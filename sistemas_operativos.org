@@ -2,6 +2,7 @@
 #+AUTHOR: Gunnar Wolf
 #+EMAIL: gwolf@gwolf.org
 #+LANGUAGE: es
+#+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
 * Generalidades del curso
 ** Calendario general
@@ -46,219 +47,98 @@ sistema operativo Linux
   - Funciones y objetivos de los sistemas operativos
   - Evolución de los sistemas operativos
   - Estructura de los sistemas operativos
-- Apuntes :: [[1-Introduccion.html][Ir a los apuntes del tema]]
+- Apuntes :: [[./introduccion.org][Ir a los apuntes del tema]]
 
 * Administración de procesos
 - Objetivo :: El alumno identificará los tipos de procesos y sus
 	      estados. Describirá las diferentes técnicas de
 	      comunicación y sincronización de procesos concurrentes.
-** Procesos. Concepto y estados de un proceso
-** Hilos y multihilos
-** Concurrencia
-*** Exclusión mutua y sincronización
-*** Bloqueos mutuos
+- Subtemas ::
+  - Procesos. Concepto y estados de un proceso
+  - Hilos y multihilos
+  - Concurrencia
+    - Exclusión mutua y sincronización
+    - Bloqueos mutuos
+- Apuntes :: [[./administracion_de_procesos.org][Ir a los apuntes del tema]]
+
 * Administración de memoria
 - Objetivo :: El alumno explicará las diferentes técnicas de
               asignación de memoria contigua y no contigua.
-** Funciones y operaciones del administrador de memoria
-** Asignación de memoria contigua
-*** Partición de la memoria
-*** Paginación
-*** Segmentación
-** Memoria virtual
-*** Concepto
-*** Paginación
-*** Segmentación
-*** Paginación y segmentación combinadas
-*** Reemplazo de páginas
-*** Asignación de marcos e hiperpaginación
+- Subtemas ::
+  - Funciones y operaciones del administrador de memoria
+  - Asignación de memoria contigua
+    - Partición de la memoria
+    - Paginación
+    - Segmentación
+  - Memoria virtual
+    - Concepto
+    - Paginación
+    - Segmentación
+    - Paginación y segmentación combinadas
+    - Reemplazo de páginas
+    - Asignación de marcos e hiperpaginación
+- Apuntes :: [[./administracion-de-memoria.org][Ir a los apuntes del tema]]
 * Planificación de procesos
 - Objetivo :: El alumno explicará las diferentes técnicas de
               asignación del procesador a los procesos.
-** Tipos de planificación
-** Algoritmos de planificación
-** Planificación de multiprocesadores y en tiempo real
-** Planificación de hilos
+- Subtemas ::
+  - Tipos de planificación
+  - Algoritmos de planificación
+  - Planificación de multiprocesadores y en tiempo real
+  - Planificación de hilos
+- Apuntes :: [[./planificacion_de_procesos.org][Ir a los apuntes del tema]]
 * Sistemas de archivos
 - Objetivo :: El alumno describirá las diferentes formas de
 	      organización y acceso a archivos, basándose en el modelo
 	      de sistema de archivos.
+- Subtemas ::
+  - Concepto y tipos de archivos
+  - Organización y acceso a archivos
+  - Estructura de los directorios
+  - Estructura de los sistemas de archivos
+  - Métodos de asignación
+  - Administración del espacio libre
 
-Para este tema recomiendo fuertemente referirse al libro [[practical
-file system design]] (sección /Bibliografía adicional/).
-
-Un /sistema de archivos/ es la estructura por medio de la cual el
-sistema operativo organiza y presenta las abstracciones necesarias
-para la organización a largo plazo de la información (típicamente) en
-un dispositivo /persistente/.
-
-El sistema de archivo que elijamos o implementemos debe tomar en
-cuenta por un lado las características físicas del medio que empleará,
-y por el otro las necesidades del sistema a crear. Por ejemplo:
-
-- Tiempo de acceso necesario para realizar una operación: Cinta ≫
-  Floppy ≫ Disco duro > Disco duro /inteligente/ ≈ Flash > NVRAM ≫ RAM
-
-- Forma de acceso presentada al sistema: Secuencial (cinta), bloques
-  con referencia de direccionamiento física (floppy, disco duro),
-  bloques consecutivos (disco duro /inteligente/, Flash, NVRAM, RAM
-
-- Tipo de sistema: ¿Multiusuario? ¿Multiproceso? ¿Embebido? ¿Uso
-  genérico?
-
-- Uso esperado del medio: Fijo / transportable → Impacto no sólo en
-  estrategias de almacenamiento, sino que de compatibilidad con una
-  gama más amplia de equipos.
-
-Hay programas de ámbito especializado que no emplean sistemas de
-archivos para el almacenamiento de su información. Principalmente,
-estos son gestores de bases de datos que, dada la naturaleza altamente
-regular y predecible de la información que manejan, permiten trabajar
-con /dispositivos crudos/ (esto es, particiones gestionadas por ellos,
-e invisibles a los demás programas). Esto es partiendo de la lógica
-que hacerlo de esta manera evita tener que atravesar capas
-innecesarias de abstracción y busca un mejor rendimiento al trabajar
-tan cerca como sea posible del hardware subyacente. Esta técnica, sin
-embargo, cada vez es menos común por la forma menos transparente de
-operación que tienen los dispositivos (y que veremos posteriormente).
-
-** Conceptos básicos
-
-- Disco :: Dispositivo en el que se almacena la información
-           (independientemente del tipo de medio que sea). Define un
-           /tamaño de bloque/, que es la unidad de información que
-           puede almacenar con una sóla operación (típicamente 512
-           bytes).
-- Partición :: Una subdivisión de un disco, por medio de la cual el
-               administrador/usuario del sistema puede definir la
-               forma en que se emplea el espacio de un disco. Un disco
-               puede tener varias particiones, y cada una de ellas
-               puede tener un sistema de archivos independiente.
-- Volumen :: Colección de bloques /inicializados/ con un sistema de
-             archivos que pueden presentarse al usuario como una
-             unidad. Típicamente un volumen coincide con una
-             partición (pero no siempre es el caso).
-- Superbloque :: El área del volumen que contiene la /información
-                 crítica/ de éste: Su capacidad, tipo de sistema de
-                 archivo, nombre/etiqueta, etc.
-- Archivo :: La estructura primaria del sistema de archivos: Relaciona
-             un /nombre de archivo/ con la información que éste
-             representa.
-
-	     Desde el punto de vista de los procesos, el sistema
-	     /guarda/ o /recupera/ la información /en/ un archivo; el
-	     archivo tiene un /nombre/ por medio del que se le identifica.
-- Directorio :: Casi todos los sistemas de archivos en uso hoy en día
-                implementan una /jerarquía maestra/ en la cual se
-                ubican los archivos. Esta jerarquía se presenta
-                típicamente como un árbol — Un /grafo acíclico/ que
-                proporciona /rutas únicas/ para la ubicación lógica de
-                cada uno de los archivos.
-- Metadatos :: Información acerca de un archivo que no es el archivo
-               mismo. Por ejemplo, el nombre, tamaño o tipo del
-               archivo, su propietario, el control de acceso, sus
-               fechas de creación, último acceso y modificación, etc.
-- I-nodo o bloque de control de archivo (/FCB/) :: La estructura en
-     disco que guarda los metadatos de cada archivo, proporcionando un
-     vínculo entre la /entrada en el directorio/ y la información que
-     referida.
-
-** Concepto y tipos de archivos
-
-La razón principal de la existencia del sistema de archivos son /los
-archivos/. Un archivo almacena información de /algún tipo/,
-estructurado o no estructurado.
-
-
-*** Estructuras relacionadas
-
-Unix introdujo el concepto de que /todo es un archivo/: En el sistema
-Unix original, todos los dispositivos podían ser controlados a través
-de un /archivo especial/ que, en vez de almacenar información, apunta
-a estructuras en el sistema que controlan a cada dispositivo. Este
-concepto sobrevive en los sistemas derivados de Unix al día de hoy,
-aunque varias clases de dispositivo rompen esta lógica. El sistema
-operativo /Plan9/ de Bell Labs hace mantiene y amplía este concepto e
-introduce los /espacios de nombres mutables/.
-
-Las principales estructuras relacionadas que encontraremos en un
-sistema tipo Unix son:
-
-- Dispositivos de caracteres :: Dispositivos con los cuales la
-     información es leída o escrita un caracter a la vez y se
-     presentan como /streams/ (flujos) de información, ya sea
-     entrante, saliente o mixta. Algunos pueden permitir operaciones
-     adicionales (por ejemplo, rebobinado), pero la manipulación de la
-     información se efectúa de forma secuencial.
-
-     Ejemplos: Impresora, unidad de cinta, modem
-- Dispositivos de bloques :: Dispositivos que presentan una interfaz
-     de /acceso aleatorio/ y entregan o reciben la información en
-     /bloques/ de tamaño predeterminado.
-
-     El ejemplo más claro de este tipo de dispositivos es una unidad
-     de disco o una de sus particiones.
-- Ligas simbólicas :: Ocupan un espacio en el directorio, pero
-     /apuntan/ a un archivo cuya información está en otro lugar; la
-     información que almacenan es el nombre del archivo destino.
-
-     Las ligas simbólicas pueden ser /relativas/ (indicando la ruta a
-     partir de la ubicación en que está) o /absolutas/ (indicando la
-     ruta a partir de la raiz).
-
-     El archivo destino puede estar en otro sistema de archivos
-     montado en el sistema.
-- /Named pipes/ :: Se traduciría literalmente como /tuberías con
-                   nombre/. Representan un mecanismo de IPC
-                   (comunicación entre procesos) que permite que dos
-                   procesos no relacionados se comuniquen de forma
-                   unidireccional: Uno abre el archivo para escritura,
-                   el otro para lectura, y lo que el primero
-                   "deposite" en el archivo, el segundo lo recibirá
-                   como entrada.
-- Sockets :: (Unix domain sockets, sockets de dominio Unix). Mecanismo
-             de comunicación bidireccional similar al de los /named
-             pipes/, pero más completo, permitiendo comunicación
-             bidireccional de un modo muy similar al de la
-             comunicación entre dos procesos en red.
-
-** Organización y acceso a archivos
-** Estructura de los directorios
-** Estructura de los sistemas de archivos
-** Métodos de asignación
-** Administración del espacio libre
+- Apuntes :: [[./sistemas_de_archivos.org][Ir a los apuntes del tema]]
 * Sistemas de entrada/salida
 - Objetivo :: El alumno explicará las diversas funciones de
 	      entrada/salida en la administración y control de
 	      dispositivos periféricos. Además analizará, con un
 	      enfoque práctico, las diferentes políticas y técnicas de
 	      almacenamiento de archivos en disco.
-** Dispositivos de entrada/salida
-** Organización de las funciones de entrada/salida
-** Almacenamiento intermedio de la entrada/salida
-** Planificación de discos
-* Sistemas distribuidos
+- Subtemas ::
+  - Dispositivos de entrada/salida
+  - Organización de las funciones de entrada/salida
+  - Almacenamiento intermedio de la entrada/salida
+  - Planificación de discos
+- Apuntes :: [[./entrada_salida.org][Ir a los apuntes del tema]]
+* Sistemas distribuídos
 - Objetivo :: El alumno explicará cómo se administran los procesos y
 	      archivos que se encuentran en un sistema distribuido.
-** Proceso cliente/servidor
-** Paso distribuido de mensajes
-** Llamadas a procedimiento remoto
-** Agrupaciones
-** Gestión distribuida de procesos
-*** Migración de procesos
-*** Estados globales distribuidos
-*** Exclusión mutua distribuida
-*** Bloqueo mutuo distribuido
-** Sistema de archivos distribuidos
+- Subtemas ::
+  - Proceso cliente/servidor
+  - Paso distribuido de mensajes
+  - Llamadas a procedimiento remoto
+  - Agrupaciones
+  - Gestión distribuida de procesos
+    - Migración de procesos
+    - Estados globales distribuidos
+    - Exclusión mutua distribuida
+    - Bloqueo mutuo distribuido
+  - Sistema de archivos distribuidos
+- Apuntes :: [[./sistemas_distribuidos.org][Ir a los apuntes del tema]]
 * Seguridad y medidas de desempeño
 - Objetivo :: El alumno explicará cómo asegurar el adecuado
               funcionamiento del sistema operativo.
-** Amenazas a la seguridad
-** Protección
-** Intrusos
-** Software maligno
-** Desempeño, coprocesadores, risc y flujo de datos
-** Modelado analítico
+- Subtemas ::
+  - Amenazas a la seguridad
+  - Protección
+  - Intrusos
+  - Software maligno
+  - Desempeño, coprocesadores, risc y flujo de datos
+  - Modelado analítico
+
+- Apuntes :: [[./seguridad_y_desempeno.org][Ir a los apuntes del tema]]
 * Bibliografía
 ** Del programa de la Facultad
 - CARRETO DE MIGUEL, GARCÍA PÉREZ: /Sistemas Operativos. Una visión
@@ -286,13 +166,13 @@ Tampoco quiero con esto romper la ley con material actualmente en
 venta — Estos textos pueden ser viejos (llamémosle "clásicos") y ya no
 disponibles para su venta, o claramente no destinados a ello.
 
-- [[http://sistop.gwolf.org/biblio/priv/An_operating_system_vade_mecum_-_Raphael_Finkel.pdf][An Operating Systems Vade Mecum (Raphael Finkel, 1988)]]. Si bien este
+- [[./biblio/priv/An_operating_system_vade_mecum_-_Raphael_Finkel.pdf][An Operating Systems Vade Mecum (Raphael Finkel, 1988)]]. Si bien este
   libro es ya algo más que muy viejo, especialmente dada la velocidad
   de este campo, tiene muy buenas descripciones de varios de los temas
   que abordaremos.
 
 # <<practical file system design>>
-- [[http://sistop.gwolf.org/biblio/priv/Practical_file_system_design_with_the_Be_File_System_-_Dominic_Giampaolo.pdf][Practical file system design with the Be File System (Dominic
+- [[./biblio/priv/Practical_file_system_design_with_the_Be_File_System_-_Dominic_Giampaolo.pdf][Practical file system design with the Be File System (Dominic
   Giampaolo, 1999)]]. Giampaolo fue parte del equipo que implementó el
   sistema operativo BeOS, un sistema de alto rendimiento pensado para
   correr en estaciones de alto rendimiento, particularmente enfocado

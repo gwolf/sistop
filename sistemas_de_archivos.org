@@ -2,6 +2,7 @@
 #+AUTHOR: Gunnar Wolf
 #+EMAIL: gwolf@gwolf.org
 #+LANGUAGE: es
+#+OPTIONS: LaTeX:dvipng
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
 * Generalidades
@@ -51,6 +52,13 @@ operación que tienen los dispositivos (y que veremos posteriormente).
            /tamaño de bloque/, que es la unidad de información que
            puede almacenar con una sóla operación (típicamente 512
            bytes).
+
+	   Si bien un sistema de archivos puede implementarse sobre
+	   medios de muy distinta naturaleza, por la carga histórica
+	   de ser el medio primario de almacenamiento permanente, a lo
+	   largo de esta sección nos referiremos a /disco/ como el
+	   medio genérico, incluso si hablamos de sistemas de archivos
+	   virtuales o sobre memorias de /estado sólido/.
 - Partición :: Una subdivisión de un disco, por medio de la cual el
                administrador/usuario del sistema puede definir la
                forma en que se emplea el espacio de un disco. Un disco
@@ -87,13 +95,6 @@ operación que tienen los dispositivos (y que veremos posteriormente).
 
 * Concepto y tipos de archivos
 
-La razón principal de la existencia del sistema de archivos son /los
-archivos/. Un archivo almacena información de /algún tipo/,
-estructurado o no estructurado.
-
-
-** Estructuras relacionadas
-
 Unix introdujo el concepto de que /todo es un archivo/: En el sistema
 Unix original, todos los dispositivos podían ser controlados a través
 de un /archivo especial/ que, en vez de almacenar información, apunta
@@ -101,7 +102,11 @@ a estructuras en el sistema que controlan a cada dispositivo. Este
 concepto sobrevive en los sistemas derivados de Unix al día de hoy,
 aunque varias clases de dispositivo rompen esta lógica. El sistema
 operativo /Plan9/ de Bell Labs hace mantiene y amplía este concepto e
-introduce los /espacios de nombres mutables/.
+introduce los /espacios de nombres mutables/, que presenta con
+interfaz de archivo archivos prácticamente cualquier objeto empleado
+por el sistema.
+
+** Archivos de dispositivo
 
 Las principales estructuras relacionadas que encontraremos en un
 sistema tipo Unix son:
@@ -120,16 +125,38 @@ sistema tipo Unix son:
 
      El ejemplo más claro de este tipo de dispositivos es una unidad
      de disco o una de sus particiones.
-- Ligas simbólicas :: Ocupan un espacio en el directorio, pero
-     /apuntan/ a un archivo cuya información está en otro lugar; la
-     información que almacenan es el nombre del archivo destino.
 
-     Las ligas simbólicas pueden ser /relativas/ (indicando la ruta a
-     partir de la ubicación en que está) o /absolutas/ (indicando la
-     ruta a partir de la raiz).
+** Ligas
 
-     El archivo destino puede estar en otro sistema de archivos
-     montado en el sistema.
+Las ligas son objetos que ocupan un espacio en el directorio, pero
+/apuntan/ a un archivo distinto, cuya información está en otro lugar
+del sistema de archivos o con otro nombre; la información que
+almacenan es el nombre del archivo destino.
+
+Las ligas simbólicas pueden ser /relativas/ (indicando la ruta a
+partir de la ubicación en que está) o /absolutas/ (indicando la ruta a
+partir de la raiz).
+
+El archivo destino puede estar en otro sistema de archivos montado en
+el sistema.
+
+Diferentes sistemas operativos implementan esquemas semejantes
+(p.ej. los /accesos directos/ en Windows), con diferentes grados de
+transparencia ante las aplicaciones.
+
+Es importante no confundir las /ligas simbólicas/ con las /ligas
+duras/, que abordaremos más adelante.
+
+** Herramientas de comunicación entre procesos
+
+Muy frecuentemente, dos procesos (relacionados o no en el árbol de
+procesos) tienen que intercambiar información a lo largo de su ciclo
+de vida. Si bien sería posible hacerlo a través de una interfaz de
+memoria compartida y envío de mensajes, muchas veces es más fácil
+emplear un archivo como si fuera un dispositivo de datos o una
+conexión en red. En Unix contamos con los siguientes tipos de archivo
+para este fin:
+
 - /Named pipes/ :: Se traduciría literalmente como /tuberías con
                    nombre/. Representan un mecanismo de IPC
                    (comunicación entre procesos) que permite que dos
@@ -143,6 +170,116 @@ sistema tipo Unix son:
              pipes/, pero más completo, permitiendo comunicación
              bidireccional de un modo muy similar al de la
              comunicación entre dos procesos en red.
+
+** Archivos con estructura
+
+La razón principal de la existencia del sistema de archivos son /los
+archivos/. Un archivo almacena información de /algún tipo/,
+estructurado o no estructurado.
+
+La mayor parte de los sistemas operativos maneja únicamente archivos
+/sin estructura/ — Cada aplicación es responsable de preparar la
+información de forma congruente, y la responsabilidad del sistema
+operativo es únicamente entregarlo como un conjunto de bytes. Ha
+habido sistemas de archivos históricos, como IBM CICS (1968), IBM MVS
+(1974) o DEC VMS (1977), que administraban ciertos tipos de datos en
+un formato básico de /base de datos/.
+
+** /Forks/ de datos y de recursos
+
+En el sistema operativo MacOS (1984), empleando HFS (Hierarchical File
+System, Sistema de Archivos Jerárquico), se introdujo un mecanismo
+para permitir al sistema operativo saber cómo se manejaría un archivo
+/sin tener que abrir el archivo completo/ (por cuestiones de
+rendimiento principalmente): el /fork de datos/ y el /fork de
+recursos/ (data fork, resource fork). El /fork de datos/ contiene a la
+información del archivo propiamente, mientras que el /fork de
+recursos/ tiene el icono que se presenta al usuario en la interfaz
+gráfica (incluso la /posición/ donde este icono será mostrado), el
+programa encargado de manipularlo, preferencias, etc.
+
+* Esquema general de un sistema de archivos
+
+Hay una serie de estructuras básicas que se repiten prácticamente en
+todos los sistemas operativos diseñados en las últimas décadas:
+
+- Superbloque :: El descriptor primario del sistema de archivos;
+                 incluye la /firma/ del sistema de archivos empleado
+                 para permitir su identificación por parte del sistema
+                 operativo, y otros datos básicos (como tamaño del
+                 sistema de archivos, tamaño del bloque, etiqueta,
+                 etc.)
+
+- Directorio raiz :: La estructura base con el listado de nombres de
+     archivo. Típicamente sólo almacena los archivos que están en el
+     /primer nivel jerárquico/ del directorio, y los directorios
+     derivados son únicamente referenciados desde éste.
+
+     El directorio normalmente incluye sólo el nombre de cada uno de
+     los archivos y el número de /I-nodo/ que lo describe.
+
+- I-nodos :: La estructura que vincula a una entrada de directorio con
+             la información propiamente almacenada en el archivo es el
+             I-nodo (nomenclatura Unix: Nodo de información; conocido
+             también como FCB, /File Control Block/).
+
+	     La información almacenada incluye los permisos y
+	     propietarios del archivo y la /relación de bloques/ que
+	     ocupa en el disco. Veremos más adelante los esquemas más
+	     comunes para presentar esta relación de bloques.
+
+#+begin_center
+[[./img/inode_addr.png]]
+
+Practical File System Design, p.12
+#+end_center
+
+- Bitmap :: La función del bitmap es poder gestionar el espacio libre
+            del disco. Recordemos que el disco se presenta asignado
+            por /bloques/, típicamente de 4096 bytes — En el bitmap
+            cada bloque se representa con un bit, con lo que aquí
+            podemos encontrar de forma compacta el espacio ocupado y
+            disponible, así como el lugar adecuado para crear un nuevo
+            archivo.
+
+	    El bitmap para un disco de 100GB puede, de esta manera,
+            representarse en 23MB ($100 \times 10^9 \over 4096$),
+            cantidad que puede razonablemente mantener en memoria un
+            sistema de escritorio promedio hoy en día.
+
+	    Veremos más adelante algunas estructuras avanzadas que
+            permiten mayor eficiencia en este sentido.
+
+
+
+* Direccionamiento directo e indirecto
+
+*UGH, revisar*: En esta sección más que límites de direccionamiento
+por partición, quiero referirme a directo/indirecto por inodo!
+
+Todo sistema de archivos tiene límites máximos en relación a la
+cantidad de datos que pueden ser direccionados. Este límite es dado
+por el producto del tamaño de bloque por la longitud de sus
+direcciones.
+
+** Ejemplo: Sistemas basados en FAT (MS-DOS)
+
+Por ejemplo, el FAT12 (MS-DOS < 3.3) manejaba direccionamiento de 12
+bits y /clusters/ tamaño fijo, de 8 bloques de 512 bytes (4096
+bytes). 12 bits permite direccionar hasta 4096 posiciones
+independientes, por lo que el tamaño máximo de partición que podía
+manejar era de 16MB.
+
+Al introducirse FAT16 en 1984, la principal ventaja fue /menor espacio
+desperdiciado/ dado que para el mismo disco duro los clusters podían
+ser de menor número de sectores.
+
+El sistema de archivos FAT tuvo varias revisiones menores; la última
+importante fue en 1996, FAT32, con espacio de direccionamiento de 28
+bits y tamaño de cluster de entre 1 y 8 sectores (512 y 4096 bytes),
+lo cual permite particiones de hasta 16TB.
+
+
 
 * Organización y acceso a archivos
 * Estructura de los directorios

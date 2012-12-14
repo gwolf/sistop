@@ -70,23 +70,123 @@ con el hardware de la computadora. Sus funciones primarias son:
 		 cuente con ayuda del hardware.
 
 * Evolución de los sistemas operativos
+
+** Proceso por lotes (/batch processing/)
+
+Los antecedentes a lo que hoy comprendemos como sistema operativo
+podemos encontralros en la primer automatización de proceso de
+diferentes programas que encontramos en los primeros centros de
+cómputo: Cuando en los 1950 aparecieron los dispositivos
+perforadores/lectores de tarjetas de papel, el tiempo que una
+computadora estaba improductiva esperando a que estuviera listo el
+programa para ejecutarse disminuyó fuertemente: Los programadores
+entregaban sus /tambaches/ o lotes de tarjetas perforadas (en inglés,
+batches) a los operadores, quienes las alimentaban a los dispositivos
+lectores, que lo cargaban en memoria en un tiempo razonable, iniciaban
+y monitoreaban la ejecución, y producían los resultados.
+
+En esta primer época en que las computadoras se especializaban en
+tareas de cálculo intensivo y los dispositivos que interactuatan con
+medios externos eran prácticamente desconocidos, el rol del sistema
+/monitor/ o /de control/ era básicamente asistir al operador en la
+carga de los programas y las bibliotecas requeridas, la notificación
+de resultados, y la contabilidad de recursos empleados para su cobro.
+
+Los sistemas monitor se fueron sofisticando al implementar
+protecciones que evitaran la corrupción de /otros trabajos/ (por
+ejemplo, lanzar erróneamente la instrucción /leer siguiente tarjeta/
+causaría que el siguiente trabajo encolado perdiera sus primeros
+caracteres, corrompiéndolo e impidiendo su ejecución), o que entraran
+en un ciclo infinito, estableciendo /alarmas/ (/timers/) que
+interrumpirían la ejecución de un proceso si éste duraba más allá del
+tiempo estipulado. Estos monitores implicaban la modificación del
+hardware para contemplar dichas características de seguridad — Y ahí
+podemos ya hablar de la característica básica de gestión de recursos
+que identifica a los sistemas operativos.
+
+Cabe añadir que el tiempo de carga y puesta a punto de un programa
+seguía representando una parte importante del tiempo que la
+computadora dedicaba al proceso: Un lector de cintas rápido procesaba
+del órden de cientos de caracteres por minuto, y a pesar de la
+lentitud relativa de las computadoras de los 1950s ante los estándares
+de hoy (las mediríamos por miles de instrucciones por segundo, KHz, en
+vez de miles de millones como lo hacemos hoy, GHz), esperar cinco o
+diez minutos con el sistema completamente detenido por la carga de un
+programa moderado resulta a todas luces un desperdicio.
+
+** Sistemas en lotes con dispositivos de carga (/spool/)
+
+Una mejoría natural a este último punto fue la invención del /spool/:
+Un mecanismo de entrada/salida que permitía que una computadora de
+propósito específico, mucho más económica y limitada, leyera las
+tarjetas y las fuera convirtiendo a cinta magnética, un medio mucho
+más rápido, teniéndola lista para que la computadora central la
+cargara cuando terminara con el trabajo anterior. Del mismo modo, la
+computadora central guardaría sus resultados en cinta para que equipos
+especializados la leyeran e imprimieran para el usuario solicitante.
+
+La palabra /spool/ (/bobina/) se tomó como /acrónimo inverso/ hacia
+/Simultaneous Peripherial Operations On-Line/, /Operación simultánea
+de periféricos en línea/.
+
+** Sistemas multiprogramados
+
+Esto cambió fuertemente al aparecer, durante los 1960s, los primeros
+/sistemas multiprogramados/, o como les llamaríamos hoy, /multitareas/
+y /multiusuarios/, en buena medida diferenciados de los anteriores por
+la aparición de las /terminales/ (primero teletipos seriales,
+posteriormente equipos con una pantalla completa como las conocemos
+hasta hoy).
+
+En primer término, la tarea de programación y depuración del código se
+simplificó fuertemente al poder el programador directamente hacer
+cambios y someter el programa a ejecución de inmediato. En segundo
+término, la computadora /nunca más estaría simplemente esperando a
+estar lista/: Mientras un programador editaba o compilaba su programa,
+la computadora seguiría calculando lo que otros procesos requirieran.
+
+El hardware requerido cambió fuertemente: No sólo por los dispositivos
+(y medios) de interacción con la computadora, sino con el procesador
+mismo. Si bien se esperaba que cada usuario fuera responsable con el
+uso de recursos, se hizo necesario que apareciera la infraestructura
+de protección de recursos: Un proceso no debe sobreescribir el espacio
+de memoria de otro (ni el código ni los datos), mucho menos el espacio
+del monitor. Esta protección la encontramos en la /Unidad de Manejo de
+Memoria/ (MMU), presente en todas las computadoras de uso genérico
+desde los 1990.
+
+Ciertos dispositivos requieren bloqueo para ofrecer acceso
+exclusivo/único — Cintas e impresoras, por ejemplo, son de acceso
+estrictamente secuencial, y si dos usuarios intentaran usarlas al
+mismo tiempo, el resultado para ambos se corrompería. Para estos
+dispositivos, el sistema debe implementar otros /spools/.
+
+Además, fueron naciendo de forma natural y paulatina las abstracciones
+que conocemos hoy en día, como el concepto de /archivos/ y
+/directorios/, y el código necesario para emplearlos iba siendo
+enviado a través de las /bibliotecas de sistema/ y, cada vez más (por
+su centralidad) hacia el núcleo mismo del –ahora sí– sistema
+operativo.
+
+** Sistemas de tiempo compartido
+
+** Computadoras personales
+
+# Los primeros sistemas operativos no contaban con la ayuda en hardware
+# de diversos componentes indispensables para presentar ciertas
+# características de abstracción, como la /unidad de administración de
+# memoria/ (MMU) o un esquema de /anillos/ o niveles de protección.
+
+# Esto significó que tenían que realizar su tarea con la cooperación
+# explícita de los autores de todos los programas — Y que un programa
+# /mal comportado/ podía corromper la operación completa del equipo.
+
+# En esta primer etapa sí había sistemas operativos multiprocesos
+# (incluso en las computadoras personales — Por ejemplo, AmigaOS, ATARI
+# TOS hacia mediados de los 1980s), sin embargo, su estabilidad da mucho
+# que desear.
+
 * Estructuras de los sistemas operativos
-** Sistemas operativos /cohabitantes/
-
-Los primeros sistemas operativos no contaban con la ayuda en hardware
-de diversos componentes indispensables para presentar ciertas
-características de abstracción, como la /unidad de administración de
-memoria/ (MMU) o un esquema de /anillos/ o niveles de protección.
-
-Esto significó que tenían que realizar su tarea con la cooperación
-explícita de los autores de todos los programas — Y que un programa
-/mal comportado/ podía corromper la operación completa del equipo.
-
-En esta primer etapa sí había sistemas operativos multiprocesos
-(incluso en las computadoras personales — Por ejemplo, AmigaOS, ATARI
-TOS hacia mediados de los 1980s), sin embargo, su estabilidad da mucho
-que desear.
-
 ** Sistemas operativos monolíticos
 
 ** Sistemas operativos /microkernel/
@@ -100,3 +200,7 @@ General overview]]
 - Linux con drivers implementados en espacio de usuario (FUSE)
 - Paravirtualización
 
+
+* Otros recursos
+
+- [[http://cs.gordon.edu/courses/cs322/lectures/history.html][CS322: A Brief History of Computer Operating Systems]]

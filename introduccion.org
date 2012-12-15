@@ -78,8 +78,9 @@ podemos encontralros en la primer automatización de proceso de
 diferentes programas que encontramos en los primeros centros de
 cómputo: Cuando en los 1950 aparecieron los dispositivos
 perforadores/lectores de tarjetas de papel, el tiempo que una
-computadora estaba improductiva esperando a que estuviera listo el
-programa para ejecutarse disminuyó fuertemente: Los programadores
+computadora estaba improductiva esperando a que estuviera lista una
+/tarea/ (como se designaba a una ejecución de cada determinado
+programa) para ejecutarse disminuyó fuertemente: Los programadores
 entregaban sus /tambaches/ o lotes de tarjetas perforadas (en inglés,
 batches) a los operadores, quienes las alimentaban a los dispositivos
 lectores, que lo cargaban en memoria en un tiempo razonable, iniciaban
@@ -104,7 +105,7 @@ hardware para contemplar dichas características de seguridad — Y ahí
 podemos ya hablar de la característica básica de gestión de recursos
 que identifica a los sistemas operativos.
 
-Cabe añadir que el tiempo de carga y puesta a punto de un programa
+Cabe añadir que el tiempo de carga y puesta a punto de una tarea
 seguía representando una parte importante del tiempo que la
 computadora dedicaba al proceso: Un lector de cintas rápido procesaba
 del órden de cientos de caracteres por minuto, y a pesar de la
@@ -131,35 +132,46 @@ de periféricos en línea/.
 
 ** Sistemas multiprogramados
 
-Esto cambió fuertemente al aparecer, durante los 1960s, los primeros
-/sistemas multiprogramados/, o como les llamaríamos hoy, /multitareas/
-y /multiusuarios/, en buena medida diferenciados de los anteriores por
-la aparición de las /terminales/ (primero teletipos seriales,
-posteriormente equipos con una pantalla completa como las conocemos
-hasta hoy).
+A lo largo de su ejecución, un programa normalmente pasa por etapas
+con muy distintas características: Al estar en un ciclo fuertemente
+dedicado al cálculo numérico, el sistema opera /limitado por el CPU/
+(/CPU-bound/), mientras que al leer o escribir resultados a medios
+externos (incluso a través de /spools/) el límite es impuesto por los
+dispositivos, esto es, opera /limitado por entrada-salida/ (/I-O
+bound/). La /programación multitareas/ o los /sistemas
+multiprogramados/ buscaban maximizar más aún el tiempo de uso efectivo
+del procesador ejecutando varios procesos al mismo tiempo.
 
-En primer término, la tarea de programación y depuración del código se
-simplificó fuertemente al poder el programador directamente hacer
-cambios y someter el programa a ejecución de inmediato. En segundo
-término, la computadora /nunca más estaría simplemente esperando a
-estar lista/: Mientras un programador editaba o compilaba su programa,
-la computadora seguiría calculando lo que otros procesos requirieran.
-
-El hardware requerido cambió fuertemente: No sólo por los dispositivos
-(y medios) de interacción con la computadora, sino con el procesador
-mismo. Si bien se esperaba que cada usuario fuera responsable con el
-uso de recursos, se hizo necesario que apareciera la infraestructura
-de protección de recursos: Un proceso no debe sobreescribir el espacio
-de memoria de otro (ni el código ni los datos), mucho menos el espacio
-del monitor. Esta protección la encontramos en la /Unidad de Manejo de
-Memoria/ (MMU), presente en todas las computadoras de uso genérico
-desde los 1990.
+El hardware requerido cambió fuertemente. Si bien se esperaba que cada
+usuario fuera responsable con el uso de recursos, se hizo necesario
+que apareciera la infraestructura de protección de recursos: Un
+proceso no debe sobreescribir el espacio de memoria de otro (ni el
+código ni los datos), mucho menos el espacio del monitor. Esta
+protección la encontramos en la /Unidad de Manejo de Memoria/ (MMU),
+presente en todas las computadoras de uso genérico desde los 1990.
 
 Ciertos dispositivos requieren bloqueo para ofrecer acceso
 exclusivo/único — Cintas e impresoras, por ejemplo, son de acceso
 estrictamente secuencial, y si dos usuarios intentaran usarlas al
 mismo tiempo, el resultado para ambos se corrompería. Para estos
-dispositivos, el sistema debe implementar otros /spools/.
+dispositivos, el sistema debe implementar otros /spools/ y mecanismos
+de bloqueo.
+
+** Sistemas de tiempo compartido
+
+El modo de interactuar con las computadoras cambió fuertemente al
+aparecer, durante los 1960s, al extenderse la multitarea para
+convertirse en sistemas /interactivos/ y /multiusuarios/, en buena
+medida diferenciados de los anteriores por la aparición de las
+/terminales/ (primero teletipos seriales, posteriormente equipos con
+una pantalla completa como las conocemos hasta hoy).
+
+En primer término, la tarea de programación y depuración del código se
+simplificó fuertemente al poder el programador hacer directamente
+cambios y someter el programa a ejecución de inmediato. En segundo
+término, la computadora /nunca más estaría simplemente esperando a
+estar lista/: Mientras un programador editaba o compilaba su programa,
+la computadora seguiría calculando lo que otros procesos requirieran.
 
 Además, fueron naciendo de forma natural y paulatina las abstracciones
 que conocemos hoy en día, como el concepto de /archivos/ y
@@ -168,9 +180,66 @@ enviado a través de las /bibliotecas de sistema/ y, cada vez más (por
 su centralidad) hacia el núcleo mismo del –ahora sí– sistema
 operativo.
 
-** Sistemas de tiempo compartido
+Más alla del cambio del dispositivo de acceso, un cambio importante
+entre los sistemas multiprogramados y de tiempo compartido es la
+velocidad del cambio entre una tarea y otra es mucho más rápido: Si
+bien en un sistema multiprogramado un /cambio de contexto/ podía
+producirse sólo cuando la tarea cambiara de uno a otro modos de
+ejecución y el resultado no se vería fuertemente afectado, en un
+sistema interactivo, para dar la /ilusión/ de uso directo de la
+computadora, el hardware emitiría al sistema operativo
+/interrupciones/ (señales) que le indicaran múltiples veces /por
+segundo/ para que cambie el /proceso/ activo (como ahora se le
+denomina a una instancia de un programa en ejecución).
+
+Diferentes tipos de proceso pueden tener distinto nivel de importancia
+— Ya sea porque son más importantes para el funcionamiento de la
+computadora misma (procesos de sistema), porque tienen mayor carga de
+interactividad (por la experiencia del usuario) o por diversas
+categorías de usuarios (sistemas con contabilidad por tipo de
+atención). Esto requiere la implementación de diversas /prioridades/
+para cada uno de estos.
 
 ** Computadoras personales
+
+Si bien la discusión hasta este momento asume una computadora central
+con operadores dedicados y múltiples usuarios, en la década de los
+1970 comenzaron a aparecer las /computadoras personales/, sistemas en
+un inicio verdaderamente reducidos en prestaciones y a un nivel de
+precios que los ponían al alcance, primero, de los aficionados
+entusiastas y, posteriormente, de cualquiera.
+
+#+begin_center
+[[./img/altair.jpg]]
+
+La /microcomputadora Altair 8800/, primer computadora personal con
+distribución masiva, a la venta a partir de 1975
+#+end_center
+
+Las primeras computadoras personales tampoco eran distribuídas con
+sistemas operativos o lenguajes de programación; la interfaz primaria
+para programarlas era a través de /switches/, y para recibir sus
+resultados, de bancos de LEDs. Claro está, esto requería conocimientos
+especializados, y las computadoras personales eran aún vistas sólo
+como juguetes caros.
+
+La verdadera revolución apareció cuando‚ poco tiempo más tarde,
+comenzaron a venderse computadoras personales con salida de video
+(típicamente a través de una televisión) y entrada a través de un
+teclado. Estas computadoras popularizaron el lenguaje de programación
+BASIC, diseñado para usuarios novatos en los 1960, y para permitir a
+los usuarios gestionar sus recursos (unidades de cinta, pantalla
+posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
+software mínimo de sistema — Nuevamente, un proto-sistema operativo.
+
+#+begin_center
+[[./img/commodore_pet.jpg]]
+
+La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras
+con intérprete de BASIC
+#+end_center
+
+
 
 # Los primeros sistemas operativos no contaban con la ayuda en hardware
 # de diversos componentes indispensables para presentar ciertas

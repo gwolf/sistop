@@ -200,7 +200,7 @@ categorías de usuarios (sistemas con contabilidad por tipo de
 atención). Esto requiere la implementación de diversas /prioridades/
 para cada uno de estos.
 
-* Evolución II: Las computadoras personales
+* Y del lado de las computadoras personales
 
 Si bien la discusión hasta este momento asume una computadora central
 con operadores dedicados y múltiples usuarios, en la década de los
@@ -331,27 +331,126 @@ multimedia y multitarea preventiva, una verdadera maravilla para su
 momento. ([[http://oldcomputers.net/amiga1000.html][Fuente de la imagen]])
 #+end_center
 
-
-
 Naturalmente, ante el uso común de un entorno de ventanas, los
 programas que se ejecutaban sin requerir de la carga del sistema
 operativo cayeron lentamente en el olvido.
 
-** Convergencia de dos mercados
+** Convergencia de los dos grandes mercados
+
+Conforme fueron apareciendo los CPUs con características suficientes
+en el mercado para ofrecer la protección y aislamiento necesario
+(particularmente, Intel 80386 y Motorola 68030), la brecha de
+funcionalidad entre las computadoras personales y las /estaciones de
+trabajo/ y /mainframes/ se fue cerrando.
+
+Hacia principios de los 1990, la mayor parte de las computadoras de
+arquitecturas /alternativas/ fueron cediendo a las presiones del
+mercado, y hacia mediados de la década sólo quedaban dos arquitecturas
+principales: La derivada de IBM y la derivada de la Apple Macintosh.
+
+Los sistemas operativos primarios para ambas plataformas fueron
+respondiendo a las nuevas características del hardware: En las IBM, la
+presencia de Microsoft Windows (originalmente un /entorno operativo/
+desde su primer edición en 1985, evolucionando hacia un sistema
+operativo completo corriendo sobre una base de MS-DOS en 1995) se fue
+haciendo prevalente hasta ser la norma. Windows pasó de ser un sistema
+meramente de aplicaciones propias y operaba únicamente por reemplazo
+de aplicación activa a ser un sistema de multitarea cooperativa, a ser
+finalmente un sistema que requería protección en hardware (80386) e
+implementaba multitarea preventiva.
+
+A partir del 2003, el núcleo de Windows en más amplio uso fue
+reemplazado por un desarrollo hecho de inicio como un sistema
+operativo completo y ya no como una aplicación dependiente de MS-DOS:
+El núcleo de Nueva Tecnología (Windows NT), que, sin romper
+compatibilidad con los /APIs/ históricos de Windows, ofreció una mucho
+mayor estabilidad.
+
+Por el lado de Apple, la evolución fue muy en paralelo: Ante un
+sistema ya agotado y obsoleto, el MacOS 9, en 2001 anunció una
+nueva versión de su sistema operativo que fue en realidad un
+relanzamiento completo: MacOS X es un sistema basado en un núcleo Unix
+BSD, sobre el /microkernel/ Mach.
+
+Y otro importante jugador que entró en escena durante los 1990s fue el
+software libre, por medio de varias implementaciones distintas de
+sistemas tipo Unix — principalmente, Linux y los *BSD (FreeBSD,
+NetBSD, OpenBSD). Estos sistemas implementaron, colaborativamente y a
+escala mundial, software compatible con el que corría en las
+estaciones de trabajo a gran escala, con alta confiabilidad, y
+cerrando por fin la divergencia del árbol del desarrollo de la
+computación en /fierros grandes/ y /fierros chicos/.
+
+Al día de hoy, la arquitectura derivada de Intel (y la PC) es el claro
+ganador de este proceso de 35 años, habiendo conquistado casi la
+totalidad de los casos de uso. Hoy en día, la arquitectura Intel corre
+desde subportátiles hasta supercomputadoras y centros de datos; el
+sistema operativo específico varía según el uso, yendo
+mayoritariamente hacia Windows, con los diferentes Unixes concentrados
+en los equipos servidores.
+
+En el frente de los dispositivos /embebidos/ (las computadoras más
+pequeñas, desde microcontroladores hasta teléfonos y tabletas), la
+norma es la arquitectura ARM, también bajo versiones específicas de
+sistemas operativos Unix y Windows (en ese órden).
 
 * Estructuras de los sistemas operativos
-** Sistemas operativos monolíticos
 
-** Sistemas operativos /microkernel/
+Para comenzar el estudio de los sistemas operativos, la complejidad
+del tema requerirá que lo hagamos de una forma modular. En este curso
+no buscamos enseñar cómo se usa un determinado sistema operativo, ni
+siquiera comparar el uso de uno con otro (fuera de hacerlo con fines
+de explicar diferentes implementaciones).
 
-Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
-microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
-General overview]]
+Al nivel que vamos a estudiarlo, un sistema operativo es más bien un
+gran programa, que ejecuta a otros muchos programas y les expone un
+conjunto de interfaces para que puedan aprovechar los recursos de
+cómputo. Hay dos formas primarias de organización /hacia adentro/ del
+sistema operativo: Los sistemas monolíticos y los sistemas
+microkernel. Y si bien no podemos marcar una línea clara a rajatabla
+que indique en qué clasificiación cae cada sistema, no es dificil
+encontrar líneas base.
 
-** Sistemas con concepciones híbridas
+- Monolíticos :: La mayor parte de los sistemas operativos
+		 históricamente han sido /monolíticos/ — Esto
+		 significa que hay un sólo /proceso privilegiado/ que
+		 opera en modo supervisor, y dentro del cual se
+		 encuentran todas las rutinas para las diversas tareas
+		 que realiza el sistema operativo.
 
-- Linux con drivers implementados en espacio de usuario (FUSE)
-- Paravirtualización
+
+- Microkernel :: El núcleo del sistema operativo se mantiene en el
+                 mínimo posible de funcionalidad, descargando en
+                 /procesos especiales/ las tareas que implementan el
+                 acceso a dispositivos y las diversas políticas de uso
+                 del sistema.
+
+Las principales ventaja de diseñar un sistema siguiendo un esquema
+monolítico es la simplificación de una gran cantidad de mecanismos de
+comunicación, que lleva a una mayor velocidad de ejecución (al
+requerir menos cambios de contexto para cualquier operación
+realizada). Además, al manejarse la comunicación directa como paso de
+estructuras en memoria, la mayor acoplación permite más flexibilidad
+al adecuarse para nuevos requisitos (al no tener que modificar no sólo
+al núcleo y a los procesos especiales, sino también la interfaz
+pública entre ellos).
+
+Por otro lado, los sistemas microkernel siguen esquemas lógicos más
+limpios, permiten implementaciones más elegantes y facilitan la
+comprensión por separado de cada una de sus piezas. Pueden
+/auto-repararse/ con mayor facilidad, dado que en caso de fallar uno
+de los componentes (por más que parezca ser de muy bajo nivel), el
+núcleo puede reiniciarlo o incluso reemplazarlo.
+
+- Sistemas con concepciones híbridas :: 
+
+  - Linux con drivers implementados en espacio de usuario (FUSE)
+  - Paravirtualización
+
+		 Discusión interesante y reciente (diciembre 2012):
+		 [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server microkernel OS Genode 12.11 can build
+		 itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode – General overview]]
+
 
 
 * Otros recursos

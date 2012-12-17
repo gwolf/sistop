@@ -200,7 +200,7 @@ categorías de usuarios (sistemas con contabilidad por tipo de
 atención). Esto requiere la implementación de diversas /prioridades/
 para cada uno de estos.
 
-** Computadoras personales
+* Evolución II: Las computadoras personales
 
 Si bien la discusión hasta este momento asume una computadora central
 con operadores dedicados y múltiples usuarios, en la década de los
@@ -209,11 +209,15 @@ un inicio verdaderamente reducidos en prestaciones y a un nivel de
 precios que los ponían al alcance, primero, de los aficionados
 entusiastas y, posteriormente, de cualquiera.
 
+** Primeros sistemas para entusiastas
+
 #+begin_center
+#+attr_html: height="350"
 [[./img/altair.jpg]]
 
 La /microcomputadora Altair 8800/, primer computadora personal con
-distribución masiva, a la venta a partir de 1975
+distribución masiva, a la venta a partir de 1975 ([[http://web.ncf.ca/dunfield/classic.htm][Imagen de Dave
+Dunfield]])
 #+end_center
 
 Las primeras computadoras personales tampoco eran distribuídas con
@@ -222,6 +226,8 @@ para programarlas era a través de /switches/, y para recibir sus
 resultados, de bancos de LEDs. Claro está, esto requería conocimientos
 especializados, y las computadoras personales eran aún vistas sólo
 como juguetes caros.
+
+** La revolución de los 8 bits
 
 La verdadera revolución apareció cuando‚ poco tiempo más tarde,
 comenzaron a venderse computadoras personales con salida de video
@@ -233,27 +239,105 @@ posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
 software mínimo de sistema — Nuevamente, un proto-sistema operativo.
 
 #+begin_center
+#+attr_html: height="350"
 [[./img/commodore_pet.jpg]]
 
 La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras
-con intérprete de BASIC
+con intérprete de BASIC. ([[http://www.classiccmp.org/dunfield/pet/index.htm][Imagen de Dave Dunfield]])
+#+end_center
+
+** La computadora para fines "serios": La familia PC
+
+Al aparecer las computadoras personales "serias", orientadas a la
+oficina más que al hobby, a principios de los 1980 (particularmente
+representadas por la IBM PC, 1981), sus sistemas operativos se
+comenzaron a diferenciar de los equipos previos al separar el /entorno
+de desarrollo/ en algún lenguaje de programación del /entorno de
+ejecución/. El rol principal del sistema operativo ante el usuario era
+para poder administrar los archivos de las diversas aplicaciones a
+través de una sencilla interfaz de línea de comando, y lanzar las
+aplicaciones propiamente.
+
+La PC de IBM fuer la primer arquitectura de computadoras personales en
+desarrollar una amplia familia de /clones/, computadoras compatibles
+diseñadas para correr con el mismo sistema operativo, y que
+eventualmente capturaron prácticamente el 100% del
+mercado. Prácticamente todas las computadoras de escritorio y
+portátiles en el mercado hoy derivan de la arquitectura de la IBM PC.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/ibmpc.jpg]]
+
+La computadora IBM PC modelo 5150 (1981), iniciadora de la
+arquitectura predominantemente en uso hasta el día de hoy. ([[https://en.wikipedia.org/wiki/IBM_Personal_Computer][Imagen de
+la Wikipedia]])
+#+end_center
+
+Ante las aplicaciones, el sistema operativo (PC-DOS, en las versiones
+distribuídas directamente por IBM, o el que se popularizó más, MS-DOS,
+en los /clones/) ofrecía la ya conocida serie de interfaces y
+abstracciones para administrar los archivos y la entrada/salida a
+través de sus puertos. Cabe destacar que, particularmente en sus
+primeros años, muchos programas corrían directamente sobre el
+hardware, arrancando desde el BIOS y sin emplear el sistema operativo.
+
+** El impacto del entorno gráfico (WIMP)
+
+Hacia mediados de los 1980 comenzaron a aparecer computadoras con
+interfaces gráficas basadas en el paradigma WIMP (/Windows, Icons,
+Menus, Pointer/; Ventanas, Iconos, Menúes, Apuntador), que permitían
+la interacción con varios programas al mismo tiempo. Esto /no
+necesariamente/ significa que sean sistemas multitarea — Por ejemplo,
+la primer interfaz de MacOS permitía visualizar a varias ventanas
+abiertas simultáneamente, pero sólo el proceso que estuviera activo se
+ejecutaba.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/mac128.png]]
+
+Apple Macintosh (1984), popularizó la interfaz usuario gráfica
+(GUI). ([[https://en.wikipedia.org/wiki/File:Macintosh_128k_transparency.png][Imagen de la Wikipedia]])
+#+end_center
+
+Esto comenzó, sin embargo, a plantear inevitablemente las necesidades
+de concurrencia a los programadores. Los programas ya no tenían acceso
+directo a la pantalla para manipular a su antojo, sino que a una
+abstracción (la /ventana/) que podía variar sus medidas, y que
+requería que toda la salida fuera estrictamente a través de llamadas a
+bibliotecas de primitivas gráficas que comenzaron a verse como parte
+integral del sistema operativo.
+
+Además, los problemas de protección y separación entre procesos
+concurrentes comenzaron a hacerse evidentes: Los programadores tenían
+ahora que programar con la conciencia de que compartirían recursos —
+Con el limitante (que no tenían en las máquinas /profesionales/) de no
+contar con hardware especializado para esta protección: Los
+procesadores en uso comercial en los 1980 no manejaban /anillos/ o
+/niveles de ejecución/ ni /unidad de administración de memoria/ (MMU),
+por lo que un programa /mal comportado/ podía corromper la operación
+completa del equipo. Y si bien los entornos que más éxito tuvieron
+(Apple MacOS y Microsoft Windows) no implementaban multitarea real, sí
+hubo desde el principio sistemas como la Commodore Amiga o la Atari ST
+que hacían un multitasking /preventivo/ verdadero.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/A1000.jpg]]
+
+Commodore Amiga 1000 (1985), computadora con amplias capacidades
+multimedia y multitarea preventiva, una verdadera maravilla para su
+momento. ([[http://oldcomputers.net/amiga1000.html][Fuente de la imagen]])
 #+end_center
 
 
 
-# Los primeros sistemas operativos no contaban con la ayuda en hardware
-# de diversos componentes indispensables para presentar ciertas
-# características de abstracción, como la /unidad de administración de
-# memoria/ (MMU) o un esquema de /anillos/ o niveles de protección.
+Naturalmente, ante el uso común de un entorno de ventanas, los
+programas que se ejecutaban sin requerir de la carga del sistema
+operativo cayeron lentamente en el olvido.
 
-# Esto significó que tenían que realizar su tarea con la cooperación
-# explícita de los autores de todos los programas — Y que un programa
-# /mal comportado/ podía corromper la operación completa del equipo.
-
-# En esta primer etapa sí había sistemas operativos multiprocesos
-# (incluso en las computadoras personales — Por ejemplo, AmigaOS, ATARI
-# TOS hacia mediados de los 1980s), sin embargo, su estabilidad da mucho
-# que desear.
+** Convergencia de dos mercados
 
 * Estructuras de los sistemas operativos
 ** Sistemas operativos monolíticos

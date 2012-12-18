@@ -394,7 +394,7 @@ pequeñas, desde microcontroladores hasta teléfonos y tabletas), la
 norma es la arquitectura ARM, también bajo versiones específicas de
 sistemas operativos Unix y Windows (en ese órden).
 
-* Estructuras de los sistemas operativos
+* Organización de los sistemas operativos
 
 Para comenzar el estudio de los sistemas operativos, la complejidad
 del tema requerirá que lo hagamos de una forma modular. En este curso
@@ -442,16 +442,17 @@ comprensión por separado de cada una de sus piezas. Pueden
 de los componentes (por más que parezca ser de muy bajo nivel), el
 núcleo puede reiniciarlo o incluso reemplazarlo.
 
-- Sistemas con concepciones híbridas :: 
+- Sistemas con concepciones híbridas :: No podemos hablar de
+     concepciones únicas ni de verdades absolutas. A lo largo del
+     curso veremos ejemplos de /concepciones híbridas/ en este sentido
+     — Sistemas que son mayormente monolíticos pero manejan algunos
+     procesos que parecerían centrales a través de procesos de nivel
+     usuario como los microkernel (por ejemplo, los sistemas de
+     archivos en espacio de usuario, FUSE, en Linux).
 
-  - Linux con drivers implementados en espacio de usuario (FUSE)
-  - Paravirtualización
-
-		 Discusión interesante y reciente (diciembre 2012):
-		 [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server microkernel OS Genode 12.11 can build
-		 itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode – General overview]]
-
-
+# Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
+# microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
+# General overview]]
 
 * Otros recursos
 

@@ -7,6 +7,7 @@ all:
 	    fi ; done
 
 clean:
+	rm -f ltxpng/*.png
 	for i in *.org; do \
 	    h=`echo $$i|sed s/.org$$/.html/`; \
 	    l=`echo $$i|sed s/.org$$/.tex/`; \

@@ -454,6 +454,156 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 # microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
 # General overview]]
 
+* Estructuras y funciones básicas
+
+Repasaremos brevemente algunos conceptos de arquitectura de
+computadoras que nos resultarán fundamentales para abordar el tema que
+nos ocupa.
+
+** Jerarquía de almacenamiento
+
+Las computadoras que siguen la arquitectura /von Neumann/, esto es,
+prácticamente la totalidad hoy en día podrían resumir su operación
+general a alimentar a una /unidad de proceso/ (CPU) con los datos e
+instrucciones almacenados en /memoria/, que pueden incluir llamadas a
+servicio (y respuestas a eventos) originados en medios externos.
+
+Una computadora von Neumann significa básicamente que es una
+computadora de /programa almacenado en la memoria primaria/ — Esto es,
+se usa el mismo almacenamiento para el programa que está siendo
+ejecutado y para sus datos, sirviéndose de un /registro/ especial para
+indicar al CPU cuál es la dirección en memoria de la siguiente
+instrucción a ejecutar.
+
+La arquitectura von Neumann fue planteada, obviamente, sin considerar
+la posterior diferencia entre la velocidad que adquiriría el CPU y la
+memoria. En 1977, John Backus presentó al recibir el premio Turing un
+artículo describiendo el /cuello de botella de von Neumann/. Los
+procesadores son cada vez más rápidos (se logró un aumento de 1000
+veces tanto entre 1975 y 2000 tan sólo en el reloj del sistema), pero
+la memoria aumentó su velocidad a un ritmo mucho menor —
+Aproximadamente un factor de 50 para la tecnología en un nivel
+costo-beneficio suficiente para usarse como memoria primaria.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/jerarquia_memoria.png]]
+
+Jerarquía de memoria. (Imagen: /Operating System Concepts Essentials/;
+Silberschatz, Galvin, Gagne; p.11)
+#+end_center
+
+Una respuesta parcial a este problema es la creación de una jerarquía
+de almacenamiento, yendo de una pequeña área de memoria mucho más cara
+hasta un gran espacio de memoria muy económica. En particular, la
+relación entre las capas superiores está administrada por hardware
+especializado de modo que su existencia resulta transparente al
+programador.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/velocidad_memoria.png]]
+
+Velocidad y gestor de los principales niveles de memoria. (Imagen:
+/Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne;
+p.28)
+#+end_center
+
+
+** Registros
+
+La memoria más rápida de la computadora son los /registros/, ubicados
+dentro de cada /uno de los/ núcleos de cada uno de los CPUs. La
+arquitecturas tipo RISC sólo contmplan la ejecución de instrucciones
+(excepto, claro, las de carga y almacenamiento a memoria primaria)
+entre registros.
+
+Los primeros CPUs trabajaban con pocos CPUs de propósito específico —
+Trabajaban más bien con una lógica de /registro acumulador/. Por
+ejemplo, el MOS 6502 (en el cual se basaron las principales
+computadoras de 8 bits) tenía un acumulador de 8 bits (A), dos
+registros índice de 8 bits (X y Y), un registro de estado del
+procesador de 8 bits (P), un apuntador al /stack/ de 8 bits (S), y un
+apuntador al programa de 16-bit (PC). El otro gran procesador de su
+era, el Zilog Z80, tenía 14 registros (3 de 8 bits y el resto de 16),
+pero sólo uno era un acumulador de propósito general.
+
+El procesador Intel 8088, en el cual se basó la primer generación de
+la arquitectura PC, ofrecía cuatro registros de uso /casi/ general. En
+los 1980 comenzaron a producirse los primeros procesadores tipo RISC,
+muchos de los cuales ofrecían 32 registros, todos ellos de propósito
+general.
+
+Todas las operaciones que el CPU deba realizar reiteradamente, donde
+la rapidez es fundamental, se realiza con los operadores cargados en
+los registros. Pero, lo que es más importante para nuestro curso: El
+estado del CPU en un momento dado está determinado por el contenido de
+los registros. El contenido de la memoria, obviamente, debe estar
+sincronizado con lo que ocurre dentro de éste — Pero el estado actual
+del CPU, lo que está haciendo, las indicaciones respecto a las
+operaciones recién realizadas que se deben entregar al programa en
+ejecución están todos representados en los registros. Debemos mantener
+esto en mente cuando posteriormente hablemos de todas las situaciones
+en que el flujo de ejecución debe ser tomado de un proceso y entregado
+a otro.
+
+** Interrupciones
+
+La ejecución de los procesos podría seguir siempre linealmente, pero
+en el modelo de uso de cómputo actual, eso no nos serviría de mucho:
+Para que un proceso acepte interacción, su ejecución debe poder
+responder a los /eventos/ que ocurran alrededor del sistema. Y los
+eventos son manejados a través de las /interrupciones/.
+
+Cuando ocurre algún evento que requiera la atención del sistema
+operativo, el hardware encargado de procesarlo escribe directamente a
+una ubicación predeterminada de memoria la naturaleza de la solicitud
+(el /vector de interrupción/) y, levantando una solicitud de
+interrupción, /roba/ el procesamiento del proceso que estaba siendo
+ejecutado. El sistema operativo entonces ejecuta su /rutina de manejo
+de interrupciones/ (típicamente comienza grabando el estado de los
+registros del CPU y otra información relativa al estado del proceso
+desplazado) y posteriormente la atiende.
+
+Las interrupciones pueden organizarse por /prioridades/, de modo que
+una interrupción de menor jerarquía no interrumpa a una más
+importante — Dado que las interrupciones muchas veces indican que hay
+datos disponibles en algún buffer, el no atenderlas a tiempo podría
+llevarnos a perder datos.
+
+El sistema operativo puede elegir ignorar (/enmascarar/) a ciertas
+interrupciones — Pero hay interrupciones que son /no enmascarables/.
+
+Los eventos pueden ser, como mencionamos, indicadors de que hay algún
+dispositivo requiriendo atención, pero pueden también provenir del
+mismo sistema, como una /alarma/ o /temporizador/ (que se emplea para
+obligar a todo programa a entregar el control en un sistema
+multitareas) o indicando una condición de error (por ejemplo, una
+división sobre cero).
+
+** Llamadas al sistema
+
+De forma de cierto modo análoga a las interrupciones, podemos hablar
+de las llamadas al sistema. El sistema operativo protege a un proceso
+de otro, y previene que un proceso ejecutándose en espacio no
+privilegiado tenga acceso directo a los dispositivos. Cuando un
+proceso requiere de alguna de estas acciones, acede a ellas levantando
+una /llamada al sistema/.
+
+Cada sistema operativo /expone/ una /interfaz al programador/ (API)
+que incluye todas las operaciones que se le pueden solicitar, cómo
+hacerlo y con qué argumentos.
+
+Cada familia de sistemas operativos implementa un API distinto, y éste
+es el que distingue principalmente a uno de otro. Por ejemplo, los
+sistemas Windows 95 en adelante implementan Win32, Win16
+(compatibilidad con Windows previos) y MSDOS; MacOS implementa Cocoa
+(aplicaciones MacOS X) y Carbon (compatibilidad con aplicaciones de
+MacOS previos), y Linux y los *BSDs, POSIX (el estándar que define a
+Unix). El caso de MacOS X es interesante, porque también implementa
+POSIX, ofreciendo la /semántica/ de dos sistemas muy distintos entre
+sí.
+
 * Otros recursos
 
 - [[http://cs.gordon.edu/courses/cs322/lectures/history.html][CS322: A Brief History of Computer Operating Systems]]

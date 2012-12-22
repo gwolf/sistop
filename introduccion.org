@@ -509,7 +509,6 @@ Velocidad y gestor de los principales niveles de memoria. (Imagen:
 p.28)
 #+end_center
 
-
 ** Registros
 
 La memoria más rápida de la computadora son los /registros/, ubicados
@@ -547,13 +546,14 @@ esto en mente cuando posteriormente hablemos de todas las situaciones
 en que el flujo de ejecución debe ser tomado de un proceso y entregado
 a otro.
 
-** Interrupciones
+** Interrupciones y excepciones
 
 La ejecución de los procesos podría seguir siempre linealmente, pero
 en el modelo de uso de cómputo actual, eso no nos serviría de mucho:
 Para que un proceso acepte interacción, su ejecución debe poder
 responder a los /eventos/ que ocurran alrededor del sistema. Y los
-eventos son manejados a través de las /interrupciones/.
+eventos son manejados a través de las /interrupciones/ y /excepciones/
+(o /trampas/).
 
 Cuando ocurre algún evento que requiera la atención del sistema
 operativo, el hardware encargado de procesarlo escribe directamente a
@@ -574,12 +574,20 @@ llevarnos a perder datos.
 El sistema operativo puede elegir ignorar (/enmascarar/) a ciertas
 interrupciones — Pero hay interrupciones que son /no enmascarables/.
 
-Los eventos pueden ser, como mencionamos, indicadors de que hay algún
+Hacemos la distinción entre interrupciones y excepciones según su
+origen: Una interrupción es generada por causas externas al sistema
+(un dispositivo requiere atención), mientras que una excepción es una
+evento generado por un proceso (una condición en el proceso que
+requiere la intervención del sistema operativo). Si bien hay
+distinciones sutiles entre interrupciones, trampas y excepciones, al
+nivel de discusión que abordaremos basta esta distinción.
+
+Los eventos pueden ser, como mencionamos, indicadores de que hay algún
 dispositivo requiriendo atención, pero pueden también provenir del
 mismo sistema, como una /alarma/ o /temporizador/ (que se emplea para
 obligar a todo programa a entregar el control en un sistema
 multitareas) o indicando una condición de error (por ejemplo, una
-división sobre cero).
+división sobre cero o un error leyendo de disco).
 
 ** Llamadas al sistema
 
@@ -588,21 +596,131 @@ de las llamadas al sistema. El sistema operativo protege a un proceso
 de otro, y previene que un proceso ejecutándose en espacio no
 privilegiado tenga acceso directo a los dispositivos. Cuando un
 proceso requiere de alguna de estas acciones, acede a ellas levantando
-una /llamada al sistema/.
+una /llamada al sistema/. Las llamadas al sistema pueden agruparse, a
+grandes rasgos, en:
 
-Cada sistema operativo /expone/ una /interfaz al programador/ (API)
-que incluye todas las operaciones que se le pueden solicitar, cómo
-hacerlo y con qué argumentos.
+- Control de procesos :: Crear o finalizar un proceso, obtener
+     atributos del proceso, esperar cierto tiempo, asignar o liberar
+     memoria, etc.
 
-Cada familia de sistemas operativos implementa un API distinto, y éste
-es el que distingue principalmente a uno de otro. Por ejemplo, los
-sistemas Windows 95 en adelante implementan Win32, Win16
-(compatibilidad con Windows previos) y MSDOS; MacOS implementa Cocoa
-(aplicaciones MacOS X) y Carbon (compatibilidad con aplicaciones de
-MacOS previos), y Linux y los *BSDs, POSIX (el estándar que define a
-Unix). El caso de MacOS X es interesante, porque también implementa
-POSIX, ofreciendo la /semántica/ de dos sistemas muy distintos entre
-sí.
+- Manipulación de archivos :: Crear, borrar o renombrar un archivo;
+     abrir o cerrar un archivo existente; modificar sus /metadatos/;
+     leer o escribir de un /descriptor de archivo/ abierto, etc.
+
+- Manipulación de dispositivos :: Solicitar o liberar un archivo;
+     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
+     llaadas son análogas a las de manipulación de archivos, y varios
+     sistemas operativos las ofrecen como una sola.
+
+- Mantenimiento de la información :: Obtener o modificar la hora del
+     sistema; obtener detalles acerca de procesos o archivos, etc.
+
+- Comunicaciones :: Establecer una comunicación con determinado
+                    proceso (local o remoto), aceptar una solicitud de
+                    comunicación de otro proceso, intercambiar
+                    información sobre un canal establecido
+
+- Protección :: Consultar o modificar la información relativa al
+                acceso de objetos en el disco, otros procesos, o la
+                misma sesión de usuario
+
+Cada sistema operativo /expone/ una serie de llamadas al
+sistema. Estas son, a su vez, expuestas al programador a través de las
+/interfaces de aplicación al programador/ (API), que se alínean de
+forma cercana (pero no exacta). Del mismo modo que cada sistema
+operativo ofrece un conjunto de llamadas al sistema distinto, cada
+implmentación de un lenguaje de programación puede ofrecer un API
+ligeramente distinto de otros.
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/llamando_syscall.png]]
+
+Un API expone una interfaz en un lenguaje de alto nivel hacia una
+llamada al sistema. (Imagen: /Operating System Concepts Essentials/;
+Silberschatz, Galvin, Gagne; p.56)
+#+end_center
+
+*** Llamadas al sistema, arquitecturas y APIs
+
+Cada familia de sistemas operativos distintas llamadas al sistema, y
+sus lenguajes/bibliotecas implementan distintos APIs. Esto es el que
+distingue principalmente a uno de otro. Por ejemplo, los sistemas
+Windows 95 en adelante implementan Win32, Win16 (compatibilidad con
+Windows previos) y MSDOS; MacOS implementa Cocoa (aplicaciones MacOS
+X) y Carbon (compatibilidad con aplicaciones de MacOS previos), y
+Linux y los *BSDs, POSIX (el estándar que define a Unix). El caso de
+MacOS X es interesante, porque también implementa POSIX, ofreciendo la
+/semántica/ de dos sistemas muy distintos entre sí.
+
+Los lenguajes basados en /máquinas virtuales abstractas/, como Java o
+la familia .Net, exponen un API con mucha mayor distancia respecto al
+sistema operativo; la máquina virtual se presenta como un
+pseudo-sistema operativo intermedio que se ejecuta dentro del real, y
+esta distinción se hace especialmente notoria cuando buscamos conocer
+los detalles del sistea operativo. Sugiero para este curso emplear
+plataformas que presenten de la forma más transparente al sistema
+subyacente.
+
+*** Depuración por /trazas/ (trace)
+
+La mayor parte de los sistemas operativos ofrecen programas que, para
+fines de depuración, /envuelven/ al API del sistema y permiten ver la
+/traza/ de las llamadas al sistema que va realizando un
+proceso. Algunos ejemplos de estas herramientas son =strace= en Linux,
+=truss= en la mayor parte de los Unixes históricos o =ktrace= y
+=kdump= en los *BSD. A partir de Solaris 10 (2005), Sun incluye una
+herramienta mucho más profunda y programable para esta tarea llamada
+=dtrace=, misma que ha sido /portada/ a otros Unixes (*BSD, MacOS).
+
+La salida de una traza nos brinda amplio detalle acerca de la
+actividad realizada por un proceso, y nos permite comprender a grandes
+rasgos su interacción con el sistema. El nivel de información que nos
+da es, sin embargo, a veces demasiado — Consideren la siguiente
+traza, ante uno de los comandos más sencillos: =pwd= (obtener el
+directorio actual)
+
+#+begin_src sh
+$ strace pwd
+execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
+brk(0)                                  = 0x8414000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773d000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=78233, ...}) = 0
+mmap2(NULL, 78233, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7729000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0po\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1351816, ...}) = 0
+mmap2(NULL, 1366328, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb75db000
+mprotect(0xb7722000, 4096, PROT_NONE)   = 0
+mmap2(0xb7723000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x147) = 0xb7723000
+mmap2(0xb7726000, 10552, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7726000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb75da000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb75da8d0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xb7723000, 8192, PROT_READ)   = 0
+mprotect(0xb775c000, 4096, PROT_READ)   = 0
+munmap(0xb7729000, 78233)               = 0
+brk(0)                                  = 0x8414000
+brk(0x8435000)                          = 0x8435000
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_LARGEFILE) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=1534672, ...}) = 0
+mmap2(NULL, 1534672, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7463000
+close(3)                                = 0
+getcwd("/home/gwolf/vcs/sistemas_operativos", 4096) = 36
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773c000
+write(1, "/home/gwolf/vcs/sistemas_operati"..., 36/home/gwolf/vcs/sistemas_operativos
+) = 36
+close(1)                                = 0
+munmap(0xb773c000, 4096)                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
+#+end_src
 
 * Otros recursos
 

@@ -4,6 +4,28 @@
 #+LANGUAGE: es
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
+
+Un proceso requiere mantener mucha más información que sólo la
+/sección de texto/; típicamente incluye:
+
+- Sección de texto :: Imagen en memoria de las instrucciones a ser
+     ejecutadas
+
+- Contador de programa :: Registro que apunta a la siguiente
+     instrucción a ser ejecutada
+
+- /Stack/ del proceso :: Estructuras representando a la serie de
+     funciones que han sido llamadas dentro del proceso, con sus
+     parámetros, direcciones de /retorno/, variables locales
+
+- Sección de datos :: Espacio fijo preasignado para las variables
+     globales
+
+- /Heap/ :: Espacio de memoria asignado dinámicamente al proceso
+            durante su ejecución; profundizaremos en este en la
+            sección /Administración de memoria/
+
+
 * Funciones y operaciones del administrador de memoria
 * Asignación de memoria contigua
 ** Partición de la memoria

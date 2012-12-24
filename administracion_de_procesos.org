@@ -5,7 +5,214 @@
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
 * Procesos. Concepto y estados de un proceso
-* Hilos y multihilos
+
+En un sistema multiprogramado o de tiempo compartido, un /proceso/ es
+la imagen en memoria de un programa, junto con la información
+relacionada con el estado de su ejecución.
+
+Un programa es una /entidad pasiva/, una lista de instrucciones; un
+proceso es una /entidad activa/, que –empleando al programa– define la
+actuación que tendrá el sistema.
+
+En contraposición con /proceso/, hablaríamos de /tareas/ en un sistema
+por lotes. Una tarea requiere mucha menos información, típicamente
+bastaría con guardar información relacionada con la /contabilidad/ de
+los recursos empleados. Una tarea no es interrupmida en el transcurso
+de su ejecución. Ahora bien, esta distinción no es completamente
+objetiva — Y encontraremos muchos textos que emplean indistintamente
+una u otra nomenclatura.
+
+Pero si bien el sistema nos da la /ilusión/ de que muchos procesos se
+están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
+están esperando estar listos para su ejecución — en un momento
+determinado sólo puede estarse ejecutando un número de procesos igual
+o menor al número de CPUs que tenga el sistema.
+
+** Estados de un proceso
+
+Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
+de ejecución. Estos son:
+
+- Nuevo :: Se solicitó al sistema operativo la creación de un proceso,
+           y sus recursos y estructuras están siendo creadas
+
+- Listo :: Está listo para ser asignado para su ejecución en un procesador
+
+- En ejecución :: El proceso está siendo ejecutado en este momento
+
+- Bloqueado :: En espera de algún evento para poder continuar
+               ejecutándose
+
+- Terminado :: El proceso terminó de ejecutarse; sus estructuras están
+               a la espera de ser /limpiadas/ por el sistema operativo
+
+#+begin_center
+#+attr_html: height="350"
+[[./img/estados_proceso.png]]
+
+Diagrama de transición entre los estados de un proceso (Imagen:
+/Sistemas Operativos/, Pablo Ruiz Múzquiz, p. 22)
+#+end_center
+
+** El bloque de control de proceso (PCB)
+
+La información que debe manipular el sistema operativo relativa a cada
+uno de los procesos en ejecución (sea cual sea su estado) se compone
+de:
+
+- Estado del proceso :: El estado actual del proceso
+
+- Contador de programa :: Cuál es la siguiente instrucción a ser
+     ejecutada por el proceso.
+
+- Registros del CPU :: La información específica del estado del CPU
+     mientras el proceso está en ejecución debe ser respaldada y
+     restaurada cuando se registra un cambio de estado
+
+- Información de agendamiento (scheduling) :: La prioridad del
+     proceso, la /cola/ en que está agendado, y demás información que
+     puede ayudar al sistema operativo a agendar al proceso;
+     profundizaremos en el tema en la sección /[[./planificacion_de_procesos.org][Planificación de
+     procesos]]/.
+
+- Información de administración de memoria :: Las tablas de mapeo de
+     memoria (páginas o segmentos, dependiendo del sistema
+     operativo). Abordaremos el tema en la sección /[[./administracion_de_memoria.org][Administración de
+     memoria]]/.
+
+- Información de contabilidad :: Información de la utilización de
+     recursos que ha tenido este proceso — Puede incluir el tiempo
+     total empleado (/de usuario/, cuando el CPU va avanzando sobre
+     las instrucciones del programa propiamente, /de sistema/ cuando
+     el sistema operativo está atendiendo las solicitudes realizadas
+     por él), uso acumulado de memoria y dispositivos, etc.
+
+- Estado de E/S :: Listado de dispositivos y archivos asignados que el
+                   proceso tiene /abiertos/ en un momento dado.
+
+* Hilos
+
+Como vimos, la cantidad de información que el sistema operativo debe
+manejar acerca de cada proceso es bastante significativa. Si cada vez
+que el /agendador/ elige qué proceso pasar de /Listo/ a /En ejecución/
+debe considerar buena parte de dicha información, la simple
+transferencia de todo esto entre la memoria y el CPU podría llevar a
+un desperdicio /burocrático/ de recursos. Una respuesta a esta
+problemática fue la de los /hilos de ejecución/, a veces conocidos
+como /procesos ligeros/ (Lightweight processes, LWP).
+
+Cuando consideramos procesos basados en un modelo de hilos, podríamos
+proyectar en sentido inverso que todo proceso es como un sólo hilo de
+ejecución. Un sistema operativo que no ofreciera soporte expreso a los
+hilos lo agendaría exactamente del mismo modo.
+
+Pero visto desde la perspectiva del proceso hay una gran diferencia:
+Si bien el sistema operativo se encarga de que cada proceso tenga una
+visión de virtual exclusividad sobre la computadora, todos los hilos
+de un proceso comparten un sólo espacio de direccionamiento en memoria
+y lista de descriptores de archivos y dispositivos abiertos. Cada uno
+de los hilos se ejecuta de forma (aparentemente) secuencial y maneja
+su propio contador de programa (y algunas estructuras adicionales,
+aunque mucho más ligeras que el PCB).
+
+** Los hilos y el sistema operativo
+
+Formalmente, una programación basada en hilos puede hacerse
+completamente y de forma transparente en espacio de usuario (sin
+involucrar al sistema operativo). Estos hilos se llaman /hilos de
+usuario/ (/user threads/), y muchos lenguajes de programación los
+denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
+es en sistemas operativos mínimos (p.ej. para dispositivos embebidos)
+capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
+Si bien el sistema operativo no maneja multiprocesamiento, a través de
+los hilos de usuario sí podemos crear procesos con multitarea interna.
+
+Los procesos que implementan hilos ganan un poco en el rendimiento,
+pero mucho para compartir espacio de memoria sin tenerlo que
+establecer explícitamente a través de mecanismos de comunicación entre
+procesos. Muchas veces (dependiendo de la plataforma) los hilos de
+usuario utilizan multitarea cooperativa para pasar el control de un
+hilo a otro. Cualquier llamada al sistema /bloqueante/ (como obtener
+datos de un archivo para utilizarlos inmediatamente) interrumpirá la
+ejecución de todos los hilos, dado que el control de ejecución es
+entregado al sistema operativo.
+
+El siguiente paso fue la creación de hilos /informando/ al sistema
+operativo, típicamente denominados /hilos de kernel/ (/kernel
+threads/). A través de bibliotecas de sistema que los implementan de
+forma estándar para los diferentes sistemas operativos
+(p.ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
+arquitecturas (/hilos verdes/, en Java; Perl tiene un
+modelo propio, modelado de cerca al estilo de POSIX). Estas
+bibliotecas aprovechan la comunicación con el sistema operativo tanto
+para solicitudes de recursos (p.ej. un proceso basado en hilos puede
+beneficiarse de una ejecución verdaderamente paralela en sistemas
+multiprocesador) como para una gestión de recursos más comparable con
+una situación de multiproceso estándar.
+
+** Patrones de trabajo con hilos
+
+Hay tres patrones en los que caen generalmente los modelos de hilos;
+podemos emplear a más de uno de estos patrones en diferentes áreas de
+nuestra aplicación:
+
+- Jefe / trabajador :: Un hilo tiene una tarea distinta de todos los
+     demás: El hilo /jefe/ genera o recopila tareas que requieren ser
+     cubiertas, las separa y se las entrega a los hilos
+     /trabajadores/.
+
+     Este modelo es el más común para procesos que implementan
+     servidores y para aplicaciones gráficas (GUIs), en que hay una
+     porción del programa (el hilo /jefe/) esperando a que ocurran
+     eventos externos. El jefe realiza poco trabajo, aunque puede
+     llevar contabilidad de los trabajos realizados.
+
+- Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
+     se crean muchos hilos idénticos, que realizarán las mismas tareas
+     sobre diferentes datos. Este modelo es muy frecuentemente
+     utilizado para cálculos matemáticos (p.ej. criptografía,
+     render). Puede combinarse con un estilo jefe/trabajador para irle
+     dando al usuario una previsualización del resultado de su
+     cálculo, dado que éste se irá ensamblando progresivamente, pedazo
+     por pedazo.
+
+- Línea de ensamblado :: Si una tarea larga puede dividirse en pasos
+     sobre bloques de la información total a procesar, cada hilo puede
+     enfocarse a hacer sólo una tarea y pasarle los datos a otro hilo
+     conforme vaya terminando. Una de las principales ventajas de este
+     modelo es que nos ayuda a mantener rutinas simples de comprender,
+     y permite que el procesamiento de datos continúe incluso si parte
+     del programa está bloqueado esperando E/S.
+
 * Concurrencia
+
+Si bien una de las tareas principales de los sistemas operativos es
+dar a cada proceso la ilusión de que se está ejecutando en una
+computadora dedicada, de modo que el programador no tenga que pensar
+en la competencia por recursos, a veces esta ilusión sencillamente no
+puede presentarse — 
+
 ** Exclusión mutua y sincronización
 ** Bloqueos mutuos
+** Concurrencia con hilos
+
+Un patrón muy común en sistemas Unix es el de servidores pre-separados
+(/preforking servers/) — Al iniciar la operación de un proceso
+servidor, tan pronto se inicializan las estructuras base, se llama a
+=fork()= para lanzar muchos procesos para que estén listos para
+atender a las solicitudes entrantes. De este modo, sin mayor
+complicación que requiera al programador pensar en paralelismo
+expresamente, cada solicitud entrante puede ser atendida rápidamente
+sin tener que /pagar/ el costo de inicialización.
+
+Si esta misma estrategia se aplica a un sistema basado en hilos, el
+costo (tanto de inicialización como de reagendamiento durante la
+ejecución) es mucho menor, pero con el costo de que el programador
+debe cuidar que cada hilo no sobre-escriba los valores que emplean los
+otros hilos. Esto se hace definiendo claramente cuáles datos son
+/compartidos/ y cuáles datos son /privados/ a cada proceso, y cuáles
+son las regiones donde habrá paralelismo.
+
+* Otros recursos
+
+- [[http://perldoc.perl.org/perlthrtut.html][Tutorial de hilos de Perl]]

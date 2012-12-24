@@ -173,6 +173,27 @@ término, la computadora /nunca más estaría simplemente esperando a
 estar lista/: Mientras un programador editaba o compilaba su programa,
 la computadora seguiría calculando lo que otros procesos requirieran.
 
+Un cambio fundamental entre el modelo de /multiprogramación/ y de
+/tiempo compartido/ es el tipo de control sobre la multitarea:
+(abundaremos al respecto en la sección de /[[./administracion_de_procesos.org][Administración de
+procesos]]/)
+
+- Multitarea /cooperativa/ o /no apropiativa/ :: (/Cooperative
+     multitasking) La implementan los sistemas multiprogramados: Cada
+     proceso tenía control del CPU hasta que éste hacía una llamada al
+     sistema (o indicara su /disposición a cooperar/ por medio de la
+     llamada =yield=: /ceder el paso/).
+
+     Un cálculo largo no sería interrumpido por el sistema operativo,
+     lo que permitía que un error de programador congelara a la
+     computadora completa.
+
+- Multitarea /preventiva/ o /apropiativa/ :: (/Preemptive
+     multitasking/) En los sistemas de tiempo compartido, el reloj del
+     sistema interrumpe periódicamente a los diversos procesos,
+     transfiriendo /forzosamente/ el control de vuelta al sistema
+     operativo.
+
 Además, fueron naciendo de forma natural y paulatina las abstracciones
 que conocemos hoy en día, como el concepto de /archivos/ y
 /directorios/, y el código necesario para emplearlos iba siendo
@@ -489,8 +510,7 @@ costo-beneficio suficiente para usarse como memoria primaria.
 #+attr_html: height="350"
 [[./img/jerarquia_memoria.png]]
 
-Jerarquía de memoria. (Imagen: /Operating System Concepts Essentials/;
-Silberschatz, Galvin, Gagne; p.11)
+Jerarquía de memoria entre diversos medios de almacenamiento.
 #+end_center
 
 Una respuesta parcial a este problema es la creación de una jerarquía
@@ -501,12 +521,19 @@ especializado de modo que su existencia resulta transparente al
 programador.
 
 #+begin_center
-#+attr_html: height="350"
-[[./img/velocidad_memoria.png]]
+| Nivel                   | 1                                    | 2                                | 3                 | 4                 |
+|-------------------------+--------------------------------------+----------------------------------+-------------------+-------------------|
+| *Nombre*                | Registros                            | Cache                            | Memoria principal | Disco             |
+| *Tamaño típico*         | <1KB                                 | <16MB                            | <64GB             | >100GB            |
+| *Tecnología típica*     | Memoria específica multipuerto, CMOS | RAM estática CMOS (en chip o no) | CMOS DRAM         | Disco magnético   |
+| *Tiempo de acceso (ns)* | 0.25-0.5                             | 0.5-25                           | 80-250            | 5,000,000         |
+| *Ancho de banda (MB/s)* | 20,000-100,000                       | 5,000-10,000                     | 1,000-5,000       | 20-150            |
+| *Administrado por*      | Compilador                           | Hardware                         | Sistema operativo | Sistema operativo |
+| *Respaldado en*         | Cache                                | Memoria principal                | Disco             | CD o cinta        |
 
-Velocidad y gestor de los principales niveles de memoria. (Imagen:
-/Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne;
-p.28)
+
+Velocidad y gestor de los principales niveles de
+memoria. (Silberschatz, Galvin, Gagne; p.28)
 #+end_center
 
 ** Registros

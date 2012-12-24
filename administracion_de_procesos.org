@@ -186,12 +186,41 @@ nuestra aplicación:
 
 * Concurrencia
 
+#+begin_center
+#+attr_html: max-width: 80%;
+Para el estudio de este tema, recomiendo fuertemente referirse al
+libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey (2008).
+
+Pueden descargar (legalmente) el libro desde el sitio Web del curso o
+desde [[http://www.greenteapress.com/semaphores/index.html][Green Tea Press]].
+#+end_center
+
+En el ámbito del estudio de los sistemas operativos, /concurrencia/ no
+necesariamente se refiere a dos o más eventos que ocurran a la vez,
+sino que a dos o más eventos cuyo órden es /no determinista/, esto es,
+eventos acerca de los cuales /no podemos predecir el órden en que
+ocurrirán/. Esto puede ocurrir porque hablamos de dos hilos
+ejcutándose en conjunto, dos procesos independientes en el mismo
+equipo, o incluso procesos independientes en computadoras separadas
+geográficamente; el estudio de situaciones derivadas de la
+concurrencia es uno de los campos de estudio clásico (y más abstracto)
+de las ciencias de la computación.
+
 Si bien una de las tareas principales de los sistemas operativos es
 dar a cada proceso la ilusión de que se está ejecutando en una
 computadora dedicada, de modo que el programador no tenga que pensar
 en la competencia por recursos, a veces esta ilusión sencillamente no
-puede presentarse — 
+puede presentarse — Parte del desarrollo de un programa puede depender
+de datos obtenidos en fuentes externas a éste, y la cooperación con
+hilos o procesos externos es fundamental.
 
+Para muchos ejemplos a continuación, por simplicidad, presentaremos
+ejemplos usando la semántica de la interacción entre hilos del mismo
+proceso — Pero en todos los casos, estas situaciones podrían
+presentarse compartiendo (o compitiendo por) estructuras entre
+procesos independientes.
+
+** Las operaciones no atómicas
 ** Exclusión mutua y sincronización
 ** Bloqueos mutuos
 ** Concurrencia con hilos

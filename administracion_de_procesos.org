@@ -28,6 +28,12 @@ están esperando estar listos para su ejecución — en un momento
 determinado sólo puede estarse ejecutando un número de procesos igual
 o menor al número de CPUs que tenga el sistema.
 
+En esta sección del curso nos ocuparemos de los conceptos relacionados
+con procesos, hilos, concurrencia y sincronización — Abordaremos las
+técnicas y algoritmos que emplea el sistema operativo para determinar
+cómo y en qué órden hacer los cambios de proceso que nos brindan la
+ilusión de simultaneidad en la sección /[[./planificacion_de_procesos.org][Planificación de procesos]]/.
+
 ** Estados de un proceso
 
 Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
@@ -184,6 +190,7 @@ nuestra aplicación:
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
 
+
 * Concurrencia
 
 #+begin_center
@@ -221,7 +228,168 @@ presentarse compartiendo (o compitiendo por) estructuras entre
 procesos independientes.
 
 ** Las operaciones no atómicas
+
+Varios hilos pueden avanzar en su trabajo de forma concurrente sin
+entorpecerse mutuamente siempre y cuando estén trabajando únicamente
+con /variables locales/, esto es, valores independientes para cada uno
+de los hilos. Sin embargo, cuando dos hilos tienen que
+/sincronizarse/ (asegurar un ordenamiento dado entre flujos
+independientes de ejecución), o cuando tienen que transmitirse
+información, el uso de /variables globales/ y de recursos externos
+requiere tener en mente que el agendador puede interrumpir el flujo de
+un hilo /en cualquier momento/. Esto implica, por ejemplo, que el
+siguiente código en Ruby puede llevarnos a distintos resultados:
+
+#+begin_src ruby +n
+class EjemploHilos
+  def initialize
+    @x = 0
+  end
+
+  def f1
+    sleep 0.1
+    @x += 3
+  end
+
+  def f2
+    sleep 0.1
+    @x *= 2
+  end
+
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1
+    print @x + ' '
+  end
+end
+#+end_src
+
+En este ejemplo, inserté un tiempo de espera largo, de una décima de
+segundo (=sleep 0.1=) para obligar al agendador a elegir a alguno de
+los hilos tras un periodo de espera (en caso contraio, las funciones
+son tan simples que, bajo la implementación de Ruby, se ejecutaría
+simplemente en forma secuencial.
+
+En este caso tenemos tres hilos /compitiendo/ por la variable
+compartida @x. En algunas ejecuciones, =EjemploHilos.new= imprimirá 3
+(0 * 2 + 3), en otras imprimirá 6 (0 + 3 * 2) — Y en algunas,
+inclusive, imprimirá 0 (cuando el hilo principal es /despertado/ antes
+que t1 o t2). Ante una ejecución repetida:
+
+#+begin_src ruby
+e = EjemploHilos.new;10.times{e.run}
+6 9 21 45 180 183 372 750 1500 3006
+
+e = EjemploHilos.new;10.times{e.run}
+0 3 15 33 66 135 276 1110 1110 2226
+#+end_src
+
+Y si bien este pequeño programa fue hecho explícitamente para ilustrar
+este problema, en un programa real con hilos de ejecución complejos,
+el no saber dónde será interrumpido el flujo presenta un problema
+mayor: ¿cómo pueden dos hilos manipular un recurso compartido si no
+hay garantía de que una operación no será interrumpida? Y recordemos
+que las instrucciones que le damos al sistema no tienen por qué
+traducirse a una sóla instrucción ante el sistema — Una instrucción en
+C tan simple como =x++= implica:
+
+- Obtener la dirección en memoria de =x=
+- Traer el valor de =x= a un registro del procesador
+- Incrementar ese valor en 2
+- Almacenar el valor del registro en la memoria
+
+Al haber dos accesos a memoria (¡y estamos hablando de un lenguaje de
+mucho más bajo nivel que el del ejemplo!), el CPU puede tener que
+esperar a que el valor le sea transferido, y al agendador puede
+aprovechar para cambiar el hilo en ejecución.
+
+- Operación atómica :: Operación que tenemos la garantía que se
+     ejecutará o no como una sóla unidad de ejecución. Esto no
+     necesariamente implica que el sistema no retirará el flujo de
+     ejecución de su hilo, sino que /el efecto de que se le retire el
+     flujo/ no llevará a comportamiento inconsistente.
+
 ** Exclusión mutua y sincronización
+
+- Condición de carrera :: (Race condition) Categoría de errores de
+     programación que implica a dos procesos fallando al comunicarse
+     su estado mutuo, llevando a resultados inconsistentes. Es uno de
+     los problemas más frecuentes y difíciles de depurar, y ocurre
+     típicamente por no considerar la /no atomicidad/ de una operación
+
+- Sección crítica :: El área de código que requiere ser protegida de
+     accesos simultáneos, donde se realiza la modificiación de datos
+     compartidos.
+
+Dado que el sistema no tiene forma de saber cuáles instrucciones (o
+áreas del código) requerimos que funcionen de forma atómica, nosotros
+debemos indicárselo de forma explícita, sincronizando nuestros hilos
+(o procesos). Es necesario asegurarnos que la sección crítica no
+permitirá la entrada de dos hilos de forma casi-simultánea.
+
+Un error muy común es utilizar mecanismos /no atómicos/ para señalizar
+al respecto. Consideremos que estamos haciendo un sistema de venta de
+boletos de autobús en Perl, y queremos hacer la siguiente función
+/segura ante la concurrencia/. El programador aquí ya hizo un primer
+intento:
+
+#+begin_src perl +n
+sub asigna_asiento {
+  while ($bloq) { sleep 0.1; }
+  $bloq = 1;
+  if ($proximo_asiento < $capacidad) {
+    $asignado = $proximo_asiento;
+    $proximo_asiento += 1;
+    print "Asiento asignado: $asignado\n";
+  } else {
+    print "No hay asientos disponibles";
+  }
+  $bloq = 0;
+}
+#+end_src
+
+El programador identificó correctamente la /sección crítica/ como las
+líneas comprendidas entre la 4 y la 6 (pero, al ser parte de un bloque
+condicional, /protegió/ hasta la 10). Sin embargo, tenemos aún una
+situación de carrera (aunque mucho más contenida) entre la 2 y la 3:
+Podría un hilo entrar[fn:: Este ejemplo utiliza además el mal ejemplo
+de una /espera activa/ (busy wait), requiriendo del tiempo del
+procesador periódicamente mientras espera a que se satisfaga una
+condición dada. Veremos cómo evitar esto más adelante.] al =while= y
+evaluar a un =$bloq= aún falso, y –justo antes de modificarlo– el
+control se transfiere a otro hilo entrando al mismo lugar, y vendiendo
+dos veces el mismo asiento.
+
+Para señalizar la entrada a una sección crítica no podemos hacerlo
+desde el flujo susceptible a ser interrumpido, tenemos que hacerlo a
+través de instrucciones de las que el agendador pueda /asegurar/ su
+atomicidad.
+
+*** Semáforos
+
+La /primitiva/ básica de sincronización es el /semáforo/, publicada
+por Edsger Dijkstra en 1968.
+
+Un semáforo es una variable de tipo entero que tiene definida la
+siguiente interfaz:
+
+- Inicialización :: Se puede inicializar el semáforo a cualquier valor
+                    entero, pero después de esto, su valor no puede ya
+                    ser leído.
+- Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
+                 negativo, el hilo se /bloquea/ y no puede continuar
+                 hasta que /otro hilo/ incremente el semáforo
+- Incrementar :: Cuando un hilo incrementa al semáforo, si hay hilos
+                 epserando, uno de ellos es /despertado/.
+
+Las operaciones de decrementar e incrementar muchas veces son
+implementadas como =wait= y =signal= (siguiendo la semántica de los
+semáforos de tren). En ciertos textos los veremos referidos también
+como =P= y =V=, los nombres empleados por Dijkstra en su artículo (de
+/proberen/ y /verhogen/, en holandés), =down= y =up=, o =acquire= y
+=release=.
+
 ** Bloqueos mutuos
 ** Concurrencia con hilos
 

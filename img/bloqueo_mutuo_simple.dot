@@ -1,0 +1,13 @@
+digraph G {
+	layout = circo;
+
+	A [label = "Proceso\nA"];
+	B [label = "Proceso\nB"];
+	1 [label = "Unidad\n1", shape = box];
+	2 [label = "Unidad\n2", shape = box];
+
+	A -> 1 [label = "Asignada"];
+	B -> 2 [label = "Asignada"];
+	A -> 2 [label = "Solicitada", style = dotted];
+	B -> 1 [label = "Solicitada", style = dotted];
+}

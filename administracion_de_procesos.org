@@ -54,6 +54,7 @@ de ejecución. Estos son:
 
 #+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
 [[./img/estados_proceso.png]]
 
 Diagrama de transición entre los estados de un proceso (Imagen:
@@ -100,7 +101,7 @@ de:
 
 Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
-que el /agendador/ elige qué proceso pasar de /Listo/ a /En ejecución/
+que el /planificador/ elige qué proceso pasar de /Listo/ a /En ejecución/
 debe considerar buena parte de dicha información, la simple
 transferencia de todo esto entre la memoria y el CPU podría llevar a
 un desperdicio /burocrático/ de recursos. Una respuesta a esta
@@ -190,7 +191,6 @@ nuestra aplicación:
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
 
-
 * Concurrencia
 
 #+begin_center
@@ -205,9 +205,9 @@ desde [[http://www.greenteapress.com/semaphores/index.html][Green Tea Press]].
 En el ámbito del estudio de los sistemas operativos, /concurrencia/ no
 necesariamente se refiere a dos o más eventos que ocurran a la vez,
 sino que a dos o más eventos cuyo órden es /no determinista/, esto es,
-eventos acerca de los cuales /no podemos predecir el órden en que
-ocurrirán/. Esto puede ocurrir porque hablamos de dos hilos
-ejcutándose en conjunto, dos procesos independientes en el mismo
+eventos acerca de los cuales /no podemos predecir el órden relativo en
+que ocurrirán/. Esto puede ocurrir porque hablamos de dos hilos
+ejecutándose en conjunto, dos procesos independientes en el mismo
 equipo, o incluso procesos independientes en computadoras separadas
 geográficamente; el estudio de situaciones derivadas de la
 concurrencia es uno de los campos de estudio clásico (y más abstracto)
@@ -221,11 +221,14 @@ puede presentarse — Parte del desarrollo de un programa puede depender
 de datos obtenidos en fuentes externas a éste, y la cooperación con
 hilos o procesos externos es fundamental.
 
-Para muchos ejemplos a continuación, por simplicidad, presentaremos
-ejemplos usando la semántica de la interacción entre hilos del mismo
-proceso — Pero en todos los casos, estas situaciones podrían
-presentarse compartiendo (o compitiendo por) estructuras entre
-procesos independientes.
+Para algunos de los ejemplos a continuación, presentaremos ejemplos
+usando la semántica de la interacción entre hilos del mismo proceso,
+sincronización entre procesos independientes, asignación de recursos
+por parte del núcleo a procesos simultáneos, o incluso entre usuarios
+de diferentes equipos de una red — En todos estos casos, los conceptos
+presentados pueden generalizarse a los demás, y son situaciones en que
+se presenta compartición (o competencia) por estructuras entre
+entes independientes.
 
 ** Las operaciones no atómicas
 
@@ -236,7 +239,7 @@ de los hilos. Sin embargo, cuando dos hilos tienen que
 /sincronizarse/ (asegurar un ordenamiento dado entre flujos
 independientes de ejecución), o cuando tienen que transmitirse
 información, el uso de /variables globales/ y de recursos externos
-requiere tener en mente que el agendador puede interrumpir el flujo de
+requiere tener en mente que el planificador puede interrumpir el flujo de
 un hilo /en cualquier momento/. Esto implica, por ejemplo, que el
 siguiente código en Ruby puede llevarnos a distintos resultados:
 
@@ -266,7 +269,7 @@ end
 #+end_src
 
 En este ejemplo, inserté un tiempo de espera largo, de una décima de
-segundo (=sleep 0.1=) para obligar al agendador a elegir a alguno de
+segundo (=sleep 0.1=) para obligar al planificador a elegir a alguno de
 los hilos tras un periodo de espera (en caso contraio, las funciones
 son tan simples que, bajo la implementación de Ruby, se ejecutaría
 simplemente en forma secuencial.
@@ -301,7 +304,7 @@ C tan simple como =x++= implica:
 
 Al haber dos accesos a memoria (¡y estamos hablando de un lenguaje de
 mucho más bajo nivel que el del ejemplo!), el CPU puede tener que
-esperar a que el valor le sea transferido, y al agendador puede
+esperar a que el valor le sea transferido, y al planificador puede
 aprovechar para cambiar el hilo en ejecución.
 
 - Operación atómica :: Operación que tenemos la garantía que se
@@ -363,10 +366,10 @@ dos veces el mismo asiento.
 
 Para señalizar la entrada a una sección crítica no podemos hacerlo
 desde el flujo susceptible a ser interrumpido, tenemos que hacerlo a
-través de instrucciones de las que el agendador pueda /asegurar/ su
+través de instrucciones de las que el planificador pueda /asegurar/ su
 atomicidad.
 
-*** Semáforos
+*** Semáforos y /mutexes/
 
 La /primitiva/ básica de sincronización es el /semáforo/, publicada
 por Edsger Dijkstra en 1968.
@@ -390,25 +393,452 @@ como =P= y =V=, los nombres empleados por Dijkstra en su artículo (de
 /proberen/ y /verhogen/, en holandés), =down= y =up=, o =acquire= y
 =release=.
 
+
+
 ** Bloqueos mutuos
-** Concurrencia con hilos
 
-Un patrón muy común en sistemas Unix es el de servidores pre-separados
-(/preforking servers/) — Al iniciar la operación de un proceso
-servidor, tan pronto se inicializan las estructuras base, se llama a
-=fork()= para lanzar muchos procesos para que estén listos para
-atender a las solicitudes entrantes. De este modo, sin mayor
-complicación que requiera al programador pensar en paralelismo
-expresamente, cada solicitud entrante puede ser atendida rápidamente
-sin tener que /pagar/ el costo de inicialización.
+- Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
+                   que ocurre cuando dos procesos poseen determinados
+                   recursos, y cada uno queda detenido, a la espera de
+                   alguno de los que tiene el otro. El sistema puede
+                   seguir operando normalmente, pero los procesos en
+                   cuestión no podrán avanzar.
 
-Si esta misma estrategia se aplica a un sistema basado en hilos, el
-costo (tanto de inicialización como de reagendamiento durante la
-ejecución) es mucho menor, pero con el costo de que el programador
-debe cuidar que cada hilo no sobre-escriba los valores que emplean los
-otros hilos. Esto se hace definiendo claramente cuáles datos son
-/compartidos/ y cuáles datos son /privados/ a cada proceso, y cuáles
-son las regiones donde habrá paralelismo.
+- Inanición :: (en inglés /resource starvation/): Situación en que un
+	       proceso no es agendado para su ejecución dado que los
+	       recursos por los cuales está esperando son asignados a
+	       otros procesos.
+
+Un bloqueo mutuo puede ejemplificarse con la situación que se presenta
+cuando cuatro automovilistas llegan al mismo tiempo al cruce de dos
+avenidas del mismo rango en que no hay un semáforo, cada uno desde
+otra dirección. Los reglamentos de tránsito señalan que la precedencia
+la tiene /el automovilista que viene más por la derecha/. En este
+caso, cada uno de los cuatro debe ceder el paso al que tiene a la
+derecha — Y ante la ausencia de un criterio humano que rompa el
+bloqueo, deberían todos mantenerse esperando por siempre.
+
+Un bloqueo mutuo se presenta cuando (/Condiciones de Coffman/) (La
+Red, p. 185)
+
+1. Los procesos reclaman control exclusivo de los recursos que piden
+   (condición de /exclusión mutua/).
+
+2. Los procesos mantienen los recursos que ya les han sido asignados
+   mientras esperan por recursos adicionales (condición de /espera
+   por/).
+
+3. Los recursos no pueden ser extraídos de los procesos que los tienen
+   hasta su completa utilización (condición de /no apropiatividad/).
+
+4. Existe una cadena circular de procesos en la que cada uno mantiene a
+   uno o más recursos que son requeridos por el siguiente proceso de la
+   cadena (condición de /espera circular/).
+
+Las primeras tres condiciones son /necesarias pero no suficientes/
+para que se produzcaun bloqueo; su presencia puede llamar nuestra
+atención hacia una situación de riesgo. Sólo cuando se presentan las
+cuatro podemos hablar de un bloqueo mutuo efectivo.
+
+Otro ejemplo clásico es un sistema con dos unidades de cinta
+(dispositivos de acceso secuencial y no compartible), en que los
+procesos /A/ y /B/ requieren de ambas unidades. Supongamos siguiente
+secuencia:
+
+1. /A/ solicita una unidad de cinta y se bloquea
+
+2. /B/ solicita una unidad de cinta y se bloquea
+
+3. El sistema operativo otorga la unidad /1/ a /A/.y lo vuelve a poner
+   en ejecución
+
+4. /A/ continúa procesando; termina su periodo de ejecución
+
+5. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a poner
+   en ejecución
+
+6. /B/ solicita otra unidad de cinta y se bloquea
+
+7. El sistema operativo no tiene otra unidad de cinta por
+   asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
+   /A/
+
+8. /A/ solicita otra unidad de cinta y se bloquea
+
+9. El sistema operativo no tiene otra unidad de cinta por
+   asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
+   otro proceso (o queda en espera)
+
+#+begin_center
+#+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+[[./img/bloqueo_mutuo_simple.png]]
+
+Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/
+esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
+#+end_center
+
+Sin una política de prevención o resolución de bloqueos mutuos, no hay
+modo de que /A/ o /B/ continúen su ejecución.
+
+*** Estrategias ante los bloqueos
+
+En el apartado de /Exclusión mutua/, los hilos presentados estaban
+diseñados para /cooperar explícitamente/. El rol del sistema operativo
+va más allá, tiene que implementar /políticas/ que eviten, en la
+medida de lo posible, dichos bloqueos.
+
+Las políticas tendientes a otorgar los recursos lo antes posible
+cuando son solicitadas pueden ser vistas como /liberales/, en tanto
+que las que controlan más la asignación de recursos,
+/conservadoras/.
+
+#+begin_center
+#+attr_html: height="200"
+#+attr_latex: width=0.9\textwidth
+[[./img/deadlocks_conserv_lib.png]]
+
+Espectro liberal—conservador de esquemas para evitar bloqueos
+(Finkel, 1988, p.128)
+#+end_center
+
+Las líneas principales que describen a las estrategias para enfrentar
+situaciones de bloqueo (La Red, p. 188):
+
+- Prevención :: Se centra en modelar el comportamiento del sistema
+		para que /elimine toda posibilidad/ de que se produzca
+		un bloqueo. Resulta en una utilización subóptima de
+		recursos.
+
+- Evasión :: Busca imponer condiciones menos estrictas que en la
+	     prevención, para intentar lograr una mejor utilización de
+	     los recursos. Si bien no puede evitar /todas las
+	     posibilidades/ de un bloqueo, cuando éste se produce
+	     busca /evitar/ sus consecuencias.
+
+- Detección y recuperación :: El sistema /permite/ que ocurran los
+     bloqueos, pero busca /determinar si ha ocurrido/ y tomar medidas
+     para eliminarlo.
+
+     Busca despejar los bloqueos presentados para que el sistema
+     continúe operando sin ellos.
+
+*** Prevención de bloqueos
+
+Una manera de evitar bloqueos /por completo/ sería el que un sistema
+operativo jamás asignara recursos a más de un proceso a la vez — Los
+procesos podrían seguir efectuando cálculos o empleando recursos /no
+rivales/, pero sólo uno podría obtener recursos de forma exclusiva al
+mismo tiempo. Este mecanismo sería la /serialización/, y la situación
+antes descrita se resolvería de la siguiente manera:
+
+1. /A/ solicita una unidad de cinta y se bloquea
+
+2. /B/ solicita una unidad de cinta y se bloquea
+
+3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
+   en ejecución
+
+4. /A/ continúa procesando; termina su periodo de ejecución
+
+5. El sistema operativo mantiene bloqueado a /B/, dado que /A/ tiene
+   un recurso
+
+6. /A/ solicita otra unidad de cinta y se bloquea
+
+7. El sistema operativo otorga la unidad /2/ a /A/ y lo vuelve a poner
+   en ejecución
+
+8. /A/ libera la unidad de cinta /1/
+
+9. /A/ libera la unidad de cinta /2/ (y con ello, el bloqueo de uso de
+   recursos)
+
+10. El sistema operativo otorga la unidad /1/ a /B/ y lo vuelve a
+    poner en ejecución
+
+11. /B/ solicita otra unidad de cinta y se bloquea
+
+12. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a
+    poner en ejecución
+
+13. /B/ libera la unidad de cinta /1/
+
+14. /B/ libera la unidad de cinta /2/
+
+Si bien la serialización resuelve la situación aquí mencionada, el
+mecanismo empleado es subóptimo dado que puede haber hasta /n-1/
+procesos esperando a que uno libere los recursos.
+
+Un sistema que implementa una política de asignación de recursos
+basada en la serialización, si bien no caerá en bloqueos mutuos, sí
+tiene un peligro fuerte de caer en /inanición/.
+
+Otro ejemplo de política preventiva /menos conservadora/ sería la
+/retención y espera/ o /reserva/ (/advance claim/): Que todos los
+programas declaren al iniciar su ejecución qué recursos van a
+requerir. Los recursos son apartados para su uso exclusivo hasta que
+el proceso termina, pero el sistema operativo puede seguir atendiendo
+solicitudes /que no rivalicen/: Si a los procesos /A/ y /B/ anteriores
+se suman procesos /C/ y /D/, pero requieren otro tipo de recursos,
+podrían ejecutarse en paralelo /A/, /C/ y /D/, y una vez que /A/
+termine, podrían continuar ejecutando /B/, /C/ y /D/.
+
+El bloqueo resulta ahora imposible por diseño, pero el usuario que
+inició /B/ tiene una percepción de injusticia dado el tiempo que tuvo
+que esperar para que su solicitud fuera atendida — De hecho, si /A/ es
+un proceso de larga duración (incluso si requiere la unidad de cinta
+sólo por un breve periodo), esto lleva a que /B/ sufra una /inanición/
+innecesariamente prolongada.
+
+Además, la implementación de este mecanismo preventivo requiere que el
+programador sepa por anticipado qué recursos requerirá — Y esto en la
+realidad muchas veces es imposible. Si bien podría diseñarse una
+estrategia de lanzar procesos /representantes/ (o /proxy/) solicitando
+recursos específicos cuando éstos hicieran falta, esto sólo
+transferiría la situación de bloqueo por recursos a bloqueo por
+procesos — y un programador poco cuidadoso podría de todos modos
+desencadenar la misma situación.
+
+*** Evasión de bloqueos
+
+Para la evasión de bloqueos, el sistema partiría de poseer, además de
+la información descrita en el caso anterior, información acerca de
+/cuándo/ requiere un proceso utilizar cada recurso. De este modo,
+el planificador puede marcar qué flujos entre dos (o más) procesos son
+/seguros/ y cuáles son /inseguros/
+
+#+begin_center
+#+attr_html: height="350"
+#+attr_latex: width=0.8\textwidth
+[[./img/tray_proc_evasion_bloqueo.png]]
+
+Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical)
+requieren del acceso exclusivo a un scanner y una impresora. (La Red,
+p. 200)
+#+end_center
+
+El análisis de la interacción entre dos procesos se representa como en
+la figura anterior; el avance en cada proceso es marcado con una
+flecha horizontal (/A/) o vertical (/B/); en un sistema
+multiprocesador, podría haber avance mutuo, y lo indicaríamos con una
+flecha diagonal.
+
+Al saber cuándo reclama y libera un recurso cada proceso, podemos
+marcar cuál es el área /segura/ para la ejecución y cuándo estamos
+aproximándonos a un área de riesgo. En el caso mostrado, el bloqueo
+mutuo se produciría si entráramos a I_2—I_3 e I_6—I_7, por lo que –en
+la situación descrita en esta gráfica– el sistema debe mantener a /B/
+congelado por lo menos hasta que /A/ llegue a I_3.
+
+Este mecanismo proveería una mejor respuesta que los vistos en el
+apartado de /prevención de bloqueos/, pero es todavía más dificil de
+aplicar en situaciones reales. Para que pudiéramos implementar un
+sistema con evasión de bloqueos, tendría que ser posible hacer un
+análisis estático previo del código a ejecutar, y tener un listado
+total de recursos estático. Estos mecanismos pueden ser efectivos en
+sistemas de uso especializado, pero no en sistemas operativos (o
+planificadores) genéricos.
+
+*** Detección y recuperación de bloqueos
+
+La detección de bloqueos es una forma de /reaccionar/ ante una
+situación de bloqueo que ya se presentó y de buscar la mejor manera de
+salir de ella. La detección de bloqueos se ejecuta como una tarea
+/periódica/, y si bien no puede prevenir situaciones de bloqueo, puede
+detectarlas una vez que ya ocurrieron y limitar su impacto.
+
+Manteniendo una lista de recursos asignados y solicitados, el sistema
+operativo puede saber cuando un conjunto de procesos están esperándose
+mutuamente en una solicitud por recursos — Al analizar estas tablas
+como grafos dirigidos, representamos:
+
+- Los procesos, con cuadrados
+
+- Los recursos, con círculos
+
+  - Puede representarse como un círculo grande a una /clase de
+    recursos/, y como círculos pequeños dentro de éste a una /serie de
+    recursos idénticos/ (p.ej. las diversas unidades de cinta)
+
+- Las flechas que van de un recurso a un proceso indican que el
+  recurso /está asignado/ al proceso
+
+- Las flechas que van de un proceso a un recurso indican que el
+  proceso /solicita/ al recurso
+
+Si tenemos una representación completa de los procesos y recursos en
+el sistema, la estrategia es /reducir/ la gráfica retirando los
+elementos que no brinden información imprescindible, siguiendo la
+siguiente lógica (recordemos que representan una fotografía del
+sistema /en un momento dado/):
+
+- Retiramos los procesos que no están solicitando ni tienen asignado
+  ningún recurso.
+
+- Para todos los procesos restantes: Si todos los recursos que están
+  solicitando /pueden ser concedidos/ (esto es, no están actualmente
+  asignados a otro), reducimos eliminando del grafo al proceso y a
+  todas las flechas relacionadas con éste.
+
+- Si después de esta reducción eliminamos a todos los procesos del
+  grafo, entonces no hay interbloqueos y podemos continuar. En caso de
+  permanecer procesos en el grafo, los procesos “irreducibles”
+  constituyen la serie de procesos interbloqueados de la gráfica.
+
+#+begin_center
+#+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+[[./img/deteccion_bloqueos.png]]
+
+Detección de bloqueos: Grafo de procesos y recursos en un momento dado
+#+end_center
+
+De la gráfica anterior, podríamos proceder:
+
+- Reducimos por /B/, dado que actualmente no está esperando a ningún
+  recurso
+
+- Reducimos por /A/ y /F/, dado que los recursos por los cuales están
+  esperando quedarían libres en ausencia de /B/
+
+Y quedamos con un interbloqueo entre /C/, /D/ y /E/, en torno a los
+recursos /4/, /5/ y /7/.
+
+#+begin_center
+#+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+[[./img/deteccion_bloqueos_2.png]]
+
+Detección de bloqueos: Proceso de reducción en un grafo de procesos y
+recursos, manejando clases de recursos
+#+end_center
+
+Nótese que /reducir/ un proceso del grafo no implica que éste haya
+/entregado/ sus recursos, sino que únicamente que, hasta donde tenemos
+conocimiento, /tiene posibilidad de hacerlo/. Los procesos que estan
+esperando por recursos retenidos por un proceso pueden sufrir
+inanición aún por un tiempo indeterminado.
+
+Una vez que un bloqueo es diagnosticado, dado que los procesos no
+podrán terminar por sí mismos (dado que están precisamente bloqueados,
+su ejecución no avanzará más), hay varias estrategias para la
+recuperación:
+
+- Terminar a todos los procesos bloqueados. Esta es la técnica más
+  sencilla y, de cierto modo, más justa — Todos los procesos
+  implicados en el bloqueo pueden ser relanzados, pero todo el estado
+  del cómputo que han realizado hasta este momento se perderá.
+
+- /Retroceder/ a los procesos implicados hasta el último /punto de
+  control/ (/checkpoint/) conocido. Esto es posible únicamente cuando
+  el sistema implementa esta funcionalidad, que tiene un elevado costo
+  adicional. Cuando el estado de uno de los procesos depende de
+  factores externos a éste, es imposible implementar fielmente los
+  /puntos de control/.
+
+  Podría parecer que retroceder a un punto previo llevaría
+  indefectiblemente a que se repita la situación — Pero los bloqueos
+  mutuos requieren de un órden de ejecución específico para
+  aparecer. Muy probablemente, dos ejecuciones posteriores lograrían
+  salvar el bloqueo — y en caso contrario, puede repetirse este paso.
+
+- Terminar, uno por uno y no en bloque, a cada uno de los procesos
+  bloqueados. Una vez que se termina uno, se evalúa la situación para
+  verificar si logró romperse la situación de bloqueo, en cuyo caso la
+  ejecución de los restantes continúa sin interrupción.
+
+  Para esto, si bien podría elegirse un proceso al azar de entre los
+  bloqueados, típicamente se consideran elementos adicionales como:
+
+  - Los procesos que demandan garantías de /tiempo real/ son los más
+    sensibles para detener y relanzar
+
+  - La menor cantidad de tiempo de procesador consumido hasta el
+    momento. Dado que el proceso probablemente tenga que ser
+    re-lanzado (re-ejecutado), puede ser conveniente /apostarle/ a un
+    proceso que haya hecho poco cálculo (para que el tiempo que tenga
+    que invertir para volver al punto actual sea el mínimo posible).
+
+  - Mayor tiempo restante estimado. Si se puede estimar cuánto tiempo
+    de procesamiento /queda pendiente/, conviene terminar al proceso
+    que más le falte por hacer.
+
+  - Menor número de recursos asignados hasta el momento. Un poco como
+    criterio de justicia, y un poco partiendo de que es un proceso que
+    está haciendo menor uso del sistema.
+
+  - Prioridad más baja. Cuando hay un ordenamiento de procesos o
+    usuarios por prioridades, siempre es preferible terminar un
+    proceso de menor prioridad o perteneciente a un usuario poco
+    importante que uno de mayor prioridad.
+
+  - En caso de contar con la información necesaria, es siempre mejor
+    interrumpir un proceso que /pueda ser repetido sin pérdida de
+    información/ que uno que la cause. Por ejemplo, es preferible
+    interrumpir una compilación que la actualización de una base de
+    datos.
+
+Un punto importante a considerar es cada cuánto debe realizarse la
+verificación de bloqueos. Podría hacerse:
+
+- Cada vez que un proceso solicite un recurso. pero esto llevaría a un
+  gasto de tiempo en este análisis demasiado frecuente.
+
+- Con una periodicidad fija, pero esto arriesga a que los procesos
+  pasen más tiempo bloqueados.
+
+- Cuando el nivel del uso del CPU baje de cierto porcentaje. Esto
+  indicaría que hay un nivel elevado de procesos en espera.
+
+- Una estrategia combinada.
+
+Por último, si bien los dispositivos aquí mencionados requieren
+bloqueo exclusivo, otra estragegia es la /apropiación temporal/: Tomar
+un recurso asignado a determinado proceso para otorgárselo
+/temporalmente/ a otro. Esto no siempre es posible, claro, y depende
+fuertemente de la naturaleza del mismo — pero podría, por ejemplo,
+interrumpirse un proceso que tiene asignada (pero inactiva) a una
+impresora para otorgársela temporalmente a otro que tiene un trabajo
+corto pendiente. Esto último, sin embargo, es tan sensible a detalles
+de cada clase de recursos que rara vez puede hacerlo el sistema
+operativo — es normalmente hecho /de acuerdo/ entre los procesos
+competidores, por medio de algún protocolo pre-establecido.
+
+*** Algoritmo del banquero
+
+Ummm... *Por desarrollar* ☹
+
+*** Algoritmo del avestruz
+
+Una quinta línea (que, por increíble que parezca, es probablemente la
+más común) es el llamado /algoritmo del avestruz/: Ignorar las
+situaciones de bloqueo (escondiéndose de ellas como avestruz que
+esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
+suficientemente poco frecuente. Hay que comprender que esto ocurre
+porque las condiciones impuestas por las demás estrategias resultan
+demasiado onerosas, el conocimiento previo resulta insuficiente, o los
+bloqueos simplemente pueden presentarse ante recursos externos y no
+controlados (o conocidos siquiera) por el sistema operativo.
+
+Ignorar la posibilidad de un bloqueo /cuando su probabilidad es
+suficientemente baja/ será preferible para los usuarios (y
+programadores) ante la disyuntiva de afrontar restricciones para la
+forma y conveniencia de solicitar recursos.
+
+En este caso, se toma una decisión entre lo /correcto/ y lo
+/conveniente/ — Un sistema operativo formalmente no debería permitir
+la posibilidad de que hubiera bloqueos, pero la inconveniencia
+presentada al usuario sería inaceptable.
+
+Una posible salida ante la presencia del /algoritmo del avestruz/ es
+que los /programadores de aplicaciones/ soliciten un recurso pero, en
+vez de solicitarlo por medio de una /llamada bloqueante/, hacerlo por
+medio de una /llamada no bloqueante/ y, en caso de fallar ésta,
+esperar un tiempo aleatorio e intentarlo e intentar nuevamente acceder
+al recurso un número dado de veces, y, tras /n/ intentos, abortar
+limpiamente el proceso y notificar al usuario (evitando un bloqueo
+mutuo circular indefinido).
 
 * Otros recursos
 

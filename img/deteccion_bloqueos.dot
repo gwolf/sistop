@@ -1,0 +1,45 @@
+digraph G {
+	layout = neato;
+	1 [label = "1"];
+	2 [label = "2"];
+	3 [label = "3"];
+	4 [label = "4"];
+	5 [label = "5"];
+	6 [label = "6"];
+	7 [label = "7"];
+	A [label = "A", shape = box];
+	B [label = "B", shape = box];
+	C [label = "C", shape = box];
+	D [label = "D", shape = box];
+	E [label = "E", shape = box];
+	F [label = "F", shape = box];
+	A -> 1 -> B
+	3 -> B;
+	F -> 6 -> B;
+	4 -> B;
+	4 -> C;
+	2 -> C -> 5 -> E -> 7 -> D -> 4;
+		
+	// 	11 [label = "1"];
+	// 	21 [label = "2"];
+	// 	31 [label = "3"];
+	// 	41 [label = "4"];
+	// 	51 [label = "5"];
+	// 	61 [label = "6"];
+	// 	71 [label = "7"];
+	// 	A1 [label = "A", shape = box];
+	// 	C1 [label = "C", shape = box];
+	// 	D1 [label = "D", shape = box];
+	// 	E1 [label = "E", shape = box];
+	// 	F1 [label = "F", shape = box];
+	// 	A1 -> 11;
+	// 	F1 -> 61;
+	// 	21 -> C1;
+	// 	C1 -> 51;
+	// 	51 -> E1;
+	// 	E1 -> 71;
+	// 	71 -> D1;
+	// 	D1 -> 41;
+	// 	41 -> C1;
+	// };
+}

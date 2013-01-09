@@ -6,6 +6,13 @@ html: dot
 		emacs -Q --batch --visit=$$i --eval '(setq make-backup-files nil)' --funcall=org-mode --funcall=org-export-as-html ; \
 	    fi ; done
 
+pdf: dot
+	for i in *.org; do \
+	    h=`echo $$i|sed s/.org$$/.pdf/`; \
+	    if [ ! -f $$h -o $$i -nt $$h ] ; then \
+		emacs -Q --batch --visit=$$i --eval '(setq make-backup-files nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
+	    fi ; done
+
 all: html
 
 dot: img/*.dot

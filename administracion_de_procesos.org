@@ -57,8 +57,7 @@ de ejecución. Estos son:
 #+attr_latex: width=0.5\textwidth
 [[./img/estados_proceso.png]]
 
-Diagrama de transición entre los estados de un proceso (Imagen:
-/Sistemas Operativos/, Pablo Ruiz Múzquiz, p. 22)
+Diagrama de transición entre los estados de un proceso
 #+end_center
 
 ** El bloque de control de proceso (PCB)
@@ -97,7 +96,7 @@ de:
 - Estado de E/S :: Listado de dispositivos y archivos asignados que el
                    proceso tiene /abiertos/ en un momento dado.
 
-* Hilos
+* Procesos e hilos
 
 Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
@@ -202,7 +201,7 @@ Pueden descargar (legalmente) el libro desde el sitio Web del curso o
 desde [[http://www.greenteapress.com/semaphores/index.html][Green Tea Press]].
 #+end_center
 
-En el ámbito del estudio de los sistemas operativos, /concurrencia/ no
+Formalmente y desde las ciencias de la computación, /concurrencia/ no
 necesariamente se refiere a dos o más eventos que ocurran a la vez,
 sino que a dos o más eventos cuyo órden es /no determinista/, esto es,
 eventos acerca de los cuales /no podemos predecir el órden relativo en
@@ -230,7 +229,7 @@ presentados pueden generalizarse a los demás, y son situaciones en que
 se presenta compartición (o competencia) por estructuras entre
 entes independientes.
 
-** Las operaciones no atómicas
+** Exclusión mutua y sincronización
 
 Varios hilos pueden avanzar en su trabajo de forma concurrente sin
 entorpecerse mutuamente siempre y cuando estén trabajando únicamente
@@ -243,7 +242,7 @@ requiere tener en mente que el planificador puede interrumpir el flujo de
 un hilo /en cualquier momento/. Esto implica, por ejemplo, que el
 siguiente código en Ruby puede llevarnos a distintos resultados:
 
-#+begin_src ruby +n
+#+begin_src ruby -n
 class EjemploHilos
   def initialize
     @x = 0
@@ -274,11 +273,17 @@ los hilos tras un periodo de espera (en caso contraio, las funciones
 son tan simples que, bajo la implementación de Ruby, se ejecutaría
 simplemente en forma secuencial.
 
-En este caso tenemos tres hilos /compitiendo/ por la variable
-compartida @x. En algunas ejecuciones, =EjemploHilos.new= imprimirá 3
-(0 * 2 + 3), en otras imprimirá 6 (0 + 3 * 2) — Y en algunas,
-inclusive, imprimirá 0 (cuando el hilo principal es /despertado/ antes
-que t1 o t2). Ante una ejecución repetida:
+La /variable de instancia/ =@x= es compartida entre los dos hilos de
+ejecución, y en este ejemplo tenemos tres hilos /compitiendo/ por
+ella. En algunas ejecuciones, =run= ejecutará primero la
+multiplicación, resultando en =(@x * 2) + 3=, en otras =(@x + 3) * 2=
+(siendo hilos diferentes, no vale la precedencia de los
+operadores). Algunas veces imprimirá el resultado antes de ambas
+operaciones (el =@x= original, en el estado de entrada de los hilos),
+en otros a medio camino, y en otras más después de ambas
+modificaciones. Es más, a veces el valor resultante de =@x= puede
+/aparentar que una de las operaciones no ocurrió, dado que un hilo fue
+interrumpido a media operación:
 
 #+begin_src ruby
 e = EjemploHilos.new;10.times{e.run}
@@ -295,7 +300,7 @@ mayor: ¿cómo pueden dos hilos manipular un recurso compartido si no
 hay garantía de que una operación no será interrumpida? Y recordemos
 que las instrucciones que le damos al sistema no tienen por qué
 traducirse a una sóla instrucción ante el sistema — Una instrucción en
-C tan simple como =x++= implica:
+C tan simple como =x++= implica por lo menos:
 
 - Obtener la dirección en memoria de =x=
 - Traer el valor de =x= a un registro del procesador
@@ -305,15 +310,15 @@ C tan simple como =x++= implica:
 Al haber dos accesos a memoria (¡y estamos hablando de un lenguaje de
 mucho más bajo nivel que el del ejemplo!), el CPU puede tener que
 esperar a que el valor le sea transferido, y al planificador puede
-aprovechar para cambiar el hilo en ejecución.
+aprovechar para cambiar el hilo en ejecución. Claro está, con un
+lenguaje de tan alto nivel como Ruby, el número de instrucciones
+resultante puede ser mucho mayor.
 
 - Operación atómica :: Operación que tenemos la garantía que se
      ejecutará o no como una sóla unidad de ejecución. Esto no
      necesariamente implica que el sistema no retirará el flujo de
      ejecución de su hilo, sino que /el efecto de que se le retire el
      flujo/ no llevará a comportamiento inconsistente.
-
-** Exclusión mutua y sincronización
 
 - Condición de carrera :: (Race condition) Categoría de errores de
      programación que implica a dos procesos fallando al comunicarse
@@ -337,7 +342,10 @@ boletos de autobús en Perl, y queremos hacer la siguiente función
 /segura ante la concurrencia/. El programador aquí ya hizo un primer
 intento:
 
-#+begin_src perl +n
+#+begin_src perl -n
+my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
+$capacidad = 40;
+
 sub asigna_asiento {
   while ($bloq) { sleep 0.1; }
   $bloq = 1;
@@ -346,15 +354,17 @@ sub asigna_asiento {
     $proximo_asiento += 1;
     print "Asiento asignado: $asignado\n";
   } else {
-    print "No hay asientos disponibles";
+    print "No hay asientos disponibles\n";
+    return 1;
   }
   $bloq = 0;
+  return 0;
 }
 #+end_src
 
 El programador identificó correctamente la /sección crítica/ como las
-líneas comprendidas entre la 4 y la 6 (pero, al ser parte de un bloque
-condicional, /protegió/ hasta la 10). Sin embargo, tenemos aún una
+líneas comprendidas entre la 7 y la 9 (pero, al ser parte de un bloque
+condicional, /protegió/ hasta la 14). Sin embargo, tenemos aún una
 situación de carrera (aunque mucho más contenida) entre la 2 y la 3:
 Podría un hilo entrar[fn:: Este ejemplo utiliza además el mal ejemplo
 de una /espera activa/ (busy wait), requiriendo del tiempo del
@@ -369,10 +379,113 @@ desde el flujo susceptible a ser interrumpido, tenemos que hacerlo a
 través de instrucciones de las que el planificador pueda /asegurar/ su
 atomicidad.
 
-*** Semáforos y /mutexes/
+*** /Mutexes/
 
-La /primitiva/ básica de sincronización es el /semáforo/, publicada
-por Edsger Dijkstra en 1968.
+La palabra /mutex/ nace de la frecuencia con que se habla de las
+/regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
+mecanismo que nos asegura que cierta región del código será ejecutada
+como si fuera atómica.
+
+Hay que tener en cuenta que un mutex /no significa/ que el código no
+se va a interrumpir mientras está dentro de esta región — Eso sería
+muy peligroso, dado que permitiría que el sistema operativo perdiera
+el control del planificador, volviendo para propósitos prácticos a un
+esquema de multitarea cooperativa. El mutex es un /mecanismo de
+prevención/ que mantiene en espera a cualquier hilo o proceso que
+quiera entrar a la /sección crítica/ hasta que el proceso que la está
+ejecutando en un momento dado salga de ella.
+
+Como vimos en el ejemplo anterior, para que una mutex sea efectiva
+tiene que ser implementada a través de una /primitiva/ a un nivel
+superior, implicando al planificador.
+
+El código del ejemplo anterior podría reescribirse de la siguiente
+manera empleando un mutex:
+
+#+begin_src perl -n
+my ($proximo_asiento :shared, $capacidad :shared);
+$capacidad = 40;
+
+sub asigna_asiento {
+  lock($proximo_asiento);
+  if ($proximo_asiento < $capacidad) {
+    $asignado = $proximo_asiento;
+    $proximo_asiento += 1;
+    print "Asiento asignado: $asignado\n";
+  } else {
+    print "No hay asientos disponibles\n";
+    return 1;
+  }
+  return 0;
+}
+#+end_src
+
+Tomemos en cuenta que en este caso estamos hablando de una
+implementación de hilos — Y como lo mencionamos previamente, esto nos
+hace dependientes del lenguaje específico de implementación. En este
+caso, en Perl, al ser =proximo_asiento= una variable compartida tiene
+algunas /propiedades/ adicionales — Como, en este caso, la de poder
+operar como un mutex. La implementación en Perl resulta muy /limpia/,
+dado que nos evita el uso de una /variable de condición/ explícita —
+Podríamos leer la línea 5 como /exclusión mutua sobre/
+=$proximo_asiento=.
+
+En la implementación de hilos de Perl, la función =lock()= implementa
+un mutex delimitado por el /ámbito léxico/ de su invocación: El área
+de exclusión mutua abarca desde la línea 5 en que es invocada hasta la
+15 en que termina el bloque en que se invocó.
+
+Un área de exclusion mutua debe:
+
+- Ser mínima :: Debe ser /tan corta como sea posible/, para evitar que
+                otros hilos queden bloqueados fuera del área
+                crítica. Si bien en este ejemplo es demasiado simple,
+                si hiciéramos cualquier llamada a otra función (o al
+                sistema) estando dentro de un área de exclusión mutua,
+                detendríamos la ejecución de todos los demás hilos por
+                demasiado tiempo.
+
+- Ser comprehensiva :: Debemos analizar bien cuál es el área a
+     proteger y no arriesgarnos a proteger de menos. En este ejemplo,
+     podríamos haber puesto =lock($asignado)= dentro del =if=, dado
+     que sólo dentro de su evaluación positiva modificamos la variable
+     =$proximo_asiento=. Sin embargo, si la ejecución de un hilo se
+     interrumpiera entre las líneas 7 y 8, la condición del =if= se
+     evaluaría incorrectamente.
+
+Como comparación, una rutina equivalente en Bash (entre procesos
+independientes y usando los archivos =/tmp/proximo_asiento= y
+=/etc/capacidad/= como un mecanismo para compartir datos) sería:
+
+#+begin_src bash -n
+asigna_asiento() {
+  lockfile /tmp/asigna_asiento.lock
+  PROX=$(cat /tmp/proximo_asiento || echo 0)
+  CAP=$(cat /etc/capacidad || echo 40)
+  if [ $PROX -lt $CAP ]
+    then
+      ASIG=$PROX
+      echo $(($PROX+1)) > /tmp/proximo_asiento
+      echo "Asiento asignado: $ASIG"
+    else
+      echo "No hay asientos disponibles"
+      return 1;
+    fi
+  rm -f /tmp/asigna_asiento.lock
+}
+#+end_src
+
+Un mutex es, pues, una herramienta muy sencilla, y podría verse como
+la pieza básica para la sincronización entre procesos. Lo fundamental
+para emplearlos es identificar las regiones críticas de nuestro
+código, y proteger el acceso /con un mecanismo apto de
+sincronización/, que garantice atomicidad.
+
+*** Semáforos
+
+La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
+resolver algunos problemas de sincronización. Edsger Dijkstra (1968) propuso
+a los /semáforos/.
 
 Un semáforo es una variable de tipo entero que tiene definida la
 siguiente interfaz:
@@ -380,9 +493,11 @@ siguiente interfaz:
 - Inicialización :: Se puede inicializar el semáforo a cualquier valor
                     entero, pero después de esto, su valor no puede ya
                     ser leído.
+
 - Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
                  negativo, el hilo se /bloquea/ y no puede continuar
                  hasta que /otro hilo/ incremente el semáforo
+
 - Incrementar :: Cuando un hilo incrementa al semáforo, si hay hilos
                  epserando, uno de ellos es /despertado/.
 
@@ -393,9 +508,98 @@ como =P= y =V=, los nombres empleados por Dijkstra en su artículo (de
 /proberen/ y /verhogen/, en holandés), =down= y =up=, o =acquire= y
 =release=.
 
+Un semáforo permite la implementación de varios patrones:
 
+- Señalizar :: Un hilo debe informar a otro que cierta condición está
+               ya cumplida — Por ejemplo, un hilo prepara una conexión
+               en red mientras que otro calcula lo que tiene que
+               enviar. No podemos arriesgarnos a comenzar a enviar
+               antes de que la conexión esté lista. Inicializamos el
+               semáforo a 0, y:
 
-** Bloqueos mutuos
+	       #+begin_src python -n
+	       # Antes de lanzar los hilos
+	       senal = Semaphore(0)
+
+	       def envia_datos:
+	         calcula_datos()
+		 senal.acquire()
+		 envia_por_red()
+
+	       def prepara_conexion:
+	         crea_conexion()
+		 senal.release()
+
+	       #+end_src
+
+	       No importa si =prepara_conexion()= termina primero — En
+	       el momento en que termine, =senal= valdrá 1 y
+	       =envia_datos()= podrá proceder.
+
+- /Rendezvous/ :: Así se denomina en francés (y ha sido adoptado al
+                  inglés) a quedar en una /cita/. Este patrón busca
+                  que dos hilos se esperen mutuamente en cierto punto
+                  para continuar en conjunto — Por ejemplo, en una
+                  aplicación GUI, un hilo prepara la interfaz gráfica
+                  y actualiza sus eventos mientras otro efectúa
+                  cálculos para mostrar. Queremos mostrar al usuario
+                  la simulación desde el principio, así que no debe
+                  empezar a calcular antes de que el GUI esté listo,
+                  pero preparar los datos del cálculo toma tiempo, y
+                  no queremos esperar doblemente. Para esto,
+                  implementamos dos semáforos señalizándose
+                  mutuamente:
+
+		  #+begin_src python -n
+		  guiListo = Semaphore(0)
+		  calculoListo = Semaphore(0)
+
+		  threading.Thread(target=maneja_gui, args=[]).start()
+		  threading.Thread(target=maneja_calculo, args=[]).start()
+
+		  def maneja_gui():
+		    inicializa_gui()
+		    guiListo.release()
+		    calculoListo.acquire()
+		    recibe_eventos()
+
+		  def maneja_calculo():
+		    inicializa_datos()
+		    calculoListo.release()
+		    guiListo.acquire()
+		    procesa_calculo()
+		  #+end_src
+
+- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
+                resulta útil para paatrones posteriores. 
+
+- Mutex :: El uso de un semáforo inicializado a 1 puede implementar
+	   fácilmente un mutex. En Python:
+
+           #+begin_src python -n
+	   mutex = Semaphore(1)
+	   # ...Inicializamos estado y lanzamos hilos
+	   mutex.acquire()
+	   # Estamos en la región de exclusión mutua
+	   x = x + 1
+	   mutex.release()
+	   # Continúa la ejecución paralela
+           #+end_src
+
+- Multiplex :: Permite la entrada de no más de /n/ procesos a la
+               región crítica. Si lo vemos como una generalización de
+               /Mutex/, basta con inicializar al semáforo al número
+               máximo de procesos deseado.
+
+- Barrera ::
+
+- Barrera reutilizable ::
+
+- Cola ::
+
+- Cola FIFO ::
+
+* Bloqueos mutuos
 
 - Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
                    que ocurre cuando dos procesos poseen determinados
@@ -481,7 +685,7 @@ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución.
 
-*** Estrategias ante los bloqueos
+** Estrategias ante los bloqueos
 
 En el apartado de /Exclusión mutua/, los hilos presentados estaban
 diseñados para /cooperar explícitamente/. El rol del sistema operativo
@@ -523,12 +727,14 @@ situaciones de bloqueo (La Red, p. 188):
      Busca despejar los bloqueos presentados para que el sistema
      continúe operando sin ellos.
 
-*** Prevención de bloqueos
+** Prevención de bloqueos
 
 Una manera de evitar bloqueos /por completo/ sería el que un sistema
 operativo jamás asignara recursos a más de un proceso a la vez — Los
 procesos podrían seguir efectuando cálculos o empleando recursos /no
-rivales/, pero sólo uno podría obtener recursos de forma exclusiva al
+rivales/ (que no requieran acceso exclusivo — Por ejemplo, empleo de
+archivos en el disco, sin que exista un acceso directo del proceso al
+disco), pero sólo uno podría obtener recursos de forma exclusiva al
 mismo tiempo. Este mecanismo sería la /serialización/, y la situación
 antes descrita se resolvería de la siguiente manera:
 
@@ -600,7 +806,7 @@ transferiría la situación de bloqueo por recursos a bloqueo por
 procesos — y un programador poco cuidadoso podría de todos modos
 desencadenar la misma situación.
 
-*** Evasión de bloqueos
+** Evasión de bloqueos
 
 Para la evasión de bloqueos, el sistema partiría de poseer, además de
 la información descrita en el caso anterior, información acerca de
@@ -640,7 +846,7 @@ total de recursos estático. Estos mecanismos pueden ser efectivos en
 sistemas de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 
-*** Detección y recuperación de bloqueos
+** Detección y recuperación de bloqueos
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
 situación de bloqueo que ya se presentó y de buscar la mejor manera de
@@ -805,11 +1011,11 @@ de cada clase de recursos que rara vez puede hacerlo el sistema
 operativo — es normalmente hecho /de acuerdo/ entre los procesos
 competidores, por medio de algún protocolo pre-establecido.
 
-*** Algoritmo del banquero
+** Algoritmo del banquero
 
 Ummm... *Por desarrollar* ☹
 
-*** Algoritmo del avestruz
+** Algoritmo del avestruz
 
 Una quinta línea (que, por increíble que parezca, es probablemente la
 más común) es el llamado /algoritmo del avestruz/: Ignorar las

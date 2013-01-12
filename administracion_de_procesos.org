@@ -4,7 +4,7 @@
 #+LANGUAGE: es
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
-* Procesos. Concepto y estados de un proceso
+* Concepto y estados de un proceso
 
 En un sistema multiprogramado o de tiempo compartido, un /proceso/ es
 la imagen en memoria de un programa, junto con la información
@@ -75,7 +75,7 @@ de:
      mientras el proceso está en ejecución debe ser respaldada y
      restaurada cuando se registra un cambio de estado
 
-- Información de agendamiento (scheduling) :: La prioridad del
+- Información de planificación (scheduling) :: La prioridad del
      proceso, la /cola/ en que está agendado, y demás información que
      puede ayudar al sistema operativo a agendar al proceso;
      profundizaremos en el tema en la sección /[[./planificacion_de_procesos.org][Planificación de
@@ -229,7 +229,109 @@ presentados pueden generalizarse a los demás, y son situaciones en que
 se presenta compartición (o competencia) por estructuras entre
 entes independientes.
 
-** Exclusión mutua y sincronización
+** Mecanismos de exclusión mutua y sincronización
+
+Comenzaremos el planteamiento de esta sección con algunos problemas
+clásicos que la ilustran, para posteriormente formalizar las nociones
+y los mecanismos para resolverlos.
+
+*** Problemas clásicos
+
+Enunciaremos a continuación algunos planteamientos que ilustran
+situaciones que se pueden resolver empleando semáforos. Por ahora
+haremos únicamente el planteamiento, y después de presentar las
+estructuras de sincronización, veremos cómo pueden
+resolverse.
+
+Conviene ir pensando en qué estrategias podrían seguir para resolver
+los problemas.
+
+- Problema productor-consumidor :: En un entorno multihilos es común
+     que haya una división de tareas tipo /línea de ensamblado/, que
+     se puede generalizar a que un grupo de hilos van /produciendo/
+     ciertas estructuras, a ser /consumidas/ por otro.
+
+     Un ejemplo de este problema puede ser un programa /orientado a
+     eventos/, en que eventos de distinta naturaleza pueden
+     producirse, y causan que se /disparen/ los mecanismos que los
+     puedan atender. Los eventos pueden /apilarse/ en un buffer que
+     será procesado por los hilos encargados conforme se vayan
+     liberando. Esto impone ciertos requisitos, como:
+
+     - Agregar o retirar un elemento del buffer tiene que ser hecho de
+       forma atómica. Si más de un proceso intentara hacerlo al mismo
+       tiempo, correríamos riesgo de que se corrompan los datos.
+
+     - Si un consumidor está listo y el buffer está vacío, debe
+       bloquearse (¡no realizar espera activa!) hasta que un productor
+       genere un elemento.
+
+- Problema lectores-escritores :: Una estructura de datos puede ser
+     accesada simultáneamente por muchos procesos /lectores/, pero si
+     algún proceso está escribiendo, debemos evitar que cualquier otro
+     lea (dado que podría encontrarse con los datos en un estado
+     inconsistente). Los requisitos de sincronización son
+
+     - Cualquier cantidad de lectores puede estar leyendo al mismo
+       tiempo.
+     - Los escritores deben tener accfeso exclusivo a la sección
+       crítica.
+     - Como refinamiento al planteamiento: Debemos evitar que un
+       influjo constante de procesos lectores dejen a un escritor en
+       situación de /inanición/.
+
+- La cena de los filósofos :: Cinco filósofos se dan cita para comer
+     arroz en una mesa redonda. En la mesa, cada uno de ellos se
+     sienta frente a un plato. A su derecha, tiene un palito chino, y
+     a su izquierda tiene otro.
+
+     Los filósofos sólo saben =pensar()= y =comer()=. Cada uno de
+     ellos va a =pensar()= un tiempo arbitrario, hasta que le da
+     hambre. El hambre es mala consejera, por lo que intenta
+     =comer()=. Los requisitos son:
+
+     - Sólo un filósofo puede sostener un palito a la vez.
+
+     - Debe ser imposible que un filósofo muera de inanición estando a
+       la espera de un palito.
+
+     - Debe ser imposible que se presente un bloqueo mutuo.
+
+     - Debe ser posible que más de un filósofo pueda comer al mismo
+       tiempo.
+
+- El problema de los fumadores :: Hay tres fumadores empedernidos y un
+     /agente/ que, de tiempo en tiempo, consigue ciertos insumos. Los
+     ingredientes necesarios para fumar son tabaco, papel y
+     cerillos. Cada uno de los fumadores tiene una cantidad infinita
+     de alguno de los ingredientes, pero no les gusta
+     compartir. Afortunadamente, del mismo modo que no comparten, no
+     son acaparadores.
+
+     De tiempo en tiempo, el agente consigue una dosis de dos de los
+     ingredientes — Por ejemplo, si deja en la mesa un papel y tabaco,
+     el que trae los cerillos educadamente tomará los ingredientes, se
+     hará un cigarro, y lo fumará.
+
+     Suhas Patil (1971) planteó este problema buscando demostrar que
+     hay situaciones que no se pueden resolver con el uso de
+     semáforos. Las condiciones planteadas son
+
+     - No podemos modificar el código del agente. Si el agente es un
+       sistema operativo, ¡tiene sentido la restricción de no tenerle
+       que notificar acerca de los flujos cada uno de los programas
+       que corre!
+
+     - El planteamiento original de Patil menciona que no debe
+       emplearse arreglos de semáforos o usar condicionales en el
+       flujo. Esta segunda restricción haría efectivamente irresoluble
+       al problema, por lo que podemos ignorarlo.
+
+
+Nuevamente, recomiendo al libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de
+Allen Downey (2008) para profundizar en este tema.
+
+*** Secciones críticas y operaciones atómicas
 
 Varios hilos pueden avanzar en su trabajo de forma concurrente sin
 entorpecerse mutuamente siempre y cuando estén trabajando únicamente
@@ -378,6 +480,31 @@ Para señalizar la entrada a una sección crítica no podemos hacerlo
 desde el flujo susceptible a ser interrumpido, tenemos que hacerlo a
 través de instrucciones de las que el planificador pueda /asegurar/ su
 atomicidad.
+
+*** Bloqueos mutuos e inanición
+
+Cuando nos enfrentamos a la concurrencia, además de asegurar la
+atomicidad de ciertas operaciones, debemos evitar dos problemas que
+son consecuencia natural de la existencia de la asignación de recursos
+de forma exclusiva:
+
+- Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
+                   que ocurre cuando dos procesos poseen determinados
+                   recursos, y cada uno queda detenido, a la espera de
+                   alguno de los que tiene el otro. El sistema puede
+                   seguir operando normalmente, pero ninguno de los
+                   procesos involucrados podrán avanzar.
+
+- Inanición :: (en inglés /resource starvation/): Situación en que un
+	       proceso no es agendado para su ejecución dado que los
+	       recursos por los cuales está esperando son asignados a
+	       otros procesos.
+
+El que presentemos estos conceptos aquí no significa que están
+exclusivamente relacionados con esta sección: Son conceptos con los
+que nos enfrentaremos una y otra vez al hablar de asignación exclusiva
+a recursos — Temática recurrente en el campo de los sistemas
+operativos.
 
 *** /Mutexes/
 
@@ -600,18 +727,6 @@ Un semáforo permite la implementación de varios patrones:
 - Cola FIFO ::
 
 * Bloqueos mutuos
-
-- Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
-                   que ocurre cuando dos procesos poseen determinados
-                   recursos, y cada uno queda detenido, a la espera de
-                   alguno de los que tiene el otro. El sistema puede
-                   seguir operando normalmente, pero los procesos en
-                   cuestión no podrán avanzar.
-
-- Inanición :: (en inglés /resource starvation/): Situación en que un
-	       proceso no es agendado para su ejecución dado que los
-	       recursos por los cuales está esperando son asignados a
-	       otros procesos.
 
 Un bloqueo mutuo puede ejemplificarse con la situación que se presenta
 cuando cuatro automovilistas llegan al mismo tiempo al cruce de dos

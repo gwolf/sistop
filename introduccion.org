@@ -506,12 +506,41 @@ la memoria aumentó su velocidad a un ritmo mucho menor —
 Aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
-#+begin_center
+# #+begin_center
 #+attr_html: height="350"
-[[./img/jerarquia_memoria.png]]
-
+#+begin_src dot :file ltxpng/jearquia_memoria.png
+digraph G {
+	layout = dot;
+	node [shape = box];
+	rankdir = TB;
+	
+	Registros ;
+	Cache ;
+	Principal [label = "Memoria principal"];
+	Electr [label = "Disco electrónico"];
+	Magnet [label = "Disco magnético"];
+	Optico [label = "Disco óptico"];
+	Cinta [label = "Cintas magnéticas"];
+	
+	Registros -> Cache [dir = both];
+	
+	Cache -> Principal [dir = both];
+	
+	Principal -> Electr [dir = both];
+	Principal -> Magnet [dir = both];
+	
+	Electr -> Magnet [dir = both];
+	
+	Electr -> Optico [dir = both];
+	Magnet -> Optico [dir = both];
+	
+        Optico -> Cinta [dir = both];
+	Electr -> Cinta [dir = both, minlen=2];
+	Magnet -> Cinta [dir = both, minlen=2];
+}
+#+end_src
 Jerarquía de memoria entre diversos medios de almacenamiento.
-#+end_center
+# #+end_center
 
 Una respuesta parcial a este problema es la creación de una jerarquía
 de almacenamiento, yendo de una pequeña área de memoria mucho más cara

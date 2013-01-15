@@ -52,13 +52,34 @@ de ejecución. Estos son:
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
 
-#+begin_center
+# #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
-[[./img/estados_proceso.png]]
+
+#+begin_src dot :file ltxpng/estados_proceso.png
+digraph G {
+	layout = dot;
+	node [shape = box];
+
+	Nuevo;
+	Listo;
+	Ejecución;
+	Bloqueado;
+	Terminado;
+
+	Nuevo -> Listo [label = Admitir];
+	Listo -> Ejecución [weight = 2, label = "Activar\nejecución"];
+	Ejecución -> Listo [weight = -2, label = "Tiempo\nterminado"];
+	Ejecución -> Bloqueado [label = "Esperar\nevento"];
+	Bloqueado -> Listo [weight = 2, label = "Ocurrió\nevento"];
+	Ejecución -> Terminado [weight = 2];
+	Bloqueado -> Terminado [minlen = 2, weight = -2, style = dotted];
+	Listo -> Terminado [minlen = 2, weight = -2, style = dotted];
+}
+#+end_src
 
 Diagrama de transición entre los estados de un proceso
-#+end_center
+# #+end_center
 
 ** El bloque de control de proceso (PCB)
 
@@ -623,17 +644,16 @@ siguiente interfaz:
 
 - Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
                  negativo, el hilo se /bloquea/ y no puede continuar
-                 hasta que /otro hilo/ incremente el semáforo
+                 hasta que /otro hilo/ incremente el semáforo. Según
+                 la implementación, esta operación puede denominarse
+                 =wait=, =down=, =acquire= o incluso =P= (por ser la
+                 inicial de /proberen/, /verificar/ en holandés, del
+                 planteamiento original en el artículo de Dijkstra).
 
 - Incrementar :: Cuando un hilo incrementa al semáforo, si hay hilos
-                 epserando, uno de ellos es /despertado/.
-
-Las operaciones de decrementar e incrementar muchas veces son
-implementadas como =wait= y =signal= (siguiendo la semántica de los
-semáforos de tren). En ciertos textos los veremos referidos también
-como =P= y =V=, los nombres empleados por Dijkstra en su artículo (de
-/proberen/ y /verhogen/, en holandés), =down= y =up=, o =acquire= y
-=release=.
+                 epserando, uno de ellos es /despertado/. Los nombres
+                 que recibe esta operación son =signal=, =up=,
+                 =release= o =V= (de /verhogen/).
 
 Un semáforo permite la implementación de varios patrones:
 
@@ -697,9 +717,6 @@ Un semáforo permite la implementación de varios patrones:
 		    procesa_calculo()
 		  #+end_src
 
-- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
-                resulta útil para paatrones posteriores. 
-
 - Mutex :: El uso de un semáforo inicializado a 1 puede implementar
 	   fácilmente un mutex. En Python:
 
@@ -718,7 +735,42 @@ Un semáforo permite la implementación de varios patrones:
                /Mutex/, basta con inicializar al semáforo al número
                máximo de procesos deseado.
 
-- Barrera ::
+	       Su construcción es idéntica a la de un mutex, pero es
+               inicializado al número de procesos que se quiere
+               permitir que ejecuten de forma simultánea.
+
+- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
+                resulta útil para patrones posteriores. Esta
+                construcción garantiza que un grupo de hilos o
+                procesos /pasa por un punto determinado/ de uno en uno
+                (incluso en un ambiente multiprocesador):
+
+		#+begin_src python -n
+                torniquete = Semaphore(0)
+                # (...)
+                if alguna_condicion():
+                  torniquete.release()
+                # (...)
+                torniquete.acquire()
+                torniquete.release()
+		#+end_src
+
+                En este caso, vemos primero una /señalización/ que
+                hace que todos los procesos esperen frente al
+                torniquete hasta que alguno marque que
+                =alguna_condicion()= se ha cumplido y libere el
+                paso. Posteriormente, los procesos que esperan
+                pasarán ordenadamente por el torniquete.
+
+		El torniquete por sí sólo no es tan útil, pero su
+                función se hará clara a continuación.
+
+- Barrera :: Una barrera es una generalización de /rendezvous/ que
+             permite la sincronización entre varios hilos (no sólo
+             dos), y no requiere que el rol de cada uno de los hilos
+             sea distinto. Como caso de aplicación, queremos que
+             ningún hilo ejecute su sección crítica hasta que /todos/
+             hayan 
 
 - Barrera reutilizable ::
 
@@ -726,6 +778,7 @@ Un semáforo permite la implementación de varios patrones:
 
 - Cola FIFO ::
 
+*** Monitores
 * Bloqueos mutuos
 
 Un bloqueo mutuo puede ejemplificarse con la situación que se presenta
@@ -788,14 +841,30 @@ secuencia:
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
    otro proceso (o queda en espera)
 
-#+begin_center
+# #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
-[[./img/bloqueo_mutuo_simple.png]]
+
+#+begin_src dot :file ltxpng/bloqueo_mutuo_simple.png
+digraph G {
+	layout = circo;
+
+	A [label = "Proceso\nA"];
+	B [label = "Proceso\nB"];
+	1 [label = "Unidad\n1", shape = box];
+	2 [label = "Unidad\n2", shape = box];
+
+	A -> 1 [label = "Asignada"];
+	B -> 2 [label = "Asignada"];
+	A -> 2 [label = "Solicitada", style = dotted];
+	B -> 1 [label = "Solicitada", style = dotted];
+}
+#+end_src
+
 
 Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/
 esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
-#+end_center
+# #+end_center
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución.
@@ -961,6 +1030,60 @@ total de recursos estático. Estos mecanismos pueden ser efectivos en
 sistemas de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 
+*** Algoritmo del banquero
+
+Edsger Djikstra propuso un algoritmo de asignación de recursos
+orientado a la evasión de bloqueos a ser empleado para el sistema
+operativo THE (desarrollado entre 1965 y 1968 en la Escuela Superior
+Técnica de Eindhoven, Technische Hogeschool Eindhoven), un sistema
+multiprogramado organizado en anillos de privilegios. El nombre de
+este algoritmo proviene de que busca que el sistema opere cuidando de
+tener siempre la liquidez (nunca entrar a /estados inseguros/) para
+satisfacer los préstamos (recursos) solicitados por sus clientes
+(quienes a su vez tienen una línea de crédito pre-autorizada por el
+banco).
+
+Este algoritmo debe ejecutarse cada vez que un proceso solicita
+recursos; el sistema evita caer en situaciones conducentes a un
+bloqueo mutuo ya sea denegando o posponiendo la solicitud. El
+requisito particular es que, al iniciar, cada proceso debe /anunciar
+su reclamo máximo/ (llamémosle =claim()=) al sistema el número máximo
+de recursos de cada tipo que va a emplear a lo largo de su ejecución —
+Esto sería implementado como una llamada al sistema. Una vez que un
+proceso presentó su reclamo máximo de recursos, cualquier llamada
+subsecuente a =claim()= falla. Claro está, si el proceso anuncia una
+necesidad mayor al número existente de recursos de algún tipo, también
+falla dado que el sistema no será capaz de cumplirlo.
+
+El /algoritmo del banquero/ muchas veces se presenta basado en
+matrices de necesidades por proceso y por tipo de recurso — Por
+simplicidad, lo presentamos asumiendo un solo tipo de recurso.
+
+Un estado es /seguro/ si existe una /secuencia segura/ donde 
+
+# El sistema debe saber en todo momento:
+
+# - Cuántos y cuáles recursos puede llegar a solicitar un proceso
+# - Cuántos y cuáles recursos tiene actualmente asignado cada proceso
+# - Cuántos y cuáles recursos tiene el sistema disponibles
+
+# Y opera por medio de las siguientes estructuras, que representan el
+# estado del sistema /al momento de arribo/ de una solicitud:
+
+# - Disp :: Vector de longitud $m$ que indica el número de recursos
+#           disponibles. Si $Disp_j = k$, hay $k$ instancias disponibles
+#           de $R_j$
+# - Max :: Una matriz de $n×m$ detallando la demanda máxima de cada
+#          proceso, por tipo de recurso. Si $Max_{i,j} = k$, $P_i$ puede
+#          solicitar cuando mucho $k$ instancias de $R_j$.
+# - Asig :: Una matriz de $n×m$ que indica cuántos recursos tiene
+#           asignados un proceso. $Asig_{i,j} = k$ indica que $P_i$
+#           tiene actualmente $k$ instancias de $R_j$
+# - Nec :: Una matriz de $n×m$ que indica cuántos recursos necesita cada
+#          proceso para compleetar su tarea. Esta matriz es resultante
+#          de la resta de las dos anteriores: $Nec_{i,j} = Max_{i,j} -
+#          Asig_{i,j}$
+
 ** Detección y recuperación de bloqueos
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
@@ -1007,13 +1130,36 @@ sistema /en un momento dado/):
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
 
-#+begin_center
+# #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
-[[./img/deteccion_bloqueos.png]]
+#+begin_src dot :file ltxpng/deteccion_bloqueos.png
+digraph G {
+	layout = neato;
+	1 [label = "1"];
+	2 [label = "2"];
+	3 [label = "3"];
+	4 [label = "4"];
+	5 [label = "5"];
+	6 [label = "6"];
+	7 [label = "7"];
+	A [label = "A", shape = box];
+	B [label = "B", shape = box];
+	C [label = "C", shape = box];
+	D [label = "D", shape = box];
+	E [label = "E", shape = box];
+	F [label = "F", shape = box];
+	A -> 1 -> B
+	3 -> B;
+	F -> 6 -> B;
+	4 -> B;
+	4 -> C;
+	2 -> C -> 5 -> E -> 7 -> D -> 4;
+}
+#+end_src
 
 Detección de bloqueos: Grafo de procesos y recursos en un momento dado
-#+end_center
+# #+end_center
 
 De la gráfica anterior, podríamos proceder:
 
@@ -1125,10 +1271,6 @@ corto pendiente. Esto último, sin embargo, es tan sensible a detalles
 de cada clase de recursos que rara vez puede hacerlo el sistema
 operativo — es normalmente hecho /de acuerdo/ entre los procesos
 competidores, por medio de algún protocolo pre-establecido.
-
-** Algoritmo del banquero
-
-Ummm... *Por desarrollar* ☹
 
 ** Algoritmo del avestruz
 

@@ -3,6 +3,7 @@
 #+EMAIL: gwolf@gwolf.org
 #+LANGUAGE: es
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
+#+LATEX_HEADER: \usepackage[spanish]{babel}
 
 * Concepto y estados de un proceso
 
@@ -55,6 +56,7 @@ de ejecución. Estos son:
 # #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+caption: Diagrama de transición entre los estados de un proceso
 
 #+begin_src dot :file ltxpng/estados_proceso.png
 digraph G {
@@ -78,7 +80,11 @@ digraph G {
 }
 #+end_src
 
-Diagrama de transición entre los estados de un proceso
+#+begin_html
+<p align="center">Diagrama de transición entre los estados de un proceso</p>
+#+end_html
+
+
 # #+end_center
 
 ** El bloque de control de proceso (PCB)
@@ -605,7 +611,7 @@ Como comparación, una rutina equivalente en Bash (entre procesos
 independientes y usando los archivos =/tmp/proximo_asiento= y
 =/etc/capacidad/= como un mecanismo para compartir datos) sería:
 
-#+begin_src bash -n
+#+begin_src sh -n
 asigna_asiento() {
   lockfile /tmp/asigna_asiento.lock
   PROX=$(cat /tmp/proximo_asiento || echo 0)
@@ -647,15 +653,39 @@ siguiente interfaz:
                  hasta que /otro hilo/ incremente el semáforo. Según
                  la implementación, esta operación puede denominarse
                  =wait=, =down=, =acquire= o incluso =P= (por ser la
-                 inicial de /proberen/, /verificar/ en holandés, del
-                 planteamiento original en el artículo de Dijkstra).
+                 inicial de /proberen te verlagen/, /intentar
+                 decrementar/ en holandés, del planteamiento original
+                 en el artículo de Dijkstra).
 
 - Incrementar :: Cuando un hilo incrementa al semáforo, si hay hilos
                  epserando, uno de ellos es /despertado/. Los nombres
                  que recibe esta operación son =signal=, =up=,
-                 =release= o =V= (de /verhogen/).
+                 =release=, =post= o =V= (de /verhogen/,
+                 /incrementar/).
 
-Un semáforo permite la implementación de varios patrones:
+La interfaz de hilos =POSIX= (=pthreads=) presenta estas primitivas
+con la siguiente definición:
+
+#+begin_src C
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_post(sem_t *sem);
+int sem_wait(sem_t *sem);
+int sem_trywait(sem_t *sem);
+#+end_src
+
+La variable =pshared= indica si el semáforo puede ser compartido
+entre procesos o únicamente entre hilos. =sem_trywait= extiende la
+intefaz sugerida por Dijkstra: Verifica si el semáforo puede ser
+decrementado y, en caso de que no, en vez de bloquearse, indica al
+proceso que no puede continuar. El proceso debe tener la lógica
+necesaria para no entrar en las secciones críticas (digamos, intentar
+otra estrategia).
+
+=sem_trywait= se sale de la definición clásica de semáforo, por lo
+cual no lo consideraremos en esta sección.
+
+Un semáforo permite la implementación de varios patrones, entre los
+cuales tenemos a:
 
 - Señalizar :: Un hilo debe informar a otro que cierta condición está
                ya cumplida — Por ejemplo, un hilo prepara una conexión
@@ -768,17 +798,98 @@ Un semáforo permite la implementación de varios patrones:
 - Barrera :: Una barrera es una generalización de /rendezvous/ que
              permite la sincronización entre varios hilos (no sólo
              dos), y no requiere que el rol de cada uno de los hilos
-             sea distinto. Como caso de aplicación, queremos que
-             ningún hilo ejecute su sección crítica hasta que /todos/
-             hayan 
+             sea distinto.
 
-- Barrera reutilizable ::
+	     Esta construcción busca que ninguno de los hilos
+             continúe ejecutando hasta que todos hayan llegado a un
+             punto dado.
 
-- Cola ::
+	     Para implementar una barrera, es necesario que ésta
+             guarde algo de información adicional además del semáforo,
+             particularmente, el número de hilos que se han lanzado
+             (para esperarlos a todos). Esta será una variable
+             compartida y, por tanto, requiere de un mutex. Veamos la
+             inicialización (que se ejecuta antes de iniciar los
+             hilos):
 
-- Cola FIFO ::
+	     #+begin_src python
+	     require random
+	     n = random.randint(1,10) # Número de hilos
+	     cuenta = 0
+	     mutex = Semaphore(1)
+	     barrera = Semaphore(0)
+	     #+end_src
 
-*** Monitores
+	     Ahora, Supongamos que todos los hilos tienen que
+             realizar, por separado, la inicialización de su estado,
+             y ninguno de ellos debe comenzar el procesamiento hasta
+             que todos hayan efectuado su inicialización:
+
+	     #+begin_src python
+	     inicializa_estado()
+
+	     mutex.acquire()
+	     count = count + 1
+	     mutex.release()
+
+	     if count == n:
+	       barrera.release()
+
+	     barrera.acquire()
+	     barrera.release()
+
+	     procesamiento()
+	     #+end_src
+
+	     Las barreras son una construcción suficientemente útil
+             como para que sea común encontrarlas "prefabricadas". En
+             los hilos =POSIX= (=pthreads=), por ejemplo, la interfaz
+             básica es:
+
+	     #+begin_src C
+	     int pthread_barrier_init(pthread_barrier_t  *barrier,
+                                      const pthread_barrierattr_t *restrict attr,
+                                      unsigned count);
+             int pthread_barrier_wait(pthread_barrier_t  *barrier);
+	     int pthread_barrier_destroy(pthread_barrier_t *barrier);
+	     #+end_src
+
+- Cola :: Podemos emplear una cola cuando tenemos dos /clases de/
+          hilos que deben proceder en pares. Este patrón es a veces
+          referido como /baile de salón/: Para que una pareja baile,
+          hace falta que haya un /líder/ y un /seguidor/. Cuando
+          llega una persona al salón, verifica si hay uno de la otra
+          clase esperando bailar. En caso de haberlo, bailan, y en
+          caso contrario, espera a que llegue su contraparte.
+
+	  El código para implementar esto es muy simple:
+
+	  #+begin_src python
+	  colaLideres = Semaphore(0)
+	  colaSeguidores = Semaphore(0)
+	  # (...)
+	  def lider
+	    colaSeguidores.release()
+	    colaLideres.acquire()
+	    baila()
+	  def seguidor
+	    colaLideres.release()
+	    colaSeguidores.acquire()
+	    baila()
+	  #+end_src
+
+	  El patrón debe resultar ya familiar: Es un /rendezvous/. La
+          distinción es meramente semántica: En el /rendezvous/
+          hablábamos de dos hilos explícitamente, aquí hablamos de
+          dos clases de hilos.
+
+	  Sobre de este patrón base se pueden refinar muchos
+          comportamientos. Por ejemplo, asegurar que sólo una pareja
+          esté bailando al mismo tiempo, o asegurar que los hilos en
+          espera vayan bailando en el órden en que llegaron.
+
+*** TODO Monitores
+*** TODO Soluciones a los problemas clásicos
 * Bloqueos mutuos
 
 Un bloqueo mutuo puede ejemplificarse con la situación que se presenta
@@ -844,6 +955,7 @@ secuencia:
 # #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 
 #+begin_src dot :file ltxpng/bloqueo_mutuo_simple.png
 digraph G {
@@ -861,15 +973,11 @@ digraph G {
 }
 #+end_src
 
-
-Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/
-esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 # #+end_center
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
-modo de que /A/ o /B/ continúen su ejecución.
-
-** Estrategias ante los bloqueos
+modo de que /A/ o /B/ continúen su ejecución. Veremos, pues, algunas
+estrategias para enfrentar a los bloqueos mutuos.
 
 En el apartado de /Exclusión mutua/, los hilos presentados estaban
 diseñados para /cooperar explícitamente/. El rol del sistema operativo
@@ -1030,7 +1138,9 @@ total de recursos estático. Estos mecanismos pueden ser efectivos en
 sistemas de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 
-*** Algoritmo del banquero
+*** TODO Algoritmo del banquero
+
+*Hace falta terminar de desarrollar esta sección*
 
 Edsger Djikstra propuso un algoritmo de asignación de recursos
 orientado a la evasión de bloqueos a ser empleado para el sistema
@@ -1133,6 +1243,8 @@ sistema /en un momento dado/):
 # #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
+
 #+begin_src dot :file ltxpng/deteccion_bloqueos.png
 digraph G {
 	layout = neato;
@@ -1158,7 +1270,6 @@ digraph G {
 }
 #+end_src
 
-Detección de bloqueos: Grafo de procesos y recursos en un momento dado
 # #+end_center
 
 De la gráfica anterior, podríamos proceder:
@@ -1306,3 +1417,12 @@ mutuo circular indefinido).
 * Otros recursos
 
 - [[http://perldoc.perl.org/perlthrtut.html][Tutorial de hilos de Perl]]
+
+
+## Me queda pendiente:
+##
+## 
+## Writing Papers Using org-mode
+## http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
+## \bibliographystyle{plain}
+## \bibliography{refs}{}

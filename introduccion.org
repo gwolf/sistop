@@ -471,6 +471,14 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      usuario como los microkernel (por ejemplo, los sistemas de
      archivos en espacio de usuario, FUSE, en Linux).
 
+#+begin_center
+#+attr_html: height="350"
+[[./img/monolithic_micro_hybrid.png]]
+
+Esquematización de la arquitectura básica de los sistemas monolíticos,
+microkernel e híbridos. ([[https://commons.wikimedia.org/wiki/File:OS-structure2.svg][Imagen de la Wikipedia]])
+#+end_center
+
 # Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
 # microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
 # General overview]]
@@ -781,3 +789,6 @@ exit_group(0)                           = ?
 * Otros recursos
 
 - [[http://cs.gordon.edu/courses/cs322/lectures/history.html][CS322: A Brief History of Computer Operating Systems]]
+- [[http://lwn.net/Articles/532771/][Making EPERM friendlier]] (LWN): Explica algunas de las limitantes de
+  la semántica POSIX: Falta de granularidad en el reporte de mensajes
+  de error (=EPERM=), y =errno= global por hilo.

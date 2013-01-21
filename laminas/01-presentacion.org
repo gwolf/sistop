@@ -1,0 +1,200 @@
+#+TITLE: Sistemas Operativos:\\Presentación del curso
+#+AUTHOR: Gunnar Wolf
+#+EMAIL: gwolf@gwolf.org
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+#+LaTeX_HEADER \usepackage[spanish]{babel}
+#+BEAMER_HEADER_EXTRA: \pgfdeclareimage[height=1.5cm]{../img/pres/cintillo.png}{../img/pres/cintillo.png}\logo{\pgfuseimage{../img/pres/cintillo.png}}
+#+BEAMER_HEADER_EXTRA: \AtBeginSection[]{ \begin{frame}<beamer> \frametitle{Índice} \tableofcontents[currentsection] \end{frame} }
+#+BEAMER_FRAME_LEVEL: 2
+#+MACRO: BEAMERMODE presentation
+#+MACRO: BEAMERTHEME Darmstadt
+#+MACRO: BEAMERCOLORTHEME lily
+#+MACRO: BEAMERINSTITUTE Facultad de Ingeniería, UNAM
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE: es
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:  
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+
+* Punto de partida
+
+** Mis coordenadas
+#+begin_center
+Personales
+#+end_center
+
+- Nombre :: Gunnar Eyal Wolf Iszaevich
+- E-mail :: gwolf+sistop@gwolf.org
+- Ubicación :: Instituto de Investigaciones Económicas UNAM
+
+#+begin_center
+Del curso
+#+end_center
+
+- Página Web :: http://sistop.gwolf.org/
+
+** Horario, calendario
+- Lunes, miércoles y viernes
+- 13:00 a 14:30
+- Salón ***
+- 72 horas clase en total… En teoría.
+  - Feriados 4 de febrero, 18 de marzo, 1, 10 y 15 de mayo
+  - Una sesión de presentación; estimo tres exámenes parciales
+- La realidad: 52.5 horas efectivas de clase.
+
+* Encuadre del curso
+
+** El curso dentro de la currícula de la carrera
+#+begin_center
+#+attr_latex: width=0.7\textwidth
+[[../img/pres/mapa_curricular.png]]
+#+end_center
+
+** Seriación y materias relacionadas
+- Seriación obligatoria: /Estructura y programación de computadoras/
+- Asumo familiaridad con:
+  - Computación para ingenieros
+  - Programación avanzada y métodos numéricos
+  - Algoritmos y estructura de datos
+
+** Lenguajes de programación
+- Familiaridad con algún lenguaje de programación de alto nivel
+  - Para seguir ejemplos (que serán principalmente en shell POSIX,
+    Ruby, Perl y Python)
+  - Para hacer ejercicios en clase (basta con pseudocódigo
+    semi-formal)
+  - Para tareas (¡código legal/válido!)
+- Familiaridad básica con C
+  - Más para leer que para desarrollar
+
+** Otros requisitos
+#+begin_center
+Linux (GNU) / Unix
+#+end_center
+- *Muy* conveniente tener acceso a un sistema basado en Linux, o algún
+  Unix
+- *Muy* preferentemente, software libre
+
+#+begin_center
+Lectura en inglés
+#+begin_center
+- Buena parte del material de referencia es en inglés
+- El material de estudios de caso casi siempre es en inglés
+- Nivel de comprensión de lectura *muy* recomendado
+
+** Programa de estudio
+#+begin_center
+#+attr_latex: width=\textwidth
+[[../img/pres/prog_estudio.png]]
+#+end_center
+
+* Enfoque personal
+** ¿Quién soy y por qué estoy aquí?
+- Formación autodidacta
+  - La necesidad es el mejor motor para aprender algo
+  - ¿No conocemos algo que necesitamos? Lo aprendemos sobre la marcha
+  - ¿Aprender algo para lo que no tengo uso? Aprendizaje destinado al
+    olvido/fracaso
+- Usuario, promotor y desarrollador de software libre
+
+** ¿Por qué me parece importante la materia?
+- No espero que se dediquen a /escribir/ sistemas operativos (aunque
+  puede ocurrir)
+- Pero en cualquier área de aplicación profesional /requerimos conocer
+  su funcionamiento/ para desempeñarnos mejor
+  - Citando el objetivo institucional de la materia, /administrar un
+    sistema operativo/ y /diseñar y desarrollar software operativo/
+- Lo que veamos en esta materia tendrá aplicación prácticamente en
+  cualquier área de desempeño profesional
+
+** ¿Qué debemos lograr?
+#+begin_center
+La Facultad dice que:\\
+#+attr_latex: width=0.9\textwidth
+[[../img/pres/prog_estudio.png]]
+#+end_center
+
+** ¿Qué espero que logremos?
+- Comprender la función de 
+
+* Estructura del curso
+** Unidades
+1. Introducción a los sistemas operativos
+2. Administración de procesos
+3. Administración de memoria
+4. Planificación de procesos
+5. Sistemas de archivos
+6. Sistemas de entrada/salida
+7. Sistemas distribuidos
+8. Seguridad y medidas de desempeño
+
+* Forma de evaluación
+** Porcentajes de evaluación
+** Toma de asistencia
+
+* Bibliografía
+
+** Bibliografía oficial del curso
+#+latex: \vfill {\scriptsize
+#+latex: \begin{columns}\begin{column}{0.4\textwidth}
+#+attr_latex: height=10em
+[[../img/pres/libro_silberschatz.png]]
+\vskip 2em
+#+attr_latex: height=10em
+[[../img/pres/libro_tanenbaum.png]]
+#+latex: \end{column}\begin{column}{0.5\textwidth}
+#+latex: {\large Operating System Concept Essentials} \\
+Abraham Silberschatz, Peter Baen Galvin, Greg Gagne\\
+Wiley (Traducción: Limusa)\\
+5ª edición (1998) en adelante
+#+latex: \vskip 2em
+#+latex: {\large Sistemas operativos: Diseño e implementación} \\
+Andrew S. Tanenbaum y Albert S. Woodhull \\
+Prentice Hall\\
+2ª (1997) o 3ª (2006) ediciones
+#+LaTeX: \end{column}\end{columns}
+
+** Libros descargables disponibles en español
+#+latex: \vfill {\scriptsize
+#+latex: \begin{columns}\begin{column}{0.25\textwidth} \vskip 10em
+#+attr_latex: height=10em
+[[../img/pres/libro_ruiz.png]]
+#+latex: \end{column}\begin{column}{0.7\textwidth}
+#+latex: {\large Sistemas Operativos} \\
+Luis La Red Martínez\\ Universidad Nacional del Nordeste (Argentina)\\
+[[http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/sistope2.PDF][Disponible en línea]] desde [[http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/SOF.htm][el sitio Web del autor]] (y también con [[http://sistop.gwolf.org/biblio/Sistemas_Operativos_-_Luis_La_Red_Martinez.pdf][copia
+local]] en la página del curso)
+#+latex: \vskip 2em {\large Sistemas operativos} \\
+Pablo Ruiz Múzquiz\\
+Libro Abierto / Serie Apuntes, 2004\\
+[[http://forja.rediris.es/frs/download.php/1922/SSOO-0_5_0.pdf][Disponible en línea]] desde la [[http://alqua.tiddlyspace.com/][editorial de textos libres Alqua]] (y
+también con [[http://sistop.gwolf.org/biblio/Sistemas_Operativos_-_Pablo_Ruiz_Muzquiz.pdf][copia local]] en la página del curso)
+#+latex: \end{column}\end{columns}
+
+** Otros textos recomendados
+
+#+latex: {\large An operating systems vade mecum } \\
+Raphael Finkel\\
+University of Kentucky - Lexington, 1988\\
+[[ftp://ftp.cs.uky.edu/cs/manuscripts/vade.mecum.2.pdf][Disponible en línea]] desde [[http://www.cs.uky.edu/~raphael/][el sitio Web del autor]] (y también con [[http://sistop.gwolf.org/biblio/An_operating_system_vade_mecum_-_Raphael_Finkel.pdf][copia
+local]] en la página del curso)
+
+#+latex: \vskip 2em {\large A short introduction to operating systems } \\
+Mark Burgess\\
+Oslo University College, 2001 \\
+[[http://www.iu.hio.no/~mark/os/os.pdf][Disponible en línea]] desde [[http://cfengine.com/markburgess/writing.html][el sitio Web del autor]] (y también
+con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_Mark_Burgess.pdf][copia local]] en la página del curso)
+
+#+end_center
+
+** Más allá...
+- Emplearemos más bibliografía a lo largo del curso respecto a temas
+  específicos
+- En todo momento que empleemos un texto en particular; les haré
+  llegar copia (electrónica).

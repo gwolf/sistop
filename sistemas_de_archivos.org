@@ -1,15 +1,12 @@
 #+TITLE: Sistemas Operativos — Sistemas de archivos
 #+AUTHOR: Gunnar Wolf
-#+EMAIL: gwolf@gwolf.org
+#+EMAIL: gwolf@sistop.org
 #+LANGUAGE: es
 #+OPTIONS: LaTeX:dvipng
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 #+BIBLIOGRAPHY: /home/gwolf/vcs/doc_gwolf/bib/gwolf.bib apalike limit:t
 
 * Generalidades
-
-Para este tema recomiendo fuertemente referirse al libro [[practical
-file system design]] \cite{BeFS} (sección /Bibliografía adicional/).
 
 Un /sistema de archivos/ es la estructura por medio de la cual el
 sistema operativo organiza y presenta las abstracciones necesarias
@@ -306,12 +303,31 @@ de Berkeley/ (Berkeley Fast File System, FFS).
 
 Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
 * Otros recursos
+- Practical File System Design (Dominic Giampaolo, 1999): El autor fue
+  parte del equipo que implementó el sistema operativo BeOS, un
+  sistema de alto rendimiento pensado para correr en estaciones de
+  alto rendimiento, particularmente enfocado al video. El proyecto
+  fracasó a la larga, y BeOS (así como BeFS, el sistema que describe)
+  ya no se utilizan. Este libro tiene una muy buena descripción de
+  varios sistemas de archivos, y aborda a profundidad técnicas que
+  hace 15 años eran verdaderamente novedosas, y hoy forman parte de
+  casi todos los sistemas de archivos con uso amplio, e incluso
+  algunas que no se han logrado implementar y que BeFS sí ofrecía.
+
 - [[http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf][A Fast File System for UNIX]] (Marshall Kirk Mckusick, William N. Joy,
   Samuel J. Lefler, Robert S. Fabry, 1984)
+
 - [[http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf][The Design and Implementation of a Log-Structured File System]]
   (Mendel Rosenblum, J. K. Ousterhout, 1992)
+
+- [[http://www.nongnu.org/ext2-doc/][The Second Extended File System: Internal Layout]] (Dave Poirier,
+  2001-2011)
+
 - [[http://www.cyanezfdz.me/nilfs2-en-linux.html][NILFS2 en Linux]] (César Yáñez)
+
 - [[http://www.cyanezfdz.me/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos.html][Los discos desde la perspectiva de un sistema de archivos]] (César
   Yáñez)
+
 - [[http://lwn.net/Articles/529077/][A hash-based DoS attack on Btrfs]] (LWN)
+
 - [[http://linux.slashdot.org/story/12/12/15/0055217/denial-of-service-attack-found-in-btrfs-file-system][Denial-of-Service Attack Found In Btrfs File-System]] (Slashdot)

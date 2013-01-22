@@ -13,6 +13,13 @@ pdf:
 		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; done
 
+slides:
+	for i in laminas/*.org; do \
+	    h=`echo $$i|sed s/.org$$/.pdf/`; \
+	    if [ ! -f $$h -o $$i -nt $$h ] ; then \
+		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
+	    fi ; done
+
 all: html
 
 clean:

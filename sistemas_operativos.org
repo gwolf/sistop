@@ -1,11 +1,11 @@
 #+TITLE: Sistemas Operativos
 #+AUTHOR: Gunnar Wolf
-#+EMAIL: gwolf@gwolf.org
+#+EMAIL: gwolf@sistop.org
 #+LANGUAGE: es
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 
-* Generalidades del curso
-** Calendario general
+* Calendario general
+
 Esta materia se imparte los días /lunes, miércoles y viernes/ de
 13:00 a 14:30 en *algún día sabré qué salón*.
 
@@ -20,7 +20,28 @@ contaremos con 64.5 horas efectivas de clase. Asumiendo una sesión de
 presentación y tres exámenes parciales, quedamos en 52.5 horas. Así
 que, sin más, ¡tendremos que ponernos las pilas!
 
-** Punto de partida
+* Punto de partida
+
+El objetivo formal del curso, según el material de la Facultad de
+Ingeniería, es:
+
+#+begin_quote
+El alumno obtendrá las bases para administrar un sistema operativo,
+así como diseñar y desarrollar software operativo.
+#+end_quote
+
+A este objetivo genérico y formal, yo agrego lo que espero que
+logremos a lo largo del curso:
+
+- Comprender el rol del sistema operativo
+- Conociendo el funcionamiento general de los sistemas operativos,
+  poder sacar mejor provecho de la computadora
+  - Al programar
+  - Al administrarla
+  - Al emplearla como usuario final
+- Ser un usuario /más responsable/
+- Conocer y saber aprovechar no sólo los sistemas, sino las
+  metodologías y principales formas de interacción del software libre
 
 Esta clase asume que tienen todo el conocimiento básico de los
 [[http://www.ingenieria.unam.mx/paginas/Carreras/planes2010/ingComputo_Plan.htm][primeros cuatro semestres de la carrera de Ingeniería en
@@ -37,12 +58,98 @@ no sólo para desarrollar ejercicios, sino para entender código
 ejemplo.
 
 Resultará muy conveniente que tengan acceso a una computadora con
-sistema operativo Linux
+sistema operativo Linux (GNU) u otro Unix libre. En caso de que no
+quieran hacer la instalación completa en la computadora /real/, les
+sugiero emplear una /máquina virtual/; buena parte de las computadoras
+disponibles hoy en día lo permitirán. A través del uso continuado de
+un sistema tipo Unix, estoy seguro que lo terminarán adoptando como
+entorno primario tarde o temprano.
 
-** Forma de evaluación
+En el curso manejaremos textos en inglés, tanto para la bibliografía
+como para estudios de caso. Es /muy recomendado/ que tengan un nivel
+de comprensión que les permita la lectura de textos medianamente
+técnicos.
 
+* Criterios de evaluación
 
-* Introducción a los sistemas operativos
+La calificación que obtendrán en el curso consiste de:
+|-----------------------+-----|
+| Examenes parciales    | 60% |
+| Tareas y exposiciones | 30% |
+| Proyecto final        | 20% |
+|-----------------------+-----|
+
+Esto nos otorga un total posible del 110% — en caso de alcanzar
+porcentajes superior al 100%, la calificación se recortará al máximo
+definido.
+
+A lo largo del curso tendremos un /mínimo/ de 3 exámenes parciales
+(aunque, en caso de juzgarlo necesario, puede haber más). Los
+exámenes parciales serán anunciados con por lo menos una semana de
+antelación. En caso de haber exámenes adicionales, pueden ser
+parciales anunciados o sorpresa.
+
+Una calificación global de 8 exime de la obligación de presentar un
+examen ordinario.
+
+Mi compromiso por docente es entregar los exámenes /corregidos/ a la
+brevedad. Los exámenes parciales /deben cumplir un rol formativo/, por
+lo que los entregaré detallando cuáles son los errores.
+
+Todas las sesiones de clase se tomará asistencia. La asistencia de
+clase es obligatoria. Sólo con un 80% de asistencias tendrán derecho
+ya sea a la exención o a presentar el examen ordinario. Si llegan más
+de 15 minutos tarde, podran entrar al salón y tomar la clase, pero no
+contará como asistencia. Si salen a media clase por un tiempo
+prolongado, me reservo el derecho de anular su asistencia.
+
+Por último, me permito recalcar que /todo fraude causa baja/ del
+curso. Si encuentro que copiaron, ya sea en tareas, exámenes o
+cualquier otro tipo de ejercicio, /puedo darlos de baja del grupo/ sin
+derecho a examen ordinario. Como consecuencia lógica, en caso de dejar
+algún tema a investigar o desarrollar de tarea, /nada de copiar y
+pegar/. No se expongan gratuitamente a mis malas interpretaciones.
+
+* Normas de convivencia
+
+El curso requiere un /ambiente de respeto mutuo/ como primera
+condición. No requiero que tengamos un trato /formal/ — No tengo
+ningún problema con que nos /tuteemos/, pero sí con cualquier falta de
+respeto. Y no sólo entre docente y estudiante, sino entre cualquiera
+de los estudiantes. Me reservo el derecho de tomar medidas correctivas
+cuando sea que se presenten situaciones de falta de respeto.
+
+Como parte de la exigencia de respeto mutuo (y al grupo, y a uno
+mismo), manejaremos un /lenguaje correcto/. Si tienen que entrar o
+salir a media clase, háganlo discretamente y sin estorbar. Si van a
+tener que salir antes de terminar la clase, elijan un lugar cerca de
+la puerta.
+
+Es deseable que no comamos en clase. Sin embargo, reconozco que el
+horario que nos tocó juega en contra de ello. Algunos de ustedes
+pueden tener clases corridas en este horario. Se permite que coman en
+clase siempre y cuando lo hagan sin molestar a terceros, ya sea con
+ruido (no bolsas de papitas) o con olores (un sandwich frío, no una
+torta recién frita). Como condición fundamental, /no deben dejar
+basura/. Si el salón queda sucio varias veces, puedo cancelar esta
+concesión.
+
+Los teléfonos celulares /deben estar apagados/ en el transcurso de la
+clase. No en modo vibrador — Apagados. Aunque tengan asuntos muy
+importantes o urgentes, la atención en el transcurso de la clase se
+pierde muy fácilmente con las distracciones del teléfono. Y esto vale
+tanto para uno como para los compañeros (y hasta para el docente). En
+caso de haber una situación excepcional que requiera que estén
+pendientes a algún mensaje, /me lo deberán comunicar al inicio de la
+clase/.
+
+* Estructura temática del curso
+
+Seguiremos el programa del curso tal como está planificado por la
+Facultad. Las unidades a seguir están desarrolladas en los apuntes
+específicos de cada tema.
+
+** Introducción a los sistemas operativos
 - Objetivo :: El alumno describirá las funciones, características y
               estructura de los sistemas operativos
 - Subtemas ::
@@ -51,7 +158,7 @@ sistema operativo Linux
   - Estructura de los sistemas operativos
 - Apuntes :: [[./introduccion.org][Ir a los apuntes del tema]]
 
-* Administración de procesos
+** Administración de procesos
 - Objetivo :: El alumno identificará los tipos de procesos y sus
 	      estados. Describirá las diferentes técnicas de
 	      comunicación y sincronización de procesos concurrentes.
@@ -63,7 +170,7 @@ sistema operativo Linux
     - Bloqueos mutuos
 - Apuntes :: [[./administracion_de_procesos.org][Ir a los apuntes del tema]]
 
-* Administración de memoria
+** Administración de memoria
 - Objetivo :: El alumno explicará las diferentes técnicas de
               asignación de memoria contigua y no contigua.
 - Subtemas ::
@@ -80,7 +187,7 @@ sistema operativo Linux
     - Reemplazo de páginas
     - Asignación de marcos e hiperpaginación
 - Apuntes :: [[./administracion-de-memoria.org][Ir a los apuntes del tema]]
-* Planificación de procesos
+** Planificación de procesos
 - Objetivo :: El alumno explicará las diferentes técnicas de
               asignación del procesador a los procesos.
 - Subtemas ::
@@ -89,7 +196,7 @@ sistema operativo Linux
   - Planificación de multiprocesadores y en tiempo real
   - Planificación de hilos
 - Apuntes :: [[./planificacion_de_procesos.org][Ir a los apuntes del tema]]
-* Sistemas de archivos
+** Sistemas de archivos
 - Objetivo :: El alumno describirá las diferentes formas de
 	      organización y acceso a archivos, basándose en el modelo
 	      de sistema de archivos.
@@ -102,7 +209,7 @@ sistema operativo Linux
   - Administración del espacio libre
 
 - Apuntes :: [[./sistemas_de_archivos.org][Ir a los apuntes del tema]]
-* Sistemas de entrada/salida
+** Sistemas de entrada/salida
 - Objetivo :: El alumno explicará las diversas funciones de
 	      entrada/salida en la administración y control de
 	      dispositivos periféricos. Además analizará, con un
@@ -114,7 +221,7 @@ sistema operativo Linux
   - Almacenamiento intermedio de la entrada/salida
   - Planificación de discos
 - Apuntes :: [[./entrada_salida.org][Ir a los apuntes del tema]]
-* Sistemas distribuídos
+** Sistemas distribuídos
 - Objetivo :: El alumno explicará cómo se administran los procesos y
 	      archivos que se encuentran en un sistema distribuido.
 - Subtemas ::
@@ -129,7 +236,7 @@ sistema operativo Linux
     - Bloqueo mutuo distribuido
   - Sistema de archivos distribuidos
 - Apuntes :: [[./sistemas_distribuidos.org][Ir a los apuntes del tema]]
-* Seguridad y medidas de desempeño
+** Seguridad y medidas de desempeño
 - Objetivo :: El alumno explicará cómo asegurar el adecuado
               funcionamiento del sistema operativo.
 - Subtemas ::
@@ -143,18 +250,24 @@ sistema operativo Linux
 - Apuntes :: [[./seguridad_y_desempeno.org][Ir a los apuntes del tema]]
 * Bibliografía
 ** Del programa de la Facultad
+El curso fue diseñado siguiendo principalmente los siguientes textos:
+
+- SILBERSCHATZ, GALVIN, GAGNE: /Sistemas Operativos/ 6a. edición
+  (México, Limusa - Wiley, 2002)
+- TANENBAUM, Andrew y WOODHULL, Albert: /Sistemas Operativos. Diseño e
+  implementación/ 2a. edición (México, Prentice Hall, 1999)
+
+Los siguientes forman también parte de la bibliografía sugerida por
+parte de la Facultad, y pueden también emplearse como libros de texto
+
 - CARRETO DE MIGUEL, GARCÍA PÉREZ: /Sistemas Operativos. Una visión
   aplicada/ (España, Mc. Graw Hill/Interamericana de España, 2001)
 - DEITEL, H. M.: /Introducción a los Sistemas Operativos/ 2a. edición
   (México Addison Wesley Iberoamericana, 2000)
 - FLYNN, Ida y McIver A.: /Sistemas Operativos/ 3a. edición (México,
   Thomson Learning, 2001)
-- SILBERSCHATZ, GALVIN, GAGNE: /Sistemas Operativos/ 6a. edición
-  (México, Limusa - Wiley, 2002)
 - STALLINGS, William: /Operating Systems/ 5th edition (USA, Prentice
   Hall, 2004)
-- TANENBAUM, Andrew y WOODHULL, Albert: /Sistemas Operativos. Diseño e
-  implementación/ 2a. edición (México, Prentice Hall, 1999)
 - MÁRQUEZ GARCÍA, Francisco Manuel: /UNIX. Programación avanzada/
   3a. edición (México Alfa omega Grupo Editor, 2004)
 
@@ -163,39 +276,20 @@ sistema operativo Linux
 Aquí compartiré algunos textos de libre redistribución que pueden ser
 buen material de referencia para el curso.
 
-- [[./biblio/Sistemas_Operativos_-_Luis_La_Red_Martinez.pdf][Luis La Red Martínez: Sistemas Operativos]] (2001)
+Además de este material, hay textos que emplearemos para temas
+específicos, y se indicarán en la unidad correspondiente.
 
-- [[./biblio/Sistemas_Operativos_-_Pablo_Ruiz_Muzquiz.pdf][Pablo Ruiz Múzquiz: Sistemas Operativos]] (2004)
+- [[./biblio/Sistemas_Operativos_-_Luis_La_Red_Martinez.pdf][Luis La Red Martínez: Sistemas Operativos]] (2001): Texto completo y
+  a profundidad, con varios temas desarrollados con un nivel apto
+  para estudios de posgrado
 
-- [[Little_Book_of_Semaphores_-_Allen_Downey.pdf][Allen Downey: The little book of semaphores]] (2008)
-
-** Adicional (restringidos)
-
-En esta sección pondré a su disposición textos variados; por razones
-de derechos de autor, no puedo ofrecerlos abiertamente, así que
-estarán protegidos por una contraseña que les daré en clase.
-
-Tampoco quiero con esto romper la ley con material actualmente en
-venta — Estos textos pueden ser viejos (llamémosle "clásicos") y ya no
-disponibles para su venta, o claramente no destinados a ello.
+- [[./biblio/Sistemas_Operativos_-_Pablo_Ruiz_Muzquiz.pdf][Pablo Ruiz Múzquiz: Sistemas Operativos]] (2004): Texto más simple e
+  introductorio, bien escrito, fácil de seguir.
 
 - [[./biblio/An_operating_system_vade_mecum_-_Raphael_Finkel.pdf][An Operating Systems Vade Mecum (Raphael Finkel, 1988)]]. Si bien este
   libro es ya algo más que muy viejo, especialmente dada la velocidad
   de este campo, tiene muy buenas descripciones de varios de los temas
   que abordaremos.
-
-# <<practical file system design>>
-- [[./biblio/priv/Practical_file_system_design_with_the_Be_File_System_-_Dominic_Giampaolo.pdf][Practical file system design with the Be File System (Dominic
-  Giampaolo, 1999)]]. Giampaolo fue parte del equipo que implementó el
-  sistema operativo BeOS, un sistema de alto rendimiento pensado para
-  correr en estaciones de alto rendimiento, particularmente enfocado
-  al video. El proyecto fracasó a la larga, y BeOS (así como BeFS, el
-  sistema que describe) ya no se utilizan. Este libro tiene una muy
-  buena descripción de varios sistemas de archivos, y aborda a
-  profundidad técnicas que hace 15 años eran verdaderamente novedosas,
-  y hoy forman parte de casi todos los sistemas de archivos con uso
-  amplio, e incluso algunas que no se han logrado implementar y que
-  BeFS sí ofrecía.
 
 - [[./biblio/Short_introduction_to_operating_systems_-_Mark_Burgess.pdf][A short introduction to operating systems (Mark Burgess, 2001)]]. Un
   libro tutorial que cubre buena parte del material de este curso,
@@ -212,3 +306,30 @@ disponibles para su venta, o claramente no destinados a ello.
   Incluyo a este libro por conveniencia al alumno; el autor
   distribuye este texto desde su sitio Web, tanto [[http://www.iu.hio.no/~mark/os/os.pdf][en formato PDF]] como
   [[http://www.iu.hio.no/~mark/os/os.html][en formato HTML]].
+
+** Para subtemas específicos
+
+- [[Little_Book_of_Semaphores_-_Allen_Downey.pdf][Allen Downey: The little book of semaphores]] (2008)
+
+** Adicional (restringidos)
+
+En esta sección pondré a su disposición textos variados; por razones
+de derechos de autor, no puedo ofrecerlos abiertamente, así que
+estarán protegidos por una contraseña que les daré en clase.
+
+Tampoco quiero con esto romper la ley con material actualmente en
+venta — Estos textos pueden ser viejos (llamémosle "clásicos") y ya no
+disponibles para su venta, o claramente no destinados a ello.
+
+# <<practical file system design>>
+- [[./biblio/priv/Practical_file_system_design_with_the_Be_File_System_-_Dominic_Giampaolo.pdf][Practical file system design with the Be File System (Dominic
+  Giampaolo, 1999)]]. Giampaolo fue parte del equipo que implementó el
+  sistema operativo BeOS, un sistema de alto rendimiento pensado para
+  correr en estaciones de alto rendimiento, particularmente enfocado
+  al video. El proyecto fracasó a la larga, y BeOS (así como BeFS, el
+  sistema que describe) ya no se utilizan. Este libro tiene una muy
+  buena descripción de varios sistemas de archivos, y aborda a
+  profundidad técnicas que hace 15 años eran verdaderamente novedosas,
+  y hoy forman parte de casi todos los sistemas de archivos con uso
+  amplio, e incluso algunas que no se han logrado implementar y que
+  BeFS sí ofrecía.

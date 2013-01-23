@@ -888,8 +888,174 @@ cuales tenemos a:
           esté bailando al mismo tiempo, o asegurar que los hilos en
           espera vayan bailando en el órden en que llegaron.
 
-*** TODO Monitores
 *** TODO Soluciones a los problemas clásicos
+
+*** Monitores
+
+El principal problema con los mecanismos anteriormente descritos es
+que no sólo hace falta encontrar un mecanismo que permita evitar
+el acceso simultáneo a la sección crítica sin caer en bloqueos mutuos
+o inanición, sino que hay que /implementarlo correctamente/,
+empleando una semántica que requiere de bastante entrenamiento para
+entender correctamente.
+
+Además, al hablar de procesos que compiten por recursos de una forma
+/hostil/, nuestra implementación basada en semáforos puede resultar
+insuficiente. Ilustremos, por ejemplo, por qué en el modelo original
+de Djikstra (así como en los ejemplos que presentamos anteriormente)
+sólo existen las operaciones de incrementar y decrementar, y no se
+permite verificar el estado (como lo ofrece =sem_trywait()= en
+=pthreads=):
+
+#+begin_src C
+while (! sem_trywait(semaforo)) {}
+seccion_critica();
+sem_post(semaforo);
+#+end_src
+
+El código presentado es absolutamente válido — Pero cae en una
+/espera activa/ que desperdicia innecesariamente y constantemente
+tiempo de procesador (y no tiene garantía de tener más éxito que una
+espera pasiva, como sería el caso con un =sem_wait()=).
+
+Por otro lado, algún programador puede creer que su código ejecutará
+suficientemente rápido y con suficientemente baja frecuencia para que
+la probabilidad de que usar la sección crítica le cause problemas sea
+muy baja. Es frecuente ver ejemplos como el siguiente:
+
+#+begin_src C
+/* Cruzamos los dedos... ¡A fin de cuentas, corremos con baja frecuencia! */
+seccion_critica();
+#+end_src
+
+Los perjuicios causados por este programador resultan obvios. Sin
+embargo, es común ver casos como este.
+
+Los /monitores/ son estructuras provistas por el lenguaje o entorno de
+desarrollo que /encapsulan/ tanto a los datos /como a las funciones
+que los pueden manipular/, e impiden el acceso directo a las funciones
+potencialmente peligrosas — En otras palabras, son /tipos de datos
+abstractos/ (ADTs), /clases/ de /objetos/, y /exponen/ una serie de
+/métodos públicos/, además de los /métodos privados/ que emplean
+internamente.
+
+Al no presentar al usuario/programador una interfaz que puedan
+/subvertir/, el monitor asegura que todo el código necesario para
+asegurar el acceso concurrente a los datos está en un sólo lugar.
+
+#+begin_center
+#+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+[[./img/monitor.png]]
+
+Vista esquemática de un monitor. No es ya un conjunto de
+procedimientos aislados, sino que una abstracción que permite
+realizar únicamente las operaciones públicas sobre datos
+encapsulados. (Silberschatz, p.239)
+#+end_center
+
+
+Un monitor puede implementarse utilizando cualquiera de los
+mecanismos de sincronización que presentamos anteriormente — La
+diferencia radica en que esto es hecho /en un sólo lugar/. Los
+programas que quieran emplear el recurso protegido lo hacen
+incluyendo a nuestro código como módulo / biblioteca, lo cual fomenta
+la /reutilización de código/.
+
+Como ejemplo, el lenguaje de programación /Java/ implementa
+sincronización vía monitores entre hilos como una propiedad de la
+declaración de método, y lo implementa directamente en la JVM. Si
+declaramos un método de la siguiente manera (Silberschatz):
+
+#+begin_src java
+public class SimpleClass {
+  // . . .
+  public synchronized void safeMethod() {
+    /* Implementation of safeMethod() */
+  // . . .
+  }
+}
+#+end_src
+
+E inicializamos a un =SimpleClass sc = new SimpleClass()=, cuando
+llamemos a =sc.safeMethod()=, la máquina virtual verificará si ningún
+otro proceso está ejecutando =safeMethod()=; en caso de que no sea
+así, le permitirá la ejecución obteniendo el candado, y en caso de sí
+haberlo, el hilo se bloqueará hasta que el candado sea liberado.
+
+El modelo de sincronización basado en monitores no sólo presenta a la
+exclusión mutua. A través /variables de condición/ podemos también
+emplear una semántica parecida (aunque no igual) a la de los
+semáforos, con los métodos =var.wait()= y =var.signal()=. En el caso
+de los monitores, =var.wait()= suspende al hilo hasta que otro hilo
+ejecute =var.signal()=; en caso de no haber ningún proceso esperando,
+=var.signal()= no tiene ningún efecto (no cambia el estado de =var=,
+a diferencia de lo que ocurre con los semáforos)
+
+Presento, a modo de ilustración, la resolución del problema de la
+/cena de los filósofos/ en C[fn:: Implementación basada en el ejemplo
+de Ted Baker,
+http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html]. Esto
+demuestra, además, que si bien utilizamos semántica de orientación a
+objetos, no sólo los lenguajes clásicamente relacionados con la
+programación orientada a objetos nos permiten emplear monitores.
+
+#+begin_src c
+/* Implementación para cinco filósofos */
+pthread_cond_t  CV[NTHREADS];    /* Una variable de condicion por filosofo */
+pthread_mutex_t M;               /* Mutex para el monitor */
+int             state[NTHREADS]; /* Estado de cada cada filosofo */
+
+void init () {
+    int i;
+    pthread_mutex_init(&M, NULL);
+    for (i = 0; i < 5; i++) {
+        pthread_cond_init(&CV[i], NULL);
+        state[i] = PENSANDO;
+    }
+}
+
+void toma_palillos (int i) {
+    pthread_mutex_lock(&M)
+    state[i] = HAMBRIENTO;
+    actualiza(i);
+    while (state[i] == HAMBRIENTO)
+        pthread_cond_wait(&CV[i], &M);
+    pthread_mutex_unlock(&M);
+}
+
+void suelta_palillos (int i) {
+    state[i] = PENSANDO;
+    actualiza((i + 4) % 5);
+    actualiza((i + 1) % 5);
+    pthread_mutex_unlock(&M);
+}
+
+void come(int i) {
+    printf("El filósofo %d está comiendo\n", i);
+}
+
+/* No incluimos 'actualiza' en los encabezados, es una función interna */
+int actualiza (int i) {
+    if ((state[(i + 4) % 5] != COMIENDO) &&
+        (state[i] == HAMBRIENTO) &&
+        (state[(i + 1) % 5] != COMIENDO)) {
+        state[i] = COMIENDO;
+        pthread_cond_signal(&CV[i]);
+    }
+    return 0;
+}
+#+end_src
+
+Con esta declaración, la implementación completa de cada uno de los
+filósofos se reduce a:
+
+#+begin_src c
+toma_palillos(i);
+come();
+suelta_palillos(i);
+#+end_src
+
 * Bloqueos mutuos
 
 Un bloqueo mutuo puede ejemplificarse con la situación que se presenta
@@ -1286,6 +1452,7 @@ recursos /4/, /5/ y /7/.
 #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+
 [[./img/deteccion_bloqueos_2.png]]
 
 Detección de bloqueos: Proceso de reducción en un grafo de procesos y

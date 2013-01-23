@@ -2,7 +2,11 @@
 #+AUTHOR: Gunnar Wolf
 #+EMAIL: gwolf@sistop.org
 #+LANGUAGE: es
+#+OPTIONS: LaTeX:dvipng
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
+#+BIBLIOGRAPHY: /home/gwolf/vcs/doc_gwolf/bib/gwolf.bib apalike limit:t
+#+LATEX_HEADER: \usepackage[spanish]{babel}
+#+STYLE: <link rel="stylesheet" type="text/css" href="sistop.css" />
 
 * ¿Qué es un sistema operativo?
 
@@ -232,14 +236,10 @@ entusiastas y, posteriormente, de cualquiera.
 
 ** Primeros sistemas para entusiastas
 
-#+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: La /microcomputadora Altair 8800/, primer computadora personal con distribución masiva, a la venta a partir de 1975 ([[http://web.ncf.ca/dunfield/classic.htm][Imagen de Dave Dunfield]])
 [[./img/altair.jpg]]
-
-La /microcomputadora Altair 8800/, primer computadora personal con
-distribución masiva, a la venta a partir de 1975 ([[http://web.ncf.ca/dunfield/classic.htm][Imagen de Dave
-Dunfield]])
-#+end_center
 
 Las primeras computadoras personales tampoco eran distribuídas con
 sistemas operativos o lenguajes de programación; la interfaz primaria
@@ -259,13 +259,10 @@ los usuarios gestionar sus recursos (unidades de cinta, pantalla
 posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
 software mínimo de sistema — Nuevamente, un proto-sistema operativo.
 
-#+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras con intérprete de BASIC. ([[http://www.classiccmp.org/dunfield/pet/index.htm][Imagen de Dave Dunfield]])
 [[./img/commodore_pet.jpg]]
-
-La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras
-con intérprete de BASIC. ([[http://www.classiccmp.org/dunfield/pet/index.htm][Imagen de Dave Dunfield]])
-#+end_center
 
 ** La computadora para fines "serios": La familia PC
 
@@ -286,14 +283,10 @@ eventualmente capturaron prácticamente el 100% del
 mercado. Prácticamente todas las computadoras de escritorio y
 portátiles en el mercado hoy derivan de la arquitectura de la IBM PC.
 
-#+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: La computadora IBM PC modelo 5150 (1981), iniciadora de la arquitectura predominantemente en uso hasta el día de hoy. (Imagen de la Wikipedia: /IBM Personal Computer/)
 [[./img/ibmpc.jpg]]
-
-La computadora IBM PC modelo 5150 (1981), iniciadora de la
-arquitectura predominantemente en uso hasta el día de hoy. ([[https://en.wikipedia.org/wiki/IBM_Personal_Computer][Imagen de
-la Wikipedia]])
-#+end_center
 
 Ante las aplicaciones, el sistema operativo (PC-DOS, en las versiones
 distribuídas directamente por IBM, o el que se popularizó más, MS-DOS,
@@ -314,13 +307,11 @@ la primer interfaz de MacOS permitía visualizar a varias ventanas
 abiertas simultáneamente, pero sólo el proceso que estuviera activo se
 ejecutaba.
 
-#+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: Apple Macintosh (1984), popularizó la interfaz usuario gráfica (GUI). (Imagen de la Wikipedia: /Macintosh/)
 [[./img/mac128.png]]
 
-Apple Macintosh (1984), popularizó la interfaz usuario gráfica
-(GUI). ([[https://en.wikipedia.org/wiki/File:Macintosh_128k_transparency.png][Imagen de la Wikipedia]])
-#+end_center
 
 Esto comenzó, sin embargo, a plantear inevitablemente las necesidades
 de concurrencia a los programadores. Los programas ya no tenían acceso
@@ -343,14 +334,10 @@ completa del equipo. Y si bien los entornos que más éxito tuvieron
 hubo desde el principio sistemas como la Commodore Amiga o la Atari ST
 que hacían un multitasking /preventivo/ verdadero.
 
-#+begin_center
 #+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: Commodore Amiga 1000 (1985), computadora con amplias capacidades multimedia y multitarea preventiva, una verdadera maravilla para su momento. ([[http://oldcomputers.net/amiga1000.html][Imagen de /OldComputers.net/]])
 [[./img/A1000.jpg]]
-
-Commodore Amiga 1000 (1985), computadora con amplias capacidades
-multimedia y multitarea preventiva, una verdadera maravilla para su
-momento. ([[http://oldcomputers.net/amiga1000.html][Fuente de la imagen]])
-#+end_center
 
 Naturalmente, ante el uso común de un entorno de ventanas, los
 programas que se ejecutaban sin requerir de la carga del sistema
@@ -471,13 +458,10 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      usuario como los microkernel (por ejemplo, los sistemas de
      archivos en espacio de usuario, FUSE, en Linux).
 
-#+begin_center
-#+attr_html: height="350"
+#+attr_html: width="100%"
+#+attr_latex: width=0.5\textwidth
+#+caption: Esquematización de la arquitectura básica de los sistemas monolíticos, microkernel e híbridos. ([[https://commons.wikimedia.org/wiki/File:OS-structure2.svg][Imagen de la Wikipedia: Monolithic kernel]])
 [[./img/monolithic_micro_hybrid.png]]
-
-Esquematización de la arquitectura básica de los sistemas monolíticos,
-microkernel e híbridos. ([[https://commons.wikimedia.org/wiki/File:OS-structure2.svg][Imagen de la Wikipedia]])
-#+end_center
 
 # Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
 # microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
@@ -514,8 +498,9 @@ la memoria aumentó su velocidad a un ritmo mucho menor —
 Aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
-# #+begin_center
+#+attr_latex: height=0.5\textheight
 #+attr_html: height="350"
+#+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
 #+begin_src dot :file ltxpng/jearquia_memoria.png
 digraph G {
 	layout = dot;
@@ -547,8 +532,10 @@ digraph G {
 	Magnet -> Cinta [dir = both, minlen=2];
 }
 #+end_src
-Jerarquía de memoria entre diversos medios de almacenamiento.
-# #+end_center
+
+#+begin_html
+<p align="center">Jerarquía de memoria entre diversos medios de almacenamiento.</p>
+#+end_html
 
 Una respuesta parcial a este problema es la creación de una jerarquía
 de almacenamiento, yendo de una pequeña área de memoria mucho más cara
@@ -557,21 +544,16 @@ relación entre las capas superiores está administrada por hardware
 especializado de modo que su existencia resulta transparente al
 programador.
 
-#+begin_center
-| Nivel                   | 1                                    | 2                                | 3                 | 4                 |
-|-------------------------+--------------------------------------+----------------------------------+-------------------+-------------------|
-| *Nombre*                | Registros                            | Cache                            | Memoria principal | Disco             |
-| *Tamaño típico*         | <1KB                                 | <16MB                            | <64GB             | >100GB            |
-| *Tecnología típica*     | Memoria específica multipuerto, CMOS | RAM estática CMOS (en chip o no) | CMOS DRAM         | Disco magnético   |
-| *Tiempo de acceso (ns)* | 0.25-0.5                             | 0.5-25                           | 80-250            | 5,000,000         |
-| *Ancho de banda (MB/s)* | 20,000-100,000                       | 5,000-10,000                     | 1,000-5,000       | 20-150            |
-| *Administrado por*      | Compilador                           | Hardware                         | Sistema operativo | Sistema operativo |
-| *Respaldado en*         | Cache                                | Memoria principal                | Disco             | CD o cinta        |
-
-
-Velocidad y gestor de los principales niveles de
-memoria. (Silberschatz, Galvin, Gagne; p.28)
-#+end_center
+#+caption: Velocidad y gestor de los principales niveles de memoria. (Silberschatz, Galvin, Gagne; p.28)
+| Nivel           | 1                 | 2              | 3              | 4          |
+|-----------------+-------------------+----------------+----------------+------------|
+| *Nombre*        | Registros         | Cache          | Memoria princ. | Disco      |
+| *Tamaño*        | <1KB              | <16MB          | <64GB          | >100GB     |
+| *Tecnología*    | Multipuerto, CMOS | SRAM CMOS      | CMOS DRAM      | Magnética  |
+| *Acceso (ns)*   | 0.25-0.5          | 0.5-25         | 80-250         | 5,000,000  |
+| *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
+| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
+| *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
 
 ** Registros
 
@@ -696,14 +678,11 @@ operativo ofrece un conjunto de llamadas al sistema distinto, cada
 implmentación de un lenguaje de programación puede ofrecer un API
 ligeramente distinto de otros.
 
-#+begin_center
+#+attr_latex: width=0.7\textwidth
 #+attr_html: height="350"
+#+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
 [[./img/llamando_syscall.png]]
 
-Un API expone una interfaz en un lenguaje de alto nivel hacia una
-llamada al sistema. (Imagen: /Operating System Concepts Essentials/;
-Silberschatz, Galvin, Gagne; p.56)
-#+end_center
 
 *** Llamadas al sistema, arquitecturas y APIs
 
@@ -744,6 +723,7 @@ da es, sin embargo, a veces demasiado — Consideren la siguiente
 traza, ante uno de los comandos más sencillos: =pwd= (obtener el
 directorio actual)
 
+#+latex: {\scriptsize
 #+begin_src sh
 $ strace pwd
 execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
@@ -785,6 +765,7 @@ munmap(0xb773c000, 4096)                = 0
 close(2)                                = 0
 exit_group(0)                           = ?
 #+end_src
+#+latex: }
 
 * Otros recursos
 

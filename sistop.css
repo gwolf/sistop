@@ -1,0 +1,36 @@
+/* Agrega una etiqueta con el nombre del lenguaje a los bloques de
+   código. Tomado de Ken Williams, lista de correo
+   emacs-orgmode@gnu.org, 23/01/2013
+   (<DB9AE166BFBB0640B307A82E6F93D02601253F@SPEXCH02.WindLogics.local>)
+*/
+
+pre.src {
+  background-color: #336666;
+  position: relative;
+  overflow: visible;
+  margin-right: auto;
+}
+
+pre.src:before {
+  position: absolute;
+  top: -15px;
+  color: #ffffff;
+  background: #003333;
+  padding: 1px;
+  border: 1px solid #003333;
+  font-size: small;
+  font-style: italic;
+  font-family: sans-serif;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+
+pre.src-bash:before, pre.src-sh:before   { content: 'Shell'; }
+pre.src-c:before, pre.src-C:before { content: 'C'; }
+pre.src-java:before { content: 'Java'; }
+pre.src-perl:before { content: 'Perl'; }
+pre.src-python:before { content: 'Python'; }
+pre.src-ruby:before { content: 'Ruby'; }
+pre.src-sql:before  { content: 'SQL'; }
+pre.example         { background-color: #FFF5F5; }
+

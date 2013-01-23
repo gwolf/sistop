@@ -2,8 +2,11 @@
 #+AUTHOR: Gunnar Wolf
 #+EMAIL: gwolf@sistop.org
 #+LANGUAGE: es
+#+OPTIONS: LaTeX:dvipng
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
+#+BIBLIOGRAPHY: /home/gwolf/vcs/doc_gwolf/bib/gwolf.bib apalike limit:t
 #+LATEX_HEADER: \usepackage[spanish]{babel}
+#+STYLE: <link rel="stylesheet" type="text/css" href="sistop.css" />
 
 * Concepto y estados de un proceso
 
@@ -53,11 +56,9 @@ de ejecución. Estos son:
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
 
-# #+begin_center
 #+attr_html: height="350"
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=0.4\textwidth
 #+caption: Diagrama de transición entre los estados de un proceso
-
 #+begin_src dot :file ltxpng/estados_proceso.png
 digraph G {
 	layout = dot;
@@ -83,9 +84,6 @@ digraph G {
 #+begin_html
 <p align="center">Diagrama de transición entre los estados de un proceso</p>
 #+end_html
-
-
-# #+end_center
 
 ** El bloque de control de proceso (PCB)
 
@@ -698,12 +696,12 @@ cuales tenemos a:
 	       # Antes de lanzar los hilos
 	       senal = Semaphore(0)
 
-	       def envia_datos:
+	       def envia_datos():
 	         calcula_datos()
 		 senal.acquire()
 		 envia_por_red()
 
-	       def prepara_conexion:
+	       def prepara_conexion():
 	         crea_conexion()
 		 senal.release()
 
@@ -868,11 +866,11 @@ cuales tenemos a:
 	  colaLideres = Semaphore(0)
 	  colaSeguidores = Semaphore(0)
 	  # (...)
-	  def lider
+	  def lider():
 	    colaSeguidores.release()
 	    colaLideres.acquire()
 	    baila()
-	  def seguidor
+	  def seguidor():
 	    colaLideres.release()
 	    colaSeguidores.acquire()
 	    baila()
@@ -943,16 +941,10 @@ Al no presentar al usuario/programador una interfaz que puedan
 /subvertir/, el monitor asegura que todo el código necesario para
 asegurar el acceso concurrente a los datos está en un sólo lugar.
 
-#+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+caption: Vista esquemática de un monitor. No es ya un conjunto de procedimientos aislados, sino que una abstracción que permite realizar únicamente las operaciones públicas sobre datos encapsulados. (Silberschatz, p.239)
 [[./img/monitor.png]]
-
-Vista esquemática de un monitor. No es ya un conjunto de
-procedimientos aislados, sino que una abstracción que permite
-realizar únicamente las operaciones públicas sobre datos
-encapsulados. (Silberschatz, p.239)
-#+end_center
 
 
 Un monitor puede implementarse utilizando cualquiera de los
@@ -1000,7 +992,7 @@ demuestra, además, que si bien utilizamos semántica de orientación a
 objetos, no sólo los lenguajes clásicamente relacionados con la
 programación orientada a objetos nos permiten emplear monitores.
 
-#+begin_src c
+#+begin_src C
 /* Implementación para cinco filósofos */
 pthread_cond_t  CV[NTHREADS];    /* Una variable de condicion por filosofo */
 pthread_mutex_t M;               /* Mutex para el monitor */
@@ -1050,7 +1042,7 @@ int actualiza (int i) {
 Con esta declaración, la implementación completa de cada uno de los
 filósofos se reduce a:
 
-#+begin_src c
+#+begin_src C
 toma_palillos(i);
 come();
 suelta_palillos(i);
@@ -1118,7 +1110,6 @@ secuencia:
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
    otro proceso (o queda en espera)
 
-# #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
@@ -1139,7 +1130,9 @@ digraph G {
 }
 #+end_src
 
-# #+end_center
+#+begin_html
+<p align="center">Esquema clásico de un bloqueo mutuo simple: Los procesos <em>A</em> y <em>B</em> esperan mutuamente para el acceso a las unidades de cinta <em>1</em> y <em>2</em>.</p>
+#+end_html
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución. Veremos, pues, algunas
@@ -1155,14 +1148,11 @@ cuando son solicitadas pueden ser vistas como /liberales/, en tanto
 que las que controlan más la asignación de recursos,
 /conservadoras/.
 
-#+begin_center
 #+attr_html: height="200"
 #+attr_latex: width=0.9\textwidth
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
 [[./img/deadlocks_conserv_lib.png]]
 
-Espectro liberal—conservador de esquemas para evitar bloqueos
-(Finkel, 1988, p.128)
-#+end_center
 
 Las líneas principales que describen a las estrategias para enfrentar
 situaciones de bloqueo (La Red, p. 188):
@@ -1272,15 +1262,11 @@ la información descrita en el caso anterior, información acerca de
 el planificador puede marcar qué flujos entre dos (o más) procesos son
 /seguros/ y cuáles son /inseguros/
 
-#+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.8\textwidth
+#+caption: Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical) requieren del acceso exclusivo a un scanner y una impresora. (La Red, p. 200)
 [[./img/tray_proc_evasion_bloqueo.png]]
 
-Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical)
-requieren del acceso exclusivo a un scanner y una impresora. (La Red,
-p. 200)
-#+end_center
 
 El análisis de la interacción entre dos procesos se representa como en
 la figura anterior; el avance en cada proceso es marcado con una
@@ -1406,7 +1392,6 @@ sistema /en un momento dado/):
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
 
-# #+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
 #+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
@@ -1436,7 +1421,9 @@ digraph G {
 }
 #+end_src
 
-# #+end_center
+#+begin_html
+<p align="center">Detección de bloqueos: Grafo de procesos y recursos en un momento dado</p>
+#+end_html
 
 De la gráfica anterior, podríamos proceder:
 
@@ -1449,15 +1436,11 @@ De la gráfica anterior, podríamos proceder:
 Y quedamos con un interbloqueo entre /C/, /D/ y /E/, en torno a los
 recursos /4/, /5/ y /7/.
 
-#+begin_center
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
-
+#+caption: Detección de bloqueos: Proceso de reducción en un grafo de procesos y recursos, manejando clases de recursos
 [[./img/deteccion_bloqueos_2.png]]
 
-Detección de bloqueos: Proceso de reducción en un grafo de procesos y
-recursos, manejando clases de recursos
-#+end_center
 
 Nótese que /reducir/ un proceso del grafo no implica que éste haya
 /entregado/ sus recursos, sino que únicamente que, hasta donde tenemos
@@ -1586,10 +1569,9 @@ mutuo circular indefinido).
 - [[http://perldoc.perl.org/perlthrtut.html][Tutorial de hilos de Perl]]
 
 
-## Me queda pendiente:
-##
-## 
-## Writing Papers Using org-mode
-## http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
-## \bibliographystyle{plain}
-## \bibliography{refs}{}
+# Me queda pendiente:
+# 
+# Writing Papers Using org-mode
+# http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
+# \bibliographystyle{plain}
+# \bibliography{refs}{}

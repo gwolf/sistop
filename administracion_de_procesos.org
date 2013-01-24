@@ -6,6 +6,8 @@
 #+INFOJS_OPT: tdepth:1 sdepth:1 ftoc:nil ltoc:nil
 #+BIBLIOGRAPHY: /home/gwolf/vcs/doc_gwolf/bib/gwolf.bib apalike limit:t
 #+LATEX_HEADER: \usepackage[spanish]{babel}
+#+LATEX_HEADER: \definecolor{string}{rgb}{0,0.6,0} \definecolor{shadow}{rgb}{0.5,0.5,0.5} \definecolor{keyword}{rgb}{0.58,0,0.82} \definecolor{identifier}{rgb}{0,0,0.7}
+#+LATEX_HEADER: \renewcommand{\ttdefault}{pcr} \lstset{basicstyle=\ttfamily\small\bfseries, frame=shadowbox, showstringspaces=false, rulesepcolor=\color{shadow}, keywordstyle=\color{keyword}, stringstyle=\color{string}, identifierstyle=\color{identifier}, commentstyle=\mdseries\textit, inputencoding=utf8, extendedchars=true, breaklines=true, breakatwhitespace=true, breakautoindent=true, numbers=left, numberstyle=\ttfamily\footnotesize\textit, framexleftmargin=7mm}
 #+STYLE: <link rel="stylesheet" type="text/css" href="sistop.css" />
 
 * Concepto y estados de un proceso
@@ -369,7 +371,7 @@ requiere tener en mente que el planificador puede interrumpir el flujo de
 un hilo /en cualquier momento/. Esto implica, por ejemplo, que el
 siguiente código en Ruby puede llevarnos a distintos resultados:
 
-#+begin_src ruby -n
+#+begin_src ruby
 class EjemploHilos
   def initialize
     @x = 0
@@ -469,7 +471,7 @@ boletos de autobús en Perl, y queremos hacer la siguiente función
 /segura ante la concurrencia/. El programador aquí ya hizo un primer
 intento:
 
-#+begin_src perl -n
+#+begin_src perl
 my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
 $capacidad = 40;
 
@@ -554,7 +556,7 @@ superior, implicando al planificador.
 El código del ejemplo anterior podría reescribirse de la siguiente
 manera empleando un mutex:
 
-#+begin_src perl -n
+#+begin_src perl
 my ($proximo_asiento :shared, $capacidad :shared);
 $capacidad = 40;
 
@@ -609,7 +611,7 @@ Como comparación, una rutina equivalente en Bash (entre procesos
 independientes y usando los archivos =/tmp/proximo_asiento= y
 =/etc/capacidad/= como un mecanismo para compartir datos) sería:
 
-#+begin_src sh -n
+#+begin_src sh
 asigna_asiento() {
   lockfile /tmp/asigna_asiento.lock
   PROX=$(cat /tmp/proximo_asiento || echo 0)
@@ -692,7 +694,7 @@ cuales tenemos a:
                antes de que la conexión esté lista. Inicializamos el
                semáforo a 0, y:
 
-	       #+begin_src python -n
+	       #+begin_src python
 	       # Antes de lanzar los hilos
 	       senal = Semaphore(0)
 
@@ -725,7 +727,7 @@ cuales tenemos a:
                   implementamos dos semáforos señalizándose
                   mutuamente:
 
-		  #+begin_src python -n
+		  #+begin_src python
 		  guiListo = Semaphore(0)
 		  calculoListo = Semaphore(0)
 
@@ -748,14 +750,14 @@ cuales tenemos a:
 - Mutex :: El uso de un semáforo inicializado a 1 puede implementar
 	   fácilmente un mutex. En Python:
 
-           #+begin_src python -n
+           #+begin_src python
 	   mutex = Semaphore(1)
 	   # ...Inicializamos estado y lanzamos hilos
 	   mutex.acquire()
-	   # Estamos en la región de exclusión mutua
+	   # Estamos en la region de exclusion mutua
 	   x = x + 1
 	   mutex.release()
-	   # Continúa la ejecución paralela
+	   # Continua la ejecucion paralela
            #+end_src
 
 - Multiplex :: Permite la entrada de no más de /n/ procesos a la
@@ -773,7 +775,7 @@ cuales tenemos a:
                 procesos /pasa por un punto determinado/ de uno en uno
                 (incluso en un ambiente multiprocesador):
 
-		#+begin_src python -n
+		#+begin_src python
                 torniquete = Semaphore(0)
                 # (...)
                 if alguna_condicion():
@@ -812,7 +814,7 @@ cuales tenemos a:
 
 	     #+begin_src python
 	     require random
-	     n = random.randint(1,10) # Número de hilos
+	     n = random.randint(1,10) # Numero de hilos
 	     cuenta = 0
 	     mutex = Semaphore(1)
 	     barrera = Semaphore(0)
@@ -922,7 +924,7 @@ la probabilidad de que usar la sección crítica le cause problemas sea
 muy baja. Es frecuente ver ejemplos como el siguiente:
 
 #+begin_src C
-/* Cruzamos los dedos... ¡A fin de cuentas, corremos con baja frecuencia! */
+/* Cruzamos los dedos... A fin de cuentas, corremos con baja frecuencia! */
 seccion_critica();
 #+end_src
 
@@ -993,10 +995,10 @@ objetos, no sólo los lenguajes clásicamente relacionados con la
 programación orientada a objetos nos permiten emplear monitores.
 
 #+begin_src C
-/* Implementación para cinco filósofos */
-pthread_cond_t  CV[NTHREADS];    /* Una variable de condicion por filosofo */
+/* Implementacion para cinco filosofos */
+pthread_cond_t  CV[NTHREADS];    /* Una variable condicional por filosofo */
 pthread_mutex_t M;               /* Mutex para el monitor */
-int             state[NTHREADS]; /* Estado de cada cada filosofo */
+int             state[NTHREADS]; /* Estado de cada filosofo */
 
 void init () {
     int i;
@@ -1024,10 +1026,10 @@ void suelta_palillos (int i) {
 }
 
 void come(int i) {
-    printf("El filósofo %d está comiendo\n", i);
+    printf("El filosofo %d esta comiendo\n", i);
 }
 
-/* No incluimos 'actualiza' en los encabezados, es una función interna */
+/* No incluimos 'actualiza' en los encabezados, es una funcion interna */
 int actualiza (int i) {
     if ((state[(i + 4) % 5] != COMIENDO) &&
         (state[i] == HAMBRIENTO) &&

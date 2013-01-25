@@ -1,19 +1,14 @@
 #!/usr/bin/make -f
 baseurl = http://sistop.gwolf.org
 
+publish:
+	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
+
 html:
-	for i in *.org; do \
-	    html=`echo $$i|sed s/.org$$/.html/`; \
-	    if [ ! -f $$html -o $$i -nt $$html ] ; then \
-		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html ; \
-	    fi ; done
+	echo html | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
 pdf:
-	for i in *.org; do \
-	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
-	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
-		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
-	    fi ; done
+	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
 beamer:
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > laminas/index.org
@@ -33,13 +28,12 @@ beamer:
 	emacs -Q --batch --visit=laminas/index.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	rm laminas/index.org
 
-clean:
+clean-publish-cache:
+	rm -f ~/.org-timestamps/notas*.cache
+
+clean: clean-publish-cache
 	rm -f ltxpng/*.png dot
-	for i in *.org; do \
-	    html=`echo $$i|sed s/.org$$/.html/`; \
-	    tex=`echo $$i|sed s/.org$$/.tex/`; \
-	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
-	    rm -f $$html $$tex $$pdf; \
-	done
+	rm -rf html
+	rm -rf pdf
 
 all: pdf html beamer

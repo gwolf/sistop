@@ -267,8 +267,7 @@ y los mecanismos para resolverlos.
 Enunciaremos a continuación algunos planteamientos que ilustran
 situaciones que se pueden resolver empleando semáforos. Por ahora
 haremos únicamente el planteamiento, y después de presentar las
-estructuras de sincronización, veremos cómo pueden
-resolverse.
+estructuras de sincronización, veremos cómo pueden resolverse.
 
 Conviene ir pensando en qué estrategias podrían seguir para resolver
 los problemas.
@@ -327,7 +326,7 @@ los problemas.
      - Debe ser posible que más de un filósofo pueda comer al mismo
        tiempo.
 
-- El problema de los fumadores :: Hay tres fumadores empedernidos y un
+- Los fumadores compulsivos :: Hay tres fumadores empedernidos y un
      /agente/ que, de tiempo en tiempo, consigue ciertos insumos. Los
      ingredientes necesarios para fumar son tabaco, papel y
      cerillos. Cada uno de los fumadores tiene una cantidad infinita
@@ -356,7 +355,12 @@ los problemas.
 
 
 Nuevamente, recomiendo al libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de
-Allen Downey (2008) para profundizar en este tema.
+Allen Downey (2008) para profundizar en este tema. En este libro,
+además de otros muchos ejemplos que ilustran el uso de semáforos no
+sólo para resolver problemas de sincronización, sino como un
+mecanismo simple de comunicación entre procesos, podemos encontrar
+una detallada explicación del por qué de diversas implementaciones
+propuestas para cada uno de ellos.
 
 *** Secciones críticas y operaciones atómicas
 
@@ -889,7 +893,9 @@ cuales tenemos a:
           espera vayan bailando en el órden en que llegaron.
 
 *** TODO Soluciones a los problemas clásicos
-
+- Problema productor-consumidor :: 
+- La cena de los filósofos :: 
+- Los fumadores compulsivos :: 
 *** Monitores
 
 El principal problema con los mecanismos anteriormente descritos es
@@ -1049,6 +1055,141 @@ toma_palillos(i);
 come();
 suelta_palillos(i);
 #+end_src
+
+*** Soluciones en hardware
+
+Si bien hay diversos mecanismos como los que hemos visto, otra
+alternativa para lograr resolver los problemas de sincronización
+sería contar con asistencia del hardware para solucionar esta
+problemática. Algunas maneras de lograrlo pueden ser:
+
+- Inhabilitación de interrupciones ::
+     ¿Qué pasaría si un proceso al entrar a una región crítica pudiera
+     indicarle al sistema operativo que va a realizar una tarea
+     sensible, y éste se encargara de que el procesos pudiera terminar
+     su sección crítica lo antes posible? Esto muy podría lograrse
+     deshabilitando las interrupciones a nivel hardware.
+
+     Esta idea fue manejada con cierta popularidad hace años, pero al
+     día de hoy ha quedado prácticamente enterrada.
+
+     Deshabilitar las interrupciones, sin embargo, sería como /matar
+     moscas a cañonazos/: Por un lado, esto revertiría los beneficios
+     de un sistema operativo capaz de /multiproceso preventivo/. Al
+     no haber interrupciones, el sistema operativo no recibiría
+     ninguna notificación por parte del temporizador, y el proceso
+     ejecutante podría seguir ejecutando indefinidamente. Es más, un
+     simple ciclo que no terminara en dicho proceso podría detener por
+     completo la ejecución del equipo.
+
+     Además de esto, la realidad se encargó de marcar esta solución
+     como inviable: En un sistema multiprocesador (como hoy en día lo
+     son casi todas las computadoras de propósito general), el
+     inhabilitar las interrupciones permitiría que otros procesos
+     siguieran ejecutando en los otros procesadores del sistema. Y si
+     bien también sería posible, detener a los demás procesadores
+     representa un costo demasiado alto, mucho más que el de los
+     algoritmos antes descritos.
+
+- Instrucciones atómicas ::
+     En el desarrollo de esta sección hemos asumido que es imposible
+     hacer una verificación y modificar una ubicación de memoria de
+     forma atómica. Sin embargo, siendo la sincronización uno de los
+     problemas más frecuentes de los programadores, ¿por qué sigue
+     siendo así?
+
+     Si asumiéramos la existencia de una instrucción /a nivel CPU/ que
+     verificara el contenido de una localidad en memoria que actuara
+     como la representación de nuestro mutex y, dependiendo de su
+     estado, la modificara, nuestros programas podrían ser mucho más
+     simples. El efecto de esta instrucción podría ilustrarse de la
+     siguiente manera:
+
+     #+BEGIN_SRC C
+     boolean test_and_set_lock(int i) {
+         if (i == 0) {
+             i = 1;
+             return true;
+         } else {
+             return false;
+         }
+     }
+     void free_lock(int i) {
+         if (i == 1) {
+             i = 0;
+         }
+     }
+     #+END_SRC
+
+     Entonces, el código para obtener un bloqueo exclusivo para
+     realizar determinada tarea podría ser tan simple como:
+
+     #+BEGIN_SRC C
+     while (test_and_set_lock(candado)) {}
+     seccion_critica();
+     free_lock(candado);
+     #+END_SRC
+
+     Esto requeriría contar con soporte en hardware en el procesador
+     y en el controlador de memoria, pero la simplicidad obtenida
+     justificaría el costo marginal adicional en hardware.
+
+     Un problema con esta solución es que fomentaría la /espera
+     activa/, desperdiciando tiempo de procesador cada vez que un
+     proceso está esperando al candado. Seguiría siendo necesaria la
+     existencia de algoritmos para evitar situaciones de inanición.
+
+     Hay arquitecturas de cómputo que implementan instrucciones como
+     la aquí propuesta. Sin embargo, el costo asociado (no sólo por la
+     electrónica requerida, sino que por la demora que esta
+     instrucción requiere del procesador — Un mínimo absoluto de dos
+     accesos a memoria, lo cual de propio rompe los principios de
+     diseño de las arquitecturas RISC, y protección adicional para
+     arquitecturas multiprocesador) han evitado que se popularice
+     más.
+
+- Memoria transaccional ::
+     Un área activa de investigación hoy en día es la de la memoria
+     transaccional. La lógica es ofrecer primitivas que protejan a /un
+     conjunto de accesos a memoria/ del mismo modo que ocurre con las
+     bases de datos, en que tras abrir una transacción, podemos
+     realizar una gran cantidad (no ilimitada) de tareas, y al
+     terminar con la tarea, /confirmarlas/ (/commit/) o /rechazarlas/
+     (/rollback/) atómicamente — Y, claro, el sistema operativo
+     indicará éxito o fracaso de forma atómica al conjunto entero.
+
+     Esto facilitaría mucho más aún la sincronización: En vez de
+     hablar de /secciones críticas/, podremos reintentar la
+     transacción y sólo preocuparnos de revisar si fue exitosa o no —
+     Por ejemplo:
+
+     #+BEGIN_SRC C
+     do {
+         begin_transaction();
+         var1 = var2 * var3;
+         var3 = var2 - var1;
+         var2 = var1 / var2;
+     } while (! commit_transaction());
+     #+END_SRC
+
+     Si en el transcurso de la transacción algún otro proceso
+     modifica alguna de las variables, la transacción se abortará,
+     pero podemos volver a ejecutarla.
+
+     Claro está, el ejemplo presentado desperdicia recursos de
+     proceso (lleva a cabo los cálculos al tiempo que va modificando
+     las variables), por lo cual sería un mal ejemplo de sección
+     crítica.
+
+     Hay numerosas implementaciones en software de este principio
+     (Software Transactional Memory, STM) para los principales
+     lenguajes, aunque el planteamiento ideal sigue apuntando a una
+     implementación en hardware. Hay casos en que, sin embargo, esta
+     técnica puede aún llevar a resultados inconsistentes
+     (particularmente si un proceso lector puede recibir los valores
+     que van cambiando en el tiempo por parte de un segundo proceso),
+     y el costo computacional de dichas operaciones es elevado, sin
+     embargo, es una construcción muy poderosa.
 
 * Bloqueos mutuos
 

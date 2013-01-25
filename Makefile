@@ -1,17 +1,19 @@
 #!/usr/bin/make -f
 baseurl = http://sistop.gwolf.org
 
-publish_dest_html = gwolf@gwolf.org:/home/gwolf/sistop.gwolf.org/html/
-publish_dest_pdf = gwolf@gwolf.org:/home/gwolf/sistop.gwolf.org/pdf/
+publish_dest = gwolf@gwolf.org:/home/gwolf/sistop.gwolf.org
 
 publish_src_html = ./html/*
 publish_src_pdf = ./pdf/*
+publish_src_pdf = ./biblio/*
 
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
 html:
 	echo html | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
+	ln -s ../pdf html/pdf || true
+	ln -s ../biblio html/biblio || true
 
 pdf:
 	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
@@ -42,12 +44,15 @@ clean: clean-publish-cache
 	rm -rf html
 	rm -rf pdf
 
-push: push_html push_pdf
+push: push_html push_pdf push_biblio
 
 push_html: html
-	rsync -av --delete $(publish_src_html) $(publish_dest_html)
+	rsync -av --delete ./html/* $(publish_dest)/html
 
 push_pdf: pdf
-	rsync -av --delete $(publish_src_pdf) $(publish_dest_pdf)
+	rsync -av --delete ./pdf/* $(publish_dest)/pdf
+
+push_biblio:
+	rsync -av --delete ./biblio/* $(publish_dest)/biblio
 
 all: pdf html beamer

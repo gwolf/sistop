@@ -40,7 +40,7 @@ clean-publish-cache:
 	rm -f ~/.org-timestamps/notas*.cache
 
 clean: clean-publish-cache
-	rm -f ltxpng/*.png dot
+	rm -f ltxpng/*.png dot notas/*.tex notas/*.html notas/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
 	rm -rf html
 	rm -rf pdf
 

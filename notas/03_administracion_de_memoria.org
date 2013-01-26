@@ -1,28 +1,151 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Administración de memoria
 
-Un proceso requiere mantener mucha más información que sólo la
-/sección de texto/; típicamente incluye:
+# Un proceso requiere mantener mucha más información que sólo la
+# /sección de texto/; típicamente incluye:
 
-- Sección de texto :: Imagen en memoria de las instrucciones a ser
-     ejecutadas
+# - Sección de texto :: Imagen en memoria de las instrucciones a ser
+#      ejecutadas
 
-- Contador de programa :: Registro que apunta a la siguiente
-     instrucción a ser ejecutada
+# - Contador de programa :: Registro que apunta a la siguiente
+#      instrucción a ser ejecutada
 
-- /Stack/ del proceso :: Estructuras representando a la serie de
-     funciones que han sido llamadas dentro del proceso, con sus
-     parámetros, direcciones de /retorno/, variables locales
+# - /Stack/ del proceso :: Estructuras representando a la serie de
+#      funciones que han sido llamadas dentro del proceso, con sus
+#      parámetros, direcciones de /retorno/, variables locales
 
-- Sección de datos :: Espacio fijo preasignado para las variables
-     globales
+# - Sección de datos :: Espacio fijo preasignado para las variables
+#      globales
 
-- /Heap/ :: Espacio de memoria asignado dinámicamente al proceso
-            durante su ejecución; profundizaremos en este en la
-            sección /Administración de memoria/
+# - /Heap/ :: Espacio de memoria asignado dinámicamente al proceso
+#             durante su ejecución; profundizaremos en este en la
+#             sección /Administración de memoria/
 
 
 * Funciones y operaciones del administrador de memoria
+
+El único espacio de almacenamiento que el procesador puede utilizar
+directamente, más allá de los registros (que si bien le son internos y
+sumamente rápidos, pero de capacidad muy escasa) es la memoria
+física. Todas las arquitecturas de procesador tienen instrucciones
+para interactuar con la memoria, pero ninguna lo tiene para hacerlo
+con medios /persistentes/ de almacenamiento, como las unidades de
+disco[fn:: Veremos en la unidad /Sistemas de entrada y salida/ cómo se
+interactúa con estas].
+
+Todos los programas que deseemos ejecutar deben cargarse a la memoria
+del sistema antes de ser utilizados. En esta unidad veremos cómo
+administra el sistema operativo a la memoria para permitir que varios
+procesos la compartan — Esta tarea debe preverse desde el proceso de
+compilación de nuestros programas (en particular, la fase de
+/ligado/). Hoy en día, además, casi todos los sistemas operativos
+emplean implementaciones que requieren de hardware especializado — La
+/Unidad de Manejo de Memoria/ (MMU). Hablaremos de cómo se manejaban
+los sistemas multitarea antes de la universalización de los MMU, y qué
+rol juegan hoy en día.
+
+** Hardware: de la unidad de manejo de memoria (MMU)
+
+A lo largo de la historia de las computadoras ha sido necesario
+emplear más memoria de la que está directamente disponible — Por un
+lado, ofrecer a los procesos más espacio de lo que puede direccionar
+/la arquitectura (hardware) que empleamos/, por otro lado la
+abstracción de un espacio virtualmente ilimitado para realizar sus
+operaciones incluso cuando la memoria /real/ es mucho menor a la
+solicitada, y por último, la ilusión de tener un bloque contiguo e
+ininterrumpido de memoria, cuando en realidad puede haber alta
+/fragmentación/.
+
+Veremos cómo es que el MMU cubre estas necesidades, qué mecanismos
+emplea para lograrlo — Y qué debemos cuidar, incluso como
+programadores de aplicaciones de alto nivel, para aprovechar de la
+mejor manera estas funciones (y evitar, por el contrario, que nuestros
+programas se vuelvan lentos por no saber manejar la memoria)
+correctamente.
+
+El MMU es también el encargado de verificar que un proceso no tenga
+acceso a leer o modificar los datos de otro — Si el sistema operativo
+tuviera que verificar que ninguna de las instrucciones ejecutadas por
+un programa resulta en una violación de seguridad, la penalización en
+velocidad sería demasiado severa[fn:: Y de hecho está demostrado que
+no puede garantizarse que una verificación estática sea
+suficientemente exhaustiva].
+
+Una primer aproximación a la protección de acceso es a través de un
+/registro base/ y un /registro límite/: Si la arquitectura ofrece dos
+registros del procesador que sólo pueden ser modificados por el
+sistema operativo (Esto es, el hardware define la modificación de
+dichos registros como una operación privilegiada que requiere estar
+ejecutando en /modo supervisor/), el CPU puede comparar /cada acceso a
+memoria/ para verificar que esté en el rango permitido.
+
+Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
+64K (65535 bytes) a partir de la dirección 504214, el /registro base/
+contendría 504214, y el /registro límite/ 65535. Si hubiera una
+instrucción por parte de dicho proceso que solicitara una dirección
+menor a 504214 o mayor a 569749, el CPU lanzaría una interrupción
+interrumpiendo el procesamiento, e indicando al sistema operativo que
+ocurrió una /violación de segmento/ (/segmentation fault/). El sistema
+operativo entonces procedería terminando la ejecución del proceso,
+reclamando todos los recursos que tuviera asignados y notificando a su
+usuario.
+
+** La memoria /caché/
+
+Hay otro proceso que hoy en día asumimos como un hecho: La memoria
+/caché/. Si bien su manejo es (casi) transparente para el sistema
+operativo, es muy importante mantenerlo en mente.
+
+Conforme el procesador va avanzando sobre las instrucciones de un
+programa (avanzando el registro de conteo de instrucción), se van
+produciendo accesos a memoria. Por un lado, tiene que buscar en
+memoria la siguiente instrucción a ejecutar. Por otro lado, estas
+instrucciones pueden requerirle uno o más operadores adicionales que
+deben ser traídos de la memoria. Por último, la instrucción puede
+requerir guardar su resultado en cierta dirección de memoria.
+
+Hace años esto no era un problema — La velocidad del procesador
+estaba básicamente sincronizada con la del manejador de memoria, y el
+flujo podía mantenerse básicamente estable. Pero conforme los
+procesadores se fueron haciendo más rápido, y conforme se ha
+popularizado el procesamiento en paralelo, la memoria no ha podido
+acelerarse a la misma velocidad. La memoria de alta velocidad es
+demasiado cara, e incluso las distancias de unos pocos centímetros se
+van volviendo obstáculos insalvables por la velocidad máxima de los
+electrones viajando por pistas conductoras.
+
+Cuando el procesador solicitó el contenido de una dirección de memoria
+y esta no está aún disponible, /tiene que detener su ejecución/ hasta
+que los datos estén disponibles. El CPU no puede, a diferencia del
+sistema operativo, "congelar" todo y guardar el estado para atender a
+otro proceso: Para el procesador, la lista de instrucciones a
+ejecutar es estrictamente secuencial, y todo tiempo que requiere
+esperar a una transferencia de datos es tiempo perdido.
+
+La respuesta para reducir esa espera es la /memoria caché/. Esta es
+memoria de alta velocidad, situada /entre/ la memoria principal y el
+procesador propiamente, que guarda copias de las /páginas/ que van
+siendo accesadas, partiendo del principio de la /localidad de
+referencia/:
+
+- Localidad temporal :: Es probable que un recurso que fue empleado
+     recientemente vuelva a ser empleado en un futuro cercano.
+- Localidad espacial :: La probabilidad de que un recurso /aún no
+     requerido/ sea accesado es mucho mayor si fue requerido algún
+     recurso cercano.
+- Localidad secuencial :: Un recurso, y muy particularmente la
+     memoria, tiende a ser requerido de forma secuencial.
+
+En base a esto, cuando el procesador solicita al hardware determinada
+dirección de memoria, el hardware no sólo transfiere a la memoria
+caché el byte o palabra solicitado, sino que un bloque o /página/
+completo.
+
+Cabe mencionar que hoy en día (particularmente desde que se detuvo la
+/guerra de los Megahertz/ parte importante del diferencial en precios
+de los procesadores líderes en el mercado es la cantidad de cache de
+primero y segundo nivel con que cuentan.
+
 * Asignación de memoria contigua
 ** Partición de la memoria
 ** Paginación
@@ -38,3 +161,4 @@ Un proceso requiere mantener mucha más información que sólo la
 
 - [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto
   propiamente sea del nivel adecuado. En todo caso, buscar algo de Valgrind.
+- [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][Hacker Bypasses Windows 7/8 Address Space Layout Randomization]] (Slashdot)

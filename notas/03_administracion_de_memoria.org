@@ -165,7 +165,7 @@ relativa a su ejecución.
      pila ocupa la parte /más alta/ del espacio en memoria, y /crece
      hacia abajo/.
 
-#+attr_html: height="350"
+#+attr_html: height="294"
 #+attr_latex: width=0.3\textwidth
 #+caption: Regiones de la memoria para un proceso (Silberschatz, p. 100)
 [[./img/proceso_en_memoria.png]]
@@ -306,13 +306,44 @@ ejecución, cuando el sistema operativo comience a detectar un alto
 ejecución para que ocupen espacios contiguos, permitiendo unificar
 varios bloques libres en uno solo.
 
-#+attr_html: height="350"
+#+attr_html: height="224"
 #+attr_latex: width=0.5\textwidth
 #+caption: Compactación de la memoria de procesos en ejecución (La Red, p.76)
 [[./img/compactacion_memoria.png]]
 
 La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
+
+*** Intercambio con el almacenamiento secundario
+
+Siguiendo de cierto modo la lógica requerida por la compactación
+encontramos los sistemas que utilizan /intercambio/ (/swap/) entre la
+memoria primaria y secundaria. En estos sistemas, el sistema operativo
+puede /comprometer/ más espacio de memoria del que tiene físicamente
+disponible. Cuando hay más procesos de los que caben en memoria, el
+sistema suspende a uno de ellos y almacena una copia de su imagen en
+memoria en almacenamiento secundario.
+
+Hay algunas restricciones a observar previo a suspender un proceso. Un
+proceso que tiene abierto alguna operación de entrada/salida en
+curso. Una estrategia ante esto podría ser que todas las operaciones
+se realicen únicamente a /buffers/ en el espacio del sistema operativo
+y éste las transfiera al espacio del proceso interesado.
+
+Esta técnica se popularizó en los sistemas de escritorio hacia fines
+de los 1980 y principios de los 1990, en que las computadoras
+personales tenían típicamente entre 1 y 8MB de memoria.
+
+Recordemos que las unidades de disco son del órden de decenas de miles
+de veces más lentas que la memoria, por lo que este proceso resulta
+muy caro — Por ejemplo, si la imagen en memoria de un proceso es de
+100MB, bastante conservador hoy en día, y la tasa de transferencia
+sostenida al disco de 50MB/s, intercambiar un proceso al disco toma
+dos segundos. Cargarlo de vuelta a memoria toma otros dos segundos — Y
+a esto debe sumarse el tiempo de posicionamiento de la cabeza de
+lectura/escritura, especialmente si el espacio a emplear no es
+secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
+desuso conforme aumenta el tamaño de los procesos.
 
 ** Paginación
 ** Segmentación
@@ -328,6 +359,7 @@ totalidad de la memoria (probablemente más de una vez por bloque).
 ** Secciones de texto no ejecutables
 - Problemática con los programas /auto-relocalizables/
   (self-relocatable): ¿código auto-modificable?
+** Aleatorización de las direcciones
 * Otros recursos
 
 - [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto

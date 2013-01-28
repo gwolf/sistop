@@ -1,27 +1,6 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Administración de memoria
 
-# Un proceso requiere mantener mucha más información que sólo la
-# /sección de texto/; típicamente incluye:
-
-# - Sección de texto :: Imagen en memoria de las instrucciones a ser
-#      ejecutadas
-
-# - Contador de programa :: Registro que apunta a la siguiente
-#      instrucción a ser ejecutada
-
-# - /Stack/ del proceso :: Estructuras representando a la serie de
-#      funciones que han sido llamadas dentro del proceso, con sus
-#      parámetros, direcciones de /retorno/, variables locales
-
-# - Sección de datos :: Espacio fijo preasignado para las variables
-#      globales
-
-# - /Heap/ :: Espacio de memoria asignado dinámicamente al proceso
-#             durante su ejecución; profundizaremos en este en la
-#             sección /Administración de memoria/
-
-
 * Funciones y operaciones del administrador de memoria
 
 El único espacio de almacenamiento que el procesador puede utilizar
@@ -31,7 +10,10 @@ física. Todas las arquitecturas de procesador tienen instrucciones
 para interactuar con la memoria, pero ninguna lo tiene para hacerlo
 con medios /persistentes/ de almacenamiento, como las unidades de
 disco[fn:: Veremos en la unidad /Sistemas de entrada y salida/ cómo se
-interactúa con estas].
+interactúa con estas]. Cabe mencionar que cuando veamos en un texto
+referencia al /almacenamiento primario/ siempre se referirá a la
+memoria, mientras que el /almacenamiento secundario/ se refiere a los
+discos u otros medios de almacenamiento persistente.
 
 Todos los programas que deseemos ejecutar deben cargarse a la memoria
 del sistema antes de ser utilizados. En esta unidad veremos cómo
@@ -43,6 +25,9 @@ emplean implementaciones que requieren de hardware especializado — La
 /Unidad de Manejo de Memoria/ (MMU). Hablaremos de cómo se manejaban
 los sistemas multitarea antes de la universalización de los MMU, y qué
 rol juegan hoy en día.
+
+En esta primer sección, veremos algunos conceptos base que iremos
+hilando y empleando en las secciones subsecuentes.
 
 ** Hardware: de la unidad de manejo de memoria (MMU)
 
@@ -146,8 +131,189 @@ Cabe mencionar que hoy en día (particularmente desde que se detuvo la
 de los procesadores líderes en el mercado es la cantidad de cache de
 primero y segundo nivel con que cuentan.
 
+** El espacio en memoria de un proceso
+
+Cuando un sistema operativo inicia un proceso, no se limita a volcar
+el archivo ejecutable a memoria, sino que tiene que proveer la
+estructura para que éste vaya guardando la información de estado
+relativa a su ejecución.
+
+- Sección de texto :: Es el nombre que recibe la imagen en memoria de
+     las instrucciones a ser ejecutadas. Típicamente, la sección de
+     texto ocupa las direcciones /más bajas/ del espacio en memoria.
+
+- Sección de datos :: Espacio fijo preasignado para las variables
+     globales. Este espacio es fijado en tiempo de compilación, y no
+     puede cambiar (aunque los datos que carga sí cambian en el tiempo
+     de vida del proceso)
+
+- Espacio de /libres/ :: (/Heap/) Espacio de memoria que se emplea
+     para la asignación dinámica de memoria /durante la ejecución/ del
+     proceso. Este espacio se ubica por encima de la sección de datos,
+     y /crece hacia arriba/.
+
+     Cuando el programa es escrito en lenguajes que requieren /manejo
+     manual de la memoria/ (como C), esta área es la que se maneja a
+     través de las llamadas de la familia de =malloc= y =free=; en
+     lenguajes con gestión automática, esta área es monitoreada por
+     los /recolectores de basura/ (volveremos a estos conceptos más
+     adelante).
+
+- Pila de llamadas :: (/Stack/) Estructuras representando a la serie
+     de funciones que han sido llamadas dentro del proceso, con sus
+     parámetros, direcciones de /retorno/, variables locales, etc. La
+     pila ocupa la parte /más alta/ del espacio en memoria, y /crece
+     hacia abajo/.
+
+#+attr_html: height="350"
+#+attr_latex: width=0.3\textwidth
+#+caption: Regiones de la memoria para un proceso (Silberschatz, p. 100)
+[[./img/proceso_en_memoria.png]]
+
+
+** Resolución de direcciones
+Un programa compilado no emplea nombres simbólicos para las variables
+o funciones que llama[fn:: Cuando se hace /ligado dinámico/ a
+bibliotecas externas sí se mantiene la referencia por nombre, pero
+para los propósitos de esta sección, hablaremos de las referencias
+internas únicamente]; el compilador, al convertir el programa a
+lenguaje máquina, las substituye por la dirección en memoria donde se
+encuentra.
+
+Ahora bien, en los sistemas actuales, los procesos pueden requerir
+coexistir con otros, para lo cual las direcciones indicadas en el
+/texto/ del programa pueden requerir ser traducidas al lugar /relativo
+al sitio de inicio del proceso en memoria/ — Esto es,
+/resueltas/. Podemos hablar de las siguientes tres estrategias de
+resolución:
+
+- En tiempo de compilación :: El texto del programa tiene la dirección
+     /absoluta/ de los datos y funciones. Esto era muy común en las
+     computadoras previas al multiprocesamiento; en la arquitectura
+     compatible con PC, el formato ejecutable =.com= es un volcado de
+     memoria directo de un archivo objeto con las direcciones
+     indicadas de forma absoluta. Esto lo podemos ver hoy
+     principalmente en sistemas embebidos o de función específica.
+
+- En tiempo de carga :: Al cargarse a memoria el programa y antes de
+     iniciar su ejecución, el /cargador/ (componente del sistema
+     operativo) actualiza las referncias a memoria dentro del texto
+     para que apunten al lugar correcto — Claro está, esto depende de
+     que el compilador indique dónde están todas las referencias a
+     variables y funciones.
+
+- En tiempo de ejecución :: El programa nunca hace referencia a una
+     ubicación absoluta de memoria, sino que lo hace siempre relativo
+     a una /base/ y un /desplazamiento/ (offset). Esto permite que el
+     proceso sea incluso reubicado en la memoria mientras está siendo
+     ejecutado sin tener que sufrir cambios, pero requiere de hardware
+     específico (como un MMU).
+
 * Asignación de memoria contigua
+
+En los sistemas de ejecución en lotes, así como en las primeras
+computadoras personales, sólo un programa se ejecutaba a la vez, por
+lo que, más allá de la carga del programa y la satisfacción de alguna
+eventual llamada al sistema solicitando recursos, el sistema operativo
+no tenía que ocuparse de la asignación de memoria.
+
+Al nacer los primeros sistemas operativos multitarea, se hizo
+necesario resolver cómo asignar el espacio en memoria a diferentes
+procesos.
+
 ** Partición de la memoria
+
+La primer respuesta, claro está, es la más sencilla: Asignar
+a cada programa a ser ejecutado un bloque /contiguo/ de memoria de un
+tamaño fijo. En tanto los programas permitieran la resolución de
+direcciones en tiempo de carga o de ejecución, podrían emplear este
+esquema.
+
+El sistema operativo emplearía una región específica de la memoria del
+sistema (típicamente la /región baja/ — Desde la dirección en memoria
+0x00000000 hacia arriba), y una vez terminado el espacio necesario
+para el núcleo y sus estructuras, el sistema asigna espacio a cada uno
+de los procesos. Si la arquitectura en cuestión permite limitar los
+segmentos disponibles a cada uno de los procesos (por ejemplo, con los
+registros /base/ y /límite/ discutidos anteriormente), esto sería
+suficiente para alojar en memoria a varios procesos y evitar que
+interfieran entre sí.
+
+Desde la perspectiva del sistema operativo, cada uno de los espacios
+asignados a un proceso es una /partición/. Cuando el sistema operativo
+inicia, toda la memoria disponible es vista como un sólo bloque, y
+conforme se van lanzando procesos, este bloque va siendo subdividido
+para satisfacer sus requisitos. Cada proceso debe indicar al sistema
+operativo cuánta memoria va a requerir a lo largo de su vida prevista.
+
+*** Fragmentación
+
+La /fragmentación/ comienza a aparecer cuando más procesos van siendo
+lanzados y van terminando: Al terminar la ejecución de un proceso, ya
+no tenemos sólo un bloque de espacio libre, sino dos. Potencialmente,
+cada programa que vaya terminando, irá devolviendo al sistema
+operativo un bloque de distinto tamaño, que quede entre dos procesos
+activos.
+
+Si la computadora no tiene hardware específico que permita que los
+procesos resuelvan sus direcciones en tiempo de ejecución, el sistema
+operativo no puede reasignar los bloques existentes, y aunque pudiera
+hacerlo, mover un proceso entero en memoria puede resultar una
+operación cara en tiempo de procesamiento.
+
+Al lanzarse un nuevo programa, el sistema operativo tiene tres
+estrategias según las cuales podría asignarle uno de los bloques
+disponibles:
+
+- Primer ajuste :: Asigna al nuevo proceso el primer bloque que
+                   encuentre donde éste quepa. Este mecanismo es el
+                   más simple de implementar y el de más rápida
+                   ejecución.
+
+- Mejor ajuste :: El sistema busca entre todos los bloques disponibles
+                  cuál es el que mejor se ajusta al tamaño requerido
+                  por el nuevo proceso. Esto requiere la revisión
+                  completa de la lista de bloques.
+
+- Peor ajuste :: El sistema busca cuál es el bloque más grande
+                 disponible, y se lo asigna al nuevo
+                 proceso. Empleando una estrucura de datos como un
+                 /montículo/, esta operación puede ser incluso más
+                 rápida que la de primer espacio.
+
+La /fragmentación externa/ se produce cuando hay muchos bloques libres
+entre bloques asignados a procesos; la /fragmentación interna/ se
+refiere a la cantidad de memoria perdida por asuntos administrativos —
+Por ejemplo, si el sistema operativo maneja /bloques/ de 512 bytes y
+un proceso requiere 768 bytes para su ejecución, el sistema le
+entregará 1024, desperdiciando 256.
+
+Según análisis estadísticos (Silberschatz, p.289), por cada /N/
+bloques asignados, se perderán del órden de /0.5N/ bloques por
+fragmentación interna y externa.
+
+*** Compactación
+
+Un problema importante que va surgiendo como resultado de esta
+fragmentación es que el espacio total libre de memoria puede ser mucho
+mayor que lo que requiere un nuevo proceso, pero al estar partida en
+muchos bloques, éste no encontrará una partición donde ser cargado.
+
+Si los procesos emplean resolución de direcciones en tiempo de
+ejecución, cuando el sistema operativo comience a detectar un alto
+índice de fragmentación, puede lanzar una operación de /compresión/ o
+/compactación/: Mover los contenidos en memoria de los procesos en
+ejecución para que ocupen espacios contiguos, permitiendo unificar
+varios bloques libres en uno solo.
+
+#+attr_html: height="350"
+#+attr_latex: width=0.5\textwidth
+#+caption: Compactación de la memoria de procesos en ejecución (La Red, p.76)
+[[./img/compactacion_memoria.png]]
+
+La compactación tiene un costo alto — Involucra mover prácticamente la
+totalidad de la memoria (probablemente más de una vez por bloque).
+
 ** Paginación
 ** Segmentación
 * Memoria virtual
@@ -157,8 +323,42 @@ primero y segundo nivel con que cuentan.
 ** Paginación y segmentación combinadas
 ** Reemplazo de páginas
 ** Asignación de marcos e hiperpaginación
+* Consideraciones de seguridad
+** Bibliotecas de ligado estático y ligado dinámico
+** Secciones de texto no ejecutables
+- Problemática con los programas /auto-relocalizables/
+  (self-relocatable): ¿código auto-modificable?
 * Otros recursos
 
 - [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto
   propiamente sea del nivel adecuado. En todo caso, buscar algo de Valgrind.
 - [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][Hacker Bypasses Windows 7/8 Address Space Layout Randomization]] (Slashdot)
+- [[http://ghostbar.ath.cx/2013/01/27/less-swap/][Less swap]] (blog de Jose Luis Rivas) — Controlando el "swappiness" de
+  Linux vía =vm.swappiness=
+# My old X61 has 2G in RAM and 3G in Swap. It seems my using-habit for
+# Google Chrome is heavy (more than 20 tabs open most of the time) so
+# my swap is normally being used above the 1.8G-mark. That means, my
+# disk is constantly being written and read, and since this is the
+# original hard-drive scare comes to my mind: will I blow-up my disk
+# if I continue doing this? and the heat this disk-use's generating
+# was absurd.
+#
+# That's not good, at all, I prefer having cache used than swap; in
+# Venezuela is not that easy to get a good sale on hard-drives (you
+# know, is hard to get dollars here, since is illegal to buy them
+# unless the govt gives you permission).
+#
+# So the first thing that comes to my mind is sysctl. If I wanted to
+# cofigure swap it would be with a kernel parameter. So running sysctl
+# -a | grep swap throws me vm.swappiness = 60, and a little google
+# search tells me more about it.
+#
+# If the swappiness is close to 0 then it will use the swap only if it
+# is really necessary, if it is close to 100 then it will use the swap
+# aggressively. Mine was at 60, and it was really aggressive.
+#
+# The next steps for me was doing sudo echo 'vm.swappiness = 1' >>
+# /etc/sysctl.conf && sudo sysctl -p.
+#
+# Now my system is really smooth and using Chrome + Terminal + Tmux +
+# Rhythmbox is acceptable.

@@ -1,0 +1,183 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Introducción a los sistemas operativos
+#+DATE: 30 de enero de 2013
+
+* ¿Qué son y qué hacen?
+
+** ¿Qué es un sistema operativo?
+- El programa que /siempre corre/
+- Gestor de los /recursos/ del sistema
+- …
+
+** Por descarte, ¿Qué /no/ es?
+- El ambiente gráfico
+- Los programas básicos para administrar archivos
+- La forma en que el usuario /lanza/ programas
+
+** Abstracción
+#+begin_center
+Proporciona /abstracciones consistentes/ y /simplificaciones/ a los
+procesos del usuario
+#+end_center
+- Archivos y directorios
+- /Flujos de caracteres/ (entrada/salida)
+- El mismo concepto de /proceso/
+
+** Gestión de recursos
+#+begin_center
+Administra los /recursos existentes/ en la computadora, permitiendo la
+ejecución a los diversos procesos
+#+end_center
+- Cómo comparten los diversos procesos los recursos existentes (y
+  rivales)
+- Políticas de asignación (y recuperación) justas
+
+** Aislamiento
+#+begin_center
+Protección de los datos, de los recursos, de los procesos
+#+end_center
+- Entre procesos
+- Entre usuarios
+- Ante procesos /mal comportados/
+- Ante procesos maliciosos
+
+* Historia y evolución
+
+** Construyendo a través de la historia
+#+begin_center
+Para comprender lo que hoy gestionan los sistemas operativos,
+comencemos viendo cómo es que llegaron a gestionarlo.
+
+Vamos con un repaso histórico de la historia de la computación,
+enfocados a las /inovaciones/ de cada etapa
+#+end_center
+
+** En el principio…
+- Arquitectura /von Neumann/ (programa almacenado)
+- Programación directa y explícita para el hardware
+- Tiempo de programación -> tiempo /no productivo/ -> desperdicio de
+  recursos
+
+** Sistemas de proceso por lotes (/batch processing/)
+- Los programadores codifican su código en un medio de almacenamiento
+  (/tarjetas perforadas/)
+- Entregan los tambaches (/batches/) a los operadores
+- Los operadores cargan secuencialmente los trabajos, entregan los
+  resultados conforme se presentan
+
+** Sistemas monitor en el proceso por lotes
+- Implementan protección evitando la corrupción de /otros trabajos/
+  - Interactuar con el lector de tarjetas (corrompiendo el siguiente
+    programa)
+  - Temporizadores y alarmas para evitar ciclos infinitos
+- Estas medidas de protección requieren /modificación del hardware/
+  - Noción de /instrucciones privilegiadas/
+
+** Sistemas en lotes con /spool/
+- ¿Spool? Bobina, o /Simultaneous Peripherial Operations On-Line/
+- Cintas magnéticas
+  - Carga intermedia de tarjeta a cinta
+  - Resultados a cinta para posterior impresión
+- Liberando los trabajos más lentos
+  - Empleo de equipos /periféricos/ especializados
+
+** Sistemas multiprogramados
+- Diferentes etapas en la vida de un proceso: /limitado por CPU/,
+  /limitado por entrada-salida/
+- Para maximizar el uso de recursos, ejecutar /simultáneamente/ varios
+  procesos
+  - Requiere cambios fuertes en el hardware
+  - Protección de recursos — Espacio de memoria
+  - Recursos /estrictamente secuenciales/ requieren /bloqueos/ para
+    ofrecer /acceso exclusivo/
+- El monitor es invocado con mucha mayor frecuencia por los
+  temporizadores
+  - /Cambios de contexto/
+- Interacción con el equipo: Se mantiene como el modelo en lotes
+
+** Sistemas de tiempo compartido
+- 1960s: Sistemas /interactivos/ y /multiusuarios/
+- Manejo de /terminales/ para la interacción (teletipos, CRTs)
+- Abstracciones de almacenamiento: Archivos, directorios en discos
+- Ventajas al programador:
+  - Interacción directa con el equipo
+  - Edición interactiva
+  - Compilación parcial
+  - Ejecución inmediata
+  - Bibliotecas de sistema
+- Complejidad técnica
+  - Requisito de múltiples cambios de contexto por segundo
+
+** Tipos de multitarea
+- /Cooperativa/ o /no apropiativa/ :: (cooperative multitasking) Cada
+     proceso tiene control del CPU hasta que efectúa una /llamada al
+     sistema/ o indica al sistema que puede tomar el control (=yield=)
+
+- /Preventiva/ o /apropiativa/ :: (preemptive multitasking) El reloj
+     del sistema interrumpe la ejecución de cada proceso transfiriendo
+     /forzosamente/ el control al sistema operativo
+
+** Clases de procesos
+#+begin_center
+¿Qué procesos son más importantes?
+#+end_center
+- Procesos interactivos :: El usuario tiene la /experiencia/ de la demora
+- Del sistema :: Procesos no postergables
+- Por nivel de usuario :: Hay usuarios más importantes que otros
+#+begin_center
+Los procesos se organizan en /colas de prioridad/ según las políticas
+requeridas por cada sistema
+#+end_center
+
+* Computadoras personales
+** Nacimiento de las computadoras personales
+- En los 1970s comienzan a aparecer las computadoras personales
+- En un principio, programadas a través de /switches/, con resultados
+  a través de LEDs
+#+attr_latex: width=0.5\textwidth
+#+caption: Microcomputadora Altair 8800
+[[../img/altair.jpg]]
+
+** La era de los 8 bits
+- Al aparecer los /microprocesadores/ de 8 bits, la miniaturización
+  permite tener salida a video (tipo TV), entrada por teclado
+- Se populariza la programación en BASIC (en ROM)
+#+attr_latex: width=0.3\textwidth
+#+caption: Commodore Pet 2001, a la venta desde 1977
+[[../img/commodore_pet.jpg]]
+- Comienzan a manejarse /dispositivos/: Unidades de cinta, unidades de
+  disco, impresoras, modems, etc.
+- Muchas arquitecturas mutuamente incompatibles
+
+** La microcomputadora seria: Familia PC (1981)
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
+#+attr_latex: width=\textwidth
+#+caption: Computadora IBM PC modelo 5150 (1981)
+[[../img/ibmpc.jpg]]
+#+latex: \end{column}\begin{column}{0.6\textwidth}
+- Primer computadora de una empresa seria, orientada a su uso en
+  ambiente empresarial
+- Separan el /entorno de desarrollo/ del /entorno de programación/, se
+  populariza la /distribución de binarios/
+- Entorno primario de ejecución: /Línea de comando/ (PC-DOS, MS-DOS)
+- Al día de hoy sigue siendo la arquitectura predominante
+#+latex: \end{column}\end{columns}
+
+** Entorno gráfico (WIMP) (1984)
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
+#+attr_latex: width=0.6\textwidth
+#+caption: Apple Macintosh (1984)
+[[../img/mac128.png]]
+#+caption: Commodore Amiga 1000 (1985)
+#+attr_latex: width=0.6\textwidth
+[[../img/A1000.jpg]]
+#+latex: \end{column}\begin{column}{0.6\textwidth}
+- Ventanas, iconos, menúes, apuntador (/Windows, Icons, Menus,
+  Pointer/)
+- 1984: Apple Macintosh, primer sistema WIMP con éxito comercial
+- Multiprocesos, /no multitarea/
+- Los programadores /tienen que pensar en concurrencia/
+- Multitarea preventiva real: 1985 (Amiga, Atari ST)
+  - Sin hardware de protección
+#+latex: \end{column}\end{columns}
+

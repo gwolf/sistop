@@ -220,10 +220,160 @@ escritorio?
   requieren sistema operativo (p.ej. Arduino)
   - Probablemente siempre lo habrá
 
-* Estructura básica de los sistemas operativos
+* Estructuras básicas
+** Continuando con la introducción…
+#+BEGIN_CENTER
+Seguimos con…
+
+Algunos conceptos base que se presentarán repetidamente a lo largo
+del curso.
+
+Algunos conceptos sin demasiada hilación temática — pero que se harán
+fundamentales
+#+END_CENTER
 ** Separación /espacio núcleo/ y /espacio usuario/
-** Núcleos /monolíticos/, /microkernel/ y casos híbridos
+- Evolución de los tipos de /modo protegido/ de los sistemas monitores
+  - ¿Dos modos? ¿Más modos?
+- Código con diferentes roles
+  - Lo que hace el sistema operativo vs. las aplicaciones del usuario
+- ¿Cómo se /brinca/ entre un modo y otro?
+** Organización del sistema operativo
+#+BEGIN_CENTER
+¿Hasta dónde llega el sistema operativo?
+
+¿Hasta dónde llega el código que corre en modo protegido/espacio
+núcleo?
+#+END_CENTER
+- Monolítico :: Todas las operaciones privilegiadas en el mismo
+                /super-proceso/.
+- Microkernel :: Un núcleo con el mínimo posible de funcionalidad,
+                 descargando en /procesos especiales/ ciertas tareas
+- Híbridos :: Sistemas que entran mayormente en una categoría, pero
+              tienen alguna excepción
+** Monolíticos
+- La mayor parte de los sistemas históricamente
+
+- Más fáciles de diseñar
+  - (¡No es lo mismo que /diseño más simple!)
+
+- Estructuras compartidas directamente entre subsistemas
+
+- Más rápidos (menos /cambios de contexto/)
+** Microkernel
+- Se delegan a /espacio usuario/ todos los procesos que sea posible
+  - p.ej. sistemas de archivos, planificación de procesos,
+    administración de memoria, dispositivos, modelo de seguridad…
+
+- Código resultante /más limpio/
+  - Interfaces claras, separación de responsabilidades
+  - Seguridad: Verificabilidad, /auto-reparación/
+
+- Más lentos
+  - Típicamente basados en /paso de mensajes/
+  - Requieren más cambios de contexto
+
+- Más difíciles de implementar correctamente
+** Esquema organizativo
+#+attr_latex: width=\textwidth
+[[../img/monolithic_micro_hybrid.png]]
+** ¿Tiempo de acceso? ¿Tasa de transferencia?
+#+BEGIN_CENTER
+Manejaremos muchas mediciones de velocidad. Debemos siempre tener en cuenta:
+#+END_CENTER
+- Tiempo de acceso :: ¿Cuánto tiempo toma /iniciar/ una
+     transferencia? (medido en s, ms, ns)
+- Tasa de transferencia :: Una vez iniciada, ¿a qué velocidad
+     /sostenida/ podemos mantenerla? (medido en b/s, Kb/s, Mb/s)
+#+BEGIN_CENTER
+En el /mejor caso/, la transferencia de $x$ bits nos tomará $t_a +
+xt_t$
+#+END_CENTER
+** Tipos de almacenamiento
+#+BEGIN_CENTER
+¿Cómo representar y guardar /adecuadamente/ los datos e instrucciones?
+#+END_CENTER
+- La memoria rápida es muy cara
+- La memoria barata es muy lenta (hasta 1000 veces más lenta que el procesador)
+- El almacenamiento /a largo plazo/ es mucho más barato, pero
+  muchísimo más lento
+  - Los discos llegan a ser /millones/ de veces más lentos que la
+    memoria
+- El avance del desarrollo de hardware /juega en contra/ de reducir
+  la diferencia
+** Jerarquía de almacenamiento (vista clásica)
+#+attr_latex: height=0.7\textheight
+#+caption: Jerarquía de almacenamiento (Silberschatz, Galvin, Gagne; p. 11)
+[[../img/jerarquia.png]]
+** Jerarquía de almacenamiento (vista más real)
+#+attr_latex: width=\textwidth
+#+caption: La realidad de los niveles es menos rígida... (e incluso esta representación admite varias mejorías)
+#+begin_src dot :file ltxpng/jearquia_memoria.png
+digraph G {
+	layout = dot;
+	node [shape = box];
+	rankdir = LR;
+	
+	Registros ;
+	Cache ;
+	Principal [label = "Memoria principal"];
+	Electr [label = "Disco electrónico"];
+	Magnet [label = "Disco magnético"];
+	Optico [label = "Disco óptico"];
+	Cinta [label = "Cintas magnéticas"];
+	
+	Registros -> Cache [dir = both];
+	
+	Cache -> Principal [dir = both];
+	
+	Principal -> Electr [dir = both];
+	Principal -> Magnet [dir = both];
+	
+	Electr -> Magnet [dir = both];
+	
+	Electr -> Optico [dir = both];
+	Magnet -> Optico [dir = both];
+	
+        Optico -> Cinta [dir = both];
+	Electr -> Cinta [dir = both, minlen=2];
+	Magnet -> Cinta [dir = both, minlen=2];
+}
+#+end_src
 ** Jerarquía de almacenamiento
+#+BEGIN_CENTER
+#+latex: {\scriptsize
+#+caption: Velocidad y gestor de los principales niveles de memoria. (Silberschatz, Galvin, Gagne; p.28)
+| Nivel           | 1                 | 2              | 3              | 4          |
+|-----------------+-------------------+----------------+----------------+------------|
+| *Nombre*        | Registros         | Cache          | Memoria princ. | Disco      |
+| *Tamaño*        | <1KB              | <16MB          | <64GB          | >100GB     |
+| *Tecnología*    | Multipuerto, CMOS | SRAM CMOS      | CMOS DRAM      | Magnética  |
+| *Acceso (ns)*   | 0.25-0.5          | 0.5-25         | 80-250         | 5,000,000  |
+| *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
+| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
+| *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
+#+latex: }
+#+END_CENTER
+** Almacenamiento /primario/ y /secundario/
+- El procesador /sólo puede manejar directamente/ a la memoria
+  principal
+  - Se le conoce también como /almacenamiento primario/
+  - *Ojo* ¡No es persistente! Es almacenamiento /durante el tiempo de
+    ejecución de un programa/
+- Discos, cintas, almacenamiento /estado sólido/ son /almacenamiento
+  secundario/
+  - Todas las computadoras lo manejan a través de /controladores
+    específicos/
 ** La memoria y los registros
+#+BEGIN_CENTER
+¿Qué son los registros?
+#+END_CENTER
+- Memoria super-rápida, ubicada /dentro/ del procesador
+- Manejada /por referencia directa/, no por dirección
+- Primeros procesadores: Basados en /acumuladores/
+- Hoy: Típicamente ≥32 registros /largos/ (32, 64bit) de propósito
+  general, mas algunos de propósito específico
+- Además de los datos del proceso guardan su /estado/
+- ¿Qué significa /gestionados por el compilador?
 ** Interrupciones y excepciones
+
 ** Llamadas al sistema

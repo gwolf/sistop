@@ -5,15 +5,25 @@
 * ¿Qué son y qué hacen?
 
 ** ¿Qué es un sistema operativo?
+- El /sistema base/ de una computadora
 - El programa que /siempre corre/
 - Gestor de los /recursos/ del sistema
+- Lo que define /qué es compatible/ y /qué no/ dentro de una
+  determinada arquitectura de hardware
 - …
 
-** Por descarte, ¿Qué /no/ es?
-- El ambiente gráfico
+** …¿Qué /no/ es?
 - Los programas básicos para administrar archivos
 - La forma en que el usuario /lanza/ programas
+- El ambiente con que interactúa el usuario
+  - Entorno gráfico
+  - Línea de comando
+  - …
 
+** ¿Qué brinda al /programador/?
+- Abstracción (/embellecimiento/ -Finkel)
+- Gestión de recursos
+- Aislamiento y protección
 ** Abstracción
 #+begin_center
 Proporciona /abstracciones consistentes/ y /simplificaciones/ a los
@@ -32,7 +42,7 @@ ejecución a los diversos procesos
   rivales)
 - Políticas de asignación (y recuperación) justas
 
-** Aislamiento
+** Aislamiento y protección
 #+begin_center
 Protección de los datos, de los recursos, de los procesos
 #+end_center
@@ -41,13 +51,25 @@ Protección de los datos, de los recursos, de los procesos
 - Ante procesos /mal comportados/
 - Ante procesos maliciosos
 
+** Ahora sí… ¿Qué es un sistema operativo?
+- El principal programa que corre en una computadora de propósito
+  general
+- Provee una serie de abstracciones básicas a los programas
+  - Pueden haber diferentes sistemas operativos, definiendo distintas
+    /interfaces/, sobre el mismo hardware
+  - Un mismo sistema operativo puede /adecuarse a/ distintas
+    arquitecturas de hardware
+- Ofrece una infraestructura de gestión, aislamiento y protección de
+  recursos
+- Permite la implementación de /entornos operativos/
+
 * Historia y evolución
 
 ** Construyendo a través de la historia
 #+begin_center
 Para comprender lo que hoy gestionan los sistemas operativos,
 comencemos viendo cómo es que llegaron a gestionarlo.
-
+\vfill
 Vamos con un repaso histórico de la historia de la computación,
 enfocados a las /inovaciones/ de cada etapa
 #+end_center
@@ -124,6 +146,8 @@ enfocados a las /inovaciones/ de cada etapa
 - Procesos interactivos :: El usuario tiene la /experiencia/ de la demora
 - Del sistema :: Procesos no postergables
 - Por nivel de usuario :: Hay usuarios más importantes que otros
+- /…Asegún el sapo/ :: Cada situación puede ameritar una política
+     diferente
 #+begin_center
 Los procesos se organizan en /colas de prioridad/ según las políticas
 requeridas por cada sistema
@@ -135,19 +159,24 @@ requeridas por cada sistema
 - En un principio, programadas a través de /switches/, con resultados
   a través de LEDs
 #+attr_latex: width=0.5\textwidth
-#+caption: Microcomputadora Altair 8800
+#+caption: Microcomputadora Altair 8800 (1975, ~US$600)
 [[../img/altair.jpg]]
 
-** La era de los 8 bits
-- Al aparecer los /microprocesadores/ de 8 bits, la miniaturización
-  permite tener salida a video (tipo TV), entrada por teclado
-- Se populariza la programación en BASIC (en ROM)
-#+attr_latex: width=0.3\textwidth
-#+caption: Commodore Pet 2001, a la venta desde 1977
+** La era de los 8 bits (~1977-1985)
+- /Microprocesadores/ de 8 bits y miniaturización
+  - Salida a video (tipo TV)
+  - Entrada por teclado
+  - Entrada opcional por cinta, primeros diskettes
+- Programación en BASIC (intérprete en ROM)
+#+attr_latex: width=0.4\textwidth
+#+caption: Commodore Pet 2001 (1977)
 [[../img/commodore_pet.jpg]]
+
+** La era de los 8 bits (~1977-1985)
 - Comienzan a manejarse /dispositivos/: Unidades de cinta, unidades de
   disco, impresoras, modems, etc.
 - Muchas arquitecturas mutuamente incompatibles
+- Explosión de la industria de los videojuegos
 
 ** La microcomputadora seria: Familia PC (1981)
 #+latex: \begin{columns}\begin{column}{0.3\textwidth}
@@ -165,7 +194,7 @@ requeridas por cada sistema
 
 ** Entorno gráfico (WIMP) (1984)
 #+latex: \begin{columns}\begin{column}{0.3\textwidth}
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: width=0.5\textwidth
 #+caption: Apple Macintosh (1984)
 [[../img/mac128.png]]
 #+caption: Commodore Amiga 1000 (1985)
@@ -182,8 +211,8 @@ requeridas por cada sistema
 #+latex: \end{column}\end{columns}
 
 ** La profesionalización del escritorio
-- Intel 80486, Motorola 68040, PowerPC: Hardware tan capaz como el de
-  las /estaciones de trabajo/
+- Fines de los 1980 — Intel 80486, Motorola 68040, PowerPC: Hardware
+  tan capaz como el de las /estaciones de trabajo/
 - Reducción de las arquitecturas alternativas
 - Reemplazo paulatino de los sistemas operativos por otros más capaces
   (o mejor /mercadeados/)
@@ -191,7 +220,7 @@ requeridas por cada sistema
     NeXT y MacOS
 
 ** Convergen Unix y las computadoras /humildes/
-- Unixes históricos para escritorio: Xenix, A/UX, SCO.
+- Unixes históricos para computadoras personales: Xenix, A/UX, SCO.
   - Muy limitados por su hardware
   - Precio desproporcionadamente alto; mejor ir por una /estación de
     trabajo/
@@ -254,11 +283,13 @@ núcleo?
 - La mayor parte de los sistemas históricamente
 
 - Más fáciles de diseñar
-  - (¡No es lo mismo que /diseño más simple!)
+  - (¡No es lo mismo que /diseño más simple/!)
 
 - Estructuras compartidas directamente entre subsistemas
 
 - Más rápidos (menos /cambios de contexto/)
+
+- Difícil transición a un entorno multiprocesador
 ** Microkernel
 - Se delegan a /espacio usuario/ todos los procesos que sea posible
   - p.ej. sistemas de archivos, planificación de procesos,
@@ -267,15 +298,17 @@ núcleo?
 - Código resultante /más limpio/
   - Interfaces claras, separación de responsabilidades
   - Seguridad: Verificabilidad, /auto-reparación/
+  - Más fácil pasar a multiprocesador
 
 - Más lentos
   - Típicamente basados en /paso de mensajes/
   - Requieren más cambios de contexto
 
 - Más difíciles de implementar correctamente
-** Esquema organizativo
+** Monolítico / microkernel / mixto: Esquema
 #+attr_latex: width=\textwidth
 [[../img/monolithic_micro_hybrid.png]]
+
 ** ¿Tiempo de acceso? ¿Tasa de transferencia?
 #+BEGIN_CENTER
 Manejaremos muchas mediciones de velocidad. Debemos siempre tener en cuenta:
@@ -296,6 +329,7 @@ xt_t$
 - La memoria barata es muy lenta (hasta 1000 veces más lenta que el procesador)
 - El almacenamiento /a largo plazo/ es mucho más barato, pero
   muchísimo más lento
+  - El almacenamiento primario es /volátil/
   - Los discos llegan a ser /millones/ de veces más lentos que la
     memoria
 - El avance del desarrollo de hardware /juega en contra/ de reducir
@@ -361,8 +395,7 @@ digraph G {
     ejecución de un programa/
 - Discos, cintas, almacenamiento /estado sólido/ son /almacenamiento
   secundario/
-  - Todas las computadoras lo manejan a través de /controladores
-    específicos/
+  - Todas las computadoras lo manejan a través de /controladores/
 ** La memoria y los registros
 #+BEGIN_CENTER
 ¿Qué son los registros?
@@ -374,6 +407,83 @@ digraph G {
   general, mas algunos de propósito específico
 - Además de los datos del proceso guardan su /estado/
 - ¿Qué significa /gestionados por el compilador?
+
+** Ejemplo de registros: Intel 8086/8088
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+#+attr_latex: width=\columnwidth
+#+caption: Imagen de Wikipedia
+[[../img/registros_8086.png]]
+#+latex: \end{column}\begin{column}{0.4\textwidth}
+Registros /bandera/ (vector de booleanos): Overflow, Dirección,
+Interrupción, Trampa/depuración, Signo, Cero, Acarreo auxiliar,
+Paridad, Acarreo
+#+latex: \end{column}\end{columns}
+
 ** Interrupciones y excepciones
 
+- Interrupción :: Todo evento recibido por el sistema, de origen
+                  /externo/ al flujo de la ejecución
+  - Actividad en la red
+  - Teclado o mouse
+  - Alarma del temporizador
+  - Datos del disco listos
+
+- Excepción :: Eventos inesperados originados por el flujo del
+               proceso
+  - División sobre cero
+  - Instrucción ilegal
+  - Acceso a memoria no direccionada
+
+** Manejo de interrupciones y excepciones
+- Todo /evento/ es recibido por el sistema operativo (no por los
+  procesos)
+- Cuando ocurre cualquier /evento/, el hardware /lanza una
+  interrupción/ que interrumpe el flujo de ejecución
+- Rutina de /manejo de interrupciones/
+  - Grabar estado del proceso desplazado y /cambiar contexto/
+  - Atender la interrupción en /modo privilegiado/ (¡el menor tiempo
+    posible!)
+  - Una vez procesada, volver a invocar al /planificador/
+
 ** Llamadas al sistema
+- De cierto modo análogas/complementarias a las interrupciones
+- Mecanismo para que un proceso /solicite un servicio/ al sistema
+  operativo
+- Cada sistema operativo /expone/ un diferente juego de llamadas al
+  sistema a través de su API
+- Es en buena medida lo que determina la /compatibilidad de código/
+  entre sistemas operativos
+  - Contraposición: Compatibilidad binaria
+  - APIs implementados por diversos sistemas: POSIX, Win32
+- Interrupciones /enmascarables/ y /no enmascarables/
+** Tipos de llamadas al sistema (1)
+#+BEGIN_CENTER
+Lista incompleta, meramente ejemplificando
+#+END_CENTER
+- Control de procesos :: Crear o finalizar un proceso, obtener
+     atributos del proceso, esperar cierto tiempo, asignar o liberar
+     memoria, etc.
+
+- Manipulación de archivos :: Crear, borrar o renombrar un archivo;
+     abrir o cerrar un archivo existente; modificar sus /metadatos/;
+     leer o escribir de un /descriptor de archivo/ abierto, etc.
+
+- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
+     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
+     llamadas son análogas a las de manipulación de archivos, y varios
+     sistemas operativos las ofrecen como una sola.
+** Tipos de llamadas al sistema (2)
+#+BEGIN_CENTER
+Lista incompleta, meramente ejemplificando
+#+END_CENTER
+- Mantenimiento de la información :: Obtener o modificar la hora del
+     sistema; obtener detalles acerca de procesos o archivos, etc.
+
+- Comunicaciones :: Establecer una comunicación con determinado
+                    proceso (local o remoto), aceptar una solicitud de
+                    comunicación de otro proceso, intercambiar
+                    información sobre un canal establecido
+
+- Protección :: Consultar o modificar la información relativa al
+                acceso de objetos en el disco, otros procesos, o la
+                misma sesión de usuario

@@ -11,11 +11,13 @@ publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
 html:
+	mkdir -p html/ltxpng
 	echo html | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 	ln -s ../pdf html/pdf || true
 	ln -s ../biblio html/biblio || true
 
 pdf:
+	mkdir -p pdf/ltxpng
 	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
 beamer:

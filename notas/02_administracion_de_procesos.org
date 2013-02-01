@@ -49,10 +49,10 @@ de ejecución. Estos son:
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
 
-#+attr_html: height="350"
+#+html: <div class="figure">
 #+attr_latex: width=0.4\textwidth
 #+caption: Diagrama de transición entre los estados de un proceso
-#+begin_src dot :file ltxpng/estados_proceso.png
+#+begin_src dot :exports results :file ltxpng/estados_proceso.png
 digraph G {
 	layout = dot;
 	node [shape = box];
@@ -74,9 +74,9 @@ digraph G {
 }
 #+end_src
 
-#+begin_html
-<p align="center">Diagrama de transición entre los estados de un proceso</p>
-#+end_html
+#+results:
+[[file:ltxpng/estados_proceso.png]]
+#+html: <p align="center">Diagrama de transición entre los estados de un proceso</p></div>
 
 ** El bloque de control de proceso (PCB)
 
@@ -1244,11 +1244,11 @@ secuencia:
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
    otro proceso (o queda en espera)
 
-#+attr_html: height="350"
+#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 
-#+begin_src dot :file ltxpng/bloqueo_mutuo_simple.png
+#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
 digraph G {
 	layout = circo;
 
@@ -1264,9 +1264,9 @@ digraph G {
 }
 #+end_src
 
-#+begin_html
-<p align="center">Esquema clásico de un bloqueo mutuo simple: Los procesos <em>A</em> y <em>B</em> esperan mutuamente para el acceso a las unidades de cinta <em>1</em> y <em>2</em>.</p>
-#+end_html
+#+results:
+[[file:ltxpng/bloqueo_mutuo_simple.png]]
+#+html: <p align="center">Esquema clásico de un bloqueo mutuo simple: Los procesos <em>A</em> y <em>B</em> esperan mutuamente para el acceso a las unidades de cinta <em>1</em> y <em>2</em>.</p></div>
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución. Veremos, pues, algunas
@@ -1526,11 +1526,11 @@ sistema /en un momento dado/):
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
 
-#+attr_html: height="350"
+#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
 
-#+begin_src dot :file ltxpng/deteccion_bloqueos.png
+#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
 digraph G {
 	layout = neato;
 	1 [label = "1"];
@@ -1555,9 +1555,7 @@ digraph G {
 }
 #+end_src
 
-#+begin_html
-<p align="center">Detección de bloqueos: Grafo de procesos y recursos en un momento dado</p>
-#+end_html
+#+html: <p align="center">Detección de bloqueos: Grafo de procesos y recursos en un momento dado</p></div>
 
 De la gráfica anterior, podríamos proceder:
 

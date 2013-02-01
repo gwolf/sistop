@@ -32,6 +32,14 @@
 	 :publishing-function org-publish-attachment
 	 )
 
+	("notas-pdf-static"
+	 :base-directory "~/vcs/sistemas_operativos/notas/"
+	 :base-extension "png\\|jpg\\|svg"
+	 :publishing-directory "~/vcs/sistemas_operativos/pdf"
+	 :recursive t
+	 :publishing-function org-publish-attachment
+	 )
+
 	("notas-pdf"
 	 :base-directory "~/vcs/sistemas_operativos/notas/"
 	 :base-extension "org"
@@ -43,6 +51,6 @@
 	 )
 
 	("html" :components ("notas-html" "notas-html-static"))
-	("pdf" :components ("notas-pdf"))
+	("pdf" :components ("notas-pdf-static" "notas-pdf"))
 	)
       )

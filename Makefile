@@ -15,6 +15,7 @@ html:
 	echo html | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 	ln -s ../pdf html/pdf || true
 	ln -s ../biblio html/biblio || true
+	ln -s ../laminas html/laminas || true
 
 pdf:
 	mkdir -p pdf/ltxpng
@@ -46,7 +47,7 @@ clean: clean-publish-cache
 	rm -rf html
 	rm -rf pdf
 
-push: push_html push_pdf push_biblio
+push: push_html push_pdf push_biblio push_laminas
 
 push_html: html
 	rsync -av --delete ./html/* $(publish_dest)/html
@@ -56,5 +57,8 @@ push_pdf: pdf
 
 push_biblio:
 	rsync -av --delete ./biblio/* $(publish_dest)/biblio
+
+push_beamer:
+	rsync -av --delete ./laminas/* $(publish_dest)/laminas
 
 all: pdf html beamer

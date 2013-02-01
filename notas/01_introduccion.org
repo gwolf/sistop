@@ -452,7 +452,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      archivos en espacio de usuario, FUSE, en Linux).
 
 #+attr_html: width="100%"
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=\textwidth
 #+caption: Esquematización de la arquitectura básica de los sistemas monolíticos, microkernel e híbridos. ([[https://commons.wikimedia.org/wiki/File:OS-structure2.svg][Imagen de la Wikipedia: Monolithic kernel]])
 [[./img/monolithic_micro_hybrid.png]]
 
@@ -491,10 +491,10 @@ la memoria aumentó su velocidad a un ritmo mucho menor —
 Aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
+#+html: <div class="figure">
 #+attr_latex: height=0.5\textheight
-#+attr_html: height="350"
 #+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
-#+begin_src dot :file ltxpng/jearquia_memoria.png
+#+begin_src dot :exports results :file ltxpng/jearquia_memoria.png
 digraph G {
 	layout = dot;
 	node [shape = box];
@@ -526,9 +526,9 @@ digraph G {
 }
 #+end_src
 
-#+begin_html
-<p align="center">Jerarquía de memoria entre diversos medios de almacenamiento.</p>
-#+end_html
+#+results:
+[[file:ltxpng/jerarquia_memoria.png]]
+#+html: <p align="center">Jerarquía de memoria entre diversos medios de almacenamiento.</p></div>
 
 Una respuesta parcial a este problema es la creación de una jerarquía
 de almacenamiento, yendo de una pequeña área de memoria mucho más cara
@@ -573,7 +573,7 @@ muchos de los cuales ofrecían 32 registros, todos ellos de propósito
 general.
 
 #+attr_html: width=444px
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.6\textwidth
 #+caption: Ejemplo de registros: Intel 8086/8088 (Imagen de la Wikipedia: /Intel 8086 y 8088/)
 [[./img/registros_8086.png]]
 

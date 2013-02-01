@@ -47,7 +47,7 @@ clean: clean-publish-cache
 	rm -rf html
 	rm -rf pdf
 
-push: push_html push_pdf push_biblio push_laminas
+push: push_html push_pdf push_biblio push_beamer
 
 push_html: html
 	rsync -av --delete ./html/* $(publish_dest)/html

@@ -1,4 +1,5 @@
 #+SETUPFILE: ../setup_laminas.org
+#+LaTeX_CLASS_OPTIONS: [10pt]
 #+TITLE: Revisión de la tarea del 28-30 de enero
 #+DATE: 1 de febrero, 2013
 
@@ -25,39 +26,46 @@ Exposición detallada en http://sistop.gwolf.org/html/01_introduccion.html
 - iOS (2)
 
 ** 3. ¿Qué factores los diferencian? (En general)
-- Tipo de formato
 - Factor económico/comercial, libres/de paga
-- Interfaz gráfica
-- Tipo de arquitecturas y equipos que soportan
-- Tipo de software que usa
-- Tipo de lenguaje de programación
-- Permisos de los archivos
-- Manejo de la seguridad, sistemas de permisos
 - El hardware que lo soporta
+  - Tipo de arquitecturas y equipos que soportan
+- Para qué o cómo se emplea (o diseña para él)
+  - Tipo de software que usa
+  - Tipo de lenguaje de programación
+- Implementación de subsistemas específicos
+  - Tipo de formato
+  - Permisos de los archivos
+  - Manejo de la seguridad, sistemas de permisos
+- Interfaz gráfica
 - Comandos utilizados
 
 ** 3. ¿Qué factores los diferencian? (Linux)
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
 - Seguridad
   - Prácticamente inmune a virus
 - Es libre
+  - Abierto
   - Se puede compartir
   - Es gratuito
   - Puede ser modificado y mejorado por cualquier programador
+  - Orientado a desarrolladores ("por la característica free")
+  - Código fuente disponible, puede modificarse al gusto
+- Más complejo; Requiere más conocimiento/experiencia
+#+latex: \end{column}\begin{column}{0.5\textwidth}
 - Estabilidad
-  - "Programado para no reiniicarse a la hora de instalar un
+  - "Programado para no reiniciarse a la hora de instalar un
     programa"
-- Abierto
+  - Más robusto
 - Rápido
+  - Es más rápido que Windows ("porque comentan que está mejor hecho")
 - Orientado a trabajo en red
 - Multiusuario
 - Multitarea real
 - Mayor control
-- Más complejo; Requiere más conocimiento/experiencia
 - Ext2, Ext3
-- Orientado a desarrolladores ("por la característica free")
-- Es más rápido que Windows ("porque comentan que está mejor hecho")
-- Más robusto
-- Código fuente disponible, puede modificarse al gusto
+#+latex: \end{column}\end{columns}
+
+** 3. ¿Qué factores los diferencian? (Derivados de Linux)
 - Jolicloud
   - Basado en /la nube/
   - Diseñado pra computadoras portátiles
@@ -67,42 +75,53 @@ Exposición detallada en http://sistop.gwolf.org/html/01_introduccion.html
   - Velocidad buena de navegación
 
 ** 3. ¿Qué factores los diferencian? (Windows)
-- Simplicidad ("destinado a estudiantes y computadoras de hogar")
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+- Simplicidad
+  - "Destinado a estudiantes y computadoras de hogar"
+  - Entorno más gráfico
 - Se necesita licencia
   - Es cerrado y no se puede modificar o mejorar
-- Vulnerable a virus
+- Inseguro / inestable
+  - Vulnerable a virus
+  - No es multitarea real
+  - No hay verdadera protección de archivos de distintos usuarios
+- Soporte técnico accesible
 - Apto para juegos 3D
 - Compatibilidad (casi todos los programas)
+#+latex: \end{column}\begin{column}{0.5\textwidth}
 - Dirigido a PC
-- No es multitarea real
-- No hay verdadera protección de archivos de distintos usuarios
-- NTFS, FAT32
-- Entorno más gráfico
 - Mayor soporte a muchos dispositivos
 - Poca estabilidad
   - No soporta muchos programas abiertos
   - Entorno más frágil ("le borro tan sólo un archivo .dll y (…) no
     vuelve a encender)
   - Requiere formateos y reinicios
-- Soporte técnico accesible
-- Optimización de sistema, pero degradación conforme se usa
+  - Optimización de sistema, pero degradación conforme se usa
+- NTFS, FAT32
+#+latex: \end{column}\end{columns}
 
 ** 3. ¿Qué factores los diferencian? (MacOS)
+#+BEGIN_CENTER
+MacOS /tradicional/ (escritorio)
+#+END_CENTER
 - Muy amigable
 - Más barato que Windows
 - Existe sólo una versión
-- Sólo compatible con drivers de Apple
-- /Gestures/
-- Muchos programas sin trabarse
+- Estabilidad y seguridad
+  - Muchos programas sin trabarse
+  - La seguridad ("porque MacOS tiene bloqueadas ciertas funciones del
+    sistema para el usuario"
+  - Poco vulnerable a virus y malware
 - Menos control ("No puedes saber dónde fueron instaladas las cosas
   y por qué")
-- La seguridad ("porque MacOS tiene bloqueadas ciertas funciones del
-  sistema para el usuario"
+- Sólo compatible con drivers de Apple
 - Excelente diseño HW y SW
-- Poco vulnerable a virus y malware
 - Rápido y fácil de usar
+- /Gestures/
 
-** 3. ¿Qué factores los diferencian? (iOS)
+#+BEGIN_CENTER
+iOS
+#+END_CENTER
 - Dirigido a móviles Apple
 
 * Puntos a rescatar/discutir
@@ -122,3 +141,25 @@ Windows
 #+end_quote
 
 ** /Jolicloud/ (hoy JoliOS) y el /cómputo en la nube/
+- ¿Qué es el /cómputo en la nube/?
+  - Sistemas distribuídos — De cierto modo, bajo cierto concepto
+    (heterodoxo)
+- Jolicloud — ¿Nos puedes relatar tu experiencia?
+- El caso de /computadora.de/
+- Las promesas de FirefoxOS, ChromeOS
+- Características de las /aplicaciones en línea/
+  - Propiedad
+  - Confiabilidad
+
+** La /filosofía Unix/
+#+BEGIN_CENTER
+¿Por qué un OS puede correr en hardware muy variado y otro no?
+\vfill
+/Caso específico/: Windows ha sacado muchas versiones para
+dispositivos pequeños, sin mayor éxito
+\vfill
+El /mantra Unix/:
+
+Muchos programas especializados, que se limitan a /cumplir una sóla
+tarea, pero a cumplirla bien/
+#+END_CENTER

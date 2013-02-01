@@ -456,6 +456,10 @@ Paridad, Acarreo
   - Contraposición: Compatibilidad binaria
   - APIs implementados por diversos sistemas: POSIX, Win32
 - Interrupciones /enmascarables/ y /no enmascarables/
+** Flujo de control en una llamada al sistema
+#+attr_latex: width=\textwidth
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Silberschatz, Galvin, Gagne; p.22)
+[[../img/llamada_al_sistema.png]]
 ** Tipos de llamadas al sistema (1)
 #+BEGIN_CENTER
 Lista incompleta, meramente ejemplificando
@@ -487,3 +491,37 @@ Lista incompleta, meramente ejemplificando
 - Protección :: Consultar o modificar la información relativa al
                 acceso de objetos en el disco, otros procesos, o la
                 misma sesión de usuario
+
+** Ley de Moore
+#+attr_latex: width=0.8\textwidth
+[[../img/ley_de_moore.png]]
+** Multiprocesamiento
+- Un entorno multiprocesador supone cambios en muchas estructuras y
+  algoritmos básicos
+  - Concurrencia /real/
+- Desde 1970s, empleado para entornos especializados — Alto
+  rendimiento
+- Desde ~2005, común incluso en el escritorio
+  - Ley de Moore: El /número de transistores/ en un circuito integrado se duplica cada dos años (Imagen: Wikipedia)
+  - La carrera de los GHz; eficiencia térmica -> Múltiples núcleos
+  - Resultado: Ya no podemos /ignorar/ la complejidad del multiprocesamiento
+  - ¿En qué nos afecta?
+
+** Cómputo distribuído
+- Procesos realizados en paralelo /entre computadoras independientes/
+- Más formalmente, /entre procesadores que no comparten memoria
+- Modelos de cooperación: Sobre red local, sobre red global
+- Modelos de cómputo distribuido
+  - Cliente-servidor — ¿Es cómputo distribuido?
+  - Clusters, grids
+  - P2P
+  - /Web Services/, SaaS, IaaS, PaaS, /la nube/
+
+** Sistemas de propósito especial
+- Sistemas de /tiempo real/
+  - Operaciones con tiempo de ejecución /prometido duro/
+  - ¿Por qué no usar un sistema operativo estándar?
+  - ¿Qué tanto podemos acercarlo?
+- Particularidades de los sistemas reducidos (p.ej. portátiles)
+  - Maximización de batería
+  - Almacenamiento secundario

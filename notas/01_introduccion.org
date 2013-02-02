@@ -494,7 +494,7 @@ costo-beneficio suficiente para usarse como memoria primaria.
 #+html: <div class="figure">
 #+attr_latex: height=0.5\textheight
 #+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
-#+begin_src dot :exports results :file ltxpng/jearquia_memoria.png
+#+begin_src dot :exports results :file ltxpng/jerarquia_memoria.png
 digraph G {
 	layout = dot;
 	node [shape = box];
@@ -764,6 +764,134 @@ close(2)                                = 0
 exit_group(0)                           = ?
 #+end_src
 #+latex: }
+
+** Multiprocesamiento
+
+El /multiprocesamiento/ es todo entorno donde hay más de un procesador
+(CPU). En un entorno multiprocesado, el conjunto de procesadores se
+vuelven un recurso más a gestionar por el sistema operativo — Y el que
+haya concurrencia /real/ tiene un fuerte impacto en su diseño.
+
+El multiprocesamiento se emplea ampliamente desde los 1960 en los
+entornos de cómputo de alto rendimiento, pero por muchos años se vio
+como el área de especialización de muy pocos — Las computadoras con
+más de un procesador eran prohibitivamente caras, y para muchos
+sistemas, ignorar el problema resultaba una opción válida. Muchos
+sistemas operativos ni siquiera detectaban la existencia de
+procesadores adicionales, y en presencia de éstos, ejecutaban en uno
+sólo.
+
+Esto cambió hacia el 2005. Tras más de 30 años de cumplirse, el modelo
+conocido como la /Ley de Moore/, enunciando que cada dos años la
+densidad de transistores por circuito integrado se duplicaría,
+llevaba a velocidades de CPU que, en el ámbito comercial, excedían los
+3GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
+el diferencial de velocidad con el acceso a memoria era cada vez más
+alto. Esto motivó a que las principales compañías productoras de CPUs
+cambiaran de estrategia, introduciendo chips que son, para propósitos
+prácticos, /paquetes/ con 2 o más procesadores dentro.
+
+#+attr_latex: width=0.7\textwidth
+#+attr_html: height="350"
+#+caption: La /Ley de Moore/: Conteo de transistores por procesador de 1971 al 2011. (Imagen de la Wikipedia: /Ley de Moore/)
+[[./img/ley_de_moore.png]]
+
+Con este cambio, el /reloj/ de los procesadores se ha mantenido casi
+sin cambios, cerca de 1GHz, pero el rendimiento de los equipos sigue
+aumentando. Sin embargo, como programadores de sistemas operativos y
+programas de aplicación ya no podemos ignorar esta complejidad
+adicional.
+
+Se denomina /multiprocesamiento simétrico/ (típicamente abreviado SMP)
+a la situación en la que todos los procesadores del sistema son
+iguales y pueden realizar en el mismo tiempo las mismas
+operaciones. Todos los procesadores del sistema tienen acceso a la
+misma memoria (aunque cada uno puede tener su propio /caché/).
+
+Existe también el /multiprocesamiento asimétrico/; dependiendo de la
+implementación, la asimetría puede residir en diferentes puntos. Puede
+ir desde que los procesadores tengan una /arquitectura/ distinta
+(típicamente dedicada a una tarea específica), en caso en el cual
+pueden verse como /coprocesadores/ o /procesadores coadyuvantes/, casi
+computadoras independientes contribuyendo sus resultados a un mismo
+cómputo. Hoy en día, este sería el caso de las tarjetas gráficas 3D,
+que son computadoras completas con su propia memoria y
+responsabilidades muy distintas del sistema central.
+
+Es posible tener diferentes procesadores con la misma arquitectura
+pero funcionando a diferente frecuencia. Esto conlleva una fuerte
+complejidad adicional, y no se utiliza hoy en día.
+
+Por último, existen los diseños de /Acceso No-Uniforme a Memoria/
+(/Non-Uniform Memory Access/, /NUMA/). En este esquema, cada
+procesador tiene /afinidad/ con bancos específicos de memoria — Para
+evitar que los diferentes procesadores estén esperando al mismo tiempo
+al bus compartido de memoria, cada uno tiene acceso exclusivo a su
+área. Los sistemas NUMA pueden ubicarse como en un punto intermedio
+entre el procesamiento simétrico y el cómputo distribuído, y puede ser
+visto como un /cómputo distribuído fuertemente acoplado/.
+
+** Cómputo distribuído
+
+Se denomina cómputo distribuído a un proceso de cómputo realizado
+entre computadoras independientes, o, más formalmente, entre
+procesadores que /no comparten memoria/ (almacenamiento primario).
+Puede verse que un equipo de diseño NUMA está a medio camino entre una
+computadora multiprocesada y el cómputo distribuído.
+
+Hay diferentes modelos para implementar el cómputo distribuído,
+siempre basados en la transmisión de datos sobre una /red/. Estos son
+principalmente:
+
+- /Cúmulos/ (clusters) :: Computadoras conectadas por una red local
+     (de alta velocidad), corriendo cada una su propia instancia de
+     sistema operativo. Pueden estar orientadas al /alto rendimiento/,
+     /alta disponibilidad/ o al /balanceo de cargas/. Típicamente son
+     equipos homogéneos, y dedicados a la tarea en cuestión.
+
+- /Mallas/ (Grids) :: Computadoras distribuídas geográficamente y
+     conectadas a través de una red de comunicaciones. Las
+     computadoras participantes pueden ser heterogéneas (en
+     capacidades y hasta en arquitectura); la comunicación tiene que
+     adecuarse a enlaces de mucho menor velocidad que en el caso de un
+     cluster, e incluso presentar la elasticidad para permitir las
+     conexiones y desconexiones de nodos en el transcurso del
+     cómputo.
+
+- Cómputo /en la nube/ :: Un caso específico de cómputo distribuído
+     con partición de recursos (al estilo del modelo
+     cliente-servidor); este modelo de servicio está fuertemente
+     orientado a la /tercerización/ de servicios específicos. A
+     diferencia del modelo cliente-servidor tradicional, en un entorno
+     de cómputo en la nube lo más común es que tanto el cliente como
+     el servidor sean procesos que van integrando la información,
+     posiblemente por muchos pasos, y que sólo eventualmente llegarán
+     a un usuario final. La implementación de cada uno de los
+     servicios empleados deja de ser relevante, para volverse un
+     servicio /opaco/. Algunos conceptos relacionados son:
+
+  - Servicios Web :: Mecanismo de descripción de funcionalidad, así
+                     como de solicitud y recepción de resultados,
+                     basado en el estándar HTTP y contenido XML
+
+  - Software como servicio :: El proveedor ofrece una /aplicación
+       completa y cerrada/ sobre la red, /exponiendo/ únicamente su
+       interfaz (API) de consultas
+
+  - Plataforma como servicio :: El proveedor ofrece la /abstracción/
+       de un entorno específico de desarrollo de modo que un equipo de
+       programadores pueda /desplegar/ una aplicación desarrollada
+       sobre dicha plataforma tecnológica. Puede ser visto como un
+       conjunto de piezas de infraestructura sobre de un servidor
+       administrado centralmente.
+
+  - Infraestructura como servicio :: El proveedor ofrece computadoras
+       completas (en hardware real o máquinas virtuales); la principal
+       ventaja de esta modalidad es que los usuarios, si bien retienen
+       la capacidad plena de administración sobre sus /granjas/,
+       tienen mucho mayor flexibilidad para aumentar o reducir el
+       consumo de recursos (y por tanto, el pago) según la demanda que
+       alcancen.
 
 * Otros recursos
 

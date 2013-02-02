@@ -492,30 +492,40 @@ Lista incompleta, meramente ejemplificando
                 acceso de objetos en el disco, otros procesos, o la
                 misma sesión de usuario
 
-** Ley de Moore
-#+attr_latex: width=0.8\textwidth
-[[../img/ley_de_moore.png]]
 ** Multiprocesamiento
 - Un entorno multiprocesador supone cambios en muchas estructuras y
   algoritmos básicos
   - Concurrencia /real/
 - Desde 1970s, empleado para entornos especializados — Alto
   rendimiento
+- Diferentes tipos de multiprocesamiento
+  - SMP
+  - ASMP
+  - NUMA
+
+** Ley de Moore
+#+attr_latex: width=0.8\textwidth
+[[../img/ley_de_moore.png]]
+
+** Multiprocesamiento al escritorio
 - Desde ~2005, común incluso en el escritorio
-  - Ley de Moore: El /número de transistores/ en un circuito integrado se duplica cada dos años (Imagen: Wikipedia)
-  - La carrera de los GHz; eficiencia térmica -> Múltiples núcleos
-  - Resultado: Ya no podemos /ignorar/ la complejidad del multiprocesamiento
+- Ley de Moore: El /número de transistores/ en un circuito integrado se duplica cada dos años (Imagen: Wikipedia)
+- La carrera de los GHz; eficiencia térmica -> Múltiples núcleos
+- Resultado: Ya no podemos /ignorar/ la complejidad del multiprocesamiento
   - ¿En qué nos afecta?
 
 ** Cómputo distribuído
 - Procesos realizados en paralelo /entre computadoras independientes/
-- Más formalmente, /entre procesadores que no comparten memoria
+- Más formalmente, /entre procesadores que no comparten memoria/
 - Modelos de cooperación: Sobre red local, sobre red global
 - Modelos de cómputo distribuido
-  - Cliente-servidor — ¿Es cómputo distribuido?
-  - Clusters, grids
-  - P2P
-  - /Web Services/, SaaS, IaaS, PaaS, /la nube/
+  - Clusters
+  - Grids
+  -Cómputo en /la nube/
+    - /Web Services/
+    - SaaS
+    - IaaS
+    - PaaS
 
 ** Sistemas de propósito especial
 - Sistemas de /tiempo real/

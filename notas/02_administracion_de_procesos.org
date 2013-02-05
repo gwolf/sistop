@@ -653,7 +653,7 @@ siguiente interfaz:
                  en el artículo de Dijkstra).
 
 - Incrementar :: Cuando un hilo incrementa al semáforo, si hay hilos
-                 epserando, uno de ellos es /despertado/. Los nombres
+                 esperando, uno de ellos es /despertado/. Los nombres
                  que recibe esta operación son =signal=, =up=,
                  =release=, =post= o =V= (de /verhogen/,
                  /incrementar/).
@@ -884,7 +884,92 @@ cuales tenemos a:
           espera vayan bailando en el órden en que llegaron.
 
 *** TODO Soluciones a los problemas clásicos
-- Problema productor-consumidor :: 
+- Problema productor-consumidor ::
+  Si no tuviéramos en cuenta a la sincronización, podríamos presentar
+  código tan simple como el siguiente:
+
+  #+begin_src python
+  import threading
+  global buffer
+  buffer = []
+  threading.Thread(target=productor,args=[]).start()
+  threading.Thread(target=consumidor,args=[]).start()
+
+  def productor():
+    global buffer
+    while True:
+      event = genera_evento()
+      buffer.append(event)
+
+  def consumidor():
+    global buffer
+    while True:
+      event = buffer.pop()
+      event.process()
+  #+end_src
+
+  Pero el acceso a =buffer= no está protegido para garantizar la
+  exclusión mutua, y podría quedar en un estado inconsistente si
+  =add()= y =get()= intentan manipular sus estructuras al mismo
+  tiempo. Además, si bien en este ejemplo asumimos un sólo hilo
+  productor y un sólo hilo consumidor, podríamos extender el programa
+  para que fueran varios en cualquiera de estos roles.
+
+  =evento= no requiere de protección, dado que es una variable local a
+  cada hilo.
+
+  Para resolver este problema, usaremos dos semáforos: =mutex=, que
+  protege el acceso a nuestra sección crítica, y =elementos=. El valor
+  almacenado en =elementos= indica, cuando es positivo, cuántos
+  eventos tenemos pendientes por procesar, y cuando es negativo,
+  cuántos consumidores están listos y esperando un evento.
+
+  Una solución a este problema puede ser:
+
+  #+begin_src python
+  import threading
+  global buffer, mutex, elementos
+  mutex = threading.Semaphore(1)
+  elementos = threading.Semaphore(0)
+  buffer = []
+  threading.Thread(target=productor, args=[]).start()
+  threading.Thread(target=consumidor, args=[]).start()
+
+  def productor():
+    global buffer, mutex, elementos
+    while True:
+      event = genera_evento()
+      mutex.acquire()
+      buffer.append(event)
+      mutex.release()
+      elementos.release()
+
+  def consumidor():
+    global buffer, mutex, elementos
+    while True:
+      elementos.acquire()
+      mutex.acquire()
+      event = buffer.pop()
+      mutex.release()
+      event.process()
+  #+end_src
+
+  Podemos ver que la misma construcción, un semáforo, es utilizada de
+  forma muy distinta por =mutex= y =elementos=. =mutex= implementa una
+  exclusión mutua clásica, delimitando tanto como es posible (a una
+  sóla línea en nuestro ejemplo) al área crítica, y siempre apareando
+  un =acquire()= con un =release()=. =elementos=, en cambio, es
+  empleado como un verdadero semáforo del mundo real: Como una
+  estructura para la sincronización. Sólo los hilos productores
+  incrementan (sueltan) el semáforo, y sólo los consumidores lo
+  decrementan (adquieren). Esto es, ambos comunican /al planificador/
+  cuándo es posible despertar a algún consumidor.
+
+  Si asumimos que =genera_evento()= es eficiente y no implementa
+  alguna espera activa, esta implementación es óptima: Deja en manos
+  del planificador toda la espera necesaria, y no desperdicia recursos
+  de cómputo esperando a que el siguiente elemento esté listo.
+
 - La cena de los filósofos :: 
 - Los fumadores compulsivos :: 
 *** Monitores

@@ -770,6 +770,60 @@ exit_group(0)                           = ?
 #+end_src
 #+latex: }
 
+** Acceso directo a memoria (DMA)
+
+La operación de dispositivos de entrada/salida puede ser altamente
+ineficiente. Cuando un proceso está en una sección /limitada por
+entrada-salida/ (esto es, donde la actividad principal es la
+transferencia de información entre la memoria principal y cualquier
+otra área del sistema), si el procesador tiene que encargarse de la
+transferencia de toda la información[fn:: Este modo de operación es
+también conocido como /entrada/salida programada/.], se crearía un
+cuello de botella por la cantidad y frecuencia de interrupciones. Hoy
+en día, para evitar que el sistema se detenga cada que hay una
+transferencia grande de datos, todas las computadoras implementan
+controladores de /acceso directo a memoria/ (DMA) en uno o más de sus
+subsistemas.
+
+El DMA se emplea principalmente al tratar con dispositivos con un
+gran ancho de banda, como unidades de disco, subsistemas multimedia,
+tarjetas de red, e incluso para transferir información entre niveles
+del caché.
+
+Las transferencias DMA se hacen en /bloques/ preestablecidos; en vez
+de que el procesador reciba una interrupción cada que hay una palabra
+lista para ser almacenada en la memoria, el procesador indica al
+controlador DMA la dirección física base de memoria en la cual
+operará, la cantidad de datos a transferir, la /dirección/ en que se
+efectuará la operación (del dispositivo a memoria o de memoria al
+dispositivo), y el /puerto/ del dispositivo en cuestión; el
+controlador DMA efectuará la transferencia solicitada, y sólo una vez
+terminada ésta (o en caso de encontrar algún error en el proceso)
+lanzará una interrupción al sistema; el procesador queda libre para
+realizar otras tareas, sin más limitante que la posible /contención/
+que tendrá que enfrentar en el bus de acceso a la memoria.
+
+*** Coherencia de cache
+
+Cuando se realiza una transferencia DMA de un dispositivo a la
+memoria, puede haber /páginas/ de la memoria en cuestión que estén en
+alguno de los niveles de la memoria caché; dado que el caché está uno
+o más niveles por encima de la memoria principal, es posible que la
+información haya ya cambiado pero el caché retenga la información
+anterior.
+
+Los sistemas de /caché coherente/ implementan mecanismos en hardware
+que notifican a los controladores de caché que las páginas que alojan
+están /sucias/ y deben ser vueltas a cargar para ser empleadas, los
+sistemas /no coherentes/ requieren que el subsistema de memoria del
+sistema operativo hagan esta operación.
+
+Los procesadores actuales implementan típicamente varios niveles de
+caché, estando algunos dentro del mismo CPU, por lo que típicamente
+encontramos sistemas híbridos, en los que los cachés de nivel 2 son
+coherentes, pero los de nivel 1 no, y deben ser manejados por
+software.
+
 ** Multiprocesamiento
 
 El /multiprocesamiento/ es todo entorno donde hay más de un procesador
@@ -811,7 +865,9 @@ Se denomina /multiprocesamiento simétrico/ (típicamente abreviado SMP)
 a la situación en la que todos los procesadores del sistema son
 iguales y pueden realizar en el mismo tiempo las mismas
 operaciones. Todos los procesadores del sistema tienen acceso a la
-misma memoria (aunque cada uno puede tener su propio /caché/).
+misma memoria (aunque cada uno puede tener su propio /caché/, lo cual
+obliga a mantener en mente los puntos relacionados con la /coherencia
+de caché/ abordados en la sección anterior).
 
 Existe también el /multiprocesamiento asimétrico/; dependiendo de la
 implementación, la asimetría puede residir en diferentes puntos. Puede

@@ -492,6 +492,45 @@ Lista incompleta, meramente ejemplificando
                 acceso de objetos en el disco, otros procesos, o la
                 misma sesión de usuario
 
+** Acceso directo a memoria (DMA)
+#+BEGIN_CENTER
+Problema: En la sección de un proceso en que está /limitado por
+entrada-salida/, la transferencia de información se vuelve cuello de
+botella
+#+END_CENTER
+- Modo /entrada/salida programada/
+- Gran cantidad y frecuencia de interrupciones
+- Imposible realizar trabajo real
+#+BEGIN_CENTER
+Respuesta: /Acceso Directo a Memoria/
+#+END_CENTER
+
+** Acceso directo a memoria (DMA)
+- Orientado a dispositivos de gran ancho de banda
+  - Unidades de disco
+  - Multimedia
+  - Red
+  - Memoria y caché
+- Transferencia en bloques, empleando un /controlador/
+  - Dirección física base de memoria
+  - Cantidad de datos a transferir
+  - /Puerto/ del dispositivo
+  - Dirección de la transferencia (/desde/ o /hacia/ memoria)
+- Limitante: Contención en el bus de memoria
+
+** Coherencia de caché
+#+BEGIN_CENTER
+¿Qué problema puede causar una transferencia /no iniciada por el
+procesador/?
+#+END_CENTER
+- Incongruencia entre la memoria real y /páginas/ de caché existentes
+  - Caché coherente :: Mecanismos /en hardware/ que notifican a los
+       controladores de caché que las páginas están /sucias/
+  - No coherente :: El sistema operativo debe realizar esta operación
+- Sistemas híbridos en lo relativo a la coherencia
+  - Caché de nivel superior (en el procesador) no coherente, cachés
+    inferiores coherentes
+
 ** Multiprocesamiento
 - Un entorno multiprocesador supone cambios en muchas estructuras y
   algoritmos básicos

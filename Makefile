@@ -26,7 +26,9 @@ beamer:
 	echo '#+AUTHOR: Gunnar Wolf' >> laminas/index.org
 	echo '#+EMAIL: gwolf@sistop.org' >> laminas/index.org
 	echo '#+LANGUAGE: es' >> laminas/index.org
-	echo '* Láminas disponibles'
+	echo '* Láminas disponibles' >> laminas/index.org
+	echo '| *Fecha* | Título |' >> laminas/index.org
+	echo '|--|--|' >> laminas/index.org
 	for i in `ls laminas/*.org | grep -v index.org | sort -n`; do \
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
@@ -34,7 +36,7 @@ beamer:
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
 		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
-	    echo "- [[$(baseurl)/$$pdf][$$title]] $$date" >> laminas/index.org; \
+	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> laminas/index.org; \
 	done
 	emacs -Q --batch --visit=laminas/index.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	rm laminas/index.org

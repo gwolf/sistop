@@ -100,9 +100,9 @@ de:
      procesos]]/.
 
 - Información de administración de memoria :: Las tablas de mapeo de
-     memoria (páginas o segmentos, dependiendo del sistema
-     operativo). Abordaremos el tema en la sección /[[./administracion_de_memoria.org][Administración de
-     memoria]]/.
+     memoria (páginas o segmentos, dependiendo del sistema operativo),
+     incluyenod la pila (/stack/) de llamadas. Abordaremos el tema en
+     la sección /[[./administracion_de_memoria.org][Administración de memoria]]/.
 
 - Información de contabilidad :: Información de la utilización de
      recursos que ha tenido este proceso — Puede incluir el tiempo
@@ -166,13 +166,11 @@ operativo, típicamente denominados /hilos de kernel/ (/kernel
 threads/). A través de bibliotecas de sistema que los implementan de
 forma estándar para los diferentes sistemas operativos
 (p.ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
-arquitecturas (/hilos verdes/, en Java; Perl tiene un
-modelo propio, modelado de cerca al estilo de POSIX). Estas
-bibliotecas aprovechan la comunicación con el sistema operativo tanto
-para solicitudes de recursos (p.ej. un proceso basado en hilos puede
-beneficiarse de una ejecución verdaderamente paralela en sistemas
-multiprocesador) como para una gestión de recursos más comparable con
-una situación de multiproceso estándar.
+arquitecturas. Estas bibliotecas aprovechan la comunicación con el
+sistema operativo tanto para solicitudes de recursos (p.ej. un proceso
+basado en hilos puede beneficiarse de una ejecución verdaderamente
+paralela en sistemas multiprocesador) como para una gestión de
+recursos más comparable con una situación de multiproceso estándar.
 
 ** Patrones de trabajo con hilos
 

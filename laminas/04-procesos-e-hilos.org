@@ -1,0 +1,227 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de procesos: Procesos e hilos
+#+DATE: 2013-02-08
+
+* Concepto y estados de un proceso
+** ¿Cuándo es proceso? ¿Cuando es programa?
+- Programa :: Una lista de instrucciones a seguir, una /entidad
+              pasiva/
+- Proceso :: /Entidad activa/ que:
+  - /Emplea/ al programa
+  - Típicamente opera sobre un /conjunto de datos/
+  - Tiene /información de estado/ que indica, entre otras cosas, en
+    qué punto va la ejecución.
+
+** ¿Cuando es proceso? ¿Cuándo es tarea?
+- Tarea :: Equivalente a un proceso en un /sistema por lotes/;
+           requiere típicamente menos metainformación.
+#+BEGIN_CENTER
+La distinción proceso-tarea no es del todo clara u objetiva.
+\vfill
+Hay textos que emplean uno u otro término indistintamente
+\vfill
+Nosotros emplearemos siempre el término /proceso/.
+#+END_CENTER
+
+** La ilusión de la concurrencia
+- Un sistema actual nos da la /ilusión/ de ejecución simultánea de
+  muchos procesos
+- La realidad: Casi todos están suspendidos, esperando que los active
+  el planificador
+- En un momento dado sólo puede estarse ejecutando un número de
+  procesos igual o menor al número de CPUs que tenga el sistema.
+- Esa ilusión tiene grandes costos... Especialmente pensando con
+  suficiente velocidad
+
+** Objetivo de esta sección
+#+BEGIN_CENTER
+En esta sección abordaremos los conceptos de:
+#+END_CENTER
+- Procesos
+- Hilos
+- Concurrencia
+  - Exclusión mutua, bloqueos mutuos e inanición
+- Sincronización
+  - Mutexes, semáforos, monitores
+
+* El proceso
+
+** Estados de un proceso
+
+Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
+de ejecución. Estos son:
+
+- Nuevo :: Se solicitó al sistema la creación de un proceso, y sus
+           recursos y estructuras están siendo creadas
+
+- Listo :: Está listo para ser asignado para su ejecución
+
+- En ejecución :: El proceso está siendo ejecutado
+
+- Bloqueado :: En espera de algún evento para poder continuar
+               ejecutándose
+
+- Terminado :: El proceso terminó de ejecutarse; sus estructuras están
+               a la espera de ser /limpiadas/ por el sistema
+
+** Estados de un proceso
+#+attr_latex: height=0.7\textheight
+#+caption: Diagrama de transición entre los estados de un proceso
+#+begin_src dot :exports results :file ltxpng/estados_proceso.png
+digraph G {
+	layout = dot;
+	node [shape = box];
+
+	Nuevo;
+	Listo;
+	Ejecución;
+	Bloqueado;
+	Terminado;
+
+	Nuevo -> Listo [label = Admitir];
+	Listo -> Ejecución [weight = 2, label = "Activar\nejecución"];
+	Ejecución -> Listo [weight = -2, label = "Tiempo\nterminado"];
+	Ejecución -> Bloqueado [label = "Esperar\nevento"];
+	Bloqueado -> Listo [weight = 2, label = "Ocurrió\nevento"];
+	Ejecución -> Terminado [weight = 2];
+	Bloqueado -> Terminado [minlen = 2, weight = -2, style = dotted];
+	Listo -> Terminado [minlen = 2, weight = -2, style = dotted];
+}
+#+end_src
+
+#+results:
+[[file:ltxpng/estados_proceso.png]]
+
+** El bloque de control del proceso (PCB) (1)
+#+BEGIN_CENTER
+¿Qué información debe mantener el sistema acerca de cada proceso?
+
+O, ¿Cuánto cuesta un cambio de contexto?
+#+END_CENTER
+
+- Estado del proceso :: El estado actual del proceso
+
+- Contador de programa :: Cuál es la siguiente instrucción a ser
+     ejecutada
+
+- Registros del CPU :: Información específica del estado del CPU
+
+- Información de planificación (scheduling) :: La prioridad del
+     proceso, la /cola/ en que está agendado, y demás información que
+     puede ayudar al sistema operativo a agendar al proceso
+
+** El bloque de control del proceso (PCB) (2)
+- Información de administración de memoria :: Las tablas de mapeo de
+     memoria (páginas o segmentos, dependiendo del sistema
+     operativo). Incluye la pila (/stack/) de llamadas.
+
+- Estado de E/S :: Listado de dispositivos y archivos asignados que el
+                   proceso tiene /abiertos/ en un momento dado.
+
+- Información de contabilidad :: Información de la utilización de
+     recursos que ha tenido este proceso
+  - Tiempo /de usuario/ y /de sistema/
+  - Uso acumulado de memoria y dispositivos
+  - etc.
+
+* Hilos
+
+** El problema con los hilos
+
+#+BEGIN_QUOTE
+Aunque los hilos parecen ser un pequeño paso partiendo del cómputo
+secuencial, de hecho, son un paso inmenso. Descartan las propiedades
+más esenciales y atractivas del cómputo secuencial: Facilidad de
+comprensión, predictabilidad y determinismo. Los hilos, como un modelo
+de computación, son salvajemente no-determinísticos, y el trabajo del
+programador se convierte en /podar/ ese no-determinismo.
+
+— /El problema con los hilos/, Edward A. Lee, UC Berkeley, 2006
+#+END_QUOTE
+
+** El peso de los procesos
+- La cantidad de información implicada en un cambio de contexto es
+  muy grande
+- Desperdicio /burocrático/ de recursos
+- Una respuesta: /procesos ligeros/ (/Lightweight processes/, LWP)
+  - Diversos /hilos de ejecución/ dentro de un mismo proceso
+
+** Extrapolando
+- Un proceso que no usa hilos es /un sólo hilo/
+- Un sistema operativo que no ofrece soporte para hilos agendaría a
+  nuestro proceso como a cualquier otro
+
+** La diferencia desde dentro
+- Entre diferentes procesos, cada uno tiene ilusión de /exclusividad
+  virtual/ sobre la computadora
+  - Espacio de direccionamiento de memoria exclusivo
+  - Descriptores de archivos y dispositivos independientes
+- Los hilos /son y deben ser conscientes/ de su coexistencia
+  - Comparten memoria, descriptores de archivos y dispositivos
+  - Pueden tener /variables/ locales y globales
+
+** ¿Qué tanto se /aligera/ el PCB?
+- Estado del proceso
+- Cada hilo se ejecuta de forma aparentemente secuencial
+  - Tiene su propio /contador de programa/
+  - Y su propia pila de llamadas (/stack/)
+- Conjunto de variables locales
+  - Puede ser implementado de forma muy sencilla
+  - p.ej. con arreglos indexados por ID de hilo
+- Información de planeación /interna/
+- Pueden llevar información de contabilidad
+- No requerimos:
+  - Registros del CPU
+  - Estado de E/S
+
+** Patrones de trabajo: Jefe / trabajador
+- Un hilo tiene una tarea distinta de todos los demás
+- El hilo /jefe/ genera o recopila tareas
+- Los hilos /trabajadores/ efectúan el trabajo.
+- Modelo común para procesos servidor, GUIs que procesan eventos
+- El jefe puede llevar la contabilidad de los trabajos realizados
+
+** Patrones de trabajo: Equipo de trabajo
+- A partir de hilos idénticos
+- Realizarán las mismas tareas sobre diferentes datos
+- Muy frecuentemente utilizado para cálculos matemáticos
+  (p.ej. criptografía, render).
+- Puede combinarse con jefe/trabajador para generar
+  previsualizaciones (la tarea se realiza progresivamente)
+
+** Patrones de trabajo: Línea de ensamblado
+- Una tarea larga que puede dividirse en pasos
+- Cada hilo se enfoca en una sóla tarea
+- Pasa los datos a otro hilo conforme va terminando
+- Ayuda a mantener las rutinas simples de comprender
+- Permite continuar procesando datos cuando hay hilos esperando E/S
+
+* Los hilos para el sistema operativo
+
+** Hilos de usuario (o hilos verdes)
+- Los hilos pueden implementarse 100% con las facilidades del proceso
+  - Caso extremo: Programas multihilos en sistemas operativos mínimos
+    (o directo sobre el hardware)
+- Mayor portabilidad
+- A través de alguna biblioteca /del lenguaje/entorno de programación/
+- Típicamente multitarea /interna/ cooperativa
+
+** Pros y contras de los hilos de usuario
+#+BEGIN_CENTER
+Ganamos:
+#+END_CENTER
+- Espacio de memoria compartido sin intervención del sistema operativo
+- Mayor rapidez para realizar trabajos cooperativos o multiagentes
+#+BEGIN_CENTER
+Perdemos:
+#+END_CENTER
+- Cualquier llamada al sistema interrumpe a /todos los hilos/
+- No aprovechan el multiprocesamiento
+
+** Hilos nativos (o hilos de kernel)
+- A través de bibliotecas de sistema que /informan/ al sistema
+- El núcleo se encarga de la multitarea /preventiva/ entre los hilos
+- El proceso /puede/ pedir al sistema un mayor número de procesadores
+  - Logrando ejecución verdaderamente paralela
+- El sistema puede priorizar de diferente manera a un proceso
+  multihilo

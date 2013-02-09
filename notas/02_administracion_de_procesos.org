@@ -968,8 +968,101 @@ cuales tenemos a:
   del planificador toda la espera necesaria, y no desperdicia recursos
   de cómputo esperando a que el siguiente elemento esté listo.
 
-- La cena de los filósofos :: 
-- Los fumadores compulsivos :: 
+- La cena de los filósofos ::
+
+  En este caso, el peligro no es, como en el ejemplo anterior, que una
+  estructura de datos sea sobreescrita por ser accesada por dos hilos
+  al mismo tiempo, sino que, en caso de presentar una resolución
+  simplista del caso, se presenten situaciones en el curso normal de
+  la operación que lleven a un bloqueo mutuo indefinido.
+
+  A diferencia del caso antes escrito, en este caso emplearemos a los
+  semáforos no como una herramienta para indicar al planificador
+  cuándo despertar a uno de los hilos, sino como una herramienta de
+  comunicación entre los propios hilos.
+
+  Podemos representar a los palillos como un arreglo de semáforos,
+  asegurando la exclusión mutua (esto es, sólo un filósofo puede
+  sostener un palillo al mismo tiempo), pero eso no nos salva de un
+  bloqueo mutuo. Por ejemplo, si nuestra respuesta fuera:
+
+  #+begin_src python
+    import threading
+    num = 5
+    palillos = [threading.Semaphore(1) for i in range(num)]
+    filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
+    
+    def filosofo(id):
+      while True:
+        piensa(id)
+        levanta_palillos(id)
+        come(id)
+        suelta_palillos(id)
+    
+    def piensa(id):
+      True
+      print "%d - Tengo hambre..." % id
+    
+    def levanta_palillos(id):
+      palillos[(id+1) % num].acquire()
+      print "%d - Tengo el palillo derecho" % id
+      palillos[id].acquire()
+      print "%d - Tengo ambos palillos" % id
+    
+    def suelta_palillos(id):
+      palillos[(id+1) % num].release()
+      palillos[id].release()
+      print "%d - Sigamos pensando..." % id
+    
+    def come(id):
+      print "%d - ¡A comer!" % id
+      True
+  #+end_src
+
+  Eventualmente todos los filósofos van a querer comer al mismo
+  tiempo, y el planificador dejará suspendidos a todos con el palillo
+  izquierdo en la mano.
+
+  Ahora, ¿qué pasa si hacemos que algunos filósofos sean /zurdos/?
+  Esto es, que levanten primero el palillo izquierdo y luego el
+  derecho:
+
+  #+begin_src python
+    def levanta_palillos(id):
+      if (id % 2 == 0): # Zurdo
+        palillo1 = palillos[id]
+        palillo2 = palillos[(id+1) % num]
+      else: # Diestro
+        palillo1 = paltos[(id+1) % num]
+        palillo2 = palillos[id]
+      palillo1.acquire()
+      print "%d - Tengo el primer palillo" % id
+      palillo2.acquire()
+      print "%d - Tengo ambos palillos" % id
+  #+end_src
+
+  Al asegurarnos que dos filósofos contiguos no intenten levantar el
+  mismo palillo, tenemos la certeza de que no caeremos en bloqueos
+  mutuos. De hecho, incluso si sólo uno de los filósofos es zurdo,
+  podemos demostrar que no habrá bloqueos:
+
+  #+begin_src python
+    def levanta_palillos(id):
+    if id == 0: # Zurdo
+      palillos[id].acquire()
+      print "%d - Tengo el palillo izquierdo" % id
+      palillos[(id+1) % num].acquire()
+    else: # Diestro
+      palillos[(id+1) % num].acquire()
+      print "%d - Tengo el palillo derecho" % id
+      palillos[id].acquire()
+    print "%d - Tengo ambos palillos" % id
+  #+end_src
+
+  Cabe apuntar que ninguno de estos mecanismos asegura que en la mesa
+  no haya /inanición/, sólo que no haya bloqueos mutuos.
+
+- Los fumadores compulsivos ::
 *** Monitores
 
 El principal problema con los mecanismos anteriormente descritos es

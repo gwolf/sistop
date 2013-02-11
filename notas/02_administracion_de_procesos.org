@@ -211,7 +211,7 @@ nuestra aplicación:
 #+begin_center
 #+attr_html: max-width: 80%;
 Para el estudio de este tema, recomiendo fuertemente referirse al
-libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey (2008).
+libro «[[/biblio/Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey (2008).
 
 Pueden descargar (legalmente) el libro desde el sitio Web del curso o
 desde [[http://www.greenteapress.com/semaphores/index.html][Green Tea Press]].
@@ -289,7 +289,7 @@ los problemas.
 
      - Cualquier cantidad de lectores puede estar leyendo al mismo
        tiempo.
-     - Los escritores deben tener accfeso exclusivo a la sección
+     - Los escritores deben tener acceso exclusivo a la sección
        crítica.
      - Como refinamiento al planteamiento: Debemos evitar que un
        influjo constante de procesos lectores dejen a un escritor en
@@ -788,6 +788,19 @@ cuales tenemos a:
 		El torniquete por sí sólo no es tan útil, pero su
                 función se hará clara a continuación.
 
+- Apagador :: Cuando tenemos una situación de /exclusión categórica/
+              (basada en categorías y no en procesos individuales —
+              Varios procesos de la misma categoría pueden entrar a la
+              sección crítica, pero procesos de dos categorías
+              distintas deben tenerlo prohibido), un /apagador/ nos
+              permite evitar la inanición de una de las categorías
+              ante un flujo constante de procesos de la otra.
+
+	      El apagador usa, como uno de sus componentes, a un
+	      torniquete. Para ver una implementación ejemplo de un
+	      apagador, refiéranse al ejemplo de solución presentado a
+	      continuación para el problema lectores-escritores.
+
 - Barrera :: Una barrera es una generalización de /rendezvous/ que
              permite la sincronización entre varios hilos (no sólo
              dos), y no requiere que el rol de cada uno de los hilos
@@ -987,6 +1000,118 @@ cuales tenemos a:
         event = buffer.pop()
       event.process()
   #+end_src
+
+- Problema lectores-escritores ::
+
+  Este problema puede ser generalizado como una /exclusión mutua
+  categórica/: Se debe separar el uso de un recurso según la categoría
+  del proceso. La presencia de un proceso en la sección crítica no
+  lleva a la exclusión de otros, pero sí hay /categorías/ de procesos
+  que tienen distintas reglas — Para los escritores /sí/ hace falta
+  una exclusión mutua completa.
+
+  Un primer acercamiento a este problema nos permite una resolución
+  libre de bloqueos mutuos, empleando sólo tres estructuras globales:
+  Un contador que indica cuántos lectores hay en la sección crítica,
+  un mutex protegiendo a dicho contador, y otro mutex indicando que el
+  cuarto está vacío. Implementamos los mutexes con semáforos.
+
+  #+begin_src python
+  import threading
+  global lectores, mutex, cuarto_vacio
+  lectores = 0
+  mutex = threading.Semaphore(1)
+  cuarto_vacio = threading.Semaphore(1)
+
+  def escritor():
+    global cuarto_vacio
+    cuarto_vacio.acquire()
+    escribe()
+    cuarto_vacio.release()
+
+  def lector():
+    global lectores, mutex, cuarto_vacio
+    mutex.acquire()
+    lectores = lectores + 1
+    if lectores == 1:
+      cuarto_vacio.acquire()
+    mutex.release()
+
+    lee()
+
+    mutex.acquire()
+    lectores = lectores - 1
+    if lectores == 0:
+      cuarto_vacio.release()
+    mutex.release()
+  #+end_src
+
+  El semáforo =cuarto_vacio= sigue un patrón llamado /apagador/. El
+  escritor utiliza al apagador como a cualquier mutex: Lo utiliza para
+  rodear a su sección crítica. El lector, sin embargo, lo emplea de
+  otra manera. Lo primero que hace es verificar /si la luz está
+  prendida/, esto es, si hay algún otro lector en el cuarto (si
+  =lectores= es igual a 1). Si es el primer lector en entrar, prende
+  la luz adquiriendo =cuarto_vacio= (lo cual evitará que un escritor
+  entre). Cualquier cantidad de lectores puede entrar, actualizando su
+  número. Cuando el último sale (=lectores= es igual a 0), apaga la
+  luz.
+
+  El problema con esta implementación es que un flujo constante de
+  lectores puede llevar a la inanición de un escritor, que está
+  pacientemente parado esperando a que alguien apague la luz.
+
+  Para evitar esta condición de inanición, podemos agregar un
+  /torniquete/ evitando que lectores adicionales se /cuelen/ antes del
+  escritor. Reescribamos pues:
+
+  #+begin_src python
+  import threading
+  global lectores, mutex, cuarto_vacio, torniquete
+  lectores = 0
+  mutex = threading.Semaphore(1)
+  cuarto_vacio = threading.Semaphore(1)
+  torniquete = threading.Semaphore(1)
+
+  def escritor():
+    global cuarto_vacio, torniquete
+    torniquete.acquire()
+    cuarto_vacio.acquire()
+    escribe()
+    cuarto_vacio.release()
+    torniquete.release()
+
+  def lector():
+    global lectores, mutex, cuarto_vacio, torniquete
+
+    torniquete.acquire()
+    torniquete.release()
+
+    mutex.acquire()
+    lectores = lectores + 1
+    if lectores == 1:
+      cuarto_vacio.acquire()
+    mutex.release()
+
+    lee()
+
+    mutex.acquire()
+    lectores = lectores - 1
+    if lectores == 0:
+      cuarto_vacio.release()
+    mutex.release()
+  #+end_src
+
+  En la implementación de los escritores, esto puede parecer inútil:
+  Únicamente agregamos un mutex redundante alrededor de lo que ya
+  teníamos. Sin embargo, al obligar a que el lector pase por un
+  torniquete antes de actualizar =lectores=, lo cual obligaría a que
+  se mantenga encendida la luz, obligamos a que espere a que el
+  escritor suelte este mutex exterior.
+
+  Como nota adicional: Este ejemplo ilustra cómo un mismo objeto puede
+  ser empleado de dos maneras distintas: Mientras =torniquete= es para
+  =lector= un torniquete, para =escritor= es una mutex.
 
 - La cena de los filósofos ::
 

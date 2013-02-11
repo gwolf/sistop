@@ -968,6 +968,26 @@ cuales tenemos a:
   del planificador toda la espera necesaria, y no desperdicia recursos
   de cómputo esperando a que el siguiente elemento esté listo.
 
+  Como nota al pie, la semántica del módulo =threading= de Python
+  incluye a la declaración de contexto =with=. Todo objeto de
+  =threading= que implemente =acquire()= y =release()= puede ser
+  envuelto en un bloque =with=, aumentando la legibilidad y con
+  exactamente la misma semántica; no lo hicimos en este ejemplo para
+  ilustrar el uso tradicional de los semáforos para implementar
+  regiones de exclusión mutua, sin embargo y sólo para concluir con el
+  ejemplo, la función =consumidor()= final podría escribirse así, y
+  ser semánticamente idéntica:
+
+  #+begin_src python
+  def consumidor():
+    global buffer, mutex, elementos
+    while True:
+      elementos.acquire()
+      with mutex:
+        event = buffer.pop()
+      event.process()
+  #+end_src
+
 - La cena de los filósofos ::
 
   En este caso, el peligro no es, como en el ejemplo anterior, que una
@@ -1875,7 +1895,7 @@ mutuo circular indefinido).
 * Otros recursos
 
 - [[http://perldoc.perl.org/perlthrtut.html][Tutorial de hilos de Perl]]
-
+- [[http://docs.python.org/2/library/threading.html][Python higher level threading interface]]
 
 # Me queda pendiente:
 # 

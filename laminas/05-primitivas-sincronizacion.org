@@ -1,0 +1,166 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de procesos: Primitivas de sincronización
+#+DATE: 2013-02-13 — 2013-02-??
+
+* ¿Qué queremos evitar?
+** Concurrencia
+- No tenemos que preocuparnos cuando todos los datos que maneja un
+  hilo son /locales/
+- Al utilizar /variables globales/ o recursos externos, debemos
+  recordar que el planificador puede interrumpir el flujo /en
+  cualquier momento/
+- No tenemos garantía del ordenamiento que obtendremos
+
+** Los problemas de la concurrencia (1)
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC ruby
+class EjemploHilos
+  def initialize
+    @x = 0
+  end
+  def f1
+    sleep 0.1
+    print '+'
+    @x += 3
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f2
+    sleep 0.1
+    print '*'
+    @x *= 2
+  end
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1
+    print '%d ' % @x
+  end
+end
+#+END_SRC
+#+latex: \end{column}\end{columns}
+#+begin_src ruby
+>> e = EjemploHilos.new;10.times{e.run}
+0 *+3 *+9 *+21 +*48 *+99 +*204 *+411 +*828 *+1659
+
+>> e = EjemploHilos.new;10.times{e.run}
++0 *+6 *+*18 42 +*+90 **186 +375 +**756 ++1515 *3036
+#+end_src
+
+** Los problemas de la concurrencia (2)
+- No son dos hilos compitiendo por el acceso a la variable
+  - Son tres
+  - El /jefe/ también entra en la competencia a la hora de imprimir
+- A veces, el órden de la ejecución es (¿parece ser?) =(@x *2) + 3=,
+  a veces =(@x + 3) * 2=
+  - A veces la impresión ocurre en otro órden: =+**756= o =++1515=
+- Esto porque tenemos una /condición de carrera/ en el acceso a la
+  variable compartida
+
+** Condición de carrera (Race condition)
+- Error de programación
+- Implica a dos procesos (o hilos)
+- Fallan al comunicarse su estado mutuo
+- Lleva a /resultados inconsistentes
+  - Problema muy común
+  - Difícil de depurar
+- Ocurre por no considerar la /no atomicidad/ de una operación
+- *Categoría importante de fallos de seguridad*
+
+** Operación atómica
+- Operación que tenemos la garantía que se ejecutará /o no/ como /una
+  sóla unidad de ejecución/
+- /No implica/ que el sistema no le retirará el flujo de ejecución
+  - /El efecto de que se le retire el flujo/ no llevará a
+    comportamiento inconsistente.
+  - Requiere sincronización /explícita/ entre los procesos que la realicen
+
+** Sección crítica
+Es el área de código que:
+- Realiza el acceso (¿modificación? ¿lectura?) de datos compartidos
+- Requiere /ser protegida de accesos simultáneos/
+- Dicha protección tiene que ser implementada /siempre, y
+  manualmente/ por el programador
+  - Identificarlas requiere inteligencia
+- Debe ser protegida /empleando mecanismos atómicos/
+  - Si no, el problema podría aminorarse — Pero no prevenirse
+  - ¡Cuidado con los accesos casi-simultáneos!
+
+** Bloqueo mutuo
+#+BEGIN_CENTER
+Algunos autores lo presentan como /interbloqueo/.
+
+En inglés, /deadlock/
+#+END_CENTER
+- Dos o más procesos poseen determinados recursos
+- Cada uno de ellos queda detenido esperando a alguno de los que tiene
+  otro
+- El sistema operativo puede seguir procesando normalmente
+  - Pero ninguno de los procesos involucrados puede avanzar
+  - ¿Única salida? Que el administrador del sistema interrumpa a
+    alguno de los procesos
+    - …Implica pérdida de información
+
+** Inanición
+#+BEGIN_CENTER
+En inglés, /resource starvation/
+#+END_CENTER
+- Situación en que uno o más procesos están atravesando exitosamente
+  una sección crítica
+  - Pero el flujo no permite que otro proceso, posiblemente de otra
+    clase, entre a dicha sección
+- El sistema continúa siendo productivo, pero uno de los recursos
+  puede estar detenido por un tiempo arbitrariamente largo.
+
+** Primer acercamiento… (¡Inseguro!)
+#+BEGIN_CENTER
+¿Qué hizo el programador bien? ¿qué hizo mal?
+#+END_CENTER
+#+begin_src perl
+my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
+$capacidad = 40;
+sub asigna_asiento {
+  while ($bloq) { sleep 0.1; }
+  $bloq = 1;
+  if ($proximo_asiento < $capacidad) {
+    $asignado = $proximo_asiento;
+    $proximo_asiento += 1;
+    print "Asiento asignado: $asignado\n";
+  } else {
+    print "No hay asientos disponibles\n";
+    return 1;
+  }
+  $bloq = 0;
+  return 0;
+}
+#+end_src
+#+BEGIN_CENTER
+/Tip/: Sección crítica entre las líneas 6 y 8 (¿o hasta 14?)
+#+END_CENTER
+
+** ¿Por qué es inseguro el ejemplo anterior?
+#+BEGIN_CENTER
+Líneas 4 y 5:
+#+END_CENTER
+- Espera activa (/spinlock/): Desperdicio de recursos
+  - Eso hace que el código sea /poco considerado/ — No que sea inseguro
+- ¿Quién protege a =$bloq= de modificaciones no-atómicas?
+
+** Las secciones críticas deben protegerse a otro nivel
+- Las primitivas que empleemos para sincronización /deben ser
+  atómicas/
+- La única forma de asegurar su atomicidad es /implementándolas a un
+  nivel más bajo/ que el del código que deben proteger
+  - (Al menos) el proceso debe implementar la protección entre hilos
+  - (Al menos) el sistema operativo debe implementar la protección
+    entre procesos
+
+
+* Primitivas de sincronización
+** Mutex
+** Semáforos
+** Monitores
+** Soluciones en hardware
+
+* Abordando los problemas clásicos

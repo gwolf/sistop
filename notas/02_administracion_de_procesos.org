@@ -372,19 +372,20 @@ class EjemploHilos
 
   def f1
     sleep 0.1
+    print '+'
     @x += 3
   end
 
   def f2
     sleep 0.1
+    print '*'
     @x *= 2
   end
-
   def run
     t1 = Thread.new {f1}
     t2 = Thread.new {f2}
     sleep 0.1
-    print @x + ' '
+    print '%d ' % @x
   end
 end
 #+end_src
@@ -409,10 +410,10 @@ interrumpido a media operación:
 
 #+begin_src ruby
 e = EjemploHilos.new;10.times{e.run}
-6 9 21 45 180 183 372 750 1500 3006
+0 *+3 *+9 *+21 +*48 *+99 +*204 *+411 +*828 *+1659
 
 e = EjemploHilos.new;10.times{e.run}
-0 3 15 33 66 135 276 1110 1110 2226
++0 *+6 *+*18 42 +*+90 **186 +375 +**756 ++1515 *3036
 #+end_src
 
 Y si bien este pequeño programa fue hecho explícitamente para ilustrar
@@ -487,7 +488,7 @@ sub asigna_asiento {
 El programador identificó correctamente la /sección crítica/ como las
 líneas comprendidas entre la 7 y la 9 (pero, al ser parte de un bloque
 condicional, /protegió/ hasta la 14). Sin embargo, tenemos aún una
-situación de carrera (aunque mucho más contenida) entre la 2 y la 3:
+situación de carrera (aunque mucho más contenida) entre la 5 y la 6:
 Podría un hilo entrar[fn:: Este ejemplo utiliza además el mal ejemplo
 de una /espera activa/ (busy wait), requiriendo del tiempo del
 procesador periódicamente mientras espera a que se satisfaga una
@@ -509,11 +510,12 @@ son consecuencia natural de la existencia de la asignación de recursos
 de forma exclusiva:
 
 - Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
-                   que ocurre cuando dos procesos poseen determinados
-                   recursos, y cada uno queda detenido, a la espera de
-                   alguno de los que tiene el otro. El sistema puede
-                   seguir operando normalmente, pero ninguno de los
-                   procesos involucrados podrán avanzar.
+                   que ocurre cuando dos o más procesos poseen
+                   determinados recursos, y cada uno queda detenido, a
+                   la espera de alguno de los que tiene el otro. El
+                   sistema puede seguir operando normalmente, pero
+                   ninguno de los procesos involucrados podrán
+                   avanzar.
 
 - Inanición :: (en inglés /resource starvation/): Situación en que un
 	       proceso no es agendado para su ejecución dado que los

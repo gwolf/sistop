@@ -62,7 +62,7 @@ end
 - Error de programación
 - Implica a dos procesos (o hilos)
 - Fallan al comunicarse su estado mutuo
-- Lleva a /resultados inconsistentes
+- Lleva a /resultados inconsistentes/
   - Problema muy común
   - Difícil de depurar
 - Ocurre por no considerar la /no atomicidad/ de una operación
@@ -96,11 +96,35 @@ En inglés, /deadlock/
 - Dos o más procesos poseen determinados recursos
 - Cada uno de ellos queda detenido esperando a alguno de los que tiene
   otro
+
+** Bloqueo mutuo
+#+attr_latex: width=0.5\textwidth
+#+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades /1/ y /2/.
+
+#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
+digraph G {
+	layout = circo;
+
+	A [label = "Proceso\nA"];
+	B [label = "Proceso\nB"];
+	1 [label = "Unidad\n1", shape = box];
+	2 [label = "Unidad\n2", shape = box];
+
+	A -> 1 [label = "Asignada"];
+	B -> 2 [label = "Asignada"];
+	A -> 2 [label = "Solicitada", style = dotted];
+	B -> 1 [label = "Solicitada", style = dotted];
+}
+#+end_src
+#+results:
+[[file:ltxpng/bloqueo_mutuo_simple.png]]
+
+** Bloqueo mutuo
 - El sistema operativo puede seguir procesando normalmente
   - Pero ninguno de los procesos involucrados puede avanzar
   - ¿Única salida? Que el administrador del sistema interrumpa a
     alguno de los procesos
-    - …Implica pérdida de información
+    - …Implica probable pérdida de información
 
 ** Inanición
 #+BEGIN_CENTER
@@ -113,9 +137,9 @@ En inglés, /resource starvation/
 - El sistema continúa siendo productivo, pero uno de los recursos
   puede estar detenido por un tiempo arbitrariamente largo.
 
-** Primer acercamiento… (¡Inseguro!)
+** Primer acercamiento: /Reservas de autobús/
 #+BEGIN_CENTER
-¿Qué hizo el programador bien? ¿qué hizo mal?
+¡Inseguro! ¿Qué hizo el programador bien? ¿qué hizo mal?
 #+END_CENTER
 #+begin_src perl
 my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
@@ -144,6 +168,8 @@ sub asigna_asiento {
 Líneas 4 y 5:
 #+END_CENTER
 - Espera activa (/spinlock/): Desperdicio de recursos
+  - Aunque esta espera activa lleva dentro un =sleep=, sigue siendo
+    espera activa.
   - Eso hace que el código sea /poco considerado/ — No que sea inseguro
 - ¿Quién protege a =$bloq= de modificaciones no-atómicas?
 
@@ -156,11 +182,148 @@ Líneas 4 y 5:
   - (Al menos) el sistema operativo debe implementar la protección
     entre procesos
 
-
 * Primitivas de sincronización
+** Requisitos para las /primitivas/
+- Implementadas a un nivel más bajo que el código que protegen
+  - Desde el sistema operativo
+  - Desde bibliotecas de sistema
+  - Desde la máquina virtual (p.ej. JVM)
+- ¡No las implementes tú mismo!
+  - Parecen conceptos simples... Pero no lo son
+  - Utilicemos el conocimiento acumulado de medio siglo
 ** Mutex
+- Contracción de /Mutual Exclusion/, exclusión mutua
+- Un mecanismo que asegura que la región protegida del código se
+  ejecutará como si fuera atómica
+  - /No garantiza que el planificador no interrumpa/ — Eso rompería el
+    multiprocesamiento preventivo.
+  - Requiere que /cada hilo o proceso/ implemente (¡y respete!) al
+    mutex
+- Mantiene en espera a los procesos adicionales que quieran emplearlo
+  - Sin garantizar ordenamiento
+- Ejemplo: La llave del baño en un entorno de oficina mediana
 ** Semáforos
+- Propuestos por Edsger Djikstra (1965)
+- Estructuras de datos simples para la sincronización y (muy
+  limitada) comunicación entre procesos
+  - ¡Increíblemente versátiles para lo limitado de su interfaz!
+- Se han publicado muchos patrones basados en su interfaz, modelando
+  interacciones muy complejas
+
+** Las tres operaciones de los semáforos
+- Inicializar :: Puede inicializarse a cualquier valor entero. Una
+                   vez inicializado, el valor /ya no puede ser leído/.
+- Decrementar :: Disminuye en 1 el valor del semáforo. Si el
+                 resultado es negativo, el hilo /se bloquea/ y no
+                 puede continuar hasta que /otro hilo/ incremente
+                 al semáforo.
+
+		 Puede denominarse =wait=, =down=, =acquire=, =P=
+                 (/proberen te verlagen/, /intentar decrementar/)
+- Incrementar :: Incrementa en 1 el valor del semáforo. Si hay
+                 hilos esperando, uno de ellos es despertado.
+
+		 Puede denominarse =signal=, =up=, =release=,
+                 =post= o =V= (/verhogen/, /incrementar/).
+
+** Los semáforos en C (POSIX pthreads)
+
+#+begin_src C
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_post(sem_t *sem);
+int sem_wait(sem_t *sem);
+int sem_trywait(sem_t *sem);
+#+end_src
+
+- =pshared= indica si se compartirá entre procesos o sólo entre hilos
+  (por optimización de estructuras)
+- =sem_trywait= extiende la interfaz de Djikstra: Verifica si el
+  semáforo puede ser decrementado, pero en vez de bloquearse, regresa
+  al invocante un error
+  - El proceso /debe tener la lógica/ para no proceder a la sección
+    crítica
+
+** Problemática con mutexes y semáforos
+- No sólo hay que encontrar el mecanismo correcto para proteger
+  nuestras secciones críticas
+  - hay que /implementarlo correctamente/
+  - La semántica de paso de mensajes por esta vía puede ser confusa
+- Un encapsulamiento /más claro/ puede reducir problemas
+- Puede haber procesos que compitan por recursos /de forma hostil/
+
+** Competencia hostil por recursos
+#+BEGIN_CENTER
+Qué pasa si en vez de esto:
+#+END_CENTER
+#+BEGIN_SRC C
+sem_wait(semaforo);
+seccion_critica();
+sem_post(semaforo);
+#+END_SRC
+#+BEGIN_CENTER
+Tenemos esto:
+#+END_CENTER
+#+BEGIN_SRC C
+while (sem_trywait(semaforo) != 0) {}
+seccion_critica();
+sem_post(semaforo);
+#+END_SRC
+
+** La estupidez humana puede ser infinita
+#+BEGIN_SRC C
+/* Mecanismo de protección: Crucemos los dedos... */
+/* A fin de cuentas, corremos con baja frecuencia! */
+seccion_critica();
+#+END_SRC
+
 ** Monitores
+- Estructuras abstractas (/ADTs/ u /objetos/) provistas por el lenguaje
+  o entorno de desarrollo
+- /Encapsulan/ tanto a los datos /como a las funciones que los pueden
+  manipular/
+- Impiden el acceso directo a las funciones potencialmente peligrosas
+- /Exponen/ una serie de /métodos públicos/
+  - Y pueden implementar /métodos privados/
+- Al no presentar una interfaz que puedan /subvertir/, aseguran que
+  todo el código que asegura el /acceso concurrente seguro/ es empleado
+- Pueden ser presentados como /bibliotecas/
+
+** Visión esquemática de los monitores
+#+attr_latex: width=0.6\textwidth
+#+caption: Vista esquemática de un monitor. No es ya un conjunto de procedimientos aislados, sino que una abstracción que permite realizar únicamente las operaciones públicas sobre datos encapsulados. (Silberschatz, p.239)
+[[../img/monitor.png]]
+
+** Monitores en Java
+#+BEGIN_CENTER
+/Java/ implementa sincronización vía monitores entre hilos como una
+propiedad de la declaración de método, y lo implementa directamente en
+la JVM. (Silberschatz):
+#+END_CENTER
+#+begin_src java
+public class SimpleClass {
+  // . . .
+  public synchronized void safeMethod() {
+    /* Implementation of safeMethod() */
+  // . . .
+  }
+}
+#+end_src
+La JVM implementa:
+- Mutexes a través de la declaración =synchronized=
+- /variables de condición/
+- Una semántica parecida (¡no idéntica!) a la de semáforos con =var.wait()= y =var.signal()=
+#+END_CENTER
+
 ** Soluciones en hardware
+
+* Patrones basados en semáforos
+** Señalizar
+** /Rendezvous/
+** Mutex
+** Multiplex
+** Torniquete
+** Apagador
+** Barrera
+** Cola
 
 * Abordando los problemas clásicos

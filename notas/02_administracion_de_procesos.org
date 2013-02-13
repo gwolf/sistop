@@ -921,19 +921,16 @@ número de ingredientes necesario.
 
   #+begin_src python
   import threading
-  global buffer
   buffer = []
   threading.Thread(target=productor,args=[]).start()
   threading.Thread(target=consumidor,args=[]).start()
 
   def productor():
-    global buffer
     while True:
       event = genera_evento()
       buffer.append(event)
 
   def consumidor():
-    global buffer
     while True:
       event = buffer.pop()
       event.process()
@@ -959,7 +956,6 @@ número de ingredientes necesario.
 
   #+begin_src python
   import threading
-  global buffer, mutex, elementos
   mutex = threading.Semaphore(1)
   elementos = threading.Semaphore(0)
   buffer = []
@@ -967,7 +963,6 @@ número de ingredientes necesario.
   threading.Thread(target=consumidor, args=[]).start()
 
   def productor():
-    global buffer, mutex, elementos
     while True:
       event = genera_evento()
       mutex.acquire()
@@ -976,7 +971,6 @@ número de ingredientes necesario.
       elementos.release()
 
   def consumidor():
-    global buffer, mutex, elementos
     while True:
       elementos.acquire()
       mutex.acquire()
@@ -1013,13 +1007,20 @@ número de ingredientes necesario.
 
   #+begin_src python
   def consumidor():
-    global buffer, mutex, elementos
     while True:
       elementos.acquire()
       with mutex:
         event = buffer.pop()
       event.process()
   #+end_src
+
+  A pesar de ser más clara, no emplearemos esta notación por dos
+  razones. La primera es para mantener la conciencia de semántica de
+  las operaciones =acquire()= y =release()=, y la segunda es mantener
+  la consistencia a través de las distintas implementaciones, ya que
+  encontraremos varios casos en que no es el mismo hilo el que
+  adquiere un semáforo y el que lo libera (esto es, los semáforos no
+  siempre son empleados como mutexes).
 
 *** Problema lectores-escritores
 
@@ -1038,19 +1039,16 @@ número de ingredientes necesario.
 
   #+begin_src python
   import threading
-  global lectores, mutex, cuarto_vacio
   lectores = 0
   mutex = threading.Semaphore(1)
   cuarto_vacio = threading.Semaphore(1)
 
   def escritor():
-    global cuarto_vacio
     cuarto_vacio.acquire()
     escribe()
     cuarto_vacio.release()
 
   def lector():
-    global lectores, mutex, cuarto_vacio
     mutex.acquire()
     lectores = lectores + 1
     if lectores == 1:
@@ -1087,14 +1085,12 @@ número de ingredientes necesario.
 
   #+begin_src python
   import threading
-  global lectores, mutex, cuarto_vacio, torniquete
   lectores = 0
   mutex = threading.Semaphore(1)
   cuarto_vacio = threading.Semaphore(1)
   torniquete = threading.Semaphore(1)
 
   def escritor():
-    global cuarto_vacio, torniquete
     torniquete.acquire()
     cuarto_vacio.acquire()
     escribe()
@@ -1102,8 +1098,6 @@ número de ingredientes necesario.
     torniquete.release()
 
   def lector():
-    global lectores, mutex, cuarto_vacio, torniquete
-
     torniquete.acquire()
     torniquete.release()
 
@@ -1229,9 +1223,9 @@ número de ingredientes necesario.
 
 *** Los fumadores compulsivos
 
-Al haber tres distintos ingredientes, tiene sentido que empleemos
-tres distintos semáforos, para señalizar a los fumadores respecto a
-cada uno de los ingredientes. Un primer acercamiento podría ser:
+Al haber tres distintos ingredientes, tiene sentido que empleemos tres
+distintos semáforos, para señalizar a los fumadores respecto a cada
+uno de los ingredientes. Un primer acercamiento podría ser:
 
   #+BEGIN_SRC python
     import random
@@ -1349,7 +1343,7 @@ permite verificar el estado (como lo ofrece =sem_trywait()= en
 =pthreads=):
 
 #+begin_src C
-while (! sem_trywait(semaforo)) {}
+while (sem_trywait(semaforo) != 0) {}
 seccion_critica();
 sem_post(semaforo);
 #+end_src

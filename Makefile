@@ -26,6 +26,7 @@ beamer:
 	echo '#+AUTHOR: Gunnar Wolf' >> laminas/index.org
 	echo '#+EMAIL: gwolf@sistop.org' >> laminas/index.org
 	echo '#+LANGUAGE: es' >> laminas/index.org
+	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> laminas/index.org
 	echo '* Láminas disponibles' >> laminas/index.org
 	echo '| *Fecha* | Título |' >> laminas/index.org
 	echo '|--|--|' >> laminas/index.org

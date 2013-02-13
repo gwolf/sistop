@@ -293,11 +293,11 @@ seccion_critica();
 #+caption: Vista esquemática de un monitor. No es ya un conjunto de procedimientos aislados, sino que una abstracción que permite realizar únicamente las operaciones públicas sobre datos encapsulados. (Silberschatz, p.239)
 [[../img/monitor.png]]
 
-** Monitores en Java
+** Ejemplo: Sincronización en Java
 #+BEGIN_CENTER
-/Java/ implementa sincronización vía monitores entre hilos como una
-propiedad de la declaración de método, y lo implementa directamente en
-la JVM. (Silberschatz):
+/Java/ facilita que una clase estándar se convierta en un monitor como
+una propiedad de la declaración de método, y lo implementa
+directamente en la JVM. (Silberschatz):
 #+END_CENTER
 #+begin_src java
 public class SimpleClass {
@@ -334,10 +334,10 @@ pero...
 - Inhabilita el multiproceso preventivo
   - Demasiado peligroso
 
-** Instrucciones atómicas /reales/: =test_and_set= (1)
+** Instrucciones atómicas: =test_and_set= (1)
    Siguiendo una implementación /en hardware/ correspondiente a:
    #+BEGIN_SRC C
-   boolean test_and_set_lock(int i) {
+   boolean test_and_set(int i) {
        if (i == 0) {
            i = 1;
            return true;
@@ -348,13 +348,24 @@ pero...
    }
    #+END_SRC
 
-** Instrucciones atómicas /reales/: =test_and_set= (2)
+** Instrucciones atómicas: =test_and_set= (2)
    Bastaría con:
-   #+begin_src C
-   while (test_and_set(candado)) {}
-   seccion_critica();
-   free_lock(candado);
-   #+end_src
+   #+BEGIN_SRC asm
+     enter_region:
+       tsl reg, flag      ; Test and Set Lock; 'flag' es la variable
+                          ; compartida, es cargada al registro 'reg'
+                          ; y, atomicamente, convertida en 1.
+       cmp reg, #0        ; Era la bandera igual a 0 al entrar?
+       jnz enter_region   ; En caso de que no fuera 0 al ejecutar
+                          ; tsl, vuelve a 'enter_region'
+       ret                ; Termina la rutina. 'flag' era cero al
+                          ; entrar. 'tsl' fue exitoso y 'flag' queda
+                          ; no-cero. Tenemos acceso exclusivo al
+                          ; recurso protegido.
+     leave_region:
+       move flag, #0      ; Guarda 0 en flag, liberando el recurso
+       ret                ; Regresa al invocante.
+   #+END_SRC
 
    #+begin_center
    ¿Qué problema le vemos?
@@ -393,7 +404,7 @@ pero...
    Ejemplo poco eficiente, elegido meramente por claridad: Efectúa
    múltiples cálculos dentro de una espera activa efectiva
 
-** Semántica de memoria transaccional en software (STM)
+** Memoria transaccional en software (STM)
 - Implementaciones como la mencionada disponibles en varios lenguajes
 - Computacionalmente caras
   - Invariablemente /mucho/ más lentas
@@ -443,26 +454,27 @@ def envia_datos():
     el cálculo antes de que haya una interfaz mostrada
   - No queremos que la interfaz se presente en blanco
 
-** /Rendesvous/
+** /Rendezvous/
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+begin_src python
 guiListo = Semaphore(0)
 calculoListo = Semaphore(0)
-threading.Thread(target=maneja_gui, args=[]).start()
-threading.Thread(target=maneja_calculo, args=[]).start()
-def maneja_gui():
-  inicializa_gui()
-  guiListo.release()
-  calculoListo.acquire()
-  recibe_eventos()
+threading.Thread(target=gui, args=[]).start()
+threading.Thread(target=calculo, args=[]).start()
 #+end_src
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+begin_src python
-def maneja_calculo():
+def calculo():
   inicializa_datos()
   calculoListo.release()
   guiListo.acquire()
   procesa_calculo()
+
+def gui():
+  inicializa_gui()
+  guiListo.release()
+  calculoListo.acquire()
+  recibe_eventos()
 #+end_src
 #+latex: \end{column}\end{columns}
 
@@ -477,10 +489,352 @@ x = x + 1
 mutex.release()
 # Continua la ejecucion paralela
 #+end_src
+- Varios hilos pueden pasar por este código, tranquilos de que la
+  región crítica será accesada por sólo uno a la vez
+- El mismo mutex puede proteger a /diferentes secciones críticas/
+  (p.ej. distintos puntos donde se usa el mismo recurso)
 ** Multiplex
+- Un mutex que permita a /no más de cierta cantidad de hilos/
+  empleando determinado recurso
+- Para implementar un /multiplex/, basta inicializar el semáforo de
+  nuestro mutex a un valor superior:
+#+begin_src python
+multiplex = Semaphore(5)
+# ...Inicializamos estado y lanzamos hilos
+multiplex.acquire()
+# Estamos en la region de exclusion mutua
+# (con hasta cinco hilos concurrentes)
+x = x + 1
+multiplex.release()
+# Continua la ejecucion paralela
+#+end_src
 ** Torniquete
+- Garantiza que un grupo de hilos o procesos pasan por un punto
+  determinado /de uno en uno/
+- Ayuda a controlar contención, es empleado como parte de
+  construcciones posteriores
+  #+begin_src python
+    torniquete = Semaphore(0)
+    # (...)
+    if alguna_condicion():
+      torniquete.release()
+    # (...)
+    torniquete.acquire()
+    torniquete.release()
+  #+end_src
+- Esperamos primero a una /señalización/ que permita que los procesos
+  comiencen a fluir
+- La sucesión rápida =acquire()= / =release()= permite que los
+  procesos fluyan uno a uno
 ** Apagador
+- Principalmente emplados en situación de /exclusión categórica/
+  - Categorías de procesos, no procesos individuales, que deben
+    excluirse mutuamente de secciones críticas
+- Metáfora empleada: La zona de exclusión mutua es un /cuarto/, y los
+  procesos que quieren entrar deben verificar /si está prendida la luz/
+- Implementación ejemplo a continuación (problema de
+  /lectores-escritores/)
 ** Barrera
+- Generalización de /rendezvous/ para manejar a varios hilos (no sólo
+  dos)
+- El rol de cada uno de estos hilos puede ser el mismo, puede ser
+  distinto
+- Requiere de una variable adicional para mantener registro de su
+  /estado/
+  - Esta variable adicional es /compartida/ entre los hilos, y debe
+    ser /protegida por un mutex/
+** Barrera: Código ejemplo
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+begin_src python
+  require random
+  # n = Numero de hilos
+  n = random.randint(1,10)
+  cuenta = 0
+  mutex = Semaphore(1)
+  barrera = Semaphore(0)
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src python
+  inicializa_estado()
+  
+  mutex.acquire()
+  count = count + 1
+  mutex.release()
+  
+  if count == n:
+    barrera.release()
+  
+  barrera.acquire()
+  barrera.release()
+  
+  procesamiento()
+#+end_src
+#+latex: \end{column}\end{columns}
+- Todos los hilos se inicializan por separado (=inicializa_estado()=)
+- Ningún hilo inicia hasta que todos estén listos
+- /Pasar la barrera/ en este caso equivale a /habilitar un torniquete/
+
+** Barreras: Implementación en =pthreads=
+- Las barreras son una construcción tan común que las encontramos
+  "prefabricadas"
+- Definición en los hilos =POSIX= (=pthreads=):
+#+BEGIN_SRC C
+  int pthread_barrier_init(pthread_barrier_t  *barrier,
+                      const pthread_barrierattr_t *restrict attr,
+                      unsigned count);
+  int pthread_barrier_wait(pthread_barrier_t  *barrier);
+  int pthread_barrier_destroy(pthread_barrier_t *barrier);
+#+END_SRC
+
 ** Cola
+- Tenemos que asegurarnos que procesos de dos distintas categorías
+  procedan siempre /en pares/
+- Patrón conocido también como /baile de salón/:
+  - Para que una pareja baile, tiene que haber un /líder/ y un
+    /seguidor/
+  - Cuando llega al salón un /líder/, revisa si hay algún /seguidor/
+    esperando
+    - Si lo hay, bailan
+    - Si no, espera a que llegue uno
+  - El seguidor procede de forma análoga.
+
+** Cola
+#+BEGIN_SRC python
+  colaLideres = Semaphore(0)
+  colaSeguidores = Semaphore(0)
+  # (...)
+  def lider():
+    colaSeguidores.release()
+    colaLideres.acquire()
+    baila()
+  def seguidor():
+    colaLideres.release()
+    colaSeguidores.acquire()
+    baila()
+#+END_SRC
+- Nuevamente, estamos viendo un /rendezvous/
+  - Pero es entre dos categorías, no entre dos hilos específicos
+- El patrón puede refinarse mucho, esta es la implementación básica
+  - Asegurarse que sólo una pareja baile a la vez
+  - Asegurarse que bailendo en el órden en que llegaron
 
 * Abordando los problemas clásicos
+** ¿De qué se tratan estos problemas clásicos?
+- Manera fácil de recordar para hablar de situaciones comunes en la
+  vida real
+- Forma de demostrar las ventajas/desventajas de una construcción de
+  sincronización frente a otras
+- Ampliamente utilizados en la literatura de la materia
+- Ayudan a comprender la complejidad del manejo de los patrones,
+  aparentemente simples
+
+** Problema productor-consumidor: Planteamiento
+- División de tareas tipo /línea de ensamblado/
+- Un grupo de procesos va /produciendo/ ciertas estructuras
+- Otro grupo va /consumiéndolas/
+- Emplean un buffer de acceso compartido para comunicarse dichas
+  estructuras
+  - Agregar o retirar un elemento del buffer /debe hacerse de forma
+    atómica/
+  - Si un consumidor está listo y el buffer está vacío, debe
+    bloquearse (¡no espera activa!)
+- Refinamientos posteriores
+  - Implementación con un buffer no-infinito (¿buffer circular?):
+- Vida real
+  - Cola de trabajos para impresión
+  - /Pipes/ (tuberías) entre procesos
+** Productor-consumidor: Implementación ingenua
+#+BEGIN_SRC python
+  import threading
+  buffer = []
+  threading.Thread(target=productor,args=[]).start()
+  threading.Thread(target=consumidor,args=[]).start()
+  
+  def productor():
+    while True:
+      event = genera_evento()
+      buffer.append(event)
+  
+  def consumidor():
+    while True:
+      event = buffer.pop()
+      procesa(event)
+#+END_SRC
+#+BEGIN_CENTER
+¿Qué problema vemos?
+
+¿Qué estructuras neceistan protección?
+
+(¿Qué estructuras no?)
+#+END_CENTER
+** Productor-consumidor: Estructuras a emplear
+Vamos a emplear dos semáforos:
+- Un mutex sencillo (=mutex=)
+- Un semáforo (=elementos=) representando el estado del sistema
+  - =elementos > 0= :: Cuántos eventos tenemos pendientes por
+       procesar
+  - =elementos < 0= :: Cuántos consumidores están listos y
+       esperando un evento
+
+** Productor-consumidor: Implementación
+#+BEGIN_SRC python
+  import threading
+  mutex = threading.Semaphore(1)
+  elementos = threading.Semaphore(0)
+  buffer = []
+  threading.Thread(target=productor, args=[]).start()
+  threading.Thread(target=consumidor, args=[]).start()
+#+END_SRC
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC python
+  def productor():
+    while True:
+      event = genera_evento()
+      mutex.acquire()
+      buffer.append(event)
+      mutex.release()
+      elementos.release()
+#+END_SRC
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+BEGIN_SRC python
+  def consumidor():
+    while True:
+      elementos.acquire()
+      mutex.acquire()
+      event = buffer.pop()
+      mutex.release()
+      event.process()
+#+END_SRC
+#+latex: \end{column}\end{columns}
+
+** Problema lectores-escritores: Planteamiento
+- Una estructura de datos puede ser accesada simultáneamente por
+  muchos /procesos lectores/
+- Si un proceso requiere /modificarla/, debe asegurar que:
+  - Ningún proceso lector esté empleándola
+  - Ningún otro proceso escritor esté empleándola
+  - Los escritores deben tener /acceso exclusivo/ a la sección
+    crítica
+- Refinamiento: Debemos evitar que un /influjo constante de lectores/
+  nos deje en situación de /inanición/
+
+** Lectores-escritores: Primer acercamiento
+- El problema es de /exclusión mutua categórica/
+- Empleamos un patrón /apagador/
+  - Los escritores entran al /cuarto/ sólo con la luz /apagada/
+- Mutex para el indicador del número de lectores
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+begin_src python
+  import threading
+  lectores = 0
+  mutex = threading.Semaphore(1)
+  cuarto_vacio = threading.Semaphore(1)
+
+  def escritor():
+    cuarto_vacio.acquire()
+    escribe()
+    cuarto_vacio.release()
+#+end_src python
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src python
+  def lector():
+    mutex.acquire()
+    lectores = lectores + 1
+    if lectores == 1:
+      cuarto_vacio.acquire()
+    mutex.release()
+
+    lee()
+
+    mutex.acquire()
+    lectores = lectores - 1
+    if lectores == 0:
+      cuarto_vacio.release()
+    mutex.release()
+#+end_src
+#+latex: \end{column}\end{columns}
+
+** Lectores-escritores: Notas
+- La misma estructura puede usarse siguiendo diferentes patrones
+  - =escritor()= usa =cuarto_vacio= como un mutex, =lector()= lo usa
+    como un apagador
+  - Porque las características (requisitos) de cada categoría son distintas
+- Susceptible a la inanición
+  - Si tenemos alta concurrencia de lectores, un escritor puede
+    quedarse esperando para siempre
+  - Podemos agregar un /torniquete/ evitando que lectores adicionales
+    se /cuelen/ si hay un escritor esperando
+
+** Lectores-escritores sin inanición
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC python  import threading
+  lectores = 0
+  mutex = threading.Semaphore(1)
+  cuarto_vacio = threading.Semaphore(1)
+  torniquete = threading.Semaphore(1)
+  
+  def escritor():
+    torniquete.acquire()
+    cuarto_vacio.acquire()
+    escribe()
+    cuarto_vacio.release()
+    torniquete.release()
+  #+END_SRC
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+BEGIN_SRC python
+  def lector():
+    torniquete.acquire()
+    torniquete.release()
+  
+    mutex.acquire()
+    lectores = lectores + 1
+    if lectores == 1:
+      cuarto_vacio.acquire()
+    mutex.release()
+  
+    lee()
+  
+    mutex.acquire()
+    lectores = lectores - 1
+    if lectores == 0:
+      cuarto_vacio.release()
+    mutex.release()
+#+END_SRC
+#+latex: \end{column}\end{columns}
+
+** La cena de los filósofos: Planteamiento (1)
+- Hay cinco filósofos sentados a la mesa
+  - Al centro de la mesa hay un tazón de arroz
+  - Cada filósofo tiene un plato, un palillo a la derecha, y un
+    palillo a la izquierda
+  - El palillo lo /comparten/ con el filósofo de junto
+#+BEGIN_CENTER
+#+attr_latex: width=0.3\textwidth
+[[../img/mesa_filosofos.png]]
+#+END_CENTER
+#+latex: {\scriptsize Imagenes ilustrativas: Ted P. Baker}
+
+** La cena de los filósofos: Planteamiento (2)
+- Cada filósofo /sólo/ sabe hacer dos cosas: Pensar y comer
+- Los filósofos /piensan/ hasta que les da hambre
+  - Una vez que tiene hambre, un filósofo levanta un palillo, luego
+    levanta el otro, y come
+  - Cuando se sacia, pone en la mesa un palillo, y luego el otro
+- ¿Qué problemas pueden presentarse?
+
+** La cena de los filósofos: Bloqueo mutuo
+#+BEGIN_CENTER
+#+attr_latex: width=0.5\textwidth
+#+caption: Cuando todos los filósofos intentan levantar uno de los palillos se produce un /bloqueo mutuo/
+[[../img/filosofos_bloqueados.png]]
+#+END_CENTER
+
+
+** La cena de los filósofos: Inanición
+#+BEGIN_CENTER
+#+attr_latex: width=\textwidth
+#+caption: Una rápida sucesión de C y E lleva a la inanición de D
+[[../img/filosofos_inanicion.png]]
+#+END_CENTER
+
+** Los fumadores compulsivos

@@ -933,12 +933,12 @@ número de ingredientes necesario.
   def consumidor():
     while True:
       event = buffer.pop()
-      event.process()
+      procesa(event)
   #+end_src
 
   Pero el acceso a =buffer= no está protegido para garantizar la
   exclusión mutua, y podría quedar en un estado inconsistente si
-  =add()= y =get()= intentan manipular sus estructuras al mismo
+  =append()= y =pop()= intentan manipular sus estructuras al mismo
   tiempo. Además, si bien en este ejemplo asumimos un sólo hilo
   productor y un sólo hilo consumidor, podríamos extender el programa
   para que fueran varios en cualquiera de estos roles.
@@ -955,28 +955,28 @@ número de ingredientes necesario.
   Una solución a este problema puede ser:
 
   #+begin_src python
-  import threading
-  mutex = threading.Semaphore(1)
-  elementos = threading.Semaphore(0)
-  buffer = []
-  threading.Thread(target=productor, args=[]).start()
-  threading.Thread(target=consumidor, args=[]).start()
-
-  def productor():
-    while True:
-      event = genera_evento()
-      mutex.acquire()
-      buffer.append(event)
-      mutex.release()
-      elementos.release()
-
-  def consumidor():
-    while True:
-      elementos.acquire()
-      mutex.acquire()
-      event = buffer.pop()
-      mutex.release()
-      event.process()
+    import threading
+    mutex = threading.Semaphore(1)
+    elementos = threading.Semaphore(0)
+    buffer = []
+    threading.Thread(target=productor, args=[]).start()
+    threading.Thread(target=consumidor, args=[]).start()
+    
+    def productor():
+      while True:
+        event = genera_evento()
+        mutex.acquire()
+        buffer.append(event)
+        mutex.release()
+        elementos.release()
+    
+    def consumidor():
+      while True:
+        elementos.acquire()
+        mutex.acquire()
+        event = buffer.pop()
+        mutex.release()
+        event.process()
   #+end_src
 
   Podemos ver que la misma construcción, un semáforo, es utilizada de
@@ -1084,36 +1084,36 @@ número de ingredientes necesario.
   escritor. Reescribamos pues:
 
   #+begin_src python
-  import threading
-  lectores = 0
-  mutex = threading.Semaphore(1)
-  cuarto_vacio = threading.Semaphore(1)
-  torniquete = threading.Semaphore(1)
-
-  def escritor():
-    torniquete.acquire()
-    cuarto_vacio.acquire()
-    escribe()
-    cuarto_vacio.release()
-    torniquete.release()
-
-  def lector():
-    torniquete.acquire()
-    torniquete.release()
-
-    mutex.acquire()
-    lectores = lectores + 1
-    if lectores == 1:
+    import threading
+    lectores = 0
+    mutex = threading.Semaphore(1)
+    cuarto_vacio = threading.Semaphore(1)
+    torniquete = threading.Semaphore(1)
+    
+    def escritor():
+      torniquete.acquire()
       cuarto_vacio.acquire()
-    mutex.release()
-
-    lee()
-
-    mutex.acquire()
-    lectores = lectores - 1
-    if lectores == 0:
+      escribe()
       cuarto_vacio.release()
-    mutex.release()
+      torniquete.release()
+    
+    def lector():
+      torniquete.acquire()
+      torniquete.release()
+    
+      mutex.acquire()
+      lectores = lectores + 1
+      if lectores == 1:
+        cuarto_vacio.acquire()
+      mutex.release()
+    
+      lee()
+    
+      mutex.acquire()
+      lectores = lectores - 1
+      if lectores == 0:
+        cuarto_vacio.release()
+      mutex.release()
   #+end_src
 
   En la implementación de los escritores, esto puede parecer inútil:
@@ -1121,11 +1121,9 @@ número de ingredientes necesario.
   teníamos. Sin embargo, al obligar a que el lector pase por un
   torniquete antes de actualizar =lectores=, lo cual obligaría a que
   se mantenga encendida la luz, obligamos a que espere a que el
-  escritor suelte este mutex exterior.
-
-  Como nota adicional: Este ejemplo ilustra cómo un mismo objeto puede
-  ser empleado de dos maneras distintas: Mientras =torniquete= es para
-  =lector= un torniquete, para =escritor= es una mutex.
+  escritor suelte este mutex exterior. Vemos nuevamente cómo la misma
+  estructura es tratada de dos diferentes maneras: Para el lector es
+  un torniquete, y para el escritor es un mutex.
 
 *** La cena de los filósofos
 

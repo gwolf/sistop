@@ -1535,7 +1535,7 @@ problemática. Algunas maneras de lograrlo pueden ser:
      siguiente manera:
 
      #+BEGIN_SRC C
-     boolean test_and_set_lock(int i) {
+     boolean test_and_set(int i) {
          if (i == 0) {
              i = 1;
              return true;
@@ -1553,20 +1553,38 @@ problemática. Algunas maneras de lograrlo pueden ser:
      Entonces, el código para obtener un bloqueo exclusivo para
      realizar determinada tarea podría ser tan simple como:
 
-     #+BEGIN_SRC C
-     while (test_and_set_lock(candado)) {}
-     seccion_critica();
-     free_lock(candado);
-     #+END_SRC
+     #+begin_src asm
+       enter_region:        ; Etiqueta de entrada a la verificación
+        
+         tsl reg, flag      ; Test and Set Lock; 'flag' es la variable
+                            ; compartida, es cargada al registro 'reg'
+                            ; y, atómicamente, convertida en 1.
+         cmp reg, #0        ; ¿Era la bandera igual a 0 al entrar?
+         jnz enter_region   ; En caso de que no fuera 0 al ejecutar el tsl,
+                            ; vuelve a ejecutar desde enter_region
+         ret                ; Termina la rutina. Esto significa que 'flag'
+                            ; era cero al entrar. Si llegamos hasta aquí,
+                            ; tsl fue exitoso y flag queda marcado como
+                            ; no-cero. Tenemos acceso exclusivo al recurso
+                            ; protegido por flag.
+        
+       leave_region:
+         move flag, #0      ; Guarda 0 en flag, liberando el recurso
+         ret                ; Regresa al invocante.
+     #+end_src
 
      Esto requeriría contar con soporte en hardware en el procesador
      y en el controlador de memoria, pero la simplicidad obtenida
      justificaría el costo marginal adicional en hardware.
 
-     Un problema con esta solución es que fomentaría la /espera
-     activa/, desperdiciando tiempo de procesador cada vez que un
-     proceso está esperando al candado. Seguiría siendo necesaria la
-     existencia de algoritmos para evitar situaciones de inanición.
+     Un problema con esta solución es que fomenta la /espera activa/,
+     desperdiciando tiempo de procesador cada vez que un proceso está
+     esperando al candado. Seguiría siendo necesaria la existencia de
+     algoritmos para evitar situaciones de inanición. Esta instrucción
+     existe y es empleada hoy en día, pero su uso está limitado a las
+     estructuras que no pueden ser interrumpidas por ninguna razón,
+     como las rutinas gestoras de interrupciones en el núcleo, y sólo
+     se emplea para esperas que se sabe que serán muy cortas.
 
      Hay arquitecturas de cómputo que implementan instrucciones como
      la aquí propuesta. Sin embargo, el costo asociado (no sólo por la
@@ -1576,6 +1594,17 @@ problemática. Algunas maneras de lograrlo pueden ser:
      diseño de las arquitecturas RISC, y protección adicional para
      arquitecturas multiprocesador) han evitado que se popularice
      más.
+
+     Un factor adicional que dificulta la implementación a mayor
+     escala de esta instrucción es que, siendo una instrucción en
+     hardware con doble acceso a memoria, implica la complejidad
+     adicional de asegurar la coherencia del caché cada vez que es
+     invocada.
+
+     Para mayores detalles acerca de las razones, ventajas y
+     desventajas del uso de spinlocks en sistemas operativos reales,
+     sugiero referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html#%281%29][Spin Locks & Other Forms of Mutual Exclusion]]
+     (Theodore P. Baker 2010)
 
 - Memoria transaccional ::
      Un área activa de investigación hoy en día es la de la memoria
@@ -2138,7 +2167,7 @@ mutuo circular indefinido).
 
 - [[http://perldoc.perl.org/perlthrtut.html][Tutorial de hilos de Perl]]
 - [[http://docs.python.org/2/library/threading.html][Python higher level threading interface]]
-
+- [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html#%281%29][Spin Locks & Other Forms of Mutual Exclusion]] (Theodore P. Baker 2010)
 # Me queda pendiente:
 # 
 # Writing Papers Using org-mode

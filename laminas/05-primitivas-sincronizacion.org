@@ -315,11 +315,168 @@ La JVM implementa:
 #+END_CENTER
 
 ** Soluciones en hardware
+- Decimos una y otra vez que /la concurrencia está aquí para quedarse/
+- El hardware especializado para cualquier cosa (interrupciones, MMU,
+  punto flotante, etc.) es siempre caro, hasta que baja de precio
+- ¿No podría el hardware ayudarnos a implementar operaciones atómicas?
+#+begin_center
+Veamos algunas estrategias
+#+end_center
+
+** Inhabilitación de interrupciones
+#+begin_center
+Efectivamente evita que las secciones críticas sean interrumpidas,
+pero...
+#+end_center
+- Inútil cuando hay multiprocesamiento real
+  - A menos que detenga también la ejecución en los demás CPUs
+- Matar moscas a cañonazos
+- Inhabilita el multiproceso preventivo
+  - Demasiado peligroso
+
+** Instrucciones atómicas /reales/: =test_and_set= (1)
+   Siguiendo una implementación /en hardware/ correspondiente a:
+   #+BEGIN_SRC C
+   boolean test_and_set_lock(int i) {
+       if (i == 0) {
+           i = 1;
+           return true;
+       } else return false;
+   }
+   void free_lock(int i) {
+       if (i == 1) i = 0;
+   }
+   #+END_SRC
+
+** Instrucciones atómicas /reales/: =test_and_set= (2)
+   Bastaría con:
+   #+begin_src C
+   while (test_and_set(candado)) {}
+   seccion_critica();
+   free_lock(candado);
+   #+end_src
+
+   #+begin_center
+   ¿Qué problema le vemos?
+   #+end_center
+
+** Problemas con =test_and_set=
+- Espera activa
+  - Se utiliza sólo en código no interrumpible (p.ej. gestor de
+    interrupciones en el núcleo)
+- Código no portable
+- Imposible de implementar en arquitecturas RISC limpias
+  - Doble acceso a memoria en una sóla instrucción
+  - ...Muy caro de implementar en arquitecturas CISC
+- Susceptible a problemas de coherencia de cache
+
+** Memoria transaccional
+- Idea base: Semántica de bases de datos en el acceso a memoria
+- Permite agrupar varias operaciones en una sóla /transacción/
+  - Una vez terminada, /confirmar/ (/commit/) todos los cambios
+  - O, en caso de error, /rechazarlos/ (/rollback/)
+- Si algún otro proceso modifica alguna de las localidades en
+  cuestión, el proceso se /rechaza/
+- Toda lectura de memoria antes de /confirmar/ entrega los datos
+  previos
+
+** Memoria transaccional: Ejemplo de semántica
+   #+BEGIN_SRC C
+   do {
+       begin_transaction();
+       var1 = var2 * var3;
+       var3 = var2 - var1;
+       var2 = var1 / var2;
+   } while (! commit_transaction());
+   #+END_SRC
+
+   Ejemplo poco eficiente, elegido meramente por claridad: Efectúa
+   múltiples cálculos dentro de una espera activa efectiva
+
+** Semántica de memoria transaccional en software (STM)
+- Implementaciones como la mencionada disponibles en varios lenguajes
+- Computacionalmente caras
+  - Invariablemente /mucho/ más lentas
+  - Y menos eficientes en espacio
+  - ...Pero en hardware tampoco serían mucho más baratas — y sí
+    tendrían restricciones (en tamaño o cantidad de transacciones
+    simultáneas)
+- Puede llevar a inconsistencias si implican /cualquier estructura/
+  fuera del control de la transacción (archivos, dispositivos, IPC)
+- Construcción poderosa (¡y cómoda!)
 
 * Patrones basados en semáforos
 ** Señalizar
+- Un hilo debe informar a otro que cierta condición está cumplida
+- Ejemplo: Un hilo prepara una conexión en red mientras el otro
+  prepara los datos a enviar
+  - No podemos arriesgarnos a comenzar la transmisión hasta que la
+    conexión esté lista
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+begin_src python
+# Antes de lanzar los hilos
+senal = Semaphore(0)
+
+def prepara_conexion():
+  crea_conexion()
+  senal.release()
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src python
+def envia_datos():
+  calcula_datos()
+  senal.acquire()
+  envia_por_red()
+#+end_src
+#+latex: \end{column}\end{columns}
+
 ** /Rendezvous/
+- Nombre tomado del francés para /preséntense/ (utilizado ampliamente
+  en inglés para /tiempo y lugar de encuentro/)
+- Dos hilos deben esperarse mutuamente en cierto punto para continuar
+  en conjunto
+  - Empleamos dos semáforos
+- Por ejemplo, en un GUI:
+  - Un hilo prepara la interfaz gráfica y actualiza sus eventos
+  - Otro hilo efectúa cálculos para mostrar
+  - Queremos mostrar la simulación desde el principio, no debe iniciar
+    el cálculo antes de que haya una interfaz mostrada
+  - No queremos que la interfaz se presente en blanco
+
+** /Rendesvous/
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+begin_src python
+guiListo = Semaphore(0)
+calculoListo = Semaphore(0)
+threading.Thread(target=maneja_gui, args=[]).start()
+threading.Thread(target=maneja_calculo, args=[]).start()
+def maneja_gui():
+  inicializa_gui()
+  guiListo.release()
+  calculoListo.acquire()
+  recibe_eventos()
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src python
+def maneja_calculo():
+  inicializa_datos()
+  calculoListo.release()
+  guiListo.acquire()
+  procesa_calculo()
+#+end_src
+#+latex: \end{column}\end{columns}
+
 ** Mutex
+Un mutex puede implementarse con un semáforo inicializado a 1:
+#+begin_src python
+mutex = Semaphore(1)
+# ...Inicializamos estado y lanzamos hilos
+mutex.acquire()
+# Estamos en la region de exclusion mutua
+x = x + 1
+mutex.release()
+# Continua la ejecucion paralela
+#+end_src
 ** Multiplex
 ** Torniquete
 ** Apagador

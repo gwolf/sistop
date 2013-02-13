@@ -245,13 +245,8 @@ presentados pueden generalizarse a los demás, y son situaciones en que
 se presenta compartición (o competencia) por estructuras entre
 entes independientes.
 
-** Mecanismos de exclusión mutua y sincronización
-
-Comenzaremos el planteamiento de esta sección con algunos problemas
-clásicos que la ilustran, para posteriormente formalizar las nociones
-y los mecanismos para resolverlos.
-
-*** Problemas clásicos
+** Problemas clásicos de exclusión mutua y sincronización
+# <<problemas_clasicos>>
 
 Enunciaremos a continuación algunos planteamientos que ilustran
 situaciones que se pueden resolver empleando semáforos. Por ahora
@@ -321,7 +316,9 @@ los problemas.
      cerillos. Cada uno de los fumadores tiene una cantidad infinita
      de alguno de los ingredientes, pero no les gusta
      compartir. Afortunadamente, del mismo modo que no comparten, no
-     son acaparadores.
+     son acaparadores[fn:: Esto es, no buscan obtener y conservar los
+     recursos /preventivamente/, sino que los toman sólo cuando
+     satisfacen /por completo/ sus necesidades.].
 
      De tiempo en tiempo, el agente consigue una dosis de dos de los
      ingredientes — Por ejemplo, si deja en la mesa un papel y tabaco,
@@ -350,6 +347,13 @@ sólo para resolver problemas de sincronización, sino como un
 mecanismo simple de comunicación entre procesos, podemos encontrar
 una detallada explicación del por qué de diversas implementaciones
 propuestas para cada uno de ellos.
+
+** Conceptos y primitivas básicas
+
+Para plantear la resolución de los problemas antes mencionados,
+debemos partir del vocabulario básico de las situaciones que crean la
+problemática. En esta sección presentaremos también las estructuras
+básicas para enfrentarlas.
 
 *** Secciones críticas y operaciones atómicas
 
@@ -896,8 +900,22 @@ cuales tenemos a:
           esté bailando al mismo tiempo, o asegurar que los hilos en
           espera vayan bailando en el órden en que llegaron.
 
-*** TODO Soluciones a los problemas clásicos
-- Problema productor-consumidor ::
+** Soluciones a los problemas clásicos
+
+A continuación presentamos /una forma/ de resolver [[#problemas_clasicos][los problemas
+propuestos]] anteriormente. Para todos estos problemas hay más de una
+implementación válida de solución. Algunos de estos problemas fueron
+originalmente planteados como justificación del desarrollo de las
+estructuras de control presentadas, y hay amplios cuerpos de
+bibliografía desarrollándolos, tanto como fueron planteados como con
+diversas modificaciones a sus premisas de resolución.
+
+Cabe mencionar que la resolución de la /cena de los filósofos/ y /los
+fumadores compulsivos/ fue realizada de modo que sea flexible,
+permitiendo variar ya sea el número de huéspedes a la mesa o el
+número de ingredientes necesario.
+
+*** Problema productor-consumidor
   Si no tuviéramos en cuenta a la sincronización, podríamos presentar
   código tan simple como el siguiente:
 
@@ -1003,7 +1021,7 @@ cuales tenemos a:
       event.process()
   #+end_src
 
-- Problema lectores-escritores ::
+*** Problema lectores-escritores
 
   Este problema puede ser generalizado como una /exclusión mutua
   categórica/: Se debe separar el uso de un recurso según la categoría
@@ -1115,7 +1133,7 @@ cuales tenemos a:
   ser empleado de dos maneras distintas: Mientras =torniquete= es para
   =lector= un torniquete, para =escritor= es una mutex.
 
-- La cena de los filósofos ::
+*** La cena de los filósofos
 
   En este caso, el peligro no es, como en el ejemplo anterior, que una
   estructura de datos sea sobreescrita por ser accesada por dos hilos
@@ -1209,7 +1227,110 @@ cuales tenemos a:
   Cabe apuntar que ninguno de estos mecanismos asegura que en la mesa
   no haya /inanición/, sólo que no haya bloqueos mutuos.
 
-- Los fumadores compulsivos ::
+*** Los fumadores compulsivos
+
+Al haber tres distintos ingredientes, tiene sentido que empleemos
+tres distintos semáforos, para señalizar a los fumadores respecto a
+cada uno de los ingredientes. Un primer acercamiento podría ser:
+
+  #+BEGIN_SRC python
+    import random
+    import threading
+    ingredientes = ['tabaco', 'papel', 'cerillo']
+    semaforos = {}
+    for i in ingredientes:
+      semaforos[i] = threading.Semaphore(0)
+    semaforo_agente = threading.Semaphore(1)
+    
+    threading.Thread(target=agente, args=[]).start()
+    fumadores = [threading.Thread(target=fumador, args=[i]).start() for i in ingredientes]
+    
+    def agente():
+      while True:
+        semaforo_agente.acquire()
+        mis_semaf = semaforos.values()
+        mis_semaf.remove(random.choice(mis_semaf))
+        for i in mis_semaf:
+          i.release()
+    
+    def fumador(ingr):
+      mis_semaf = []
+      for i in semaforos.keys():
+        if i != ingr:
+          mis_semaf.append(semaforos[i])
+      while True:
+        for i in mis_semaf:
+          i.acquire()
+        semaforo_agente.release()
+        fuma(ingr)
+    
+    def fuma(ingr):
+      print 'Fumador con %s echando humo...' % ingr
+  #+END_SRC
+
+El problema en este caso es que, al tener que cubrir un número de
+ingredientes mayor a uno, utilizar sólo un semáforo ya no nos
+funciona: Si =agente()= decide proveer papel y cerillos, nada
+garantiza que no sea el =fumador['cerillo']= el que reciba la primer
+señal o que =fumador['tabaco']= reciba la segunda — Para que este
+programa avance hace falta, más que otra cosa, la buena suerte de que
+las señales sean recibidas por el proceso indicado.
+
+Una manera de evitar esta situación es la utilización de
+/intermediarios/ encargados de notificar al hilo adecuado. Partiendo
+de que, respetando la primer restricción impuesta por Patil, no
+podemos modificar el código del agente, implementamos a los
+intermediarios y reimplementamos a los fumadores, y agregamos algunas
+variables globales, de esta manera:
+
+  #+BEGIN_SRC python
+    que_tengo = {}
+    semaforos_interm = {}
+    for i in ingredientes:
+      que_tengo[i] = False
+      semaforos_interm[i] = threading.Semaphore(0)
+    interm_mutex = threading.Semaphore(1)
+    intermediarios = [threading.Thread(target=intermediario, args=[i]).start() for i in ingredientes]
+    
+    def fumador(ingr):
+      while True:
+        semaforos_interm[ingr].acquire()
+        semaforo_agente.release()
+        fuma(ingr)
+    
+    def intermediario(ingr):
+      otros_ingr = ingredientes[:]
+      otros_ingr.remove(ingr)
+      while True:
+        semaforos[ingr].acquire()
+        interm_mutex.acquire()
+        for i in otros_ingr:
+          if que_tengo[i]:
+            que_tengo[i] = False
+            semaforos_interm[i].release()
+            break
+          que_tengo[i] = True
+        interm_mutex.release()
+  #+END_SRC
+
+Si bien vemos que el código de =fumador()= se simplifica (dado que ya
+no tiene que efectuar ninguna verificación), =intermediario()= tiene
+mayor complejidad. El elemento clave de su lógica es que, si bien el
+=agente()= (el sistema operativo) seguirá enviándonos una señal por
+cada ingrediente disponible, los tres intermediarios se sincronizarán
+empleando al arreglo =que_tengo= (protegido por =interm_mutex=), y de
+este modo cada hilo (independientemente del órden en que fue invocado)
+señalizará a los otros intermediarios qué ingredientes hay en la mesa,
+y una vez que sepa a qué fumador notificar, dejará el estado listo
+para recibir una nueva notificación.
+
+** Otros mecanismos
+
+Más allá de los mecanismos basados en mutexes y semáforos, existen
+otros mecanismos que emplean diferentes niveles de /encapsulamiento/
+para proteger las abstracciones. Si bien no entraremos más en detalles
+al respecto, los presentamos a continuación.
+
 *** Monitores
 
 El principal problema con los mecanismos anteriormente descritos es

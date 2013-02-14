@@ -900,6 +900,57 @@ cuales tenemos a:
           esté bailando al mismo tiempo, o asegurar que los hilos en
           espera vayan bailando en el órden en que llegaron.
 
+*** Variables condicionales
+
+Las variables condicionales presentan una extensión sobre el
+comportamiento de las mutexes, buscando darles la "inteligencia" de
+responder ante determinados eventos. Una variable condicional siempre
+opera /en conjunto con/ un mutex, y en algunas implementaciones es
+necesario indicar cuál será dicho mutex desde la misma inicialización
+del objeto.[fn:: Mientras que otras implementaciones permiten que se
+declaren por separado, pero siempre que se invoca a una variable
+condicional, debe indicársele qué mutex estará empleando.] Mantienen
+hasta cierto punto una semántica comparable con la de los semáforos.
+
+Una variable condicional presenta las siguientes operaciones:
+
+- Espera :: Se le indica una condición y un mutex. El mutex tiene que
+            haber sido ya adquirido. Esta operación /libera/ al
+            mutex, y se bloquea hasta recibir una /notificación/. Una
+            vez que la notificación es recibida, y antes de devolver
+            la ejecución al hilo, /re-adquiere/ el mutex.
+
+- Espera medida :: Tiene una semántica igual a la de la espera, pero
+                   recibe un argumento adicional, indicando el tiempo
+                   de expiración. Si pasado el tiempo de expiración
+                   no ha sido notificado, despierta al hilo
+                   regresándole un error (y sin re-adquirir el
+                   mutex).
+
+- Señaliza :: Requiere que el mutex ya haya sido adquirido. Despierta
+              a uno o más hilos (algunas implementaciones permiten
+              indicar como argumento a cuántos hilos). /No/ libera al
+              mutex — Esto significa que el flujo de ejecución /se
+              mantiene en el invocante/, quien tiene que salir de su
+              sección crítica (entregar el mutex) antes de que otro
+              de los hilos continúe ejecutando.
+
+- Señaliza a todos :: Indica a /todos los hilos/ que estén esperando a
+     esta condición.
+
+La interfaz de hilos =POSIX= (=pthreads=) presenta la siguiente
+definición:
+
+#+BEGIN_SRC C
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
+int pthread_cond_signal(pthread_cond_t *cond);
+int pthread_cond_broadcast(pthread_cond_t *cond);
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime);
+int pthread_cond_destroy(pthread_cond_t *cond);
+#+END_SRC
+
 ** Soluciones a los problemas clásicos
 
 A continuación presentamos /una forma/ de resolver [[#problemas_clasicos][los problemas

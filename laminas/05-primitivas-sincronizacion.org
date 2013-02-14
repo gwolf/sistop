@@ -243,7 +243,81 @@ int sem_trywait(sem_t *sem);
   - El proceso /debe tener la lógica/ para no proceder a la sección
     crítica
 
-** Problemática con mutexes y semáforos
+** Variables Condicionales
+- Una extensión sobre el comportamiento de un mutex permitiéndole una
+  mayor "inteligencia"
+- Operan ligadas a un mutex (/candado/)
+- Implementa las siguientes operaciones:
+  - =wait()= :: Libera el candado y se bloquea hasta recibir una
+                /notificación/. Una vez despertado, /re-adquiere/ el
+                candado.
+  - =timedwait(timeout)= :: Como =wait()=, pero se despierta
+       (regresando error) pasado el tiempo indicado si no recibió
+       notificación.
+  - =signal()= :: Despierta a un hilo esperando a esta condición (si
+                  lo hay). No libera al candado.
+  - =broadcast= :: Notifica a todos los hilos que estén esperando a
+                   esta condición
+
+** Variables Condicionales en C (POSIX pthreads)
+#+BEGIN_SRC C
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
+int pthread_cond_signal(pthread_cond_t *cond);
+int pthread_cond_broadcast(pthread_cond_t *cond);
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime);
+int pthread_cond_destroy(pthread_cond_t *cond);
+#+END_SRC
+
+** Ejemplo con variables condicionales
+#+BEGIN_SRC C
+  int x,y;
+  pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+  pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+  /* (...) */
+  /*  Un hilo espera hasta que x sea mayor que y */
+  pthread_mutex_lock(&mut);
+  while (x <= y) {
+          pthread_cond_wait(&cond, &mut);
+  }
+  /* (Realiza el trabajo...) */
+  pthread_mutex_unlock(&mut);
+  /* (...) */
+  /* Cuando otro hilo modifica a x o y, notifica */
+  /* a todos los hilos que estén esperando */
+  pthread_mutex_lock(&mut);
+  x = x + 1;
+  if (x > y) pthread_cond_broadcast(&cond);
+  pthread_mutex_unlock(&mut);
+#+END_SRC
+#+latex:{\scriptsize
+http://www.sourceware.org/pthreads-win32/manual/pthread_cond_init.html
+#+latex:}
+
+** Ejemplo de espera limitada con VCs
+#+BEGIN_SRC C
+  struct timeval now;
+  struct timespec timeout;
+  int retcode;
+  pthread_mutex_lock(&mut);
+  gettimeofday(&now);
+  timeout.tv_sec = now.tv_sec + 5;
+  timeout.tv_nsec = now.tv_usec * 1000;
+  retcode = 0;
+  while (x <= y && retcode != ETIMEDOUT) {
+          retcode = pthread_cond_timedwait(&cond, &mut, &timeout);
+  }
+  if (retcode == ETIMEDOUT) {
+          /* Expirado el tiempo estipulado - Falla. */
+  } else {
+          /* Trabaja con x y y */
+  }
+  pthread_mutex_unlock(&mut);
+  
+#+END_SRC
+
+** Problemática con mutexes, semáforos y VCs
 - No sólo hay que encontrar el mecanismo correcto para proteger
   nuestras secciones críticas
   - hay que /implementarlo correctamente/

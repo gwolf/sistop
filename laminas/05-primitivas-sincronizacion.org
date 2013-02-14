@@ -837,4 +837,165 @@ Vamos a emplear dos semáforos:
 [[../img/filosofos_inanicion.png]]
 #+END_CENTER
 
-** Los fumadores compulsivos
+** Cena de filósofos: Primer acercamiento
+#+BEGIN_SRC python
+  import threading
+  num = 5
+  palillos = [threading.Semaphore(1) for i in range(num)]
+  filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
+#+end_src
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC python
+  def filosofo(id):
+    while True:
+      piensa(id)
+      levanta_palillos(id)
+      come(id)
+      suelta_palillos(id)
+
+  def levanta_palillos(id):
+    palillos[(id+1) % num].acquire()
+    print "%d - Tengo el palillo derecho" % id
+    palillos[id].acquire()
+    print "%d - Tengo ambos palillos" % id
+#+END_SRC
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+BEGIN_SRC python
+  def suelta_palillos(id):
+    palillos[(id+1) % num].release()
+    palillos[id].release()
+    print "%d - Sigamos pensando..." % id
+
+  def piensa(id):
+    # (...)
+    print "%d - Tengo hambre..." % id
+  
+  def come(id):
+    print "%d - ¡A comer!" % id
+    # (...)
+#+END_SRC
+#+latex: \end{column}\end{columns}
+
+** Cena de filósofos: Semáforos para comunicación
+- Para la resolución de este problema, representaremos a los palillos
+  como un arreglo de semáforos
+  - Esto asegura que presenten la semántica de exclusión mutua:
+    /levantar un palillo/ es una operación atómica
+- Sujeto a bloqueos mutuos
+  - Eventualmente, terminarán todos suspendidos con el palillo
+    derecho en la mano
+- ¿Ideas para evitar el bloqueo mutuo?
+
+** Cena de filósofos: Filósofos zurdos
+#+BEGIN_CENTER
+¿Y si hacemos que los filósofos pares sean diestros y los impares
+sean zurdos?
+#+END_CENTER
+#+BEGIN_SRC python
+  def levanta_palillos(id):
+    if (id % 2 == 0): # Zurdo
+      palillo1 = palillos[id]
+      palillo2 = palillos[(id+1) % num]
+    else: # Diestro
+      palillo1 = paltos[(id+1) % num]
+      palillo2 = palillos[id]
+    palillo1.acquire()
+    print "%d - Tengo el primer palillo" % id
+    palillo2.acquire()
+    print "%d - Tengo ambos palillos" % id
+#+END_SRC
+
+** Cena de filósofos: Basta con uno
+#+BEGIN_CENTER
+De hecho, basta con que uno de los filósofos sea zurdo para que no
+haya bloqueo mutuo
+#+END_CENTER
+#+begin_src python
+  def levanta_palillos(id):
+   if id == 0: # Zurdo
+     palillos[id].acquire()
+     print "%d - Tengo el palillo izquierdo" % id
+     palillos[(id+1) % num].acquire()
+   else: # Diestro
+     palillos[(id+1) % num].acquire()
+     print "%d - Tengo el palillo derecho" % id
+     palillos[id].acquire()
+   print "%d - Tengo ambos palillos" % id
+#+end_src
+
+** Cena de filósofos: Monitor y VCs (C)
+Implementación de [[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][Ted P. Baker (Florida State University)]] basada en
+Tanenbaum
+
+#+begin_src C
+/* Implementacion para cinco filosofos */
+pthread_cond_t  CV[NTHREADS];    /* Variable por filosofo */
+pthread_mutex_t M;               /* Mutex para el monitor */
+int             state[NTHREADS]; /* Estado de cada filosofo */
+
+void init () {
+    int i;
+    pthread_mutex_init(&M, NULL);
+    for (i = 0; i < 5; i++) {
+        pthread_cond_init(&CV[i], NULL);
+        state[i] = PENSANDO;
+    }
+}
+
+void come(int i) {
+    printf("El filosofo %d esta comiendo\n", i);
+}
+#+end_src
+
+** Cena de filósofos: Monitor y VCs (C)
+#+begin_src C
+void toma_palillos (int i) {
+    pthread_mutex_lock(&M)
+    state[i] = HAMBRIENTO;
+    actualiza(i);
+    while (state[i] == HAMBRIENTO)
+        pthread_cond_wait(&CV[i], &M);
+    pthread_mutex_unlock(&M);
+}
+
+void suelta_palillos (int i) {
+    state[i] = PENSANDO;
+    actualiza((i + 4) % 5);
+    actualiza((i + 1) % 5);
+    pthread_mutex_unlock(&M);
+}
+#+end_src
+
+
+** Cena de filósofos: Monitor y VCs (C)
+#+begin_src C
+/* No incluimos 'actualiza' en los encabezados (funcion interna) */
+int actualiza (int i) {
+    if ((state[(i + 4) % 5] != COMIENDO) &&
+        (state[i] == HAMBRIENTO) &&
+        (state[(i + 1) % 5] != COMIENDO)) {
+        state[i] = COMIENDO;
+        pthread_cond_signal(&CV[i]);
+    }
+    return 0;
+}
+#+end_src
+
+** Cena de filósofos: Monitor y VCs (C)
+#+attr_latex: width=0.4\textwidth
+#+caption: Representación del monitor
+[[../img/filosofos_monitor.png]]
+
+** Cena de filósofos: ¿Y la inanición?
+- La inanición es un problema mucho más dificil de tratar que el
+  bloqueo mutuo
+- El algoritmo presentado por Tanenbaum (1987) buscaba prevenir la
+  inanición, pero Gingras (1990) demostró que aún éste es vulnerable a
+  ciertos patrones
+- Gingras propone un algoritmo libre de inanición, pero demanda de
+  estructuras adicionales que rompen el planteamiento del problema
+  original
+#+BEGIN_CENTER
+[[https://dl.acm.org/citation.cfm?id%3D101091][Artículo de Gingras (1990): Dining philosophers revisited]] (descargable
+desde la red de la UNAM — No RIU)
+#+END_CENTER

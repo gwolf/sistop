@@ -841,7 +841,8 @@ Vamos a emplear dos semáforos:
 
 ** Lectores-escritores sin inanición
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+BEGIN_SRC python  import threading
+#+BEGIN_SRC python
+  import threading
   lectores = 0
   mutex = threading.Semaphore(1)
   cuarto_vacio = threading.Semaphore(1)
@@ -896,15 +897,14 @@ Vamos a emplear dos semáforos:
   - Cuando se sacia, pone en la mesa un palillo, y luego el otro
 - ¿Qué problemas pueden presentarse?
 
-** La cena de los filósofos: Bloqueo mutuo
+** Cena de filósofos: Bloqueo mutuo
 #+BEGIN_CENTER
 #+attr_latex: width=0.5\textwidth
 #+caption: Cuando todos los filósofos intentan levantar uno de los palillos se produce un /bloqueo mutuo/
 [[../img/filosofos_bloqueados.png]]
 #+END_CENTER
 
-
-** La cena de los filósofos: Inanición
+** Cena de filósofos: Inanición
 #+BEGIN_CENTER
 #+attr_latex: width=\textwidth
 #+caption: Una rápida sucesión de C y E lleva a la inanición de D
@@ -1072,4 +1072,130 @@ int actualiza (int i) {
 #+BEGIN_CENTER
 [[https://dl.acm.org/citation.cfm?id%3D101091][Artículo de Gingras (1990): Dining philosophers revisited]] (descargable
 desde la red de la UNAM — No RIU)
+#+END_CENTER
+
+** Fumadores compulsivos: Planteamiento
+- Para fumar hacen falta tres ingredientes
+  - Tabaco, papel, cerillos
+- Hay tres fumadores compulsivos / en cadena
+  - Cada uno tiene una cantidad ilimitada de /uno/ de los
+    ingredientes
+  - No cooperan, pero no se estorban: No comparten, pero no acaparan
+- Un /agente/ de tiempo en tiempo consigue insumos /en pares/
+  - Cuando no hay nada en la /mesa/, puede poner una dosis de /dos/
+    ingredientes
+  - El agente no habla con los fumadores. Sólo deja los ingredientes
+    cuando uno de ellos termina de fumar.
+  - Requisito planteado: /No podemos modificar la lógica del agente/
+
+** Fumadores compulsivos: Primer implementación
+#+BEGIN_CENTER
+Estructuras comunes:
+#+END_CENTER
+#+BEGIN_SRC python
+  import random
+  import threading
+  ingredientes = ['tabaco', 'papel', 'cerillo']
+  semaforos = {}
+  semaforo_agente = threading.Semaphore(1)
+  for i in ingredientes:
+    semaforos[i] = threading.Semaphore(0)
+  
+  threading.Thread(target=agente, args=[]).start()
+  fumadores = [threading.Thread(target=fumador, args=[i]).start() for i in ingredientes]
+  
+  def fuma(ingr):
+    print 'Fumador con %s echando humo...' % ingr
+#+END_SRC
+
+** Fumadores compulsivos: Primer implementación
+#+BEGIN_SRC python
+  def agente():
+    while True:
+      semaforo_agente.acquire()
+      mis_ingr = ingredientes[:]
+      mis_ingr.remove(random.choice(mis_ingr))
+      for i in mis_ingr:
+        print "Proveyendo %s" % i
+        semaforos[i].release()
+  
+  def fumador(ingr):
+    mis_semaf = []
+    for i in semaforos.keys():
+      if i != ingr:
+        mis_semaf.append(semaforos[i])
+    while True:
+      for i in mis_semaf:
+        i.acquire()
+      fuma(ingr)
+      semaforo_agente.release()
+#+END_SRC
+
+** Fumadores compulsivos: Bloqueo mutuo
+- Tenemos un semáforo por ingrediente
+- Pero no podemos asegurar el ordenamiento
+- Al aparecer /un/ ingrediente en la mesa, cualquiera de los dos
+  fumadores que lo requiera lo va a tomar
+  - La mitad de las veces, el segundo ingrediente que /aparezca/ no
+    le servirá
+  - Otro de los fumadores tomará este segundo ingrediente
+  - ¡Bloqueo!
+
+** Fumadores compulsivos: Empleando intermediarios
+- No podemos modificar al agente, pero sí a los fumadores
+- Podemos usar /intermediarios/
+  - Uno por cada ingrediente
+  - Con comunicación entre sí
+  - Cuando toman una decisión, despiertan al fumador en cuestión
+- Agregamos algunas variables globales para representar a los
+  intermediarios y la comunicación entre ellos
+#+BEGIN_SRC python
+  que_tengo = {}
+  semaforos_interm = {}
+  for i in ingredientes:
+    que_tengo[i] = False
+    semaforos_interm[i] = threading.Semaphore(0)
+  interm_mutex = threading.Semaphore(1)
+  intermediarios = [threading.Thread(target=intermediario, args=[i]).start() for i in ingredientes]
+#+END_SRC
+
+** Fumadores compulsivos: Empleando intermediarios
+#+BEGIN_CENTER
+El código del fumador resulta mucho más simple:
+#+END_CENTER
+#+BEGIN_SRC python
+  def fumador(ingr):
+    while True:
+      semaforos_interm[ingr].acquire()
+      fuma(ingr)
+      semaforo_agente.release()
+#+END_SRC
+#+BEGIN_CENTER
+Sólo debe esperar a que su intermediario lo despierte.
+
+Sigue siendo su responsabilidad /notificar al agente/ para que éste
+continúe.
+#+END_CENTER
+
+** Fumadores compulsivos: Empleando intermediarios
+#+BEGIN_CENTER
+¿Qué y cómo se comunican entre sí los intermediarios?
+#+END_CENTER
+#+BEGIN_SRC python
+  def intermediario(ingr):
+    otros_ingr = ingredientes[:]
+    otros_ingr.remove(ingr)
+    while True:
+      semaforos[ingr].acquire()
+      interm_mutex.acquire()
+      for i in otros_ingr:
+        if que_tengo[i]:
+          que_tengo[i] = False
+          semaforos_interm[i].release()
+          break
+        que_tengo[i] = True
+      interm_mutex.release()
+#+END_SRC
+#+BEGIN_CENTER
+Tip: Intentar analizar el flujo en paralelo de los tres intermediarios
 #+END_CENTER

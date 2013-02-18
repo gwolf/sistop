@@ -124,7 +124,7 @@ digraph G {
   - Pero ninguno de los procesos involucrados puede avanzar
   - ¿Única salida? Que el administrador del sistema interrumpa a
     alguno de los procesos
-    - …Implica probable pérdida de información
+    - ...Implica probable pérdida de información
 
 ** Inanición
 #+BEGIN_CENTER
@@ -692,7 +692,7 @@ multiplex.release()
   - Asegurarse que sólo una pareja baile a la vez
   - Asegurarse que bailendo en el órden en que llegaron
 
-* Abordando los problemas clásicos
+* Problemas clásicos
 ** ¿De qué se tratan estos problemas clásicos?
 - Manera fácil de recordar para hablar de situaciones comunes en la
   vida real
@@ -912,6 +912,15 @@ Vamos a emplear dos semáforos:
 #+END_CENTER
 
 ** Cena de filósofos: Primer acercamiento
+- Para la resolución de este problema, representaremos a los palillos
+  como un arreglo de semáforos
+  - Esto asegura que presenten la semántica de exclusión mutua:
+    /levantar un palillo/ es una operación atómica
+- Cada filósofo sabe cuál es su ID (numérico, 0 a /n/; ejemplo con /n/
+  = 5)
+  - Los palillos de /i/ son =palillos[i]= y =palillos[(i+1) % n]=
+
+** Cena de filósofos: Primer acercamiento
 #+BEGIN_SRC python
   import threading
   num = 5
@@ -951,10 +960,6 @@ Vamos a emplear dos semáforos:
 #+latex: \end{column}\end{columns}
 
 ** Cena de filósofos: Semáforos para comunicación
-- Para la resolución de este problema, representaremos a los palillos
-  como un arreglo de semáforos
-  - Esto asegura que presenten la semántica de exclusión mutua:
-    /levantar un palillo/ es una operación atómica
 - Sujeto a bloqueos mutuos
   - Eventualmente, terminarán todos suspendidos con el palillo
     derecho en la mano
@@ -971,7 +976,7 @@ sean zurdos?
       palillo1 = palillos[id]
       palillo2 = palillos[(id+1) % num]
     else: # Diestro
-      palillo1 = paltos[(id+1) % num]
+      palillo1 = palillos[(id+1) % num]
       palillo2 = palillos[id]
     palillo1.acquire()
     print "%d - Tengo el primer palillo" % id
@@ -1199,3 +1204,301 @@ continúe.
 #+BEGIN_CENTER
 Tip: Intentar analizar el flujo en paralelo de los tres intermediarios
 #+END_CENTER
+* El problema de inicio
+** Volviendo al problema de la concurrencia
+#+BEGIN_CENTER
+A modo de corolario, intentemos resolver el problema inicial...
+#+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC ruby
+class EjemploHilos
+  def initialize
+    @x = 0
+  end
+  def f1
+    sleep 0.1
+    print '+'
+    @x += 3
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f2
+    sleep 0.1
+    print '*'
+    @x *= 2
+  end
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1
+    print '%d ' % @x
+  end
+end
+#+END_SRC
+#+latex: \end{column}\end{columns}
+#+begin_src ruby
+>> e = EjemploHilos.new;10.times{e.run}
+0 *+3 *+9 *+21 +*48 *+99 +*204 *+411 +*828 *+1659
+
+>> e = EjemploHilos.new;10.times{e.run}
++0 *+6 *+*18 42 +*+90 **186 +375 +**756 ++1515 *3036
+#+end_src
+
+** Devolviendo la predictibilidad
+- Tenemos un programa /explícitamente hecho para fallar/
+  - Con muchos /vicios/ en su código
+- Ilustra cómo los hilos pueden enredarse entre sí
+- ... ¿Cómo desenmarañar la madeja?
+
+** ¿Bastará con proteger con mutex?
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC ruby
+class EjemploHilos
+  def initialize
+    @x = 0
+    @mut = Mutex.new
+  end
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1
+    @mut.lock
+    print '%d ' % @x
+    @mut.unlock
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f1
+    sleep 0.1
+    @mut.lock
+    print '+'
+    @x += 3
+    @mut.unlock
+  end
+  def f2
+    sleep 0.1
+    @mut.lock
+    print '*'
+    @x *= 2
+    @mut.unlock
+  end
+end
+#+END_SRC
+#+latex: \end{column}\end{columns}
+#+BEGIN_CENTER
+¿Será con esto suficiente?
+
+¿Tendremos resultados consistentes?
+
+¿Por qué?
+
+¿Para qué intento proteger con el mutex al =print= en =run=?
+#+END_CENTER
+
+** Un mutex no es suficiente
+#+begin_src ruby
+>>  e = EjemploHilos.new;10.times{e.run}
+0 *++3 *12 *+*27 +57 +*120 *+243 +*492 +*+993 *1986 +=> 10
+>> * e = EjemploHilos.new;10.times{e.run}
+0 +**6 +15 +*36 +*+78 *162 +*330 +*666 +**1338 +2679 => 10
+>> *
+#+end_src
+- Nuestro problema no /sólo/ venía del acceso concurrente a =@x=
+- Sino que al ordenamiento relativo
+  - No importa que entren a la vez
+  - =(a + b) * c != a + (b * c)=
+- ¿Cómo podemos asegurar una invocación ordenada /sin perder el paralelismo/?
+  - Las tres funciones (=f1=, =f2= y =run=) incluyen un =sleep(0.1)=
+  - Que ese =sleep= reperesente nuestro código /paralelizable/
+
+
+** Solución 1: Esperar a la finalización de los hilos
+#+BEGIN_CENTER
+Del mismo modo que podemos lanzar un hilo nuevo (en Ruby, =Thread.new
+{...}=; en Python, =threading.Thread(...).start()=), podemos esperar a que
+termine, con =join=
+#+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC ruby
+class EjemploHilos
+  def initialize
+    @x = 0
+  end
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2(t1)}
+    sleep 0.1
+    t2.join
+    print '%d ' % @x
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f1
+    sleep 0.1
+    print '+'
+    @x += 3
+  end
+  def f2(t)
+    sleep 0.1
+    t.join
+    print '*'
+    @x *= 2
+  end
+end
+#+END_SRC
+#+latex: \end{column}\end{columns}
+
+** Esperar a la finalización
+#+BEGIN_SRC ruby
+>> e = EjemploHilos.new;10.times{e.run}
++*6 +*18 +*42 +*90 +*186 +*378 +*762 +*1530 +*3066 +*6138 => 10
+>> e = EjemploHilos.new;10.times{e.run}
++*6 +*18 +*42 +*90 +*186 +*378 +*762 +*1530 +*3066 +*6138 => 10
+#+END_SRC
+- Código resultante /claro/, aunque más rígido
+  - ¿Qué tendríamos que modificar para que la multiplicación ocurra
+    /antes de/ la suma?
+- /Mayor acoplamiento/ entre las tres funciones
+  - =f2= debe recibir una referencia al hilo 1 (=t=)
+  - Cada función debe comprender su rol en la /línea de ensamblaje/
+- ¿Aprovecho efectivamente el paralelismo?
+  - ¿Se ejecutan /a la vez/ las secciones no críticas?
+    (los =sleep 0.1=)
+
+** Modificando el flujo
+#+latex: \begin{columns}\begin{column}{0.45\textwidth}
+#+BEGIN_SRC ruby
+  def run
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2(t1)}
+    sleep 0.1
+    t2.join
+    print '%d ' % @x
+  end
+  def f1
+    sleep 0.1
+    print '+'
+    @x += 3
+  end
+  def f2(t)
+    sleep 0.1
+    t.join
+    print '*'
+    @x *= 2
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.1\textwidth}
+->
+#+latex: \end{column} \begin{column}{0.45\textwidth}
+#+BEGIN_SRC ruby
+  def run
+    t1 = Thread.new {f2}
+    t2 = Thread.new {f1(t1)}
+    sleep 0.1
+    t2.join
+    print '%d ' % @x
+  end
+  def f1(t)
+    sleep 0.1
+    t.join
+    print '+'
+    @x += 3
+  end
+  def f2
+    sleep 0.1
+    print '*'
+    @x *= 2
+  end
+#+end_src
+#+latex: \end{column}\end{columns}
+#+BEGIN_SRC ruby
+e = EjemploHilos.new;10.times{e.run}
+*+3 *+9 *+21 *+45 *+93 *+189 *+381 *+765 *+1533 *+3069 => 10
+#+end_src
+
+** Solución 2: Variables de condición
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_SRC ruby
+class EjemploHilos
+  require 'thread'
+  def initialize
+    @x = 0
+    @estado = 0
+    @mut = Mutex.new
+    @cv = ConditionVariable.new
+  end
+  def run
+    @estado = 0
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1
+    @mut.lock
+    @cv.wait(@mut) while (@estado != 2)
+    puts '%d ' % @x
+    @mut.unlock
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f1
+    sleep 0.1
+    @mut.lock
+    @cv.wait(@mut) while (@estado != 0)
+    @x += 3
+    @estado += 1
+    @cv.broadcast(@mut)
+    @mut.unlock
+  end
+  def f2
+    sleep 0.1
+    @mut.lock
+    @cv.wait(@mut) while (@estado != 1)
+    @x *= 2
+    @estado += 1
+    @cv.broadcast(@mut)
+    @mut.unlock
+  end
+end
+#+END_SRC
+#+latex: \end{column}\end{columns}
+#+BEGIN_CENTER
+Ojo: /No funcional/ (el intérprete /detecta un bloqueo mutuo/)
+#+END_CENTER
+
+** Sincronización a través de CV
+- Código resultante /más complejo/ (más elementos a considerar),
+  aunque más flexible
+  - Ejemplo de complejidad: No funcionó tras un tiempo razonable :-P
+  - Podría mejorarse con un poco de /azucar sintáctico/
+- Menor acoplamiento entre funciones
+  - Ordenamiento determinado por estado
+  - Podría configurarse en un sólo punto, p.ej:
+#+BEGIN_SRC ruby
+def initialize
+  (...) @orden = {:f1 => 0, :f2 => 1, :run => 2}
+end
+def f1
+  (...) @cv.wait(@mut) while (@estado != @orden[:f1])
+end
+#+END_SRC
+
+** ¿Y cómo es que /el intérprete/ detecta...?
+- Habrán notado que el comentario al código basado en CV menciona que
+  el intérprete /detecta un bloqueo mutuo/
+- Indica, sin duda, un error del programador
+#+BEGIN_SRC ruby
+>> EjemploHilos.new.run
+fatal: deadlock detected
+	from /usr/lib/ruby/1.9.1/thread.rb:71:in 'sleep'
+	from /usr/lib/ruby/1.9.1/thread.rb:71:in 'wait'
+	from (irb):15:in 'run'
+	from (irb):42
+	from /usr/bin/irb:12:in '<main>'
+#+END_SRC
+- Pero... ¿Cómo se dio cuenta?
+- ¿Cómo puede el intérprete /prevenir/ este bloqueo y /notificar al
+  programador/?
+  - ¡Antes de la primer iteración!

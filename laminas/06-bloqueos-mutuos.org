@@ -1,0 +1,228 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de procesos: Bloqueos mutuos y políticas
+#+DATE: 2013-02-?? — 2013-02-??
+
+* El SO y los Bloqueos mutuos
+** Generalizando bloqueos mutuos
+- Estudiamos ya varios casos de bloqueos mutuos al hablar de
+  sincronización
+- Pueden presentarse en varios otros entornos
+  - De cómputo o de la vida real
+
+** El encuentro de dos trenes
+#+begin_quote
+Cuando dos trenes lleguen a un crucero, /ambos deben detenerse por
+completo/ y no avanzar hasta que el otro se haya ido
+#+end_quote
+#+begin_center
+#+latex: {\scriptsize Ley aprobada por el Estado de Kansas, principios del siglo XX}
+#+end_center
+
+** El cruce de un semáforo
+- Cuando dos personas llegan a un crucero sin semáforo, ¿quién tiene
+  el paso?
+#+latex:\pause
+  - Reglamento de tránsito: El conductor que viene /más por la
+    derecha/
+- ¿Y qué procede cuando cuatro conductores llegan /a la vez/?
+#+latex:\pause
+  - Legalmente, los cuatro deben detenerse y nunca más avanzar
+  - Uno podría echarse en reversa, otro podría ignorar la ley y pasar
+    de todos modos, ¡pero es porque los conductores humanos tienen iniciativa!
+
+** ¿Cuándo se presenta un bloqueo mutuo?
+#+begin_center
+Condiciones de Coffman
+#+end_center
+1. Los procesos reclaman acceso exclusivo de los recursos
+   - Condición de /exclusión mutua/
+2. Los procesos mantienen los recursos que ya les habían sido
+   asignados mientras esperan recursos adicionales
+   - Condición de /espera por/
+3. Los recursos no pueden ser extraídos de los procesos que los tienen
+   hasta su completa utilización
+   - Condición de /no apropiatividad/
+4. Existe una cadena circular de procesos en que cada uno mantiene a
+   uno o más recursos que son requeridos por el siguiente en la cadena
+   - Condición de /espera circular/
+
+** Evaluando en base a las conidiciones de Coffman
+- Cada una de las condiciones presentadas son /necesarias, pero no
+  suficientes/ para que haya un bloqueo
+- Pero pueden alertarnos hacia una situación de riesgo
+- Cuando se presentan las cuatro, tenemos un bloqueo mutuo que sólo
+  puede resolverse terminando a uno de los procesos involucrados
+  - Pérdida de datos / estado
+
+** Ejemplo clásico de bloqueo mutuo (1)
+#+begin_center
+Asumimos: Un sistema con dos unidades de cinta (acceso secuencial,
+no-compartible)
+
+Dos procesos, /A/ y /B/, requieren de ambas unidades.
+#+end_center
+
+1. /A/ solicita una unidad de cinta y se bloquea
+
+2. /B/ solicita una unidad de cinta y se bloquea
+
+3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
+   en ejecución
+
+4. /A/ continúa procesando; termina su periodo de ejecución
+
+5. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a poner
+   en ejecución
+
+** Ejemplo clásico de bloqueo mutuo (2)
+
+6. /B/ solicita otra unidad de cinta y se bloquea
+
+7. El sistema operativo no tiene otra unidad de cinta por
+   asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
+   /A/
+
+8. /A/ solicita otra unidad de cinta y se bloquea
+
+9. El sistema operativo no tiene otra unidad de cinta por
+   asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
+   otro proceso (o queda en espera)
+
+** Esquematizando el ejemplo clásico
+#+attr_latex: width=0.5\textwidth
+#+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
+#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
+digraph G {
+	layout = circo;
+
+	A [label = "Proceso\nA"];
+	B [label = "Proceso\nB"];
+	1 [label = "Unidad\n1", shape = box];
+	2 [label = "Unidad\n2", shape = box];
+
+	A -> 1 [label = "Asignada"];
+	B -> 2 [label = "Asignada"];
+	A -> 2 [label = "Solicitada", style = dotted];
+	B -> 1 [label = "Solicitada", style = dotted];
+}
+#+end_src
+
+#+results:
+[[file:ltxpng/bloqueo_mutuo_simple.png]]
+
+** El punto de vista del sistema operativo
+- El rol del sistema operativo va más allá de lo presentado en las
+  láminas anteriores (/Exclusión mutua/)
+- No podemos asumir que los procesos cooperarán entre sí
+  - Ni siquiera que sabrán por anticipado de la existencia mutua
+- Un rol primario del sistema operativo es gestionar los recursos del
+  equipo
+
+** Políticas de prevención o resolución de bloqueos mutuos
+#+begin_center
+   Si el sistema /establece políticas/ respecto a la asignación de
+   recursos, puede evitar casos como el presentado.
+
+   Las políticas pueden verse en un contínuo entre:
+#+end_center
+- Liberales :: Buscan a otorgar los recursos lo antes posible cuando
+	       son solicitados
+- Conservadiras :: Controlan más el proceso de asignación de recursos
+
+** Espectro liberal-conservador de políticas
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
+[[./img/deadlocks_conserv_lib.png]]
+#+begin_center
+#+latex: {\scriptsize Volveremos a este diagrama hacia el final del tema}
+#+end_center
+
+** Categorías de estrategias ante bloqueos mutuos
+
+- Prevención :: Modela el comportamiento del sistema para /eliminar
+		toda posibilidad/ de un bloqueo.
+
+		Resulta en una utilización subóptima de recursos.
+
+- Evasión :: Impone condiciones menos estrictas. No puede evitar
+	     /todas las posibilidades/ de un bloqueo, cuando éste se
+	     produce busca /evitar/ sus consecuencias.
+
+- Detección y recuperación :: /Permite/ que ocurran los bloqueos, pero
+     busca /determinar si ha ocurrido/ y actuar para eliminarlos.
+
+* Prevención de bloqueos
+** Serialización
+- Previene caer en bloqueos negando que el sistema otorgue recursos a
+  más de un proceso a la vez
+- Los diferentes procesos pueden seguir ejecutando
+  - Realizando cálculos
+  - Empleando recursos /no rivales/
+- Podría emplearse en un esquema tipo multiprogramación temprana (no
+  interactiva)
+** Serializando el ejemplo clásico de bloqueo mutuo (1)
+1. /A/ solicita una unidad de cinta y se bloquea
+
+2. /B/ solicita una unidad de cinta y se bloquea
+
+3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
+   en ejecución
+
+4. /A/ continúa procesando; termina su periodo de ejecución
+
+5. El sistema operativo mantiene bloqueado a /B/, dado que /A/ tiene
+   un recurso
+
+6. /A/ solicita otra unidad de cinta y se bloquea
+
+** Serializando el ejemplo clásico de bloqueo mutuo (2)
+7. El sistema operativo otorga la unidad /2/ a /A/ y lo vuelve a poner
+   en ejecución
+
+8. /A/ libera la unidad de cinta /1/
+
+9. /A/ libera la unidad de cinta /2/ (y con ello, el bloqueo de uso de
+   recursos)
+
+10. El sistema operativo otorga la unidad /1/ a /B/ y lo vuelve a
+    poner en ejecución
+
+11. /B/ solicita otra unidad de cinta y se bloquea
+
+12. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a
+    poner en ejecución
+
+13. /B/ libera la unidad de cinta /1/
+
+14. /B/ libera la unidad de cinta /2/
+
+** Analizando a la serialización
+- Previene toda posibilidad de bloqueo ante solicitud de recursos
+- Pero se vuelve muy susceptible a la inanición
+- Lleva a subutilización de los recursos
+  - Con /n/ procesos, puede haber /n-1/ esperando a que uno libere los
+    recursos.
+** /Retención y espera/ o /Reserva/ (/advance claim/)
+- Política de prevención /menos conservadora/
+- Todos los programas al iniciar su ejecución /declaran/ qué recursos
+  requerirán
+- Apartados para uso exclusivo hasta que el proceso termina
+- El sistema puede seguir concediendo solicitudes /que no rivalicen/
+  - Si /C/ y /D/ requieren recursos /diferentes/ de /A/ y /B/, pueden
+    ejecutarse en paralelo /A/, /C/ y /D/
+  - Posteriormente, /B/, /C/, /D/
+** Desventajas de la /retención y espera/
+- Recursos reservados por /toda la ejecución/ del proceso
+  - Incluso si la requieren por un tiempo muy limitado
+- Percepción de injusticia por inanición
+  - Tiempo de espera para el usuario que lanzó /B/
+- Requiere que el programador sepa por anticipado los recursos que requerirá
+  - Muchas veces es imposible
+- Puede ser burlado
+  - P.ej. empleando procesos /representantes/ (/proxy/)
+  - Un programador poco cuidadoso puede, sin llegar a /bloqueo por
+    recursos/, llegar a un /bloqueo por procesos/
+** Prevención de bloqueos: Resumiendo
+- Mecanismos muy /conservadores/ pero 100% efectivos (si nos limitamos
+  a lo /declarado/...)
+- Poco acordes a un entorno multiusuario/multitarea como la mayoría de
+  los actuales

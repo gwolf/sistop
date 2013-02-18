@@ -1425,8 +1425,7 @@ e = EjemploHilos.new;10.times{e.run}
 class EjemploHilos
   require 'thread'
   def initialize
-    @x = 0
-    @estado = 0
+    @x = 0; @estado = 0
     @mut = Mutex.new
     @cv = ConditionVariable.new
   end
@@ -1447,8 +1446,7 @@ class EjemploHilos
     sleep 0.1
     @mut.lock
     @cv.wait(@mut) while (@estado != 0)
-    @x += 3
-    @estado += 1
+    @x += 3; @estado += 1
     @cv.broadcast(@mut)
     @mut.unlock
   end
@@ -1456,8 +1454,7 @@ class EjemploHilos
     sleep 0.1
     @mut.lock
     @cv.wait(@mut) while (@estado != 1)
-    @x *= 2
-    @estado += 1
+    @x *= 2; @estado += 1
     @cv.broadcast(@mut)
     @mut.unlock
   end
@@ -1468,13 +1465,14 @@ end
 Ojo: /No funcional/ (el intérprete /detecta un bloqueo mutuo/)
 #+END_CENTER
 
+
 ** Sincronización a través de CV
 - Código resultante /más complejo/ (más elementos a considerar),
   aunque más flexible
   - Ejemplo de complejidad: No funcionó tras un tiempo razonable :-P
   - Podría mejorarse con un poco de /azucar sintáctico/
 - Menor acoplamiento entre funciones
-  - Ordenamiento determinado por estado
+  - Ordenamiento determinado por =@estado=
   - Podría configurarse en un sólo punto, p.ej:
 #+BEGIN_SRC ruby
 def initialize

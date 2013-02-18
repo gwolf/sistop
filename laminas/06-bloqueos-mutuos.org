@@ -34,17 +34,15 @@ completo/ y no avanzar hasta que el otro se haya ido
 #+begin_center
 Condiciones de Coffman
 #+end_center
-1. Los procesos reclaman acceso exclusivo de los recursos
-   - Condición de /exclusión mutua/
-2. Los procesos mantienen los recursos que ya les habían sido
-   asignados mientras esperan recursos adicionales
-   - Condición de /espera por/
-3. Los recursos no pueden ser extraídos de los procesos que los tienen
-   hasta su completa utilización
-   - Condición de /no apropiatividad/
-4. Existe una cadena circular de procesos en que cada uno mantiene a
-   uno o más recursos que son requeridos por el siguiente en la cadena
-   - Condición de /espera circular/
+- Exclusión mutua :: Los procesos reclaman acceso exclusivo de los
+     recursos
+- Espera por :: Los procesos mantienen los recursos que ya les habían
+                sido asignados mientras esperan recursos adicionales
+- No apropiatividad :: Los recursos no pueden ser extraídos de los
+     procesos que los tienen hasta su completa utilización
+- Espera circular :: Existe una cadena circular de procesos en que
+     cada uno mantiene a uno o más recursos que son requeridos por el
+     siguiente en la cadena
 
 ** Evaluando en base a las conidiciones de Coffman
 - Cada una de las condiciones presentadas son /necesarias, pero no
@@ -76,7 +74,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 
 ** Ejemplo clásico de bloqueo mutuo (2)
 
-6. /B/ solicita otra unidad de cinta y se bloquea
+6. [@6] /B/ solicita otra unidad de cinta y se bloquea
 
 7. El sistema operativo no tiene otra unidad de cinta por
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
@@ -127,11 +125,11 @@ digraph G {
 #+end_center
 - Liberales :: Buscan a otorgar los recursos lo antes posible cuando
 	       son solicitados
-- Conservadiras :: Controlan más el proceso de asignación de recursos
+- Conservadoras :: Controlan más el proceso de asignación de recursos
 
 ** Espectro liberal-conservador de políticas
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
-[[./img/deadlocks_conserv_lib.png]]
+[[../img/deadlocks_conserv_lib.png]]
 #+begin_center
 #+latex: {\scriptsize Volveremos a este diagrama hacia el final del tema}
 #+end_center
@@ -144,13 +142,13 @@ digraph G {
 		Resulta en una utilización subóptima de recursos.
 
 - Evasión :: Impone condiciones menos estrictas. No puede evitar
-	     /todas las posibilidades/ de un bloqueo, cuando éste se
+	     /todas las posibilidades/ de un bloqueo; cuando éste se
 	     produce busca /evitar/ sus consecuencias.
 
 - Detección y recuperación :: /Permite/ que ocurran los bloqueos, pero
      busca /determinar si ha ocurrido/ y actuar para eliminarlos.
 
-* Prevención de bloqueos
+* Prevención
 ** Serialización
 - Previene caer en bloqueos negando que el sistema otorgue recursos a
   más de un proceso a la vez
@@ -175,7 +173,7 @@ digraph G {
 6. /A/ solicita otra unidad de cinta y se bloquea
 
 ** Serializando el ejemplo clásico de bloqueo mutuo (2)
-7. El sistema operativo otorga la unidad /2/ a /A/ y lo vuelve a poner
+7. [@7] El sistema operativo otorga la unidad /2/ a /A/ y lo vuelve a poner
    en ejecución
 
 8. /A/ libera la unidad de cinta /1/
@@ -226,3 +224,5 @@ digraph G {
   a lo /declarado/...)
 - Poco acordes a un entorno multiusuario/multitarea como la mayoría de
   los actuales
+* Evasión
+* Detección y recuperación

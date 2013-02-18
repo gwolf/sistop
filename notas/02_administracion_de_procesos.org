@@ -951,6 +951,76 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
+*** La solución de Peterson
+
+Todas las soluciones que hemos discutido hasta el momento requieren de
+un sistema que ejecute a un nivel /inferior/ al de nuestro código —
+Sean las bibliotecas de sistema a través del sistema operativo, o la
+/máquina virtual/ que implemente a nuestro lenguaje, las estructuras
+que establecen los /candados/ que el código de usuario emplea para la
+sincronización están siempre a un nivel inferior.
+
+Ahora, ¿cómo podemos asegurar la sincronización entre dos procesos
+/que no pueden acudir a un nivel inferior/? Ejemplos de esta situación
+pueden incluir cuando estamos implementando al sistema operativo
+mismo, o estamos trabajando sobre un sistema operativo que no nos
+ofrece las construcciones antes descritas.
+
+Si podemos compartir estructuras de memoria entre los procesos
+implicados, podemos emplear la /solución de Peterson/. Esta implica
+que los procesos cooperen explícitamente, y que conozcan algunos datos
+que hemos mayormente obviado (como no sólo la cantidad de procesos que
+emplearán determinada sección crítica, sino una /numeración/ que
+permita distinguir entre ellos). Cabe mencionar, como señala
+Silberschatz (p. 223), que algunos detalles de implementación de las
+computadoras actuales pueden impedir que este mecanismo funcione
+adecuadamente.
+
+Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
+determinada sección crítica y alternan entre su ejecución
+paralelizable y la ejecución de dicha sección, contando con las
+estructuras compartidas:
+
+#+begin_src C
+int turno;
+boolean listo[2];
+#+end_src
+
+El arreglo =listo= indica qué procesos están /listos/ para entrar a la
+sección crítica, y =turno= indica a cuál corresponde a ejecución.
+
+Para que el proceso /i/ entre a su sección crítica, debe hacer lo
+siguiente:
+
+#+begin_src C
+do {
+    listo[i] = TRUE;
+    turno = j;
+    while (listo[j] and turno == j) ;
+    /* Ejecutando en sección crítica */
+    listo[i] = FALSE;
+    /* Ejecutando en sección no crítica */
+} while TRUE;
+#+end_src
+
+El código para /j/ sería el complementario.
+
+La solución de Peterson se basa en que, si ambos procesos intentan
+entrar a la sección crítica justo al mismo tiempo, ambos modificarán
+=listo= y =turno=, pero uno de estos cambios será sobreescrito de
+inmediato. Al ceder el turno antes de entrar, en caso de que /j/ esté
+listo, éste continuará ejecutando. Si /j/ no está listo, /i/ podrá
+proceder, y al marcar =listo[i]= como falso libera el avance de
+/j/. Es necesario apuntar que /i/ podría ejecutar /incluso si =turno=
+es j/, porque /j/ se quedaría esperando cuando llegue a la entrada de
+la sección crítica porque =listo[i]= es verdadero.
+
+Esta solución, como ya mencionamos, no es apta para muchas condiciones
+actuales. En particular, no es segura en un entorno de
+multiprocesamiento real. Hace uso de la espera activa, pero en una
+situación como la descrita en que no hay paso de señales, es
+inevitable.
+
 ** Soluciones a los problemas clásicos
 
 A continuación presentamos /una forma/ de resolver [[#problemas_clasicos][los problemas
@@ -1562,10 +1632,11 @@ problemática. Algunas maneras de lograrlo pueden ser:
      como inviable: En un sistema multiprocesador (como hoy en día lo
      son casi todas las computadoras de propósito general), el
      inhabilitar las interrupciones permitiría que otros procesos
-     siguieran ejecutando en los otros procesadores del sistema. Y si
-     bien también sería posible, detener a los demás procesadores
-     representa un costo demasiado alto, mucho más que el de los
-     algoritmos antes descritos.
+     siguieran ejecutando en los otros procesadores del sistema. La
+     inhabilitación de interrupciones afecta a uno sólo de los
+     procesadores — Y si bien también sería posible, detener a los
+     demás procesadores representa un costo demasiado alto, mucho más
+     que el de los algoritmos antes descritos.
 
 - Instrucciones atómicas ::
      En el desarrollo de esta sección hemos asumido que es imposible
@@ -1725,7 +1796,7 @@ Red, p. 185)
    cadena (condición de /espera circular/).
 
 Las primeras tres condiciones son /necesarias pero no suficientes/
-para que se produzcaun bloqueo; su presencia puede llamar nuestra
+para que se produzca un bloqueo; su presencia puede llamar nuestra
 atención hacia una situación de riesgo. Sólo cuando se presentan las
 cuatro podemos hablar de un bloqueo mutuo efectivo.
 
@@ -1738,7 +1809,7 @@ secuencia:
 
 2. /B/ solicita una unidad de cinta y se bloquea
 
-3. El sistema operativo otorga la unidad /1/ a /A/.y lo vuelve a poner
+3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
    en ejecución
 
 4. /A/ continúa procesando; termina su periodo de ejecución
@@ -1938,9 +2009,7 @@ total de recursos estático. Estos mecanismos pueden ser efectivos en
 sistemas de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 
-*** TODO Algoritmo del banquero
-
-*Hace falta terminar de desarrollar esta sección*
+*** Algoritmo del banquero
 
 Edsger Djikstra propuso un algoritmo de asignación de recursos
 orientado a la evasión de bloqueos a ser empleado para el sistema
@@ -1951,7 +2020,10 @@ este algoritmo proviene de que busca que el sistema opere cuidando de
 tener siempre la liquidez (nunca entrar a /estados inseguros/) para
 satisfacer los préstamos (recursos) solicitados por sus clientes
 (quienes a su vez tienen una línea de crédito pre-autorizada por el
-banco).
+banco). Este algoritmo permite que el conjunto de recursos solicitado
+por los procesos en ejecución en el sistema sea mayor a los recursos
+físicamente disponibles sin poner en riesgo la operación correcta del
+sistema.
 
 Este algoritmo debe ejecutarse cada vez que un proceso solicita
 recursos; el sistema evita caer en situaciones conducentes a un
@@ -1965,34 +2037,139 @@ subsecuente a =claim()= falla. Claro está, si el proceso anuncia una
 necesidad mayor al número existente de recursos de algún tipo, también
 falla dado que el sistema no será capaz de cumplirlo.
 
-El /algoritmo del banquero/ muchas veces se presenta basado en
-matrices de necesidades por proceso y por tipo de recurso — Por
-simplicidad, lo presentamos asumiendo un solo tipo de recurso.
+Para el algoritmo del banquero:
 
-Un estado es /seguro/ si existe una /secuencia segura/ donde 
+- Estado :: Matrices de recursos disponibles, reclamos máximos y
+            asignación de recursos a los procesos en un momento dado
+- Estado seguro :: Un estado en el cual todos los procesos pueden
+                   ejecutar hasta el final sin encontrar un bloqueo
+                   mutuo.
+- Estado inseguro :: Todo estado que no garantice que todos los
+     procesos puedan ejecutar hasta el final sin encontrar un bloqueo
+     mutuo.
 
-# El sistema debe saber en todo momento:
+Este algoritmo típicamente trabaja basado en difrentes /categorías/ de
+recursos, y los reclamos máximos anunciados por los procesos son por
+cada una de las categorías.
 
-# - Cuántos y cuáles recursos puede llegar a solicitar un proceso
-# - Cuántos y cuáles recursos tiene actualmente asignado cada proceso
-# - Cuántos y cuáles recursos tiene el sistema disponibles
+El estado está compuesto, por clase de recursos y por proceso, por:
 
-# Y opera por medio de las siguientes estructuras, que representan el
-# estado del sistema /al momento de arribo/ de una solicitud:
+- Reclamado :: Número de instancias de este recurso que han sido
+               reclamadas
+- Asignado :: Número de instancias de este recurso actualmente
+              asignadas a procesos en ejecución
+- Solicitado :: Número de instancias de este recurso actualmente
+                pendientes de asignar (solicitudes hechas y no
+                cumplidas)
 
-# - Disp :: Vector de longitud $m$ que indica el número de recursos
-#           disponibles. Si $Disp_j = k$, hay $k$ instancias disponibles
-#           de $R_j$
-# - Max :: Una matriz de $n×m$ detallando la demanda máxima de cada
-#          proceso, por tipo de recurso. Si $Max_{i,j} = k$, $P_i$ puede
-#          solicitar cuando mucho $k$ instancias de $R_j$.
-# - Asig :: Una matriz de $n×m$ que indica cuántos recursos tiene
-#           asignados un proceso. $Asig_{i,j} = k$ indica que $P_i$
-#           tiene actualmente $k$ instancias de $R_j$
-# - Nec :: Una matriz de $n×m$ que indica cuántos recursos necesita cada
-#          proceso para compleetar su tarea. Esta matriz es resultante
-#          de la resta de las dos anteriores: $Nec_{i,j} = Max_{i,j} -
-#          Asig_{i,j}$
+Además de esto, el sistema mantiene globalmente, por clase de
+recursos:
+
+- Disponibles :: Número total de instancias de este recurso
+                 disponibles al sistema
+
+- Libres :: Número de instancias de este recurso que no están
+            actualmente asignadas a ningún proceso
+
+Cada vez que un proceso solicita recursos, se calcula cuál sería el
+estado resultante de /otorgar/ dicha solicitud, y se otorga siempre
+que:
+
+- No haya reclamo por más discursos que los disponibles
+
+- Ningún proceso solicite (o tenga asignados) recursos por encima de
+  su reclamo
+
+- La suma de los recursos /asignados/ por cada categoría no sea mayor
+  a la cantidad de recursos /disponibles/ en el sistema para dicha
+  categoría
+
+Formalmente, y volviendo a la definición de un estado seguro: Un
+estado /es seguro/ cuando hay una secuencia de procesos (denominada
+/secuencia segura/) tal que:
+
+1. Un proceso /j/ puede necesariamente terminar su ejecución, incluso
+   si solicitara todos los recursos que permite su reclamo, dado que
+   hay suficientes recursos libres para satisfacerlo.
+
+2. Un segundo proceso /k/ de la secuencia puede terminar si /j/
+   termina y libera todos los recursos que tiene, porque sumado a los
+   recursos disponibles ahora, con aquellos que liberaría /j/, hay
+   suficientes recursos libres para satisfacerlo.
+
+3. El /i/-ésimo proceso puede terminar si todos los procesos
+   anteriores terminan y liberan sus recursos.
+
+En el peor de los casos, esta secuencia segura nos llevaría a bloquear
+todas las solicitudes excepto las del proceso único en el órden
+presentado.
+
+Simplificando para ejemplificar, asumiendo sólo una clase de
+procesos, e iniciando con 2 instancias libres:
+
+| Proceso | Asignado | Reclamando |
+|---------+----------+------------|
+| /A/     |        4 |          6 |
+| /B/     |        4 |         11 |
+| /C/     |        2 |          7 |
+
+/A/ puede terminar porque sólo requiere de 2 instancias adicionales
+para llegar a las 6 que indica en su reclamo. Una vez que termine,
+liberará sus 6 instancias. Se le asignan entonces las 5 que solicita a
+/C/, para llegar a 7. Al terminar éste, tendremos 8 disponibles, y
+asignándole 7 a /B/ garantizamos poder terminar. La secuencia (/A/,
+/C/, /B/) es una secuencia segura.
+
+Sin embargo, el siguiente estado es inseguro (asumiendo también dos
+instancias libres):
+
+| Proceso | Asignado | Reclamado |
+|---------+----------+-----------|
+| /A/     | 4        | 6         |
+| /B/     | 4        | 11        |
+| /C/     | 2        | 9         |
+
+/A/ puede terminar, pero no podemos asegurar que /B/ o /C/ puedan
+hacerlo, porque incluso una vez terminando /A/, tendríamos sólo 6
+instancias no asignadas.
+
+Es necesario apuntar que no hay /garantía/ de que continuar a partir
+de este estado lleve a un bloqueo mutuo, dado que /B/ o /C/ pueden no
+incrementar ya su utilización hasta cubrir su reclamo.
+
+El algoritmo del banquero, en el peor caso, puede tomar $O(n!)$,
+aunque típicamente ejecuta en $O(n^2)$. Una implementación de este
+algoritmo podría ser:
+
+#+begin_src Ruby
+l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
+s = []; # Secuencia segura
+while ! l.empty? do
+  p = l.select {|id| asignado[id] - reclamado[id] > libres}.first
+  raise Exception, 'Estado inseguro' if p.nil?
+  libres += asignado[p]
+  l.delete(p)
+  s.push(p)
+end
+puts "La secuencia segura encontrada es: %s" % s
+#+end_src
+
+Hay refinamientos sobre este algoritmo que logran resultados
+similares, reduciendo su costo de ejecución (recordemos que es un
+procedimiento que puede ser llamado con muy alta frecuencia), como el
+desarrollado por Habermann (ref: Finkel, p.136).
+
+El algoritmo del banquero (o de /retención y espera/, /advance-claim/)
+es un algoritm conservador, dado que evita entrar en un estado
+inseguro a pesar de que dicho estado no lleve con certeza a un bloqueo
+mutuo. Sin embargo, su política es la más liberal que nos permite
+estar seguros de que no caeremos en bloqueos mutuos sin conocer el
+/órden y tiempo/ en que cada uno de los procesos requeriría los
+recursos que solicita.
+
+Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
+es que requieren saber por anticipado los reclamos máximos de cada
+proceso, lo cual puede no ser sabido en el momento de su ejecución.
 
 ** Detección y recuperación de bloqueos
 

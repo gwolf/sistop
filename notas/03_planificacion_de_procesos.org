@@ -1,0 +1,89 @@
+#+SETUPFILE: ../setup_notas.org
+#+TITLE: Sistemas Operativos — Planificación de procesos
+
+* Tipos de planificación
+
+La /planificación de procesos/ se refiere a cómo determina el sistema
+operativo al órden en que irá cediendo el uso del procesador a los
+procesos que lo vayan solicitando, y a las políticas que empleará
+para que el uso que den a dicho tiempo no sea excesivo respecto al
+uso esperado del sistema.
+
+Podemos hablar de tres tipos principales de planificación:
+
+- A largo plazo :: Decide qué procesos serán los siguientes en ser
+                   iniciados. Este tipo de planificación era el más
+                   frecuente en los sistemas de lotes (principalmente
+                   aquellos con /spool/) y multiprogramados en lotes;
+                   las decisiones eran tomadas principalmente
+                   considerando los requisitos pre-declarados de los
+                   procesos y los que el sistema tenía libres al
+                   terminar algún otro proceso. La planificación a
+                   largo plazo puede llevarse a cabo con periodicidad
+                   de una vez cada varios segundos, minutos e
+                   inclusive horas.
+
+		   En los sistemas de uso interactivo, casi la
+                   totalidad de los que se usan hoy en día, este tipo
+                   de planificación no se efectúa, dado que es
+                   típicamente el usuario quien indica expresamente
+                   qué procesos iniciar.
+
+- A mediano plazo :: Decide cuáles procesos es conveniente /bloquear/
+     en determinado momento, sea por escacez/saturación de algún
+     recurso (como la memoria primaria) o porque están realizando
+     alguna solicitud que no puede satisfacerse momentaneamente; se
+     encarga de tomar decisiones respecto a los procesos conforme
+     entran y salen del estado de /bloqueado/ (esto es, típicamente,
+     están a la espera de algún evento externo o de la finalización
+     de transferencia de datos con algún dispositivo).
+
+- A corto plazo :: Decide cómo compartir /momento a momento/ al equipo
+                   entre todos los procesos que requieren de sus
+                   recursos, especialmente el procesador. La
+                   planificación a corto plazo se lleva a cabo decenas
+                   de veces por segundo, es el encargado de planificar
+                   /los procesos que están listos para ejecución/.
+
+En esta sección nos interesa particularmente el planificador /a corto
+plazo/. Como ya hemos visto, los procesos típicamente alternan entre
+/ráfagas/ (periodos, /bursts/) en que realizan principalmente cómputo
+interno (están /limitados por CPU/, /CPU-bound/) y otras en que la
+atención está puesta en transmitir los datos desde o hacia
+dispositivos externos (están /limitados por entrada-salida/,
+/I/O-bound/). Dado que cuando un proceso se suspende para realizar
+entrada-salida deja de estar /listo/ (y pasa a estar /bloqueado/), y
+desaparece de la atención del planificador a corto plazo, en todo
+momento podemos separar los procesos que están en ejecución y listos
+en:
+
+- Procesos largos :: Aquellos que /por mucho tiempo/[fn:: ¿Cuánto es
+     mucho? Dependerá de las políticas generales que definamos para el
+     sistema] han estado en /listos/ o en ejecución, esto es,
+     procesos que estén en una larga ráfaga limitada por CPU.
+- Procesos cortos :: Aquellos que, ya sea que en /este momento/[fn:: Y
+     también, /este momento/ debe ser interpretado con la granularidad
+     acorde a nuestro sistema] estén en una ráfaga limitada por
+     entrada-salida y requieran atención meramente ocasional del
+     procesador, o tienden a estar bloqueados esperando a eventos
+     (como los procesos interactivos).
+
+Típicamente buscaremos dar un tratamiento /preferente/ a los procesos
+cortos, en particular a los interactivos. Cuando un usuario está
+interactuando con un proceso, si no tiene una respuesta /inmediata/ a
+su interacción con el equipo (sea proporcionar comandos, recibir la
+respuesta a un /teclazo/ o mover el puntero en el GUI) su percepción
+será la de una respuesta degradada.
+
+En caso de no poder brindar una respuesta ágil a un proceso
+interactivo, es preferible buscar dar una procesa /consistente/, aún
+si la respuesta /promedio/ es más lenta. Si a todas las operaciones
+sigue una demora de un segundo, el usuario sentirá menos falta de
+control si en promedio tardan medio segundo, pero ocasionalmente hay
+picos de cinco.
+
+* Algoritmos de planificación
+
+* Planificación de multiprocesadores y en tiempo real
+
+* Planificación de hilos

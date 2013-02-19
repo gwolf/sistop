@@ -45,22 +45,26 @@ Podemos hablar de tres tipos principales de planificación:
                    de veces por segundo, es el encargado de planificar
                    /los procesos que están listos para ejecución/.
 
-En esta sección nos interesa particularmente el planificador /a corto
-plazo/. Como ya hemos visto, los procesos típicamente alternan entre
-/ráfagas/ (periodos, /bursts/) en que realizan principalmente cómputo
-interno (están /limitados por CPU/, /CPU-bound/) y otras en que la
-atención está puesta en transmitir los datos desde o hacia
-dispositivos externos (están /limitados por entrada-salida/,
-/I/O-bound/). Dado que cuando un proceso se suspende para realizar
-entrada-salida deja de estar /listo/ (y pasa a estar /bloqueado/), y
-desaparece de la atención del planificador a corto plazo, en todo
-momento podemos separar los procesos que están en ejecución y listos
-en:
+En esta sección nos ocuparemos particularmente el planificador /a
+corto plazo/, y en segundo término del planificador /a mediano plazo/.
+
+** Tipos de proceso
+
+Como ya hemos visto, los procesos típicamente alternan entre /ráfagas/
+(periodos, /bursts/) en que realizan principalmente cómputo interno
+(están /limitados por CPU/, /CPU-bound/) y otras en que la atención
+está puesta en transmitir los datos desde o hacia dispositivos
+externos (están /limitados por entrada-salida/, /I/O-bound/). Dado que
+cuando un proceso se suspende para realizar entrada-salida deja de
+estar /listo/ (y pasa a estar /bloqueado/), y desaparece de la
+atención del planificador a corto plazo, en todo momento podemos
+separar los procesos que están en ejecución y listos en:
 
 - Procesos largos :: Aquellos que /por mucho tiempo/[fn:: ¿Cuánto es
      mucho? Dependerá de las políticas generales que definamos para el
      sistema] han estado en /listos/ o en ejecución, esto es,
      procesos que estén en una larga ráfaga limitada por CPU.
+
 - Procesos cortos :: Aquellos que, ya sea que en /este momento/[fn:: Y
      también, /este momento/ debe ser interpretado con la granularidad
      acorde a nuestro sistema] estén en una ráfaga limitada por
@@ -75,12 +79,68 @@ su interacción con el equipo (sea proporcionar comandos, recibir la
 respuesta a un /teclazo/ o mover el puntero en el GUI) su percepción
 será la de una respuesta degradada.
 
-En caso de no poder brindar una respuesta ágil a un proceso
-interactivo, es preferible buscar dar una procesa /consistente/, aún
-si la respuesta /promedio/ es más lenta. Si a todas las operaciones
-sigue una demora de un segundo, el usuario sentirá menos falta de
-control si en promedio tardan medio segundo, pero ocasionalmente hay
-picos de cinco.
+** Midiendo la respuesta
+
+Resulta intuitivo que cada patrón de uso del sistema debe seguir
+políticas de planificación distintas. Por ejemplo, en el caso de un
+proceso interactivo, buscaremos ubicar al proceso en una /cola/
+preferente (para obtener un tiempo de respuesta más ágil, para mejorar
+la percepción del usuario), pero en caso de sufrir demoras, es
+preferible buscar dar una respuesta /consistente/, aún si la respuesta
+/promedio/ es más lenta. Esto es, si a todas las operaciones sigue una
+demora de un segundo, el usuario sentirá menos falta de control si en
+promedio tardan medio segundo, pero ocasionalmente hay picos de cinco.
+
+¿Qué mecanismos o métricas podemos emplear para medir el
+comportamiento del sistema bajo determinado planificador? Partamos de
+los siguientes conceptos, para un proceso $p$ que requiere de un
+tiempo $t$ de ejecución:
+
+- Tiempo de respuesta ($T$) :: Cuánto tiempo total es necesario para
+     completar el trabajo pendiente de un proceso $p$, incluyendo el
+     tiempo que está inactivo esperando ejecución (pero está en la
+     cola de procesos listos).
+
+- Tiempo en espera ($E = T - t$) = :: También referido como /tiempo
+     perdido/. Del tiempo de respuesta total, cuánto tiempo $p$ está
+     listo y esperando ejecutar. Desde la óptica de $p$, desearíamos
+     que $E \rightarrow 0$
+
+- Tiempo de penalización ($P = \frac{T}{t}$) :: Fracción del tiempo
+     de respuesta durante la cual $p$ estuvo en espera.
+
+- Proporción de respuesta ($R = \frac{t}{T}$) :: Inverso de
+     $P$. Fracción del tiempo de respuesta durante la cual $p$ pudo
+     ejecutarse.
+
+Para referirnos a un grupo de procesos con requisitos similares, todos
+ellos requiriendo de un mismo tiempo $t$, nos referiremos a $T(t)$,
+$E(t) = T(t) - t$, $P(t) = \frac{T(t)}{t}$ y $R(t) = \frac{t}{T(t)}$.
+
+Además de estos tiempos, expresados en relación al tiempo efectivo de
+los diversos procesos del sistema, tenemos también:
+
+- Tiempo núcleo o /kernel/ :: Tiempo que pasa el sistema en espacio de
+     núcleo, incluyendo el empleado en decidir e implementar la
+     política de planificación y los cambios de contexto.
+
+- Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
+     listos está vacía y no puede realizarse ningún trabajo.
+
+Y respecto al patrón de llegada y salida de los procesos, lo
+manejaremos también en base a una proporción. Si tenemos una
+/frecuencia de llegada/ promedio de nuevos procesos a la cola de
+procesos listos $\alpha$, y el /tiempo de servicio requerido/ promedio
+$\beta$, definimos el /valor de saturación/ $\rho$ como $\rho =
+\frac{\alpha}{beta}$.
+
+Cuando $\rho = 0$, nunca llegan nuevos procesos, por lo cual nuestro
+sistema estará /desocupado/. Cuando $\rho = 1$, los procesos son
+despachados al mismo ritmo al que van llegando. Cuando $\rho > 1$, el
+ritmo de llegada de procesos es mayor que la velocidad a la cual la
+computadora puede darles servicio, con lo cual la cola de procesos
+listos tenderá a crecer (y la calidad de servicio, la proporción de
+respuesta $R$, para cada proceso se decrementará).
 
 * Algoritmos de planificación
 

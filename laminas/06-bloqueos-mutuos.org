@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Administración de procesos: Bloqueos mutuos y políticas
-#+DATE: 2013-02-?? — 2013-02-??
+#+DATE: 2013-02-20 — 2013-02-??
 
 * El SO y los Bloqueos mutuos
 ** Generalizando bloqueos mutuos
@@ -73,7 +73,6 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
    en ejecución
 
 ** Ejemplo clásico de bloqueo mutuo (2)
-
 6. [@6] /B/ solicita otra unidad de cinta y se bloquea
 
 7. El sistema operativo no tiene otra unidad de cinta por
@@ -135,7 +134,6 @@ digraph G {
 #+end_center
 
 ** Categorías de estrategias ante bloqueos mutuos
-
 - Prevención :: Modela el comportamiento del sistema para /eliminar
 		toda posibilidad/ de un bloqueo.
 
@@ -149,6 +147,15 @@ digraph G {
      busca /determinar si ha ocurrido/ y actuar para eliminarlos.
 
 * Prevención
+
+** Característica básica
+#+BEGIN_CENTER
+Modela el comportamiento del sistema para /eliminar toda posibilidad/
+de un bloqueo.
+
+Resulta en una utilización subóptima de recursos.
+#+END_CENTER
+
 ** Serialización
 - Previene caer en bloqueos negando que el sistema otorgue recursos a
   más de un proceso a la vez
@@ -157,6 +164,7 @@ digraph G {
   - Empleando recursos /no rivales/
 - Podría emplearse en un esquema tipo multiprogramación temprana (no
   interactiva)
+
 ** Serializando el ejemplo clásico de bloqueo mutuo (1)
 1. /A/ solicita una unidad de cinta y se bloquea
 
@@ -199,6 +207,7 @@ digraph G {
 - Lleva a subutilización de los recursos
   - Con /n/ procesos, puede haber /n-1/ esperando a que uno libere los
     recursos.
+
 ** /Retención y espera/ o /Reserva/ (/advance claim/)
 - Política de prevención /menos conservadora/
 - Todos los programas al iniciar su ejecución /declaran/ qué recursos
@@ -208,21 +217,230 @@ digraph G {
   - Si /C/ y /D/ requieren recursos /diferentes/ de /A/ y /B/, pueden
     ejecutarse en paralelo /A/, /C/ y /D/
   - Posteriormente, /B/, /C/, /D/
+
 ** Desventajas de la /retención y espera/
 - Recursos reservados por /toda la ejecución/ del proceso
   - Incluso si la requieren por un tiempo muy limitado
-- Percepción de injusticia por inanición
+- Percepción de /injusticia/ por inanición
   - Tiempo de espera para el usuario que lanzó /B/
 - Requiere que el programador sepa por anticipado los recursos que requerirá
   - Muchas veces es imposible
-- Puede ser burlado
+
+** Sorteando los mecanismos de prevención
+- ¿Podemos /burlar/ estos mecanismos?
   - P.ej. empleando procesos /representantes/ (/proxy/)
-  - Un programador poco cuidadoso puede, sin llegar a /bloqueo por
-    recursos/, llegar a un /bloqueo por procesos/
+- Un programador poco cuidadoso puede, sin llegar a /bloqueo por
+  recursos/, llegar a un /bloqueo por procesos/
+  - Pero una /buena práctica/ sería descargar el uso de recursos
+    rivales en un proceso que sepa cómo compartirlos
+    /inteligentemente/
+
 ** Prevención de bloqueos: Resumiendo
 - Mecanismos muy /conservadores/ pero 100% efectivos (si nos limitamos
   a lo /declarado/...)
-- Poco acordes a un entorno multiusuario/multitarea como la mayoría de
-  los actuales
+- Parecerían poco acordes a un entorno multiusuario/multitarea como la
+  mayoría de los actuales
+- Sin embargo, empleados para ciertos subsistemas, con /esquemas de mediación/
+  - Impresión
+  - Audio
+
 * Evasión
+
+** Característica básica
+#+BEGIN_CENTER
+Impone condiciones menos estrictas. No puede evitar /todas las
+posibilidades/ de un bloqueo; cuando éste se produce busca /evitar/
+sus consecuencias.
+#+END_CENTER
+
+** Enfoque 1: Flujos seguros e inseguros
+- Realizado por el planificador
+- Requiere saber /por anticipado/ qué procesos utilizarán qué recursos
+  - Un poco menos detallado que la prevención (número de recursos por
+    categoría)
+- Saber /cuándo/ se va a usar cada recurso
+- Análisis de la interacción, marcando /áreas de riesgo/
+
+** Flujos seguros e inseguros
+#+attr_html: height="350"
+#+attr_latex: width=0.8\textwidth
+#+caption: Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical) requieren del acceso exclusivo a un scanner y una impresora. Nota: El diagrama debe leerse como estados /no discretos/. (La Red, p. 200)
+[[../img/tray_proc_evasion_bloqueo.png]]
+
+** Áreas de riesgo
+- Mientras avancemos por el /área segura/ no hay riesgo de bloqueos
+- Sistemas uniprocesador, sólo avance vertical/horizontal
+  - Sistemas multiprocesador, avance diagonal
+- Áreas de riesgo: Cuando /alguno de los recursos rivales/ es otorgado
+- El bloqueo mutuo se produce en la /intersección/ de I_2—I_3 e
+  I_6—I_7
+- En la situación descrita, el sistema debe mantener a /B/ congelado
+  por lo menos asta que /A/ llegue a I_3
+
+** Analizando esta estrategia
+- Muy dificil de implementar en un sistema de propósito general
+  - Requiere análisis estático previo del código
+  - O requisitos de programación diferentes a los expuestos por los
+    sistemas en uso generalizado
+- Puede especificarse dentro de un /marco de desarrollo/: Asignación
+  de recursos por /subrutina/
+
+** Enfoque 2: /Algoritmo del banquero/
+- Edsger Djikstra, para el sistema operativo THE, 1965-1968
+- El sistema procede cuidando de la /liquidez/ para siempre poder
+  satisfacer los /préstamos/ (recursos) de sus clientes
+- Permite que el /conjunto de recursos/ solicitados por los procesos
+  sean mayores a los disponibles
+
+** Requisitos para el /Algoritmo del banquero/
+- Debe ejecutarse cada vez que un proceso solicita recursos
+- Todo proceso debe declarar su /reclamo máximo/ (/claim/) de
+  recursos al iniciar su ejecución
+  - Si el reclamo en cualquier categoría es superior al máximo
+    existente, el sistema niega la ejecución
+
+** Estructuras a emplear: Relativas a procesos
+#+BEGIN_CENTER
+Matrices (llaves por categoría y por proceso)
+#+END_CENTER
+- Reclamado :: Número de instancias de este recurso que han sido
+               reclamadas
+- Asignado :: Número de instancias de este recurso actualmente
+              asignadas a procesos en ejecución
+- Solicitado :: Número de instancias de este recurso actualmente
+                pendientes de asignar (solicitudes hechas y no
+                cumplidas)
+
+** Estructuras a emplear: Categorías de recursos
+#+BEGIN_CENTER
+Listas (llave por categoría)
+#+END_CENTER
+- Disponibles :: Número total de instancias de este recurso
+                 disponibles al sistema
+
+- Libres :: Número de instancias de este recurso que no están
+            actualmente asignadas a ningún proceso
+
+
+** Estados
+- Estado :: Matrices de recursos disponibles, reclamos máximos y
+            asignación de recursos a los procesos en un momento dado
+- Estado seguro :: Un estado en el cual todos los procesos pueden
+                   ejecutar hasta el final sin encontrar un bloqueo
+                   mutuo.
+- Estado inseguro :: Todo estado que no garantice que todos los
+     procesos puedan ejecutar hasta el final sin encontrar un bloqueo
+     mutuo.
+
+** Lógica del algoritmo del banquero
+#+BEGIN_CENTER
+Cada vez que un proceso solicita recursos, se calcula cuál sería el
+estado resultante de /otorgar/ dicha solicitud, y se otorga siempre
+que:
+#+END_CENTER
+
+- No haya reclamo por más discursos que los disponibles
+
+- Ningún proceso solicite (o tenga asignados) recursos por encima de
+  su reclamo
+
+- La suma de los recursos /asignados/ por cada categoría no sea mayor
+  a la cantidad de recursos /disponibles/ en el sistema para dicha
+  categoría
+
+** Definiendo estados /seguros/
+#+BEGIN_CENTER
+Un estado /es seguro/ cuando hay una secuencia de procesos (denominada
+/secuencia segura/) tal que:
+#+END_CENTER
+1. Un proceso /j/ puede necesariamente terminar su ejecución
+   - Incluso si solicitara /todos/ los recursos que reservó en su
+     reclamo
+   - Siempre debe haber suficientes recursos libres para satisfacerlo
+
+2. Un segundo proceso /k/ de la secuencia puede terminar:
+   - Si /j/ termina y libera todos los recursos que tiene
+   - Siempre que sumado a los recursos disponibles ahora, con aquellos
+     que liberaría /j/, hay suficientes recursos libres
+
+3. El /i/-ésimo proceso puede terminar si todos los procesos
+   anteriores terminan y liberan sus recursos.
+
+** Peor caso con el algoritmo del banquero
+#+BEGIN_CENTER
+En el peor de los casos, esta secuencia segura nos llevaría a bloquear
+todas las solicitudes excepto las del proceso único en el órden
+presentado.
+#+END_CENTER
+
+** Ejemplo
+#+BEGIN_CENTER
+Asumiendo que tenemos /sólo una clase de recursos/ y nos quedan dos
+instancias libres:
+#+END_CENTER
+| Proceso | Asignado | Reclamando |
+|---------+----------+------------|
+| /A/     |        4 |          6 |
+| /B/     |        4 |         11 |
+| /C/     |        2 |          7 |
+
+1. /A/ puede terminar porque sólo requiere dos instancias adicionales
+2. Terminado /A/, /C/ puede recibir las 5 restantes que requiere
+3. Terminados /A/ y /C/, /B/ puede satisfacer las 7
+4. La secuencia /A-C-B/ es segura.
+
+** Ejemplo 2
+#+BEGIN_CENTER
+Sólo una clase de recursos, 2 instancias libres
+#+END_CENTER
+| Proceso | Asignado | Reclamado |
+|---------+----------+-----------|
+| /A/     | 4        | 6         |
+| /B/     | 4        | 11        |
+| /C/     | 2        | 9         |
+1. /A/ puede satisfacer su demanda
+2. Pero una vez terminado /A/, no podemos asegurar las necesidades ni
+   de /B/ ni de /C/
+3. Este es un /esstado inseguro/, por lo cual el algoritmo del
+   banquero /no debe permitir llegar a él/.
+
+** Implementación ejemplo (para una sóla categoría)
+
+#+begin_src ruby
+l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
+s = []; # Secuencia segura
+while ! l.empty? do
+  p = l.select {|id| asignado[id] - reclamado[id] > libres}.first
+  raise Exception, 'Estado inseguro' if p.nil?
+  libres += asignado[p]
+  l.delete(p)
+  s.push(p)
+end
+puts "La secuencia segura encontrada es: %s" % s
+#+end_src
+
+** Precisiones
+- En el ejemplo 2, es posible que ni /B/ ni /C/ requirieran ya /todos/
+  sus recursos reclamados
+- Pero el estado es inseguro.
+- El algoritmo del banquero, en el peor caso, puede tomar $O(n!)$
+  - Típicamente toma $O(n^2)$
+- Hay refinamientos a este algoritmo que reducen su costo de ejecución
+  - Puede ser llamado con muy alta frecuencia
+
+** Precisiones
+- Es un algoritmo /conservador/: Evita entrar en estados inseguros
+  /a pesar de que no lleve con certeza a un bloqueo mutuo/
+  - Pero es la política más liberal que evita los bloqueos /sin
+    conocer órden y tiempo/ de necesidad de recursos.
+- Desventaja de /todos/ los algoritmos basados en la evasión:
+  Requieren saber por anticipado los reclamos máximos
+  - No siempre es posible con el modelo actual de computación
+
 * Detección y recuperación
+
+** Característica básica
+#+BEGIN_CENTER
+/Permite/ que ocurran los bloqueos, pero busca /determinar si ha
+ocurrido/ y actuar para eliminarlos.
+#+END_CENTER

@@ -2146,7 +2146,7 @@ El algoritmo del banquero, en el peor caso, puede tomar $O(n!)$,
 aunque típicamente ejecuta en $O(n^2)$. Una implementación de este
 algoritmo podría ser:
 
-#+begin_src Ruby
+#+begin_src ruby
 l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
 s = []; # Secuencia segura
 while ! l.empty? do
@@ -2164,13 +2164,12 @@ similares, reduciendo su costo de ejecución (recordemos que es un
 procedimiento que puede ser llamado con muy alta frecuencia), como el
 desarrollado por Habermann (ref: Finkel, p.136).
 
-El algoritmo del banquero (o de /retención y espera/, /advance-claim/)
-es un algoritm conservador, dado que evita entrar en un estado
-inseguro a pesar de que dicho estado no lleve con certeza a un bloqueo
-mutuo. Sin embargo, su política es la más liberal que nos permite
-estar seguros de que no caeremos en bloqueos mutuos sin conocer el
-/órden y tiempo/ en que cada uno de los procesos requeriría los
-recursos que solicita.
+El algoritmo del banquero es un algoritmo conservador, dado que evita
+entrar en un estado inseguro a pesar de que dicho estado no lleve con
+certeza a un bloqueo mutuo. Sin embargo, su política es la más liberal
+que nos permite estar seguros de que no caeremos en bloqueos mutuos
+sin conocer el /órden y tiempo/ en que cada uno de los procesos
+requeriría los recursos que solicita.
 
 Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
 es que requieren saber por anticipado los reclamos máximos de cada

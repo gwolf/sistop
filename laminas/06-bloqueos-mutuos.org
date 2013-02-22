@@ -226,6 +226,44 @@ Resulta en una utilización subóptima de recursos.
 - Requiere que el programador sepa por anticipado los recursos que requerirá
   - Muchas veces es imposible
 
+** Solicitud /de una vez/ (/one-shot/)
+- Otro mecanismo de prevención de bloqueos
+- Un proceso sólo puede solicitar recursos /cuando no tiene ninguno/
+  - Dos variantes: Todos de inicio, o soltar y readquirir
+- Rompe la condición de /espera por/
+- ...¡Pero hay muchos recursos que deben /mantenerse bloqueados/ por
+  largo plazo!
+- Cambia la lógica de programación al tener puntos definidos de
+  adquisición y liberación
+
+** Asignación de recursos /jerárquica/
+- A cada categoría de recursos se le asigna una prioridad o /nivel jerárquico/
+- Un proceso dado sólo puede solicitar recursos /de un nivel superior/
+  a los que ya tiene asignados.
+  - Para pedir dos dispositivos del mismo nivel, debe hacerse de
+    forma /atómica/
+  - Si tanto $P_1$ como $P_2$ requieren dos unidades de cinta, ambos
+    deben pedirlas a ambas de una sola vez
+  - El planificador elegirá cuál /gana/; ese tendrá ambos recursos
+  - El otro esperará hasta que éste termine
+  - No hay bloqueo
+- Podríamos presentar a la solicitud /de una vez/ como un caso
+  degenerado de asignación jerárquica.
+
+** Asignación de recursos /jerárquica/
+- Si $P_1$ y $P_2$ requieren una impresora y una unidad de cinta, hay
+  un órden claro en que tienen que pedirse
+  - No hay bloqueo
+- Los recursos más escasos están más arriba en la jerarquía
+  - Esto hace que lleguen menos solicitudes por ellos
+#+BEGIN_CENTER
+... ¿Pero?
+#+END_CENTER
+- Es un ordenamiento demasiado estricto para muchas situaciones del
+  mundo real
+- Lleva a los procesos a acaparar recursos de baja prioridad
+- Conduce a inanición
+
 ** Sorteando los mecanismos de prevención
 - ¿Podemos /burlar/ estos mecanismos?
   - P.ej. empleando procesos /representantes/ (/proxy/)
@@ -243,6 +281,7 @@ Resulta en una utilización subóptima de recursos.
 - Sin embargo, empleados para ciertos subsistemas, con /esquemas de mediación/
   - Impresión
   - Audio
+
 
 * Evasión
 
@@ -401,11 +440,50 @@ Sólo una clase de recursos, 2 instancias libres
 1. /A/ puede satisfacer su demanda
 2. Pero una vez terminado /A/, no podemos asegurar las necesidades ni
    de /B/ ni de /C/
-3. Este es un /esstado inseguro/, por lo cual el algoritmo del
+3. Este es un /estado inseguro/, por lo cual el algoritmo del
    banquero /no debe permitir llegar a él/.
 
-** Implementación ejemplo (para una sóla categoría)
+** Ejemplo 3: Paso por paso
+#+BEGIN_CENTER
+¿Hasta dónde nos dejaría /avanzar/ el algoritmo del banquero?
+#+END_CENTER
+- Estado inicial:
+  - 8 recursos disponibles
+  - Reclamos: $P_1$: 5, $P_2$: 5, $P_3$: 4
+- $t_1$: $P_1$ con 2, $P_2$ con 1, $P_3$ con 1
+- $t_2$: $P_2$ solicita 1
+- $t_3$: $P_3$ solicita 1
+- $t_4$: $P_1$ solicita 1
 
+** Ejemplo 3: Paso por paso
+#+attr_latex: width=\textwidth
+#+caption:
+[[../img/banquero1.png]]
+
+#+BEGIN_CENTER
+#+latex: {\scriptsize Imagen: Samuel Oporto Díaz }
+#+END_CENTER
+
+** Ejemplo 3: Paso por paso
+#+attr_latex: width=\textwidth
+#+caption:
+[[../img/banquero2.png]]
+
+#+BEGIN_CENTER
+#+latex: {\scriptsize Imagen: Samuel Oporto Díaz }
+#+END_CENTER
+
+** Ejemplo 3: Paso por paso
+- El algoritmo nos permite avanzar por $t_1$, $t_2$, $t_3$
+  - Uso /efectivo/ de recursos del sistema: 14
+  - /Sobrecompromiso/ (/overcommitment/) ante los 8 recursos /reales/
+- Al llegar a $t_4$, otorgar un recurso a $P_1$ nos ubica en un
+  /estado inseguro/
+  - Es imposible satisfacer el reclamo completo de $P_1$, $P_2$ o $P_3$
+  - Desde $t_3$, /sólo/ podemos otorgar recursos a $P_3$
+  - $P_1$ y $P_2$ pueden seguir ejecutando /si no solicitan recursos/
+
+** Implementación ejemplo (para una sóla categoría)
 #+begin_src ruby
 l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
 s = []; # Secuencia segura
@@ -443,4 +521,240 @@ puts "La secuencia segura encontrada es: %s" % s
 #+BEGIN_CENTER
 /Permite/ que ocurran los bloqueos, pero busca /determinar si ha
 ocurrido/ y actuar para eliminarlos.
+
+A diferencia de la /prevención/ y la /evasión/, las cuatro
+condiciones de Coffman /pueden presentarse/.
 #+END_CENTER
+
+** Funcionamiento básico
+- Se ejecuta como una tarea /periódica/
+  - Busca /limitar/ el impacto de los bloqueos /existentes/ en el
+    sistema
+  - (Discutiremos al respecto más adelante...)
+- Mantenemos una lista de recursos existentes, asignados y
+  solicitados
+- Eliminando lo /obviamente resuelto/, nos quedamos con lo
+  /obviamente bloqueado/
+
+** Representación con grafos dirigidos
+- Procesos con cuadrados
+- Recursos con círculos
+  - Puede representarse una /clase de recursos/ como un círculo
+    grande, /conteniendo/ círculos pequeños indicando /recursos
+    idénticos/
+  - Si un proceso puede solicitar /un recurso específico/ (y no
+    /cualquiera de una categoría/), no son idénticos
+- Flecha de un recurso a un proceso: El recurso /está asignado/ al
+  proceso.
+- Flecha de un proceso a un recurso: El proceso /está solicitando/ al
+  recurso.
+
+** Estrategia general
+- Tenemos la representación completa de los recursos y procesos en el
+  sistema
+- Buscamos /reducir/ la gráfica, retirando los elementos que no
+  aportan /información relevante/:
+  1. Los procesos que no estén solicitando ni tienen asignado un
+     recurso
+  2. Para los procesos restantes: Si todos los recursos que solicitan
+     /pueden ser concedidos/ (no están concedidos a otro), eliminamos
+     al proceso y a todas sus flechas.
+     - Repetimos cuantas veces sea posible
+  3. Si no quedan procesos en el grafo, no hay interbloqueos y podemos
+     continuar
+  4. Los procesos ``irreductibles'' están en bloqueo mutuo.
+     - Proceder según la política del sistema
+
+** Ejemplo 1
+#+attr_latex: width=0.5\textwidth
+#+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
+
+#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
+digraph G {
+	layout = neato;
+	1 [label = "1"];
+	2 [label = "2"];
+	3 [label = "3"];
+	4 [label = "4"];
+	5 [label = "5"];
+	6 [label = "6"];
+	7 [label = "7"];
+	A [label = "A", shape = box];
+	B [label = "B", shape = box];
+	C [label = "C", shape = box];
+	D [label = "D", shape = box];
+	E [label = "E", shape = box];
+	F [label = "F", shape = box];
+	A -> 1 -> B
+	3 -> B;
+	F -> 6 -> B;
+	4 -> B;
+	4 -> C;
+	2 -> C -> 5 -> E -> 7 -> D -> 4;
+}
+#+end_src
+
+** Resolviendo el ejemplo 1
+1. Reducimos por /B/, dado que actualmente no está esperando a ningún
+  recurso
+
+2. Reducimos por /A/ y /F/, dado que los recursos por los cuales están
+   esperando quedarían libres en ausencia de /B/
+
+3. Quedamos con un interbloqueo entre /C/, /D/ y /E/, en torno a los
+   recursos /4/, /5/ y /7/.
+
+** Ejemplo 2
+
+#+attr_latex: width=0.5\textwidth
+#+caption: Ejemplo con categorías de recursos (Imágenes: Samuel Oporto Díaz)
+[[../img/deteccion_bloqueos_por_pasos_1.png]]
+
+** Ejemplo 2
+#+caption: Resultado de reducir por P9
+#+attr_latex: width=0.5\textwidth
+[[../img/deteccion_bloqueos_por_pasos_2.png]]
+
+** Ejemplo 2
+#+caption: Resultado de reducir por P7
+#+attr_latex: width=0.5\textwidth
+[[../img/deteccion_bloqueos_por_pasos_3.png]]
+
+** Ejemplo 2
+#+caption: Resultado de reducir por P8
+#+attr_latex: width=0.5\textwidth
+[[../img/deteccion_bloqueos_por_pasos_4.png]]
+
+** ¡No todo ciclo es un bloqueo!
+#+attr_latex: height=0.6\textheight
+#+caption: Al manejar /categorías/ de recursos, no siempre un ciclo implicará un bloqueo
+[[../img/ciclo_no_bloqueo.png]]
+
+** Bloqueado /vs./ bloqueando
+- /Reducir un proceso/ no implica que este /haya entregado/ sus recursos
+  - Sólo que /está en posibilidad de hacerlo/
+  - Puede haber inanición por parte de cualquier proceso que espera
+- Podría agregarse a este algoritmo una ponderación por tiempo
+  excesivo de retención
+  - Pero causaría muchos falsos positivos \rightarrow ¡Muchos casos de
+    procesos finalizados sin necesidad!
+
+#+BEGIN_CENTER
+Ahora... Una vez detectado el bloqueo, ¿qué procede?
+#+END_CENTER
+
+** /Mátelos, luego 'virigüa/
+- Terminar a /todos/ los procesos bloqueados
+- Técnica más sencilla y más justa...
+  - Para cierta definición de justicia
+- Maximiza la pérdida de información
+
+** Retroceder al último /punto de control/ (/checkpoint/)
+- Sólo cuando el sistema implementa esta funcionalidad
+- Sólo cuando /ninguno/ de los procesos depende de factores
+  externos
+- Retroceder en el tiempo, ¿no llevaría a un nuevo bloqueo?\pause
+- Los bloqueos están ligados al órden /específico/ de ejecución
+- Probablemente otro orden específico se salve del bloqueo
+  - Y si no... Se vuelve una vez más.
+  - Tal vez, agregar un contador de /intentos/ que cambie el planificador
+
+** Terminación selectiva / limitada
+- Terminar forzosamente, uno a uno (y no en bloque), a los procesos
+  bloqueados
+  - Terminar a uno y re-evaluar el estado
+  - Los restantes pueden continuar operando
+- ¿Cómo elijo al desafortunado? Varias estrategias...
+
+** Estrategias para elegir el proceso a terminar (1)
+- Los procesos más sensibles para detener/relanzar: Los que
+  demandan /garantías de tiempo real/. Evitar penalizarlos.
+- Causar una menor pérdida de trabajo. El que haya consumido menor
+  cantidad de procesador hasta el momento.
+- Mayor tiempo restante estimado (si puedo estimar cuánto
+  procesamiento /queda pendiente/)
+
+** Estrategias para elegir el proceso a terminar (2)
+- Menor /número/ de recursos asignados hasta ahora (como criterio
+  de /justicia/: ¿qué proceso está haciendo un uso /más juicioso/
+  del sistema?)
+- Prioridad más baja (cuando la hay)
+- Procesos con naturaleza repetible sin pérdida de información
+  (aunque sí de tiempo)
+  - p.ej. es mejor interrupmir una compilación que la actualización
+    de una BD
+
+** Periodicidad del chequeo
+- Si buscamos bloqueos cada vez que se solicita un recurso, es una
+  sobrecarga administrativa demasiado grande
+- Con una periodicidad fija: Arriesga a que los procesos pasen más
+  tiempo bloqueados ($\approx0.5t$)
+- Cuando el /nivel de uso/ del CPU baje de cierto porcentaje
+  - Indica que hay un nivel elevado de procesos en espera
+  - ...Pero un sistema demasiado ocupado puede nunca /disparar/ esta condición
+- Una estrategia combinada
+
+* La triste realidad...
+
+** Frustraciones...
+- Les advertí que este tema me resultaba frustrante
+- Hemos visto varios enfoques a cómo lidiar con la presencia de
+  bloqueos
+- Es un área viva y activa de investigación, y viene avanzando desde
+  los primeros días del multiprocesamiento
+- Sin embargo...
+
+** Recapitulando: Conservadores y liberales
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
+[[../img/deadlocks_conserv_lib.png]]
+
+** El Algoritmo del avestruz
+- Mecanismo más frecuente utilizado por los sistemas operativos de
+  propósito general
+- Ignorar las situaciones de bloqueo
+- Esconder la cabeza bajo tierra y esperar a que pasen
+- Esperar que su ocurrencia suficientemente poco frecuente
+- Esperar que el usuario detecte y resuelva el problema por sí sólo
+
+** El por qué del avestruz
+- Las condiciones impeustas por las diversas estrategias son casi
+  imposibles de alcanzar
+- Conocimiento previo de requisitos insuficiente
+- Bloqueos originados fuera de nuestra esfera de acción
+  - Recursos externos
+  - Procesos /representante/
+  - Estructuras a niveles superiores
+- Modelo de computación tendiente al interactivo
+  - En servidores: Programas (¡y personas!) dedicados al monitoreo
+
+** Cuestión de compromisos
+- Un sistema operativo de propósito general tiene que funcionar para
+  muy distintas situaciones
+  - Es muy difícil plantear esquemas aptos para toda necesidad
+- Debe tomarse una decisión entre lo /correcto/ y lo /conveniente/
+  - Un SO no debería permitir que hubiera bloqueos
+  - Pero la inconveniencia a usuarios y programadores sería demasiada
+
+** Cuestión de programar /defensivamente/
+#+BEGIN_CENTER
+El programador puede tomar ciertas medidas para evitar que /su
+programa/ caiga en situaciones de bloqueo
+#+END_CENTER
+- Solicitar recursos con llamadas /no bloqueantes/
+- Temporizadores y manejo de errores
+- Particularmente, /notificar al usuario/ en caso de demoras o fallas
+  repetidas
+
+** Aplicaciones de monitoreo en espacio de usuario
+- El monitoreo también ha caído hacia el terreno de las aplicaciones
+- Brinda mayor flexibilidad
+  - Aunque menos poder
+- Hay cientos de aplicaciones de monitoreo para todo tipo de situaciones
+- Un monitor /inteligente/, adaptado para un /servicio/ en particular,
+  puede detectar mejor situaciones anómalas (y no sólo bloqueos)
+
+** Consideraciones finales
+- ¿Qué es un recurso?
+  - No sólo cintas, impresoras, tarjetas de audio...
+  - ¡También segmentos de memoria, tiempo de procesamiento!
+

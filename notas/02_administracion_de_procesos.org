@@ -1906,6 +1906,11 @@ situaciones de bloqueo (La Red, p. 188):
 
 ** Prevención de bloqueos
 
+Presentaremos a continuación algunos algoritmos que implementan la
+prevención de bloqueos.
+
+*** Serialización
+
 Una manera de evitar bloqueos /por completo/ sería el que un sistema
 operativo jamás asignara recursos a más de un proceso a la vez — Los
 procesos podrían seguir efectuando cálculos o empleando recursos /no
@@ -1957,6 +1962,8 @@ Un sistema que implementa una política de asignación de recursos
 basada en la serialización, si bien no caerá en bloqueos mutuos, sí
 tiene un peligro fuerte de caer en /inanición/.
 
+*** Retención y espera (/advance claim/)
+
 Otro ejemplo de política preventiva /menos conservadora/ sería la
 /retención y espera/ o /reserva/ (/advance claim/): Que todos los
 programas declaren al iniciar su ejecución qué recursos van a
@@ -1982,6 +1989,70 @@ recursos específicos cuando éstos hicieran falta, esto sólo
 transferiría la situación de bloqueo por recursos a bloqueo por
 procesos — y un programador poco cuidadoso podría de todos modos
 desencadenar la misma situación.
+
+*** Solicitud /de una vez/ (/one-shot/)
+# <<one-shot>>
+
+Otro mecanismo de prevención de bloqueos sería que los recursos se
+otorguen exclusivamente a aquellos procesos que /no poseen ningún
+recurso/. Esta estrategia rompería la condición de Coffman /espera
+por/, haciendo imposible que se presente un bloqueo.
+
+En su planteamiento inicial, este mecanismo requería que un proceso
+declarara /una sóla vez/ qué recursos requeriría, pero posteriormente
+la estrategia se modificó, permitiendo que un proceso solicite
+recursos nuevamente, pero únicamente a condición de que previo a
+hacerlo /renuncien a los recursos/ que retengan en ese momento —
+Claro, pueden volver a incluirlos en la operación de solicitud.
+
+Al haber una /renuncia explícita/, se imposibilita de forma tajante
+que un conjunto de procesos entre en condición de bloqueo mutuo.
+
+Las principales desventajas de este mecanismo son:
+
+- Requiere cambiar la lógica de programación para tener puntos más
+  definidos de adquisición y liberación de recursos.
+- Muchas veces no basta con la /readquisición/ de un recurso, sino
+  que es necesario /mantenerlo bloqueado/. Volviendo al ejemplo de
+  las unidades de cinta, un proceso que requiera ir generando un
+  archivo largo no puede arriesgarse a /soltarla/, pues podría ser
+  entregada a otro proceso y corromperse el resultado.
+
+*** Asignación jerárquica
+
+Otro mecanismo de evasión es la asignación /jerárquica/ de
+recursos. Bajo este mecanismo, se asigna una prioridad o /nivel
+jerárquico/ a cada recurso o clase de recursos.[fn:: Incluso varios
+recursos distintos, o varias clases, pueden compartir prioridad,
+aunque esto dificultaría la programación. Podría verse a la [[#one-shot][solicitud
+de una vez]] como un caso extremo de asignación jerárquica con jerarquía
+plana] La condición básica es que, una vez que un proceso obtiene un
+recurso de determinado nivel, sólo puede solicitar recursos
+adicionales de niveles superiores. En caso de requerir dos
+dispositivos ubicados al mismo nivel, tiene que hacerse de forma
+atómica.
+
+De este modo, si las unidades de cinta tienen asignada la prioridad
+$x$, $P_1$ sólo puede solicitar dos unidades de cinta por medio de
+/una sóla operación/. En caso de también requerir dos unidades de
+cinta el proceso $P_2$ /al mismo tiempo/, al ser atómicas las
+solicitudes, éstas le serán otorgadas a sólo un de los dos procesos,
+por lo cual no se presentará bloqueo.
+
+Además, el crear una jerarquía de recursos nos permitiría ubicar los
+recursos más escasos o /peleados/ a la cima de la jerarquía,
+reduciendo las situaciones de contención en que varios procesos
+compiten por dichos recursos — Sólo llegarían a solicitarlos aquellos
+procesos que ya tienen /asegurado/ el acceso a los demás recursos que
+vayan a emplear.
+
+Sin embargo, este ordenamiento es demasiado estricto para muchas
+situaciones del mundo real. El tener que renunciar a ciertos recursos
+para adquirir uno de menor prioridad /y volver a competir por ellos/,
+además de resultar contraintuitivo para un programador, resulta en
+esperas frustrantes. Este mecanismo llevaría a los procesos a acaparar
+recursos de baja prioridad, para evitar tener que ceder y re-adquirir
+recursos más altos, por lo que conduce a una alta inanición.
 
 ** Evasión de bloqueos
 
@@ -2180,7 +2251,9 @@ Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
 es que requieren saber por anticipado los reclamos máximos de cada
 proceso, lo cual puede no ser sabido en el momento de su ejecución.
 
+
 ** Detección y recuperación de bloqueos
+# <<det_y_rec_bloq>>
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
 situación de bloqueo que ya se presentó y de buscar la mejor manera de
@@ -2367,15 +2440,20 @@ competidores, por medio de algún protocolo pre-establecido.
 
 ** Algoritmo del avestruz
 
-Una quinta línea (que, por increíble que parezca, es probablemente la
-más común) es el llamado /algoritmo del avestruz/: Ignorar las
-situaciones de bloqueo (escondiéndose de ellas como avestruz que
+Una cuarta línea (que, por increíble que parezca, es la más común,
+empleada en todos los sistemas operativos de propósito general con
+amplia utilización) es el llamado /algoritmo del avestruz/: Ignorar
+las situaciones de bloqueo (escondiéndose de ellas como avestruz que
 esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
-suficientemente poco frecuente. Hay que comprender que esto ocurre
-porque las condiciones impuestas por las demás estrategias resultan
-demasiado onerosas, el conocimiento previo resulta insuficiente, o los
-bloqueos simplemente pueden presentarse ante recursos externos y no
-controlados (o conocidos siquiera) por el sistema operativo.
+suficientemente poco frecuente.
+
+*** Justificando a los avestruces
+
+Hay que comprender que esto ocurre porque las condiciones impuestas
+por las demás estrategias resultan demasiado onerosas, el conocimiento
+previo resulta insuficiente, o los bloqueos simplemente pueden
+presentarse ante recursos externos y no controlados (o conocidos
+siquiera) por el sistema operativo.
 
 Ignorar la posibilidad de un bloqueo /cuando su probabilidad es
 suficientemente baja/ será preferible para los usuarios (y
@@ -2387,14 +2465,42 @@ En este caso, se toma una decisión entre lo /correcto/ y lo
 la posibilidad de que hubiera bloqueos, pero la inconveniencia
 presentada al usuario sería inaceptable.
 
+Por último, cabe mencionar algo que a lo largo de todo este apartado
+mencionamos únicamente de forma casual, evadiendo definiciones claras:
+¿Qué es un recurso? La realidad es que no está muy bien
+definido. Podríamos, como mencionan nuestros ejemplos, hablar de los
+clásicos de acceso rival y secuencial: Impresoras, cintas, terminales
+seriales, etc. Sin embargo, también podemos ver como recursos a otras
+entidades administrads por el sistema operativo — Como el espacio
+disponible de memoria o el tiempo de procesamiento. Y para esos casos,
+prácticamente ninguno de los mecanismos aquí analizados resolvería las
+características de acceso y bloqueo necesarias.
+
+*** Enfrentando a los avestruces
+
+La realidad del cómputo marca que es el programador de aplicaciones
+quien debe prever las situaciones de carrera, bloqueo e inanición en
+su código — El sistema operativo empleará ciertos mecanismos para
+asegurar la seguridad en general entre los componentes del sistema,
+pero para muchas tareas, esto recae en las manos del programador.
+
 Una posible salida ante la presencia del /algoritmo del avestruz/ es
-que los /programadores de aplicaciones/ soliciten un recurso pero, en
-vez de solicitarlo por medio de una /llamada bloqueante/, hacerlo por
-medio de una /llamada no bloqueante/ y, en caso de fallar ésta,
-esperar un tiempo aleatorio e intentarlo e intentar nuevamente acceder
-al recurso un número dado de veces, y, tras /n/ intentos, abortar
-limpiamente el proceso y notificar al usuario (evitando un bloqueo
-mutuo circular indefinido).
+adoptar un método /defensivo/ de programar. Un ejemplo de esto sería
+que los programas soliciten un recurso pero, en vez de solicitarlo por
+medio de una /llamada bloqueante/, hacerlo por medio de una /llamada
+no bloqueante/ y, en caso de fallar ésta, esperar un tiempo aleatorio
+e intentarlo e intentar nuevamente acceder al recurso un número dado
+de veces, y, tras /n/ intentos, abortar limpiamente el proceso y
+notificar al usuario (evitando un bloqueo mutuo circular indefinido).
+
+Por otro lado, hay una gran cantidad de aplicaciones de monitoreo en
+espacio de usuario. Conociendo el funcionamiento esperable específico
+de determinados programas es posible construir aplicaciones que los
+monitoreen /de una forma inteligente/ y tomen acciones (ya sea
+alertar a los administradores o, como lo revisamos en la sección de
+[[#det_y_rec_bloq][detección y recuperación de bloqueos]], aborten (y posiblemente
+reinicien) la ejecución de aquellos procesos que no puedan
+recuperarse.
 
 * Otros recursos
 

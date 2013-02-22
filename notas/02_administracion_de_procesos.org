@@ -468,6 +468,11 @@ debemos indicárselo de forma explícita, sincronizando nuestros hilos
 (o procesos). Es necesario asegurarnos que la sección crítica no
 permitirá la entrada de dos hilos de forma casi-simultánea.
 
+#+attr_html: height="261"
+#+attr_latex: width=0.7\textwidth
+#+caption: Sincronización al intentar ejecutar concurrentemente una sección crítica (imagen: Prof. Samuel Oporto Díaz)
+[[./img/secc_crit.png]]
+
 Un error muy común es utilizar mecanismos /no atómicos/ para señalizar
 al respecto. Consideremos que estamos haciendo un sistema de venta de
 boletos de autobús en Perl, y queremos hacer la siguiente función

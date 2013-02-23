@@ -29,6 +29,11 @@ Podemos hablar de tres tipos principales de planificación:
                    típicamente el usuario quien indica expresamente
                    qué procesos iniciar.
 
+		   #+caption: Planificador a largo plazo
+		   #+attr_html: height="281"
+		   #+attr_latex: width=0.3\textwidth
+		   [[./img/planificador_largo_plazo.png]]
+
 - A mediano plazo :: Decide cuáles procesos es conveniente /bloquear/
      en determinado momento, sea por escacez/saturación de algún
      recurso (como la memoria primaria) o porque están realizando
@@ -38,12 +43,30 @@ Podemos hablar de tres tipos principales de planificación:
      están a la espera de algún evento externo o de la finalización
      de transferencia de datos con algún dispositivo).
 
+     En algunos textos, al /planificador a mediano plazo/ se le llama
+     /agendador/ (/scheduler/).
+
+     #+caption: Planificador a mediano plazo, o /agendador/
+     #+attr_html: height="412"
+     #+attr_latex: width=0.7\textwidth
+     [[./img/planificador_mediano_plazo.png]]
+
 - A corto plazo :: Decide cómo compartir /momento a momento/ al equipo
                    entre todos los procesos que requieren de sus
                    recursos, especialmente el procesador. La
                    planificación a corto plazo se lleva a cabo decenas
-                   de veces por segundo, es el encargado de planificar
-                   /los procesos que están listos para ejecución/.
+                   de veces por segundo (razón por la cual debe ser
+                   código muy simple, eficiente y rápido); es el
+                   encargado de planificar /los procesos que están
+                   listos para ejecución/.
+
+		   En algunos textos, al /planificador a corto plazo/
+                   se le llama /despachador/ (/dispatcher/).
+
+		   #+caption: Planificador a corto plazo, o /despachador/
+		   #+attr_html: height="252"
+		   #+attr_latex: width=0.5\textwidth
+		   [[./img/planificador_corto_plazo.png]]
 
 En esta sección nos ocuparemos particularmente el planificador /a
 corto plazo/, y en segundo término del planificador /a mediano plazo/.
@@ -91,6 +114,24 @@ preferible buscar dar una respuesta /consistente/, aún si la respuesta
 demora de un segundo, el usuario sentirá menos falta de control si en
 promedio tardan medio segundo, pero ocasionalmente hay picos de cinco.
 
+Para este tema, en vez de emplear unidades temporales formales
+(p.ej. fracciones de segundo), es común emplear /quantums/ y
+/ticks/. Esto es en buena medida porque, si bien en el campo del
+cómputo las velocidades de acceso y uso efectivo cambian
+constantemente, los conceptos y las definiciones permanecen. Además,
+al ser ambos parámetros ajustables, una misma implementación puede
+sobrevivir ajustándose a la evolución del hardware.
+
+- /Tick/ :: Una fracción de segundo durante la cual se puede realizar
+            trabajo útil. Es una medida caprichosa y arbitraria; en
+            Linux (a partir de la versión 2.6.8), un /tick/ dura un
+            milisegundo, en Windows, entre 10 y 15 milisegundos.
+- /Quantum/ :: El tiempo mínimo que se permitirá a un proceso el uso
+               del procesador. En Windows, dependiendo de la clase de
+               proceso que se trate, un /quantum/ durará entre 2 y 12
+               ticks (esto es, entre 20 y 180 ms), y en Linux, entre
+               10 y 200 ticks (o milisegundos).
+
 ¿Qué mecanismos o métricas podemos emplear para medir el
 comportamiento del sistema bajo determinado planificador? Partamos de
 los siguientes conceptos, para un proceso $p$ que requiere de un
@@ -101,7 +142,7 @@ tiempo $t$ de ejecución:
      tiempo que está inactivo esperando ejecución (pero está en la
      cola de procesos listos).
 
-- Tiempo en espera ($E = T - t$) = :: También referido como /tiempo
+- Tiempo en espera ($E = T - t$) :: También referido como /tiempo
      perdido/. Del tiempo de respuesta total, cuánto tiempo $p$ está
      listo y esperando ejecutar. Desde la óptica de $p$, desearíamos
      que $E \rightarrow 0$
@@ -127,12 +168,87 @@ los diversos procesos del sistema, tenemos también:
 - Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
      listos está vacía y no puede realizarse ningún trabajo.
 
-Y respecto al patrón de llegada y salida de los procesos, lo
-manejaremos también en base a una proporción. Si tenemos una
-/frecuencia de llegada/ promedio de nuevos procesos a la cola de
-procesos listos $\alpha$, y el /tiempo de servicio requerido/ promedio
-$\beta$, definimos el /valor de saturación/ $\rho$ como $\rho =
-\frac{\alpha}{beta}$.
+- Utilización del CPU :: Porcentaje del tiempo en que el CPU está
+     realizando /trabajo útil/. Si bien conceptualmente podemos
+     ubicar dicha utilización entre 0 y 100%, en sistemas reales se
+     ha observado (Silberschatz, p.179) que se ubica en un rango
+     entre el 40 y el 90%.
+
+Por ejemplo, si llegan a la cola de procesos listos:
+
+|---------+-------+---------|
+| Proceso | Ticks | Llegada |
+|---------+-------+---------|
+| $A$     |    70 |       0 |
+| $B$     |    30 |      20 |
+| $C$     |   120 |      60 |
+| $D$     |    40 |     200 |
+|---------+-------+---------|
+
+Si el tiempo que toma al sistema efectuar un cambio de contexto es de
+20 /ticks/, y la duración de cada /quantum/ es de 50 ticks, en un
+ordenamiento [[#Round%20Robin][de ronda]],[fn:: Claro está, veremos este ordenamiento en
+breve.]  tendríamos:
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Ejecución de cuatro procesos con /quantums/ de 50 /ticks/ y cambios de contexto de 20 /ticks/
+#+begin_src ditaa :file ltxpng/planificador.png :cmdline -E
+
++----+----+----+----+----+----+----+   +----+----+----+----+----+----+----+----+----+----+
+|cGRE A                            |   |cBLK Núcleo                                      |
++----+----+----+----+----+----+----+   +----+----+----+----+----+----+----+----+----+----+
+|
+|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
+|         |cRED B        |    |cYEL C                                                     |
+|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
+0         |             50    |                  100                      150                      200
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+V    |    V    |    |    |    V    |    |    |    *    |    |    |    |    |    |    |    |    |    V
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|cGRE                    |cBLK     |cRED          |cBLK     |cYEL                    |cBLK     |cGRE|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+
++----+----+----+----+
+|cBLU D             |
++----+----+----+----+
+|
+200                     250                      300                      350                      400
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+V    *    |    |    |    |    |    |    |    |    |    |    |    |    *    |    |    |    *    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|cGRE|cBLK     |cYEL                    |cBLK     |cBLU               |cBLK     |cYEL     |cBLK     |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+#+html: <p align="center">Ejecución de cuatro procesos con <em>ticks</em> de 50 ciclos y cambios de contexto de 20 ciclos</p></div>
+
+Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
+cuyo trabajo en este espacio de tiempo finalizó junto con los
+demás,[fn:: Normalmente /no/ consideramos al núcleo al hacer este
+cálculo, dado que en este ámbito todo el trabajoo que hace puede verse
+como /burocracia/ ante los resultados deseados del sistema] tendríamos
+por resultado:
+
+|---------+-----+-----+-----+------+------|
+| Proceso | $t$ | $T$ | $E$ |  $P$ |  $R$ |
+|---------+-----+-----+-----+------+------|
+| $A$     |  70 | 210 | 140 |  3.0 | 0.33 |
+| $B$     |  30 |  80 |  50 | 2.66 | 0.37 |
+| $C$     | 120 | 320 | 140 | 2.66 | 0.37 |
+| $D$     |  40 | 140 | 100 | 3.5  | 0.28 |
+| Núcleo  | 100 | 400 | 300 | 4.0  | 0.25 |
+|---------+-----+-----+-----+------+------|
+
+Tomemos en cuenta que, para obtener $T$, se parte del momento en que
+el proceso llegó a la cola, no el punto de inicio de nuestra línea de
+tiempo. Asumimos en este caso que el núcleo llega también en 0.
+
+Respecto al patrón de llegada y salida de los procesos, lo manejaremos
+también en base a una proporción. Si tenemos una /frecuencia de
+llegada/ promedio de nuevos procesos a la cola de procesos listos
+$\alpha$, y el /tiempo de servicio requerido/ promedio $\beta$,
+definimos el /valor de saturación/ $\rho$ como $\rho =
+\frac{\alpha}{\beta}$.
 
 Cuando $\rho = 0$, nunca llegan nuevos procesos, por lo cual nuestro
 sistema estará /desocupado/. Cuando $\rho = 1$, los procesos son
@@ -144,6 +260,361 @@ respuesta $R$, para cada proceso se decrementará).
 
 * Algoritmos de planificación
 
+El planificador a corto plazo puede ser invocado cuando un proceso se
+encuentra en algunas de las cuatro siguientes circunstancias:
+
+1. Pasa de estar /ejecutando/ a estar /en espera/ (por ejemplo, por
+   solicitar una operación de E/S, esperar a la sincronización con
+   otro proceso, etc.)
+2. Pasa de estar /ejecutando/ a estar /listo/ (por ejemplo, al ocurrir
+   una interrupción
+3. Deja de estar /en espera/ a estar /listo/ (por ejemplo, al
+   finalizar la operación de E/S que solicitó)
+4. Finaliza su ejecución, y pasa de /ejecutando/ a /terminado/
+
+En el primer y cuarto casos, el sistem operativo siempre tomará el
+control; un sistema que opera bajo /multitarea preventiva/
+implementará también el segundo y tercer casos, mientras que uno que
+opera bajo /multitarea cooperativa/ no necesariamente reconocerá
+dichos estados.
+
+Ahora, para los algoritmos a continuación, recordemos que en este caso
+estamos hablando únicamente del /despachador/. Un proceso siempre
+abandonará la cola de procesos listos al requerir de un servicio del
+sistema.
+
+Para todos los ejemplos a continuación, asumamos que los tiempos están
+dados en /ticks/; no nos preocupa en este caso a cuánto tiempo de
+reloj estos equivalen, sino el rendimiento relativo del sistema entero
+ante una carga dada.
+
+Revisemos, pues, los principales algoritmos de planificación.
+
+** Primero llegado, primero servido (/FCFS/)
+
+El esquema más simple de planificación es el /Primero llegado, primero
+servido/ (/First come, first serve/, /FCFS/). Este es un mecanismo
+cooperativo, con la mínima lógica posible: Cada proceso se ejecuta en
+el órden en que fue llegando, y hasta que /suelta el control/. El
+despachador es muy simple, básicamente una cola FIFO.
+
+Consideremos los siguientes procesos: (Finkel 1988, p.35)
+
+| Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
+|          |   Llegada |     |        |     |     |     |      |
+|----------+-----------+-----+--------+-----+-----+-----+------|
+| A        |         0 |   3 |      0 |   3 |   3 |   0 |    1 |
+| B        |         1 |   5 |      3 |   8 |   7 |   2 |  1.4 |
+| C        |         3 |   2 |      8 |  10 |   7 |   5 |  3.5 |
+| D        |         9 |   5 |     10 |  15 |   6 |   1 |  1.2 |
+| E        |        12 |   5 |     15 |  20 |   8 |   3 |  1.6 |
+|----------+-----------+-----+--------+-----+-----+-----+------|
+| Promedio |           |   4 |        |     | 6.2 | 2.2 | 1.74 |
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Primero llegado, primero servido (FCFS)
+#+begin_src ditaa :file ltxpng/fcfs.png :cmdline -E
+  +--------------+                             +----+------------------------+
+  |cBLU  A       |                             |cBLK|cGRE      D             |
+  +--------------+                             +----+------------------------+
+  |                                            |
+  |    +---------+------------------------+    |
+  |    |cBLK     |cRED       B            |    |              +--------------+------------------------+
+  |    +---------+------------------------+    |              |cBLK          |cPNK        E           |
+  |    |                                       |              +--------------+------------------------+
+  |    |         +------------------------+---------+         |
+  |    |         |cBLK                    |cYEL C   |         |
+  |    |         +------------------------+---------+         |
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cRED                    |cYEL     |cGRE                    |cPNK                    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+#+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+
+Si bien un esquema FCFS reduce al mínimo la /sobrecarga
+administrativa/ (que incluye tanto al tiempo requerido por el
+planificador para seleccionar al siguiente proceso como el tiempo
+requerido para el cambio de contexto), el rendimiento percibido por
+los últimos procesos en llegar (o por procesos cortos llegados en un
+momento inconveniente) resulta inaceptable.
+
+Este algoritmo dará servicio y salida a todos los procesos siempre que
+$\rho \le 1$. En caso de que se sostenga $\rho > 1$, la demora para
+iniciar la atención de un proceso crecerá cada vez más, cayendo en
+una cada vez mayor inanición.
+
+FCFS tiene características claramente inadecuadas para trabajo
+interactivo, sin embargo, al no requerir de hardware de apoyo (como
+un temporizador) sigue siendo ampliamente empleado.
+
+** Ronda (/Round Robin/)
+# << Round Robin >>
+
+El esquema /ronda/ busca dar una relación de respuesta buena tanto
+para procesos largos como para los cortos. La principal diferencia
+entre la ronda y FCFS es que en este caso sí emplearemos multitarea
+preventiva: A cada proceso que esté en la lista de procesos listos lo
+atenderemos por un sólo /quantum/ ($q$). Si un proceso no ha
+terminado de ejecutar al final de su /quantum/, será interrumpido y
+puesto al final de la lista de procesos listos, para que espere a su
+turno nuevamente. Los procesos que nos entreguen los planificadores a
+mediano o largo plazo se agregarán también al final de esta lista.
+
+Con la misma tabla de procesos que encontramos en el caso anterior
+(y, por ahora, ignorando la sobrecarga administrativa provocada por
+los cambios de contexto), obtendríamos los siguientes resultados:
+
+| Proceso  | Tiempo de | /t/ | Fin | /T/ | /E/ |  /P/ |
+|          |   Llegada |     |     |     |     |      |
+|----------+-----------+-----+-----+-----+-----+------|
+| A        |         0 |   3 |   6 |   6 |   3 |  2.0 |
+| B        |         1 |   5 |  11 |  10 |   5 |  2.0 |
+| C        |         3 |   2 |   8 |   5 |   3 |  2.5 |
+| D        |         9 |   5 |  18 |   9 |   4 |  1.8 |
+| E        |        12 |   5 |  20 |   8 |   3 |  1.6 |
+|----------+-----------+-----+-----+-----+-----+------|
+| Promedio |           |   4 |     | 7.6 | 3.6 | 1.98 |
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Ronda (/Round Robin/)
+#+begin_src ditaa :file ltxpng/rr1.png :cmdline -E
+    A                                             D
+  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
+  |cBLU|cBLK|cBLU|cBLK     |cBLU|              |cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|
+  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+---------+----+----+----+----+----+
+  |    |cRED|cBLK|cRED|cBLK     |cRED|cBLK|cRED|cBLK|cRED|
+  |    +----+----+----+---------+----+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK|cYEL|cBLK     |cYEL|    |              |cPNK|cBLK|cPNK|cBLK|cPNK|cBLK|cPNK|cPNK|
+  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cRED|cBLU|cRED|cYEL|cBLU|cRED|cYEL|cRED|cGRE|cRED|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+#+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+
+La /ronda/ puede ser ajustada modificando la duración de
+$q$. Conforme incrementamos $q$, la ronda tiende a convertirse en
+FCFS — Si cada /quantum/ es arbitrariamente grande, todo proceso
+terminará su ejecución dentro de su /quantum/; por otro lado,
+conforme decrece $q$, mayor frecuencia de cambios de contexto
+tendremos; esto llevaría a una mayor ilusión de tener un procesador
+dedicado por parte de cada uno de los procesos, dado que cada proceso
+sería incapaz de notar las /ráfagas/ de atención que éste le da
+(avance rápido durante un periodo corto seguido de un periodo sin
+avance). Claro está, el procesador simulado sería cada vez más lento,
+dada la fuerte penalización que iría agregando la sobrecarga
+administrativa.
+
+Finkel (1988, p.35) se refiere a esto como el /principio de la
+histéresis/: /Hay que resistirse al cambio/. Como ya lo mencionamos,
+FCFS mantiene al mínimo posible la sobrecarga administrativa, y
+–aunque sea marginalmente– resulta en mejor rendimiento global.
+
+Si repetimos el análisis anterior bajo este mismo mecanismo, pero con
+un /quantum/ de 4 /ticks/, tendremos:
+
+| Proceso  | Tiempo de | /t/ | Fin | /T/ | /E/ |  /P/ |
+|          |   Llegada |     |     |     |     |      |
+|----------+-----------+-----+-----+-----+-----+------|
+| A        |         0 |   3 |   3 |   3 |   0 |  1.0 |
+| B        |         1 |   5 |  10 |   9 |   4 |  1.8 |
+| C        |         3 |   2 |   9 |   6 |   4 |  3.0 |
+| D        |         9 |   5 |  19 |  10 |   5 |  2.0 |
+| E        |        12 |   5 |  20 |   8 |   3 |  1.6 |
+|----------+-----------+-----+-----+-----+-----+------|
+| Promedio |           |   4 |     | 7.2 | 3.2 | 1.88 |
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Ronda (/Round Robin/), con $q=4$
+#+begin_src ditaa :file ltxpng/rr4.png :cmdline -E
+    A                                             D
+  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |                             |cBLK|cGRE               |cBLK               |cGRE|
+  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+---------+----+----+----+----+
+  |    |cBLK     |cRED               |cBLK     |cRED|
+  |    +----+----+----+---------+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK               |cYEL     |              |cBLK     |cPNK               |cBLK|cPNK|
+  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cRED               |cYEL     |cRED|cGRE               |cPNK               |cGRE|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+#+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+
+** El proceso más corto a continuación (SPN)
+
+(Del inglés, /Shortest Process Next/)
+
+Cuando no tenemos la posibilidad de implementar multitarea
+preventiva, pero requerimos de un algoritmo más /justo/, y contamos
+con información /por anticipado/ acerca del tiempo que requieren los
+procesos que forman la lista, podemos elegir el más corto de los
+presentes.
+
+Ahora bien, es muy difícil contar con esta información antes de
+ejecutar el proceso. Es más frecuente buscar /caracterizar/ las
+necesidades del proceso: Ver si durante su historia de ejecución[fn::
+No perdamos de vista que todos estos mecanismos se aplican al
+/planificador a corto plazo/. Cuando un proceso se bloquea esperando
+una operación de E/S, sigue en ejecución, y la información de
+contabilidad que tenemos sigue alimentándose. SPN se ``nutre''
+precisamente de dicha información de contabilidad] ha sido un proceso
+tendiente a manejar ráfagas /limitadas por entrada-salida/ o
+/limitadas por procesador/, y cuál es su tendencia actual.
+
+Para estimar el tiempo que requerirá un proceso $p$ en su próxima
+invocación, es común emplear el /promedio exponencial/
+$e_p$. Definimos un /factor atenuante/ $0 \le f \le 1$, que
+determinará qué tan reactivo será el promedio obtenido a la última
+duración; es común que este valor sea cercano a 0.9.
+
+Si el $p$ empleó $q$ /quantums/ durante su última invocación,
+
+#+BEGIN_CENTER
+$e_p' = fe_p + (1-f)q$
+#+END_CENTER
+
+Podemos tomar como /semilla/ para el $e_p$ inicial un número elegido
+arbitrariamente, o uno que ilustre el comportamiento actual del
+sistema (como el promedio del $e_p$ de los procesos actualmente en
+ejecución).
+
+#+attr_latex: width=0.7\textwidth
+#+attr_html: width="510" height="280"
+#+caption: Promedio exponencial (predicción de próxima solicitud de tiempo) de un proceso. (Silberschatz, p.183)
+[[./img/promedio_exponencial.png]]
+
+Empleando el mismo juego de datos de procesos que hemos venido
+manejando como resultados de las estimaciones, obtendríamos el
+siguiente resultado:
+
+| Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
+|          |   Llegada |     |        |     |     |     |      |
+|----------+-----------+-----+--------+-----+-----+-----+------|
+| A        |         0 |   3 |      0 |   3 |   3 |   0 |  1.0 |
+| B        |         1 |   5 |      5 |  10 |   9 |   4 |  1.8 |
+| C        |         3 |   2 |      3 |   5 |   2 |   0 |  1.0 |
+| D        |         9 |   5 |     10 |  15 |   6 |   1 |  1.2 |
+| E        |        12 |   5 |     15 |  20 |   8 |   3 |  1.6 |
+|----------+-----------+-----+--------+-----+-----+-----+------|
+| Promedio |           |   4 |        |     | 5.6 | 1.6 | 1.32 |
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: El proceso más corto a continuación (SPN)
+#+begin_src ditaa :file ltxpng/spn.png :cmdline -E
+    A                                             D
+  +----+----+----+                             +----+----+----+----+----+----+
+  |cBLU          |                             |cBLK|cGRE                    |
+  +----+----+----+                             +----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+---------+----+----+----+----+
+  |    |cBLK                    |cRED               |
+  |    +----+----+----+---------+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
+  |    |         |cYEL     |                   |              |cBLK          |cPNK                    |
+  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cYEL     |cRED                    |cGRE                    |cPNK                    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+#+html: <p align="center">El proceso más corto a continuación (SPN)</p></div>
+
+Como era de esperarse, SPN favorece a los procesos cortos. Sin
+embargo, un proceso largo puede esperar mucho tiempo antes de ser
+atendido, especialmente con valores de $\rho$ cercanos o superiores a
+1 — Un proceso más largo que el promedio está predispuesto a sufrir
+inanición.
+
+En un sistema poco ocupado, en que la cola de procesos listos es
+corta, SPN generará resultados muy similares a los de FCFS. Sin
+embargo, podemos observar en el ejemplo que con sólo una permutación
+en los cinco procesos ejemplos (/B/ y /C/), los factores de
+penalización a los procesos ejemplo resultaron muy beneficiados.
+
+*** SPN preventivo (PSPN)
+
+(/Preemptive Shortest Process Next/)
+
+Finkel (1988, p.44) apunta a que, a pesar de que intuitivamente daría
+una mayor ganancia combinar las estrategias de SPN con un esquema de
+multitarea preventiva, el comportamiento obtenido es muy similar para
+la amplia mayoría de los procesos. Incluso para procesos muy largos,
+PSPN no los penaliza mucho más allá de lo que lo haría la ronda, y
+obtiene mejores promedios de forma consistente porque, al despachar
+primero a los procesos más cortos, mantiene la lista de procesos
+pendientes corta, lo que lleva naturalmente a menores índices de
+penalización.
+
+*** El más penalizado a continuación (HPRN)
+
+(/Highest Penalty Ratio Next/)
+
+Si no contamos con multitarea preventiva, las alternativas
+presentadas hasta ahora resultan invariablmente injustas: FCFS
+favorece a los procesos largos, y SPN a los cortos. Un intento de
+llegar a un algoritmo más balanceado es HPRN.
+
+Todo proceso inicia su paso por la cola de procesos listos con un
+valor de penalización $P = 1$. Cada vez que es obligado a esperar
+un tiempo $w$ por otro proceso, $P$ se actualiza como $P =
+\frac{(w+t)}{t}$. El proceso que se elige como activo será el que
+tenga mayor $P$. Mientras $\rho < 1$, HPRN evitará que incluso los
+procesos más largos sufran inanición.
+
+En los experimentos realizados por Finkel, HPRN se sitúa siempre en
+un punto medio entre FCFS y SPN; su principal desventaja se presenta
+conforme crece la cola de procesos listos, ya que $P$ tiene que
+calcularse para todos ellos cada vez que el despachador toma una
+decisión.
+
+** Retroalimentación multinivel (FB)
+
+(/Multilevel Feedback/)
+
+** Ronda egoísta (SRR)
+
+(/Selfish Round Robin/)
+
+** Métodos híbridos
+
+** Métodos dependientes del estado y prioridad
+
+** Métodos de prioridad externa
+
+#+attr_html: height="305"
+#+attr_latex: width=0.7\textwidth
+#+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
+[[./img/penalizaciones_por_algoritmo_planificador.png]]
+
+
 * Planificación de multiprocesadores y en tiempo real
 
 * Planificación de hilos
+* Recursos adicionales
+- [[http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml][Thread Scheduling (ctd): quanta, switching and scheduling
+  algorithms]] (/Javamex tutorial and performance information/)

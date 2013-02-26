@@ -1,0 +1,87 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Planificación de procesos: Algoritmos de planificación
+#+DATE: 2013-02-27 — 2013-03-??
+
+* Introducción
+
+** Principal decisión en un sistema multitareas
+- ¿Qué proceso es el siguiente a ejecutar?
+  - ¿Qué procesos han ido terminando?
+- ¿Qué /eventos/ ocurrieron que hacen que /cambien de estado/?
+  - Solicitudes (y respuestas) de E/S
+  - /Swap/ de/a disco
+- ¿Cual es el siguiente proceso al que le toca atención del CPU?
+  - ¿Y por cuánto tiempo?
+#+BEGIN_CENTER
+Vemos que hay tres tipos muy distintos de planificación.
+#+END_CENTER
+
+** Planificador a largo plazo
+- Cual es el siguiente proceso a ser iniciado
+- Principalmente orientado a la operación /en lotes/
+  - Principalmente a los sistemas con /spool/
+  - También presente en la multiprogramacin temprana
+- Decide en base a los requisitos /pre-declarados/ de los procesos, y
+  a los recursos disponibles al ejecutarse
+- Periodicidad: segundos a horas
+- Hoy en día no se emplean
+  - El usuario indica expresamente qué procesos iniciar
+
+** Planificador a largo plazo
+#+caption: Planificador a largo plazo
+#+attr_latex: width=0.7\textwidth
+[[../img/planificador_largo_plazo.png]]
+
+** Planificador a mediano plazo
+- Cuáles procesos hay que /bloquear/
+  - Por escacez/saturación de algún recurso (p.ej. almacenamiento primario)
+  - Por haber iniciado una operación que no puede satisfacerse aún
+- Cuáles procesos hay que /desbloquear/
+  - A la espera de algún dispositivo
+  - Fueron enviados a /swap/, pero ya requieren o merecen ejecutarse
+- Frecuentemente llamado /agendador/ (/scheduler/)
+
+** Planificador a mediano plazo
+#+caption: Planificador a mediano plazo, o /agendador/
+#+attr_latex: width=0.7\textwidth
+[[../img/planificador_mediano_plazo.png]]
+
+** Planificador a corto plazo
+- Cómo compartir /momento a momento/ al CPU entre todos los procesos
+- Se efectúa decenas de veces por segundo
+  - Debe ser simple, eficiente y rápido
+- Se encarga de planificar los procesos /listos para ejecución/
+  - Estados /listo/ y /ejecutando/
+- Frecuentemente llamado /despachador/ (/dispatcher/)
+
+** Planificador a corto plazo
+#+caption: Planificador a corto plazo, o /despachador/
+#+attr_latex: width=0.5\textwidth
+[[../img/planificador_corto_plazo.png]]
+
+** El enfoque de esta sección
+#+BEGIN_CENTER
+En esta sección hablaremos particularmente del planificador /a corto
+plazo/
+
+Cuando un proceso es /suspendido/ (o /bloqueado/) y posteriormente
+reactivado, lo trataremos como /un proceso nuevo/.
+#+END_CENTER
+
+** Tipos de proceso
+- Diversos procesos tienen distintas características
+- Alternan entre /ráfagas/ (/bursts/)
+  - Limitado por CPU
+  - Limitado por E/S
+- Cuando termina una ráfaga limitada por CPU y se suspende esperando
+  E/S, deja de estar /listo/ y sale de la vista del /despachador/
+- Esto nos lleva a separar los procesos en...
+
+** Tipos de proceso
+- Largos :: Han estado /listos/ o /en ejecución/ por mucho tiempo
+  - Esto es, están en una ráfaga limitada por CPU
+- Cortos :: En este momento están en una ráfaga limitada por E/S
+  - Requieren atención meramente ocasional del procesador
+  - Tienden a estar bloqueados, esperando a /eventos/
+
+* Métricas

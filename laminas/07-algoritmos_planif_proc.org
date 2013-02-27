@@ -85,3 +85,165 @@ reactivado, lo trataremos como /un proceso nuevo/.
   - Tienden a estar bloqueados, esperando a /eventos/
 
 * Métricas
+
+** Unidades a manejar
+#+begin_center
+Para hablar de planificación del procesador, /no/ vamos a manejar
+tiempos /estándar/ (s, ms, ns), sino que:
+#+end_center
+- /Tick/ :: Un tiempo mínimo dado durante el cual se puede realizar
+            trabajo útil. Medida caprichosa y arbitraria.
+
+	    En Windows, un /tick/ dura entre 10 y 15 ms. En Linux
+	    (2.6.8 en adelante), dura 1 ms.
+
+- /Quantum/ :: Tiempo mínimo, expresado en /ticks/, que se permitirá a
+               un proceso el uso del procesador.
+
+	       En Windows, 2—12 /ticks/ (esto es, 20—180ms). En Linux,
+	       10—200 /ticks/ (10-200ms)
+
+** ¿Qué es /mejor/?
+- No hay un sólo criterio para definir qué es una /mejor/ respuesta
+- El patrón correcto varía según el propósito del sistema
+- Un proceso interactivo /sufre/ si el tiempo de respuesta incrementa,
+  aunque pueda procesar por más tiempo corrido
+  - En caso de sufrir demoras, debemos intentar que sean
+    /consistentes/, aunque el /tiempo promedio/ resulte deteriorado
+  - Es mejor saber que el sistema /siempre/ tardará 0.5s en responder
+    a mis necesidades a que unas veces responda de inmediato y otras
+    tarde 3s.
+
+** ¿Qué métricas compararemos?
+- Tiempo de respuesta ($T$) :: Tiempo total necesario para completar
+     el trabajo pendiente de un proceso $p$
+     - Incluye el tiempo inactivo (pero listo).
+
+- Tiempo en espera ($E$) :: De $T$, cuánto tiempo está esperando
+     ejecutar. (/Tiempo perdido/)
+     - $E = T - s$
+     - $p$, desea que $E \rightarrow 0$
+
+- Tiempo de penalización ($P$) :: Fracción del tiempo
+     de respuesta durante la cual $p$ estuvo en espera.
+     - $P = \frac{T}{t}$
+
+- Proporción de respuesta ($R$) :: Fracción del tiempo
+     de respuesta durante la cual $p$ pudo ejecutarse.
+     - $R = \frac{t}{T}$ ; $R = \frac{1}{P}$
+
+** Además de los anteriores, para el sistema...
+
+- Tiempo núcleo o /kernel/ :: Tiempo que pasa el sistema en espacio de
+     núcleo
+
+- Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
+     listos está vacía y no puede realizarse ningún trabajo.
+
+- Utilización del CPU :: Porcentaje del tiempo en que el CPU está
+     realizando /trabajo útil/.
+     - Conceptualmente, entre 0 y 100%
+     - En realidad, en un rango entre 40 y el 90%.
+
+** Por ejemplo...
+#+begin_center
+Los siguientes procesos forman la /cola de procesos listos/:
+
+|---------+-------+---------|
+| Proceso | Ticks | Llegada |
+|---------+-------+---------|
+| $A$     |    70 |       0 |
+| $B$     |    30 |      20 |
+| $C$     |   120 |      60 |
+| $D$     |    40 |     200 |
+|---------+-------+---------|
+
+Toma 20 /ticks/ realizar un cambio de contexto; cada /quantum/ es de
+50 /ticks/, y tenemos un ordenamiento /de ronda/
+#+end_center
+
+** Precisiones sobre el ejemplo
+- ¡El cambio de contexto propuesto es desproporcionadamente largo!
+  (sólo para ejemplificar)
+- Consideraremos al tiempo núcleo como si fuera un proceso más
+  - Midiendo /como si iniciara y terminara/ junto con los demás
+  - Normalmente el tiempo núcleo no se cuenta, es tomado por
+    /burocracia/
+
+** Graficando nuestro ejemplo
+#+attr_latex: width=\textwidth
+#+caption: Ejecución de cuatro procesos con /quantums/ de 50 /ticks/ y cambios de contexto de 20 /ticks/
+#+begin_src ditaa :file ltxpng/planificador.png :cmdline -E
+
++----+----+----+----+----+----+----+   +----+----+----+----+----+----+
+|cGRE A                            |   |cBLK Núcleo                  |
++----+----+----+----+----+----+----+   +----+----+----+----+----+----+
+|
+|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
+|         |cRED B        |    |cYEL C                                                     |
+|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
+0         |             50    |                  100                      150                      200
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+V    |    V    |    |    |    V    |    |    |    *    |    |    |    |    |    |    |    |    |    V
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|cGRE                    |cBLK     |cRED          |cBLK     |cYEL                    |cBLK     |cGRE|
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+
++----+----+----+----+      +----+----+----+----+----+----+----+----+
+|cBLU D             |      |cBLK Núcleo                            |
++----+----+----+----+      +----+----+----+----+----+----+----+----+
+|
+200                     250                      300                      350                      400
+|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+V    *    |    |    |    |    |    |    |    |    |    |    |    |    *    |    |    |    *    |    |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+|cGRE|cBLK     |cYEL                    |cBLK     |cBLU               |cBLK     |cYEL     |cBLK     |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Resultado de nuestro ejemplo
+#+begin_center
+|----------+-----+-----+-----+-------+-------|
+| Proceso  | $t$ | $T$ | $E$ |   $P$ |   $R$ |
+|----------+-----+-----+-----+-------+-------|
+| $A$      |  70 | 210 | 140 |   3.0 |  0.33 |
+| $B$      |  30 |  80 |  50 |  2.66 |  0.37 |
+| $C$      | 120 | 320 | 140 |  2.66 |  0.37 |
+| $D$      |  40 | 140 | 100 |   3.5 |  0.28 |
+| Núcleo   | 140 | 400 | 260 |   4.0 |  0.25 |
+|----------+-----+-----+-----+-------+-------|
+| Promedio |  80 | 230 | 138 | 2.875 | 0.347 |
+|----------+-----+-----+-----+-------+-------|
+
+- Tiempo kernel :: 140 /ticks/
+- Tiempo desocupado :: 0 /ticks/
+- Utilización del CPU :: 260 /ticks/
+#+end_center
+
+** Frecuencias
+#+begin_center
+Respecto al patrón de llegadas y salidas de procesos a la cola de
+procesos listos:
+#+end_center
+- $\alpha$ :: Frecuencia de llegada promedio
+- $\beta$ :: Tiempo de servicio requerido promedio
+- $\rho$ :: Valor de saturación, $\rho = \frac{\alpha}{\beta}$
+#+begin_center
+Esto significa:
+#+end_center
+- $\rho = 0$ :: Nunca llegan procesos nuevos; el sistema estará desocupado
+- $\rho = 1$ :: Los procesos van saliendo al mismo ritmo al que van
+                entrando
+- $\rho > 1$ :: Los procesos llegan más rápido de lo que puede ser
+                atendidos. La cola de procesos listos tiende a
+                crecer. $R$ se decrementa para todos.
+
+* Algoritmos de planificación
+** Primero llegado, primero servido (/FCFS/)
+** Ronda (/Round Robin/)
+** El proceso más corto a continuación (SPN)
+** Retroalimentación multinivel (FB)
+** Ronda egoísta (SRR)
+** Métodos híbridos
+** Métodos dependientes del estado y prioridad
+** Métodos de prioridad externa

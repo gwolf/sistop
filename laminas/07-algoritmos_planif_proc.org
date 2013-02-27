@@ -4,6 +4,15 @@
 
 * Introducción
 
+** Referencia para esta sección
+#+BEGIN_CENTER
+Buena parte del material de esta unidad toma por referencia al
+capítulo 2 de /An operating systems vade mecum/ (Raphael
+Finkel, 1988)
+\vfill
+([[http://sistop.gwolf.org/html/biblio/An_operating_system_vade_mecum_-_Raphael_Finkel.pdf][Disponible en el sitio Web del curso]])
+#+END_CENTER
+
 ** Principal decisión en un sistema multitareas
 - ¿Qué proceso es el siguiente a ejecutar?
   - ¿Qué procesos han ido terminando?
@@ -115,17 +124,19 @@ tiempos /estándar/ (s, ms, ns), sino que:
     tarde 3s.
 
 ** ¿Qué métricas compararemos?
-- Tiempo de respuesta ($T$) :: Tiempo total necesario para completar
-     el trabajo pendiente de un proceso $p$
+#+BEGIN_CENTER
+Para un proceso $p$ que requiere ejecutarse por tiempo $t$,
+#+END_CENTER
+- Tiempo de respuesta ($T$) :: Tiempo total que toma el trabajo
      - Incluye el tiempo inactivo (pero listo).
 
 - Tiempo en espera ($E$) :: De $T$, cuánto tiempo está esperando
      ejecutar. (/Tiempo perdido/)
-     - $E = T - s$
-     - $p$, desea que $E \rightarrow 0$
+     - $E = T - t$
+     - El proceso $p$ desea que $E \rightarrow 0$
 
-- Tiempo de penalización ($P$) :: Fracción del tiempo
-     de respuesta durante la cual $p$ estuvo en espera.
+- Proporción de penalización ($P$) :: Fracción del tiempo de respuesta
+     durante la cual $p$ estuvo en espera.
      - $P = \frac{T}{t}$
 
 - Proporción de respuesta ($R$) :: Fracción del tiempo
@@ -152,17 +163,21 @@ Los siguientes procesos forman la /cola de procesos listos/:
 |---------+-------+---------|
 | Proceso | Ticks | Llegada |
 |---------+-------+---------|
-| $A$     |    70 |       0 |
-| $B$     |    30 |      20 |
-| $C$     |   120 |      60 |
-| $D$     |    40 |     200 |
+| $A$     |     7 |       0 |
+| $B$     |     3 |       2 |
+| $C$     |    12 |       6 |
+| $D$     |     4 |      20 |
 |---------+-------+---------|
 
-Toma 20 /ticks/ realizar un cambio de contexto; cada /quantum/ es de
-50 /ticks/, y tenemos un ordenamiento /de ronda/
+Toma 2 /ticks/ realizar un cambio de contexto; cada /quantum/ es de 5
+/ticks/, y tenemos un ordenamiento /de ronda/[fn:: Que pronto describiremos]
+
 #+end_center
 
 ** Precisiones sobre el ejemplo
+#+BEGIN_CENTER
+Nuestro ejemplo /no es realista/
+#+END_CENTER
 - ¡El cambio de contexto propuesto es desproporcionadamente largo!
   (sólo para ejemplificar)
 - Consideraremos al tiempo núcleo como si fuera un proceso más
@@ -172,7 +187,7 @@ Toma 20 /ticks/ realizar un cambio de contexto; cada /quantum/ es de
 
 ** Graficando nuestro ejemplo
 #+attr_latex: width=\textwidth
-#+caption: Ejecución de cuatro procesos con /quantums/ de 50 /ticks/ y cambios de contexto de 20 /ticks/
+#+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
 #+begin_src ditaa :file ltxpng/planificador.png :cmdline -E
 
 +----+----+----+----+----+----+----+   +----+----+----+----+----+----+
@@ -182,7 +197,7 @@ Toma 20 /ticks/ realizar un cambio de contexto; cada /quantum/ es de
 |         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
 |         |cRED B        |    |cYEL C                                                     |
 |         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
-0         |             50    |                  100                      150                      200
+0         |              5    |                  10                       15                       20
 |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 V    |    V    |    |    |    V    |    |    |    *    |    |    |    |    |    |    |    |    |    V
 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -193,7 +208,7 @@ V    |    V    |    |    |    V    |    |    |    *    |    |    |    |    |    
 |cBLU D             |      |cBLK Núcleo                            |
 +----+----+----+----+      +----+----+----+----+----+----+----+----+
 |
-200                     250                      300                      350                      400
+20                      25                       30                       35                       40
 |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 V    *    |    |    |    |    |    |    |    |    |    |    |    |    *    |    |    |    *    |    |
 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -203,21 +218,21 @@ V    *    |    |    |    |    |    |    |    |    |    |    |    |    *    |    
 
 ** Resultado de nuestro ejemplo
 #+begin_center
-|----------+-----+-----+-----+-------+-------|
-| Proceso  | $t$ | $T$ | $E$ |   $P$ |   $R$ |
-|----------+-----+-----+-----+-------+-------|
-| $A$      |  70 | 210 | 140 |   3.0 |  0.33 |
-| $B$      |  30 |  80 |  50 |  2.66 |  0.37 |
-| $C$      | 120 | 320 | 140 |  2.66 |  0.37 |
-| $D$      |  40 | 140 | 100 |   3.5 |  0.28 |
-| Núcleo   | 140 | 400 | 260 |   4.0 |  0.25 |
-|----------+-----+-----+-----+-------+-------|
-| Promedio |  80 | 230 | 138 | 2.875 | 0.347 |
-|----------+-----+-----+-----+-------+-------|
+| Proceso         | $t$ |   $T$ |   $E$ |   $P$ |    $R$ |
+|-----------------+-----+-------+-------+-------+--------|
+| $A$             |   7 |    21 |    14 |   3.0 |   0.33 |
+| $B$             |   3 |     8 |     5 |  2.66 |   0.37 |
+| $C$             |  12 |    32 |    14 |  2.66 |   0.37 |
+| $D$             |   4 |    14 |    10 |   3.5 |   0.28 |
+| Promedio /útil/ | 6.5 | 18.75 | 10.75 | 2.958 | 0.3383 |
+|-----------------+-----+-------+-------+-------+--------|
+| Núcleo          |  14 |    40 |    26 |   4.0 |   0.25 |
+|-----------------+-----+-------+-------+-------+--------|
+| Promedio total  |   8 |    23 |  13.8 | 2.875 |  0.347 |
 
-- Tiempo kernel :: 140 /ticks/
+- Tiempo kernel :: 14 /ticks/
 - Tiempo desocupado :: 0 /ticks/
-- Utilización del CPU :: 260 /ticks/
+- Utilización del CPU :: 26 /ticks/
 #+end_center
 
 ** Frecuencias
@@ -239,11 +254,481 @@ Esto significa:
                 crecer. $R$ se decrementa para todos.
 
 * Algoritmos de planificación
+** ¿Cuándo se ejecuta el /despachador/?
+#+BEGIN_CENTER
+Cuando un proceso:
+#+END_CENTER
+1. Pasa de /ejecutando/ a /en espera/
+   - p.ej. por solicitar E/S, sincronización con otro proceso, /ceder
+     el paso/ (=yield=)
+2. Pasa de /ejecutando/ a /listo/
+   - p.ej. al ocurrir una interrupción
+3. Deja de estar /en espera/ para estar /listo/
+   - p.ej. cuando finaliza la operación E/S que solicitó
+4. Pasa de /ejecutando/ a /terminado/
+   - Cuando finaliza su ejecución
+#+BEGIN_CENTER
+Para la multitarea cooperativa, pueden ser sólo 1 y 4.
+#+END_CENTER
+** Nuestros procesos base
+#+BEGIN_CENTER
+Para presentar los diferentes algoritmos, usarmos la siguiente tabla
+de procesos:
+
+|          | Tiempo de |    Tiempo |
+| Proceso  |   llegada | requerido |
+|          |           |     ($t$) |
+|----------+-----------+-----------|
+| A        |         0 |         3 |
+| B        |         1 |         5 |
+| C        |         3 |         2 |
+| D        |         9 |         5 |
+| E        |        12 |         5 |
+| Promedio |           |         4 |
+#+END_CENTER
+
 ** Primero llegado, primero servido (/FCFS/)
+- /First Come, First Serve/.
+  - También referido como /FIFO/ (/First In, First Out/)
+- El esquema más simple de planificación
+- Apto para multitarea cooperativa
+- Cada proceso se ejecuta en órden de llegada
+- Hasta que /suelta el control/
+** Primero llegado, primero servido (/FCFS/)
+#+attr_latex: width=\textwidth
+#+caption: Primero llegado, primero servido (FCFS)
+#+begin_src ditaa :file ltxpng/fcfs.png :cmdline -E
+  +--------------+                             +----+------------------------+
+  |cBLU  A       |                             |cBLK|cGRE      D             |
+  +--------------+                             +----+------------------------+
+  |                                            |
+  |    +---------+------------------------+    |
+  |    |cBLK     |cRED       B            |    |              +--------------+------------------------+
+  |    +---------+------------------------+    |              |cBLK          |cPNK        E           |
+  |    |                                       |              +--------------+------------------------+
+  |    |         +------------------------+---------+         |
+  |    |         |cBLK                    |cYEL C   |         |
+  |    |         +------------------------+---------+         |
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cRED                    |cYEL     |cGRE                    |cPNK                    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Primero llegado, primero servido (/FCFS/)
+| Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
+|----------+--------+-----+-----+-----+------|
+| A        |      0 |   3 |   3 |   0 |    1 |
+| B        |      3 |   8 |   7 |   2 |  1.4 |
+| C        |      8 |  10 |   7 |   5 |  3.5 |
+| D        |     10 |  15 |   6 |   1 |  1.2 |
+| E        |     15 |  20 |   8 |   3 |  1.6 |
+|----------+--------+-----+-----+-----+------|
+| Promedio |        |     | 6.2 | 2.2 | 1.74 |
+
+** Primero llegado, primero servido (/FCFS/)
+- La /sobrecarga administrativa/ es mínima
+  - El algoritmo es extremadamente simple: una cola FIFO
+  - Efectúa el mínimo posible de cambios de contexto
+  - No requiere hardware de apoyo (temporizador / interrupciones)
+  - \rightarrow /Principio de histéresis/ (Finkel): ``Hay que
+    resistirse al cambio''
+
+- El rendimiento percibido por los últimos procesos disminuye
+  - Los procesos cortos pueden esperar desproporcionadamente mucho
+    tiempo
+  - La demora aumenta fuertemente conforme crece $\rho$
+- Tendencia a la inanición cuando $\rho \ge 1$
+
 ** Ronda (/Round Robin/)
+- Busca dar buena respuesta tanto a procesos cortos como largos
+- Requiere multitarea preventiva
+- Ejecutamos cada proceso por un /quantum/
+  - Si no terminó su ejecución, se interrumpe y coloca de vuelta al
+    final de la cola
+  - Los procesos nuevos se /forman/ también al final de esta misma
+    cola
+** Ronda (/Round Robin/)
+#+attr_latex: width=\textwidth
+#+caption: Ronda (/Round Robin/)
+#+begin_src ditaa :file ltxpng/rr1.png :cmdline -E
+    A                                             D
+  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
+  |cBLU|cBLK|cBLU|cBLK     |cBLU|              |cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|
+  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+---------+----+----+----+----+----+
+  |    |cRED|cBLK|cRED|cBLK     |cRED|cBLK|cRED|cBLK|cRED|
+  |    +----+----+----+---------+----+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK|cYEL|cBLK     |cYEL|    |              |cPNK|cBLK|cPNK|cBLK|cPNK|cBLK|cPNK|cPNK|
+  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cRED|cBLU|cRED|cYEL|cBLU|cRED|cYEL|cRED|cGRE|cRED|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Ronda (/Round Robin/)
+| Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
+|----------+--------+-----+-----+-----+------|
+| A        |      0 |   6 |   6 |   3 |  2.0 |
+| B        |      1 |  11 |  10 |   5 |  2.0 |
+| C        |      4 |   8 |   5 |   3 |  2.5 |
+| D        |      9 |  18 |   9 |   4 |  1.8 |
+| E        |     12 |  20 |   8 |   3 |  1.6 |
+|----------+--------+-----+-----+-----+------|
+| Promedio |        |     | 7.6 | 3.6 | 1.98 |
+
+** Ronda (/Round Robin/)
+- Alta frecuencia de cambios de contexto
+  - A pesar de que el algoritmo es simple, la sobrecarga
+    administrativa (/burocracia/) es alta
+- Puede modificarse incrementando el /quantum/
+  - Reduce la frecuencia de cambios de contexto
+  - Para valores grandes de $q$, tiende a convertirse en FCFS
+
+** Ronda (/Round Robin/) con $q = 4$
+#+attr_latex: width=\textwidth
+#+caption: Ronda (/Round Robin/), con $q=4$
+#+begin_src ditaa :file ltxpng/rr4.png :cmdline -E
+    A                                             D
+  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |                             |cBLK|cGRE               |cBLK               |cGRE|
+  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+---------+----+----+----+----+
+  |    |cBLK     |cRED               |cBLK     |cRED|
+  |    +----+----+----+---------+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK               |cYEL     |              |cBLK     |cPNK               |cBLK|cPNK|
+  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cRED               |cYEL     |cRED|cGRE               |cPNK               |cGRE|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Ronda (/Round Robin/) con $q = 4$
+| Proceso  | Inicio | Fin | /T/ | /E/ | /P/ |
+| A        |      0 |   3 |   3 |   0 | 1.0 |
+| B        |      3 |  10 |   9 |   4 | 1.8 |
+| C        |      7 |   9 |   6 |   4 | 3.0 |
+| D        |     10 |  19 |  10 |   5 | 2.0 |
+| E        |     14 |  20 |   8 |   3 | 1.6 |
+|----------+--------+-----+-----+-----+-----|
+| Promedio |        |     | 7.2 | 3.2 | 1.88 |
+
 ** El proceso más corto a continuación (SPN)
+- /Shortest Process Next/
+- Multitarea cooperativa
+- Pero requerimos un algoritmo más /justo/ que FCFS
+- Sabemos cuánto tiempo va a requerir cada proceso
+  - No por /magia/: Podemos estimar / predecir basados en su historia
+  - SPN puede mantener la contabilidad de los procesos incluso tras
+    entregarlos de vuelta al agendador
+
+** Estimando para SPN: Promedio exponencial
+#+BEGIN_CENTER
+Es común emplear un /promedio exponencial/ para estimar la siguiente
+demanda de tiempo de $p$: Si en su última invocación empleó $q$
+quantums,
+
+$e_p' = fe_p + (1-f)q$
+\vfill
+Donde $0 \le f \le 1$ es el /factor atenuante/, determinando qué tan
+/reactivo/ será el promedio a cada cambio.
+
+Es común que $f \approx 0.9$
+#+END_CENTER
+
+** Estimando para SPN: Promedio exponencial
+#+attr_latex: width=0.7\textwidth
+#+caption: Promedio exponencial (predicción de próxima solicitud de tiempo) de un proceso. (Silberschatz, p.183)
+[[../img/promedio_exponencial.png]]
+
+** El proceso más corto a continuación (SPN)
+#+attr_latex: width=\textwidth
+#+caption: El proceso más corto a continuación (SPN)
+#+begin_src ditaa :file ltxpng/spn.png :cmdline -E
+    A                                             D
+  +----+----+----+                             +----+----+----+----+----+----+
+  |cBLU          |                             |cBLK|cGRE                    |
+  +----+----+----+                             +----+----+----+----+----+----+
+  |      B                                     |
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |cBLK               |cRED                    |
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |            C                          |                E
+  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
+  |    |         |cYEL     |                   |              |cBLK          |cPNK                    |
+  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU          |cYEL     |cRED                    |cGRE                    |cPNK                    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** El proceso más corto a continuación (SPN)
+
+| Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
+|          |        |     |     |     |      |
+|----------+--------+-----+-----+-----+------|
+| A        |      0 |   3 |   3 |   0 |  1.0 |
+| B        |      5 |  10 |   9 |   4 |  1.8 |
+| C        |      3 |   5 |   2 |   0 |  1.0 |
+| D        |     10 |  15 |   6 |   1 |  1.2 |
+| E        |     15 |  20 |   8 |   3 |  1.6 |
+|----------+--------+-----+-----+-----+------|
+| Promedio |        |     | 5.6 | 1.6 | 1.32 |
+
+** El proceso más corto a continuación (SPN)
+- Obviamente, SPN favorece a los procesos cortos
+  - Un proceso largo puede esperar mucho tiempo antes de ser atendido
+  - Con $\rho$ alto, los procesos largos sufren inanición
+- Con una cola de procesos listos chica, el resultado es similar a
+  FCFS
+  - Pero vimos que una sóla permutación entre el órden de $B$ y $C$
+    redujo fuertemtente los factores de penalización
+
+** SPN preventivo (PSPN)
+- Emplea la estrategia de SPN, pero interrumpe cada /quantum/
+- Finkel observa que la penalización a procesos largos no es mucho
+  peor que la de la ronda
+- Mantiene mejores promedios, porque los procesos cortos salen más
+  temprano de la cola.
+
+** El más penalizado a continuación (HPRN)
+- /Highest Penalty Ratio Next/
+- Multitarea cooperativa
+  - Las alternativas (FCFS y SPN) parecen injustas para muchos proesos
+  - Busca otorgar un mejor balance
+- Todos los procesos incian con un valor de penalización $P = 1$
+- Cada vez que un proceso es obligado a esperar un tiempo $w$ por
+  otro, $P = \frac{w+t}{t}$ (acumulando $w$)
+- Se elige el proceso cuyo valor de $P$ sea mayor
+
+** El más penalizado a continuación (HPRN)
+- Mientras $\rho < 1$, HPRN evita inanición incluso en procesos largos
+- Finkel apunta que, ante la experimentación, HPRN se ubica siempre
+  entre FCFS y SPN
+- Principal desventaja: Es un algoritmo /caro/
+  - Cuando hay muchos procesos en la cola, $P$ tiene que calcularse
+    para todos ellos a cada invocación del despachador
+
 ** Retroalimentación multinivel (FB)
+- /Multilevel Feedback/
+- Multitarea preventiva
+- Se crea no una, sino varias colas de procesos listos
+  - Cada cola con un distinto nivel de prioridad, $C_P$
+- El despachador toma el proceso al frente de la cola de más
+  prioridad
+- Tras $n$ ejecuciones, el proceso es /degradado/ a $C_{P+1}$
+- Favorece a los procesos cortos
+  - Terminan su trabajo sin ser marcados como de prioridad inferior
+- El algoritmo es /barato/
+  - Sólo hay que actualizar a un proceso a cada ejecución, y evaluar un
+    número limitado de colas
+
+** Retroalimentación multinivel (FB)
+#+attr_latex: width=\textwidth
+#+caption: Retroalimentación multinivel (FB) básica. En la línea superior al proceso se muestra la cola antes del /quantum/ en que se ejecuta.
+#+begin_src ditaa :file ltxpng/fb_bas.png :cmdline -E
+  0 A       1                   2              0 D  1    2                   3              4
+  +----+----+----+----+----+----+----+         +----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cBLK|cBLU|cBLK          |cBLU|         |cGRE|cGRE|cGRE|cBLK          |cGRE|cBLK     |cGRE|
+  +----+----+----+----+----+----+----+         +----+----+----+----+----+----+----+----+----+----+
+  |    0 B            1              2    3    |                                       4
+  |    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |    |cRED|cBLK     |cRED|cBLK     |cRED|cRED|cBLK                                   |cRED|
+  |    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |    |         0 C       1                   |              0 E  1    2          3             4
+  |    |         +----+----+----+              |              +----+----+----+----+----+----+----+----+
+  |    |         |cYEL|cBLK|cYEL|              |              |cPNK|cPNK|cPNK|cBLK|cPNK|cBLK     |cPNK|
+  |    |         +----+----+----+              |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cRED|cBLU|cYEL|cRED|cYEL|cBLU|cRED|cRED|cGRE|cGRE|cGRE|cPNK|cPNK|cPNK|cGRE|cPNK|cRED|cGRE|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Retroalimentación multinivel (FB)
+#+BEGIN_CENTER
+Fenómenos observados:
+\vfill
+Al /tick/ 8, 10, 11, 13, 14, el despachador interrumpe al proceso
+activo /y lo vuelve a programar/
+#+END_CENTER
+- En una implementación ingenua, esto causa un cambio de contexto
+  - Burocracia innecesaria
+- ¿Puede prevenirse esta interrupción?
+
+** Retroalimentación multinivel (FB)
+
+| Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
+|          |        |     |     |     |      |
+|----------+--------+-----+-----+-----+------|
+| A        |      0 |   7 |   7 |   3 |  2.3 |
+| B        |      1 |  18 |  17 |  12 |  3.4 |
+| C        |      3 |   6 |   3 |   1 |  1.5 |
+| D        |      9 |  19 |  10 |   5 |  2.0 |
+| E        |     12 |  20 |   8 |   3 |  1.6 |
+|----------+--------+-----+-----+-----+------|
+| Promedio |        |     |   9 |   5 | 2.16 |
+
+** Retroalimentación multinivel (FB)
+- ¡Pero todos los números apuntan a que es una peor estrategia que
+  las anteriores!
+- Los únicos beneficiados son los recién llegados
+  - Entran a la cola de mayor prioridad
+  - Un proceso largo, a mayor $\rho$, enfrenta inanición
+- El rendimiento del algoritmo puede ajustarse con dos variables
+  básicas:
+  - $n$ :: Cuántas ejecuciones para ser /degradado/ a $C_{P+1}$
+  - $Q$ :: Duración del /quantum/ de las siguientes colas
+- Veamos cómo se comporta cuando:
+  - Mantenemos $n = 1$
+  - $Q = 2^{nq}$ (donde $q$ es la duración del /quantum/ base)
+
+** Retroalimentación multinivel (FB)
+#+attr_latex: width=\textwidth
+#+caption: Retroalimentación multinivel (FB) con $Q$ exponencial
+#+begin_src ditaa :file ltxpng/fb_exp.png :cmdline -E
+  0 A       1                                    D  0    1                        2
+  +----+----+----+----+                        +----+----+----+----+----+----+----+----+----+
+  |cBLU|cBLK|cBLU     |                        |cBLK|cGRE|cGRE     |cBLK          |cGRE     |
+  +----+----+----+----+                        +----+----+----+----+----+----+----+----+----+
+  |    0 B                 1              2    |
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |cRED|cBLK          |cRED     |cBLK|cRED     |
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |           C  0              1         |                E  0    1                   2
+  |    |         +----+----+----+----+----+    |              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK|cYEL|cBLK     |cYEL|    |              |cBLK|cPNK|cPNK     |cBLK     |cPNK     |
+  |    |         +----+----+----+----+----+    |              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cRED|cBLU     |cYEL|cRED     |cYEL|cRED     |cGRE|cGRE     |cPNK|cPNK     |cGRE     |cPNK     |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Retroalimentación multinivel (FB)
+#+BEGIN_CENTER
+Fenómenos observados:
+#+END_CENTER
+- Aunque FB favorece a los procesos recién llegados, al /tick/ 3, 9 y
+  10 los procesos que llegan son puestos en espera
+  - Llegaron a la mitad del /quantum/ largo de otro proceso
+
+** Retroalimentación multinivel (FB)
+
+| Proceso  | Inicio | Fin | /T/ | /E/ | /P/ |
+|          |        |     |     |     |     |
+|----------+--------+-----+-----+-----+-----|
+| A        |      0 |   4 |   4 |   1 | 1.3 |
+| B        |      1 |  10 |   9 |   4 | 1.8 |
+| C        |      4 |   8 |   5 |   3 | 2.5 |
+| D        |     10 |  18 |   9 |   4 | 1.8 |
+| E        |     13 |  20 |   8 |   3 | 1.6 |
+|----------+--------+-----+-----+-----+-----|
+| Promedio |        |     |   7 |   3 | 1.8 |
+
+** Retroalimentación multinivel (FB)
+- Con $Q$ exponencial, los promedios resultan incluso mejores que
+  /ronda/
+  - Típicamente los incrementos son más suaves — $Q=nq$ o incluso $q=q\log(n)$
+  - Un proceso largo con $Q$ exponencial puede causar inanición por
+    largo tiempo
+- Para evitar la inanición ante un $\rho$ alto, puede considerarse la
+  retroalimentación en sentido inverso
+  - Si un proceso largo es degradado a $C_P$ y pasa demasiado tiempo
+    sin ejecutarse, promoverlo de vuelta a $C_{P-1}$
+
+** Retroalimentación multinivel (FB)
+- El mecanismo es muy flexible, y permite muchas mejorías simples
+- Hoy en día es empleado por muchos de los principales sistemas operativos
+  - FreeBSD, Linux (pre-2.6), MacOS X, NetBSD, Solaris, Windows (2000
+    en adelante) (ref: Wikipedia "Scheduling algorithm")
+  - Con diferentes parámetros y prioridades
+
 ** Ronda egoísta (SRR)
+- /Selfish Round Robin/
+- Multitarea preventiva
+- Favorece a los proesos que /ya llevan tiempo ejecutando/ sobre los
+  recién llegados
+  - Un proeso nuevo se forma en la cola de /procesos nuevos/, el
+    despachador avanza sólo sobre los /procesos aceptados/
+- Parámetros ajustables:
+  - $a$ :: Ritmo de incremento de prioridad de procesos /aceptados/
+  - $b$ :: Ritmo de incremento de prioridad de procesos /nuevos/
+- Cuando la prioridad de un proceso nuevo /alcanza/ a la de uno
+  aceptado, éste se acepta.
+
+** Ronda egoísta (SRR)
+#+attr_latex: width=\textwidth
+#+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
+#+begin_src ditaa :file ltxpng/srr.png :cmdline -E
+  0 A  1    2    3                             0 D  2    3    4    5    6
+  +----+----+----+----+                        +----+----+----+----+----+----+
+  |cBLU|cBLU|cBLK|cBLU|                        |cBLK|cGRE|cGRE|cGRE|cGRE|cGRE|
+  +----+----+----+----+                        +----+----+----+----+----+----+
+  |    0 B  2    3    4    5    6    7    8    |9
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |cBLK|cRED|cBLK|cRED|cRED|cBLK|cRED|cBLK|cRED|
+  |    +----+----+----+----+----+----+----+----+----+
+  |    |         0 C  2    4    6    7    8    |              0 E  2    4    6    7    8    9    10
+  |    |         +----+----+----+----+----+----+              +----+----+----+----+----+----+----+----+
+  |    |         |cBLK          |cYEL|cBLK|cYEL|              |cBLK          |cPNK|cPNK|cPNK|cPNK|cPNK|
+  |    |         +----+----+----+----+----+----+              +----+----+----+----+----+----+----+----+
+  0    |         |         5                   |   10         |             15                       20
+  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+  |cBLU|cBLU|cRED|cBLU|cRED|cRED|cYEL|cRED|cYEL|cRED|cGRE|cGRE|cGRE|cGRE|cGRE|cPNK|cPNK|cPNK|cPNK|cPNK|
+  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+#+end_src
+
+** Ronda egoísta (SRR)
+| Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
+|          |        |     |     |     |      |
+|----------+--------+-----+-----+-----+------|
+| A        |      0 |   4 |   4 |   1 |  1.3 |
+| B        |      2 |  10 |   9 |   4 |  1.8 |
+| C        |      6 |   9 |   6 |   4 |  3.0 |
+| D        |     10 |  15 |   6 |   1 |  1.2 |
+| E        |     15 |  20 |   8 |   3 |  1.6 |
+|----------+--------+-----+-----+-----+------|
+| Promedio |        |     | 6.6 | 2.6 | 1.79 |
+
+** Ronda egoísta (SRR)
+- Mientras $\frac{b}{a} < 1$:
+  - Los procesos nuevos serán aceptados eventualmente
+  - Si el control va alternando entre dos procesos, su prioridad se
+    mantendrá igual, y serán despachados por ronda simple
+- Si $\frac{b}{a} \ge 1$, el proceso en ejecución terminará antes de
+  que se acepte el nuevo
+  - Tiende a FCFS
+- Si $\frac{b}{a} = 0$ (esto es, si $b = 0$)
+  - Los procesos recién llegados son aceptados inmediatamente
+  - Tiende a ronda
+- Si $0 < \frac{b}{a} < 1$, la ronda es /relativamente egoísta/
+  - Se da entrada a procesos nuevos
+  - Incluso si hay procesos muy largos ejecutando
+
 ** Métodos híbridos
 ** Métodos dependientes del estado y prioridad
 ** Métodos de prioridad externa

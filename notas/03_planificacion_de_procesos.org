@@ -292,6 +292,9 @@ ante una carga dada.
 
 Revisemos, pues, los principales algoritmos de planificación.
 
+La presente sección está basada fuertemente en el capítulo 2 de /An
+operating systems vade mecum/ (Raphael Finkel, 1988).
+
 ** Primero llegado, primero servido (/FCFS/)
 
 El esquema más simple de planificación es el /Primero llegado, primero
@@ -462,6 +465,13 @@ un /quantum/ de 4 /ticks/, tendremos:
   +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
 #+end_src
 #+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+
+Si bien aumentar el /quantum/ mejora los tiempos promedio de
+respuesta, aumentarlo hasta convertirlo en un FCFS efectivo degenera
+en una penalización a los procesos cortos, y puede llevar a la
+inanición cuando $\rho > 1$. Silberschatz apunta (p.188) a que
+típicamente el /quantum/ debe mantenerse inferior a la duración
+promedio del 80% de los procesos.
 
 ** El proceso más corto a continuación (SPN)
 
@@ -817,6 +827,34 @@ diferentes versiones de retroalimentación multinivel.
 
 ** Esquemas híbridos
 
+En líneas generales, podemos clasificar a los siete algoritmos
+presentados sobre dos discriminadores primarios: Si están pensados
+para emplearse en multitarea cooperativa o preventiva, y si emplean
+información /intrínseca/ a los procesos evaluados o no lo hacen, esto
+es, si un proceso es tratado de distinta forma dependiendo de su
+historial de ejecución.
+
+#+caption: Caracterización de los mecanismos de planificación a corto plazo
+|---------------+-------------------------+-------------------|
+|               | *No considera*          | *Considera*       |
+|               | *intrínseca*            | *intrínseca*      |
+|---------------+-------------------------+-------------------|
+| *Cooperativa* | Primero llegado         | Proceso más       |
+|               | primero servido         | corto (SPN),      |
+|               | (FCFS)                  | Proceso más       |
+|               |                         | penalizado (HPRN) |
+|---------------+-------------------------+-------------------|
+| *Preventiva*  | Ronda (RR),             | Proceso más       |
+|               | Retroalimentación (FB), | corto preventivo  |
+|               | Ronda egoísta (SRR)     | (PSPN)            |
+|---------------+-------------------------+-------------------|
+
+Ahora bien, estas características primarias pueden ser empleadas en
+conjunto, empleando diferentes algoritmos a diferentes niveles, o
+cambiándolos según el patrón de uso del sistema, aprovechando de mejor
+manera sus bondades y logrando evitar sus deficiencias. A
+continuación, algunos ejemplos de esquemas híbridos.
+
 *** Algoritmo por cola dentro de FB
 
 Al introducir varias colas, se abre la posibilidad de que cada una de
@@ -839,6 +877,16 @@ lo antes posible su ejecución.
 Podemos variar también ciertos parámetros dependiendo del estado
 actual del sistema, e incluso tomando en consideración valores
 externos al despachador. Algunas ideas al respecto son:
+
+- Si los procesos listos son /en promedio/ no muy largos, y el valor
+  de saturación es bajo ($\rho < 1$), optar por los métodos que menos
+  sobrecarga administrativa signifiquen, como FCFS o SPN (o, para
+  evitar los peligros de la multitarea cooperativa, un RR con un
+  /quantum/ muy largo). Si el despachador observa que la longitud de
+  la cola excede un valor determinado (o /muestra una tendencia/ en
+  ese sentido, al incrementarse $\rho$), cambiar a un mecanismo que
+  garantice una mejor distribución de la atención, como un RR con
+  /quantum/ corto o PSPN.
 
 - Usar un esquema simple de ronda. La duración de un /quantum/ puede
   ser ajustada periódicamente (a cada cambio de contexto, o como un
@@ -870,6 +918,16 @@ externos al despachador. Algunas ideas al respecto son:
   otros recursos. El proceso que ha sufrido del /peor servicio/ es
   seleccionado para su ejecución, y si varios empatan, se elige uno
   en ronda.
+
+  La principal desventaja de /WSN/ es que, al considerar tantos
+  factores, el tiempo requerido por un lado para recopilar todos estos
+  datos, y por otro lado calcular el peso que darán a cada uno de los
+  procesos implicados, puede impactar en el tiempo global de
+  ejecución. Es posible acudir a WSN periódicamente (y no cada vez que
+  el despachador es invocado) para que reordene las colas según
+  criterios generales, y abanzar sobre dichas colas con algoritmos más
+  simples, aunque esto reduce la velocidad de reacción ante cambios de
+  comportamiento.
 
 - Algunas versiones históricas de Unix manejaban un esquema en que la
   prioridad especificada por el usuario[fn:: La /lindura/, o
@@ -917,8 +975,130 @@ aspectos importantes de los diferentes despachadores:
 #+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
 [[./img/penalizaciones_por_algoritmo_planificador.png]]
 
+Observamos que la penalización por cambios de contexto en esquemas
+preventivos como la /ronda/ puede evitarse empleando /quantums/
+mayores. Por otro lado, ¿qué tan corto tiene sentido que sea un
+/quantum/? Con el hardware y las estructuras requeridas por los
+sistemas operativos de uso general disponibles hoy en día, un cambio
+de contexto requiere del órden de 10 microsegundos (Silberschatz,
+p.187), por lo que incluso con el /quantum/ de 10ms (el más corto que
+manejan tanto Linux como Windows), representa apenas la milésima parte
+del tiempo efectivo de proceso.
 
-* Planificación de multiprocesadores y en tiempo real
+Una estrategia empleada por Control Data Corporation para la CDC6600
+(comercializada a partir de 1964, y diseñada por Seymour Cray) fue
+emplear hardware especializado que permitiera efectivamente /compartir
+el procesador/: Un sólo procesador tenía 10 /juegos/ de registros,
+permitiéndole alternar entre 10 procesos con un /quantum/ efectivo
+igual a la velocidad del reloj. A cada paso del reloj, el procesador
+cambiaba el juego de registros. De este modo, un sólo procesador de
+muy alta velocidad para su momento (1 MHz) aparecía ante las
+aplicaciones como 10 procesadores efectivos, cada uno de 100 KHz,
+reduciendo los costos al implementar sólamente una vez cada una de las
+unidades funcionales. Podemos ver una evolución de esta idea retomada
+hacia mediados de la década del 2000 en los procesadores que manejan
+hilos de ejecución.[fn:: Aunque la arquitecura de la CDC6600 era
+/plenamente superescalar/, a diferencia de los procesadores
+/Hyperthreading/ en que para que dos instrucciones se ejecuten
+simultáneamente deben ser de naturalezas distintas, no requiriendo
+ambas de la misma /unidad funcional/ del CPU. El procesador de la
+CDC6600 no manejaba /pipelines/, sino que cada ejecución empleaba al
+CPU completo].
+
+Esta arquitectura permitía tener multitarea real sin tener que
+realizar cambios de contexto, sin embargo, al tener un /nivel de
+concurrencia/ fijo establecido en hardware no es tan fácil adecuar a
+un entorno cambiante, con picos de ocupación.
+
+* Planificación de multiprocesadores
+
+Hasta este punto, nos hemos concentrado en la planificación asumiendo
+un sólo procesador. Del mismo modo que lo que vimos hasta este
+momento, no hay una sóla estrategia que pueda ser vista como superior
+a las demás.
+
+Para trabajar en multiprocesadores, puede mantenerse una sóla lista de
+procesos e ir despachándolos a cada uno de los procesadores como
+unidades de ejecución equivalentes e idénticas, o pueden mantenerse
+listas separadas de procesos. Veremos algunos argumentos respecto a
+estos enfoques.
+
+** Afinidad a procesador
+
+En un entorno multiprocesador, después de que un proceso se ejecutó
+por cierto tiempo, tendrá parte importante de sus datos copiados en el
+caché del procesador en el que fue ejecutado. Si el despachador
+decidiera lanzarlo en un procesador que no compartiera dicho caché,
+estos datos tendrían que ser /invalidados/ para mantener la
+coherencia, y muy probablemente (por /localidad de referencia/) serían
+vueltos a cargar al caché del nuevo procesador.
+
+Resulta obvio por esto que un proceso que fue ejecutado en determinado
+procesador vuelva a ser ejecutado en el mismo, esto es, el proceso
+/tiene afinidad/ por cierto procesador. Un proceso que
+/preferentemente/ será ejecutado en determinado procesador se dice que
+/tiene afinidad suave/ por ese procesador, pero determinados patrones
+de carga (por ejemplo, una mucho mayor cantidad de procesos afines a
+cierto procesador que a otro, saturando su cola de procesos listos,
+mientras que el segundo procesador tiene tiempo disponible) pueden
+llevar a que el despachador decida activarlo en otro procesador.
+
+Por otro lado, algunos sistemas operativos ofrecen la posibilidad de
+declarar /afinidad dura/, con lo cual se /garantiza/ a un proceso que
+siempre será ejecutado en un procesador, o en un conjunto de
+procesadores.
+
+Un entorno NUMA, por ejemplo, funcionará mucho mejor si el sistema que
+lo emplea maneja tanto un esquema de afinidad dura como algoritmos de
+asignación de memoria que le aseguren que un proceso siempre se
+ejecutará en el procesador que tenga mejor acceso a sus datos.
+
+** Balanceo de cargas
+
+En un sistema multiprocesador, la situación ideal es que todos los
+procesadores estén despachando trabajos al 100% de su capacidad. Sin
+embargo, ante una definición tan rígida, la realidad es que siempre
+habrá uno o más procesadores con menos del 100% de carga, o uno o más
+procesadores con procesos encolados y a la espera, o incluso ambas
+situaciones.
+
+La divergencia entre la carga de cada uno de los procesadores debe ser
+lo más pequeña posible. Para lograr esto, podemos emplear esquemas de
+/balanceo de cargas/: Algoritmos que analicen el estado de las colas
+de procesos y, de ser el caso, transfieran procesos entre las colas
+para homogeneizarlas. Claro está, el balanceo de cargas puede actuar
+precisamente en sentido contrario de la afinidad al procesador, y
+efectivamente puede reubicar a los procesos con afinidad suave.
+
+Hay dos estrategias primarias de balanceo: Por un lado, la migración
+activa o migración /por empuje/ (/push migration/) consiste en una
+tarea que ejecuta como parte del núcleo y periódicamente revisa el
+estado de los procesadores, y en caso de encontrar un desbalance mayor
+a cierto umbral, /empuja/ a uno o más procesos de la cola del
+procesador más ocupado a la del procesador más libre. Linux ejecuta
+este algoritmo cada 200 milisegundos.
+
+Por otro lado, está la migración pasiva o migración /por jalón/ (/pull
+migration/). Cuando algún procesador queda sin tareas pendientes,
+ejecuta al proceso especial /desocupado/ (/idle/). Ahora, el proceso
+/desocupado/ no significa que el procesador detenga su actividad — Ese
+tiempo puede utilizarse para ejecutar tareas del núcleo. Una de esas
+tareas puede consistir en averiguar si hay procesos en espera en algún
+otro de los procesadores, y de ser así, /jalarlo/ a la cola de este
+procesador.
+
+Ambos mecanismos pueden emplearse –y normalmente lo hacen– en el mismo
+sistema. Los principales sistemas operativos modernos emplean casi
+siempre ambos mecanismos.
+
+Un mecanismo que evitaría la necesidad de implementar esquemas de
+balanceo puede ser el que existiera una sóla cola de procesos y que
+los distintos procesadores fueran avanzando con ésta; un mecanismo
+así, sin embargo, haría mucho más difícil mantener la afinidad a
+cierto procesador y restaría flexibilidad al sistema completo, por lo
+que prácticamente no se ve.
+
+* Tiempo real
 
 * Planificación de hilos
 * Recursos adicionales

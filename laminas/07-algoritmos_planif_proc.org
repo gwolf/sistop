@@ -839,8 +839,7 @@ descriptores primarios
   - Entre más procesos pendientes, mayor el peso que /modifique/ a la
     prioridad
 
-
-* Resumiendo
+* Resumiendo y temas relacionados
 ** Sobrecarga administrativa
 #+attr_latex: width=0.7\textwidth
 #+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
@@ -887,3 +886,76 @@ descriptores primarios
 - Esquema /comparable/ con el /HyperThreading/ de procesadores actuales
   - Aunque /HyperThreading/ busca aprovechar las diferentes fases del
     /pipeline/, que no existía en 1964
+
+** Relación entre hilos y procesos
+#+BEGIN_CENTER
+¿Cómo /entiende/ el despachador a los hilos?
+
+Tres modelos principales de /mapeo/:
+#+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.33\textwidth}
+#+BEGIN_CENTER
+Muchos a uno
+#+END_CENTER
+#+attr_latex: width=\textwidth
+[[../img/hilos_muchos_a_uno.png]]
+#+latex: \end{column}\begin{column}{0.33\textwidth}
+#+BEGIN_CENTER
+Uno a uno
+#+END_CENTER
+#+attr_latex: width=\textwidth
+[[../img/hilos_uno_a_uno.png]]
+#+latex: \end{column}\begin{column}{0.33\textwidth}
+#+BEGIN_CENTER
+Muchos a muchos
+#+END_CENTER
+#+attr_latex: width=\textwidth
+[[../img/hilos_muchos_a_muchos.png]]
+#+LaTeX: \end{column}\end{columns}
+- Muchos a uno: Hilos de usuario o /hilos verdes/
+- Uno a uno y muchos a muchos: Hilos de núcleo
+#+latex: \vfill {\scriptsize
+Imágenes: /[[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale, Chathura Herath, Indiana University]]/
+#+latex: }
+
+** El /ámbito de contención/
+#+BEGIN_CENTER
+¿Recibe cada uno de los hilos /la misma atención/ que recibiría un
+proceso? Hay dos enfoques:
+#+END_CENTER
+
+- /Ámbito de contención por sistema/ (System Contention Scope, SCS)
+- /Ámbito de contencion por proceso/ (Process Contention Scope, PCS)
+
+#+BEGIN_CENTER
+El /ámbito de contención/ se refiere a cuál será la estructura dentro
+de la cual coexisten los hilos, y dentro de la cual cada hilo
+/contenderá/ por el procesador.
+#+END_CENTER
+
+** Ámbito de contención por sistema
+- Modelo /uno a uno/: Los hilos son tratados, para propósitos de
+  planificación, cual procesos normales
+  - La creación de un hilo equivale a la creación de un /proceso
+    ligero/ (LWP)
+- Puede aprovechar al paralelismo, hacer llamadas /bloqueantes/ sin
+  penalizar a los demás hilos
+  - Para propósitos prácticos, son procesos con (casi) toda la
+    memoria compartida
+- Implementación primaria en Solaris, Linux, Windows
+  - Requisito: Crear LWPs debe ser /barato/
+
+** Ámbito de contención por proceso
+- Modelo /muchos a muchos/: Los hilos dentro del espacio de
+  ejecución de un proceso pueden ser /agrupados/
+  - Hilos /unidos/ :: (/bound threads/) Varios hilos son agrupados
+                      en un sólo LWP
+  - Hilos /no unidos/ :: (unbound threads): Cada uno se ejecuta en
+       su propio LWP
+- Implementado por algunos Unixes históricos (IRIX, HP-UX, Tru64),
+  así como por algunas bibliotecas de manejo de hilos.
+
+** Multiprocesamiento: ¿Una cola o varias?
+** Multiprocesamiento: Afinidad
+** Multiprocesamiento: Balanceo de cargas
+** Multiproc.: Hilos hardware (/hyperthreading/)

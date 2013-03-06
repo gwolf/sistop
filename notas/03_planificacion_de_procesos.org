@@ -953,6 +953,46 @@ externos al despachador. Algunas ideas al respecto son:
   caro computacionalmente, aunque más justo, que aquellos sobre los
   cuales construye.
 
+** Manejo de los hilos
+
+Como vimos en la unidad de /Administración de procesos/, hay dos
+clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
+que son completamente gestionados dentro del proceso y sin ayuda del
+sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
+son gestionados por el sistema operativo como si fueran procesos.
+
+No nos ocupamos en este caso de los primeros — Cada marco de
+desarrollo o máquina virtual que emplee /hilos de usuario/
+actuará cual sistema operativo ante ellos, probablemente con alguno
+de los mecanismos ilustrados anteriormente.
+
+Cuando hablamos de los /hilos de núcleo/, nos encontramos con que el
+despachador en realidad se encarga de planificar /hilos/, esto es, un
+proceso que no crea hilos internamente es tratado como si fuera un
+solo hilo.
+
+Hay dos enfoques respecto a la /contención/ que deben tener los
+hilos, esto es: En el momento que un proceso separa su ejecución en
+dos hilos, ¿debe cada uno de estos recibir la misma atención que
+recibiría un proceso completo?
+
+Una respuesta es que todos los hilos deben ser atendidos sin exceder
+el tiempo que sería asignado a un sólo proceso. Esto se conoce como
+/Ámbito de contención por proceso/ (/Process Contention Scope/,
+/PCS/). Este modelo es muchas veces denominado /uno a muchos/, dado
+que dentro del espacio de ejecución de un proceso son /agrupados/
+muchos hilos.
+
+En contraposición, si cada hilo es visto por el planificador como un
+proceso independiente, hablamos de un /Ámbito de contención por
+sistema/ (/System Contention Scope/, /SCS/). Este modelo es también
+llamado /uno a uno/, dado que los hilos son tratados, para propósitos
+de planificación, cual procesos normales.
+
+Los sistemas operativos Windows, Linux y Solaris implementan
+únicamente contención por sistema (SCS); algunos Unixes históricos
+(IRIX, HP-UX y Tru64) emplean contención por proceso (PCS).
+
 ** Resumiendo
 
 En esta sección presentamos algunos mecanismos básicos de
@@ -973,7 +1013,7 @@ aspectos importantes de los diferentes despachadores:
 #+attr_html: height="490"
 #+attr_latex: width=0.7\textwidth
 #+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
-[[./img/penalizaciones_por_algoritmo_planificador.png]]
+[[./img/tiempo_en_espera_por_algoritmo_planificador.png]]
 
 Observamos que la penalización por cambios de contexto en esquemas
 preventivos como la /ronda/ puede evitarse empleando /quantums/
@@ -1009,6 +1049,7 @@ Esta arquitectura permitía tener multitarea real sin tener que
 realizar cambios de contexto, sin embargo, al tener un /nivel de
 concurrencia/ fijo establecido en hardware no es tan fácil adecuar a
 un entorno cambiante, con picos de ocupación.
+
 
 * Planificación de multiprocesadores
 
@@ -1091,16 +1132,138 @@ Ambos mecanismos pueden emplearse –y normalmente lo hacen– en el mismo
 sistema. Los principales sistemas operativos modernos emplean casi
 siempre ambos mecanismos.
 
-Un mecanismo que evitaría la necesidad de implementar esquemas de
-balanceo puede ser el que existiera una sóla cola de procesos y que
-los distintos procesadores fueran avanzando con ésta; un mecanismo
-así, sin embargo, haría mucho más difícil mantener la afinidad a
-cierto procesador y restaría flexibilidad al sistema completo, por lo
-que prácticamente no se ve.
+*** Una sóla cola de procesos
+
+En esta sección partimos del supuesto que hay una cola de procesos
+listos por cada procesador. Si, en cambio, hubiera una cola global de
+procesos listos de la cual el siguiente proceso a ejecutarse fuera
+asignándose al siguiente procesador, fuera éste cualquiera de los
+disponibles, podríamos ahorrarnos incluso elegir entre una estrategia
+de migración /por empuje/ o /por jalón/ — Mientras hubiera procesos
+pendientes, éstos serían asignados al siguiente procesador que
+tuviera tiempo disponible.
+
+El enfoque de una sóla cola, sin embargo, no se usa en ningún sistema
+en uso amplio. Esto es en buena medida porque un mecanismo así haría
+mucho más difícil mantener la afinidad a cierto procesador y restaría
+flexibilidad al sistema completo.
+
+Como sea, debemos mantener en mente que todo balanceo de cargas que
+se haga entre los procesadores conllevará una penalización en
+términos de afinidad al CPU.
+
+Los procesadores actuales normalmente tienen disponibles varios
+niveles de caché; si un proceso es migrado entre dos núcleos del mismo
+procesador, probablemente sólo haga falta invalidar los datos en el
+caché más interno (L1), dado que el caché en chip (L2) es compartido
+entre los varios núcleos del mismo chip; si un proceso es migrado a
+un CPU físicamente separado, será necesario invalidar también el
+caché en chip (L2), y mantener únicamente el del controlador de
+memoria (L3).
+
+Pero dado que la situación antes descrita varía de computadora a
+computadora, no podemos enunciar una regla general — Más allá de que
+el sistema operativo debe conocer cómo están estructurados los
+diversos procesadores que tiene a su disposición, y buscar realizar
+las migraciones /más baratas/, aquellas que tengan lugar entre los
+procesadores más cercanos.
+
+*** Procesadores con soporte a /hilos hardware/ (/hyperthreading/)
+
+El término de /hilos/ como abstracción general de algo que corre con
+mayor frecuencia y dentro de un mismo proceso puede llevarnos a una
+confusión, dado que en esta sección abordaremos dos temas
+relacionados. En este caso, nos referimos a los hilos en hardware que
+forman parte de ciertos procesadores, ofreciendo al sistema una
+/casi/ concurrencia adicional.
+
+Conforme han subido las frecuencias de reloj en el cómputo más allá de
+lo que podemos llevar al sistema entero como una sóla unidad, una
+respuesta recurrente ha sido incrementar el paralelismo. Y esto no
+sólo se hace proveyendo componentes completos adicionales, sino que
+separando las /unidades funcionales/ de un procesador.
+
+El flujo de una sóla instrucción a través de un procesador simple como
+el MIPS puede ser dividido en cinco secciones principales, creando una
+estructura conocida como /pipeline/ (tubería):
+
+- Recuperación de la instrucción (/Instruction Fetch/, IF)
+- Decodificación de la instrucción (/Instruction Decode/, ID)
+- Ejecución (/Execution/, EX)
+- Acceso a datos (MEM)
+- Almacenamiento (Writeback, WB)
+
+#+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
+#+BEGIN_SRC ditaa :file ltxpng/pipeline.png :cmdline -E
+  Instr
+     |  +--------+--------+--------+--------+--------+
+  1  |  | IF     | ID     | EX     | MEM    | WB cGRE|
+     |  +--------+--------+--------+--------+--------+--------+
+  2  |           | IF     | ID     | EX     | MEMcGRE| WB     |
+     |           +--------+--------+--------+--------+--------+--------+
+  3  |                    | IF     | ID     | EX cGRE| MEM    | WB     |
+     |                    +--------+--------+--------+--------+--------+--------+
+  4  |                             | IF     | ID cGRE| EX     | MEM    | WB     |
+     |                             +--------+--------+--------+--------+--------+--------+
+  5  |                                      | IF cGRE| ID     | EX     | MEM    | WB     |
+     |                                      +--------+--------+--------+--------+--------+
+     V
+          1       2        3         4        5        6        7        8        9
+   Reloj --------------------------------------------------------------------------------->
+#+END_SRC
+
+La complejidad de los procesadores actuales ha crecido ya por encima
+de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
+embargo tomaremos esta separación como base para la explicación. Un
+procesador puede iniciar el procesamiento de una instrucción cuando la
+siguiente apenas avanzó la quinta parte de su recorrido — De este
+modo, puede lograr un paralelismo interno, manteniendo idealmente
+siempre ocupadas a sus partes funcionales.
+
+Sin embargo, se ha observado que un hay patrones recurrentes que
+intercalan operaciones que requieren servicio de diferentes
+componentes del procesador, o que requieren de la inserción de
+/burbujas/ porque una unidad es más lenta que las otras — Lo cual
+lleva a que incluso empleando /pipelines/, un procesador puede pasar
+hasta el 50% del tiempo esperando a que haya datos disponibles
+solicitados a la memoria.
+
+Para remediar esto, varias de las principales familias de
+procesadores presentan a un mismo /núcleo/ de procesador como si
+estuviera compuesto de dos o más /hilos hardware/ (conocidos en el
+mercado como /hyper-threads/). Esto puede llevar a una mayor
+utilización del procesador, siguiendo patrones como el ilustrado en
+el esquema.
+
+#+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
+#+BEGIN_SRC ditaa :file ltxpng/hyperthread.png :cmdline -E
+hilo 1      +----+----+----+----+----+----+----+----+----+----+
+----------->|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
+            +----+----+----+----+----+----+----+----+----+----+
+
+hilo 0 +----+----+----+----+----+----+----+----+----+----+
+------>|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
+       +----+----+----+----+----+----+----+----+----+----+
+
++----+                   +----+
+|cGRE| Ciclo de cómputo  |cRED| Espera por memoria
++----+                   +----+
+#+END_SRC
+
+La planificación de los hilos hardware sale del ámbito del presente
+curso; implica cuestiones de complejidad tal como el ordenamiento
+específico de las instrucciones, predicción de ramas de ejecución, e
+incluso asuntos relativos a la seguridad, dado que se han presentado
+/goteos/ que permiten a un proceso ejecutando en un hilo /espiar/ el
+estado del procesador correspondiente a otro de los hilos.
+
+Esta estrategia guarda gran similitud, y no puede evitar hacerse el
+paralelo, con la /compartición de procesador/ presentada en la sección
+final de /Algoritmos de planificación/.
 
 * Tiempo real
 
-* Planificación de hilos
 * Recursos adicionales
 - [[http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml][Thread Scheduling (ctd): quanta, switching and scheduling
   algorithms]] (/Javamex tutorial and performance information/)
+- [[http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors][Microprocessor Design / Pipelined Processors]], WikiBooks.org

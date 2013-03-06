@@ -501,14 +501,14 @@ Es común que $f \approx 0.9$
   - Pero vimos que una sóla permutación entre el órden de $B$ y $C$
     redujo fuertemtente los factores de penalización
 
-** SPN preventivo (PSPN)
+** Variaciones sobre SPN: SPN preventivo (PSPN)
 - Emplea la estrategia de SPN, pero interrumpe cada /quantum/
 - Finkel observa que la penalización a procesos largos no es mucho
   peor que la de la ronda
 - Mantiene mejores promedios, porque los procesos cortos salen más
   temprano de la cola.
 
-** El más penalizado a continuación (HPRN)
+** Variaciones sobre SPN: El más penalizado a continuación (HPRN)
 - /Highest Penalty Ratio Next/
 - Multitarea cooperativa
   - Las alternativas (FCFS y SPN) parecen injustas para muchos proesos
@@ -729,6 +729,161 @@ Fenómenos observados:
   - Se da entrada a procesos nuevos
   - Incluso si hay procesos muy largos ejecutando
 
-** Métodos híbridos
-** Métodos dependientes del estado y prioridad
-** Métodos de prioridad externa
+** Clasificando a los distintos esquemas
+#+BEGIN_CENTER
+Los siete algoritmos presentados pueden caracterizarse sobre dos
+descriptores primarios
+#+END_CENTER
+- Tipo de multitarea :: si el esquema está planteado para operar bajo
+     multitarea /preventiva/ o /cooperativa/
+- Emplea información /intrínseca/ :: Si, para tomar cada decsión de
+     planificación, emplean información propia (intrínseca) a los
+     procesos evaluados, o no — Esto es, si el historial de ejecución
+     de un proceso tiene impacto en cómo será planificado a futuro.
+
+** Clasificando a los distintos esquemas
+#+caption: Caracterización de los mecanismos de planificación a corto plazo
+|---------------+-------------------------+-------------------|
+|               | *No considera*          | *Considera*       |
+|               | *intrínseca*            | *intrínseca*      |
+|---------------+-------------------------+-------------------|
+| *Cooperativa* | Primero llegado         | Proceso más       |
+|               | primero servido         | corto (SPN),      |
+|               | (FCFS)                  | Proceso más       |
+|               |                         | penalizado (HPRN) |
+|---------------+-------------------------+-------------------|
+| *Preventiva*  | Ronda (RR),             | Proceso más       |
+|               | Retroalimentación (FB), | corto preventivo  |
+|               | Ronda egoísta (SRR)     | (PSPN)            |
+|---------------+-------------------------+-------------------|
+
+* Esquemas híbridos y prioridades externas
+** Esquemas híbridos
+- Los esquemas de planificación empleados normalmente usan /mezclas/
+  de los algoritmos presentados
+- Permite emplear el algoritmo que más ventajas presente /ante una
+  situación dada/
+  - Y evitar algunas de sus deficiencias
+
+** Esquemas híbridos: Algoritmo por cola en FB
+- Manejamos varias colas en un esquema FB
+- Cada cola usa internamente un algoritmo distinto para elegir el
+  proceso que está /a la cabeza/. Algunas ideas como ejemplo:
+  - Una cola bajo PSPN: /Empuja/ a los procesos más largos hacia
+    colas que sean interrumpidas con menor frecuencia
+  - Emplear SRR para las colas de menor prioridad
+    - Sus procesos ya esperaron mucho para tener respuesta; cuando
+      obtienen el procesador, avanzan lo más ágilmente posible
+    - Pero no obstaculizan a los procesos cortos que van llegando
+
+** Esquemas híbridos: Dependientes del estado del sistema
+- Podemos considerar también información /extrínseca/ para despachar
+  - Información /externa/ al estado y ejecución de cada uno de los
+    procesos
+  - Información dependiente del estado del sistema, del tipo de
+    usuario, etc.
+- A continuación, algunos ejemplos
+
+** FCFS/SPN o RR, dependiendo de $\rho$
+- Si los procesos son /en promedio/ cortos y $\rho < 1$
+  - Métodos con la mínima sobrecarga administrativa (FCFS o SPN)
+  - O un RR con /quantum/ muy largo (evitando los problemas de la
+    multitarea cooperativa)
+- Si los procesos tienden a ser más largos o si sube $\rho$
+  - Cambiamos a RR con un /quantum/ más bajo o a PSPN
+
+** Ronda con /quantum/ dependiente de procesos pendientes
+- Esquema simple de ronda
+- La duración de un /quantum/ es ajustada periódicamente
+- Cada /quantum/ depende de la cantidad de procesos en el total de
+  procesos listos, siguiendo $Q=\frac{q}{n}$
+- Pocos procesos esperando
+  - Mayor $Q \rightarrow$ Menos cambios de contexto
+- Muchos procesos esperando
+  - Menor $Q$
+  - Nunca más allá de un minimo, para evitar sobrecarga burocrática
+
+** Ronda + Prioridad externa
+- Usamos un esquema simple de ronda, con una sola cola
+- La duración del /quantum/ dependerá de la prioridad /externa/
+  - Fijada por el usuario o por el sistema por factores /ajenos/ al
+    despachador
+- Un proceso de mayor prioridad ejecutará por mayor tiempo
+
+** /Peor servicio a continuacion/ (WSN)
+- Generalización sobre HPRN
+- No sólo se considera penalización el tiempo esperado en la cola de
+  procesos listos
+  - Veces que ha sido interrumpido por el temporizador
+  - Prioridad externa
+  - Espera por E/S u otros recursos
+- El proceso que ha /sufrido peor servicio/ es seleccionado para su
+  ejecución
+- Desventaja: Considerar demasiados factores (con distintos pesos)
+  impacta en el tiempo de ejecución del algoritmo
+  - Puede llamarse a WSN periódicamente para formar colas
+  - Proceder con esquemas más simples
+  - ...Aunque esto reduce la velocidad de reacción
+
+** /Lindura/ (/niceness/)
+- Empleado por varios Unixes históricos
+- El usuario inicia (=nice=) o modifica (=renice=) la prioridad de su
+  proceso
+  - Típicamente sólo /hacia arriba/ — Se porta /más lindo/.
+- Esta prioridad /externa/ y el tiempo consumido recientemente por el
+  proceso constituyen una prioridad /interna/
+- La prioridad interna aumenta cuando el proceso espera
+  - Por el despachador, por E/S, o cualquier otra causa
+- La prioridad interna es matizada por el tamaño de la cola de
+  procesos listos
+  - Entre más procesos pendientes, mayor el peso que /modifique/ a la
+    prioridad
+
+
+* Resumiendo
+** Sobrecarga administrativa
+#+attr_latex: width=0.7\textwidth
+#+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
+[[../img/penalizaciones_por_algoritmo_planificador.png]]
+
+** Tiempo /perdido/ por sobrecarga adm.
+#+attr_latex: width=0.7\textwidth
+#+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
+[[../img/tiempo_en_espera_por_algoritmo_planificador.png]]
+
+** Duración mínima del /quantum/
+- Vimos que la penalización en la ronda puede evitarse con /quantums/
+  mayores
+  - Pero puede degenerar en multiprocesamiento cooperativo
+- ¿Qué tan /corto/ debe ser un /quantum/?
+
+** Duración mínima del /quantum/
+- Duración de cambio de contexto /hoy en día/: $\approx 0.01ms$
+  (Silberschatz p.187)
+  - Con un /quantum/ corto, 10ms, es $\frac{1}{1000}$ la duración del tiempo
+    /efectivo/ de procesamiento
+  - Con un /quantum/ largo, 200ms, $\frac{1}{20000}$
+- No es realmente significativo — ¡Ni debe serlo!
+  - Perder 1% del tiempo de cómputo en /burocracia/ sería en general
+    visto como excesivo
+  - /Ojo/: ¡El tiempo núcleo /no sólo/ es el tiempo del cambio de proceso!
+
+** Compartir el procesador
+- Estrategia empleada por Control Data (CDC6600, 1964, diseñada por
+  Seymour Cray): Multitarea gestionada en hardware
+- Un sólo procesador, pero con 10 juegos de registros
+  - /Procesador superescalar/
+- A cada paso de reloj, avanzaba el /juego de registros/
+  - /Quantum/ efectivo igual a la velocidad del reloj
+  - Apariencia de 10 procesadores más lentos, cada uno de
+    $\frac{1}{10}$ la velocidad del /real/
+  - Multitarea sin cambios de contexto
+
+** Compartir el procesador
+- ¿Desventajas?
+  - Nivel de concurrencia fijo
+  - Difícil de adecuar a picos de ocupación
+  - Costo muy elevado
+- Esquema /comparable/ con el /HyperThreading/ de procesadores actuales
+  - Aunque /HyperThreading/ busca aprovechar las diferentes fases del
+    /pipeline/, que no existía en 1964

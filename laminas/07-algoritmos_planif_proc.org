@@ -893,39 +893,52 @@ descriptores primarios
 
 Tres modelos principales de /mapeo/:
 #+END_CENTER
-#+latex: \begin{columns}\begin{column}{0.33\textwidth}
-#+BEGIN_CENTER
-Muchos a uno
-#+END_CENTER
-#+attr_latex: width=\textwidth
+- Muchos a uno
+- Uno a uno
+- Muchos a muchos
+
+** Muchos a uno
+#+attr_latex: width=0.3\textwidth
+#+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_uno.png]]
-#+latex: \end{column}\begin{column}{0.33\textwidth}
-#+BEGIN_CENTER
-Uno a uno
-#+END_CENTER
-#+attr_latex: width=\textwidth
+- /Hilos verdes/ (o /de usuario/)
+- El SO ve un sólo proceso
+  - El tiempo se reparte dentro del proceso por mecanismos internos
+- Código más portable
+- No se aprovecha /realmente/ el paralelismo
+- Llamadas bloqueantes \rightarrow Todos esperan
+
+** Uno a uno
+#+attr_latex: width=0.3\textwidth
+#+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_uno_a_uno.png]]
-#+latex: \end{column}\begin{column}{0.33\textwidth}
-#+BEGIN_CENTER
-Muchos a muchos
-#+END_CENTER
-#+attr_latex: width=\textwidth
+- Cada hilo es un /proceso ligero/ (/lightweight process/, /LWP/)
+  - Un LWP /es/ mucho más ligero de levantar que un proceso
+  - Comparte memoria, descriptores, estructuras
+- Aprovecha tanto el paralelismo como lo permita el hardware
+  - Cada hilo puede correr en un procesador distinto, si los hay
+- El SO debe poder manejar LWP
+
+** Muchos a muchos
+#+attr_latex: width=0.3\textwidth
+#+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_muchos.png]]
-#+LaTeX: \end{column}\end{columns}
-- Muchos a uno: Hilos de usuario o /hilos verdes/
-- Uno a uno y muchos a muchos: Hilos de núcleo
-#+latex: \vfill {\scriptsize
-Imágenes: /[[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale, Chathura Herath, Indiana University]]/
-#+latex: }
+- Existen /hilos unidos/ (/bound threads/), que corresponden cada uno
+  a un LWP
+- También /hilos no unidos/ (/unbound threads/), donde /uno o más/
+  corresponden a cada LWP
+- Brindan la flexibilidad de ambos modelos
+  - Si el SO no maneja LWP, pueden caer en el modelo /uno a muchos/
+    como modo degradado
 
 ** El /ámbito de contención/
 #+BEGIN_CENTER
 ¿Recibe cada uno de los hilos /la misma atención/ que recibiría un
-proceso? Hay dos enfoques:
+proceso? Hay dos enfoques (categorización de hilos POSIX, =pthread=):
 #+END_CENTER
 
-- /Ámbito de contención por sistema/ (System Contention Scope, SCS)
-- /Ámbito de contencion por proceso/ (Process Contention Scope, PCS)
+- /Ámbito de contención de sistema/ (System Contention Scope, SCS)
+- /Ámbito de contencion de proceso/ (Process Contention Scope, PCS)
 
 #+BEGIN_CENTER
 El /ámbito de contención/ se refiere a cuál será la estructura dentro
@@ -933,29 +946,214 @@ de la cual coexisten los hilos, y dentro de la cual cada hilo
 /contenderá/ por el procesador.
 #+END_CENTER
 
-** Ámbito de contención por sistema
-- Modelo /uno a uno/: Los hilos son tratados, para propósitos de
-  planificación, cual procesos normales
-  - La creación de un hilo equivale a la creación de un /proceso
-    ligero/ (LWP)
-- Puede aprovechar al paralelismo, hacer llamadas /bloqueantes/ sin
-  penalizar a los demás hilos
-  - Para propósitos prácticos, son procesos con (casi) toda la
-    memoria compartida
-- Implementación primaria en Solaris, Linux, Windows
-  - Requisito: Crear LWPs debe ser /barato/
+** Ámbitos de contención
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+BEGIN_CENTER
+=PTHREAD_SCOPE_SYSTEM=
+#+END_CENTER
+- Todos los hilos son atendidos en el tiempo que sería asignado a /un
+  sólo proceso/
+- Modelo /muchos a uno/, así como los /hilos no unidos/ multiplexados
+  en /muchos a muchos/
+#+latex: \end{column}\begin{column}{0.5\textwidth}
+#+BEGIN_CENTER
+=PTHREAD_SCOPE_PROCESS=
+#+END_CENTER
+- Cada hilo es visto por el planificador como un proceso independiente
+- Modelo /uno a uno/ y los /hilos unidos/ en /muchos a muchos/
+#+LaTeX: \end{column}\end{columns}
+#+BEGIN_CENTER
+...Pero una implementación =pthreads= puede ofrecer sólo uno de los
+modelos \rightarrow Tanto Linux como Windows manejan sólo
+=PTHREAD_SCOPE_SYSTEM= (SCS).
+#+END_CENTER
+** Otras características en =pthreads=
+- =pthreads= incluyen varios de los otros aspectos mencionados en
+  esta unidad
+- El programador puede solicitar al núcleo la prioridad de cada uno
+  de los hilos por separado (=pthread_setschedprio=)
+- Incluso solicitar el empleo de un algoritmo de planificación en
+  específico (=sched_setscheduler=)
+- Recordemos que =pthreads= permite, en muchos casos, responder al
+  proceso /«Disculpa, no puedo hacer eso»/
 
-** Ámbito de contención por proceso
-- Modelo /muchos a muchos/: Los hilos dentro del espacio de
-  ejecución de un proceso pueden ser /agrupados/
-  - Hilos /unidos/ :: (/bound threads/) Varios hilos son agrupados
-                      en un sólo LWP
-  - Hilos /no unidos/ :: (unbound threads): Cada uno se ejecuta en
-       su propio LWP
-- Implementado por algunos Unixes históricos (IRIX, HP-UX, Tru64),
-  así como por algunas bibliotecas de manejo de hilos.
+** Multiprocesamiento
+#+BEGIN_CENTER
+¿Qué factores relativos a la planificación tenemos que considerar
+cuando hablamos de un /entorno multiprocesado/?
+#+END_CENTER
+
+** Multiprocesamiento: Afinidad
+- Cuando un proceso se ejecutó por cierto tiempo, dejó porciones de
+  su espacio de memoria en el caché del procesador
+  - Tanto segmentos de instrucciones como de datos
+- Cada procesador tiene /usualmente/ un caché independiente
+  - Puede haber un caché común a todo el sistema (L3); puede haber uno
+    por chip multicore (L2), y puede haber uno específico para cada
+    núcleo (L1)
+- Despachar a un proceso en un procesador distinto del que ya lo
+  ejecutó es un gasto inútil
+  - Invalidar el caché que empleó
+  - Re-poblar el nuevo
+
+** Multiprocesamiento: Afinidad
+- Afinidad suave :: Un proceso que /preferentemente/ será ejecutado
+                    en un determinado procesador
+
+		    Ciertos patrones de carga pueden llevar a que el
+                    despachador decida /migrarlo/ a otro procesador
+
+- Afinidad dura :: Se /garantiza/ que un proceso será ejecutado
+                   siempre en un procesador (o conjunto de
+                   procesadores)
+
+Ejemplo: En un entorno NUMA, buscamos que los procesos tengan
+/afinidad dura/ (y que el algoritmo de asignación de memoria
+considere dicha relación)
+
+** Multiprocesamiento: Balanceo de cargas
+- La situación ideal es que todos los procesadores despachen trabajos
+  al 100% de su capacidad
+  - Pero es un requisito demasiado rígido / irreal
+  - (casi) siempre habrá un procesador con tiempo libre
+  - (casi) siempre habrá procesadores con procesos encolados y en
+    espera
+  - ...O ambas situaciones
+- Para mantener la divergencia lo menor posible, se emplea el
+  /balanceo de cargas/
+
+** Multiprocesamiento: Balanceo de cargas
+- El balanceo de cargas /actúa en sentido contrario/ de la afinidad
+  al procesador
+  - Algoritmos que analizan el estado de las colas y transfieran
+    procesos entre ellas para homogeneizarlas
+- Puede reubicar procesos con afinidad suave
+  - Debe preferir reubicar procesos /sin afinidad declarada/
+  - /No debe/ reubicar procesos con afinidad dura
+
+** Estrategias de balanceo de cargas: /Por empuje/
+#+BEGIN_CENTER
+Balanceo de cargas por empuje (/push migration/)
+#+END_CENTER
+- El núcleo revisa periódicamente el estado de los procesadores
+- Si el desbalance sobrepasa cierto umbral, /empuja/ a algunos
+  procesos de una cola a otra.
+- Linux ejecuta esto cada 200ms.
+
+** Estrategias de balanceo de cargas: /Por jalón/
+#+BEGIN_CENTER
+Balanceo de cargas: Por jalón (/pull migration/)
+#+END_CENTER
+- Cuando un procesador queda sin tareas pendientes, ejecuta el
+  proceso especial /desocupado/ (/idle/)
+- /Desocupado/ no significa /no hacer nada/: Puede ejecutar tareas
+  del núcleo
+- Puede /averiguar/ si hay procesos en espera con otro procesador,
+  y /jalarlos/ al actual.
+
+#+BEGIN_CENTER
+Los mecanismos no son mutuamente exclusivos, es común que un SO emplee
+ambos.
+
+Todo balanceo de cargas conllevará una penalización en términos de
+afinidad al CPU.
+#+END_CENTER
 
 ** Multiprocesamiento: ¿Una cola o varias?
-** Multiprocesamiento: Afinidad
-** Multiprocesamiento: Balanceo de cargas
-** Multiproc.: Hilos hardware (/hyperthreading/)
+#+BEGIN_CENTER
+En un entorno multiprocesador, ¿cómo encaramos los algoritmos antes
+descritos?
+#+END_CENTER
+- Una cola global
+  - Parecería una decisión más simple
+  - Se ejecuta /un sólo despachador/ \rightarrow Ahorro de tiempo
+  - No habría que preocuparse por balanceo de cargas — Sería natural
+- Una cola por procesador
+  - Necesaria si queremos soportar manejo de afinidad al CPU
+  - Todos los sistemas en uso amplo implementan una cola por procesador
+
+** Hilos hardware (/hyperthreading/)
+- /Hilos/ es una palabra que sufre abuso en nuestro campo.
+- /Hilos hardware/ (/hyperthreading/): No tienen relación con los
+  hilos que abordamos
+  - Pero sí con el multiprocesamiento
+- La Ley de Moore no sólo ha llevado a un paralelismo /expreso/ (multinúcleo)
+  - El /pipeline/ de los procesadores hace que cada /unidad
+    funcional/ del CPU pueda estar atendiendo a una instrucción
+    distinta
+
+** Hilos hardware (/hyperthreading/): Pipelines
+- Un procesador simple/clásico (ejemplo: MIPS) puede dividir la
+  ejecución de una instrucción en 5 etapas:
+  - IF :: Recuperación de la instrucción (/Instruction Fetch/)
+  - ID :: Decodificación de la instrucción (/Instruction Decode/)
+  - EX :: Ejecución (/Execution/)
+  - MEM :: Acceso a datos
+  - WB :: Almacenamiento (Writeback)
+- Un procesador moderno presenta mucho más etapas (Pentium 4: 20
+  etapas)
+
+** Hilos hardware (/hyperthreading/): Pipelines
+#+attr_latex: width=\textwidth
+#+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
+#+BEGIN_SRC ditaa :file ltxpng/pipeline.png :cmdline -E
+  Instrucción
+       |  +--------+--------+--------+--------+--------+
+    1 -+  | IF     | ID     | EX     | MEM    | WB cGRE|
+       |  +--------+--------+--------+--------+--------+--------+
+    2 -+           | IF     | ID     | EX     | MEMcGRE| WB     |
+       |           +--------+--------+--------+--------+--------+--------+
+    3 -+                    | IF     | ID     | EX cGRE| MEM    | WB     |
+       |                    +--------+--------+--------+--------+--------+--------+
+    4 -+                             | IF     | ID cGRE| EX     | MEM    | WB     |
+       |                             +--------+--------+--------+--------+--------+--------+
+    5 -+                                      | IF cGRE| ID     | EX     | MEM    | WB     |
+       |                                      +--------+--------+--------+--------+--------+
+       V
+            
+     Reloj +-------+-------+--------+---------+--------+--------+--------+--------+--------+--->
+           |       |       |        |         |        |        |        |        |        |
+           0       1       2        3         4        5        6        7        8        9  
+#+END_SRC
+
+** Hilos hardware (/hyperthreading/): Pipelines
+- Es común que se presenten patrones de uso que requieren servicio de
+  diferentes componentes del procesador
+  - A veces con diferentes duraciones
+  - Lleva a la inserción de demasiadas /burbujas/ \rightarrow Pérdida
+    de tiempo
+- Para remediarlo, un sólo procesador (un solo núcleo) se presenta
+  como compuesto de dos o más /hilos hardware/
+  - Conocidos en el mercado como /hyper-threads/
+  - Puede aumentar el paralelismo — ¡aunque es muy improbable que sea
+    en 2x!
+
+** Hilos hardware (/hyperthreading/): Pipelines
+#+attr_latex: width=\textwidth
+#+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
+#+BEGIN_SRC ditaa :file ltxpng/hyperthread.png :cmdline -E
+hilo 1      +----+----+----+----+----+----+----+----+----+----+
+----------->|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
+            +----+----+----+----+----+----+----+----+----+----+
+
+hilo 0 +----+----+----+----+----+----+----+----+----+----+
+------>|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
+       +----+----+----+----+----+----+----+----+----+----+
+
+tiempo 1    2    3    4    5    6    7    8    9    10   11   12
+       |    |    |    |    |    |    |    |    |    |    |    |
+-------+----+----+----+----+----+----+----+----+----+----+----+--->
++----+                   +----+
+|cGRE| Ciclo de cómputo  |cRED| Espera por memoria
++----+                   +----+
+#+END_SRC
+
+** Hilos hardware (/hyperthreading/): Pipelines
+- Puede profundizarse mucho más en la planificación de hilos hardware
+  - Corresponde más bien al estudio de construcción de compiladores
+  - Y de arquitecturas de sistemas
+  - Consideraciones de seguridad entre hilos
+- Presenta gran similitud (aunque /no es lo mismo/) con la
+  /compartición de procesador/
+- No ahondaremos en el tema en este curso
+  - Se presenta para aclarar el concepto

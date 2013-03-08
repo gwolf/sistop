@@ -953,46 +953,6 @@ externos al despachador. Algunas ideas al respecto son:
   caro computacionalmente, aunque más justo, que aquellos sobre los
   cuales construye.
 
-** Manejo de los hilos
-
-Como vimos en la unidad de /Administración de procesos/, hay dos
-clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
-que son completamente gestionados dentro del proceso y sin ayuda del
-sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
-son gestionados por el sistema operativo como si fueran procesos.
-
-No nos ocupamos en este caso de los primeros — Cada marco de
-desarrollo o máquina virtual que emplee /hilos de usuario/
-actuará cual sistema operativo ante ellos, probablemente con alguno
-de los mecanismos ilustrados anteriormente.
-
-Cuando hablamos de los /hilos de núcleo/, nos encontramos con que el
-despachador en realidad se encarga de planificar /hilos/, esto es, un
-proceso que no crea hilos internamente es tratado como si fuera un
-solo hilo.
-
-Hay dos enfoques respecto a la /contención/ que deben tener los
-hilos, esto es: En el momento que un proceso separa su ejecución en
-dos hilos, ¿debe cada uno de estos recibir la misma atención que
-recibiría un proceso completo?
-
-Una respuesta es que todos los hilos deben ser atendidos sin exceder
-el tiempo que sería asignado a un sólo proceso. Esto se conoce como
-/Ámbito de contención por proceso/ (/Process Contention Scope/,
-/PCS/). Este modelo es muchas veces denominado /uno a muchos/, dado
-que dentro del espacio de ejecución de un proceso son /agrupados/
-muchos hilos.
-
-En contraposición, si cada hilo es visto por el planificador como un
-proceso independiente, hablamos de un /Ámbito de contención por
-sistema/ (/System Contention Scope/, /SCS/). Este modelo es también
-llamado /uno a uno/, dado que los hilos son tratados, para propósitos
-de planificación, cual procesos normales.
-
-Los sistemas operativos Windows, Linux y Solaris implementan
-únicamente contención por sistema (SCS); algunos Unixes históricos
-(IRIX, HP-UX y Tru64) emplean contención por proceso (PCS).
-
 ** Resumiendo
 
 En esta sección presentamos algunos mecanismos básicos de
@@ -1050,6 +1010,126 @@ realizar cambios de contexto, sin embargo, al tener un /nivel de
 concurrencia/ fijo establecido en hardware no es tan fácil adecuar a
 un entorno cambiante, con picos de ocupación.
 
+* Planificación de hilos
+
+Ahora bien, tras centrarnos para toda la presente discusión en los
+procesos, ¿cómo caben los /hilos/ en este panorama? Depende de cómo
+éstos son /mapeados/ a procesos a ojos del planificador.
+
+Como vimos en la unidad de /Administración de procesos/, hay dos
+clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
+que son completamente gestionados dentro del proceso y sin ayuda del
+sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
+son gestionados por el sistema operativo como si fueran
+procesos. Partiendo de esto, podemos hablar de tres modelos
+principales de mapeo:
+
+- Muchos a uno :: Muchos hilos son agrupados en un sólo proceso. Los
+                  /hilos verdes/ entran en este supuesto: Para el
+                  sistema operativo, hay un sólo proceso; mientras
+                  tiene la ejecución, éste se encarga de repartir el
+                  tiempo entre sus hilos.
+
+		  #+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+		  #+attr_html: height="160"
+		  #+attr_latex: width=0.3\textwidth
+		  [[./img/hilos_muchos_a_uno.png]]
+
+		  Bajo este modelo, si bien el código escrito es más
+                  portable entre diferentes sistemas operativos, los
+                  hilos no aprovechan /realmente/ al paralelismo, y
+                  todos los hilos pueden tener que bloquearse cuando
+                  uno sólo de ellos realiza una llamada /bloqueante/
+                  al sistema.
+
+- Uno a uno :: Cada hilo es ejecutado como un /proceso ligero/
+               (/lightweight process/ o /LWP/); podría dar la
+               impresión de que este esquema desperdicia la principal
+               característica de los hilos, que es una mayor sencillez
+               y rapidez de inicialización que los procesos, sin
+               embargo, la información de estado requerida para crear
+               un LWP es mucho menor que la de un proceso regular, y
+               mantiene como ventaja que los hilos continúan
+               compartiendo su memoria, descriptores de archivos y
+               demás estructuras.
+
+	       #+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+	       #+attr_html: height="161"
+	       #+attr_latex: width=0.3\textwidth
+	       [[./img/hilos_uno_a_uno.png]]
+
+	       Este mecanismo permite a los hilos aprovechar las
+               ventajas del paralelismo, pudiendo ejecutarse cada hilo
+               en un procesador distinto, y como única condición para
+               su existencia, el sistema operativo debe poder
+               implementar los LWP.
+
+- Muchos a muchos :: Este mecanismo permite que existan hilos de ambos
+     modelos: Permite la existencia de /hilos unidos/ (/bound
+     threads/), en que cada hilo corresponde a un (y sólo un) LWP, y
+     de /hilos no unidos/ (/unbound threads/), de los cuales /uno o
+     más/ estarán mapeados a cada LWP.
+
+     #+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+     #+attr_html: height="161"
+     #+attr_latex: width=0.3\textwidth
+     [[./img/hilos_muchos_a_muchos.png]]
+
+     El esquema /muchos a muchos/ proporciona las principales
+     características de ambos esquemas; en caso de ejecutarse en un
+     sistema que no soporte más que el modelo /uno a muchos/, el
+     sistema puede caer en éste como /modo degradado/.
+
+No nos ocupamos en este caso de los primeros — Cada marco de
+desarrollo o máquina virtual que emplee /hilos de usuario/
+actuará cual sistema operativo ante ellos, probablemente con alguno
+de los mecanismos ilustrados anteriormente.
+
+** Los hilos POSIX (=pthreads=)
+
+La clasificiación recién presentada de modelos de mapeo entre hilos y
+procesos se refleja aproximadamente en la categorización de los hilos
+POSIX (=pthreads=) denominada el /ámbito de contención/.
+
+Hay dos enfoques respecto a la /contención/ que deben tener los
+hilos, esto es: En el momento que un proceso separa su ejecución en
+dos hilos, ¿debe cada uno de estos recibir la misma atención que
+recibiría un proceso completo?
+
+- Ámbito de contención de proceso :: (/Process Contention Scope/,
+     /PCS/; en POSIX, =PTHREAD_SCOPE_PROCESS=) Una respuesta es que
+     todos los hilos deben ser atendidos sin exceder el tiempo que
+     sería asignado a un sólo proceso. Un proceso que consta de varios
+     hilos siguiendo el modelo /muchos a uno/, o uno que /multiplexa/
+     varios /hilos no unidos/ bajo un modelo /muchos a muchos/, se
+     ejecuta bajo este ámbito.
+
+- Ámbito de contención de sistema :: (/System Contention Scope/,
+     /SCS/; en POSIX, =PTHREAD_SCOPE_SYSTEM=) Este ámbito es cuando,
+     en contraposición, cada hilo es visto por el planificador como un
+     proceso independiente; este es el ámbito en el que se ejecutarían
+     los hilos bajo el modelo /uno a uno/, o cada uno de los /hilos
+     unidos/ bajo un modelo /muchos a muchos/, dado que los hilos son
+     tratados, para propósitos de planificación, cual procesos
+     normales.
+
+La definición de =pthreads= apunta a que, si bien el programador
+puede solicitar que sus hilos sean tratados bajo cualquiera de estos
+procesos, una implementación específica puede implementar ambos o
+sólo uno de los ámbitos. Un proceso que solicite que sus hilos sean
+programados bajo un ámbito no implementado serán ejecutados bajo el
+otro, notificando del error (pero permitiendo continuar con la
+operación).
+
+Las implementaciones de =pthreads= tanto en Windows como en Linux
+sólo contemplan SCS.
+
+Respecto a los otros aspectos mencionados en esta unidad, la
+especificación =pthreads= incluye funciones por medio de las cuales
+el programador puede solicitar al núcleo la prioridad de cada uno de
+los hilos por separado (=pthread_setschedprio=) e incluso solicitar
+el empleo de determinado algoritmo de planificación
+(=sched_setscheduler=).
 
 * Planificación de multiprocesadores
 
@@ -1073,6 +1153,22 @@ decidiera lanzarlo en un procesador que no compartiera dicho caché,
 estos datos tendrían que ser /invalidados/ para mantener la
 coherencia, y muy probablemente (por /localidad de referencia/) serían
 vueltos a cargar al caché del nuevo procesador.
+
+Los procesadores actuales normalmente tienen disponibles varios
+niveles de caché; si un proceso es migrado entre dos núcleos del mismo
+procesador, probablemente sólo haga falta invalidar los datos en el
+caché más interno (L1), dado que el caché en chip (L2) es compartido
+entre los varios núcleos del mismo chip; si un proceso es migrado a
+un CPU físicamente separado, será necesario invalidar también el
+caché en chip (L2), y mantener únicamente el del controlador de
+memoria (L3).
+
+Pero dado que la situación antes descrita varía de computadora a
+computadora, no podemos enunciar una regla general — Más allá de que
+el sistema operativo debe conocer cómo están estructurados los
+diversos procesadores que tiene a su disposición, y buscar realizar
+las migraciones /más baratas/, aquellas que tengan lugar entre los
+procesadores más cercanos.
 
 Resulta obvio por esto que un proceso que fue ejecutado en determinado
 procesador vuelva a ser ejecutado en el mismo, esto es, el proceso
@@ -1132,7 +1228,11 @@ Ambos mecanismos pueden emplearse –y normalmente lo hacen– en el mismo
 sistema. Los principales sistemas operativos modernos emplean casi
 siempre ambos mecanismos.
 
-*** Una sóla cola de procesos
+Como sea, debemos mantener en mente que todo balanceo de cargas que
+se haga entre los procesadores conllevará una penalización en
+términos de afinidad al CPU.
+
+** Colas de procesos: ¿Una o varias?
 
 En esta sección partimos del supuesto que hay una cola de procesos
 listos por cada procesador. Si, en cambio, hubiera una cola global de
@@ -1148,27 +1248,7 @@ en uso amplio. Esto es en buena medida porque un mecanismo así haría
 mucho más difícil mantener la afinidad a cierto procesador y restaría
 flexibilidad al sistema completo.
 
-Como sea, debemos mantener en mente que todo balanceo de cargas que
-se haga entre los procesadores conllevará una penalización en
-términos de afinidad al CPU.
-
-Los procesadores actuales normalmente tienen disponibles varios
-niveles de caché; si un proceso es migrado entre dos núcleos del mismo
-procesador, probablemente sólo haga falta invalidar los datos en el
-caché más interno (L1), dado que el caché en chip (L2) es compartido
-entre los varios núcleos del mismo chip; si un proceso es migrado a
-un CPU físicamente separado, será necesario invalidar también el
-caché en chip (L2), y mantener únicamente el del controlador de
-memoria (L3).
-
-Pero dado que la situación antes descrita varía de computadora a
-computadora, no podemos enunciar una regla general — Más allá de que
-el sistema operativo debe conocer cómo están estructurados los
-diversos procesadores que tiene a su disposición, y buscar realizar
-las migraciones /más baratas/, aquellas que tengan lugar entre los
-procesadores más cercanos.
-
-*** Procesadores con soporte a /hilos hardware/ (/hyperthreading/)
+** Procesadores con soporte a /hilos hardware/ (/hyperthreading/)
 
 El término de /hilos/ como abstracción general de algo que corre con
 mayor frecuencia y dentro de un mismo proceso puede llevarnos a una
@@ -1193,24 +1273,29 @@ estructura conocida como /pipeline/ (tubería):
 - Acceso a datos (MEM)
 - Almacenamiento (Writeback, WB)
 
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
 #+BEGIN_SRC ditaa :file ltxpng/pipeline.png :cmdline -E
-  Instr
-     |  +--------+--------+--------+--------+--------+
-  1  |  | IF     | ID     | EX     | MEM    | WB cGRE|
-     |  +--------+--------+--------+--------+--------+--------+
-  2  |           | IF     | ID     | EX     | MEMcGRE| WB     |
-     |           +--------+--------+--------+--------+--------+--------+
-  3  |                    | IF     | ID     | EX cGRE| MEM    | WB     |
-     |                    +--------+--------+--------+--------+--------+--------+
-  4  |                             | IF     | ID cGRE| EX     | MEM    | WB     |
-     |                             +--------+--------+--------+--------+--------+--------+
-  5  |                                      | IF cGRE| ID     | EX     | MEM    | WB     |
-     |                                      +--------+--------+--------+--------+--------+
-     V
-          1       2        3         4        5        6        7        8        9
-   Reloj --------------------------------------------------------------------------------->
+  Instrucción
+       |  +--------+--------+--------+--------+--------+
+    1 -+  | IF     | ID     | EX     | MEM    | WB cGRE|
+       |  +--------+--------+--------+--------+--------+--------+
+    2 -+           | IF     | ID     | EX     | MEMcGRE| WB     |
+       |           +--------+--------+--------+--------+--------+--------+
+    3 -+                    | IF     | ID     | EX cGRE| MEM    | WB     |
+       |                    +--------+--------+--------+--------+--------+--------+
+    4 -+                             | IF     | ID cGRE| EX     | MEM    | WB     |
+       |                             +--------+--------+--------+--------+--------+--------+
+    5 -+                                      | IF cGRE| ID     | EX     | MEM    | WB     |
+       |                                      +--------+--------+--------+--------+--------+
+       V
+            
+     Reloj +-------+-------+--------+---------+--------+--------+--------+--------+--------+--->
+           |       |       |        |         |        |        |        |        |        |
+           0       1       2        3         4        5        6        7        8        9  
 #+END_SRC
+#+html: <p align="center">Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un <em>pipeline</em></p></div>
 
 La complejidad de los procesadores actuales ha crecido ya por encima
 de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
@@ -1235,6 +1320,8 @@ mercado como /hyper-threads/). Esto puede llevar a una mayor
 utilización del procesador, siguiendo patrones como el ilustrado en
 el esquema.
 
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
 #+BEGIN_SRC ditaa :file ltxpng/hyperthread.png :cmdline -E
 hilo 1      +----+----+----+----+----+----+----+----+----+----+
@@ -1245,17 +1332,32 @@ hilo 0 +----+----+----+----+----+----+----+----+----+----+
 ------>|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
        +----+----+----+----+----+----+----+----+----+----+
 
+tiempo 1    2    3    4    5    6    7    8    9    10   11   12
+       |    |    |    |    |    |    |    |    |    |    |    |
+-------+----+----+----+----+----+----+----+----+----+----+----+--->
 +----+                   +----+
 |cGRE| Ciclo de cómputo  |cRED| Espera por memoria
 +----+                   +----+
 #+END_SRC
+#+html: <p align="center">Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (<em>hyperthreaded</em>) se presenta como dos procesadores</p></div>
+
+Hay que recordar que, a pesar de que se /presenten/ como hilos
+independientes, el rendimiento de cada uno depende de la secuencia
+particular de instrucciones del otro — No podemos esperar que el
+incremento en el procesamiento sea de 2x, ni mucho menos.
 
 La planificación de los hilos hardware sale del ámbito del presente
-curso; implica cuestiones de complejidad tal como el ordenamiento
+curso, y este tema se presenta únicamente para aclarar un concepto que
+probablemente confunda al alumno por su similitud; los hilos en
+hardware implican cuestiones de complejidad tal como el ordenamiento
 específico de las instrucciones, predicción de ramas de ejecución, e
 incluso asuntos relativos a la seguridad, dado que se han presentado
 /goteos/ que permiten a un proceso ejecutando en un hilo /espiar/ el
-estado del procesador correspondiente a otro de los hilos.
+estado del procesador correspondiente a otro de los hilos. Para
+abundar al respecto, el ámbito adecuado podría ser un curso orientado
+a la construcción de compiladores (ordenamiento de instrucciones,
+aprovechamiento del paralelismo), o uno de arquitectura de sistemas
+(estudio del pipeline, aspectos del hardware).
 
 Esta estrategia guarda gran similitud, y no puede evitar hacerse el
 paralelo, con la /compartición de procesador/ presentada en la sección
@@ -1267,3 +1369,6 @@ final de /Algoritmos de planificación/.
 - [[http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml][Thread Scheduling (ctd): quanta, switching and scheduling
   algorithms]] (/Javamex tutorial and performance information/)
 - [[http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors][Microprocessor Design / Pipelined Processors]], WikiBooks.org
+- [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Thread scheduling and synchronization]], Beth Plale, Indiana University
+- /Páginas de manual/ de Linux para [[http://man7.org/linux/man-pages/man7/pthreads.7.html][pthreads]], [[http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html][pthread_attr_setscope]],
+  [[http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html][sched_setscheduler]] (/kernel.org/)

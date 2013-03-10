@@ -1,0 +1,194 @@
+#+TITLE: Examen parcial 1: Administración y planificación de procesos
+#+AUTHOR: Sistemas Operativos · Gunnar Wolf
+#+DATE: 15 de marzo, 2013.
+#+OPTIONS: num:t toc:nil
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[margin=2cm]{geometry}
+#+LATEX_HEADER: \usepackage[spanish]{babel}
+#+LANGUAGE: es
+
+* Conceptos de procesos e hilos
+ 1. ¿Qué diferencia hay entre un programa y un proceso?
+\vskip 1cm
+
+ 2. Un proceso puede estar en uno de los siguientes cinco
+    estados. Describe brevemente cada a uno de ellos.
+    - Nuevo:
+    - Listo:
+    - Bloqueado:
+    - En ejecución:
+    - Terminado:
+
+ 3. Dentro del /bloque de control del proceso/ (PCB) encontramos toda
+    la información que, junto con su imagen en memoria, define e
+    identifica a un proceso en particular. Describe qué información
+    contienen:
+    - Registros del CPU:
+      \vskip 0.5cm
+    - Información de contabilidad:
+      \vskip 0.5cm
+    - Contador del programa:
+      \vskip 0.5cm
+
+ 4. Describe los tres principales patrones de trabajo para la
+    /paralelización de la ejecución/ en varios hilos:
+    - Jefe / trabajador:
+      \vskip 0.5cm
+    - Equipo de trabajo:
+      \vskip 0.5cm
+    - Línea de ensamblado:
+      \vskip 0.5cm
+
+* Sincronización
+ 1. Define brevemente los siguientes conceptos:
+    - Concurrencia:
+      \vskip 0.5cm
+    - Operación atómica:
+      \vskip 0.5cm
+    - Condición de carrera:
+      \vskip 0.5cm
+    - Sección crítica:
+      \vskip 0.5cm
+    - Espera activa:
+      \vskip 0.5cm
+
+ 2. Describe el funcionamiento (incluyendo las operaciones soportadas) de los /semáforos/
+    \vskip 2cm
+
+ 3. Existen estrategias basadas en hardware para manejar la
+    sincronización. Describe brevemente en lo que consisten las
+    siguientes técnicas, y por qué no se encuentran en uso
+    generalizado.
+
+    2. Inhabilitación de interrupciones
+
+    3. Memoria transaccional
+
+ 4. Vimos varios patrones de sincronización que emplean a los semáforos
+    como mecanismo de comunicación. De ellos,
+
+    1. ¿Cuándo se emplea un mutex? Muestra su implementación básica
+       entre dos hilos/procesos basada en semáforos.
+
+    2. Explica cuál es la utilidad del patrón /apagador/
+
+    3. Menciona otros tres patrones
+
+ 5. Presenta en pseudocódigo la resolución del problema
+    productores-consumidores. Menciona en qué puntos tuviste que
+    emplear estructuras de sincronización, cuál estructura/patrón
+    elegiste, y por qué.
+
+    El planteamiento base es:
+    - Un grupo de procesos va /produciendo/ ciertas estructuras
+    - Otro grupo va /consumiéndolas/
+    - Emplean un buffer de acceso compartido para comunicarse dichas
+      estructuras
+    - ¿Cómo pueden asegurar que no corromperán el buffer al haber
+      accesos simultáneos?
+    - ¿Cómo puedes evitar una /espera activa/ por parte del consumidor
+      para encontrar cuándo hay elementos por procesar?
+
+ 6. ¿Cuál es la principal problemática ilustrado por el problema de la
+    /cena de los filósofos/? Describe una de las estrategias que se
+    presentaron para su resolución.
+
+* Bloqueos mutuos y políticas
+
+1. En clase vimos dos situaciones bastante similares de /bloqueos
+   mutuos/ que se presentan en la vida real, fuera del ámbito del
+   cómputo. Describe uno de estos ejemplos (o algún otro ejemplo que
+   puedas citar que constituya un bloqueo mutuo), explicando por qué
+   lo caracterizamos como objeto mutuo. /Tip/: Recuerda las cuatro
+   /condiciones de Coffman/. Puedes describir por qué se cumple cada
+   una de ellas (aunque sea "jalando" su definición al alejarla el
+   entorno de los sistemas operativos).
+
+2. Presenta, en prosa y a través de un esquema, la situación /clásica
+   mínima/ de bloqueo mutuo. Detalla el órden de instrucciones que
+   tienen que presentarse para que se dé el bloqueo.
+
+3. Vimos tres categorías de estrategias ante los bloqueos
+   mutuos. Describe en qué consisten, y cuáles son sus principales
+   ventajas o desventajas:
+
+   - Prevención:
+
+   - Evasión:
+
+   - Detección y recuperación:
+
+4. En el caso de políticas preventivas, ¿cómo se comportaría la
+   situación /clásica mínima/ de bloqueo mutuo que describiste en el
+   inciso 2 si el sistema implementa una política de:
+
+   - Serialización
+
+   - Asignación jerárquica (inventa y detalla la jerarquía que emplearás)
+
+5. ¿Cuál es la lógica básica de operación del algoritmo del banquero?
+
+6. En un sistema con 3 unidades de cinta y 2 impresoras, y partiendo
+   de la siguiente situación, con el algoritmo del banquero:
+   |         |  Impresoras |    Reclamo |  U. Cinta |  Reclamo |
+   | Proceso | Asignadadas | Impresoras | Asignadas | U. Cinta |
+   |---------+-------------+------------+-----------+----------|
+   | A       |           1 |          3 |         0 |        1 |
+   | B       |           1 |          2 |         0 |        2 |
+   | C       |           1 |          1 |         1 |        2 |
+   - ¿Estamos en un /estado seguro/?
+   - ¿Qué solicitudes nos llevarían a otro /estado seguro/?
+   - ¿Qué solicitudes nos llevarían a un /estado inseguro/?
+   - Presenta una /secuencia segura/ de finalización.
+
+7. Cuando un algoritmo de detección y recuperación detecta un bloqueo,
+   /casi siempre/ va a terminar la ejecución de un proceso.
+   - Dame dos criterios según los cuales podría elegir a cuál
+     finalizar.
+   - ¿Qué otra estrategia podría emplear, además de la de finalizar a
+     los procesos involucrados? ¿Por qué es tan poco frecuente emplearla?
+
+* Planificación de procesos
+1. Describe los siguientes conceptos empleados para la medición
+   relacionada con el planificador a corto plazo:
+   - Tick:
+   - Quantum:
+   - Tiempo de respuesta ($T$):
+   - Tiempo en espera ($E$):
+   - Proporción de penalización ($P$):
+   - Proporción de respuesta ($R$):
+   - Valor de saturación ($\rho$):
+
+2. En un sistema interactivo, los procesos típicamente están en
+   ejecución un largo periodo de tiempo (entre minutos y días), sin
+   embargo, en nuestros ejemplos manejamos casi siempre a los procesos
+   interactivos como /procesos cortos/. ¿Por qué? ¿Cuál sería un
+   ejemplo de /proceso largo/?
+
+3. Asumiendo los siguientes procesos: (Esta pregunta vale 3 puntos)
+   | Proceso | Llegada | $t$ |
+   |---------+---------+-----|
+   | A       | 0       | 7   |
+   | B       | 2       | 3   |
+   | C       | 3       | 2   |
+   | D       | 4       | 6   |
+   | E       | 6       | 8   |
+   | F       | 6       | 3   |
+   Presenta la representación gráfica de cómo el despachador les
+   asignaría el CPU, y la tabla de análisis, bajo:
+   - Ronda con $q=1$
+   - Ronda con $q=3$
+   - Proceso más corto a continuación
+   - Retroalimentación multinivel con $n=1$ y $Q=nq$
+
+4. ¿Qué algoritmos de los estudiadios son más susceptibles a la
+   inanición que se presenta cuando $\rho > 1$? ¿Cuáles menos?
+   Menciona por lo menos dos y dos.
+
+5. Describe dos de los esquemas híbridos de planificación presentados.
+
+6. Tanto la afinidad a procesador como el balanceo de cargas son
+   elementos importantes y deseables en todo planificador que se
+   ejecute en un entorno multiprocesador. Sin embargo, afinidad y
+   balanceo de cargas trabajan uno en contra del otro. ¿Por qué?
+   ¿Cuándo debe predominar cada uno?

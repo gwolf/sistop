@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Planificación de procesos: Algoritmos de planificación
-#+DATE: 2013-02-27 — 2013-03-??
+#+DATE: 2013-02-27 — 2013-03-11
 
 * Introducción
 
@@ -1157,3 +1157,113 @@ tiempo 1    2    3    4    5    6    7    8    9    10   11   12
   /compartición de procesador/
 - No ahondaremos en el tema en este curso
   - Se presenta para aclarar el concepto
+** Tiempo real
+- Nos hemos enfocado a repartir el tiempo disponible entre varios
+  procesos
+- No hemos tocado a los procesos que requieren /garantías de tiempo/
+  - Para poder realizar su trabajo, tienen que recibir determinado
+    tiempo de procesador /antes de un tiempo límite/
+- Estos procesos son conocidos como /de tiempo real/
+
+** ¿Cuándo nos enfrentamos con el tiempo real?
+- Controladores de dispositivos
+  - Entregan un determinado /bloque/ de información cada tanto tiempo
+  - Si ese bloque no es procesado completo, se sobreescribe por el siguiente
+- Reproductores o recodificadores de audio y video
+  - Si un /cuadro/ se pierde, el resultado puede escucharse
+  - Sea como una demora (reproducción) o como un corte (recodificación)
+- Procesadores de criptografía
+  - Si un bloque se pierde, el documento completo /de ese punto en
+    adelante/ puede quedar corrupto
+
+** Reserva de recursos
+- Para poder manejarse como de tiempo real, un proceso debe declarar
+  de inicio cuánto tiempo requerirá
+  - Puede ser una sola vez: /Necesito 600ms en los próximos 2s/
+  - Puede ser periódico: /Cada segundo necesito 30ms/
+- El sistema operativo le asignará el tiempo solicitado, o le
+  notificará que no puede garantizárselo
+  - Mensaje de error \rightarrow El proceso puede intentar continuar
+    de todos modos /sin prioridad especial/
+
+** Tiempo real duro y suave
+- Tiempo real duro :: El sistema puede /dar garantía/ de que el
+     proceso tendrá el tiempo que reservó
+- Tiempo real suave :: El sistema /intentará/ dar la prioridad
+     requerida al proceso, pero puede haber pequeñas demoras
+
+** Restricciones del tiempo real duro
+- El planificador debe saber /con certeza/ cuánto tiempo toman todas
+  las tareas de sistema que ejecutará en el periodo
+- Algunos dispositivos introducen demoras con demasiada varianza
+  - Almacenamiento en disco
+  - Memoria virtual
+- Imposibilitan que un sistema que los maneje implemente tiempo real
+  duro
+
+** Tiempo real suave: Prioridad del planificador
+- Los procesos de tiempo real simplemente reciben una prioridad mucho
+  más alta ante el planificador
+- Los procesos de tiempo real /pueden llevar a la inanición/ de otros
+  procesos
+  - Es esperable y aceptable — ¡No debemos correr /tantos/ procesos de
+    tiempo real! (rompería expectativas)
+
+** Retroalimentación multinivel y tiempo real suave
+#+BEGIN_CENTER
+Puede implementarse con una modificación al esquema de
+/retroalimentación multinivel/
+#+END_CENTER
+- La cola de tiempo real recibe prioridad sobre todas las demás colas
+- La prioridad de un proceso de tiempo real /no se degrada/ conforme
+  se ejecuta repetidamente
+  - Aunque puede indicar que ya terminó con su trabajo sensible a
+      tiempo
+- La prioridad de los demás procesos /nunca llegan a subir/ al nivel
+  de tiempo real por un proceso automático
+  - Aunque sí puede hacerse por una llamada explícita
+- La latencia de despacho debe ser mínima
+#+BEGIN_CENTER
+Casi todos los sistemas operativos hoy en día presentan facilidades
+básicas de tiempo real suave.
+#+END_CENTER
+
+** Sistema operativo interrumpible (/prevenible/)
+- Hay llamadas al sistema que toman demasiado tiempo
+- Para poder ofrecer tiempo real suave con buenas expectativas, hay
+  que poder interrumpir al propio núcleo
+- Primer enfoque: /Puntos de interrupción/
+  - Marcar explícitamente puntos en que todas las estructuras están
+    en un estado estable
+- No muy eficiente: Hay pocos puntos aptos para declarar puntos de
+  interrupción
+  - Muy rígido, dificil estructurar para poner puntos adicionales
+
+** Núcleo completamente interrumpible
+- Otro enfoque: Proteger a /todas/ las modificaciones a estructuras
+  internas del núcleo con mecanismos de sincronización
+- Enfoque mucho más flexible
+- Hace que el sistema operativo /completo/ sea más lento (aunque más
+  seguro)
+  - Más operaciones a hacer por cada solicitud
+- Permiten que funciones del SO puedan correr como hilos concurrentes
+  en los distintos procesadores
+
+** Inversión de prioridades
+- Un proceso $A$ de baja prioridad hace una llamada al sistema
+  - Es interrumpido a la mitad de la llamada
+- Un proceso $B$ de prioridad /tiempo real/ hace una segunda llamada
+  al sistema
+  - Requiriendo de la misma estructura que la que tiene bloqueada $A$
+- $B$ quedará esperando hasta que $A$ vuelva a ser agendado
+#+BEGIN_CENTER
+Esto es, $B$ fue, para propósitos prácticos, /degradado/ a la
+prioridad de $A$
+#+END_CENTER
+
+** Inversión de prioridades: Herencia de prioridades
+- Mecanismo introducido por Solaris 2
+- Si $A$ bloquea a $B$ y $P_A < P_B$
+- $P_A := P_B$ hasta que $B$ libere el recurso
+- Pasado el bloqueo, $P_A$ vuelve a su estado nativo
+

@@ -1365,6 +1365,125 @@ final de /Algoritmos de planificación/.
 
 * Tiempo real
 
+Todos los esquemas de manejo de tiempo hasta este momento se han
+enfocado a repartir el tiempo disponible entre todos los procesos que
+requieren atención. No hemos tocado, sin embargo, a los procesos que
+/requieren garantías de tiempo/ — Esto es, procesos que para poder
+ejecutarse deben garantizar el haber tenido determinado tiempo de
+proceso antes de que un tiempo límite. Los procesos con estas
+características se conocen como /de tiempo real/.
+
+Podemos encontrar ejemplos de procesos que requieren este tipo de
+planificación a todo nivel — los ejemplos más comunes son los
+controladores de dispositivos y los recodificadores o reproductores de
+medios (audio, video). La lógica general es la misma:
+
+Para agendarse como un proceso con requisitos de tiempo real, éste
+debe declarar sus requisitos (formalmente, /efectuar su reserva de
+recursos/) de tiempo al iniciar su ejecución o en el transcurso de la
+misma. Claro está, siendo que los procesos de tiempo real obtienen una
+/prioridad/ mucho mayor a otros, normalmente se requerirá al iniciar
+el proceso que éste /declare/ que durante parte de su ejecución
+trabajará con restricciones de tiempo real.
+
+** Tiempo real duro y suave
+
+Si un dispositivo genera periódicamente hasta determinada cantidad de
+información y la va colocando en un área determinada de memoria
+compartida, el proceso encargado de manejar dicha información
+declarará al sistema operativo cuánto tiempo de ejecución le
+tomará. Si el sistema operativo puede /garantizar/ que en ese tiempo
+le otorgará al proceso en cuestión, el proceso se ejecuta, y si no,
+recibe un error por medio del cual podrá alertar al usuario. Los
+sistemas en que el tiempo máximo es garantizable son conocidos como
+de /tiempo real duro/.
+
+La necesidad de atención en tiempo real puede manejarse periódica (por
+ejemplo, /requiero del procesador por 30ms cada segundo/), o por
+ocurrencia única (/necesito que este proceso, que me tomará 600ms,
+termine de ejecutarse en menos de 2s/).
+
+Realizar una reserva de recursos requiere que el planificador sepa con
+certeza cuánto tiempo toma realizar las tareas de sistema que
+ocurrirán en el periodo en cuestión. Cuando entran en juego algunos
+componentes de los sistemas operativos de propósito general que
+tienen una latencia con variaciones impredecibles (como el
+almacenamiento en disco o la memoria virtual) se vuelve imposible
+mantener las garantías de tiempo ofrecidas, por lo cual, en un
+sistema operativo de uso general /no es posible/ implementar tiempo
+real duro en dichos sistemas.
+
+Para solventar necesidades de este tipo en sistemas de uso general, el
+/tiempo real suave/ sigue requiriendo que los procesos críticos
+reciban un trato prioritario por encima de los processos comunes;
+agendar a un proceso con esta prioridad puede llevar a la inanición de
+procesos de menor prioridad y un comportamiento que bajo ciertas
+métricas resultaría /injusto/. Puede implementarse a través de un
+esquema similar al de la /retroalimentación multinivel/, con las
+siguientes particularidades:
+
+- La cola de tiempo real recibe prioridad sobre todas las demás colas
+- La prioridad de un proceso de tiempo real /no se degrada/ conforme
+  se ejecuta repetidamente
+- La prioridad de los demás procesos /nunca llegan a subir/ al nivel
+  de tiempo real por un proceso automático (aunque sí puede hacerse
+  por una llamada explícita)
+- La latencia de despacho debe ser mínima
+
+Casi todos los sistemas operativos en uso amplio hoy en día ofrecen
+facilidades básicas de tiempo real suave.
+
+** Sistema operativo interrumpible (/prevenible/)
+
+Para que la implementación de tiempo real suave sea apta para estos
+requisitos es necesario modificar el comportamiento del sistema
+operativo. Cuando un proceso de usuario hace una llamada al sistema, o
+cuando una interrupción corta el flujo de ejecución, hace falta que el
+sistema procese completa la rutina que da servicio a dicha solicitud
+antes de que continúe operando. Se dice entonces que el sistema
+operativo /no es prevenible/ o /no es interrumpible/.
+
+Para lograr que el núcleo pueda ser interrumpido para dar el control
+de vuelta a procesos de usuario, un enfoque fue el poner /puntos de
+interrupción/ en los puntos de las funciones del sistema donde fuera
+seguro, tras asegurarse que las estructuras estaban en un estado
+estable. Esto, sin embargo, no modifica en mucho la situación porque
+estos puntos son relativamente pocos, y es muy difícil reestructurar
+su lógica para permitir puntos de prevención adicionales.
+
+Otro enfoque es hacer al núcleo entero completamente interrumpible,
+asegurándose de que, a lo largo de todo su código, todas las
+modificaciones a estructuras internas estén protegidas por mecanismos
+de sincronización, como los estudiados en la unidad anterior. Este
+método ralentiza varios procesos del núcleo, pero es mucho más
+flexible, y ha sido adoptado por los diversos sistemas
+operativos. Tiene la ventaja adicional de que permite que haya /hilos/
+del núcleo corriendo de forma concurrente en todos los procesadores
+del sistema.
+
+** Inversión de prioridades
+
+Un efecto colateral de que las estructuras del núcleo estén
+protegidas por mecanismos de sincronización es que puede presentarse
+la /inversión de prioridades/. Esto es:
+
+- Un proceso /A/ de baja prioridad hace una llamada al sistema, y es
+  interrumpido a la mitad de dicha llamada
+- Un proceso /B/ de prioridad /tiempo real/ hace una segunda llamada
+  al sistema, que requiere de la misma estructura que la que tiene
+  bloqueada /A/
+
+Al presentarse esta situación, /B/ se quedará esperando hasta que /A/
+pueda ser nuevamente agendado — Esto es, un proceso de alta prioridad
+no podrá avanzar hasta que uno de baja prioridad libere su recurso.
+
+La respuesta introducida por Solaris 2 a esta situación a este
+fenómeno es la /herencia de prioridades/: Todos los procesos que estén
+accesando (y, por tanto, bloqueando) recursos requeridos por un
+proceso de mayor prioridad, serán tratados como si fueran de la
+prioridad de dicho recurso /hasta que terminen de utilizar el recurso
+en cuestión/, tras lo cual volverán a su prioridad nativa.
+
 * Recursos adicionales
 - [[http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml][Thread Scheduling (ctd): quanta, switching and scheduling
   algorithms]] (/Javamex tutorial and performance information/)

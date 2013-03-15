@@ -1,15 +1,14 @@
-#+TITLE: Examen parcial 1: Administración y planificación de procesos
+#+TITLE: Reactivos para exámenes y ejercicios
 #+AUTHOR: Sistemas Operativos · Gunnar Wolf
-#+DATE: 15 de marzo, 2013.
 #+OPTIONS: num:t toc:nil
 #+LATEX_HEADER: \usepackage{setspace}
 #+LATEX_HEADER: \usepackage[margin=2cm]{geometry}
 #+LATEX_HEADER: \usepackage[spanish]{babel}
 #+LANGUAGE: es
 
-* Conceptos de procesos e hilos
+* Administración de procesos
+** Conceptos de procesos e hilos
  1. ¿Qué diferencia hay entre un programa y un proceso?
-\vskip 1cm
 
  2. Un proceso puede estar en uno de los siguientes cinco
     estados. Describe brevemente cada a uno de ellos.
@@ -24,77 +23,64 @@
     identifica a un proceso en particular. Describe qué información
     contienen:
     - Registros del CPU:
-      \vskip 0.5cm
     - Información de contabilidad:
-      \vskip 0.5cm
     - Contador del programa:
-      \vskip 0.5cm
 
  4. Describe los tres principales patrones de trabajo para la
     /paralelización de la ejecución/ en varios hilos:
     - Jefe / trabajador:
-      \vskip 0.5cm
     - Equipo de trabajo:
-      \vskip 0.5cm
     - Línea de ensamblado:
-      \vskip 0.5cm
 
-* Sincronización
- 1. Define brevemente los siguientes conceptos:
-    - Concurrencia:
-      \vskip 0.5cm
-    - Operación atómica:
-      \vskip 0.5cm
-    - Condición de carrera:
-      \vskip 0.5cm
-    - Sección crítica:
-      \vskip 0.5cm
-    - Espera activa:
-      \vskip 0.5cm
+** Sincronización
+  1. Define brevemente los siguientes conceptos:
+     - Concurrencia:
+     - Operación atómica:
+     - Condición de carrera:
+     - Sección crítica:
+     - Espera activa:
 
- 2. Describe el funcionamiento (incluyendo las operaciones soportadas) de los /semáforos/
-    \vskip 2cm
+  2. Describe el funcionamiento (incluyendo las operaciones soportadas) de los /semáforos/
 
- 3. Existen estrategias basadas en hardware para manejar la
-    sincronización. Describe brevemente en lo que consisten las
-    siguientes técnicas, y por qué no se encuentran en uso
-    generalizado.
+  3. Existen estrategias basadas en hardware para manejar la
+     sincronización. Describe brevemente en lo que consisten las
+     siguientes técnicas, y por qué no se encuentran en uso
+     generalizado.
 
-    2. Inhabilitación de interrupciones
+     2. Inhabilitación de interrupciones
 
-    3. Memoria transaccional
+     3. Memoria transaccional
 
- 4. Vimos varios patrones de sincronización que emplean a los semáforos
-    como mecanismo de comunicación. De ellos,
+  4. Vimos varios patrones de sincronización que emplean a los semáforos
+     como mecanismo de comunicación. De ellos,
 
-    1. ¿Cuándo se emplea un mutex? Muestra su implementación básica
-       entre dos hilos/procesos basada en semáforos.
+     1. ¿Cuándo se emplea un mutex? Muestra su implementación básica
+       	entre dos hilos/procesos basada en semáforos.
 
-    2. Explica cuál es la utilidad del patrón /apagador/
+     2. Explica cuál es la lógica y la utilidad del patrón /apagador/
 
-    3. Menciona otros tres patrones
+     3. Menciona otros tres patrones
 
- 5. Presenta en pseudocódigo la resolución del problema
-    productores-consumidores. Menciona en qué puntos tuviste que
-    emplear estructuras de sincronización, cuál estructura/patrón
-    elegiste, y por qué.
+  5. Presenta en pseudocódigo la resolución del problema
+     productores-consumidores. Menciona en qué puntos tuviste que
+     emplear estructuras de sincronización, cuál estructura/patrón
+     elegiste, y por qué.
 
-    El planteamiento base es:
-    - Un grupo de procesos va /produciendo/ ciertas estructuras
-    - Otro grupo va /consumiéndolas/
-    - Emplean un buffer de acceso compartido para comunicarse dichas
-      estructuras
-    - ¿Cómo pueden asegurar que no corromperán el buffer al haber
-      accesos simultáneos?
-    - ¿Cómo puedes evitar una /espera activa/ por parte del consumidor
-      para encontrar cuándo hay elementos por procesar?
+     El planteamiento base es:
+     - Un grupo de procesos va /produciendo/ ciertas estructuras
+     - Otro grupo va /consumiéndolas/
+     - Emplean un buffer de acceso compartido para comunicarse dichas
+       estructuras
+     - ¿Cómo pueden asegurar que no corromperán el buffer al haber
+       accesos simultáneos?
+     - ¿Cómo puedes evitar una /espera activa/ por parte del consumidor
+       para encontrar cuándo hay elementos por procesar?
 
- 6. ¿Cuál es la principal problemática ilustrado por el problema de la
-    /cena de los filósofos/? Describe una de las estrategias que se
-    presentaron para su resolución.
+  6. ¿Cuál es la principal problemática ilustrado por el problema de la
+     /cena de los filósofos/? Describe una de las estrategias que se
+     presentaron para su resolución.
 
-* Bloqueos mutuos y políticas
-
+** Bloqueos mutuos y políticas
 1. En clase vimos dos situaciones bastante similares de /bloqueos
    mutuos/ que se presentan en la vida real, fuera del ámbito del
    cómputo. Describe uno de estos ejemplos (o algún otro ejemplo que
@@ -149,6 +135,8 @@
      los procesos involucrados? ¿Por qué es tan poco frecuente emplearla?
 
 * Planificación de procesos
+
+** Tipos de proceso
 1. Describe los siguientes conceptos empleados para la medición
    relacionada con el planificador a corto plazo:
    - Tick:
@@ -165,11 +153,12 @@
    interactivos como /procesos cortos/. ¿Por qué? ¿Cuál sería un
    ejemplo de /proceso largo/?
 
-3. Asumiendo los siguientes procesos: (Esta pregunta vale 3 puntos)
+** Algoritmos de planificación
+1. Asumiendo los siguientes procesos:
    | Proceso | Llegada | $t$ |
    |---------+---------+-----|
    | A       | 0       | 7   |
-   | B       | 2       | 3   |
+   | B       | 2       | 15  |
    | C       | 3       | 2   |
    | D       | 4       | 6   |
    | E       | 6       | 8   |
@@ -179,16 +168,51 @@
    - Ronda con $q=1$
    - Ronda con $q=3$
    - Proceso más corto a continuación
-   - Retroalimentación multinivel con $n=1$ y $Q=nq$
+   - Retroalimentación multinivel con $q=1$, $n=1$ y $Q=nq$
 
-4. ¿Qué algoritmos de los estudiadios son más susceptibles a la
+
+2. ¿Qué algoritmos de los estudiadios son más susceptibles a la
    inanición que se presenta cuando $\rho > 1$? ¿Cuáles menos?
    Menciona por lo menos dos y dos.
 
-5. Describe dos de los esquemas híbridos de planificación presentados.
+3. Describe dos de los esquemas híbridos de planificación presentados.
 
-6. Tanto la afinidad a procesador como el balanceo de cargas son
+4. En su libro /Sistemas operativos: diseño e implementación/, Andrew
+   Tannenbaum sugiere otro esquema de planificación: El de la
+   /lotería/.
+
+   En este esquema, cada proceso tiene un cierto número de /boletos/,
+   y sl siguiente /quantum/ es asignado a través de la selección
+   aleatoria de uno de los boletos disponibles. Un proceso de mayor
+   prioridad tendrá más boletos, uno de menor prioridad tendrá
+   menos.
+
+   - ¿Cómo se compararía este método con los otros revisados en clase?
+   - ¿Para qué tipo de carga es más apto? ¿Y menos apto?
+   - ¿Qué tan susceptible resulta a producir inanición?
+   - ¿Qué tan /justa/ sería su ejecución?
+   - ¿Cómo lo emplearías si tuvieras procesos con necesidades de
+     tiempo real?
+   - ¿Se te ocurre algún punto adicional no mencionado en el
+     planteamiento para que resulte mejor?
+
+** Planificación de multiprocesadores
+1. Tanto la afinidad a procesador como el balanceo de cargas son
    elementos importantes y deseables en todo planificador que se
    ejecute en un entorno multiprocesador. Sin embargo, afinidad y
    balanceo de cargas trabajan uno en contra del otro. ¿Por qué?
    ¿Cuándo debe predominar cada uno?
+
+2. ¿Cuál sería el impacto de no contar con /afinidad dura/ en un
+   sistema NUMA? (recuerda: Non-Uniform Memory Access, Acceso
+   No-Uniforme a Memoria)
+
+3. Si nuestro planificador maneja una sóla cola de procesos para todos
+   los procesadores, ¿Cómo se ve afectado el balanceo de cargas? ¿La
+   afinidad?
+
+** Tiempo real
+
+1. ¿Por qué un sistema operativo /de propósito general/ no puede
+   ofrecer garantías /de tiempo real duro/ en una computadora
+   /estándar/?

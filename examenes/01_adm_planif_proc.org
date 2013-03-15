@@ -1,0 +1,138 @@
+#+TITLE: Examen parcial 1: Administración y planificación de procesos
+#+AUTHOR: Sistemas Operativos · Gunnar Wolf
+#+DATE: 2013-03-15
+#+OPTIONS: num:t toc:nil
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[margin=2.5cm]{geometry}
+#+LATEX_HEADER: \usepackage[spanish]{babel}
+#+LANGUAGE: es
+
+- Indicaciones: :: No olvides poner tu nombre en /todas las páginas/,
+                   y, si empleas hojas extra, numerarlas.
+
+		   Todas las preguntas tienen el mismo valor.
+
+		   Tienes la hora y media de clase completa para
+                   responder el examen.
+
+* Administración de procesos / Sincronización
+
+ 1. Describe el funcionamiento (incluyendo las instrucciones /
+    operaciones soportadas) de los /semáforos/. Detalla la lógica y la
+    utiildad de dos de los patrones de sincronización basados en
+    semáforos cubiertos en el curso.
+
+    \vskip 2cm
+
+ 2. ¿Cuál es la principal problemática ilustrada por el problema de la
+     /cena de los filósofos/? (No describas el planteamiento del
+     problema — identifica la /problemática/ que surge) Describe una
+     de las estrategias que se presentaron para su resolución.
+
+    \vskip 2cm
+
+ 3. *Ejercicio extra*
+
+    Este es un ejercicio extra, de regalo, si quieres tomarlo y crees
+    merecerlo ;-) Entregarlo completo vale por hasta dos puntos
+    adicionales en el examen. Te respetaré estos puntos como /a
+    crédito/ incluso si tu calificación sobrepasa el 10. El ejercicio
+    aparece en el libro /The Little Book of Semaphores/, de la
+    bibliografía manejada para la sección de
+    /Sincronización/. Respóndelo a la vuelta de la última página, o
+    adjunta una hoja al examen.
+
+    Para llegar a un encuentro de desarrolladores de sistemas
+    operativos, hace falta cruzar un río en balsa. Hay una sóla balsa,
+    en la cual caben cuatro (y sólo cuatro) personas — La balsa es
+    demasiado ligera, y con menos de cuatro puede volcar. Al encuentro
+    están invitados /hackers/ (desarrolladores de Linux) y /serfs/
+    (desarrolladores de Microsoft). Para evitar peleas, debe
+    mantenerse un buen balance: No debes permitir que aborden tres
+    /hackers/ y un /serf/, o tres /serfs/ y un /hacker/. Pueden subir
+    cuatro del mismo /bando/, o dos y dos.
+
+    Recuerda que hay sólo /una/ balsa. No es lícito ir /sentando/ a
+    los desarrolladores en distintas balsas. No tienen problema en
+    esperar de pie.
+
+    No te preocupes por devolver la balsa: Puedes asumir que el
+    retorno es automático, sólo encárgate de que aborden con las
+    restricciones correctas.
+
+    Haz una implementación ejemplo con pseudocódigo, empleando las
+    primitivas de sincronización vistas en clase. Si lo crees
+    necesario, puedes describir además tu lógica en prosa.
+
+\eject
+
+* Administración de procesos / Bloqueos mutuos
+
+ 1.  Presenta, en prosa y a través de un esquema, la situación
+     /clásica mínima/ de bloqueo mutuo. Detalla el órden de
+     instrucciones que tienen que presentarse para que se dé el
+     bloqueo.
+
+     \vskip 2cm
+
+ 2. En un sistema con 3 unidades de cinta y 2 impresoras, y partiendo
+    de la siguiente situación, con el algoritmo del banquero:
+    |         |  Impresoras |    Reclamo |  U. Cinta |  Reclamo |
+    | Proceso | Asignadadas | Impresoras | Asignadas | U. Cinta |
+    |---------+-------------+------------+-----------+----------|
+    | A       |           1 |          3 |         0 |        1 |
+    | B       |           1 |          2 |         0 |        2 |
+    | C       |           1 |          1 |         1 |        2 |
+    - ¿Estamos en un /estado seguro/? ¿Por qué?
+      \vskip 1cm
+    - Presenta una /secuencia segura/ de finalización.
+      \vskip 1cm
+
+* Planificación de procesos
+
+ 1. Asumiendo los siguientes procesos:
+    | Proceso | Llegada | $t$ |
+    |---------+---------+-----|
+    | A       |       0 |   7 |
+    | B       |       2 |  15 |
+    | C       |       3 |   2 |
+    | D       |       4 |   6 |
+    | E       |       6 |   8 |
+    | F       |       6 |   3 |
+
+    Presenta la representación gráfica de cómo el despachador les
+    asignaría el CPU, y la tabla de análisis (con $T$, $E$, $P$,
+    cambios de contexto y promedios), bajo:
+
+    - Ronda con $q=3$
+      \vskip 2cm
+
+    - Retroalimentación multinivel con $q=1$, $n=1$ y $Q=nq$
+      \vskip 2cm
+
+      \vskip 2cm
+
+ 2. ¿Cuál sería el impacto de emplear un esquema que no soporte
+    /afinidad dura/ en un sistema NUMA? (recuerda: Non-Uniform Memory
+    Access, Acceso No-Uniforme a Memoria)
+
+    \vskip 2cm
+
+ 3. En su libro /Sistemas operativos: diseño e implementación/, Andrew
+    Tannenbaum sugiere otro esquema de planificación: El de la
+    /lotería/.
+
+    En este esquema, cada proceso tiene un cierto número de /boletos/,
+    y sl siguiente /quantum/ es asignado a través de la selección
+    aleatoria de uno de los boletos disponibles. Un proceso de mayor
+    prioridad tendrá más boletos, uno de menor prioridad tendrá
+    menos.
+
+     - ¿Cómo se compararía este método con los otros revisados en clase?
+     - ¿Para qué tipo de carga es más apto? ¿Y menos apto?
+     - ¿Qué tan susceptible resulta a producir inanición?
+     - ¿Qué tan /justa/ sería su ejecución?
+     - ¿Cómo lo emplearías si tuvieras procesos con necesidades de
+       tiempo real?
+     - ¿Se te ocurre algún punto adicional no mencionado en el
+       planteamiento para que resulte mejor?

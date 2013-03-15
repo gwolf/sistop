@@ -61,41 +61,19 @@ Una primer aproximación a la protección de acceso es a través de un
 registros del procesador que sólo pueden ser modificados por el
 sistema operativo (Esto es, el hardware define la modificación de
 dichos registros como una operación privilegiada que requiere estar
-ejecutando en /modo supervisor/), el MMU puede comparar /cada acceso a
+ejecutando en /modo supervisor/), el CPU puede comparar /cada acceso a
 memoria/ para verificar que esté en el rango permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
-64K (65535 bytes) a partir de la dirección 504214 (492K), el /registro
-base/ contendría 504214, y el /registro límite/ 65535. Si hubiera una
+64K (65535 bytes) a partir de la dirección 504214, el /registro base/
+contendría 504214, y el /registro límite/ 65535. Si hubiera una
 instrucción por parte de dicho proceso que solicitara una dirección
-menor a 504214 o mayor a 569749 (556K), el MMU lanzaría una excepción
-o /trampa/ interrumpiendo el procesamiento, e indicando al sistema
-operativo que ocurrió una /violación de segmento/ (/segmentation
-fault/)[fn:: ¿Por qué /de segmento/? Ver la sección /segmentación/,
-más adelante en esta misma unidad]. El sistema operativo entonces
-procedería terminando la ejecución del proceso, reclamando todos los
-recursos que tuviera asignados y notificando a su usuario.
-
-#+html: <div class="figure">
-#+attr_latex: width=\textwidth
-#+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
-#+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  0     +------------------+
-        | Sist. Oper. cBLU |
-  128K  +------------------+
-        | Proceso 1        |
-  256K  +------------------+
-        | Proceso 2        |
-        |                  |
-  492K  +------------------+<-----504214 (base)
-        | Proceso 3 cGRE   |    + 65536 (límite)
-  556K  +------------------+<-----569749 (base+límite)
-        | Espacio cPNK     |
-        | Libre            |
-  1024K +------------------+
-  
-#+end_src
-#+html: <p align="center">Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite</p></div>
+menor a 504214 o mayor a 569749, el CPU lanzaría una interrupción
+interrumpiendo el procesamiento, e indicando al sistema operativo que
+ocurrió una /violación de segmento/ (/segmentation fault/). El sistema
+operativo entonces procedería terminando la ejecución del proceso,
+reclamando todos los recursos que tuviera asignados y notificando a su
+usuario.
 
 ** La memoria /caché/
 
@@ -122,12 +100,12 @@ van volviendo obstáculos insalvables por la velocidad máxima de los
 electrones viajando por pistas conductoras.
 
 Cuando el procesador solicitó el contenido de una dirección de memoria
-y esta no está aún disponible, /tiene que detener su ejecución/
-(/stall/) hasta que los datos estén disponibles. El CPU no puede, a
-diferencia del sistema operativo, "congelar" todo y guardar el estado
-para atender a otro proceso: Para el procesador, la lista de
-instrucciones a ejecutar es estrictamente secuencial, y todo tiempo
-que requiere esperar a una transferencia de datos es tiempo perdido.
+y esta no está aún disponible, /tiene que detener su ejecución/ hasta
+que los datos estén disponibles. El CPU no puede, a diferencia del
+sistema operativo, "congelar" todo y guardar el estado para atender a
+otro proceso: Para el procesador, la lista de instrucciones a
+ejecutar es estrictamente secuencial, y todo tiempo que requiere
+esperar a una transferencia de datos es tiempo perdido.
 
 La respuesta para reducir esa espera es la /memoria caché/. Esta es
 memoria de alta velocidad, situada /entre/ la memoria principal y el
@@ -142,11 +120,6 @@ referencia/:
      recurso cercano.
 - Localidad secuencial :: Un recurso, y muy particularmente la
      memoria, tiende a ser requerido de forma secuencial.
-
-#+caption: Patrones de acceso a memoria, demostrando la localidad espacial / temporal (Silberschatz, p.350)
-#+attr_html: width:"330"
-#+attr_latex: width=0.7\textwidth
-[[./img/localidad_de_referencia.png]]
 
 En base a esto, cuando el procesador solicita al hardware determinada
 dirección de memoria, el hardware no sólo transfiere a la memoria
@@ -199,7 +172,6 @@ relativa a su ejecución.
 
 
 ** Resolución de direcciones
-
 Un programa compilado no emplea nombres simbólicos para las variables
 o funciones que llama[fn:: Cuando se hace /ligado dinámico/ a
 bibliotecas externas sí se mantiene la referencia por nombre, pero
@@ -208,11 +180,12 @@ internas únicamente]; el compilador, al convertir el programa a
 lenguaje máquina, las substituye por la dirección en memoria donde se
 encuentra.
 
-Ahora bien, en los sistemas actuales, los procesos requieren coexistir
-con otros, para lo cual las direcciones indicadas en el /texto/ del
-programa pueden requerir ser traducidas al lugar /relativo al sitio de
-inicio del proceso en memoria/ — Esto es, /resueltas/. Podemos hablar
-de las siguientes tres estrategias de resolución:
+Ahora bien, en los sistemas actuales, los procesos pueden requerir
+coexistir con otros, para lo cual las direcciones indicadas en el
+/texto/ del programa pueden requerir ser traducidas al lugar /relativo
+al sitio de inicio del proceso en memoria/ — Esto es,
+/resueltas/. Podemos hablar de las siguientes tres estrategias de
+resolución:
 
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de los datos y funciones. Esto era muy común en las
@@ -235,72 +208,6 @@ de las siguientes tres estrategias de resolución:
      proceso sea incluso reubicado en la memoria mientras está siendo
      ejecutado sin tener que sufrir cambios, pero requiere de hardware
      específico (como un MMU).
-
-Esto es, los nombres simbólicos (por ejemplo, la variable llamada
-=contador=) para ser traducidos ya sea a ubicaciones en la memoria,
-pueden resolverse en tiempo de compilación (y quedar plasmada en el
-programa en disco con una ubicación explícita y definitiva: 510200),
-en tiempo de carga (sería guardada en el programa en disco como
-/inicio/ + 5986 bytes, y el proceso de carga incluiría substituirla
-por la dirección resuelta a la suma del registro base, 504214, y el
-/desplazamiento/, 5986, esto es, 510200).
-
-Por último, para emplear la resolución en tiempo de ejecución, se
-mantiene en las instrucciones a ser ejecutadas por el proceso la
-etiqueta relativa al módulo actual, /inicio/ + 5986 bytes, y es
-resuelta cada vez que sea requerido.
-
-#+html: <div class="figure">
-#+attr_latex: width=0.5\textwidth
-#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
-#+begin_src dot :exports results :file ltxpng/tipo_resol_direcc.png
-  digraph G {
-          subgraph cluster0 {
-                  label="Tiempo de compilación";
-                  color=lightgray;
-		  style=filled;
-                  compilador;
-                  objmod;
-          }
-          subgraph cluster1 {
-                  label="Tiempo de carga";
-                  color=lightgray;
-		  style=filled;
-                  ligado;
-		  modulo;
-		  cargador;
-          }
-          subgraph cluster2 {
-                  label="Tiempo de ejecución";
-                  color=lightgray;
-		  style=filled;
-                  imagenram;
-          }
-          fuente -> compilador -> objmod -> ligado -> modulo -> cargador -> imagenram;
-          otrosobj -> ligado;
-          bibliosist -> cargador;
-          dll -> imagenram [label = "Carga dinámica"];
-
-          fuente [label="Programa\nfuente"];
-          compilador [label="Compilador o\nensamblador",
-                      shape = box];
-          objmod [label="Módulo\nobjeto"];
-          otrosobj [label="Otros\nobjetos"];
-          ligado [label="Editor de\nligado",
-                  shape = box];
-          modulo [label="Módulo\ncargable"];
-          bibliosist [label="Biblioteca\nde sistema"]
-          cargador [label="Cargador",
-                    shape = box];
-          dll [label="Biblioteca\nde sistema\nde carga\ndinámica"];
-          imagenram [label="Imagen del\nbinario en\nmemoria",
-                     shape = box];
-  }
-#+end_src
-
-#+results:
-[[file:ltxpng/tipo_resol_direcc.png]]
-#+html: <p align="center">Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)</p></div>
 
 * Asignación de memoria contigua
 

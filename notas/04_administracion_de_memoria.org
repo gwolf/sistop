@@ -448,12 +448,27 @@ lectura/escritura, especialmente si el espacio a emplear no es
 secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
 desuso conforme aumenta el tamaño de los procesos.
 
-** Paginación
+* Paginación
 
 La fragmentación externa y, por tanto, la fragmentación pueden
 evitarse por completo empleando la /paginación/. Esta consiste en que
 cada proceso esté compuesto por una serie de /páginas/, dejando de
-requerir que el área 
+requerir que la asignación sea de un área /contigua/ de memoria. Claro
+está, esto requiere de mayor espacialización por parte del hardware:
+No nos basta ya con indicar dónde inicia y dónde termina el área de
+memoria de cada proceso, sino que debemos hacer un /mapeo/ entre la
+ubicación real (/física/) y la presentada a cada uno de los procesos
+(/lógica/). La memoria se presentará a cada proceso como si fuera de
+su uso exclusivo.
+
+La memoria física se divide en una serie de /marcos/ (/frames/), todos
+ellos del mismo tamaño, y el espacio cada proceso se divide en una
+serie de páginas (/pages/), del mismo tamaño que los marcos. El MMU se
+se encarga del mapeo entre páginas y marcos a través de /tablas/ de
+traducción. Las direcciones que maneja el CPU ya no son presentadas de
+forma absoluta, sino que como la combinación de un identificador de
+página y un desplazamiento — De forma similar a lo que presentamos al
+hablar de resolución de instrucciones en tiempo de ejecución.
 
 ** TODO Segmentación
 * TODO Memoria virtual

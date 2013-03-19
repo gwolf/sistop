@@ -14,86 +14,80 @@
    utiildad de dos de los patrones de sincronización basados en
    semáforos cubiertos en el curso.
 
-   #+begin_quote
-   *Respuesta:*
-
-   Los semáforos son estructuraas empleadas para la /sincronización/
+   #+begin_example
+   Los semáforos son estructuraas empleadas para la sincronización
    entre procesos o hilos. Sus operaciones son:
 
-    - Inicialización :: Crea al semáforo y le da un valor. El valor
-                        tiene que ser un /entero/.
+    - Inicialización: Crea al semáforo y le da un valor. El valor
+                      tiene que ser un entero.
 
-    - Decrementar :: Decrementa en 1 al valor del semáforo. Si como
+    - Decrementar:   Decrementa en 1 al valor del semáforo. Si como
                      resultado de esta operación el valor resulta
                      menor a 0, el proceso queda suspendido hasta que
-                     otro proceso lo /despierte/. Para esta operación
-                     también se emplean /P/, /adquirir/, /esperar/.
+                     otro proceso lo despierte. Para esta operación
+                     también se emplean P, adquirir, esperar.
 
-    - Incrementar :: Incrementa en 1 al valor del semáforo. Si hay
+    - Incrementar:   Incrementa en 1 al valor del semáforo. Si hay
  		     procesos esperando a este semáforo, se despierta
  		     a uno de ellos (la ejecución la puede conservar
  		     este hilo o pasársele al recién
- 		     despertado). También se emplean /V/, /liberar/,
- 		     /señalizar/.
-   #+end_quote
+ 		     despertado). También se emplean V, liberar,
+ 		     señalizar.
+   #+end_example
 
-   #+begin_quote
+   #+begin_example 
    Algunos de los patrones son:
 
-   - Mutex :: El semáforo se inicializa a 1. La sección crítica es
-              /rodeada/ por /decrementar/ e /incrementar/, de modo
-              que aseguramos que sólo un proceso puede ejecutar la
-              región crítica a la vez.
+   - Mutex:      El semáforo se inicializa a 1. La sección crítica es
+                 rodeada por decrementar e incrementar, de modo
+                 que aseguramos que sólo un proceso puede ejecutar la
+                 región crítica a la vez.
 
-   - Torniquete :: Un /decrementar/ e /incrementar/ en sucesión
-                   rápida, crea un punto de contención/encuentro
-                   entre varios procesos.
+   - Torniquete: Un decrementar e incrementar en sucesión
+                 rápida, crea un punto de contención/encuentro
+                 entre varios procesos.
 
-   - Rendezvous :: Dos semáforos que se emplean, entre dos procesos,
-                   para que uno espere al otro antes de continuar con
-                   la ejecución, para continuarla una vez que ambos
-                   hayan realizado determinada tarea. Un proceso hace
-                   =s1.decrementar= y =s2.incrementar=, y el otro
-                   =s1.incrementar= y =s2.decrementar=.
+   - Rendezvous: Dos semáforos que se emplean, entre dos procesos,
+                 para que uno espere al otro antes de continuar con
+                 la ejecución, para continuarla una vez que ambos
+                 hayan realizado determinada tarea. Un proceso hace
+                 s1.decrementar y s2.incrementar, y el otro
+                 s1.incrementar y s2.decrementar.
 
-   - Barrera :: Equivalente a un /rendezvous/, pero entre varios
-                hilos. Se inicializa un contador a 0, y cada hilo que
-                llega al punto crítico lo incrementa (dentro de un
-                mutex). Todos los hilos se quedan esperando ante un
-                torniquete cerrado (inicializado a 0). Al llegar el
-                /n/-ésimo hilo, tras incrementar el contador,
-                señaliza al torniquete para que se /abra/, y permita
-                la salida de todos los procesos detenidos.
-    #+end_quote
+   - Barrera:    Equivalente a un rendezvous, pero entre varios
+                 hilos. Se inicializa un contador a 0, y cada hilo que
+                 llega al punto crítico lo incrementa (dentro de un
+                 mutex). Todos los hilos se quedan esperando ante un
+                 torniquete cerrado (inicializado a 0). Al llegar el
+                 n-ésimo hilo, tras incrementar el contador,
+                 señaliza al torniquete para que se abra, y permita
+                 la salida de todos los procesos detenidos.
+    #+end_example
 
 
-2. ¿Cuál es la principal problemática ilustrada por el problema de la
-    /cena de los filósofos/? (No describas el planteamiento del
-    problema — identifica la /problemática/ que surge) Describe una
-    de las estrategias que se presentaron para su resolución.
+2. [@2] ¿Cuál es la principal problemática ilustrada por el problema
+   de la /cena de los filósofos/? (No describas el planteamiento del
+   problema — identifica la /problemática/ que surge) Describe una de
+   las estrategias que se presentaron para su resolución.
 
-    #+begin_quote
-   *Respuesta:*
-
-    El principal problema que se presenta es el /bloqueo mutuo/. Este
-    problema presenta también propensión a la /inanición/, aunque es
+    #+begin_example 
+    El principal problema que se presenta es el bloqueo mutuo. Este
+    problema presenta también propensión a la inanición, aunque es
     secundario (y de mucho más difícil resolución).
 
     Una solución que vimos es que no todos los filósofos procedan en
-    el mismo órden: Que haya uno o más /zurdos/, que /levanten/ el
+    el mismo órden: Que haya uno o más zurdos, que levanten el
     palillo izquierdo primero. Con eso queda garantizado que no habrá
     un bloqueo mutuo.
-    #+end_quote
 
-    #+begin_quote
     Vimos también que, notificándose acerca del estado (mantener un
-    arreglo compartido donde cada uno indique si está /hambriento,
-    pensando o comiendo/), puede evitarse el bloqueo y reducirse la
+    arreglo compartido donde cada uno indique si está hambriento,
+    pensando o comiendo), puede evitarse el bloqueo y reducirse la
     inanición, a cambio de una mayor complejidad (y de tener
     comunicación explícita entre los hilos).
-    #+end_quote
+    #+end_example
 
-3. *Ejercicio extra*
+3. [@3] *Ejercicio extra*
 
     Este es un ejercicio extra, de regalo, si quieres tomarlo y crees
     merecerlo ;-) Entregarlo completo vale por hasta dos puntos
@@ -126,9 +120,7 @@
     primitivas de sincronización vistas en clase. Si lo crees
     necesario, puedes describir además tu lógica en prosa.
 
-   *Respuesta:*
-
-   #+begin_src python
+   #+begin_example python
    mutex = Semaphore(1)
    hackers = 0
    serfs = 0
@@ -152,7 +144,7 @@
 
    def llegaSerf()
      # Analogo a llegaHacker
-   #+end_src
+   #+end_example
 
 * Administración de procesos / Bloqueos mutuos
 
@@ -161,22 +153,38 @@
      instrucciones que tienen que presentarse para que se dé el
      bloqueo.
 
-     #+begin_quote
-     *Respuesta:*
+     #+attr_latex: width=0.2\textwidth
+     #+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
+       digraph G {
+               layout = circo;
+       
+               A [label = "Proceso\nA"];
+               B [label = "Proceso\nB"];
+               1 [label = "Unidad\n1", shape = box];
+               2 [label = "Unidad\n2", shape = box];
+       
+               A -> 1 [label = "Asignada"];
+               B -> 2 [label = "Asignada"];
+               2 -> A [label = "Solicitada", style = dotted];
+               1 -> B [label = "Solicitada", style = dotted];
+       }
+     #+end_src
 
-     El bloqueo mutuo /siempre/ se presenta entre un mínimo de dos
+     #+begin_example
+     El bloqueo mutuo siempre se presenta entre un mínimo de dos
      procesos y dos recursos. La situación clásica mínima es: El
-     proceso /A/ tiene asignado el recurso 1 y el proceso /B/ tiene
-     asignado el recurso 2. /A/ solicita al sistema el recurso 2, y se
-     suspende esperando que le pueda ser entregado. /B/ solicita al
+     proceso A tiene asignado el recurso 1 y el proceso B tiene
+     asignado el recurso 2. A solicita al sistema el recurso 2, y se
+     suspende esperando que le pueda ser entregado. B solicita al
      sistema el recurso 1, y se suspende esperando que le pueda ser
      entregado. Ninguno de los dos puede volver a ejecutarse, ni tiene
      cómo salir del bloqueo.
-     #+end_quote
+     #+end_example
 
 
- 2. En un sistema con 2 unidades de cinta y 3 impresoras, y partiendo
-    de la siguiente situación, con el algoritmo del banquero:
+ 2. [@2] En un sistema con 2 unidades de cinta y 3 impresoras, y
+    partiendo de la siguiente situación, con el algoritmo del
+    banquero:
     |         |  Impresoras |    Reclamo |  U. Cinta |  Reclamo |
     | Proceso | Asignadadas | Impresoras | Asignadas | U. Cinta |
     |---------+-------------+------------+-----------+----------|
@@ -186,27 +194,27 @@
     - ¿Estamos en un /estado seguro/? ¿Por qué?
 
     - Presenta una /secuencia segura/ de finalización.
-      #+begin_quote
-      *Respuesta:*
 
-      Sí, porque se puede seguir una /secuencia segura/ de /estados
-      seguros/ hasta la finalización del sistema.
+  #+begin_example 
+  Sí, porque se puede seguir una /secuencia segura/ de /estados
+  seguros/ hasta la finalización del sistema.
 
-      Partimos de tener sólo disponibilidad de una unidad de cinta.
+  Partimos de tener sólo disponibilidad de una unidad de cinta.
 
-      Asignar la unidad de cinta a /C/ y esperar a que
-      finalice. Recuperar sus recursos para el sistema. Tenemos
-      ahora dos unidades de cinta y ua impresora.
+  1- Asignar la unidad de cinta a /C/ y esperar a que finalice. Recuperar
+     sus recursos para el sistema. Tenemos ahora dos unidades de cinta y
+     una impresora.
 
-      Asignar una impresora y dos unidades de cinta a /B/ y esperar
-      a que finalice. Recuperar sus recursos para el
-      sistema. Tenemos ahora dos unidades de cinta y dos impresoras.
+  2- Asignar una impresora y dos unidades de cinta a /B/ y esperar a que
+     finalice. Recuperar sus recursos para el sistema. Tenemos ahora dos
+     unidades de cinta y dos impresoras.
 
-      Asignar dos impresoras y una unidades de cinta a A y esperar
-      a que finalice. Recuperar los recursos para el sistema.
+  3- Asignar dos impresoras y una unidades de cinta a A y esperar a que
+     finalice. Recuperar los recursos para el sistema.
 
-      Fin de las solicitudes.
-      #+end_quote
+  4- Fin de las solicitudes.
+  #+end_example
+
 * Planificación de procesos
 
  1. Asumiendo los siguientes procesos:
@@ -224,9 +232,6 @@
     cambios de contexto y promedios), bajo:
 
     - Ronda con $q=3$
-      #+begin_quote
-      *Respuesta:*
-      #+end_quote
 
 |      |    T |    E |    P |
 |------+------+------+------|
@@ -238,11 +243,10 @@
 | F    |   11 |    8 | 3.66 |
 |------+------+------+------|
 | Prom | 22.6 | 15.6 | 3.38 |
-
-13 cambios de contexto.
+| 13 cambios de contexto.   |
 
 #+attr_latex: width=\textwidth
-#+begin_src ditaa :file ronda_q3.png :cmdline -E
+#+begin_src ditaa :file ltxpng/ronda_q3.png :cmdline -E
    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
  A |cGRE          |cBLK                                                                 |cGRE          |cBLK                                        |cGRE|
    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -274,9 +278,6 @@
 #+end_src
 
     - Retroalimentación multinivel con $q=1$, $n=1$ y $Q=nq$
-      #+begin_quote
-      *Respuesta:*
-      #+end_quote
 
 |      |    T |    E |     P |
 |------+------+------+-------|
@@ -288,11 +289,10 @@
 | F    |   11 |    8 |  3.66 |
 |------+------+------+-------|
 | Prom | 23.3 | 16.5 | 3.658 |
-
-18 cambios de contexto
+| 18 cambios de contexto     |
 
 #+attr_latex: width=\textwidth
-#+begin_src ditaa :file multinivel.png :cmdline -E
+#+begin_src ditaa :file ltxpng/multinivel.png :cmdline -E
     +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
   A |cGRE|cGRE     |cBLK                                                                 |cGRE          |cBLK                                        |cGRE|
     +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -324,23 +324,21 @@
 #+end_src
 
 
- 2. ¿Cuál sería el impacto de emplear un esquema que no soporte
+ 2. [@2] ¿Cuál sería el impacto de emplear un esquema que no soporte
     /afinidad dura/ en un sistema NUMA? (recuerda: Non-Uniform Memory
     Access, Acceso No-Uniforme a Memoria)
 
-    #+begin_quote
-    *Respuesta:*
-
-    La diferencia sería meramente la /velocidad/. El acceso a memoria
-    /remota/ en un sistema NUMA es mucho más lento que el acceso a
-    memoria /cercana/, por lo cual, si el sistema no soporta /afinidad
-    dura/, los procesos que sean despachados a procesadores lejanos a
+    #+begin_example
+    La diferencia sería meramente la velocidad. El acceso a memoria
+    remota en un sistema NUMA es mucho más lento que el acceso a
+    memoria cercana, por lo cual, si el sistema no soporta afinidad
+    dura, los procesos que sean despachados a procesadores lejanos a
     la memoria en que están ubicados, probablemente pasarán más tiempo
     transifirendo información que trabajando.
-    #+end_quote
+    #+end_example
 
- 3. En su libro /Sistemas operativos: diseño e implementación/, Andrew
-    Tannenbaum sugiere otro esquema de planificación: El de la
+ 3. [@3] En su libro /Sistemas operativos: diseño e implementación/,
+    Andrew Tannenbaum sugiere otro esquema de planificación: El de la
     /lotería/.
 
     En este esquema, cada proceso tiene un cierto número de /boletos/,
@@ -358,28 +356,26 @@
      - ¿Se te ocurre algún punto adicional no mencionado en el
        planteamiento para que resulte mejor?
 
-    #+begin_quote
-    *Respuesta:*
-
+    #+begin_example
     Presenté este ejercicio como un ejercicio de argumentación que me
     haga ver qué tanto dominan los conceptos presentados ante una
-    situación muy distinta; no hay respuestas /absolutamente/
+    situación muy distinta; no hay respuestas absolutamente
     correctas o erróneas. Va mi punto de vista:
 
     - Este sistema es muy dificil de perfilar / simular, dado que cada
       ejecución sera distinta de las demás.
 
-    - Es más susceptible a producir inanición por /mala suerte/ que
+    - Es más susceptible a producir inanición por mala suerte que
       los mecanismos determinísticos, pero menos por tener una
       prioridad muy baja. Los procesos de baja prioridad tienen
       siempre oportunidad de ejecutarse, incluso si hubiera muchos de
       alta prioridad. Yo califico a este mecanismo de muy justo.
 
     - Si tuviera necesidades de tiempo real, evitaría este
-      mecanismo. El tiempo real /requiere/ de una planeación
+      mecanismo. El tiempo real requiere de una planeación
       predecible. En caso de requerir emplear tiempo real en un
       sistema planificado por lotería, crearía dos colas: la de tiempo
-      real (que /no/ sería sujeta a lotería) y la general de sistema
+      real (que no sería sujeta a lotería) y la general de sistema
       (que podría planificarse por este mecanismo). Siempre que
       hubiera un proceso esperando en la cola RT, tendría precedencia
       sobre cualquier otro.
@@ -388,7 +384,13 @@
       muy compleja. Este mecanismo requiere probablemente de un
       recolector de entropía por hardware, o gastaría demasiado
       esfuerzo calculando el próximo número aleatorio.
-    #+end_quote
+    #+end_example
+
+* Estadísticas de las respuestas
+
+#+caption: Distribución de estado por respuesta
+#+attr_latex: width=0.5\textwidth
+[[./img/01_por_respuesta.png]]
 
 |              | 1.1 | 1.2 | 1.extra | 2.1 | 2.2 | 3.1 | 3.2 | 3.3 | Total |
 |--------------+-----+-----+---------+-----+-----+-----+-----+-----+-------|
@@ -397,5 +399,17 @@
 | Incorrecta   |   6 |   6 |         |   4 |   7 |   4 |   8 |     |    35 |
 | No respondió |     |     |      16 |     |     |   5 |   3 |   1 |    25 |
 
+#+caption: Distribución de calificaciones obtenidas
+#+attr_latex: width=0.5\textwidth
+[[./img/01_por_calif.png]]
 
-
+| Calificación | Frecuencia |
+|--------------+------------|
+|            1 |          1 |
+|            2 |          1 |
+|            3 |          2 |
+|            4 |          3 |
+|            5 |          3 |
+|            6 |          4 |
+|            7 |          3 |
+|            8 |          3 |

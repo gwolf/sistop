@@ -29,6 +29,49 @@ rol juegan hoy en día.
 En esta primer sección, veremos algunos conceptos base que iremos
 hilando y empleando en las secciones subsecuentes.
 
+** Espacio de direccionamiento
+
+La memoria está estructurada como un arreglo direccionable de
+bytes. Esto es, al solicitar los contenidos de una dirección
+específica de memoria, el hardware nos entregará un byte (8 bits), y
+no menos. Si queremos hacer una operación sobre /bits/ específicos,
+tenemos que solicitar y almacenar bytes enteros. En algunas
+arquitecturas, el /tamaño de palabra/ es mayor — Por ejemplo, los
+procesadores Alpha incurrían en /fallas de alineación/ si se
+solicitaba una dirección de memoria no alineada a 64 bits, y toda
+llamada a direcciones /mal alineadas/ tenía que ser /atrapada/ por el
+sistema operativo, re-alineada, y entregada.
+
+Un procesador que soporta un /espacio de direccionamiento/ de 16 bits
+puede referirse /directamente/ a hasta $2^{16}$ bytes, esto es, a
+hasta 65,536 bytes (64K). Estos procesadores fueron comunes en las
+décadas de 1970 y 1980 — Los más conocidos incluyen al Intel 8080 y
+8085, Zilog Z80, MOS 6502 y 6510, y Motorola 6800. Hay que recalcar
+que estos procesadores son reconocidos como procesadores de /8 bits/,
+pero con /espacio de direccionamiento/ de 16 bits. El procesador
+empleado en las primeras PC, el Intel 8086, manejaba un
+direccionamiento de 20 bits (hasta 1024KB), pero al ser una
+arquitectura /real/ de 16 bits requería del empleo de /segmentación/
+para alcanzar toda su memoria.
+
+Hoy en día, los procesadores dominantes son de 32 o 64 bits. Un
+procesador de 32 bits puede direccionar hasta 4,294,967,296 bytes
+(4GB), que está ya dentro de los parámetros de lo esperable hoy en
+día; una arquitectura de 32 bits sin extensiones adicionales no puede
+emplear más de 4GB RAM; a través de un mecanismo llamado /PAE/
+(Extensión de Direcciónes Físicas, /Physical Address Extension/)
+permite extender esto a rangos de hasta $2^{52}$ a cambio de un nivel
+más de indirección.
+
+Un procesador de 64 bits podría direccionar hasta
+18,446,744,073,709,551,616 bytes (16 Exabytes). Los procesadores
+comercialmente hoy en día no ofrecen esta capacidad de
+direccionamiento principalmente por un criterio económico: Al resultar
+tan poco probable que exista un sistema con estas capacidades, los
+chips actuales están limitados a entre $2^{40}$ y $2^{48}$ bits — 1 y
+256 terabytes. Esta restricción debe seguir teniendo sentido económico
+por muchos años aún.
+
 ** Hardware: de la unidad de manejo de memoria (MMU)
 
 A lo largo de la historia de las computadoras ha sido necesario
@@ -450,16 +493,17 @@ desuso conforme aumenta el tamaño de los procesos.
 
 * Paginación
 
-La fragmentación externa y, por tanto, la fragmentación pueden
-evitarse por completo empleando la /paginación/. Esta consiste en que
-cada proceso esté compuesto por una serie de /páginas/, dejando de
-requerir que la asignación sea de un área /contigua/ de memoria. Claro
-está, esto requiere de mayor espacialización por parte del hardware:
-No nos basta ya con indicar dónde inicia y dónde termina el área de
-memoria de cada proceso, sino que debemos hacer un /mapeo/ entre la
-ubicación real (/física/) y la presentada a cada uno de los procesos
-(/lógica/). La memoria se presentará a cada proceso como si fuera de
-su uso exclusivo.
+La fragmentación externa y, por tanto, la necesidad de compactación
+pueden evitarse por completo empleando la /paginación/. Esta consiste
+en que cada proceso esté compuesto por una serie de /páginas/, dejando
+de requerir que la asignación sea de un área /contigua/ de
+memoria. Claro está, esto requiere de mayor espacialización por parte
+del hardware, y mayor información relacionada a cada uno de los
+procesos: No nos basta ya con indicar dónde inicia y dónde termina el
+área de memoria de cada proceso, sino que debemos hacer un /mapeo/
+entre la ubicación real (/física/) y la presentada a cada uno de los
+procesos (/lógica/). La memoria se presentará a cada proceso como si
+fuera de su uso exclusivo.
 
 La memoria física se divide en una serie de /marcos/ (/frames/), todos
 ellos del mismo tamaño, y el espacio cada proceso se divide en una
@@ -470,7 +514,132 @@ forma absoluta, sino que como la combinación de un identificador de
 página y un desplazamiento — De forma similar a lo que presentamos al
 hablar de resolución de instrucciones en tiempo de ejecución.
 
-** TODO Segmentación
+El tamaño de los marcos (y, por tanto, las páginas) debe ser una
+/potencia de 2/, de modo que el MMU pueda discernir fácilmente la
+porción de una dirección de memoria que se refiere a la /página/ del
+/desplazamiento/. El rango varía, según el hardware, entre los 512
+bytes ($2^9$) y 16MB ($2^{24}$); al ser una potencia de 2, el MMU puede
+separar la dirección en memoria entre los primeros $m$ bits
+(referentes a la página) y los últimos $n$ bits (referentes al
+desplazamiento).
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
+#+begin_src ditaa :file ltxpng/direccion_a_pag_y_despl.png :cmdline -E
+Dirección especificada — 0001 1101 0111 0010
+ Página (7 bits)
+      ^
+      |
+  /---+---\
+  |       |
+  +-------+---------+
+  |0001110|101110010|
+  |  (14) |  (370)  |
+  +-------+---------+
+          |         |
+          \----+----/
+	       |
+	       V
+   Desplazamiento (9 bits)
+#+end_src
+#+html: <p align="center">Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes</p></div>
+
+Para poder realizar este mapeo, el MMU requiere de una /tabla de
+páginas/ (/page table/), que /resuelve/ la relación entre páginas y
+marcos, convirtiendo la /dirección lógica/ (aquella que conoce el
+proceso) en la /dirección física/ (la ubicación en que /realmente/ se
+encuentra en la memoria del sistema).
+
+Podemos tomar como ejemplo para explicar este mecanismo el esquema
+presentado en el libro de Silberschatz, Galvin y Gagné. Este nos
+presenta un esquema minúsculo: Un /espacio de direccionamiento/ de 32
+bytes (5 bits), organizado en 8 páginas de 4 bytes cada una (esto es,
+la página es representada con los 3 bits /más significativos/ de la
+dirección, y el desplazamiento con los 2 bits /menos
+significativos/).
+
+#+attr_html: height="477"
+#+attr_latex: width=0.5\textwidth
+#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes
+[[./img/ejemplo_de_paginacion.png]]
+
+El proceso que se nos presenta tiene una visión de la memoria como la
+columna del lado izquierdo: Le parece que existen 4 páginas, y tiene
+sus datos distribuidos en órden desde la dirección 00000 (0) hasta la
+01111 (15), aunque en realidad en el sistema éstas se encuentren
+desordenadas y desperdigadas.
+
+Cuando el proceso quiere referirse a la letra /f/, lo hace indicando
+la dirección 00101 (5). De esta dirección, los tres bits más
+significativos (001, 1 — Y recordemos que para la computadora, lo
+/natural/ es comenzar a contar por el 0) se refieren a la página
+número 1, y los dos bits menos significativos (01, 1) indican al
+/desplazamiento/ dentro de ésta.
+
+El MMU verifica en la tabla de páginas, y encuentra que la página 1
+corresponde al marco número 6 (110), por lo que traduce la dirección
+lógica 00101 (5) a la física 11001 (26).
+
+Podemos ver que la paginación resulta en una suerte de resolución de
+direcciones en tiempo de ejecución, pero con una /base/ distinta para
+cada una de las páginas.
+
+** Tamaño de la página
+
+Ahora, si bien la fragmentación externa se resuelve al emplear
+paginación, seguiremos enfrentándonos con la fragmentación interna: Al
+dividirse la memoria en bloques de longitud preestablecida de $2^n$
+bytes, un proceso en promedio desperdiciará $\frac{2^n}{2}$ (y, en el
+peor de los casos, hasta $2^n - 1$). Multiplicando esto por el número
+de procesos que están en ejecución en todo momento en el sistema, para
+evitar que una proporción sensible de la memoria se pierda en
+fragmentación interna, podríamos vernos tentados a emplear un tamaño
+de página tan pequeño como fuera posible.
+
+Sin embargo, la sobrecarga administrativa en que incurriríamos por
+gestionar demasiadas páginas pequeñas se vuelve una limitante en
+sentido opuesto:
+
+- Las transferencias entre unidades de disco y memoria son mucho más
+  eficientes si pueden mantenerse como trechos contínuos. El
+  controlador de disco puede responder a solicitudes de acceso directo
+  a memoria (DMA) siempre que tanto los fragmentos en disco como en
+  memoria sean continuos; fragmentar la memoria demasiado jugaría en
+  contra de la eficiencia de estas solicitudes.
+
+- El bloque de control de proceso (PCB) incluye la información de
+  memoria. Entre más páginas tenga un proceso (aunque estas fueran muy
+  pequeñas), más grande es su PCB, y más información requerirá
+  intercambiar en un cambio de contexto.
+
+Estas consideraciones opuestas apuntan a que debemos mantener el
+tamaño de página más grande, y se regulan con las primeras expuestas
+en esta sección.
+
+Hoy en día, el tamaño habitual de las páginas es de 4KB u 8KB
+($2^{12}$ o $2^{13}$ bytes). Hay algunos sistemas operativos que
+soportan múltiples tamaños de página — Por ejemplo, Solaris puede
+emplear páginas de 8KB y 4MB ($2^{13}$ o $2^{22}$ bytes), dependiendo
+del tipo de información que se declare que almacenarán.
+
+** Interfaz entre el sistema y el hardware
+
+Algunos de los primeros equipos en manejar memoria paginada empleaban
+un conjunto especial de registros para representar la tabla de
+páginas. Esto era posible dado que eran sistemas de 16 bits, con
+páginas de 8KB ($2^{13}). Esto significa que en el sistema había
+únicamente 8 páginas posibles ($2^3$), por lo que resultaba sensato
+dedicar un registro a cada una.
+
+En los equipos actuales, mantener la tabla de páginas en registros
+resultaría claramente imposible: Teniendo un procesaador de 32 bits, e
+incluso si manejáramos un tamaño de página /muy/ grande (digamos,
+4MB), tendríamos 1024 páginas posibles[fn:: $2^{32} - 2^{22} = 2^{10}
+= 1024]. Los registros son muy rápidos, sin embargo, son
+correspondientemente muy caros.
+
+* TODO Segmentación
 * TODO Memoria virtual
 ** TODO Concepto
 ** TODO Paginación

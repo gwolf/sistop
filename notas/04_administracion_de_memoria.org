@@ -623,7 +623,7 @@ soportan múltiples tamaños de página — Por ejemplo, Solaris puede
 emplear páginas de 8KB y 4MB ($2^{13}$ o $2^{22}$ bytes), dependiendo
 del tipo de información que se declare que almacenarán.
 
-** Interfaz entre el sistema y el hardware
+** Almacenamiento de la tabla de páginas
 
 Algunos de los primeros equipos en manejar memoria paginada empleaban
 un conjunto especial de registros para representar la tabla de
@@ -637,7 +637,187 @@ resultaría claramente imposible: Teniendo un procesaador de 32 bits, e
 incluso si manejáramos un tamaño de página /muy/ grande (digamos,
 4MB), tendríamos 1024 páginas posibles[fn:: $2^{32} - 2^{22} = 2^{10}
 = 1024]. Los registros son muy rápidos, sin embargo, son
-correspondientemente muy caros.
+correspondientemente muy caros. El manejo de páginas más pequeñas (que
+es lo normal), y muy especialmente el uso de espacios de
+direccionamiento de 64 bits, harían prohibitivo este enfoque. Además,
+nuevamente, cada proceso tiene una tabla de páginas distinta — Se
+haría necesario hacer una transferencia de información muy grande en
+cada cambio de contexto.
+
+Otra estrategia para enfrentar esta situación es almacenar la propia
+tabla de páginas en memoria, y apuntar al inicio de la tabla con un
+juego de registros especiales: el /registro de base de la tabla de
+páginas/ (/PTBR/, /Page Table Base Register/) y el /registro de
+longitud de la tabla de páginas/ (/PTLR/, /Page Table Length
+Register/),[fn: ¿Por qué necesitamos el segundo? Porque es
+prácticamente imposible que un proceso emplee su espacio de
+direccionamiento completo; al indicar el límite máximo de su tabla de
+páginas por medio del /PTLR/ evitamos desperdiciar grandes cantidades
+de memoria indicando todo el espacio no utiilzado.] De esta manera, en
+el cambio de contexto sólo hay que cambiar dos registros, y además
+tenemos un espacio muy amplio para poder guardar las tablas de páginas
+que necesitemos. El problema con este mecanismo es la velocidad:
+Estaríamos penalizando a /cada acceso a memoria/ con un acceso de
+memoria adicional — Si para resolver una dirección lógica a su
+correspondiente dirección física hace fala consultar la tabla de
+páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
+
+La salida obvia a este dilema es el uso de un caché. Sin embargo, más
+que un caché genérico, el MMU utiliza un caché especializado en el
+tipo de información que maneja: El /buffer de traducción adelantada/ o
+/anticipada/ (/Translation Lookaside Buffer/, /TLB/). El TLB es una
+tabla asociativa (un /hash/) en memoria de alta velocidad, una suerte
+de registros residentes dentro del MMU, donde las /llaves/ son las
+páginas y los /valores/ son los marcos correspondientes. De este modo,
+las búsquedas se efectúan en tiempo constante.
+
+El TLB típicamente tiene entre 64 y 1024 entradas. Cuando el
+procesador efectúa un acceso a memoria, si la página solicitada está
+en el TLB, el MMU tiene la dirección física de inmediato.[fn:: Indica
+Silberschatz (p.295) que el tiempo efectivo de acceso puede ser 10%
+superior al que tomaría sin emplear paginación.] En caso de no
+encontrarse la página en el TLB, el MMU lanza una /falla de página/
+(/page fault/), con lo cual consulta de la memoria principal cuál es
+el marco correspondiente. Esta nueva entrada es agregada al TLB; por
+las propiedades de /localidad de referencia/ que vimos anteriormente,
+la probabilidad de que las regiones más empleadas de la memoria
+durante un área específica de ejecución del programa sean cubiertas
+por relativamente pocas entradas del TLB son muy altas.
+
+Como sea, dado que el TLB es limitado, es necesario explicitar un
+mecanismo que indique dónde guardar las nuevas entradas una vez que el
+TLB está lleno y se produce una falla de página. Uno de los esquemas
+más comunes es emplear la entrada /menos recientemente utilizada/
+(/LRU/, /Least Recently Used/), nuevamente apelando a la localidad de
+referencia; esto tiene como consecuencia necesaria que debe haber un
+mecanismo que contabilice los accesos dentro del TLB (lo cual agrega
+tanto latencia como costo); otro mecanismo (con obvias desventajas) es
+el reemplazar una página al azar.
+
+*** Subdividiendo la tabla de páginas
+
+Incluso empleando TLBs, el espacio empleado por las páginas sigue
+siendo demasiado grande. Consideremos un escenario más frecuente que
+el propuesto anteriormente: Empleando un procesador con espacio de
+direccionamiento de 32 bits, y un tamaño de página estándar (4KB,
+$2^{12}), hablamos ya de 1,048,576 ($2^{20}$) páginas. Si cada entrada
+de la página ocupa 48 bits[fn:: 20 bits identificando a la página y
+otros 20 bits identificando al marco, mas cuatro bytes para /alinear/
+las entradas al byte más cercano, dado que la memoria se organiza por
+bytes] (esto es, 6 bytes), cada proceso requeriría de 6MB (6 bytes por
+cada una de las páginas) sólamente para representar su mapeo de
+memoria. Esto, especialmente en procesos pequeños, resultaría más
+gravoso para el sistema que los beneficios obtenidos de la
+paginación.
+
+Aprovechando que la mayor parte del espacio de direccionamiento de un
+proceso está típicamente vacío, se puede subdividir el identificador
+de página en dos (o más) niveles, por ejemplo, separando una dirección
+de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
+10 bits, y el /desplazamiento/ de 12 bits.
+
+#+caption: Paginación en dos niveles (Silberschatz, p. 300)
+#+attr_html: height="495"
+#+attr_latex: width=0.6\textwidth
+[[./img/paginacion_jerarquica.png]]
+
+Este esquema funciona adecuadamente para equipos con direccionamiento
+de hasta 32 bits. Sin embargo, recordemos que cada nivel de páginas
+conlleva un acceso adicional a memoria en caso de fallo de página —
+Emplear paginación jerárquica con un nivel externo y uno interno
+implica que un fallo de página /triplica/ (y no duplica, como sería
+con un esquema de paginación directo) el tiempo de acceso a
+memoria. Para obtener una tabla de páginas manejable bajo los
+parámetros aquí descritos en un sistema de 64 bits, tendríamos que
+/septuplicar/ el tiempo de acceso (cinco accesos /en cascada/ para
+fragmentos de 10 bits, y un tamaño de página de 14 bits, mas el acceso
+a la página destino).
+
+Otra alternativa es el emplear /funciones digestoras/ (/hash
+functions/)[fn:: Una función digestora puede definirse como $H:
+U\rightarrowM$, una función que /mapea/ o /proyecta/ al conjunto $U$
+en un conjunto $M$ mucho menor; una característica muy deseable de
+toda función hash es que la /distribución resultante/ en $M$ resulte
+homogenea y tan poco dependiente de la secuencialidad de la entrada
+como sea posible.] para mapear cada una de las páginas a un /espacio
+muestral/ mucho más pequeño. Cada página es mapeada a una lista de
+correspondencias simples[fn:: A una lista y no a un valor único dado
+que una función digestora es necesariamente proclive a presentar
+/colisiones/; el sistema debe poder resolver dichas colisiones sin
+pérdida de información.].
+
+Un esquema basado en funciones digestoras nos brinda características
+muy deseables: El tamaño de la tabla de páginas puede variar según
+crece el uso de memoria de un proceso (aunque esto requiera recalcular
+la tabla con diferentes parámetros) y el número de accesos a memoria
+en espacios tan grandes como el de un procesador de 64 bits se
+mantiene mucho más tratable. Sin embargo, por la alta frecuencia de
+accesos a esta tabla, debe elegirse un algoritmo digestor muy ágil
+para evitar que el tiempo que tome calcular la posición en la tabla
+resulte significativo frente a las alternativas.
+
+** Memoria compartida
+
+Hay muchos escenarios en que diferentes procesos pueden beneficiarse
+de compartir áreas de su memoria. Uno de ellos es como mecanismo de
+comunicación entre procesos (/IPC/, /Inter Process Communication/),
+en que dos o más procesos pueden intercambiar estructuras de datos
+complejas sin incurrir en el costo de copiado que implicaría copiarlas
+a través del sistema operativo. Otro caso, mucho más frecuente, es el
+de /compartir código/.
+
+Si un mismo programa es ejecutado varias veces, y dicho programa no
+emplea mecanismos de /código auto-modificable/, no tiene sentido que
+las páginas en que se representa cada una de dichas instancias ocupe
+un marco independiente — El sistema operativo puede asignar a páginas
+de diversos procesos /el mismo conjunto de marcos/, con lo cual puede
+aumentar la capacidad percibida de memoria.
+
+Y si bien es muy común compartir los /segmentos de texto/ de los
+diversos programas que están en un momento dado en ejecución en la
+computadora, este mecanismo es todavía más útil cuando hablamos de
+/bibliotecas del sistema/: Hay bibliotecas que son empleadas por una
+gran cantidad de programas[fn:: Algunos ejemplos sobresalientes
+podrían ser la =libc= o =glibc=, que proporciona las funcinoes
+estándar del lenguaje C y es, por tanto, requerida por casi todos los
+programas del sistema; los diferentes entornos gráficos (en los Unixes
+modernos, los principales son =Qt= y =Gtk=); bibliotecas para el
+manejo de cifrado (=openssl=), compresión (=zlib=), imágenes
+(=libpng=, =libjpeg=), etc.].
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
+#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+  +----------------+   +----------------+   +----------------+     +------------+
+  | Proceso A cYEL |   | Proceso B cGRE |   | Proceso C cRED |     | Páginas de |
+  +--------+-------+   +--------+-------+   +--------+-------+     |  memoria   |
+  | Página | Marco |   | Página | Marco |   | Página | Marco |     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   1 cYEL   |
+  |cYEL  1 | 3 cPNK|   |cGRE  1 | 3 cPNK|   |cRED  1 | 3 cPNK|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   2 cPNK   |
+  |cYEL  2 | 5 cPNK|   |cGRE  2 | 5 cPNK|   |cRED  2 | 5 cPNK|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   3 cPNK   |
+  |cYEL  3 | 2 cPNK|   |cGRE  3 | 2 cPNK|   |cRED  3 | 2 cPNK|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   4 cGRE   |
+  |cYEL  4 | 1 cYEL|   |cGRE  4 | 4 cGRE|   |cRED  4 | 6 cRED|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   5 cPNK   |
+                                                                   +------------+
+  +------------------------------+                                 |   6 cRED   |
+  | cBLU Memoria compartida      |                                 +------------+
+  +------------------------------+
+#+end_src
+#+html: <p align="center">Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.</p></div>
+
+Claro está, para ofrecer este modelo, el sistema operativo debe poder
+garantizar que las páginas correspondientes a las /secciones de texto/
+(el código del programa) sean de sólo lectura.
+
+Un programa que está programado y compilado de forma que
+permita que todo su código sea de sólo lectura es /reentrante/, dado
+que posibilita que diversos procesos entren a su espacio en memoria
+sin tener que sincronizarse con otros procesos que lo estén
+empleando.
 
 * TODO Segmentación
 * TODO Memoria virtual

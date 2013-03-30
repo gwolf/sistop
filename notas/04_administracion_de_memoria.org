@@ -202,6 +202,7 @@ de los procesadores líderes en el mercado es la cantidad de cache de
 primero y segundo nivel con que cuentan.
 
 ** El espacio en memoria de un proceso
+# <<espacio_en_memoria>>
 
 Cuando un sistema operativo inicia un proceso, no se limita a volcar
 el archivo ejecutable a memoria, sino que tiene que proveer la
@@ -461,6 +462,7 @@ La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
 
 *** Intercambio con el almacenamiento secundario
+# <<swap>>
 
 Siguiendo de cierto modo la lógica requerida por la compactación
 encontramos los sistemas que utilizan /intercambio/ (/swap/) entre la
@@ -490,6 +492,144 @@ a esto debe sumarse el tiempo de posicionamiento de la cabeza de
 lectura/escritura, especialmente si el espacio a emplear no es
 secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
 desuso conforme aumenta el tamaño de los procesos.
+
+* Segmentación
+
+Al desarrollar un programa, el programador no ve a la memoria como un
+sólo arreglo plano, en el que todas las direcciones son iguales (si
+bien está consciente de que la realidad es así). El uso que damos a la
+memoria sigue una lógica de distintos /segmentos/: En vez de dar una
+dirección /lineal/, damos al procesador una /dirección de segmento/ y
+un /desplazamiento/ dentro de dicho segmento. Podemos tener segmentos
+de distintos tamaños presentes en memoria, y la resolución de
+direcciones de cada uno de ellos se realizará por mecanismos análogos
+al descrito en el apartado anterior (registro base y
+desplazamiento). Claro está, esto debe también hacerse con apoyo del
+MMU.
+
+#+attr_html: height="445"
+#+attr_latex: width=0.7\textwidth
+#+caption: Ejemplo de segmentación (Silberschatz, p.305)
+[[./img/segmentacion_de_memoria.png]]
+
+Una de las implementaciones más obvias y directas de un espacio de
+memoria segmentado es asignar un segmento distinto a cada una de las
+secciones mencionadas en la sección [[#espacio_en_memoria][espacio en memoria de un proceso]].
+
+La segmentación también ayuda a incrementar la /modularidad/ de un
+programa: Es muy común que las bibliotecas /ligadas dinámicamente/
+estén representadas en segmentos independientes.
+
+** Permisos
+
+Una de las principales ventajas del uso de segmentación es que nos
+permite pedir al MMU que cada uno de los segmentos tenga un distinto
+/juego de permisos/ para el proceso en cuestíón: El sistema operativo
+puede indicar, por ejemplo, que el /segmento de texto/ (el código del
+programa) sea de lectura y ejecución, mientras que la seción de datos
+es de lectura y escritura. De este modo podemos evitar que un error en
+la programación resulte en que datos proporcionados por el usuario o
+por el entorno modifiquen el código que está siendo ejecutado.[fn::
+Sin embargo, incluso bajo este esquema, dado que la /pila de llamadas/
+(/stack/) debe mantenerse como escribible, es común encontrar ataques
+que permiten modificar la /dirección de retorno/ de una subrutina.] Es
+más, Incluso, dado que el acceso de /ejecución/ está limitado a sólo
+los segmentos cargados del disco por el sistema operativo, el atacante
+no podrá introducir código ejecutable tan fácilmente — Tendría que
+cargarlo como un segmento adicional con los permisos correspondientes.
+
+** Intercambio parcial
+
+Un uso muy común de la segmentación, particularmnete en los sistemas
+de los 1980s, era el de permitir que sólo /ciertas regiones/ de un
+programa sean intercambiadas al disco: Si un programa está compuesto
+por porciones de código que nunca se ejecutarán aproximadamente al
+mismo tiempo en sucesión, puede separar su texto (e incluso los datos
+correspondientes) en diferentes segmentos.
+
+A lo largo de la ejecución del programa, algunos de sus segmentos
+pueden no emplearse por largos periodos de tiempo. Estas páginas
+pueden ser enviadas al /espacio de intercambio/ (/swap/) ya sea a
+solicitud del proceso o por iniciativa del sistema operativo.
+
+*** Rendimiento
+
+En la [[#swap][sección donde presentamos el concepto de intercambio]] mencionamos
+que intercambiar un proceso completo resultaba demasaido caro. Cuando
+hablamos de un espacio de memoria segmentado, y muy particularmente
+cuando hablamos de bibliotecas de carga dinámica, la sobrecarga es
+mucho menor: Si el segmento de texto es de sólo lectura, una vez que
+éste fue copiado una vez al disco, ya no hace falta volver a hacerlo:
+Tenemos la certeza de que no será modificado por el proceso en
+ejecución, por lo que basta marcarlo como /no presente/ en las tablas
+de segmentos en memoria para que cualquier acceso ocasione que el
+sistema operativo lo traiga de disco.
+
+Por otro lado, si la biblioteca en cuestión reside en disco (antes de
+ser cargada) como una imagen directa de su representación en memoria,
+al sistema operativo le bastará identificar el archivo en cuestión al
+cargar el proceso; no hace falta siquiera cargarlo en la memoria
+principal y guardarlo al área de intercambio, puede quedar referido
+directamente al espacio en disco en que reside el archivo.
+
+Claro está, el acceso a disco sigue siendo una fuerte penalización
+cada vez que un segmento tiene que ser cargado del disco (sea del
+sistema de archivos o del espacio de intercambio), pero este mecanismo
+reduce dicha penalización, haciendo más atractiva la flexibilidad del
+intercambio por segmentos.
+
+** Ejemplificando
+
+A modo de ejemplo (Finkel, p.79), y conjuntando los conceptos
+presentados en esta sección, si un proceso tuviera la siguiente tabla
+de segmentos:
+
+| Segmento | Inicio | Tamaño | Permisos | Presente |
+|----------+--------+--------+----------+----------|
+| 0        | 13426  | 26     | RWX      | sí       |
+| 1        | 2309   | 00     | R        | sí       |
+| 2        | 1000   | 23     | WX       | sí       |
+| 3        | -      | 95     | W        | no       |
+| 4        | 10000  | 100    | RWX      | sí       |
+
+En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
+/X/ a ejecución.
+
+Un segmento que ha sido enviado al espacio de intercambio (en este
+caso, el 3), deja de estar presente en memoria y, por tanto, no tiene
+ya dirección de inicio registrada.
+
+Veamos el resultado de entregar al MMU las siguientes direcciones y
+tipos de acceso:
+
+| Dirección | Tipo de | Dirección                               |
+|   virtual | acceso  | física                                  |
+|-----------+---------+-----------------------------------------|
+|       0-0 | R       | 13426                                   |
+|      2-17 | W       | 1017                                    |
+|      2-17 | R       | Atrapada: Violación de seguridad        |
+|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-72 | W       | Atrapada: Segmento faltante             |
+|      3-94 | R       | Atrapada: Segmento faltante;            |
+|           |         | violación de seguridad                  |
+|      4-99 | X       | 10099                                   |
+|      7-25 | X       | Atrapada: Segmento invalido             |
+
+Cuando se atrapa una situación de excepción, el sistema operativo debe
+intervenir. Por ejemplo, la solicitud de un segmento inválido, de un
+desplazamiento mayor al tamaño del segmento, o de un tipo de acceso
+que no esté autorizado, típicamente llevan a la terminación del
+proceso, en tanto que una de segmento faltante (indicando un segmento
+que está en el espacio de intercambio) llevaría a la suspensión del
+proceso, lectura del segmento de disco a memoria, y una vez que éste
+estuviera listo, se permitiría continuación de la ejecución.
+
+En caso de haber más de una excepción, como podemos verlo en la
+solicitud de lectura de la dirección 3-94, el sistema debe reaccionar
+primero a la /más severa/: Si como resultado de esa solicitud iniciara
+el proceso de carga del segmento, sólo para abortar la ejecución del
+proceso al detectarse la violación de tipo de acceso, sería un
+desperdicio injustificado de recursos.
 
 * Paginación
 
@@ -818,8 +958,6 @@ permita que todo su código sea de sólo lectura es /reentrante/, dado
 que posibilita que diversos procesos entren a su espacio en memoria
 sin tener que sincronizarse con otros procesos que lo estén
 empleando.
-
-* TODO Segmentación
 * TODO Memoria virtual
 ** TODO Concepto
 ** TODO Paginación

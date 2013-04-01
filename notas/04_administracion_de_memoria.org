@@ -236,10 +236,27 @@ relativa a su ejecución.
      pila ocupa la parte /más alta/ del espacio en memoria, y /crece
      hacia abajo/.
 
-#+attr_html: height="294"
-#+attr_latex: width=0.3\textwidth
-#+caption: Regiones de la memoria para un proceso (Silberschatz, p. 100)
-[[./img/proceso_en_memoria.png]]
+#+html: <div class="figure">
+#+attr_latex: width=0.5\textwidth
+#+caption: Regiones de la memoria para un proceso
+#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
+  max   +-------------------+
+        |  Pila de llamadas |
+        +---------+---------+
+        |         |         |
+        |         V         |
+        |  cAAA             |
+        |         ^         |
+        |         |         |
+        +---------+---------+
+        | Espacio de libres |
+        +-------------------+
+        | Sección de datos  |
+        +-------------------+
+        | Sección de texto  |
+  0     +-------------------+
+#+end_src
+#+html: <p align="center">Regiones de la memoria para un proceso</p></div>
 
 
 ** Resolución de direcciones
@@ -776,7 +793,7 @@ En los equipos actuales, mantener la tabla de páginas en registros
 resultaría claramente imposible: Teniendo un procesaador de 32 bits, e
 incluso si manejáramos un tamaño de página /muy/ grande (digamos,
 4MB), tendríamos 1024 páginas posibles[fn:: $2^{32} - 2^{22} = 2^{10}
-= 1024]. Los registros son muy rápidos, sin embargo, son
+= 1024$]. Los registros son muy rápidos, sin embargo, son
 correspondientemente muy caros. El manejo de páginas más pequeñas (que
 es lo normal), y muy especialmente el uso de espacios de
 direccionamiento de 64 bits, harían prohibitivo este enfoque. Además,
@@ -789,7 +806,7 @@ tabla de páginas en memoria, y apuntar al inicio de la tabla con un
 juego de registros especiales: el /registro de base de la tabla de
 páginas/ (/PTBR/, /Page Table Base Register/) y el /registro de
 longitud de la tabla de páginas/ (/PTLR/, /Page Table Length
-Register/),[fn: ¿Por qué necesitamos el segundo? Porque es
+Register/),[fn:: ¿Por qué necesitamos el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del /PTLR/ evitamos desperdiciar grandes cantidades

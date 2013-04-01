@@ -228,7 +228,23 @@ Comportamiento del MMU
   - Sección de texto
 #+latex: \end{column}\begin{column}{0.5\textwidth}
 #+attr_latex: height=0.5\textheight
-[[../img/proceso_en_memoria.png]]
+#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
+  max   +-------------------+
+        |  Pila de llamadas |
+        +---------+---------+
+        |         |         |
+        |         V         |
+        |  cAAA             |
+        |         ^         |
+        |         |         |
+        +---------+---------+
+        | Espacio de libres |
+        +-------------------+
+        | Sección de datos  |
+        +-------------------+
+        | Sección de texto  |
+  0     +-------------------+
+#+end_src
 #+latex: \end{column}\end{columns}
 
 ** Sección de texto
@@ -320,10 +336,11 @@ Comportamiento del MMU
     resuelta cada vez que se requiera
 
 ** Proceso de compilación y carga
-#+attr_latex: height=0.75\textheight
-#+caption: Proceso de compilación y carga  (Silberschatz, p.281)
+#+attr_latex: width=\textwidth
+#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones  (Silberschatz, p.281)
 #+begin_src dot :exports results :file ltxpng/tipo_resol_direcc.png
   digraph G {
+          rankdir = LR;
           subgraph cluster0 {
                   label="Tiempo de compilación";
                   color=lightgray;

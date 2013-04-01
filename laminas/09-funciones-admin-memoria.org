@@ -1,0 +1,181 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de memoria: Funciones y operaciones
+#+DATE: 2013-04-01 — 2013-04-??
+
+* Introducción
+** El administrador de memoria
+- Es otra de las partes /fundamentales/ de un sistema operativo
+- En toda computadora basada en von Neumann, la memoria es el /único/
+  almacenamiento a que tiene acceso directo el procesador
+  - Todo otro almacenamiento tiene que pasar a través de controladores externos
+  - Típicamente manejado a través de /memoria mapeada/ o /de acceso directo/
+- Todo proceso que ejecutemos debe estar /en/ memoria
+  - El administrador de memoria es el encargado de permitir que varios
+    procesos la compartan
+
+** Notación: Sistemas binario, decimal, hexadecimal
+#+begin_center
+¡Importante!
+#+end_center
+- Para comprender bien este tema, así como el siguiente, es importante
+  tener un buen dominio de conceptos básicos de los sistemas de numeración
+  - Particularmente el binario, en segundo término el hexadecimal
+- Aspectos principales:
+  - Potencias de 2
+  - Representación numérica en los diferentes sistemas
+  - Máscaras de bits
+#+begin_center
+Hay tarea al respecto.
+#+end_center
+
+* Espacio de direccionamiento
+** Abstracción de la memoria
+- La memoria se presenta ante el CPU como un arreglo direccionable
+- Cada byte tiene una dirección única y consecutiva
+  - En algunas arquitecturas, las solicitudes deben estar /alineadas/
+    (por ejemplo, a 64 bits), y no estarlo causa ua /trampa/ o
+    /falta/, incurriendo en demoras
+  - Sin embargo, las direcciones siguen siendo de cada /byte/
+- Para operar sobre /bits/ específicos, tenemos que pedir el byte,
+  trabajar sobre de él y enviarlo de vuelta — Como una unidad.
+
+** Espacio de direccionamiento: ¿Hasta dónde puedes contar?
+- Cada arquitectura de procesador tiene un /espacio de
+  direccionamiento/ determinado
+  - Siempre es una potencia de 2, y /casi siempre/ en números
+    /cerrados/ (8, 16, 32, 64)
+
+** Procesadores de 16 bits
+- Un procesador con /espacio de direccionamiento/ de 16 bits puede
+  referirse /directamente/ a hasta $2^{16}$ (65,536) bytes.
+- Principales procesadores de este tipo: Intel 8080 y 8085, Zilog
+  Z80, MOS 6502 y 6510
+- Intel 8086/8088: Direcciona hasta 20 bits (1024KB)
+  - Pero al ser una arquitectura /real/ de 16 bits, requiere emplear
+    /segmentación/ para alcanzar toda su memoria
+- Intel 80286: espacio de direccionamiento de 24 bits (16 MB)
+  - Pero su mercado era el mismo que el del 8086/8088, y por ciertas
+    restricciones de su arquitectura, prácticamente nunca se utilizaba
+    en estos modos
+
+** Procesadores de 32 bits
+- Hoy en día, los procesadores dominantes son de 32 o 64 bits
+- Un procesador de 32 bits puede direccionar hasta 4GB — $2^{32}$
+  bytes (4,294,967,296 bytes)
+  - Hoy ya está dentro del rango de lo /alcanzable/
+  - Por medio de /PAE/ (Extensión de Direcciones Físicas, /Physical
+    Address Extension/), puede extenderse hasta $2^{52}$ (aunque
+    típicamente $2^{36}$, 64GB)
+  - PAE requiere un nivel adicional de /indirección/ (lo veremos
+    cuando cubramos /paginación/), por lo que pierde /un poco/ de
+    rendimiento, y cada proceso sigue viendo sólo hasta 4GB.
+
+** Procesadores de 64 bits
+- Un procesador de 64 bits puede direccionar hasta 16 exabytes —
+  $2^{64}$ bytes (18,446,744,073,709,551,616 bytes)
+- El hardware actual está limitado por un criterio económico a entre
+  $2^{40}$ y $2^{48}$ bits, 1TB y 256TB
+  - El costo de más de 256TB RAM hace extremadamente improbable que
+    sea requerido en suficientes procesadores de propósito general
+  - Cada bit de direccionamiento necesario requiere un pin en el CPU,
+    por tanto, tiene un costo directo
+
+** ¿Más allá?
+- ¿Qué tan lejos podemos llegar?
+- El número total de átomos en el universo está estimado en cerca de
+  $2^{80}$
+- ¿Cuánto espacio (físico) necesitamos para nuestra memoria?
+  - Por más que avance la miniaturización
+- ¿Cuánto ancho de banda podemos esperar tener?
+  - ¿Cómo podemos esperar llenar 64 bits de datos?
+
+* La unidad de manejo de memoria (MMU)
+** ¿Qué es / qué hace el MMU?
+- Casi todos los sistemas operativos modernos /requieren/ de una
+  unidad de manejo de memoria (MMU)
+  - Hardware, hoy es parte integral del CPU
+- Trabaja /muy/ de cerca con el sistema operativo
+- Encargado de funciones de control de permisos, seguridad, y
+  traducción de direcciones
+- ``Vigilando'' todos los accesos a memoria que ejecuta el código
+- Existen sistemas operativos multitarea que pueden funcionar sin MMU
+  - Pagan como precio la confiabilidad del sistema
+
+** ¿Traducción de direcciones?
+- Es común que un sistema requiera más memoria /de la que está
+  directamente disponible/
+  - Más memoria de la que existe
+  - Más memoria de la que el hardware puede direccionar
+- Un proceso no tiene por qué conocer los detalles de la asignación de
+  memoria — Le damos una vista virtual simplificada
+  - ¿Cuántos bloques de memoria me asignaron?
+  - ¿Cuál es la ubicación de cada uno de ellos?
+  - ¿Qué pasa si intento escribir (o leer) de donde tengo prohibido?
+- A lo largo de esta unidad iremos viendo las estrategias para
+  responder a esto.
+
+** Permisos
+- El MMU verifica que un proceso no tenga acceso a datos de otro
+  - A menos que sea /expresamente permitido/ (vía el sistema operativo)
+  - Hacer esta verificación desde el sistema operativo mismo
+    incurriría en costos demasiado grandes
+  - Una verificación estática no puede ser suficientemente exhaustiva
+
+** Protección de acceso: Primera aproximación
+#+begin_center
+La arquitectura nos ofrece dos registros de uso /específico/, y su
+modificación requiere una operación privilegiada / /modo supervisor/:
+#+end_center
+- Registro base :: Apunta a la primer dirección de memoria que
+                   pertenece a este proceso
+- Registro límite :: Cantidad de memoria que pertenece a este proceso
+     a partir del registro base
+#+begin_center
+/NOTA:/ Esto asume que los bloques de memoria asignados a cada proceso
+sean /contiguos/
+#+end_center
+
+** Registros base y límite: Ejemplo (1)
+- A un proceso le fue asignado un espacio de 64K (65535 bytes)
+- A partir de la dirección 504214 (492K)
+#+begin_center
+Esto se traduce a:
+#+end_center
+- El /registro base/ contiene 504214
+- El /registro limite/ contiene 65535
+** Registros base y límite: Ejemplo (2)
+#+attr_latex: width=\textwidth
+#+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
+#+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
+  0     +------------------+
+        | Sist. Oper. cBLU |
+  128K  +------------------+
+        | Proceso 1        |
+  256K  +------------------+
+        | Proceso 2        |
+        |                  |
+  492K  +------------------+<-----504214 (base)
+        | Proceso 3 cGRE   |    + 65536 (límite)
+  556K  +------------------+<-----569749 (base+límite)
+        | Espacio cPNK     |
+        | Libre            |
+  1024K +------------------+
+
+
+** Registros base y límite: Ejemplo (3)
+#+begin_center
+Comportamiento del MMU
+#+end_center
+- El proceso solicita acceso a una dirección $x < 504214 \rightarrow$
+  *Falla:* Violación de segmento (/segmentation fault/)
+- El proceso solicita acceso a una dirección $504214 < x < 569749
+  \rightarrow$ *OK* Se otorga acceso a la dirección
+- El proceso solicita acceso a una dirección $569749 < x \rightarrow$
+  *Falla:* Violación de segmento (/segmentation fault/)
+
+* La memoria /caché/
+** Lógica básica del caché
+
+* Espacio en memoria de un proceso
+
+* Resolución de direcciones

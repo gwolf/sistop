@@ -28,6 +28,39 @@
 Hay tarea al respecto.
 #+end_center
 
+** La memoria caché
+- El manejo del caché es /casi/ transparente para el sistema operativo
+- Busca resolver el diferencial (creciente) de velocidad entre el CPU
+  y la memoria
+  - La memoria de alta velocidad que maneja el caché es mucho más cara
+  - Comienza a entrar en juego la velocidad de los electrones sobre
+    pistas de cobre
+- Vimos ya que el OS tiene que saber al respecto: /Afinidad/ de
+  procesos a CPU
+- Cuando se produce una /falla de caché/ (no tiene copia de la
+  dirección solicitada), es necesario /detener/ al CPU
+  - Insertando =NOOP= $\rightarrow$ /stall/ (detención)
+
+**  ¿Por qué el caché?: Localidad de referencia
+#+BEGIN_CENTER
+Se ha observado que prácticamente todos los procesos responden al
+principio de /localidad de referencia/:
+#+END_CENTER
+- Localidad temporal :: Es probable que un recurso que fue empleado
+     recientemente vuelva a ser empleado en un futuro cercano.
+- Localidad espacial :: La probabilidad de que un recurso /aún no
+     requerido/ sea accesado es mucho mayor si fue requerido algún
+     recurso cercano.
+- Localidad secuencial :: Un recurso, y muy particularmente la
+     memoria, tiende a ser requerido de forma secuencial.
+
+     (Caso especial de /Localidad espacial/)
+
+** Ilustrando la localidad de referencia
+#+caption: Patrones de acceso a memoria (Silberschatz, p.350)
+#+attr_latex: height=0.75\textheight
+[[../img/localidad_de_referencia.png]]
+
 * Espacio de direccionamiento
 ** Abstracción de la memoria
 - La memoria se presenta ante el CPU como un arreglo direccionable
@@ -44,6 +77,11 @@ Hay tarea al respecto.
   direccionamiento/ determinado
   - Siempre es una potencia de 2, y /casi siempre/ en números
     /cerrados/ (8, 16, 32, 64)
+- Es el máximo de memoria que dicho procesador puede ver
+  - /Virtual/ :: Lo máximo que la arquitectura ofrece como una
+                 dirección de memoria
+  - /Físico/ :: Lo máximo que /un procesador específico/ puede
+                direccionar (limitado por su número de pines)
 
 ** Procesadores de 16 bits
 - Un procesador con /espacio de direccionamiento/ de 16 bits puede
@@ -55,8 +93,8 @@ Hay tarea al respecto.
     /segmentación/ para alcanzar toda su memoria
 - Intel 80286: espacio de direccionamiento de 24 bits (16 MB)
   - Pero su mercado era el mismo que el del 8086/8088, y por ciertas
-    restricciones de su arquitectura, prácticamente nunca se utilizaba
-    en estos modos
+    restricciones de su arquitectura, casi nunca se utilizó en estos
+    modos
 
 ** Procesadores de 32 bits
 - Hoy en día, los procesadores dominantes son de 32 o 64 bits
@@ -89,10 +127,10 @@ Hay tarea al respecto.
 - ¿Cuánto ancho de banda podemos esperar tener?
   - ¿Cómo podemos esperar llenar 64 bits de datos?
 
-* La unidad de manejo de memoria (MMU)
+* El MMU
 ** ¿Qué es / qué hace el MMU?
 - Casi todos los sistemas operativos modernos /requieren/ de una
-  unidad de manejo de memoria (MMU)
+  /unidad de manejo de memoria/ (MMU)
   - Hardware, hoy es parte integral del CPU
 - Trabaja /muy/ de cerca con el sistema operativo
 - Encargado de funciones de control de permisos, seguridad, y
@@ -147,35 +185,185 @@ Esto se traduce a:
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 #+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  0     +------------------+
-        | Sist. Oper. cBLU |
-  128K  +------------------+
-        | Proceso 1        |
-  256K  +------------------+
-        | Proceso 2        |
-        |                  |
-  492K  +------------------+<-----504214 (base)
-        | Proceso 3 cGRE   |    + 65536 (límite)
-  556K  +------------------+<-----569749 (base+límite)
-        | Espacio cPNK     |
-        | Libre            |
-  1024K +------------------+
-
+  0     +-------------------+  0x000000
+        | cBLU              |
+        | Sistema Operativo |
+  128K  +-------------------+  0x020000
+        | Proceso 1         |
+  256K  +-------------------+  0x040000
+        | Proceso 2         |
+        |                   |
+  492K  +-------------------+<-0x07b000<--504214 (base)
+        | Proceso 3 cGRE    | +0x010000  +65536 (límite)
+  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+        | Espacio cPNK      |
+        | Libre             |
+  1024K +-------------------+  0x100000
+#+end_src
 
 ** Registros base y límite: Ejemplo (3)
 #+begin_center
 Comportamiento del MMU
 #+end_center
-- El proceso solicita acceso a una dirección $x < 504214 \rightarrow$
-  *Falla:* Violación de segmento (/segmentation fault/)
-- El proceso solicita acceso a una dirección $504214 < x < 569749
-  \rightarrow$ *OK* Se otorga acceso a la dirección
-- El proceso solicita acceso a una dirección $569749 < x \rightarrow$
-  *Falla:* Violación de segmento (/segmentation fault/)
+- Solicita acceso a $direcc < 504214 \rightarrow$
+  *Falla:*
+  - Violación de segmento (/segmentation fault/)
+- Solicita acceso a $504214 < direcc < 569749 \rightarrow$ *OK*
+  - Se otorga acceso a la dirección
+- Solicita acceso a $569749 < direcc \rightarrow$ *Falla:*
+  - Violación de segmento (/segmentation fault/)
 
-* La memoria /caché/
-** Lógica básica del caché
+* Espacio en memoria
+** Estructura de un proceso en memoria
+- Para ejecutar un proceso, el SO /casi nunca/ se limita a volcar el
+  ejecutable a memoria
+  - Excepto en sistemas antiguos: Formato =.COM= de MS-DOS, archivos
+    =a.out= /reales/ de Unixes antiguos
+- Un proceso tiene diversas /regiones/ de memoria, con usos muy
+  diferentes:
+#+latex: \begin{columns}\begin{column}{0.4\textwidth}
+  - Pila de llamadas
+  - Espacio de /libres/
+  - Sección de datos
+  - Sección de texto
+#+latex: \end{column}\begin{column}{0.5\textwidth}
+#+attr_latex: height=0.5\textheight
+[[../img/proceso_en_memoria.png]]
+#+latex: \end{column}\end{columns}
 
-* Espacio en memoria de un proceso
+** Sección de texto
+- Imagen en memoria de las instrucciones
+- Las direcciones más /bajas/ del espacio asignado
+- El procesador va /avanzando/ sobre este espacio mediante el
+  registro de instrucción
+
+** Sección de datos
+- Espacio fijo preasignado para variables /globales/
+- Se fija en /tiempo de compilación/
+- Su tamaño no puede cambiar
+  - Aunque los /datos/ sí cambian
+
+** Espacio de /libres/ (/Heap/)
+- Espacio empleado para la asignación dinámica de memoria
+- Asignado /en tiempo de ejecución/
+- En lenguajes que requieren /manejo manual/ de la memoria, aquí se
+  manejan todas las estructuras dinámicas
+  - En C: =malloc=, =free=
+  - En C++: =new=, =delete=
+- En lenguajes con /gestión automática/, es monitoreado por los
+  /recolectores de basura/
+- /Crece hacia arriba/
+
+** Pila de llamadas (/Stack/)
+- Estructuras representando la serie de funciones que han sido
+  llamadas dentro del proceso, incluyendo:
+  - Parámetros
+  - Direcciones de /retorno/
+  - Variables locales
+  - etc.
+- Ocupa la parte /más alta/ del espacio en memoria
+- /Crece hacia abajo/
 
 * Resolución de direcciones
+** ¿Qué es la /resolución de direcciones/?
+- Cuando escribimos un programa, sus funciones y variables son
+  referidas por /nombre/
+- El compilador va substituyendo los nombres por la /dirección en
+  memoria/ a donde debe referirse
+  - Excepto en bibliotecas de ligado dinámico... Que abordaremos más
+    adelante
+- Pero en un sistema multiproceso, el compilador no necesariamente
+  sabe dónde estará el espacio de memoria asignado al proceso
+- Las direcciones indicadas en el /texto/ del programa deben ser
+  /traducidas/ (o /resueltas/) a su ubicación definitiva
+- Esto puede ocurrir en tres momentos...
+
+** En tiempo de compilación
+- El texto de programa tiene la dirección /absoluta/ de datos y
+  funciones
+- Muy común en arquitecturas no multiprocesadas
+- En las PC tempranas, el formato ejecutable =.COM= es un /volcado de
+  memoria/ con las direcciones absolutas
+  - Formato limitado a /un segmento/ de memoria (64K — 16 bits,
+    ¿Recuerdan?)
+- Hoy en día vemos esto en sistemas embebidos, microcontroladores, o
+  de función específica
+  - p.ej. Arduino
+- P.ej. la variable =contador= queda traducida en la imagen /en
+  disco/ como su dirección: =510200=
+
+** En tiempo de carga
+- El sistema operativo tiene una rutina llamada /cargador/ (/loader/)
+  - Le asiste frecuentemente el /ligador/ (/linker/), para incluir /en
+    la sección de texto/ todas las bibliotecas externas que requiera
+- Analiza el texto del programa que va cargando, y actualiza a las
+  referencias a memoria para apuntar al lugar correcto
+  - Agregando el /desplazamiento/ (/offset/) necesario (la dirección
+    /base/)
+- Depende de que el compilador indique la ubicación de cada una de
+  las variables y funciones
+- P.ej. =contador= queda traducida como un desplazamiento: =inicio +
+  5986=
+  - Al cargarse, =inicio= es /resuelto/ a 504214
+
+** En tiempo de ejecución
+- El programa /nunca/ hace referencia a ubicaciones absolutas de
+  memoria
+  - El código generado por el compilador siempre indica /base/ y
+    /desplazamiento/ (/offset/)
+- Permite que el proceso sea reubicado en la memoria /incluso estando
+  ya en ejecución/
+- Requiere de apoyo en hardware (MMU)
+- P.ej. la variable =contador= queda traducida como un desplazamiento:
+  =inicio + 5986=
+  - =inicio= se mantiene como etiqueta /durante la ejecución/ y es
+    resuelta cada vez que se requiera
+
+** Proceso de compilación y carga
+#+attr_latex: height=0.75\textheight
+#+caption: Proceso de compilación y carga  (Silberschatz, p.281)
+#+begin_src dot :exports results :file ltxpng/tipo_resol_direcc.png
+  digraph G {
+          subgraph cluster0 {
+                  label="Tiempo de compilación";
+                  color=lightgray;
+		  style=filled;
+                  compilador;
+                  objmod;
+          }
+          subgraph cluster1 {
+                  label="Tiempo de carga";
+                  color=lightgray;
+		  style=filled;
+                  ligado;
+		  modulo;
+		  cargador;
+          }
+          subgraph cluster2 {
+                  label="Tiempo de ejecución";
+                  color=lightgray;
+		  style=filled;
+                  imagenram;
+          }
+          fuente -> compilador -> objmod -> ligado -> modulo -> cargador -> imagenram;
+          otrosobj -> ligado;
+          bibliosist -> cargador;
+          dll -> imagenram [label = "Carga dinámica"];
+
+          fuente [label="Programa\nfuente"];
+          compilador [label="Compilador o\nensamblador",
+                      shape = box];
+          objmod [label="Módulo\nobjeto"];
+          otrosobj [label="Otros\nobjetos"];
+          ligado [label="Editor de\nligado",
+                  shape = box];
+          modulo [label="Módulo\ncargable"];
+          bibliosist [label="Biblioteca\nde sistema"]
+          cargador [label="Cargador",
+                    shape = box];
+          dll [label="Biblioteca\nde sistema\nde carga\ndinámica"];
+          imagenram [label="Imagen del\nbinario en\nmemoria",
+                     shape = box];
+  }
+#+end_src
+

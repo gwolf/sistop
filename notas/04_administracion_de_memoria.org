@@ -123,20 +123,20 @@ recursos que tuviera asignados y notificando a su usuario.
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 #+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  0     +------------------+
-        | Sist. Oper. cBLU |
-  128K  +------------------+
-        | Proceso 1        |
-  256K  +------------------+
-        | Proceso 2        |
-        |                  |
-  492K  +------------------+<-----504214 (base)
-        | Proceso 3 cGRE   |    + 65536 (límite)
-  556K  +------------------+<-----569749 (base+límite)
-        | Espacio cPNK     |
-        | Libre            |
-  1024K +------------------+
-  
+  0     +-------------------+  0x000000
+        | cBLU              |
+        | Sistema Operativo |
+  128K  +-------------------+  0x020000
+        | Proceso 1         |
+  256K  +-------------------+  0x040000
+        | Proceso 2         |
+        |                   |
+  492K  +-------------------+<-0x07b000<--504214 (base)
+        | Proceso 3 cGRE    | +0x010000  +65536 (límite)
+  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+        | Espacio cPNK      |
+        | Libre             |
+  1024K +-------------------+  0x100000
 #+end_src
 #+html: <p align="center">Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite</p></div>
 
@@ -261,7 +261,7 @@ de las siguientes tres estrategias de resolución:
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de los datos y funciones. Esto era muy común en las
      computadoras previas al multiprocesamiento; en la arquitectura
-     compatible con PC, el formato ejecutable =.com= es un volcado de
+     compatible con PC, el formato ejecutable =.COM= es un volcado de
      memoria directo de un archivo objeto con las direcciones
      indicadas de forma absoluta. Esto lo podemos ver hoy
      principalmente en sistemas embebidos o de función específica.

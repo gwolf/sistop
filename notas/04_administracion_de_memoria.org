@@ -476,10 +476,34 @@ ejecución, cuando el sistema operativo comience a detectar un alto
 ejecución para que ocupen espacios contiguos, permitiendo unificar
 varios bloques libres en uno solo.
 
-#+attr_html: height="224"
-#+attr_latex: width=0.5\textwidth
-#+caption: Compactación de la memoria de procesos en ejecución (La Red, p.76)
-[[./img/compactacion_memoria.png]]
+#+html: <div class="figure">
+#+attr_html: height="250"
+#+attr_latex: height=0.5\textheight
+#+caption: Compactación de la memoria de procesos en ejecución
+#+begin_src ditaa :file ltxpng/compactacion.png :cmdline -E
+      +----------------+         +----------------+
+      | cPNK Libre     |         |                |
+      +----------------+         |                |
+      |                |         |                |
+      | Proceso 4 cF0F +------+  |                |
+      +----------------+      |  | cPNK Libre     |
+      |                |      |  |                |
+      | cPNK Libre     |      |  |                |
+      |                |      |  +----------------+
+      +----------------+      |  |                |
+      | Proceso 3 cYEL +----+ +->| Proceso 4 cF0F |
+      +----------------+    |    +----------------+
+      |                |    +--->| Proceso 3 cYEL |
+      | Proceso 2 cRED +--+      +----------------+
+      +----------------+  |      |                |
+      | cPNK Libre     |  +----->| Proceso 2 cRED |
+      +----------------+         +----------------+
+      | Proceso 1 cGRE |         | Proceso 1 cGRE |
+      +----------------+         +----------------+
+      | Sist. Oper.cBLU|         | Sist. Oper.cBLU|
+      +----------------+         +----------------+
+#+end_src
+#+html: <p align="center">Compactación de la memoria de procesos en ejecución</p></div>
 
 La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).

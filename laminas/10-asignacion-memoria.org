@@ -23,6 +23,29 @@
   - La /memoria mapeada/ a los diversos dispositivos queda dentro del
     segmento del SO
 
+** Particiones fijas
+#+attr_latex: height=0.65\textheight
+#+caption: Particiones fijas, con 3 particiones libres
+#+begin_src ditaa :file ltxpng/particiones_fijas.png :cmdline -E
+  512K  +--------------------+ 0x80000
+        | cPNK  Libre        |
+  448K  +--------------------+ 0x70000
+        | Proceso 5 cF0F     |
+  384K  +--------------------+ 0x60000
+        | Proceso 3 cRED     |
+  320K  +--------------------+ 0x50000
+        | cPNK  Libre        |
+  256K  +--------------------+ 0x40000
+        | cPNK  Libre        |
+  192K  +--------------------+ 0x30000
+        | Proceso 2 cYEL     |
+  128K  +--------------------+ 0x20000
+        | Proceso 1 cGRE     |
+   64K  +--------------------+ 0x10000
+        |SistemacBLUOperativo|
+     0  +--------------------+ 0x00000
+#+end_src
+
 ** Particiones fijas: Ventajas y desventajas
 - ¿Ventajas? Principalmente, simplicidad
   - Resolución de direcciones en tiempo de carga
@@ -87,7 +110,7 @@
 
 ** Fragmentación en la memoria
 #+attr_latex: height=0.7\textheight
-#+caption: Al terminar el proceso 1 (de 128K) y lanzarse los 4 (de 64K), 5 (de 156K) y 6 (de 128K), se va fragmentando la memoria
+#+caption: Termina el proceso 1 (de 128K); inician 4 (de 64K), 5 (de 156K) y 6 (de 128K); termina 3 (64K). Se va fragmentando la memoria.
 #+begin_src ditaa :file ltxpng/fragmentacion_con_particiones_flexibles.png :cmdline -E
   1024K +-------------------+  0x100000
         | Espacio Libre cPNK|
@@ -100,7 +123,7 @@
         | Proceso 5         |
         |                   |
   556K  +-------------------+  0x08b000
-        | Proceso 3         |
+        | Espacio libre cPNK|
   492K  +-------------------+  0x07b000
         |                   |
         |                   |
@@ -173,9 +196,31 @@ nuevo proceso:
   - Suspensión sensible de los procesos implicados
 
 ** Compactación
-#+attr_latex: width=0.8\textwidth
-#+caption: Compactación de la memoria de procesos en ejecución (La Red, p.76)
-[[../img/compactacion_memoria.png]]
+#+attr_latex: height=0.7\textheight
+#+caption: Compactación de la memoria de procesos en ejecución
+#+begin_src ditaa :file ltxpng/compactacion.png :cmdline -E
+      +----------------+         +----------------+
+      | cPNK Libre     |         |                |
+      +----------------+         |                |
+      |                |         |                |
+      | Proceso 4 cF0F +------+  |                |
+      +----------------+      |  | cPNK Libre     |
+      |                |      |  |                |
+      | cPNK Libre     |      |  |                |
+      |                |      |  +----------------+
+      +----------------+      |  |                |
+      | Proceso 3 cYEL +----+ +->| Proceso 4 cF0F |
+      +----------------+    |    +----------------+
+      |                |    +--->| Proceso 3 cYEL |
+      | Proceso 2 cRED +--+      +----------------+
+      +----------------+  |      |                |
+      | cPNK Libre     |  +----->| Proceso 2 cRED |
+      +----------------+         +----------------+
+      | Proceso 1 cGRE |         | Proceso 1 cGRE |
+      +----------------+         +----------------+
+      | Sist. Oper.cBLU|         | Sist. Oper.cBLU|
+      +----------------+         +----------------+
+#+end_src
 
 ** Intercambio (/swap/)
 - El SO puede /comprometer/ más memoria de la que tiene disponible

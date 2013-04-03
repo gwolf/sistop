@@ -1,0 +1,208 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de memoria: Asignación de memoria
+#+DATE: 2013-04-03
+* Memoria contigua
+
+** Compartiendo la memoria desde...
+- Como en tantos otros temas, comencemos viendo cómo compartían la
+  memoria los /primeros/ sistemas multiprocesados
+- Las primeras implementaciones siempre son las más sencillas
+  - ...y las más ingenuas
+- ¿Cómo eran estos primeros sistemas?
+  - Poca memoria
+  - Sin MMU
+  - No interactivos
+
+** Particiones fijas
+- Primer acercamiento: /Partir/ la memoria en varios bloques
+  - Originalmente del mismo tamaño (¡más sencillo!)
+  - Por ejemplo: En 512KB de memoria física caben el sistema
+    operativo mas otros 7 programas de 64KB (16 bits) cada uno
+- El sistema operativo típicamente usa la /región más baja/, a partir
+  de 0x0000
+  - La /memoria mapeada/ a los diversos dispositivos queda dentro del
+    segmento del SO
+
+** Particiones fijas: Ventajas y desventajas
+- ¿Ventajas? Principalmente, simplicidad
+  - Resolución de direcciones en tiempo de carga
+  - /Registro base/ (no requiere siquiera de un /registro límite/)
+  - Puede limitarse simplemente con un espacio de direccionamiento
+    acorde en el compilador
+- ¿Desventajas? Rigidez
+  - /Grado de multiprocesamiento/ limitado
+    - Si hay menos de 7 procesos, se desperdician recursos
+    - Si hay más de 7, tienen que esperar a que se les abra espacio
+  - Desperdicio de espacio (/fragmentación interna/)
+    - Al asignarse la memoria en bloques fijos, un proceso pequeño
+      podría desperdiciar mucho espacio
+
+** Particiones flexibles
+- Cada proceso declara sus requisitos de memoria /al iniciar su
+  ejecución/
+  - Debe indicar su uso /máximo previsto/ de memoria
+  - Hay mecanismos para /ajustar el tamaño/ de un proceso
+    preexistente — ¡Pero pueden fallar! (p.ej. si falta memoria para
+    satisfacer una solicitud)
+- El OS tiene acceso directo a toda la memoria /como un contínuo/
+- Cada región en memoria está limitada (ahora sí) por un registro base
+  y un registro límite
+
+** Particiones flexibles
+#+attr_latex: height=0.65\textheight
+#+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
+#+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
+  1024K +-------------------+  0x100000
+        | Espacio cPNK      |
+        | Libre             |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+        | Proceso 3 cGRE    | +0x010000   +65536 (límite)
+  492K  +-------------------+<-0x07b000<--504214 (base)
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        |                   |
+        | Proceso 1         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
+#+end_src
+
+** Particiones flexibles: Ventajas y desventajas
+- ¿Ventajas? Sigue siendo: Simplicidad
+  - Cuando inicia la ejecución del sistema, este esquema parece ideal
+  - Sobrecarga mínima, con un MMU muy básico
+  - Cada proceso puede direccionar el total de memoria disponible
+- ¿Desventajas? Vienen con el tiempo...
+  - Conforme van iniciando y terminando los procesos, se van creando
+    /agujeros/ en la asignación de memoria
+  - Según análisis estadístico (Silberschatz, p.289), por cada $N$
+    bloques asignados se pierden del órden de $0.5N$ por fragmentación
+
+** Fragmentación en la memoria
+#+attr_latex: height=0.7\textheight
+#+caption: Al terminar el proceso 1 (de 128K) y lanzarse los 4 (de 64K), 5 (de 156K) y 6 (de 128K), se va fragmentando la memoria
+#+begin_src ditaa :file ltxpng/fragmentacion_con_particiones_flexibles.png :cmdline -E
+  1024K +-------------------+  0x100000
+        | Espacio Libre cPNK|
+        |                   |
+        |                   |
+  832K  +-------------------+  0x0d0000
+        | Proceso 6         |
+        |                   |
+  704K  +-------------------+  0x0b0000
+        | Proceso 5         |
+        |                   |
+  556K  +-------------------+  0x08b000
+        | Proceso 3         |
+  492K  +-------------------+  0x07b000
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        | Espacio Libre cPNK|
+  192K  +-------------------+  0x030000
+        | Proceso 4         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
+#+end_src
+
+** Fragmentación interna y externa
+- Fragmentación interna :: Espacio desperdiciado /dentro/ de la
+     memoria asignada a un proceso
+  - Porque tuvo que solicitar /toda la memoria que emplearía/ desde
+    un principio (y la desperdicia la mayor parte del tiempo
+  - Por tener que /alinearse/ a cierta frontera de memoria (p.ej. con
+    particiones pre-establecidas)
+- Fragmentación externa :: Espacio de memoria desperdiciado /entre los
+     distintos fragmentos/
+  - En el esquema anterior, hay 256K libres, pero no puede lanzarse
+    ningún proceso $> 192K$, porque no es un bloque /contiguo/
+
+** ¿Cómo ubicar un nuevo proceso?
+#+BEGIN_CENTER
+Hay tres estrategias principales para dar espacio en la memoria a un
+nuevo proceso:
+#+END_CENTER
+- Primer ajuste :: Asigna al nuevo proceso al /primer bloque/ de
+                   tamaño suficiente
+- Mejor ajuste :: Asigna al nuevo proceso al /bloque más chico/ en
+                  que quepa
+- Peor ajuste :: Asigna al nuevo proceso al /bloque más grande/ que
+                 haya disponible
+#+BEGIN_CENTER
+¿Qué ventajas / desventajas? puede tener cada uno?
+#+END_CENTER
+
+** Primer ajuste
+- El mecanismo más fácil de implementar
+- Ejecución más rápida
+
+** Mejor ajuste
+- Requiere revisión completa de los bloques disponibles
+- Busca que el desperdicio sea el menor posible
+  - Pero va generando muchos bloques muy pequeños
+
+** Peor ajuste
+- Empleando un ordenamiento en /montículo/ (/heap/), la búsqueda
+  puede ser incluso más ágil / simple que la de /primer ajuste/
+- Busca que los bloques que van quedando tras la creación de nuevos
+  procesos /tiendan a ser/ del mismo tamaño
+  - Balanceando el tamaño de los bloques remanentes
+
+** Compactación
+- Independientemente del esquema que elijamos, bajo particiones
+  flexibles se irá fragmentando cada vez más la memoria
+  - Si no se hace nada al respecto, no podrán lanzarse procesos nuevos
+- La /compactación/ consiste en:
+  - Suspender temporalmente a un proceso
+  - /Moverlo/ a otra dirección de memoria
+  - Ajustar su /registro base/
+  - Continuar con el siguiente, hasta crear un sólo bloque disponible
+    (de los muchos existentes)
+- Tiene un costo alto, porque requiere:
+  - Muchas transferencias de memoria
+  - Suspensión sensible de los procesos implicados
+
+** Compactación
+#+attr_latex: width=0.8\textwidth
+#+caption: Compactación de la memoria de procesos en ejecución (La Red, p.76)
+[[../img/compactacion_memoria.png]]
+
+** Intercambio (/swap/)
+- El SO puede /comprometer/ más memoria de la que tiene disponible
+- Cuando inicia un sistema que /no cabe en memoria/, puede elegir
+  suspender a un proceso y /grabarlo a almacenamiento secundario/
+  - Por ejemplo, un proceso que esté bloqueado esperando un bloqueo
+    externo
+- ¿Qué pasa con las operaciones E/S que tiene pendientes el proceso?
+  - Puede exigirse que sólo se pueda hacer E/S empleando buffers en
+    el espacio del SO
+
+** Costos del intercambio
+- Esta modalidad de swap fue popular en equipos de escritorio de
+  fines de los 1980 y principios de 1990
+  - Entre 1 y 8MB RAM
+- Hoy en día resultarían inaceptablemente lentos
+  - Si un proceso ocupa 100MB
+  - Y la tasa de transferencia sostenida al disco duro es de 50MB/s
+    - SATA ofrece máximos entre 150 y 600 MB/s (dependiendo de la
+      generación)
+    - Pero típicamente hay varios procesos compitiendo por el acceso
+  - Suspender el proceso a disco toma un mínimo de 2s /de acceso
+    exclusivo/
+  - Traerlo de vuelta a memoria, otros 2s
+
+* Segmentación
+
+
+
+* Paginación

@@ -39,7 +39,7 @@ Hay tarea al respecto.
   procesos a CPU
 - Cuando se produce una /falla de caché/ (no tiene copia de la
   dirección solicitada), es necesario /detener/ al CPU
-  - Insertando =NOOP= $\rightarrow$ /stall/ (detención)
+  - Insertando =NOOP= \rarrow /stall/ (detención)
 
 **  ¿Por qué el caché?: Localidad de referencia
 #+BEGIN_CENTER
@@ -185,32 +185,37 @@ Esto se traduce a:
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 #+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  0     +-------------------+  0x000000
-        | cBLU              |
-        | Sistema Operativo |
-  128K  +-------------------+  0x020000
-        | Proceso 1         |
-  256K  +-------------------+  0x040000
-        | Proceso 2         |
-        |                   |
-  492K  +-------------------+<-0x07b000<--504214 (base)
-        | Proceso 3 cGRE    | +0x010000  +65536 (límite)
-  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+  1024K +-------------------+  0x100000
         | Espacio cPNK      |
         | Libre             |
-  1024K +-------------------+  0x100000
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+        | Proceso 3 cGRE    | +0x010000   +65536 (límite)
+  492K  +-------------------+<-0x07b000<--504214 (base)
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        |                   |
+        | Proceso 1         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
 #+end_src
 
 ** Registros base y límite: Ejemplo (3)
 #+begin_center
 Comportamiento del MMU
 #+end_center
-- Solicita acceso a $direcc < 504214 \rightarrow$
-  *Falla:*
+- Solicita acceso a $direcc < 504214$ \rarrow *Falla:*
   - Violación de segmento (/segmentation fault/)
-- Solicita acceso a $504214 < direcc < 569749 \rightarrow$ *OK*
+- Solicita acceso a $504214 < direcc < 569749$ \rarrow *OK*
   - Se otorga acceso a la dirección
-- Solicita acceso a $569749 < direcc \rightarrow$ *Falla:*
+- Solicita acceso a $569749 < direcc$ \rarrow *Falla:*
   - Violación de segmento (/segmentation fault/)
 
 * Espacio en memoria

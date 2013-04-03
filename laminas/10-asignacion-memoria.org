@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Administración de memoria: Asignación de memoria
-#+DATE: 2013-04-03
+#+DATE: 2013-04-03 — 2013-04-??
 * Memoria contigua
 
 ** Compartiendo la memoria desde...
@@ -109,8 +109,8 @@
     bloques asignados se pierden del órden de $0.5N$ por fragmentación
 
 ** Fragmentación en la memoria
-#+attr_latex: height=0.7\textheight
-#+caption: Termina el proceso 1 (de 128K); inician 4 (de 64K), 5 (de 156K) y 6 (de 128K); termina 3 (64K). Se va fragmentando la memoria.
+#+attr_latex: height=0.65\textheight
+#+caption: Termina el proceso 1 (de 128K); inician 4 (de 64K), 5 (de 156K) y 6 (de 128K); termina 3 (64K). Se va fragmentando la memoria libre.
 #+begin_src ditaa :file ltxpng/fragmentacion_con_particiones_flexibles.png :cmdline -E
   1024K +-------------------+  0x100000
         | Espacio Libre cPNK|
@@ -147,7 +147,7 @@
     particiones pre-establecidas)
 - Fragmentación externa :: Espacio de memoria desperdiciado /entre los
      distintos fragmentos/
-  - En el esquema anterior, hay 256K libres, pero no puede lanzarse
+  - En el esquema anterior, hay 320K libres, pero no puede lanzarse
     ningún proceso $> 192K$, porque no es un bloque /contiguo/
 
 ** ¿Cómo ubicar un nuevo proceso?
@@ -168,15 +168,20 @@ nuevo proceso:
 ** Primer ajuste
 - El mecanismo más fácil de implementar
 - Ejecución más rápida
-
+- Pero no considera facilitar las cosas para el futuro...
 ** Mejor ajuste
 - Requiere revisión completa de los bloques disponibles
+  - ...O mantenerlos en una lista ordenada
+  - Empleando un ordenamiento en /montículo/ (/heap/), puede ser tan
+    ágil/simple como el /primer ajuste/
 - Busca que el desperdicio sea el menor posible
   - Pero va generando muchos bloques muy pequeños
 
 ** Peor ajuste
-- Empleando un ordenamiento en /montículo/ (/heap/), la búsqueda
-  puede ser incluso más ágil / simple que la de /primer ajuste/
+- Requiere revisión completa de los bloques disponibles
+  - ...O mantenerlos en una lista ordenada
+  - Empleando un ordenamiento en /montículo/ (/heap/), puede ser tan
+    ágil/simple como el /primer ajuste/
 - Busca que los bloques que van quedando tras la creación de nuevos
   procesos /tiendan a ser/ del mismo tamaño
   - Balanceando el tamaño de los bloques remanentes
@@ -222,6 +227,21 @@ nuevo proceso:
       +----------------+         +----------------+
 #+end_src
 
+** ¿Cuándo compactar?
+#+BEGIN_CENTER
+No hay una sóla respuesta
+#+END_CENTER
+- Basado en umbrales, verificando periódicamente el estado del sistema
+- Basado en eventos, cada vez que no pueda satisfacerse una solicitud
+  por haber demasiada fragmentación
+#+BEGIN_CENTER
+Señales que indican necesidad de compactar
+#+END_CENTER
+- Relación entre el número de bloques libres y ocupados
+- Relación entre la memoria total disponible y el tamaño del bloque
+  más grande
+- ...
+
 ** Intercambio (/swap/)
 - El SO puede /comprometer/ más memoria de la que tiene disponible
 - Cuando inicia un sistema que /no cabe en memoria/, puede elegir
@@ -247,7 +267,170 @@ nuevo proceso:
   - Traerlo de vuelta a memoria, otros 2s
 
 * Segmentación
+** ¿Cómo es la visión del programador?
+- El trabajo del compilador es traducir lo que ve/entiende el
+  programador a algo que pueda entender la computadora
+- Para el programador, la memoria no es un /espacio contiguo/, sino
+  que hay separaciones muy claras
+  - El programador no tiene por qué ver relación entre las secciones
+    de texto y datos
+  - No tiene por qué preocuparse de la /cercanía/ entre el /espacio de
+    libres/ y la /pila/
+  - No tiene por qué importarle la estructura representada en la pila
+  - Las bibliotecas externas enlazadas son meras /cajas negras/
 
+** Traduciendo la visión del programador
+- ...¿No podría traducirse esta separación a algo generado por el
+  compilador?
+  - Y que, de paso, pueda aprovechar el sistema...
+- El espacio de un proceso se traduce en /varios segmentos/ en memoria
+  - En vez de sólo un registro /base/ y un registro /desplazamiento/,
+    requerimos de uno por segmento
+    - Una /tabla de segmentos/ por proceso.
+    - Típicamente, un juego de /registros especiales/ en el CPU
+  - La resolución de direcciones es análoga a la descrita
+    anteriormente, con apoyo del MMU
+  - El direccionamiento se hace /explícitamente/ indicando segmento y
+    desplazamiento
 
+** Conceptualización de la segmentación
+#+attr_latex: height=0.7\textheight
+#+caption: Ejemplo de segmentación (Silberschatz, p.305)
+[[../img/segmentacion_de_memoria.png]]
+
+** Facilidades que nos brinda la segmentación
+- Ayuda a incrementar la /modularidad/ de nuestro programa, incluso
+  facilita el proceso de carga
+  - Aún tiene que efectuarse la resolución de direcciones, pero puede
+    delegarse parcialmente al MMU (en tiempo de ejecución)
+- Permite especificar /permisos diferenciados/ por tipo de memoria
+  - Restringir escritura en segmentos de texto
+  - Restringir ejecución en segmentos /no/ de texto
+  - Mejora la seguridad del sistema resultante
+    - Ojo: No es magia, siguen existiendo muchos /vectores de ataque/
+      que explotan el acomodo en memoria
+- Hace más simple / conveniente el manejo del intercambio (swap)
+
+** Intercambio (swap) parcial
+- Integrando la operación del SO y el MMU, pueden intercambiarse a
+  disco /algunos/ de los segmentos de un proceso
+- Es muy probable que no todos los segmentos de un proceso sean
+  usados /aproximadamente/ al mismo tiempo, p.ej.:
+  - Bibliotecas de importación/exportación de archivos, no son
+    empleadas durante una ráfaga de cálculo
+  - Bibliotecas de comunicación por red, no son empleadas mientras se
+    prepara un archivo para su almacenamiento
+
+** Decidiendo qué y cuándo intercambiar
+- El proceso puede indicar al CPU que no requiere por el momento
+  determinado segmento
+- El SO puede elegir, según ciertas métricas, cuál segmento mandar a
+  disco
+  - El más estorboso (grande)
+  - Apelando a la localidad de referencia: El /Menos Recientemente
+    Utilizado/ (/LRU/, /Least Recently Used/)
+- El MMU debe indicar al SO cuando el proceso solicita acceso a un
+  segmento intercambiado
+  - El SO suspende al proceso y carga al segmento de vuelta a memoria
+  - ...Aunque con poca memoria disponible, eso puede llevar a que
+    intercambie un segmento de otro proceso (o del mismo)
+    - Volveremos a este punto al hablar de la /memoria virtual/
+
+** Rendimiento del intercambio
+- Cada uno de los segmentos de un proceso es (obviamente) más chico
+  que el proceso completo
+  - La sobrecarga por transferir un segmento de/a disco es mucho menor
+- El proceso puede seguir ejecutándose incluso si está parcialmente
+  intercambiado
+- El SO puede aprovechar los permisos para reducir muchas veces a la
+  mitad el tiempo necesario para el intercambio
+
+** Reduciendo la transferencia basasda en permisos
+- Cuando un segmento no tiene permiso de escritura, sabemos que el
+  proceso no puede cambiarlo
+- Una vez que fue intercambiado, si el SO mantiene el espacio en
+  disco "reservado", no requiere volver a ser escrito
+  - Tenemos garantía de que se mantendrá sin modificaciones
+- Bajo ciertos supuestos, podemos incluso ahorrar la copia inicial
+  - Cuando el segmento proviene de una biblioteca /reposicionable/ y
+    la imagen en disco es idéntica a la imagen en memoria, el archivo
+    es un volcado directo del segmento
+
+** Ejemplificando (Finkel, p.79)
+#+BEGIN_CENTER
+Si un proceso tiene la siguiente tabla de procesos, veamos la
+respuesta del MMU a diversas solicitudes
+
+#+END_CENTER
+| Segmento | Inicio | Tamaño | Permisos | Presente |
+|----------+--------+--------+----------+----------|
+| 0        | 13426  | 26     | RWX      | sí       |
+| 1        | 2309   | 00     | R        | sí       |
+| 2        | 1000   | 23     | WX       | sí       |
+| 3        | -      | 95     | W        | no       |
+| 4        | 10000  | 100    | RWX      | sí       |
+
+#+BEGIN_CENTER
+#+latex: {\scriptsize
+R = Lectura; W = Escritura; X = Ejecución
+
+El segmento 3 está en espacio de intercambio (Inicio nulo,
+presente=no).
+#+latex: }
+#+END_CENTER
+
+** Respuesta al atrapar una excepción
+- Una excepción puede /lanzarse/ ante diversas circunstancias
+- Vemos a continuación algunos ejemplos
+- El OS debe reaccionar de diferente forma ante cada una de ellas
+  - El acceso a un /segmento faltante/ debe llevar a suspender el
+    proceso y traer el segmento de vuelta a memoria
+  - Una violación de seguridad, o un acceso fuera de rango,
+    normalmente llevarán a que el proceso sea terminado con una
+    /falla de segmentación/ (/segmentation fault/)
+- /Ojo/: Puede presentarse más de un evento a la vez. ¿Cómo debemos
+  reaccionar ante ello?
+
+** Ejemplificando (Finkel, p.79)
+| Dirección | Tipo de | Dirección                               |
+|   virtual | acceso  | física                                  |
+|-----------+---------+-----------------------------------------|
+|       0-0 | R       | 13426                                   |
+|      2-17 | W       | 1017                                    |
+|      2-17 | R       | Atrapada: Violación de seguridad        |
+|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-72 | W       | Atrapada: Segmento faltante             |
+|      3-94 | R       | Atrapada: Segmento faltante;            |
+|           |         | violación de seguridad                  |
+|      4-99 | X       | 10099                                   |
+|      7-25 | X       | Atrapada: Segmento invalido             |
+
+** Limitaciones de la segmentación
+- Número y semántica de segmentos disponible en la arquitectura
+  - En Intel 8086, 6 registros de segmento, mas un /desplazamiento/,
+    dan el espacio de direccionamiento de 20 bits (1MB); (extendido a
+    partir de 80386):
+    - CS :: /Code Segment/ (sección de texto)
+    - DS :: /Data Segment/ (sección de datos)
+    - SS :: /Stack Segment/ (pila de llamadas)
+    - ES, FS, GS :: /Extra Segment/ (cualquier otro acceso)
+  - En PowerPC, hay 16 segmentos de 24 bits, que permiten direccionar
+    hasta 52 bits
+- El código que mejor aprovecha una arquitectura de segmentación es
+  /muy difícil/ de transportar a otra arquitectura
+
+** La segmentación hoy
+- La segmentación ha caído en desuso en casi todas las arquitecturas
+  modernas
+  - Incluso en x86: Al entrar en modo de 64 bits, se inhabilitan
+    /casi/ todos los registros de segmento (quedan FS y GS)
+- Es muy susceptible a fragmentación (interna y externa)
+  - Es natural, al tener cada proceso no uno, sino que varios bloques
+    en memoria
+  - Fragmentación interna \rarrow 0 en secciones de datos y texto,
+    pero alta en libres, pila
+- Prácticamente todos los sistemas modernos emplean un esquema de
+  /memoria plana/ mediante /paginación/
+  - ...Que es, precisamente, el siguiente tema
 
 * Paginación

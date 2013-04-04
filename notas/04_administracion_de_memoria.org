@@ -251,7 +251,7 @@ relativa a su ejecución.
         +---------+---------+
         |         |         |
         |         V         |
-        |  cAAA             |
+        |  cGRE             |
         |         ^         |
         |         |         |
         +---------+---------+
@@ -710,8 +710,8 @@ fuera de su uso exclusivo.
 La memoria física se divide en una serie de /marcos/ (/frames/), todos
 ellos del mismo tamaño, y el espacio cada proceso se divide en una
 serie de páginas (/pages/), del mismo tamaño que los marcos. El MMU se
-se encarga del mapeo entre páginas y marcos a través de /tablas/ de
-traducción. Las direcciones que maneja el CPU ya no son presentadas de
+se encarga del mapeo entre páginas y marcos a través de /tablas de
+páginas/. Las direcciones que maneja el CPU ya no son presentadas de
 forma absoluta, sino que como la combinación de un identificador de
 página y un desplazamiento — De forma similar a lo que presentamos al
 hablar de resolución de instrucciones en tiempo de ejecución.
@@ -726,24 +726,23 @@ separar la dirección en memoria entre los primeros $m$ bits
 desplazamiento).
 
 #+html: <div class="figure">
-#+attr_latex: width=\textwidth
+#+attr_latex: width=0.7\textwidth
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 #+begin_src ditaa :file ltxpng/direccion_a_pag_y_despl.png :cmdline -E
 Dirección especificada — 0001 1101 0111 0010
- Página (7 bits)
-      ^
-      |
-  /---+---\
-  |       |
-  +-------+---------+
-  |0001110|101110010|
-  |  (14) |  (370)  |
-  +-------+---------+
-          |         |
-          \----+----/
-	       |
-	       V
-   Desplazamiento (9 bits)
+
+           Página (7 bits)
+                ^
+                |
+            /---+---\
+            |       |
+             0001110 101110010
+              (0x0E)  (0x172)
+                    |         |
+                    \----+----/
+                         |
+                         V
+             Desplazamiento (9 bits)
 #+end_src
 #+html: <p align="center">Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes</p></div>
 
@@ -763,7 +762,7 @@ significativos/).
 
 #+attr_html: height="477"
 #+attr_latex: width=0.5\textwidth
-#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes
+#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes (Silberschatz, p.292)
 [[./img/ejemplo_de_paginacion.png]]
 
 El proceso que se nos presenta tiene una visión de la memoria como la
@@ -837,14 +836,18 @@ dedicar un registro a cada una.
 En los equipos actuales, mantener la tabla de páginas en registros
 resultaría claramente imposible: Teniendo un procesaador de 32 bits, e
 incluso si manejáramos un tamaño de página /muy/ grande (digamos,
-4MB), tendríamos 1024 páginas posibles[fn:: $2^{32} - 2^{22} = 2^{10}
-= 1024$]. Los registros son muy rápidos, sin embargo, son
-correspondientemente muy caros. El manejo de páginas más pequeñas (que
-es lo normal), y muy especialmente el uso de espacios de
-direccionamiento de 64 bits, harían prohibitivo este enfoque. Además,
-nuevamente, cada proceso tiene una tabla de páginas distinta — Se
-haría necesario hacer una transferencia de información muy grande en
-cada cambio de contexto.
+4MB), tendríamos 1024 páginas posibles[fn:: 4MB es $2^{22}$ bytes;
+$\frac{2^{32}}{2^{22}} = 2^{10} = 1024$]; con un tamaño de páginas
+mucho más común (4KB, $2^{12}$ bytes), la tabla de páginas llega a
+ocupar 5MB.[fn:: $\frac{2^{32}}{2^{12}} = 2^{20} = 1048576$, cada
+entrada con un mínimo de 20 bits para la página y 20 bits para el
+marco. ¡La tabla de páginas misma ocuparía 1280 páginas!] Los
+registros son muy rápidos, sin embargo, son correspondientemente muy
+caros. El manejo de páginas más pequeñas (que es lo normal), y muy
+especialmente el uso de espacios de direccionamiento de 64 bits,
+harían prohibitivo este enfoque. Además, nuevamente, cada proceso
+tiene una tabla de páginas distinta — Se haría necesario hacer una
+transferencia de información muy grande en cada cambio de contexto.
 
 Otra estrategia para enfrentar esta situación es almacenar la propia
 tabla de páginas en memoria, y apuntar al inicio de la tabla con un
@@ -903,13 +906,13 @@ siendo demasiado grande. Consideremos un escenario más frecuente que
 el propuesto anteriormente: Empleando un procesador con espacio de
 direccionamiento de 32 bits, y un tamaño de página estándar (4KB,
 $2^{12}), hablamos ya de 1,048,576 ($2^{20}$) páginas. Si cada entrada
-de la página ocupa 48 bits[fn:: 20 bits identificando a la página y
-otros 20 bits identificando al marco, mas cuatro bytes para /alinear/
-las entradas al byte más cercano, dado que la memoria se organiza por
-bytes] (esto es, 6 bytes), cada proceso requeriría de 6MB (6 bytes por
-cada una de las páginas) sólamente para representar su mapeo de
-memoria. Esto, especialmente en procesos pequeños, resultaría más
-gravoso para el sistema que los beneficios obtenidos de la
+de la página ocupa 40 bits[fn:: 20 bits identificando a la página y
+otros 20 bits identificando al marco; omitimos aquí la necesidad de
+alinear los accesos a memoria a /bytes/ individuales, que lo
+aumentarían a 24] (esto es, 5 bytes), cada proceso requeriría de 5MB
+(5 bytes por cada una de las páginas) sólamente para representar su
+mapeo de memoria. Esto, especialmente en procesos pequeños, resultaría
+más gravoso para el sistema que los beneficios obtenidos de la
 paginación.
 
 Aprovechando que la mayor parte del espacio de direccionamiento de un
@@ -937,7 +940,7 @@ a la página destino).
 
 Otra alternativa es el emplear /funciones digestoras/ (/hash
 functions/)[fn:: Una función digestora puede definirse como $H:
-U\rightarrowM$, una función que /mapea/ o /proyecta/ al conjunto $U$
+U\rightarrow M$, una función que /mapea/ o /proyecta/ al conjunto $U$
 en un conjunto $M$ mucho menor; una característica muy deseable de
 toda función hash es que la /distribución resultante/ en $M$ resulte
 homogenea y tan poco dependiente de la secuencialidad de la entrada

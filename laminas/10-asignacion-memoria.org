@@ -434,3 +434,362 @@ presente=no).
   - ...Que es, precisamente, el siguiente tema
 
 * Paginación
+
+** Evitando la fragmentación externa
+- La paginación nace para evitar /definitivamente/ la fragmentación
+  externa
+  - Y, por tanto, la necesidad de compactación
+- Requiere hardware más especializado y dar seguimiento a mucha más
+  información
+- Simplifica fuertemente las cosas desde el punto de vista del proceso
+  - A costo de complicarlas para el SO
+
+** Adios a los registros base+desplazamiento
+- Al proceso se le muestra únicamente una /representación lógica/ de
+  la memoria
+- Para cada proceso, el espacio de direccionamiento comienza en 0, y
+  llega hasta el máximo posible de la arquitectura
+- La memoria está dividida en una serie de /páginas/, todas ellas del
+  mismo tamaño
+  - Históricamente desde 512 bytes ($2^9$)
+  - Típicamente 4 u 8K ($2^{12}$ o $2^{13}$)
+  - Máximos hoy, 16MB ($2^{24}$)
+- La memoria asignada ya no requiere ser contigua
+  - A pesar de usar un /modelo plano/ (no segmentado)
+
+** Esquematización del proceso de paginación
+#+attr_latex: height=0.7\textheight
+#+caption: Esquema del proceso de paginación (Silberschatz, p.290)
+[[../img/hardware_de_paginacion.png]]
+
+** Ubicación física y lógica \rarrow Marcos y páginas
+- Cada página corresponde a un /marco/ (/frame/) en la memoria física
+  - Relacionados a través de /tablas de páginas/
+  - Los marcos /siempre/ miden lo mismo que las páginas
+  - El tamaño siempre será una potencia de 2
+- La ubicación real de un /marco/ de memoria es su /ubicación física/
+- La dirección que conoce el proceso es su /ubicación lógica/
+- La porción /más significativa/ de una dirección de memoria indica
+  la página; la /menos significativa/, el desplazamiento
+
+** Ejemplo de página y desplazamiento
+#+attr_latex: width=\textwidth
+#+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
+#+begin_src ditaa :file ltxpng/direccion_a_pag_y_despl.png :cmdline -E
+Dirección especificada — 0001 1101 0111 0010
+
+           Página (7 bits)
+                ^
+                |
+            /---+---\
+            |       |
+             0001110 101110010
+              (0x0E)  (0x172)
+                    |         |
+                    \----+----/
+                         |
+                         V
+             Desplazamiento (9 bits)
+#+end_src
+
+** La tabla de páginas (/page table/)
+- Guarda la relación entre cada /página/ y el /marco/ correspondiente
+- El MMU no puede ya operar basado en unos cuantos registros
+  - En un esquema limitado como el recién presentado, tenemos hasta
+    128 páginas ($2^7$)
+  - Cada entrada requiere 14 bits (7 para la página, 7 para el marco)
+  - \rarrow 1792 bytes (en un sistema bastante primitivo)
+- El manejo de una tabla de páginas resulta en una suerte de
+  resolución en tiempo de ejecución
+  - Pero realizada por el MMU, transparente al programa (e incluso al
+    procesador)
+  - Con una /dirección base/ distinta para cada una de las páginas
+
+** Ejemplo (minúsculo) de tabla de páginas
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+attr_latex: width=0.8\textwidth
+#+caption: Ejemplo de paginación (Silberschatz, p.292)
+[[../img/ejemplo_de_paginacion.png]]
+#+latex: \end{column}\begin{column}{0.5\textwidth}
+- Direccionamiento: 5 bits
+- Página: 3 bits
+- Desplazamiento: 2 bits
+- Para referirse a la letra /f/:
+  1. Dirección 00101 (5)
+  2. Página 001 (1), posición 01 (1)
+  3. MMU: Página 001 \rarrow marco 6 (110)
+  4. Dirección física: 11001 (26)
+#+latex: \end{column}\end{columns}
+
+** Permisos y validez
+- Al emplear memoria paginada, seguimos manteniendo los modos de
+  /permisos diferenciados/ de la segmentación
+  - Lectura, escritura, ejecución (RWX)
+- En vez de aplicarse a segmentos, se aplican página por página
+- Muchas veces, /la cantidad de bits/ necesaria para alinear las
+  tablas con el acceso a memoria
+- Un bit adicional: Página válida / inválida
+  - El espacio total de direccionamiento disponible al proceso es muy
+    grande (32/64 bits)
+  - Indica cuáles páginas tiene asignadas el proceso y cuáles están
+    libres
+
+** Efecto ante la fragmentación
+- La fragmentación externa desaparece
+  - O más bien, nos deja de preocupar
+- ¿Y la fragmentación interna?
+#+latex: \pause
+- Al dividirse la memoria en bloques de $2^n$ bytes, cada proceso
+  desperdiciará en promedio $\frac{2^n}{2}$ bytes
+  - Peor caso: $2^n-1$ bytes
+- Podemos tener cientos o miles de procesos en el sistema
+#+latex: \pause
+- Respuesta lógica: Hagamos a $n$ tan pequeño como sea posible
+- Muchas páginas, muy pequeñas... ¿O no?
+
+** Impacto del tamaño de las páginas
+#+BEGIN_CENTER
+¿En qué se expresaría la /sobrecarga administrativa/ de tener páginas
+demasiado pequeñas?
+#+END_CENTER
+- Mayor carga en un cambio de contexto
+  - Crecimiento del PCB
+- Mayor número transferencias DMA requerido (p.ej. para leer/escribir
+  del disco)
+- Disminución de velocidad de /todas/ las transferencias a memoria
+
+** Impacto en las transferencias DMA
+- Es mucho más eficiente hacer una transferencia larga que varias
+  cortas
+  - Recordemos: Una transferencia DMA se /inicia/ indicando:
+    - Dirección física base de memoria
+    - Cantidad de datos a transferir
+    - /Puerto/ del dispositivo
+    - /Dirección/ de la transferencia
+- Tenemos que hacer (como máximo) transferencias del tamaño de la
+  página en memoria
+- Fragmentar la memoria física en páginas muy pequeñas reduce la
+  velocidad de transferencia de disco
+
+** Impacto en el PCB
+- Partición fija :: Un /registro base/ para indicar el /inicio/ del
+                    espacio del proceso
+- Partición flexible :: Un registro base y un /registro límite/ para
+     indicar su tamaño total
+- Segmentación :: Varios registros /de segmento/ (p.ej. 6 en x86)
+- Paginación :: Modelo presentado (128 páginas de 512 bytes,
+                esp. direc. 16 bits): 1792 bytes
+
+** ¿Cuánto ocuparía en una computadora real actual?
+- Computadora sencilla actual (páginas de 4096 bytes ($2^{12}$), esp.
+    direc. 32 bits)...
+  - 1,048,576 páginas ($2^{20}$)
+  - Cada entrada de 40 bits (20 para la página, 20 para el marco)
+  - ¡¿5MB para la tabla de páginas?!
+  - ¡¿La tabla de páginas mide 1280 páginas?!
+- ... ¿Quién se aventura a sacar números para un sistema de 64 bits?
+
+** Almacenamiento de la tabla de páginas en memoria
+- Almacenar toda esta información en registros es sencillamente
+  imposible
+  - Costo económico
+  - Tiempo perdido en el cambio de contexto
+- Una estrategia: Almacenar /la propia tabla de páginas/ en memoria
+  - Emplear /sólo dos/ registros especiales:
+    - PTBR :: Registro Base de Tabla de Páginas (/Page Table Base
+              Register/)
+    - PTLR :: Registro Límite de Tabla de Páginas (/Page Table Limit
+              Register/)
+  - ¿Por qué el PTLR? La mayor parte de los procesos, además, nunca
+    requerirá direccionarlo completo; para no tener un mapa completo
+    mayormente vacío, PTLR indica la extensión máxima empleada
+
+** Desventaja de tener la tabla de páginas en memoria:
+- Velocidad: /Cada acceso a memoria/ se ve penalizado con (al menos)
+    un acceso adicional
+  - Para resolver dónde está la página que buscamos
+- /Duplica/ el tiempo efectivo de aceso a memoria \rarrow Inaceptable.
+
+** /TLB/: El buffer de traducción adelantada
+- ¿Respuesta? Emplear un caché
+  - Pero, por su frecuencia y naturaleza de uso, un caché especializado
+- El TLB (/Translation Lookaside Buffer/) es una tabla asociativa
+  (/hash/)
+  - Las consultas (/llaves/) son las páginas
+  - Los /valores/ son los marcos correspondientes
+  - Las búsquedas se realizan en /tiempo constante/
+
+** Proceso de paginación con TLB
+#+attr_latex: height=0.7\textheight
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (Silberschatz, p.296)
+[[../img/paginacion_con_tlb.png]]
+
+** Funcionamiento del TLB
+- Típicamente, entre 64 y 1024 entradas
+  - Busca aprovechar la /localidad de referencia/
+- Si /conoce/ ya a una página (/TLB hit/), el MMU traduce de inmediato
+  para obtener el marco
+  - Silberschatz: Penalización de hasta 10%
+- Si /no/ conoce la página (/TLB miss/), lanza una falla de página
+  (/page fault/) y consulta en la memoria principal cuál es el marco
+  correspondiente
+  - Penalización >120%; la nueva página queda registrada en el TLB
+
+** Reemplazo de las entradas del TLB
+- El TLB es /mucho más pequeño/ que el espacio de páginas del proceso
+- Al recibir una entrada nueva, puede ser necesario reemplazar la
+  entrada de una página ya conocida
+- Reemplazar la /menos recientemente utilizada/ (/LRU/)
+  - Ventaja: Localidad de referencia; probablemente no la necesitemos
+    pronto
+  - Desventaja: Contabilizar los accesos dentro del TLB (/muy
+    frecuentes/) agrega latencia y costo
+- Reemplazar una página al azar
+  - Ventaja: Más simple y barato (pero... ¿Algo aleatorio es barato en
+    el cómputo?)
+  - Desventaja: Obvia. Puede reemplazarse una página en uso frecuente
+    y causar demoras
+
+** La obesidad de las tablas de páginas
+#+BEGIN_CENTER
+En un equipo moderno, incluso con TLB, el espacio de la tabla de
+páginas es demasiado grande
+#+END_CENTER
+- Como vimos, una sobrecarga de 5MB por proceso en 32 bits. Y de
+  nuevo... ¿en 64 bits?
+- Tendríamos $2^{42}$ entradas con páginas de 4MB ($2^{22}$)
+- $2^{64} / 2^{22} = 2^{42}$ entradas, cada una ocupando 42 bits
+  para la página y 42 bits para el marco
+- $2^{42} * (42 + 42)$ \rarrow ¡336TB /por proceso/!
+
+** Subdividiendo las tablas de páginas
+- Aprovechamos que la mayor parte del espacio de direccionamiento de
+  un proceso está siempre vacío
+- Podemos dividir una dirección de memoria en dos (o más) niveles)
+- Por ejemplo, una dirección de 32 bits:
+  - Tabla externa :: 10 bits (1024 entradas; 1024 × (10 + 10) bits
+                     2560 bytes)
+  - Tabla interna :: 10 bits cada una (2560 bytes cada una)
+  - Desplazamiento :: 12 bits (dentro de cada página/marco)
+- Sólo se crean las tablas internas que sean necesarias
+- El TLB guarda la resolución para los /20 bits/ de ambas tablas
+  - O los 54 bits correspondientes en una arquitectura de 64 bits
+
+** Tablas de páginas con varios niveles
+#+caption: Paginación en dos niveles (Silberschatz, p. 300)
+#+attr_latex: height=0.7\textheight
+[[../img/paginacion_jerarquica.png]]
+
+** Los costos de los niveles adicionales
+- Este esquema hace /tratable/ el direccionamiento de grandes
+  cantidades de memoria
+  - Pueden agregarse tres, cuatro, conco niveles...
+- Pero una /falla de página/ puede ahora /triplicar/ el tiempo de
+  acceso a memoria en vez de duplicarlo
+  - Porque hace falta consultar a la /tabla externa/ y a la /tabla interna/
+- En una arquitectura de 64 bits dividida en páginas en incrementos 10
+  bits... /Septuplicamos/ el tiempo de acceso
+
+** Tablas de páginas con /funciones digestoras/ (/hash/)
+#+BEGIN_CENTER
+¿Qué es una /función digestora/?
+
+$H: U\rightarrow M$
+#+END_CENTER
+- Una función que /mapea/ o /proyecta/ al conjunto $U$ en un conjunto
+   $M$ mucho menor
+- La /distribución resultante/ en $M$ debe resultar homogenea
+- Tan poco dependiente de la secuencialidad de la entrada como sea
+  posible
+- Permiten hacer /mapeos/ a espacios muestrales mucho más pequeños
+- Pero, en vez de apuntar a un sólo valor, deben apuntar a una /lista
+  ligada/ de valores
+  - Al ser espacios más pequeños, /necesariamente/ pueden presentar
+    colisiones
+
+** Tablas de páginas con funciones digestoras (/hash/)
+#+caption: Tablas de páginas empleando funciones digestoras (Silberschatz, p. 302)
+#+attr_latex: height=0.65\textheight
+[[../img/tablas_hash.png]]
+
+** Características de las tablas basadas en /hash/
+- Mayor complejidad \rarrow mayor latencia (¿mayor a qué?
+  Seguramente, no a 7 accesos a memoria)
+  - Evaluación de una función matemática (hash)
+  - Posiblemente, recorrer una lista
+- El tamaño de la tabla puede variar según crece el uso de memoria
+  del proceso
+  - Aunque requiera recalcular (/rehash/) la tabla, es una operación
+    poco frecuente
+
+** Memoria compartida
+- La memoria paginada hace simple definir áreas de memoria compartida
+- Uso muy frecuente: Comunicación entre procesos (IPC)
+  - Pueden compartirse estructuras complejas sin costo de copia
+- Uso más frecuente aún: Compartir /código/
+  - No tiene sentido que el SO /repita/ en memoria imágenes de
+    bibliotecas /relocalizables/ y /reentrantes/
+  - El mismo conjunto de marcos puede incluirse en las tablas de
+    distintos procesos, aumentando la capacidad percibida de memoria
+
+** Memoria compartida
+#+attr_latex: width=\textwidth
+#+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
+#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+  +----------------+   +----------------+   +----------------+     +------------+
+  | Proceso A cYEL |   | Proceso B cGRE |   | Proceso C cRED |     | Páginas de |
+  +--------+-------+   +--------+-------+   +--------+-------+     |  memoria   |
+  | Página | Marco |   | Página | Marco |   | Página | Marco |     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   1 cYEL   |
+  |cYEL  1 | 3 cBLU|   |cGRE  1 | 3 cBLU|   |cRED  1 | 3 cBLU|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   2 cBLU   |
+  |cYEL  2 | 5 cBLU|   |cGRE  2 | 5 cBLU|   |cRED  2 | 5 cBLU|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   3 cBLU   |
+  |cYEL  3 | 2 cBLU|   |cGRE  3 | 2 cBLU|   |cRED  3 | 2 cBLU|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   4 cGRE   |
+  |cYEL  4 | 1 cYEL|   |cGRE  4 | 4 cGRE|   |cRED  4 | 6 cRED|     +------------+
+  +--------+-------+   +--------+-------+   +--------+-------+     |   5 cBLU   |
+                                                                   +------------+
+  +------------------------------+                                 |   6 cRED   |
+  | cBLU Memoria compartida      |                                 +------------+
+  +------------------------------+
+#+end_src
+
+** La arquitectura x86-32: Paginación + Segmentación
+#+attr_latex: width=\textwidth
+#+caption: Pasos de la traducción lógica a física en un Pentium
+#+begin_src ditaa :file ltxpng/traduccion_pentium.png :cmdline -E
+ +-----+ dirección +---------------+ dirección +---------------+ dirección +--------------+
+ |cGRN |  lógica   |cGRN Unidad de |  lineal   |cGRN Unidad    | física    |   Memoria    |
+ | CPU +---------->+  segmentación +---------->+ de paginación +---------->+   física cGRN|
+ +-----+           +---------------+           +---------------+           +--------------+
+#+end_src
+- La arquitectura x86 de 32 bits permite combinar paginación y
+  segmentación para alcanzar un mayor espacio de direccionamiento
+  - Comparable con la segmentación que permitía a la x86 llegar a 1MB RAM
+  - La segmentación fue (casi) eliminada para x86-64
+
+** Segmentación en x86-32
+- Hay dos tablas de segmentos, almacenadas en /registros
+  programables/ específicos:
+  - LDT :: /Tabla local de descriptores/, segmentos privados de cada
+           uno de los procesos
+  - GDT :: /Tabla global de descriptores/, segmentos que pueden ser
+           compartidos entre diversos procesos del sistema
+- La dirección de segmento es de 16 bits
+  - 13 bits indican el segmento
+  - 1 bit indica si es en LDT o en GDT
+  - 2 bits son para los permisos
+
+** Paginación en x86-32
+- La familia Pentium (y equivalentes) pueden emplear páginas de 4KB o
+  4MB
+  - La tabla de páginas está dividida en una externa de 10 bits y una
+    interna de 10 bits (y desplazamiento, 14 bits)
+  - La /tabla externa/ incluye un bit que indica si apunta a una
+    /página grande/ o a una /tabla interna/
+
+** Paginación en x86-32
+#+caption: Paginación en x86-32 (silberschatz, p.309)
+#+attr_latex: height=0.65\textheight
+[[../img/paginas_en_pentium.png]]

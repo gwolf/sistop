@@ -541,6 +541,7 @@ secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
 desuso conforme aumenta el tamaño de los procesos.
 
 * Segmentación
+# <<segmentacion>>
 
 Al desarrollar un programa, el programador no ve a la memoria como un
 sólo arreglo plano, en el que todas las direcciones son iguales (si
@@ -586,6 +587,7 @@ no podrá introducir código ejecutable tan fácilmente — Tendría que
 cargarlo como un segmento adicional con los permisos correspondientes.
 
 ** Intercambio parcial
+# <<intercambio_parcial>>
 
 Un uso muy común de la segmentación, particularmnete en los sistemas
 de los 1980s, era el de permitir que sólo /ciertas regiones/ de un
@@ -694,6 +696,7 @@ proceso al detectarse la violación de tipo de acceso, sería un
 desperdicio injustificado de recursos.
 
 * Paginación
+# <<paginacion>>
 
 La fragmentación externa y, por tanto, la necesidad de compactación
 pueden evitarse por completo empleando la /paginación/. Esta consiste
@@ -867,6 +870,9 @@ memoria adicional — Si para resolver una dirección lógica a su
 correspondiente dirección física hace fala consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
+*** El buffer de traducción adelantada (/TLB/)
+# <<tlb>>
+
 La salida obvia a este dilema es el uso de un caché. Sin embargo, más
 que un caché genérico, el MMU utiliza un caché especializado en el
 tipo de información que maneja: El /buffer de traducción adelantada/ o
@@ -881,7 +887,7 @@ procesador efectúa un acceso a memoria, si la página solicitada está
 en el TLB, el MMU tiene la dirección física de inmediato.[fn:: Indica
 Silberschatz (p.295) que el tiempo efectivo de acceso puede ser 10%
 superior al que tomaría sin emplear paginación.] En caso de no
-encontrarse la página en el TLB, el MMU lanza una /falla de página/
+encontrarse la página en el TLB, el MMU lanza un /fallo de página/
 (/page fault/), con lo cual consulta de la memoria principal cuál es
 el marco correspondiente. Esta nueva entrada es agregada al TLB; por
 las propiedades de /localidad de referencia/ que vimos anteriormente,
@@ -891,7 +897,7 @@ por relativamente pocas entradas del TLB son muy altas.
 
 Como sea, dado que el TLB es limitado, es necesario explicitar un
 mecanismo que indique dónde guardar las nuevas entradas una vez que el
-TLB está lleno y se produce una falla de página. Uno de los esquemas
+TLB está lleno y se produce un fallo de página. Uno de los esquemas
 más comunes es emplear la entrada /menos recientemente utilizada/
 (/LRU/, /Least Recently Used/), nuevamente apelando a la localidad de
 referencia; esto tiene como consecuencia necesaria que debe haber un
@@ -1023,19 +1029,410 @@ permita que todo su código sea de sólo lectura es /reentrante/, dado
 que posibilita que diversos procesos entren a su espacio en memoria
 sin tener que sincronizarse con otros procesos que lo estén
 empleando.
-* TODO Memoria virtual
-** TODO Concepto
-** TODO Paginación
-** TODO Segmentación
-** TODO Paginación y segmentación combinadas
-** TODO Reemplazo de páginas
-** TODO Asignación de marcos e hiperpaginación
-* TODO Consideraciones de seguridad
-** TODO Bibliotecas de ligado estático y ligado dinámico
-** TODO Secciones de texto no ejecutables
+
+*** Copiar al escribir (/Copy on Write/, /CoW/)
+
+En los sistemas Unix, el mecanismo más frecuentemente utilizado para
+crear un nuevo proceso es el empleo de la llamada al sistema
+=fork()=. Cuando es invocado por un proceso, el sistema operativo crea
+a un nuevo proceso /idéntico/ al que lo llamó, diferenciándose
+únicamente en /el valor entregado/ por la llamada a =fork()=. Si
+ocurre algún error, el sistema entrega un número negativo (indicando
+la causa del error). En caso de ser exitoso, El proceso nuevo (o
+proceso /hijo/) recibe el valor =0=, mientras que el proceso
+preexistente (o proceso padre) recibe el PID (número identificador de
+proceso) del hijo. Esto es, es frecuente que veamos:
+
+#+begin_src c
+  /* (...) */
+  int pid;
+  /* (...) */
+  pid = fork();
+  if (pid == 0) {
+    /* Soy el proceso hijo */
+    /* (...) */
+   } else if (pid < 0) {
+    /* Ocurrió un error, no se creó un proceso hijo */
+   } else {
+    /* Soy el proceso padre */
+    /* La variable 'pid' tiene el PID del proceso hijo */
+    /* (...) */
+   }
+#+end_src
+
+Este método es incluso utilizado normalmente para crear nuevos
+procesos, transfiriendo el /ambiente/ (variables, por ejemplo, que
+incluyen cuál es la /entrada/ y /salida/ estándar de un proceso, esto
+es, a qué terminal están conectados, indispensable en un sistema
+multiusuario). Frecuentemente, la primer instrucción que ejecuta un
+proceso hijo es =execve()=, que carga a un nuevo programa sobre del
+actual y transfiere la ejecución a su primer instrucción.
+
+Cuesta trabajo comprender el por qué de esta lógica si no es por el
+empleo de la memoria compartida: El costo de =fork()= en un sistema
+Unix es muy bajo, se limita a crear las estructuras necesarias en la
+memoria del núcleo. Tanto el proceso padre como el proceso hijo
+comparten /todas/ sus páginas de memoria — Sin embargo, siendo dos
+procesos independientes, no deben poder modificarse más que por los
+canales explícitos de comunicación entre procesos.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
+#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+                         +---------+
+                         | Memoria |
+  +-----------+          +---------+             +-----------+
+  | Pr. Padre |   +----->|abcdefgh |<----+       | Pr. Hijo  |
+  +-+---------+   |      +---------+     |       +-+---------+
+  |1|abcdefgh |---+      |cGRE     |     +-------|1|abcdefgh |
+  +-+---------+          +---------+             +-+---------+
+  |2|ijklmnop |--------->|ijklmnop |<------------|2|ijklmnop |
+  +-+---------+          +---------+             +-+---------+
+  |3|qrstuvwx |---+      |cGRE     |     +-------|3|qrstuvwx |
+  +-+---------+   |      +---------+     |       +-+---------+
+                  +----->|qrstuvwx |<----+
+                         +---------+
+                         |cGRE     |
+                         +---------+
+#+end_src
+#+html: <p align="center">Memoria de dos procesos inmediatamente después de la creación del proceso hijo por <tt>fork()</tt></p></div>
+
+Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
+(/Copy on Write/ o /CoW/). Las páginas de memoria de ambos procesos
+son las mismas /mientras sean sólo leídas/. Sin embargo, si uno de los
+procesos modifica a cualquier dato en una de estas páginas, ésta se
+copia a un nuevo marco, y deja de ser una página compartida. El resto
+de las páginas seguirá siendo compartido.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
+#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+                         +---------+
+                         | Memoria |
+  +-----------+          +---------+             +-----------+
+  | Pr. Padre |   +----->|abcdefgh |             | Pr. Hijo  |
+  +-+---------+   |      +---------+             +-+---------+
+  |1|abcdefgh |---+      |abCDefgh |<------------|1|abCDefgh |
+  +-+---------+          +---------+             +-+---------+
+  |2|ijklmnop |--------->|ijklmnop |<------------|2|ijklmnop |
+  +-+---------+          +---------+             +-+---------+
+  |3|qrstuvwx |---+      |cGRE     |     +-------|3|qrstuvwx |
+  +-+---------+   |      +---------+     |       +-+---------+
+                  +----->|qrstuvwx |<----+
+                         +---------+
+                         |cGRE     |
+                         +---------+
+#+end_src
+#+html: <p align="center">Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.</p></div>
+
+Incluso cuando se ejecutan nuevos programas a través de =execve()=,
+es posible que una buena parte de la memoria se mantenga compartida,
+por ejemplo, al refrirse a copias de bibliotecas de sistema.
+
+* Memoria virtual
+
+Varios de los aspectos mencionados en la [[#paginacion][sección de paginación]] van
+conformando a lo que conocemos como /memoria virtual/: Vimos ya que en
+un sistema que emplea paginación, un proceso no conoce su dirección en
+memoria relativa a otros procesos, sino que trabajan con una
+/idealización/ de la memoria, en la cual ocupan el espacio completo de
+direccionamiento, desde el cero hasta el límite lógico de la
+arquitectura, independientemente del tamaño físico de la memoria
+disponible.
+
+Y si bien el modelo mencionado de paginación nos llevó a que los
+diferentes procesos pueden /compartir/ regiones de memoria y
+/direccionar/ más memoria de la físicamente disponible, no abordamos
+qué estrategia se emplearía cuando el total de páginas solicitadas por
+todos los procesos activos en el sistema superara el total de espacio
+físico. Es ahí donde entra en juego la /memoria virtual/: Para ofrecer
+a los procesos mayor espacio en memoria del que existe físicamente, el
+sistema emplea espacio en /almacenamiento secundario/ (típicamente,
+disco duro), a través de un esquema de /intercambio/ (/swap/).
+
+#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual (Silberschatz, p.320)
+#+attr_html: height="404"
+[[../img/esquema_gral_mem_virtual.png]]
+
+Es importante apuntar que la memoria virtual es gestionada /de forma
+automática y transparente/ por el sistema operativo. No hablaríamos
+de memoria virtual, por ejemplo, si un proceso pide explícitamente
+intercambiar determinadas páginas.
+
+Puesto de otra manera: Del mismo modo que la [[#segmentacion][segmentación]] permitió
+hacer mucho más cómodo y útil al [[#swap][intercambio]] a través del [[#intercambio_parcial][intercambio
+parcial]], permitiendo que continuara la ejecución del proceso incluso
+con ciertos segmentos /intercambiados/ (/swappeados/) a disco, la
+memoria virtual lo hace aún más conveniente al aumentar la
+/granularidad/ del intercambio: Ahora ya no sólo se enviarán a disco
+secciones lógicas completas del proceso (segmentos), sino que podrá
+hacerse página por página, aumentando muy fuertemente el rendimiento
+resultante.
+
+Técnicamente, cuando hablamos de memoria virtual, no nos referirmos ya
+a un /intercambiador/ (/swapper)/, sino que al /paginador/.
+
+** Paginación sobre demanda
+
+La memoria virtual entra en juego desde la carga misma del proceso.
+Tomemos en cuenta que casi siempre tenemos /código durmiente/: Código
+que sólo se emplea eventualmente, como el que responde ante una
+situación de excepción o el que se emplea sólo ante circunstancias
+particulares (por ejemplo, la exportación de un documento a
+determinados formatos, o la verificación de que no haya tareas
+pendientes antes de cerrar un programa). Y si bien a una computadora
+le sería imposible ejecutar código que no esté cargado en
+memoria,[fn:: Una computadora basada en la arquitectura von Neumann,
+como prácticamente todas las que conocemos hoy en día, no puede /ver/
+directamente más que a la memoria principal] el código sí puede
+comenzar ejecutarse sin estar /completamente/ en memoria: Basta con
+haber cargado la página donde están las instrucciones que comenzaremos
+a seguir.
+
+La /paginación sobre demanda/ significa que, para comenzar a ejecutar
+un proceso, el sistema operativo carga /sólamente la porción
+necesaria/ para comenzar la ejecución, y que a lo largo de la
+ejecución de cada uno de los procesos, el paginador /es flojo/:[fn:: En
+cómputo, muchos procesos pueden determinarse como /ansiosos/
+(/eager/), cuando buscan realizar todo el trabajo que puedan desde el
+inicio, o /flojos/ (/lazy/), si buscan hacer el trabajo mínimo en un
+principio y diferir para más tarde tanto como sea posible] Sólo carga
+a memoria las páginas cuando van a ser utilizadas. Al emplear un
+paginador /flojo/, las páginas que no sean requeridas nunca serán
+siquiera cargadas a memoria.
+
+La estructura empleada por el MMU para implementar un paginador flojo
+es muy parecida a la descrita al hablar del [[#tlb][buffer de tradución
+adelantada]]: La /tabla de páginas/ incluirá un /bit de validez/,
+indicando para cada página del proceso si está presente o no en
+memoria. Si el proceso intenta emplear una página que esté marcada
+como no válida, esto causa un fallo de página, que lleva a que el
+sistema operativo lo suspenda y traiga a memoria la página solicitada:
+
+#+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
+#+attr_html: height="466"
+[[../img/respuesta_a_fallo_de_pagina.png]]
+
+1. Verifica en el PCB si esta solicitud corresponde a una página que
+   ya ha sido asignada a este proceso.
+
+2. En caso de que la referencia sea inválida, se termina el proceso.
+
+3. Procede a traer la página del disco a la memoria. El primer paso es
+   buscar un marco disponible (por ejemplo, a través de una tabla de
+   asignación de marcos)
+
+4. Solicita al disco la lectura de la página en cuestión hacia el
+   marco especificado
+
+5. Una vez que finaliza la lectura de disco, modifica tanto al PCB
+   como al TLB para indicar que la tabla está en memoria.
+
+6. Termina la suspensión del proceso, continuando con la instrucción
+   que desencadenó al fallo. El proceso puede continuar tal como si la
+   página siempre hubiera estado presente en memoria.
+
+Llevando este proceso al extremo, podemos hablar de un sistema de
+/paginación puramente sobre demanda/ (/pure demand paging/): En un
+sistema así, /ninguna/ página llegará al espacio de un proceso si no
+es a través de un fallo de página; un proceso, al iniciarse, comienza
+su ejecución /sin ninguna página en memoria/, y con el apuntador de
+siguiente instrucción del procesador apuntando a una dirección que no
+está en memoria. El sistema operativo responde cargando esta primer
+página, y conforme avanza el flujo del programa, el proceso irá
+ocupando el espacio real que empleará.
+
+** Rendimiento
+
+La paginación sobre demanda puede impactar fuertemente el rendimiento
+de un proceso. Hemos visto ya que un acceso a disco es varios miles de
+veces más lento que el acceso a memoria; podemos calcular el tiempo de
+acceso efectivo a memoria ($t_e$) a partir de la probabilidad que en
+un programa se presente un fallo de página ($0 \le p \le 1$),
+conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que toma
+atender a un fallo de página ($t_f$):
+
+#+begin_center
+$t_e = (1-p)t_a + pt_f$
+#+end_center
+
+Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
+mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
+de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
+5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
+prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
+el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
+1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
+#+begin_center
+$t_e = (1-$frac{1}{1000}) \times 200 + $frac{1}{1000} \times 8,000,000$
+
+$t_e = 199.8 + 8000 = 8199.8$
+#+end_center
+
+Esto es, en promedio, tendemos un tiempo efectivo de acceso a memoria
+/40 veces/ mayor a que si no empleáramos este mecanismo. Con estos
+mismos números, para mantener la degradación de rendimiento por acceso
+a memoria por debajo del 10%, tendríamos que reducir la probabiliad de
+fallos de página a $frac{1}{399,990}$.
+
+Cabe mencionar que este impacto al rendimiento no necesariamente
+significa que una proporción relativamente alta de fallos de página
+para un proceso impacte negativamente a todo el sistema — El mecanismo
+de paginación sobre demanda permite, al no requerir que se tengan en
+memoria todas las páginas de un proceso, que haya /más procesos
+activos/ en el mismo espacio en memoria, aumentando el grado de
+multiprogramación del equipo. De este modo, si un proceso se ve
+obligado a esperar por 8ms a que se resuelva un fallo de página,
+durante ese tiempo pueden seguirse ejecutando los demás procesos.
+
+*** Acomodo de las páginas en disco
+
+El cálculo recién presentado, además, asume que el acomodo de las
+páginas en disco es óptimo. Sin embargo, si para llegar a una página
+hay que resolver la dirección que ocupa en un sistema de archivos
+(posiblemente navegar una estructura de directorio), y si el espacio
+asignado a la memoria virtual es compartido con los archivos en disco,
+el rendimiento sufrirá adicionalmente.
+
+Una de las principales deficiencias estructurales en este sentido de
+los sistemas de la familia Windows es que el espacio de almacenamiento
+se asigna en el espacio libre del sistema de archivos. Esto lleva a
+que, conforme crece la fragmentación del disco, la memoria virtual
+quede esparcida por todo el disco duro.
+
+La generalidad de sistemas tipo Unix, en contraposición, reservan una
+partición de disco /exclusivamente/ para la memoria virtual.
+
+** Reemplazo de páginas
+
+Si aprovechamos las características de la memoria virtual para
+aumentar el grado de multiprogramación, como vimos en la sección
+anterior, se nos presenta un problema: Al /sobre-comprometer/ memoria,
+en determinado momento, los procesos que están en ejecución pueden
+caer en un patrón que requiera un mayor uso de memoria que el que hay
+físicamente disponible.
+
+Y si recordamos que uno de los objetivos del sistema operativo es
+otorgar a los usuarios la /ilusión/ de una computadora dedicada a sus
+procesos, no sería aceptable terminar la ejecución de un proceso ya
+aceptado y cuyos requisitos han sido aprobados porque nos quedamos sin
+recursos. Se hace necesario encontrar una forma justa y adecuada de
+llevar a cabo un /reemplazo de páginas/ que nos permita continuar
+satisfaciendo sus necesidades.
+
+El reemplazo de páginas es una parte fundamental de la paginación
+sobre demanda, es la pieza que posibilita una verdadera separación
+entre memoria lógica y física.
+
+El mecanismo básico a ejecutar es simple: Si todos los marcos están
+ocupados, debemos encontrar una página que podamos liberar (una
+/página víctima/) y grabarla al espacio de intercambio en el
+disco. Una vez que lo hayamos hecho, podemos emplear el espacio
+liberado para cargar una página nueva, y continuar con la ejecución
+del proceso.
+
+Esto nos lleva a una /doble/ transferencia al disco (una para grabar
+la página víctima y una para traer la página de reemplazo), y por
+tanto, a una doble demora.
+
+Podemos, con un mínimo de /burocracia/ adicional (aunque requiere de
+apoyo del MMU): implementar un mecanismo que disminuya la probabilidad
+de que tengamos que realizar esta doble transferencia: Agregar un /bit
+de modificación/ o /bit de página sucia/ (/dirty bit/) a la tabla de
+páginas. Este bit se marca como apagado siempre que se carga una
+página a memoria, y es automáticamente encendido cuando se realiza un
+acceso de escritura a dicha página.
+
+Cuando el sistema operativo elige una página víctima, si su /bit de
+página sucia/ está encendido, es necesario grabarla al disco, pero si
+está apagada, sabemos que la información en disco es idéntica a la que
+tenemos en memoria, y permite ahorrar la mitad del tiempo de
+transferencia.
+
+Ahora bien, ¿cómo decidimos qué páginas remplazar marcándolas como
+/víctimas/ cuando hace falta? Para esto tenemos que elegir un
+/algoritmo de reemplazo de páginas/. La característica que buscamos en
+este algoritmo es que, para una patrón de accesos dado, nos dé el
+menor número de fallos de página.
+
+Esta sección está basada en los ejemplos presentados en los
+presentados en el libro /Operating Systems Concepts Essentials/
+(Silberschatz, Galvin y Gagné, 2011).
+
+Al igual que como lo hicimos al describir los algoritmos de
+planificación de procesos, para analizar los que aquí presentaremos lo
+haremos sobre una /cadena de referencia/, esto es, sobre una
+representación de accesos solicitados. Estas cadenas modelan el
+comportamiento de un conjunto de procesos en el sistema, y,
+obviamente, diferentes comportamientos nos llevarán a diferentes
+resultados.
+
+Hacer un volcado y trazado de ejecución en un sistema real puede dar
+una enorme cantidad de información, del órden de un millón de accesos
+por segundo. Para reducir esta información en un número más tratable,
+se puede simplificar basado en que no nos interesa el acceso
+independiente a cada /dirección/ de memoria, sino que a cada
+/página/. Podemos tomar como un sólo acceso a todos aquellos que
+ocurren de forma consecutiva (esto es, sin llamar a ninguna otra
+página, no es necesario que sean en instrucciones consecutivas) a una
+misma página.
+
+Para analizar a un algoritmo de reemplazo, si lo que buscamos es la
+cantidad de fallos de página producidos, además de la cadena de
+referencia, necesitamos saber cuántos marcos tiene nuestra computadora
+hipotética. Por ejemplo, si tuviéramos la cadena:
+
+#+begin_quote
+1, 4, 3, 4, 1, 2, 4, 2, 1, 3, 1, 4
+#+end_quote
+
+Si tuviéramos una computadora con cuatro o más marcos, sólo nos
+encontraríamos con cuatro fallos (el fallo inicial que hace que se
+cargue por primera vez cada una de las páginas). Si, en el otro
+extremo, tuviéramos sólo un marco, nos encontraríamos con 12 fallos,
+dado que a cada solicitud tendríamos que reemplazar el único marco
+disponible. El rendimiento que evaluaríamos sería en los casos de que
+tuviéramos dos o tres marcos.
+
+Para los algoritmos que veremos a continuación, asumiremos una memoria
+con tres marcos, y con la siguiente cadena de referencia:
+
+#+begin_quote
+7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
+#+end_quote
+
+** Asignación de marcos e hiperpaginación
+* Consideraciones de rendimiento
+#+begin_src c
+  int datos[8000][8000];
+  
+  /* Versión correcta: El ciclo externo va sobre el índice externo, */
+  /* el ciclo interno va sobre el índice interno. El arreglo en memoria */
+  /* será recorrido secuencialente. */
+  for (i=0; i<8000; i++) {
+    for (j=0; j<8000; j++) {
+      datos[i][j] += 1;
+    }
+   }
+  
+  /* Si el ciclo externo es empleado para el índice interno y viceversa, */
+  /* el recorrido en memoria será de "puntitos" distribuidos por todo el */
+  /* espacio que ocupa datos[], reemplazando a los contenidos del TLB una */
+  /* y otra vez, y con un fuerte impacto al rendimiento. */
+  for (i=0; i<8000; i++) {
+    for (j=0; j<8000; j++) {
+      datos[j][i] += 1;
+    }
+   }
+#+end_src
+* Consideraciones de seguridad
+** Bibliotecas de ligado estático y ligado dinámico
+** Secciones de texto no ejecutables
 - Problemática con los programas /auto-relocalizables/
   (self-relocatable): ¿código auto-modificable?
-** TODO Aleatorización de las direcciones
+** Aleatorización de las direcciones
 * Otros recursos
 
 - [[https://lwn.net/Articles/79036/][The Grumpy Editor goes 64-bit]] — Experiencia del editor de Linux

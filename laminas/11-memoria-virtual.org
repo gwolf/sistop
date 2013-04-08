@@ -1,0 +1,283 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de memoria: Memoria virtual
+#+DATE: 2013-04-08 — 2013-04-??
+
+* Concepto
+
+** Disociar por completo memoria física y lógica
+- El primer gran paso hacia la memoria virtual lo cubrimos al hablar
+  de paginación
+  - Cada proceso tiene una /vista lógica/ de su memoria
+  - Cada proceso se /mapea/ a la memoria física
+  - Pero es exclusivo, distinto del de los demás procesos
+- Ahora cada proceso tiene un espacio de direccionamiento exclusivo y
+  muy grande
+  - Pero omitimos cómo es que podemos ofrecer más memoria que la
+    físicamente disponible
+- Aquí entra en juego la /memoria virtual/
+  - La memoria física es sólo una /proyección parcial/ de la memoria
+    lógica, potencialmente mucho mayor
+
+** Retomando el intercambio
+- Vimos el intercambio en primer término al /intercambio/ (swap) al
+  hablar de memoria particionada
+  - Espacio de memoria completo de un proceso
+- Mejora cuando hablamos de segmentación
+  - Intercambio parcial; segmentos no utilizados.
+  - El proceso puede continuar con porciones /congeladas/ a
+    almacenamiento secundario
+- Con la memoria virtual, el intercambio se realiza /por página/
+  - Mucho más rápido que por bloques tan grandes como un segmento
+  - Completamente transparente al proceso
+
+** Esquema general empleando memoria virtual
+#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual (Silberschatz, p.320)
+#+attr_latex: height=0.65\textheight
+[[../img/esquema_gral_mem_virtual.png]]
+
+** Pequeño cambio de nomenclatura
+- El /intercambio/ (swap) deja de ser un /último recurso/
+  - Pasa a ser un elemento más en la jerarquía de memoria
+- El mecanismo para intercambiar páginas al disco ya no es un
+  mecanismo aparte
+  - Ya no hablamos del /intercambiador/ (/swapper/)
+  - Sino que del /paginador/
+
+** Transparencia al proceso
+- Es importante recalcar que cuando hablamos de memoria virtual, ésta
+  se mantiene /transparente al proceso/
+- El proceso puede dedicarse a cumplir su tarea, el sistema operativo
+  /paginará/ la memoria según haga falta
+- Es /posible/ hacer ciertas indicaciones de preferencia, pero en
+  general no es el caso
+
+* Paginación sobre demanda
+
+** Deja dormir al /código durmiente/
+- En el transcurso de la vida de un proceso, porciones importantes de
+  su memoria se mantienen /durmientes/ — Código que sólo se emplea
+  eventualmente
+  - Respuesta a situaciones de excepción
+  - Exportación de un documento a determinado formato
+  - Verificación de sanidad al cerrar el programa
+  - Estructuras inicializadas con espacio para permitir que crezcan
+  - ...
+- Las páginas en que están dichos datos no son necesarias durante la
+  ejecución normal
+  - El paginador puede /posponer/ su carga hasta cuando sean necesarias
+  - Si es que alguna vez lo son
+
+** Entonces, ¿sobre demanda?
+- Todo el código que ejecute o referencie directamente el procesador
+  /tiene/ que estar en memoria principal
+  - Pero no tiene que estarlo /antes/ de ser referenciado
+  - Para ejecutar un proceso, sólo requerimos cargar la porción
+    necesaria para /comenzar/ la ejecución
+- Podemos emplear a un paginador /flojo/
+  - Sólo ir cargando a memoria las páginas conforme van a ser
+    utilizadas
+  - Las páginas que no sean requeridas nunca serán cargadas a memoria
+
+** ¿Paginador /flojo/?
+#+begin_center
+/Flojo/: Concepto usado en diversas áreas del cómputo
+#+end_center
+- Flojo (/Lazy/) :: Busca hacer el trabajo mínimo en un principio, y
+		    diferir para más tarde tanto como sea posible
+- Ansioso (/Eager/) :: Busca realizar todo el trabajo que sea
+     posible /desde un principio/
+
+** ¿Cómo hacemos /flojo/ al paginador?
+- Estructura de MMU muy parecida a la del TLB
+- La /tabla de páginas/ incluirá un /bit de validez/
+  - Indica si la página está presente o no en memoria
+  - Si no está presente, causa un /fallo de página/
+
+** Respuesta a un fallo de página
+#+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
+#+attr_latex: height=0.75\textheight
+[[../img/respuesta_a_fallo_de_pagina.png]]
+
+** Pasos para atender a un fallo de página
+1. Verificar en PCB: ¿Esta página ya fue asignada al proceso? (¿es válida?)
+2. Si no es válida, se termina el proceso
+3. Buscar un marco disponible
+   - P.ej. en una tabla de asignación de marcos
+4. Solicita el al disco la lectura de la página hacia el marco especificado
+   - Continúa ejecutando otros procesos
+5. Cuando finaliza la lectura, actualiza PCB y TLB para indicar que la
+   tabla está en memoria
+6. Termina la suspensión del proceso.
+   - Continúa con la instrucción que desencadenó el fallo.
+   - El proceso continúa como si la página siempre hubiera estado en
+     memoria
+
+** Paginación /puramente/ sobre demanda
+#+begin_center
+Llevar este proceso al extremo: Sistema de /paginación puramente sobre
+demanda/ (/Pure demand paging/)
+#+end_center
+- Al iniciar la ejecución de un proceso, lo hace /sin ninguna página
+  en memoria/
+  - El registro de siguiente instrucción apunta a una dirección que no
+    ha sido cargada
+- De inmediato se produce un fallo de página
+  - El sistema operativo responde cargando esta primer página
+- Conforme avanza el flujo del programa, el proceso va ocupando el
+  espacio real que empleará
+
+** Efecto de la paginación sobre demanda
+- Al no cargarse todo el espacio de un proceso, puede iniciar su
+  ejecución más rápido
+- Al no requerir tener en la memoria física a los procesos completos,
+  puede haber más procesos en memoria de los que cabrían antes
+  - Aumentando el /grado de multiprogramación/
+
+** Midiendo el impacto en la ejecución
+- El impacto en la ejecución de un proceso puede ser muy grande
+- Un acceso a disco es varios miles de veces más lento que un acceso a
+  memoria
+- Podemos calcular el tiempo de acceso efectivo ($t_e$) a  partir de
+  la probabilidad de que en un proceso se presente un fallo de página
+  ($0 \le p \le 1$)
+- Conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que
+  toma atender a un fallo de página ($t_f$):
+
+#+begin_center
+$t_e = (1-p)t_a + pt_f$
+#+end_center
+
+** Resolviendo con valores actuales
+- $t_a$ ronda entre los 10 y 200ns
+- $t_f$ está cerca de los 8ms
+  - Latencia del disco duro: 3ms
+  - Tiempo de posicionamiento de cabeza: 5ms
+  - Tiempo de transferencia: 0.05ms
+- Si sólo uno de cada mil accesos a memoria ocasiona un fallo
+  ($p=\frac{1}{1000}$):
+#+begin_center
+$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$
+
+$t_e = 199.8ns + 8000ns = 8199.8ns$
+#+end_center
+
+** Ahora sí: El impacto de la paginación sobre demanda
+- Esto es, el tiempo efectivo de acceso a memoria es /40 veces/ más
+  lento que si no empleáramos paginación sobre demanda
+- Podríamos mantener la penalización por degradación por debajo del
+  10% del tiempo original
+- Pero para que $t_e \le 220$, tendríamos que reducir a $p \le
+  \frac{1}{399,990}$
+#+latex: \pause
+- No olviden: No (necesariamente) es tiempo muerto
+  - Multiprogramación: Mientras un proceso espera a que se resuelva su
+    fallo de página, otros pueden continuar ejecutando
+
+** Acomodo de las páginas en disco
+- El cálculo presentado asume que el acomodo de las páginas en disco
+  es  óptimo
+- Si hay que agregar el espacio que una página ocupa en un /sistema de
+  archivos/, $t_f$ fácilmente aumenta
+  - Navegar estructuras de directorio
+  - Posible fragmentación en espacio de archivos \rarrow la memoria va
+    quedando esparcida por todo el disco
+  - Mayores movimientos de la cabeza lectora
+  - Problema prevalente en los sistemas tipo Windows
+- Respuesta: /Partición de intercambio/, dedicada 100% a la paginación
+  - Mecanismo empleado por casi todos los sistemas Unix
+
+* Reemplazo de páginas
+** Manteniendo el sobre-compromiso
+- Cuando /sobre-comprometemos/ memoria, los procesos en ejecución
+  pueden terminar requiriendo que se carguen más páginas de las que
+  caben en la memoria física
+- Mantenemos el objetivo del sistema operativo: /Otorgar a los
+  usuarios la ilusión de una computadora dedicada a sus procesos/
+- No sería aceptable terminar la ejecución de un proceso ya aceptado
+  - Mucho menos si ya fueron aprobados sus requisitos y nos quedamos
+    sin recurso
+- \rarrow Tenemos que llevar a cabo un /reemplazo de páginas/
+
+** Importancia del reemplazo de páginas
+- Parte fundamental de la paginación sobre demanda
+- La pieza que posibilita una /verdadera separación/ entre memoria
+  lógica y física
+- Mecanismo que permite /liberar/ alguno de los marcos actualmente
+  ocupado
+
+** Mecanismo para liberar un marco ocupado
+- Cuando todos los marcos están ocupados (o se cruza el umbral
+  determinado), un algoritmo designa a una /página víctima/ para su
+  liberación
+  - Veremos más adelante algunos algoritmos para esto
+- El paginador graba a disco los contenidos de esta página y la marca
+  como libre
+  - Actualizando el PCB y TLB del proceso al cual pertenece
+- Puede continuar la carga de la página requerida
+- /¡Ojo!/ Esto significa que /se duplica/ el tiempo de transferencia
+  en caso de fallo de página ($t_f$)
+
+** Manteniendo a $t_f$ en su lugar
+- Con apoyo del MMU podemos reducir la probabilidad de esta
+  duplicación en $t_f$
+- Agregamos un /bit de modificación/ o /bit de página sucia/ a la
+  tabla de páginas
+  - Apagado cuando la página se carga a memoria
+  - Se enciende cuando se realiza un acceso de escritura a esta página
+- Al elegir una página víctima, si su /bit de página sucia/ está
+  encendido, es necesario grabarla a disco
+  - Pero si está apagado, basta actualizar las tablas del proceso
+    afectado
+  - Ahorra la mitad del tiempo de transferencia
+
+** ¿Cómo elegir una página víctima?
+- Para elegir una víctima para paginarla al disco empleamos un
+  /algoritmo de reemplazo de páginas/
+- Buscamos una característica: Para un patrón de accesos dado, obtener
+  el /menor número/ de fallos de página
+  - Diferentes patrones de acceso generan diferentes resultados para
+    cada algoritmo
+  - Nos referiremos a estos patrones de acceso como /cadena de
+    referencia/
+#+begin_center
+Para los ejemplos presentados a continuación, nos basaremos en los
+presentados en /Operating Systems Concepts Essentials/ (Silberschatz,
+Galvin y Gagné, 2011)
+#+end_center
+
+** Eligiendo una cadena de referencia
+- La cadena de referencia debe representar un patrón típico (para la
+  carga que deseemos analizar) de accesos a memoria
+- Muchas veces son tomados de un volcado/trazado de ejecución en un
+  sistema real
+  - El conjunto resultante puede ser enorme
+  - Simplificación: No nos interesa el acceso independiente a cada
+    /dirección/ de memoria, sino que a cada /página
+  - Varios accesos consecutivos a la misma página no tienen efecto en
+    el análisis
+
+** Y el reemplazo... ¿en dónde?
+- Requerimos de un segundo parámetro
+- Para analizar un algoritmo con una cadena de referencia, tenemos que
+  saber /cuántos marcos/ tiene nuestra computadora hipotética
+  - Lo que buscamos es la /cantidad de fallos de página/
+  - Depende directamente de los marcos disponibles
+
+** Casos límite respecto a los marcos disponibles
+Por ejemplo, a partir de la cadena de referencia:
+#+begin_quote
+1, 4, 3, 4, 1, 2, 4, 2, 1, 3, 1, 4
+#+end_quote
+- En una computadora con $\ge 4$ marcos, sólo se producirían cuatro fallos
+  - Los necesarios para la /carga inicial/
+- Extremo opuesto: Con un sólo marco, tendríamos 12 fallos
+  - Cada página tendría que cargarse siempre desde disco
+- Casos que se pueden estudiar: 2 o 3 marcos
+
+** Datos base para los algoritmos
+- A continuación veremos varios algoritmos de reemplazo de páginas
+- Para el análisis, asumiremos una memoria con 3 marcos
+- Y la siguiente cadena de referencia:
+#+begin_quote
+7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
+#+end_quote

@@ -1052,7 +1052,7 @@ proceso) del hijo. Esto es, es frecuente que veamos:
     /* Soy el proceso hijo */
     /* (...) */
    } else if (pid < 0) {
-    /* Ocurrió un error, no se creó un proceso hijo */
+    /* Ocurrio un error, no se creo un proceso hijo */
    } else {
     /* Soy el proceso padre */
     /* La variable 'pid' tiene el PID del proceso hijo */
@@ -1079,7 +1079,7 @@ canales explícitos de comunicación entre procesos.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
-#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+#+begin_src ditaa :file ltxpng/cow_recien_hecho.png :cmdline -E
                          +---------+
                          | Memoria |
   +-----------+          +---------+             +-----------+
@@ -1108,7 +1108,7 @@ de las páginas seguirá siendo compartido.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
-#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
+#+begin_src ditaa :file ltxpng/cow_pagina_modificada.png :cmdline -E
                          +---------+
                          | Memoria |
   +-----------+          +---------+             +-----------+
@@ -1154,7 +1154,7 @@ disco duro), a través de un esquema de /intercambio/ (/swap/).
 
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual (Silberschatz, p.320)
 #+attr_html: height="404"
-[[../img/esquema_gral_mem_virtual.png]]
+[[./img/esquema_gral_mem_virtual.png]]
 
 Es importante apuntar que la memoria virtual es gestionada /de forma
 automática y transparente/ por el sistema operativo. No hablaríamos
@@ -1169,7 +1169,9 @@ memoria virtual lo hace aún más conveniente al aumentar la
 /granularidad/ del intercambio: Ahora ya no sólo se enviarán a disco
 secciones lógicas completas del proceso (segmentos), sino que podrá
 hacerse página por página, aumentando muy fuertemente el rendimiento
-resultante.
+resultante. Veremos que, empleando memoria virtual, de cierto modo la
+memoria física se vuelve sólo una /proyección parcial/ de la memoria
+lógica, potencialmente mucho mayor a ésta.
 
 Técnicamente, cuando hablamos de memoria virtual, no nos referirmos ya
 a un /intercambiador/ (/swapper)/, sino que al /paginador/.
@@ -1213,7 +1215,7 @@ sistema operativo lo suspenda y traiga a memoria la página solicitada:
 
 #+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
 #+attr_html: height="466"
-[[../img/respuesta_a_fallo_de_pagina.png]]
+[[./img/respuesta_a_fallo_de_pagina.png]]
 
 1. Verifica en el PCB si esta solicitud corresponde a una página que
    ya ha sido asignada a este proceso.
@@ -1250,7 +1252,7 @@ La paginación sobre demanda puede impactar fuertemente el rendimiento
 de un proceso. Hemos visto ya que un acceso a disco es varios miles de
 veces más lento que el acceso a memoria; podemos calcular el tiempo de
 acceso efectivo a memoria ($t_e$) a partir de la probabilidad que en
-un programa se presente un fallo de página ($0 \le p \le 1$),
+un proceso se presente un fallo de página ($0 \le p \le 1$),
 conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que toma
 atender a un fallo de página ($t_f$):
 
@@ -1266,16 +1268,16 @@ prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
 #+begin_center
-$t_e = (1-$frac{1}{1000}) \times 200 + $frac{1}{1000} \times 8,000,000$
+$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$
 
-$t_e = 199.8 + 8000 = 8199.8$
+$t_e = 199.8ns + 8000ns = 8199.8ns$
 #+end_center
 
 Esto es, en promedio, tendemos un tiempo efectivo de acceso a memoria
 /40 veces/ mayor a que si no empleáramos este mecanismo. Con estos
 mismos números, para mantener la degradación de rendimiento por acceso
 a memoria por debajo del 10%, tendríamos que reducir la probabiliad de
-fallos de página a $frac{1}{399,990}$.
+fallos de página a $\frac{1}{399,990}$.
 
 Cabe mencionar que este impacto al rendimiento no necesariamente
 significa que una proporción relativamente alta de fallos de página
@@ -1311,8 +1313,8 @@ Si aprovechamos las características de la memoria virtual para
 aumentar el grado de multiprogramación, como vimos en la sección
 anterior, se nos presenta un problema: Al /sobre-comprometer/ memoria,
 en determinado momento, los procesos que están en ejecución pueden
-caer en un patrón que requiera un mayor uso de memoria que el que hay
-físicamente disponible.
+caer en un patrón que requiera cargarse a memoria física páginas por
+un mayor uso de memoria que el que hay físicamente disponible.
 
 Y si recordamos que uno de los objetivos del sistema operativo es
 otorgar a los usuarios la /ilusión/ de una computadora dedicada a sus
@@ -1374,10 +1376,13 @@ una enorme cantidad de información, del órden de un millón de accesos
 por segundo. Para reducir esta información en un número más tratable,
 se puede simplificar basado en que no nos interesa el acceso
 independiente a cada /dirección/ de memoria, sino que a cada
-/página/. Podemos tomar como un sólo acceso a todos aquellos que
-ocurren de forma consecutiva (esto es, sin llamar a ninguna otra
-página, no es necesario que sean en instrucciones consecutivas) a una
-misma página.
+/página/.
+
+Además, varios accesos a direcciones de memoria en la misma página no
+causan efecto en el estado. Podemos tomar como un sólo acceso a todos
+aquellos que ocurren de forma consecutiva (esto es, sin llamar a
+ninguna otra página, no es necesario que sean en instrucciones
+consecutivas) a una misma página.
 
 Para analizar a un algoritmo de reemplazo, si lo que buscamos es la
 cantidad de fallos de página producidos, además de la cadena de
@@ -1408,19 +1413,21 @@ con tres marcos, y con la siguiente cadena de referencia:
 #+begin_src c
   int datos[8000][8000];
   
-  /* Versión correcta: El ciclo externo va sobre el índice externo, */
-  /* el ciclo interno va sobre el índice interno. El arreglo en memoria */
-  /* será recorrido secuencialente. */
+  /* Version correcta: El ciclo externo va sobre el */
+  /* indice externo, el ciclo interno va sobre el indice */
+  /* interno. El arreglo en memoria sera recorrido */
+  /* secuencialente. */
   for (i=0; i<8000; i++) {
     for (j=0; j<8000; j++) {
       datos[i][j] += 1;
     }
    }
   
-  /* Si el ciclo externo es empleado para el índice interno y viceversa, */
-  /* el recorrido en memoria será de "puntitos" distribuidos por todo el */
-  /* espacio que ocupa datos[], reemplazando a los contenidos del TLB una */
-  /* y otra vez, y con un fuerte impacto al rendimiento. */
+  /* Si el ciclo externo es empleado para el indice interno */
+  /* y viceversa, el recorrido en memoria sera de "puntitos" */
+  /* distribuidos por todo el espacio que ocupa datos[], */
+  /* reemplazando a los contenidos del TLB una y otra vez, y */
+  /* con un fuerte impacto al rendimiento. */
   for (i=0; i<8000; i++) {
     for (j=0; j<8000; j++) {
       datos[j][i] += 1;
@@ -1433,6 +1440,8 @@ con tres marcos, y con la siguiente cadena de referencia:
 - Problemática con los programas /auto-relocalizables/
   (self-relocatable): ¿código auto-modificable?
 ** Aleatorización de las direcciones
+** Recuperación de datos del intercambio
+
 * Otros recursos
 
 - [[https://lwn.net/Articles/79036/][The Grumpy Editor goes 64-bit]] — Experiencia del editor de Linux

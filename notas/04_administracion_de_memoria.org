@@ -478,7 +478,7 @@ varios bloques libres en uno solo.
 
 #+html: <div class="figure">
 #+attr_html: height="250"
-#+attr_latex: height=0.5\textheight
+#+attr_latex: width=0.6\textwidth
 #+caption: Compactación de la memoria de procesos en ejecución
 #+begin_src ditaa :file ltxpng/compactacion.png :cmdline -E
       +----------------+         +----------------+
@@ -555,9 +555,9 @@ al descrito en el apartado anterior (registro base y
 desplazamiento). Claro está, esto debe también hacerse con apoyo del
 MMU.
 
+#+caption: Ejemplo de segmentación (Silberschatz, p.305)
 #+attr_html: height="445"
 #+attr_latex: width=0.7\textwidth
-#+caption: Ejemplo de segmentación (Silberschatz, p.305)
 [[./img/segmentacion_de_memoria.png]]
 
 Una de las implementaciones más obvias y directas de un espacio de
@@ -1080,21 +1080,21 @@ canales explícitos de comunicación entre procesos.
 #+attr_latex: width=\textwidth
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
 #+begin_src ditaa :file ltxpng/cow_recien_hecho.png :cmdline -E
-                         +---------+
-                         | Memoria |
-  +-----------+          +---------+             +-----------+
-  | Pr. Padre |   +----->|abcdefgh |<----+       | Pr. Hijo  |
-  +-+---------+   |      +---------+     |       +-+---------+
-  |1|abcdefgh |---+      |cGRE     |     +-------|1|abcdefgh |
-  +-+---------+          +---------+             +-+---------+
-  |2|ijklmnop |--------->|ijklmnop |<------------|2|ijklmnop |
-  +-+---------+          +---------+             +-+---------+
-  |3|qrstuvwx |---+      |cGRE     |     +-------|3|qrstuvwx |
-  +-+---------+   |      +---------+     |       +-+---------+
-                  +----->|qrstuvwx |<----+
-                         +---------+
-                         |cGRE     |
-                         +---------+
+                            +---------+
+                            | Memoria |
+  +--------------+          +---------+             +--------------+
+  |  Proc. Padre |   +----->|abcdefgh |<----+       |  Proc. Hijo  |
+  +---+----------+   |      +---------+     |       +---+----------+
+  | 1 | abcdefgh +---+      |cGRE     |     +-------+ 1 | abcdefgh |
+  +---+----------+          +---------+             +---+----------+
+  | 2 | ijklmnop +--------->|ijklmnop |<------------+ 2 | ijklmnop |
+  +---+----------+          +---------+             +---+----------+
+  | 3 | qrstuvwx +---+      |cGRE     |     +-------+ 3 | qrstuvwx |
+  +---+----------+   |      +---------+     |       +---+----------+
+                     +----->|qrstuvwx |<----+
+                            +---------+
+                            |cGRE     |
+                            +---------+
 #+end_src
 #+html: <p align="center">Memoria de dos procesos inmediatamente después de la creación del proceso hijo por <tt>fork()</tt></p></div>
 
@@ -1109,21 +1109,21 @@ de las páginas seguirá siendo compartido.
 #+attr_latex: width=\textwidth
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
 #+begin_src ditaa :file ltxpng/cow_pagina_modificada.png :cmdline -E
-                         +---------+
-                         | Memoria |
-  +-----------+          +---------+             +-----------+
-  | Pr. Padre |   +----->|abcdefgh |             | Pr. Hijo  |
-  +-+---------+   |      +---------+             +-+---------+
-  |1|abcdefgh |---+      |abCDefgh |<------------|1|abCDefgh |
-  +-+---------+          +---------+             +-+---------+
-  |2|ijklmnop |--------->|ijklmnop |<------------|2|ijklmnop |
-  +-+---------+          +---------+             +-+---------+
-  |3|qrstuvwx |---+      |cGRE     |     +-------|3|qrstuvwx |
-  +-+---------+   |      +---------+     |       +-+---------+
-                  +----->|qrstuvwx |<----+
-                         +---------+
-                         |cGRE     |
-                         +---------+
+                            +---------+
+                            | Memoria |
+  +--------------+          +---------+             +--------------+
+  |  Proc. Padre |   +----->|abcdefgh |             |  Proc. Hijo  |
+  +---+----------+   |      +---------+             +---+----------+
+  | 1 | abcdefgh +---+      |abCDefgh |<------------+ 1 | abCDefgh |
+  +---+----------+          +---------+             +---+----------+
+  | 2 | ijklmnop +--------->|ijklmnop |<------------+ 2 | ijklmnop |
+  +---+----------+          +---------+             +---+----------+
+  | 3 | qrstuvwx +---+      |cGRE     |     +-------+ 3 | qrstuvwx |
+  +---+----------+   |      +---------+     |       +---+----------+
+                     +----->|qrstuvwx |<----+
+                            +---------+
+                            |cGRE     |
+                            +---------+
 #+end_src
 #+html: <p align="center">Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.</p></div>
 
@@ -1153,6 +1153,7 @@ sistema emplea espacio en /almacenamiento secundario/ (típicamente,
 disco duro), a través de un esquema de /intercambio/ (/swap/).
 
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual (Silberschatz, p.320)
+#+attr_latex: width=0.7\textwidth
 #+attr_html: height="404"
 [[./img/esquema_gral_mem_virtual.png]]
 
@@ -1215,6 +1216,7 @@ sistema operativo lo suspenda y traiga a memoria la página solicitada:
 
 #+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
 #+attr_html: height="466"
+#+attr_latex: width=0.7\textwidth
 [[./img/respuesta_a_fallo_de_pagina.png]]
 
 1. Verifica en el PCB si esta solicitud corresponde a una página que
@@ -1393,13 +1395,20 @@ hipotética. Por ejemplo, si tuviéramos la cadena:
 1, 4, 3, 4, 1, 2, 4, 2, 1, 3, 1, 4
 #+end_quote
 
-Si tuviéramos una computadora con cuatro o más marcos, sólo nos
-encontraríamos con cuatro fallos (el fallo inicial que hace que se
-cargue por primera vez cada una de las páginas). Si, en el otro
+Al recorrer esta cadena en una computadora con cuatro o más marcos,
+sólo nos encontraríamos con cuatro fallos (el fallo inicial que hace
+que se cargue por primera vez cada una de las páginas). Si, en el otro
 extremo, tuviéramos sólo un marco, nos encontraríamos con 12 fallos,
 dado que a cada solicitud tendríamos que reemplazar el único marco
 disponible. El rendimiento que evaluaríamos sería en los casos de que
 tuviéramos dos o tres marcos.
+
+Un fenómeno interesante que se presenta con algunos algoritmos es la
+/anomalía de Belady/: Si bien la lógica indica que a mayor número de
+marcos disponibles tendremos una menor cantidad de fallos de página,
+con algunas de cadenas de referencia y bajo ciertos algoritmos puede
+haber una /regresión/, en que aumentar la cantidad de marcos también
+aumenta la cantidad de fallos.
 
 Para los algoritmos que veremos a continuación, asumiremos una memoria
 con tres marcos, y con la siguiente cadena de referencia:
@@ -1408,7 +1417,279 @@ con tres marcos, y con la siguiente cadena de referencia:
 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
 #+end_quote
 
+*** Primero en entrar, primero en salir (FIFO)
+
+El algoritmo de más simple y obvia implementación es, nuevamente, el
+FIFO: Al cargar una página en memoria, se toma nota de en qué nomento
+fue cargada, y cuando llegue el momento de reemplazar una página
+vieja, se elige la que haya sido cargada hace más tiempo.
+
+Partiendo de un estado inicial en que nuestras tres páginas están
+vacías, necesariamente las tres primeras referencias a distintas
+páginas de memoria (7, 0, 1) causarán fallos de página. La siguiente
+(2) causará uno, pero la quinta referencia (0) puede ser satisfecha
+sin requerir una nueva transferencia.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Algoritmo FIFO de reemplazo de páginas
+#+begin_src ditaa :file ltxpng/reemplazo_pag_fifo.png :cmdline -E
+  Cadena de referencia ----------->
+     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
+     |     |     |     |           |     |     |     |     |     |                 |     |                 |     |     |
+     V     V     V     V           V     V     V     V     V     V                 V     V                 V     V     V
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+  Marcos de memoria
+#+end_src
+#+html: <p align="center">Algoritmo FIFO de reemplazo de páginas.</p></div>
+
+La principal ventaja de este algoritmo es, como ya lo hemos
+mencionado, la simplicidad, tanto para programarlo como para
+comprenderlo. Su implementación puede ser tan simple como una lista
+ligada circular, cada elemento que va recibiendo se agrega en el
+último elemento de la lista, y se "empuja" el apuntador para
+convertirlo en la cabeza. Su desventaja, claro está, es que no toma
+en cuenta a la historia de las últimas solicitudes, por lo que puede
+causar un bajo rendimiento. Todas las páginas tienen la misma
+probabilidad de ser reemplazadas, sin importar su frecuencia de uso.
+
+Con las condiciones aquí presentadas, un esquema FIFO nos lleva a 15
+fallos de página en un total de 20 accesos requeridos.
+
+El algoritmo FIFO es vulnerable a la anomalía de Belady. Esto puede
+ilustrarse al pasar de 3 a 4 marcos con la cadena de referencia:
+
+#+BEGIN_QUOTE
+1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
+#+END_QUOTE
+
+La prevalencia de cadenas que desencadenan la anomalía de Belady fue
+uno de los factores principales que llevaron al diseño de nuevos
+algoritmos de reemplazo de páginas.
+
+*** Reemplazo de páginas óptimo (OPT, MIN)
+
+Un segundo algoritmo, de interés casi puramente teórico, fue
+propuesto, y es típicamente conocido como OPT o MIN. Bajo este
+algoritmo, el enunciado será elegir como página víctima a aquella
+página que /no vaya a ser utilizada/ por un tiempo máximo.
+
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
+#+begin_src ditaa :file ltxpng/reemplazo_pag_opt.png :cmdline -E
+Cadena de referencia ----------->
+     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
+     |     |     |     |           |           |                 |                 |                       |
+     V     V     V     V           V           V                 V                 V                       V
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+Marcos de memoria
+#+end_src
+#+html: <p align="center">Algoritmo óptimo de reemplazo de páginas (OPT)</p></div>
+
+Si bien este algoritmo está demostrado como óptimo o mínimo, se
+mantiene como curiosidad teórica porque requiere conocimiento a priori
+de las necesidades del sistema — Y si esto es impracticable ya en los
+algoritmos que revisamos de despachadores, lo será mucho más con un
+recurso de reemplazo tan dinámico como la memoria.
+
+Su principal utilidad reside en que nos brinda una cota mínima:
+Calculando el número de fallos que se presentan al seguir OPT,
+podemos ver qué tan cercano resulta otro algoritmo respecto al caso
+óptimo. Para esta cadena de referencia, y con tres páginas, tenemos
+un total de nueve fallos.
+
+*** Menos recientemente utilizado (LRU)
+
+Hemos visto este esquema en diversos mecanismos relacionados con la
+administración de memoria. Busca acercarse a OPT /prediciendo/ cuándo
+será la próxima vez en que se emplee cada una de las páginas que
+tiene en memoria basado en la /historia reciente/ de su
+ejecución.
+
+Cuando necesita elegir una página víctima, LRU elige la página que no
+ha sido empleada hace más tiempo.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
+#+begin_src ditaa :file ltxpng/reemplazo_pag_lru.png :cmdline -E
+Cadena de referencia ----------->
+     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
+     |     |     |     |           |           |     |     |     |                 |           |           |
+     V     V     V     V           V           V     V     V     V                 V           V           V
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+    |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+Marcos de memoria
+#+end_src
+#+html: <p align="center">Algoritmo de reemplazo de páginas menos recientemente utilizadas (LRU)</p></div>
+
+Para nuestra cadena de referencia, LRU genera 12 fallos, en el punto
+medio entre OPT y FIFO.
+
+Una observación interesante puede ser que para una cadena $S$ y su
+/cadena espejo/ (invertida) $R^S$, el resultado de evaluar $S$ por
+LRU es igual al de evaluar $R^S$ por OPT, y viceversa.
+
+La principal debilidad de LRU es que para su implementación requiere
+hardware[fn:: Dada la frecuencia con que se efectúan referencias a
+memoria, emplear un mecanismo en software para actualizar las entradas
+de los marcos resultaría inaceptablemente lento] sensiblemente más
+complejo que FIFO. Una implementación podría ser agregar un contador a
+cada uno de los marcos, actualizarlo siempre al hacer una referenciar
+a dicha página, y elegir como víctima a la página con un menor
+conteo. Este mecanismo tiene la desventaja de que, en presencia de una
+gran cantidad de páginas, tiene que recorrerlas a todas para buscar a
+la más envejecida.
+
+Otro mecanismo es emplear una lista doblemente ligada con dos métodos
+de acceso: Lista y stack. Cada vez que se haga referencia a una
+página, se mueve a la cabeza del stack, y cada vez que se busque a
+una página víctima, se selecciona a aquella que esté en el extremo
+/inferior/ del stack. Este mecanismo hace un poco más cara la
+actualización (pueden requerirse hasta seis modificaciones), pero
+encuentra a la página víctima en tiempo constante.
+
+Se ha demostrado que LRU y OPT están libres de la anomalía de Belady,
+dado que, para $n$ marcos, las páginas que estarían en memoria son un
+subconjunto estricto de las que estarían con $n+1$ marcos.
+
+*** Aproximaciones a LRU
+
+Dada la complejidad que presenta la implementación de LRU en
+hardware, algunos sistemas implementan una /aproximación/ a éste.
+
+- Bit de referencia :: Esta es una aproximación bastante
+     común. Consiste en que, al iniciar la ejecución, todos los bits
+     de referencia de la tabla de páginas están apagados (0). Cada vez
+     que se referencia a un marco, su bit de referencia se
+     enciende.
+
+     El sistema operativo invoca periódicamente a que se apaguen
+     nuevamente todos los bits de referencia. En caso de presentarse
+     un fallo de página, se elige por FIFO sobre el subconjunto de
+     marcos que no hayan sido referenciados en el periodo actual (esto
+     es, entre todos aquellos para los cuales el bit de referencia sea
+     0).
+
+- Bits adicionales :: Una mejoría casi trivial sobre la anterior
+     consiste en agregar /varios/ bits de referencia: En vez de
+     descartarlos cada vez que transcurre el periodo determinado, el
+     bit de referencia es recorrido a la derecha, descartando el bit
+     más bajo. Por ejemplo, si nuestra implementación tuviera 4 bits,
+     un marco que no ha sido empleado en los últimos 4 periodos
+     tendría el valor 0000, mientras que un marco que sí ha sido
+     referenciado los últimos cuatro periodos tendría 1111. Un marco
+     que fue empleado hace cuatro y tres periodos, pero desde
+     entonces no, tendría el 0011.
+
+     Cuando el sistema tenga que elegir a una nueva página víctima,
+     lo hará de entre el conjunto que tenga un número más bajo.
+
+     La parte de mantenimiento de este algoritmo es muy simple;
+     recorrer una serie de bits es una operación muy
+     sencillo. Seleccionar el número más pequeño requiere una pequeña
+     búsqueda, pero sigue resultando mucho más sencillo que LRU.
+
+- Segunda oportunidad (o /reloj/) :: El algoritmo de la segunda
+     oportunidad trabaja también basado en un bit de referencia y un
+     recorrido tipo FIFO. La diferencia en este caso es que, al igual
+     que hay eventos que /encienden/ a este bit (efectuar una
+     referencia al marco), también hay eventos que lo /apagan/:
+
+     Se mantiene un apuntador a la /próxima víctima/, y cuando el
+     sistema requiera efectuar un reemplazo, éste verificará si el
+     marco al que apunta tiene el bit de referencia encendido o
+     apagado. En caso de estar apagado, el marco es seleccionado como
+     víctima, pero en caso de estar encendido (indicando que fue
+     utilizado recientemente), se le da una /segunda oportunidad/: El
+     bit de referencia se apaga, el apuntador de víctima potencial
+     avanza una posición, y vuelve a intentarlo.
+
+     A este algoritmo se le llama también /de reloj/ porque puede
+     implementarse como una lista ligada circular, y el apuntador
+     puede ser visto como una manecilla. La manecilla avanza sobre la
+     lista de marcos buscando uno con el bit de referencia apagado, y
+     apagando a todos a su paso.
+
+     En el peor caso, el algoritmo de /segunda oportunidad/ degenera
+     en FIFO.
+
+- Segunda oportunidad mejorada :: El bit de referencia puede
+     amplairse con un /bit de modificación/, dándonos las siguientes
+     combinaciones, en órden de preferencia:
+
+     - (0, 0) :: No ha sido utilizado ni modificado
+                 recientemente. Candidato ideal para su reemplazo.
+
+     - (0,1) :: No ha sido utilizada recientemente, pero está
+                modificada. No es tan buena opción, porque es
+                necesario escribir la página a disco antes de
+                reemplazarla, pero puede se elegida.
+
+     - (1,0) :: El marco está /limpio/, pero fue empleado
+                recientemente, por lo que probablemente se vuelva a
+                requerir pronto
+
+     - (1,1) :: Empleada recientemente y /sucia/ — Sería necesario
+                escribir la página a disco antes de reemplazar, y
+                probablemente vuelva a ser requerida pronto. Hay que
+                evitar reemplazarla.
+
+     La lógica para encontrar una página víctima es similar a la
+     /segunda oportunidad/, pero busca reducir el costo de E/S. Esto
+     puede requerir, sin embargo, dar hasta cuatro vueltas (por cada
+     una de las listas) para elegir la página víctima.
+
+*** Más frecuentemente utilizada (MFU) / Menos frecuentemente utilizada (LFU)
+
+Estos dos algoritmos se basan en mantener un contador, como lo hace
+LRU, pero en vez de medir el tiempo, miden la /cantidad/ de
+referencias que se han hecho a determinada página.
+
+MFU parte de la lógica que, si una página fue empleada muchas veces,
+probablemente vuelva a ser empleada muchas veces más; LFU parte de
+que una página que ha sido empleada pocas veces es probablemente una
+página recién cargada, y va a ser empleada en el futuro cercano.
+
+Estos dos algoritmos son tan caros de implementar como LRU, y su
+rendimiento respecto a OPT no es tan cercana, por lo cual casi no son
+empleados.
+
+*** Algoritmos basados al manejo de buffers
+
+Un mecanismo que se emplea con cada vez mayor frecuencia es que el
+sistema no espere a enfrentarse a la necesidad de reemplazar un
+marco, sino que proactivamente busque tener siempre espacio vacío en
+memoria. Para hacerlo, conforme la carga lo permite, el sistema
+operativo busca las páginas /sucias/ más proclives a ser paginadas a
+disco y va actualizando el disco (y marcándolas nuevamente como
+/limpias/). De este modo, cuando tenga que traer una página nueva del
+disco, siempre habrá espacio donde ubicarla sin tener que esperar a
+que se transfiera una para liberarla.
+
 ** Asignación de marcos e hiperpaginación
+
+
+
 * Consideraciones de rendimiento
 #+begin_src c
   int datos[8000][8000];

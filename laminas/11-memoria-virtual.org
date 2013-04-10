@@ -281,3 +281,264 @@ Por ejemplo, a partir de la cadena de referencia:
 #+begin_quote
 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
 #+end_quote
+
+** Primero en entrar, primero en salir (FIFO) (1)
+- Nuevamente, el algoritmo más simple y de obvia implementación
+- Al cargar una página, se toma nota de cuándo fue cargada
+- Cuando llegue el momento de reemplazar una página vieja, se elige
+  la que se haya cargado hace más tiempo
+
+** Primero en entrar, primero en salir (FIFO) (2)
+#+attr_latex: width=0.9\textwidth
+#+caption: Algoritmo FIFO de reemplazo de páginas: 15 fallos
+#+begin_src ditaa :file ltxpng/reemplazo_pag_fifo.png :cmdline -E
+  Cadena de referencia ----------->
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |     |     |     |     |
+   V     V     V     V           V     V     V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+
+... Cadena de referencia ------->
+   0     3     2     1     2     0     1     7     0     1
+   |                 |     |                 |     |     |
+   V                 V     V                 V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+#+end_src
+
+** Primero en entrar, primero en salir (FIFO) (3)
+- Típicamente programado empleando una lista ligada circular
+  - Cada elemento que va recibiendo se agrega como el último elemento
+  - Tras agregarlo, se "empuja" al apuntador para convertirlo en la
+    cabeza
+- Desventaja: No toma en cuenta la historia de las últimas
+  solicitudes
+  - La cantidad de patrones de uso que le pueden causar un bajo
+    desempeño es alto
+  - Todas las páginas tienen la misma probabilidad de ser
+    reemplazadas, independientemente de su frecuencia de uso
+
+** Anomalía de Belady
+- En general, asumimos que a mayor cantidad de marcos de memoria
+  disponibles, menos fallos de página se van a presentar
+- La /Anomalía de Belady/ ocurre cuando un incremento en el número de
+  marcos disponibles lleva a /más/ fallos de página
+  - Depende del algoritmo y de la secuencia de la cadena de
+    referencia
+- FIFO es vulnerable a la anomalía de Belady
+
+** Anomalía de Belady: Expectativas de comportamiento
+#+attr_latex: height=0.6\textheight
+#+caption: Relación ideal entre el número de marcos y la cantidad de fallos de página (Silberschatz, p.335)
+[[../img/expectativa_fallas_contra_marcos.png]]
+
+** Anomalía de Belady: Comportamiento de FIFO
+#+attr_latex: height=0.6\textheight
+#+caption: El algoritmo FIFO presenta la anomalía de Belady con la cadena de referencia 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
+[[../img/belady_fifo.png]]
+
+
+** Algoritmo óptimo (OPT) o mínimo (MIN) (1)
+- Interes casi puramente téórico
+- Elegimos como página víctima a aquella que /no vaya a ser
+  utilizada/ por un tiempo máximo
+
+** Algoritmo óptimo (OPT) o mínimo (MIN) (2)
+#+attr_latex: width=0.9\textwidth
+#+caption: Algoritmo óptimo de reemplazo de páginas (OPT): 9 fallos
+#+begin_src ditaa :file ltxpng/reemplazo_pag_opt.png :cmdline -E
+Cadena de referencia ----------->
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |           |
+   V     V     V     V           V           V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+... Cadena de referencia ----------->
+   0     3     2     1     2     0     1     7     0     1
+   |                 |                       |
+   V                 V                       V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+#+end_src
+
+** Algoritmo óptimo (OPT) o mínimo (MIN) (3)
+- Óptimo demostrado, pero no aplicable
+- Requiere conocimiento a priori de las necesidades del sistema
+  - Si es de por sí impracticable en los despachadores, lo es mucho
+    mas al hablar de un área tan dinámica como la memoria
+  - Recuerden: Millones de accesos por segundo
+- Principal utilidad: Brinda una cota mínima
+  - Podemos ver qué tan cercano resulta otro algoritmo respecto al
+    caso óptimo
+
+** Menos recientemente utilizado (LRU) (1)
+- Lo hemos mencionado ya en varios puntos de la administración de memoria
+- Busca acercarse a OPT /prediciendo/ cuándo será el próximo uso de
+  cada una de las páginas
+  - Basado en su historia reciente
+- Elige la página que /no ha sido empleada/ desde hace más tiempo
+
+** Menos recientemente utilizado (LRU) (2)
+#+attr_latex: width=0.9\textwidth
+#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU): 12 fallos
+#+begin_src ditaa :file ltxpng/reemplazo_pag_lru.png :cmdline -E
+Cadena de referencia ----------->
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |           |     |     |
+   V     V     V     V           V           V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+... Cadena de referencia ----------->
+  0     3     2     1     2     0     1     7     0     1
+  |                 |           |           |
+  V                 V           V           V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+#+end_src
+
+** Menos recientemente utilizado (LRU) (3)
+- Para nuestra cadena de referencia, resulta en el punto medio entre
+  OPT y FIFO
+- Para una cadena $S$ y su /cadena espejo/ $R^S$, $OPT(S) = LRU(R^S)$
+  (y viceversa)
+- Está demostrado que LRU y OPT están libres de la anomalía de Belady
+  - Para $n$ marcos, las páginas que están en memoria son un
+    subconjunto estricto de las que estarían con $n+1$ marcos.
+
+** Implementación ejemplo de LRU (1)
+- Se agrega un contador a /cada uno/ de los marcos
+  - El contador se incrementa siempre que se hace referencia a una
+    página
+- Se elige como víctima a la página con el contrador más bajo
+  - Esto es, a la que hace más tiempo no haya sido actualizada
+- Desventaja: Con muchas páginas, se tiene que recorrer /la lista
+  completa/ para encontrar la más /envejecida/
+
+** Implementación ejemplo de LRU (2)
+- La lista de marcos es una lista doblemente ligada
+- Esta lista es tratada como una lista y como un stack
+  - Cuando se hace referencia a una página, se mueve a la cabeza
+    (arriba) del stack — Peor caso: 6 operaciones
+  - Para elegir a una página víctima, se toma la de /abajo/ del stack
+    (tiempo constante)
+
+** Más / menos frecuentemente utilizado (MFU / LFU)
+- Dos algoritmos contrapuestos, basados (como LRU) en mantener un
+  contador
+  - Miden la /cantidad/ de referencias que se han hecho a cada página
+- Lógica baseL
+  - MFU :: Si una página fue empleada muchas veces, probablemente va a
+           ser empleada muchas veces más
+  - LFU :: Si una página casi no ha sido empleada, probablemente
+           recién fue cargada, y será empleada en el futuro cercano
+- La complejidad de estos algoritmos es tan alta como LRU, y su
+  rendimiento es menos cercano a OPT
+  - Casi no son empleados
+
+** Aproximaciones a LRU
+- ¿Principal debilidad de LRU? Su implementación requiere apoyo en
+  hardware mucho más complejo que FIFO
+- Hay varios mecanismos que buscan /aproximar/ el comportamiento de
+  LRU
+  - Empleando información menos detallada
+
+** Bit de referencia
+- Aproximación bastante común
+- Todas las entradas de la tabla de páginas tienen un /bit de
+  referencia/, inicialmente apagado
+  - Cada vez que se referencia a un marco, se enciende su bit de
+    referencia
+  - El sistema /reinicia/ periódicamente a /todos/ los bits de
+    referencia, apagándolos
+- Al presentarse un fallo de página, se elige por FIFO de entre el
+  subconjunto con el bit apagado
+  - Esto es, entre las páginas que no fueron empleadas en el periodo
+
+** Bits adicionales (/columna/) de referencia
+- Mecanismo derivado del anterior, dando más granularidad
+- Se maneja una /columna/ de referencia, de varios bits de ancho
+  - Periódicamente, en vez de reiniciar a 0, el valor de todas las
+    entradas se /recorre/ a la derecha, descartando el bit más bajo
+  - El acceso a un marco hace que se encienda su bit más alto
+- Ante un fallo de página, se elige entre los marcos con valor de
+  referencia más bajo
+
+** Segunda oportunidad (o /reloj/)
+- Maneja un bit de referencia y un recorrido tipo FIFO
+- El algoritmo avanza linealmente sobre la lista ligada circular
+- Hay eventos que encienden el bit, y eventos que lo apagan:
+  - Una referencia a un marco enciende su bit de referencia
+  - Si elige a un marco que tiene encendido el bit de referencia, lo
+    apaga y avanza una posición (dándole una /segunda oportunidad/)
+  - Si elige a un marco que tiene apagado el bit de referencia, lo
+    designa como página víctima
+- Se le llama /de reloj/ porque puede verse como una manecilla que
+  avanza sobre la lista de marcos
+  - Hasta encontrar uno con el bit de referencia apagado
+
+** Segunda oportunidad mejorada (1)
+- Si agregamos al bit de referencia un bit de /modificación/, nos
+  mayor expresividad, y puede ayudar a elegir a una página víctima
+  /más barata/. En órden de preferencia:
+  - (0,0) :: El marco no ha sido utilizado ni modificado. Buen
+             candidato.
+  - (0,1) :: Sin uso reciente, pero está /sucio/. Hay que escribirlo a
+             disco.
+  - (1,0) :: Está /limpio/, pero tiene uso reciente, y es probable que
+             se vuelva a usar pronto
+  - (1,1) :: Empleado recientemente y /sucio/. Habría que grabarlo a
+             disco, y tal vez vuelva a requerirse pronto. Hay que
+             evitar reemplazarlo.
+
+** Segunda oportunidad mejorada (2)
+- Emplea una lógica como la de /segunda oportunidad/, pero
+  considerando el costo de E/S
+- Puede requerir dar hasta cuatro /vueltas/ para elegir a la página
+  víctima
+  - Aunque cada vuelta es más corta
+
+** Algoritmos con manejo de buffers
+- De uso cada vez más frecuente
+- No esperan a que el sistema requiera reemplazar un marco, buscan
+  /siempre tener espacio disponible/
+- Conforme la carga lo permite, el SO busca las páginas sucias más
+  proclives a ser paginadas
+  - Va copiándolas a disco y marcándolas como limpias
+- Cuando tenga que traer una página de disco, siempre habrá dónde
+  ubicarla sin tener que hacer una transferencia
+
+* Asignación de marcos

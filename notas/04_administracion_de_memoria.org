@@ -1420,7 +1420,7 @@ con tres marcos, y con la siguiente cadena de referencia:
 *** Primero en entrar, primero en salir (FIFO)
 
 El algoritmo de más simple y obvia implementación es, nuevamente, el
-FIFO: Al cargar una página en memoria, se toma nota de en qué nomento
+FIFO: Al cargar una página en memoria, se toma nota de en qué momento
 fue cargada, y cuando llegue el momento de reemplazar una página
 vieja, se elige la que haya sido cargada hace más tiempo.
 
@@ -1521,7 +1521,7 @@ tiene en memoria basado en la /historia reciente/ de su
 ejecución.
 
 Cuando necesita elegir una página víctima, LRU elige la página que no
-ha sido empleada hace más tiempo.
+ha sido empleada hace más tiempo
 
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
@@ -1550,15 +1550,15 @@ Una observación interesante puede ser que para una cadena $S$ y su
 LRU es igual al de evaluar $R^S$ por OPT, y viceversa.
 
 La principal debilidad de LRU es que para su implementación requiere
-hardware[fn:: Dada la frecuencia con que se efectúan referencias a
-memoria, emplear un mecanismo en software para actualizar las entradas
-de los marcos resultaría inaceptablemente lento] sensiblemente más
-complejo que FIFO. Una implementación podría ser agregar un contador a
-cada uno de los marcos, actualizarlo siempre al hacer una referenciar
-a dicha página, y elegir como víctima a la página con un menor
-conteo. Este mecanismo tiene la desventaja de que, en presencia de una
-gran cantidad de páginas, tiene que recorrerlas a todas para buscar a
-la más envejecida.
+apoyo en hardware[fn:: Dada la frecuencia con que se efectúan
+referencias a memoria, emplear un mecanismo puramente en software para
+actualizar las entradas de los marcos resultaría inaceptablemente
+lento] sensiblemente más complejo que FIFO. Una implementación podría
+ser agregar un contador a cada uno de los marcos, actualizarlo siempre
+al hacer una referenciar a dicha página, y elegir como víctima a la
+página con un menor conteo. Este mecanismo tiene la desventaja de que,
+en presencia de una gran cantidad de páginas, tiene que recorrerlas a
+todas para buscar a la más envejecida.
 
 Otro mecanismo es emplear una lista doblemente ligada con dos métodos
 de acceso: Lista y stack. Cada vez que se haga referencia a una
@@ -1572,16 +1572,32 @@ Se ha demostrado que LRU y OPT están libres de la anomalía de Belady,
 dado que, para $n$ marcos, las páginas que estarían en memoria son un
 subconjunto estricto de las que estarían con $n+1$ marcos.
 
+*** Más frecuentemente utilizada (MFU) / Menos frecuentemente utilizada (LFU)
+
+Estos dos algoritmos se basan en mantener un contador, como lo hace
+LRU, pero en vez de medir el tiempo, miden la /cantidad/ de
+referencias que se han hecho a cada página.
+
+MFU parte de la lógica que, si una página fue empleada muchas veces,
+probablemente vuelva a ser empleada muchas veces más; LFU parte de
+que una página que ha sido empleada pocas veces es probablemente una
+página recién cargada, y va a ser empleada en el futuro cercano.
+
+Estos dos algoritmos son tan caros de implementar como LRU, y su
+rendimiento respecto a OPT no es tan cercana, por lo cual casi no son
+empleados.
+
 *** Aproximaciones a LRU
 
 Dada la complejidad que presenta la implementación de LRU en
 hardware, algunos sistemas implementan una /aproximación/ a éste.
 
 - Bit de referencia :: Esta es una aproximación bastante
-     común. Consiste en que, al iniciar la ejecución, todos los bits
-     de referencia de la tabla de páginas están apagados (0). Cada vez
-     que se referencia a un marco, su bit de referencia se
-     enciende.
+     común. Consiste en que todas las entradas de la tabla de páginas
+     tengan un bit adicional, al que llamaremos /de referencia/. Al
+     iniciar la ejecución, todos los bits de referencia están apagados
+     (0). Cada vez que se referencia a un marco, su bit de referencia
+     se enciende.
 
      El sistema operativo invoca periódicamente a que se apaguen
      nuevamente todos los bits de referencia. En caso de presentarse
@@ -1590,16 +1606,17 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      es, entre todos aquellos para los cuales el bit de referencia sea
      0).
 
-- Bits adicionales :: Una mejoría casi trivial sobre la anterior
-     consiste en agregar /varios/ bits de referencia: En vez de
-     descartarlos cada vez que transcurre el periodo determinado, el
-     bit de referencia es recorrido a la derecha, descartando el bit
-     más bajo. Por ejemplo, si nuestra implementación tuviera 4 bits,
-     un marco que no ha sido empleado en los últimos 4 periodos
-     tendría el valor 0000, mientras que un marco que sí ha sido
-     referenciado los últimos cuatro periodos tendría 1111. Un marco
-     que fue empleado hace cuatro y tres periodos, pero desde
-     entonces no, tendría el 0011.
+- Columna de referencia :: Una mejoría casi trivial sobre la anterior
+     consiste en agregar /varios/ bits de referencia, conformándose
+     como una /columna/: En vez de descartar su valor cada vez que
+     transcurre el periodo determinado, el valor de la columna de
+     referencia es recorrido a la derecha, descartando el bit más
+     bajo. Por ejemplo, si nuestra implementación tuviera 4 bits, un
+     marco que no ha sido empleado en los últimos 4 periodos tendría
+     el valor 0000, mientras que un marco que sí ha sido referenciado
+     los últimos cuatro periodos tendría 1111. Un marco que fue
+     empleado hace cuatro y tres periodos, pero desde entonces no,
+     tendría el 0011.
 
      Cuando el sistema tenga que elegir a una nueva página víctima,
      lo hará de entre el conjunto que tenga un número más bajo.
@@ -1659,22 +1676,7 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      puede requerir, sin embargo, dar hasta cuatro vueltas (por cada
      una de las listas) para elegir la página víctima.
 
-*** Más frecuentemente utilizada (MFU) / Menos frecuentemente utilizada (LFU)
-
-Estos dos algoritmos se basan en mantener un contador, como lo hace
-LRU, pero en vez de medir el tiempo, miden la /cantidad/ de
-referencias que se han hecho a determinada página.
-
-MFU parte de la lógica que, si una página fue empleada muchas veces,
-probablemente vuelva a ser empleada muchas veces más; LFU parte de
-que una página que ha sido empleada pocas veces es probablemente una
-página recién cargada, y va a ser empleada en el futuro cercano.
-
-Estos dos algoritmos son tan caros de implementar como LRU, y su
-rendimiento respecto a OPT no es tan cercana, por lo cual casi no son
-empleados.
-
-*** Algoritmos basados al manejo de buffers
+*** Algoritmos con manejo de buffers
 
 Un mecanismo que se emplea con cada vez mayor frecuencia es que el
 sistema no espere a enfrentarse a la necesidad de reemplazar un

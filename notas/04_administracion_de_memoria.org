@@ -1435,17 +1435,29 @@ sin requerir una nueva transferencia.
 #+caption: Algoritmo FIFO de reemplazo de páginas
 #+begin_src ditaa :file ltxpng/reemplazo_pag_fifo.png :cmdline -E
   Cadena de referencia ----------->
-     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
-     |     |     |     |           |     |     |     |     |     |                 |     |                 |     |     |
-     V     V     V     V           V     V     V     V     V     V                 V     V                 V     V     V
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-  Marcos de memoria
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |     |     |     |     |
+   V     V     V     V           V     V     V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+
+... Cadena de referencia ------->
+   0     3     2     1     2     0     1     7     0     1
+   |                 |     |                 |     |     |
+   V                 V     V                 V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
 #+end_src
 #+html: <p align="center">Algoritmo FIFO de reemplazo de páginas.</p></div>
 
@@ -1486,17 +1498,28 @@ página que /no vaya a ser utilizada/ por un tiempo máximo.
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
 #+begin_src ditaa :file ltxpng/reemplazo_pag_opt.png :cmdline -E
 Cadena de referencia ----------->
-     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
-     |     |     |     |           |           |                 |                 |                       |
-     V     V     V     V           V           V                 V                 V                       V
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-Marcos de memoria
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |           |
+   V     V     V     V           V           V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+... Cadena de referencia ----------->
+   0     3     2     1     2     0     1     7     0     1
+   |                 |                       |
+   V                 V                       V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
 #+end_src
 #+html: <p align="center">Algoritmo óptimo de reemplazo de páginas (OPT)</p></div>
 
@@ -1528,17 +1551,28 @@ ha sido empleada hace más tiempo
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
 #+begin_src ditaa :file ltxpng/reemplazo_pag_lru.png :cmdline -E
 Cadena de referencia ----------->
-     7     0     1     2     0     3     0     4     2     3     0     3     2     1     2     0     1     7     0     1
-     |     |     |     |           |           |     |     |     |                 |           |           |
-     V     V     V     V           V           V     V     V     V                 V           V           V
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 | | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-    |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-    +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-Marcos de memoria
+   7     0     1     2     0     3     0     4     2     3
+   |     |     |     |           |           |     |     |
+   V     V     V     V           V           V     V     V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+
+... Cadena de referencia ----------->
+  0     3     2     1     2     0     1     7     0     1
+  |                 |           |           |
+  V                 V           V           V
+M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+A | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
+R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+C | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
+O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
+S | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
+  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
 #+end_src
 #+html: <p align="center">Algoritmo de reemplazo de páginas menos recientemente utilizadas (LRU)</p></div>
 
@@ -1688,9 +1722,287 @@ disco y va actualizando el disco (y marcándolas nuevamente como
 disco, siempre habrá espacio donde ubicarla sin tener que esperar a
 que se transfiera una para liberarla.
 
-** Asignación de marcos e hiperpaginación
+** Asignación de marcos
 
+Abordando el problema prácticamente por el lado opuesto al del
+reemplazo de páginas, ¿cómo se asignan los marcos existentes a los
+procesos del sistema? Esto es, ¿qué esquemas podemos encontrar para
+que la asignación inicial (y, de ser posible, en el transcurso de la
+ejecución) sea adecuada?
 
+Consideremos en primer término un esquema sencillo: Un sistema con
+1024KB de memoria, compuesta de 256 páginas de 4096 bytes cada una, y
+basado en paginación puramente sobre demanda.
+
+Si el sistema operativo ocupa 248KB, el primer paso será reservar las
+62 páginas que éste requiere, y destinar las 194 páginas restantes
+para los procesos a ejecutar.
+
+Conforme se van lanzando y comienzan a ejecutar los procesos, cada
+vez que uno de ellos genere un fallo de página, se le irá asignando
+uno de los marcos disponibles hasta ocupar que la memoria entera esté
+ocupada; claro está, cuando un proceso termine su ejecución, todos
+los marcos que tenía asignados volverán a la lista de marcos libres.
+
+Una vez que la memoria esté completamente ocupada (esto es, que haya
+194 páginas ocupadas por procesos), el siguiente fallo de página
+invocará a un algoritmo de reemplazo de página, que elegirá una de las
+194.[fn:: En realidad, dentro de la memoria del sistema operativo, al
+igual que la de cualquier otro proceso, hay regiones que deben
+mantenerse residentes y regiones que pueden paginarse. Podemos,
+simplificando, omitir por ahora esa complicación y asumir que el
+sistema operativo completo se mantendrá siempre en memoria]
+
+Este esquema, si bien es simple, al requerir una gran cantidad de
+fallos de página explícitos puede penalizar el rendimiento del
+sistema — El esquema puede resultar /demasiado flojo/, no le vendría
+mal ser un poco más /ansioso/ y asignar, de inicio, un número
+determinado como mínimo utilizable de marcos.
+
+*** Mínimo de marcos
+
+Si un proceso tiene asignados demasiado pocos marcos, su rendimiento
+indudablemente se verá afectado. Hasta ahora hemos supuesto que cada
+instrucción puede causar un sólo fallo de página, pero la realidad es
+más compleja. Cada instrucción del procesador puede, dependiendo de
+la arquitectura, desencadenar varias solicitudes.
+
+Todas las arquitecturas proporcionan instrucciones de referencia
+directa a memoria (instrucciones que permiten especificar una
+dirección de memoria para leer o escribir) — Esto significa que todas
+requerirán que, para que un proceso funcione adecuadamente, tenga por
+lo menos dos marcos asignados: En caso de que se le permitiera solo
+uno, si la instrucción ubicada en =0x00A2C8= solicita la carga de
+=0x043F00=, esta causaría dos fallos: El primero, cargar al marco la
+página =0x043=, y el segundo, cargar nuevamente la página =0x00A=,
+necesario para leer la siguiente instrucción a ejecutar del programa
+(=0x00A2CC=, asumiendo palabras de 32 bits).
+
+Algunas arquitecturas, además, permiten /referencias indirectas a
+memoria/, esto es, nuestra instrucción de carga puede solicitar la
+dirección /que está referenciada/ en =0x043F00=. El procesador
+tendría que recuperar esta dirección, y podría encontrarse con que
+hace referencia a una dirección en otra página (digamos,
+=0x010F80=). Cada nivel de indirección que se permite aumenta en uno
+el número de páginas que debemos reservar como mínimo por proceso.
+
+Algunas arquitecturas, particularmente las más antiguas,[fn:: Aquellas
+diseñadas antes de que la velocidad del procesador se distanciara
+tanto del tiempo de acceso a memoria], permiten que tanto los
+operandos de algunas instrucciones aritméticas como su resultado sean
+direcciones de memoria (y no operan estrictamente sobre los registros,
+como las arquitecturas RISC). En dichas arquitecturas, el mínimo debe
+también tener este factor en cuenta: Si en una sola instrucción
+podemos sumar dos direcciones de memoria y guardar el resultado en
+una adicional, el mínimo a reservar es de cuatro marcos: Uno para el
+flujo del programa, uno para el primer operando, uno para el segundo
+operando, y uno para el resultado.
+
+*** Algoritmos de asignación
+
+Ahora, una vez establecido el número mínimo de marcos por proceso,
+¿cómo podemos determinar el número máximo?
+
+Partiendo de que el rendimiento de un proceso será mejor entre menos
+fallos de paginación cause, podríamos intentar otorgar a cada proceso
+el total de marcos que solicita — Pero esto tendría como resultado
+disminuir el grado de multiprogramación, y por tanto, reducir el uso
+efectivo total del procesador.
+
+Otra alternativa es la /asignación igualitaria/: Se divide el total de
+espacio en memoria física entre todos los procesos en ejecución, en
+partes iguales. Esto es, volviendo a la computadora hipotética que
+presentamoss al inicio de esta sección, si tenemos 4 procesos que
+requieren ser ejecutados, de los 194 marcos disponibles, el sistema
+asignará 48 marcos (192KB) a dos de los procesos y 49 (196KB) a los
+otros dos (es imposible asignar fracciones de marcos). De este modo,
+el espacio será compartido por igual.
+
+La asignación igualitaria resulta ser un esquema deficiente para casi
+todas las distribuciones de procesos: Bajo este esquema, si $P_1$ es
+un gestor de bases de datos que puede estar empleando 2048KB (512
+páginas) de memoria virtual (a pesar de que el sistema tiene sólo 1MB
+de memoria física) y $P_2$ es un lector de texto que está empleando un
+usuario, requiriendo apenas 112KB (28 páginas), con lo cual incluso
+dejaría algunos de sus marcos sin utilizar.
+
+Un segundo esquema, que resuelve mejor esta situación, es la
+/asignación proporcional/: Dar a cada proceso una porción del espacio
+de memoria física proporcional a su uso de memoria virtual.
+
+De tal suerte, si además de los procesos anteriores tenemos a $P_3$
+empleando 560KB (140 páginas) y a $P_4$ con 320KB (80 páginas) de
+memoria virtual, el uso total de memoria virtual sería de $V = 512 +
+28 + 140 + 80 = 760$ páginas, esto es, el sistema tendría comprometido
+a través de la memoria virtual un sobreuso cercano a 3:1 sobre la
+memoria física. Cada proceso recibirá entonces $F_P =
+\frac{V_P}{V} \times m$, donde $F_P$ indica el espacio de memoria
+física que el proceso recibirá, $V_P$ la cantidad de memoria virtual
+que está empleando, y $m$ la cantidad total de marcos de memoria
+disponibles. De este modo, $P_1$ recibirá 173 marcos, $P_2$ 10, $P_3$
+47 y $P_4$ 26, proporcionalmente a su uso de memoria virtual.
+
+Cabe apuntar que este mecanismo debe observar ciertos parámetros
+mínimos: Por un lado, si el mínimo de marcos definido para esta
+arquitectura es de 4, por más que entrara en ejecución un proceso de
+32KB (8 páginas), o que $P_1$ multiplicara por 4 su uso de memoria
+virtual, ningún proceso debe tener asignado menos del mínimo
+definido. Por otro lado, este esquema ignora por completo las
+prioridades que hoy en día manejan todos los sistemas operativos; si
+quisiéramos que las consideraran, podría incluirse como factor la
+prioridad, multiplicando junto con $V_P$.
+
+El esquema de asignación proporcional sufre, sin embargo, cuando
+cambia el nivel de multiprogramación — Esto es, cuando se inicia un
+nuevo proceso o finaliza un proceso en ejecución, deben recalcularse
+los espacios en memoria física asignados a cada uno de los procesos
+restantes. Si finaliza un proceso, el problema es menor, pues sólo se
+asignan los marcos y puede esperarse a que se vayan poblando por
+paginación sobre demanda, pero si inicia uno nuevo, es necesario
+reducir de golpe la asignación de todos los demás procesos hasta
+abrir suficiente espacio para que quepa.
+
+Por último, el esquema de la asignación proporcional también tiende a
+desperdiciar recursos: Si bien hay procesos que mantienen un patrón
+estable de actividad a lo largo de su ejecución, muchos otros pueden
+tener periodos de mucho menor requisitos. Por ejemplo, un proceso
+servidor de documentos pasa la mayor parte de su tiempo simplemente
+esperando solicitudes, y podría reducirse a un uso mínimo de memoria
+física, sin embargo, al solicitársele un documento, se le deberían
+poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
+termine con su tarea.
+
+*** Ámbitos del algoritmo de reemplazo de páginas
+
+Para responder a los problemas que la anterior sección nos deja
+abiertos, se puede discutir el ámbito en que operará el algoritmo de
+reemplazo de páginas.
+
+- Reemplazo local :: Mantenemos tan estable como sea posible el
+     cálculo hecho por el esquema de asignación que estemos
+     empleando. Esto significa que cuando se presente un fallo de
+     página, las páginas que serán consideradas para su intercambio
+     serán únicamente aquellas pertenecientes /al mismo proceso/ que
+     el que causó el fallo.
+
+     Un proceso tiene asignado su espacio de memoria física, y se
+     mantendrá estable mientras el sistema operativo no tome alguna
+     decisión por cambiarlo.
+
+- Reemplazo global :: Los algoritmos de asignación determinan el
+     espacio asignado a los procesos al ser inicializados, e influyen
+     a los algoritmos de reemplazo (por ejemplo, dando mayor peso para
+     ser elegidas como páginas víctima a aquellas que pertenezcan a un
+     proceso que excede de su asignación en memoria física).
+
+     Los algoritmos de reemplazo de páginas operan sobre el espacio
+     completo de memoria, y la asignación física de cada proceso puede
+     variar según el estado del sistema momento a momento.
+
+- Reemplazo global con prioridad :: Es un esquema mixto, en el que un
+     proceso puede /sobrepasar/ su límite siempre que le /robe/
+     espacio en memoria física exclusivamente a procesos de prioridad
+     inferior a él. Esto es consistente con el comportamiento de los
+     algoritmos planificadores, que siempre dan preferencia a un
+     proceso de mayor prioridad por sobre de uno de prioridad más
+     baja.
+
+El reemplazo local es más rígido y no permite aprovechar para mejorar
+el rendimiento los periodos de inactividad de algunos de los
+procesos. En contraposición, los esquemas basados en reemplazo global
+puede llevar a rendimiento inconsistente: Dado que la asignación de
+memoria física sale del control de cada proceso, puede que la misma
+sección de código presente tiempos de ejecución muy distintos si
+porciones importantes de su memoria fueron paginadas a disco.
+
+** Hiperpaginación
+
+Cuando (bajo un esquema de reemplazo local) un proceso tiene asignadas
+demasiado pocas páginas para llevar a cabo su trabajo y genera fallos
+de página con tal frecuencia que le imposibilita realizar trabajo
+real, o (bajo un esquema de reemplazo global) hay demasiados procesos
+en ejecución en el sistema y los constantes fallos y reemplazos hacen
+imposible a todos los procesos involucrados avanzar, se dice que
+estamos en estado de hiperpaginación.[fn:: Una traducción literal del
+término /thrashing/, empleado en inglés para designar a este fenómeno,
+resulta más gráfica: /Paliza/]
+
+Hay varios escenarios que pueden llevarnos a la hiperpaginación, y
+su impacto es tan claro e identificable que prácticamente cualquier
+usuario de cómputo lo sabrá reconocer. Presentemos, pues, un
+escenario ejemplo en que las malas decisiones del sistema operativo
+pueden conducirlo a este estado.
+
+Comencemos con un sistema que está con una carga media normal, con un
+esquema de reemplazo global de marcos. Se lanza un nuevo proceso, que
+como parte de su inicialización requiere poblar diversas estructuras a
+lo largo de su espacio de memoria virtual. Para hacerlo, lanza una
+serie de fallas de página, a las que el sistema operativo responde
+reemplazando a varios marcos pertenecientes a otros procesos.
+
+Casualmente, a lo largo del periodo que toma esta inicialización
+(recordemos que puede parecer una eternidad: El disco es entre miles y
+millones de veces más lento que la memoria) algunos de estos procesos
+solicitan los espacios de memoria que acaban de ser enviados a disco,
+por lo cual lanzan nuevos fallos de página.
+
+Cuando el sistema detecta que la utilización del procesador decrece,
+el sistema operativo puede aprovechar la situación para lanzar
+procesos de mantenimiento. Se lanzan estos procesos, reduciendo aún
+más el espacio de memoria física disponible para cada uno de los
+procesos preexistentes.
+
+Se ha formado ya toda una cola de solicitudes de paginación, algunas
+veces contradictorias. El procesador tiene que comenzar a ejecutar
+=NOOP= (esto es, no tiene trabajo que ejecutar), porque la mayor
+parte del tiempo lo pasa en espera de un nuevo marco por parte del
+disco duro. El sistema completo avanza cada vez más lento.
+
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
+#+attr_html: height="382"
+#+attr_latex: width=0.7\textwidth
+[[./img/thrashing.png]]
+
+Los síntomas de la hiperpaginación son muy claros, y no son difíciles
+de detectar. ¿Qué estrategia puede emplear el sistema operativo una
+vez que se da cuenta que se presentó esta situación?
+
+Una salida sería reducir el nivel de multiprogramación — Si la
+paginación se presentó debido a que los requisitos de memoria de los
+procesos actualmente en ejecución no pueden ser satisfechos con la
+memoria física disponible, el sistema puede seleccionar a uno (o más)
+de los procesos y suspenderlos por completo hasta que el sistema
+vuelva a un estado normal. Podría seleccionarse, por ejemplo, al
+proceso con menor prioridad, al que esté causando más cantidad de
+fallos, o al que esté ocupando más memoria.
+
+*** Modelando el /conjunto activo/
+
+Un pico en la cantidad de fallos de página no necesariamente
+significa que estamos cayendo en una situación de hiperpaginación —
+Muchas veces indica que el proceso cambió su /atención/ de un
+conjunto de páginas a otro, o dicho de otro modo, que cambió el
+/conjunto activo/ del proceso — Y resulta natural que, al cambiar el
+conjunto activo, el proceso accese de golpe una serie de páginas que
+no había tocado en cierto tiempo.
+
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso ayudan a definir a su /conjunto activo/  (Silberschatz, p.349)
+#+attr_html: height="354"
+#+attr_latex: width=0.7\textwidth
+[[./img/conjunto_activo.png]]
+
+El /conjunto activo/ es, pues, la aproximación más clara a la
+/localidad de referencia/ de un proceso dado: El conjunto de páginas
+sobre los que está iterando en un momento dado.
+
+Idealmente, para evitar los problemas relacionados con la
+hiperpaginación, debemos asignar a cada proceso suficientes páginas
+como para que mantenga en memoria física su conjunto activo — Y si no
+nos es posible hacerlo, el proceso es un buen candidato para ser
+suspendido. Sin embargo, detectar con suficiente claridad como para
+efectuar este diagnóstico los /cuál/ es el conjunto activo es una
+tarea muy compleja, que típicamente implica rastrear y verificar del
+órden de los últimos miles a decenas de miles de accesos a memoria.
 
 * Consideraciones de rendimiento
 #+begin_src c

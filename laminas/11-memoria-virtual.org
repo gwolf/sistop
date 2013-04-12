@@ -542,3 +542,296 @@ S | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
   ubicarla sin tener que hacer una transferencia
 
 * Asignación de marcos
+** Viendo el lado opuesto del problema
+- Vimos ya cómo /retirar/ marcos asignados
+- ¿Cómo conviene /asignar/ los marcos a los procesos?
+- Definamos algunos parámetros para nuestros ejemplos
+  - Un sistema con 1024KB de memoria física
+  - 256 páginas de 4KB cada una
+  - El sistema operativo ocupa 248KB (62 páginas); 194 páginas para
+    los procesos a ejecutar
+
+** Vuelta a la paginación puramente sobre demanda
+- En un esquema de paginación puramente sobre demanda, cada fallo de
+  página que se va generando lleva a que se asigne el marco
+  correspondiente
+- Se van asignando los marcos conforme son requeridos, hasta que hay
+  194 páginas ocupadas por procesos
+  - Entonces, entran en escena los algoritmos de /reemplazo de
+    páginas/ que ya vimos
+  - Claro está, cuando un proceso termina, sus marcos vuelven a la
+    lista de marcos libres
+
+** Puramente sobre demanda: /Demasiado flojo/
+- El esquema de paginación /puramente/ sobre demanda puede resultar
+  /demasiado flojo/
+- Ser un poco /más ansioso/ aseguraría un mejor rendimiento
+- Conviene determinar un /mínimo/ utilizable de marcos
+  - Si asignamos por debajo del mínimo, sufre el rendimiento
+
+** Mínimo de marcos: Arquitectura y direccionamiento
+- Hasta ahora hemos simplificado asumiendo que cada instrucción puede
+  generar sólo un fallo de página
+- Independientemente de la arquitectura, cada instrucción puede
+  desencadenar /varias/ solicitudes
+  - Una solicitud, la lectura de la siguiente dirección a ejecutar
+    (¡recuerden: von Neumann!)
+  - Otra, la dirección de memoria referida
+  - Por ejemplo, si el flujo /brinca/ a =0x00A2C8=, y esta
+    instrucción es =load 0x043F00=, para satisfacerla requerimos dos
+    páginas: =0x00A= y =0x043=
+  - \rarrow Requerimos un mínimo de dos páginas
+- Pero... ¿Y las /referencias indirectas/?
+
+** Mínimo de marcos: Referencias indirectas
+- /Casi/ todas las arquitecturas permiten hacer /referencias
+  indirectas/ a memoria
+- Una instrucción de acceso a memoria (=load=, =store=) especifica
+  una dirección de memoria
+- Y /esta dirección/ guarda la ubicación de memoria
+- Por ejemplo, =0x043F00= indica la carga de =0x010F80=
+  - \rarrow Satisfacer al =load 0x043F00= requerirá entonces tres
+    páginas: =0x00A=, =0x043= y =0x010=
+- ...Y algunas arquitecturas (principalmente antiguas) permitían
+  niveles ilimitados de indirección
+  - Por ejemplo, por medio de un /bit de indirección/
+  - En dado caso, es imposible /asegurar/ un límite máximo \rarrow Es
+    común que el MMU haga un /conteo de referencias/ para evitar caer
+    en un ciclo sin fin
+
+** Instrucciones con operandos en memoria
+- Las arquitecturas RISC introdujeron requisitos de regularidad que
+  incluyen el que la aritmética opere exclusivamente sobre los
+  registros del procesador
+- Las arquitecturas más antiguas permiten que los operandos y
+  resultado sean direcciones de memoria
+  - ¿Antiguas? De antes de que la diferencia de velocidad entre CPU y
+    memoria fueran tanta
+  - Recordemos que la principal arquitectura actual tiene /herencia/
+    desde 1970...
+  - Si en un x86, en =0x00AC28= tenemos =ADD [edx], [ecx]=, en =EDX=
+    el valor =0x010F80= y en =ECX= el valor =0x043F00=,
+    - En el /acumulador/ =EAX= obtendremos la suma del /contenido/ de
+      los dos operadores
+    - \rarrow Tres referencias a memoria en una sola instrucción
+
+** El nivel /deseable/ de marcos
+- Con estos lineamientos determinamos ya un mínimo absoluto
+  - /Muy/ bajo, poniéndolo en el contexto de los sistemas actuales
+- ¿Cómo puede el sistema determinar un nivel /deseable/ de marcos por
+  proceso?
+  - Depende /siempre/ del estado actual del sistema
+- Podríamos intentar satisfacer los requisitos /totales/ de uno de
+  los procesos
+  - A menor cantidad de fallos de página, mayor rendimiento
+  - Pero si reducimos el /grado de multiprogramación/, reducimos el
+    uso efectivo del procesador
+
+** Asignación igualitaria
+- Buscando un reparto /justo/ de recursos, se divide el total de
+  memoria física disponible entre el número de procesos
+- Volviendo a nuestra computadora ejemplo (256 marcos; 62 marcos
+  asignados al sistema, 194 a los procesos):
+  - Si tenemos 4 procesos en ejecución, dos tendrán derecho a 49
+    marcos y dos a 48
+  - Los marcos no pueden dividirse; es imposible asignar 48.5 a cada
+    uno
+#+latex: \pause
+- El esquema es justo, pero deficiente
+  - Si tenemos un gestor de bases de datos $P_1$ con 2048KB (512
+    marcos) de memoria virtual, y un proceso de usuario $P_2$ que sólo
+    requiere 112KB (28 páginas)...
+  - Ambos recibirán lo mismo — Y $P_2$  desperdiciará 20 páginas
+
+** Asignación proporcional
+- Brinda a cada proceso una porción del espacio de memoria física
+  proporcional a su uso de memoria virtual
+- Si además de los dos procesos descritos tenemos a $P_3$ con 560KB
+  (140 páginas) y $P_4$ con 320KB (80 páginas) de memoria virtual
+  - Uso total de memoria virtual: $V_T = 512 + 28 + 140 + 80 = 760$
+    páginas
+    - Sobreuso de memoria física cercano al 4:1 respecto a las 194
+      páginas disponibles
+- Cada proceso recibirá $F_P = \frac{V_P}{V_T} m$
+  - $F_P$: Espacio de memoria física que recibirá
+  - $V_P$: Cantidad de memoria virtual que emplea,
+  - $m$: Total de marcos de memoria física disponibles
+- $P_1$: 130 marcos; $P_2$: 7 marcos; $P_3$: 35 marcos; $P_4$: 20
+  marcos
+  - Proporcional a su uso de memoria virtual.
+
+** Modulando la asignación proporcional
+- Mínimos: El esquema debe cuidar nunca asignar por debajo del mínimo
+  de la arquitectura
+  - Si $P_2$ ocupara sólo 10 marcos de memoria física, en una
+    arquitectura x86 no deberían asignársele menos de 3 marcos
+- Desbalance por procesos /obesos/
+  - Si $P_1$ crece al doble de su tamaño virtual, hay que cuidar
+    tener /umbrales máximos/ para no castigar de más a los demás
+    procesos del sistema
+- ¿Manejo de prioridades?
+  - Si el sistema maneja prioridades, podrían incluirse ponderadas,
+    otorgando proporcionalmente más marcos a los procesos con mayor
+    prioridad
+
+** /Sufrimiento/ ante la entrada de nuevos procesos
+- El esquema de asignación proporcional sufre cuando son admitidos
+  nuevos procesos, cambia el tamaño en memoria virtual de alguno de
+  los existentes o (aunque menos) finalizan los que están en ejecución
+- Deben recalcularse los totales, y probablemente reducir de golpe el
+  espacio asignado a los procesos existentes
+
+** Desperdicio de recursos
+- El patrón de uso de memoria física de un proceso no necesariamente
+  guarda correspondencia con su tamaño en memoria virtual
+- Pueden emplear mucho menores requisitos en /determinadas secciones/
+  de su ejecución
+- Recordar este punto \rarrow /Conjunto activo/
+
+** Ámbitos del algoritmo de reemplazo de páginas
+#+BEGIN_CENTER
+Respondiendo a los problemas que abre la sección anterior, podemos
+discutir el /ámbito/ en el que operará nuestro algoritmo de reemplazo
+de páginas
+#+END_CENTER
+
+- Reemplazo local
+- Reemplazo global
+- Reemplazo global con prioridad
+
+** Reemplazo local
+- Mantenemos tan estable como sea posible el cálculo de marcos de
+  memoria por proceso
+  - Cuando se presente un fallo de página, sólo se consideran
+    aquellas pertenecientes /al mismo proceso/
+- El proceso tiene asignado un espacio de memoria física
+  - Lo mantendrá mientras el sistema operativo no tome alguna decisión
+    para modificarlo
+
+** Reemplazo global
+- Los algoritmos de asignación determinan el espacio asignado /al
+  momento de su inicialización
+  - Pueden /influir/ en los algoritmos de reemplazo
+  - P.ej. dando /mayor peso/ a los marcos de un proceso que excede su
+    asignación para ser elegidas como víctima
+  - ...O pueden operar bajo un esquema /laissez-faire/, buscando que
+    el sistema se /auto-regule/ basado en las necesidades reales
+    momento a momento
+- Operan sobre el espacio completo de memoria
+  - La asignación física a cada proceso puede variar según el estado
+    del sistema, momento a momento
+
+** Reemplazo global con prioridad
+- Esquema mixto
+- Permite que un proceso /sobrepase su límite/
+  - Pero sólo siempre que le /robe/ espacio en memoria física /sólo/
+    a procesos de /prioridad inferior/ a él
+- Consistente con el comportamiento de los algoritmos planificadores
+  - Siempre da preferencia a un proceso de mayor prioridad por sobre
+    los de menor prioridad
+- Puede también operar bajo /concesiones temporales/, buscando
+  equilibrar posteriormente
+
+** Comparando los ámbitos de reemplazo
+- Reemplazo local :: Más rígido; no permite aprovechar las menores
+     demandas de unos procesos para favorecer a los que tienen
+     mayores demandas en un momento dado
+- Reemplazo global (ambos) :: Puede llevar a rendimiento
+     inconsistente fuera del control de cada uno de los procesos
+
+** ¿Y el tiempo real?
+- Cuando presentamos al /tiempo real/ (/Planificación de procesos/),
+  mencionamos que el tiempo real duro es incompatible con sistemas
+  basados en memoria virtual
+- Principal razón: Las demoras inducidas por la paginación
+- Podría indicarse que un proceso de tiempo real esté 100% en memoria
+  física (nunca candidato para paginación)
+- /Reduce fuertemente/ el impacto que sufriría al pelear por recursos
+  - Pero no lo resuelve por completo
+  - Ni la contención en el bus, ni la inversión de prioridades...
+  - \rarrow Sólo podemos prometer /tiempo real suave/
+
+** Hiperpaginación: Definición
+- Uno o más procesos tienen demasiadas pocas páginas asignadas para
+  llevar a cabo su trabajo
+- Generan fallos de pagina con tal frecuencia que resulta imposible
+  realizar trabajo real
+  - O resulta tan lento que la percepción es de no-avance
+- El sistema pasa más tiempo intentando satisfacer la paginación que
+  trabajando
+#+BEGIN_CENTER
+Estamos en estado de /hiperpaginación/
+
+En inglés, /thrashing/ (literal: /paliza/)
+#+END_CENTER
+
+** ¿Qué puede llevar a la hiperpaginación? (1)
+- El sistema tiene una carga normal
+- Esquema de reemplazo global de marcos
+- Se lanza un nuevo proceso
+  - Su inicialización requiere poblar estructuras a lo largo de su
+    memoria virtual
+  - O cambia de /conjunto activo/
+  - Serie de fallos de página \rarrow El sistema responde,
+    reemplazando a varios marcos de otros procesos
+- Mientras esto continúa operando, algunos de los /procesos víctima/
+  requieren de las páginas que pasaron a disco
+  - Recordemos que el disco es miles a millones de veces más lento
+    que la memoria...
+
+** ¿Qué puede llevar a la hiperpaginación? (2)
+- La utilización del procesador decrece
+  - ...Porque los procesos están esperando a que su memoria esté disponible
+- El sistema operativo aprovecha la situación para lanzar procesos de
+  mantenimiento
+  - Que requieren que se les asigne memoria
+  - \rarrow Reducen aún más el espacio de memoria física disponible
+- Se forma una cola de solicitudes de paginación (algunas veces
+  contradictorias)
+- Baja todavía más la actividad del procesador (=NOOP=)
+
+** ¿Cómo se ve la hiperpaginación?
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
+#+attr_latex: width=0.8\textwidth
+[[../img/thrashing.png]]
+
+** Respondiendo a la hiperpaginación
+- Los síntomas son muy claros
+  - Fáciles de detectar — ¡pregúntenle a cualquier usuario!
+- Reducir temporalmente el nivel de multiprogramación
+  - Caímos en hiperpaginación por tener requisitos en memoria que no
+    alcanzamos a satisfacer con la memoria física disponible
+  - El sistema puede seleccionar a uno (o más) procesos y
+    suspenderlos por completo
+  - Incluso poner su memoria física a disposición de otros procesos
+  - Hasta que salgamos del estado de hiperpaginación
+
+** ¿A cuál proceso /castigar/?
+- Al de menor prioridad
+- Al que esté causando más fallos
+- Al que esté ocupando más memoria
+- ...
+
+** El conjunto activo
+- El /conjunto activo/ es una clara aproximación a la /localidad de
+  referencia/
+- El conjunto de páginas con que un proceso está trabajando /en un
+  momento dado/
+  - ¿Qué significa /un momento dado/?
+
+** El conjunto activo
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
+#+attr_latex: width=0.8\textwidth
+[[../img/conjunto_activo.png]]
+
+** El conjunto activo y el espacio en memoria
+- Idealmente, en todo momento, debemos asignar a cada proceso
+  /suficientes páginas/ para mantener en memoria física su conjunto
+  activo
+- Si no es posible hacerlo, el proceso es buen candidato para ser
+  suspendido
+- ...Pero no es fácil detectar con claridad /cuál/ es el conjunto activo
+  - Mucho menos predecir cuál será dentro de determinado tiempo
+  - ¿Cuánto dura un proceso dentro de determinada rutina?
+  - Puede requerir rastrear y verificar decenas de miles de accesos a
+    memoria

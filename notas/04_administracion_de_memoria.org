@@ -1798,10 +1798,10 @@ una adicional, el mínimo a reservar es de cuatro marcos: Uno para el
 flujo del programa, uno para el primer operando, uno para el segundo
 operando, y uno para el resultado.
 
-*** Algoritmos de asignación
+*** Esquemas de asignación
 
 Ahora, una vez establecido el número mínimo de marcos por proceso,
-¿cómo podemos determinar el número máximo?
+¿cómo podemos determinar el nivel /deseable/?
 
 Partiendo de que el rendimiento de un proceso será mejor entre menos
 fallos de paginación cause, podríamos intentar otorgar a cada proceso
@@ -1812,7 +1812,7 @@ efectivo total del procesador.
 Otra alternativa es la /asignación igualitaria/: Se divide el total de
 espacio en memoria física entre todos los procesos en ejecución, en
 partes iguales. Esto es, volviendo a la computadora hipotética que
-presentamoss al inicio de esta sección, si tenemos 4 procesos que
+presentamos al inicio de esta sección, si tenemos 4 procesos que
 requieren ser ejecutados, de los 194 marcos disponibles, el sistema
 asignará 48 marcos (192KB) a dos de los procesos y 49 (196KB) a los
 otros dos (es imposible asignar fracciones de marcos). De este modo,
@@ -1832,25 +1832,38 @@ de memoria física proporcional a su uso de memoria virtual.
 
 De tal suerte, si además de los procesos anteriores tenemos a $P_3$
 empleando 560KB (140 páginas) y a $P_4$ con 320KB (80 páginas) de
-memoria virtual, el uso total de memoria virtual sería de $V = 512 +
+memoria virtual, el uso total de memoria virtual sería de $V_T = 512 +
 28 + 140 + 80 = 760$ páginas, esto es, el sistema tendría comprometido
-a través de la memoria virtual un sobreuso cercano a 3:1 sobre la
-memoria física. Cada proceso recibirá entonces $F_P =
-\frac{V_P}{V} \times m$, donde $F_P$ indica el espacio de memoria
-física que el proceso recibirá, $V_P$ la cantidad de memoria virtual
-que está empleando, y $m$ la cantidad total de marcos de memoria
-disponibles. De este modo, $P_1$ recibirá 173 marcos, $P_2$ 10, $P_3$
-47 y $P_4$ 26, proporcionalmente a su uso de memoria virtual.
+a través de la memoria virtual un sobreuso cercano a 4:1 sobre la
+memoria física[fn:: Recordemos que de los 1024KB, o 256 páginas, que
+tiene nuestro sistema, descontando los 248KB, o 62 páginas, que ocupa
+el sistema operativo, nos quedan 194 páginas disponibles para los
+procesos].
+
+Cada proceso recibirá entonces $F_P = \frac{V_P}{V_T} \times m$, donde
+$F_P$ indica el espacio de memoria física que el proceso recibirá,
+$V_P$ la cantidad de memoria virtual que está empleando, y $m$ la
+cantidad total de marcos de memoria disponibles. De este modo, $P_1$
+recibirá 130 marcos, $P_2$ 7, $P_3$ 35 y $P_4$ 20, proporcionalmente a
+su uso de memoria virtual.
 
 Cabe apuntar que este mecanismo debe observar ciertos parámetros
 mínimos: Por un lado, si el mínimo de marcos definido para esta
 arquitectura es de 4, por más que entrara en ejecución un proceso de
-32KB (8 páginas), o que $P_1$ multiplicara por 4 su uso de memoria
-virtual, ningún proceso debe tener asignado menos del mínimo
-definido. Por otro lado, este esquema ignora por completo las
-prioridades que hoy en día manejan todos los sistemas operativos; si
-quisiéramos que las consideraran, podría incluirse como factor la
-prioridad, multiplicando junto con $V_P$.
+32KB (8 páginas) o aumentara al doble el grado de multiprocesamiento,
+ningún proceso debe tener asignado menos del mínimo definido.
+
+La asignación proporcional también debe cuidar no sobre-asignar
+recursos a un proceso /obeso/: $P_1$ es ya mucho más grande que todos
+los procesos del sistema. En caso de que esta creciera mucho más, por
+ejemplo, si multiplicara por 4 su uso de memoria virtual, esto
+llevaría a que se /castigara/ desproporcionadamente a todos los demás
+procesos del sistema.
+
+Por otro lado, este esquema ignora por completo las prioridades que
+hoy en día manejan todos los sistemas operativos; si quisiéramos que
+las consideraran, podría incluirse como factor la prioridad,
+multiplicando junto con $V_P$.
 
 El esquema de asignación proporcional sufre, sin embargo, cuando
 cambia el nivel de multiprogramación — Esto es, cuando se inicia un
@@ -1870,7 +1883,8 @@ servidor de documentos pasa la mayor parte de su tiempo simplemente
 esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
-termine con su tarea.
+termine con su tarea. Veremos este punto en breve, al hablar del
+[[#conjunto_activo][conjunto activo]]
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1937,7 +1951,7 @@ Comencemos con un sistema que está con una carga media normal, con un
 esquema de reemplazo global de marcos. Se lanza un nuevo proceso, que
 como parte de su inicialización requiere poblar diversas estructuras a
 lo largo de su espacio de memoria virtual. Para hacerlo, lanza una
-serie de fallas de página, a las que el sistema operativo responde
+serie de fallos de página, a las que el sistema operativo responde
 reemplazando a varios marcos pertenecientes a otros procesos.
 
 Casualmente, a lo largo del periodo que toma esta inicialización
@@ -1977,6 +1991,7 @@ proceso con menor prioridad, al que esté causando más cantidad de
 fallos, o al que esté ocupando más memoria.
 
 *** Modelando el /conjunto activo/
+# <<conjunto_activo>>
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que estamos cayendo en una situación de hiperpaginación —
@@ -1986,7 +2001,7 @@ conjunto de páginas a otro, o dicho de otro modo, que cambió el
 conjunto activo, el proceso accese de golpe una serie de páginas que
 no había tocado en cierto tiempo.
 
-#+caption: Los picos y valles en la cantidad de fallos de página de un proceso ayudan a definir a su /conjunto activo/  (Silberschatz, p.349)
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
 #+attr_html: height="354"
 #+attr_latex: width=0.7\textwidth
 [[./img/conjunto_activo.png]]
@@ -2080,3 +2095,6 @@ tarea muy compleja, que típicamente implica rastrear y verificar del
   memoria
 - [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
   explícitas/completas que las de Linux
+
+- [[http://www.swansontec.com/sregisters.html][The art of picking Intel registers]] explica el uso de los
+  principales registros en la arquitectura x86

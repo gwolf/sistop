@@ -2300,8 +2300,8 @@ sistema /en un momento dado/):
   constituyen la serie de procesos interbloqueados de la gráfica.
 
 #+html: <div class="figure">
-#+attr_latex: width=0.5\textwidth
-#+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
+#+attr_latex: width=0.7\textwidth
+#+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
 
 #+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
 digraph G {
@@ -2322,15 +2322,15 @@ digraph G {
 	A -> 1 -> B
 	3 -> B;
 	F -> 6 -> B;
-	4 -> B;
-	4 -> C;
-	2 -> C -> 5 -> E -> 7 -> D -> 4;
+	2 -> B;
+	4 -> C -> 2;
+	C -> 5 -> E -> 7 -> D -> 4;
 }
 #+end_src
 
-#+html: <p align="center">Detección de bloqueos: Grafo de procesos y recursos en un momento dado</p></div>
+#+html: <p align="center">Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado</p></div>
 
-De la gráfica anterior, podríamos proceder:
+De la gráfica /Detección de ciclos denotando bloqueos/, podríamos proceder:
 
 - Reducimos por /B/, dado que actualmente no está esperando a ningún
   recurso

@@ -566,8 +566,8 @@ condiciones de Coffman /pueden presentarse/.
      - Proceder según la política del sistema
 
 ** Ejemplo 1
-#+attr_latex: width=0.5\textwidth
-#+caption: Detección de bloqueos: Grafo de procesos y recursos en un momento dado
+#+attr_latex: width=0.6\textwidth
+#+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
 
 #+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
 digraph G {
@@ -588,9 +588,9 @@ digraph G {
 	A -> 1 -> B
 	3 -> B;
 	F -> 6 -> B;
-	4 -> B;
-	4 -> C;
-	2 -> C -> 5 -> E -> 7 -> D -> 4;
+	2 -> B;
+	4 -> C -> 2;
+	C -> 5 -> E -> 7 -> D -> 4;
 }
 #+end_src
 

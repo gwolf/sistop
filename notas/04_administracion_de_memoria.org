@@ -2018,6 +2018,398 @@ suspendido. Sin embargo, detectar con suficiente claridad como para
 efectuar este diagnóstico los /cuál/ es el conjunto activo es una
 tarea muy compleja, que típicamente implica rastrear y verificar del
 órden de los últimos miles a decenas de miles de accesos a memoria.
+* Consideraciones de seguridad
+
+Para una cobertura a mayor profundidad del material presentado en
+esta sección, sugiero fuertemente referirse a los siguientes dos
+textos:
+
+- [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing The Stack For Fun And Profit]] (Aleph One, revista
+  Phrack, 1996)
+- [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
+  disponible en el sitio Web del curso)
+
+** Desbordamientos de buffer (/buffer overflows/)
+
+Una de las funciones principales de los sistemas operativos que hemos
+recalcado a lo largo del curso es la de implementar protección entre
+los procesos pertenecientes a diferentes usuarios, o ejecutándose con
+distinto nivel de privilegios. Y si bien el enfoque general que
+estamos dando es el de analizar por separado subsistema por
+subsistema, al hablar de administración de memoria es necesario
+mencionar también las implicaciones de seguridad que del presente
+tema se pueden desprender.
+
+En las computadoras de arquitectura von Neumann, todo dato a ser
+procesado (sean instrucciones o datos) debe pasar por la memoria, por
+el /almacenamiento primario/. Sólo desde ahí puede el procesador
+leer la información directamente.
+
+A lo largo de la presente unidad hemos revisado que el MMU incluye ya
+desde el hardware el concepto de /permisos/, separando claramente las
+regiones de memoria donde se ubica el código del programa (y son, por
+tanto, ejecutables y de sólo lectura) de aquellas donde se encuentran
+los datos (de lectura y escritura). Esto, sin embargo, no nos pone a
+salvo de los /desbordamientos de buffer/ (/buffer overflows/),
+errores de programación (típicamente, la falta de verificación de
+límites) que pueden convertirse en vulnerabilidades[fn:: Citando a
+Theo de Raadt, autor principal del sistema operativo OpenBSD, todo
+error es una vulnerabilidad esperando a ser descubierta].
+
+*** La /pila de llamadas/ (stack)
+
+Recordando lo mencionado en la sección en que presentamos al [[#espacio_en_memoria][espacio
+en memoria de un proceso]], profundicemos un poco en cómo está
+estructurada la /pila de llamadas/ (/stack/).
+
+El /stack/ es el mecanismo que brinda un sentido local a la
+representación del código estructurado. Está dividido en /marcos/ (sin
+relación con el concepto de marcos empleado al hablar de memoria
+virtual); durante el periodo en que es el marco /activo/ (esto es,
+cuando no se ha transferido el control a ninguna otra función), está
+delimitado por dos valores, mantenidos en registros:
+
+- Apuntador a la pila :: (/Stack pointer/, /SP/) Apunta al /final
+     actual/ (dirección inferior) de la pila. En arquitecturas x86,
+     emplea el registro =ESP=.
+- Apuntador del marco :: (/Frame pointer/, =FP=, o /Base local/, =LB=)
+     Apunta al /inicio/ del marco actual, o lo que es lo mismo, al
+     final del marco anterior. En arquitecturas x86, emplea el
+     registro =EBP=; cuando se le pide al procesador que actúe sobre
+     /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
+     este registro.
+
+A cada función a que va entrando la ejecución del proceso, se va
+creando un /marco/ en el stack, que incluye:
+
+- Los argumentos recibidos por la función
+- La dirección de retorno al código que la invocó
+- Las variables locales creadas en la función
+
+Con esto en mente, podemos en primer término analizar la traducción
+de una llamada a función en C a su equivalente en ensamblador, y en
+segundo término ver el marco del stack resultante:
+
+#+begin_src c
+void func(int a, int b, int c) {
+   char buffer1[5];
+   char buffer2[10];
+}
+
+void main() {
+  func(1,2,3);
+}
+#+end_src
+
+Y lo que el código resultante en ensamblador efectúa es:
+
+1. El procesador /empuja/ (=pushl=) los tres argumentos al stack
+   (=ESP=). La notación empleada (=$1=, =$2=, =$3=) indica que el
+   número indicado se expresa de forma literal. Cada uno de estos tres
+   valores restará 4 bytes (el tamaño de un valor entero en x86-32) a
+   =ESP=.
+2. En ensamblador, los nombres que demos a nuestras variables y
+   funciones no significan nada. La llamada =call= no es lo que
+   entenderíamos como una llamada a función en un lenguaje de alto
+   nivel — Lo que hace es /empujar/ al stack la dirección actual del
+   apuntador a la siguiente instrucción, y cargar a éste la dirección
+   en el fuente donde está dicha etiqueta (esto es, transferir la
+   ejecución hacia allá).
+3. Lo primero que hace la función al ser invocada es asegurarse de
+   saber a dónde volver: /empuja/ al stack el viejo apuntador al marco
+   (=EBP=), y lo reemplaza (=movl=) por el actual. A esta ubicación se
+   le llama =SFP= (/Saved Frame Pointer/, /apuntador al marco
+   grabado/)
+4. Por último, con =subl=, resta el espacio necesario para alojar las
+   variables locales, =buffer1= y =buffer2=. Notarán que, si bien
+   éstas son de 5 y 10 bytes, está recorriendo 20 bytes — Esto
+   porque, en la arquitectura x86-32, los accesos a memoria deben
+   estar /alineados a 32 bits/.
+
+#+begin_src asm
+; main
+        pushl $3
+        pushl $2
+        pushl $1
+        call func
+
+func:
+        pushl %ebp
+        movl %esp,%ebp
+        subl $20,%esp
+#+end_src
+
+#+attr_latex: width=0.85\textwidth
+#+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
+#+begin_src ditaa :file ltxpng/stackframe.png :cmdline -E
+  0x00000000 <----                   ----> 0xFFFFFFFF
+                                                  
+    +------------+--------+----+----+----+----+----+
+    | buffer2    |buffer1 | sfp| ret| a  | b  | c  |
+    +------------+--------+----+----+----+----+----+
+      12 bytes    8 bytes   4b   4b   4b   4b   4b
+#+end_src
+
+*** C y las funciones de manejo de cadenas
+
+El lenguaje de programación C fue creado con el propósito de ser tan
+simple como sea posible, manteniéndose tan cerca del hardware como se
+pudiera, para que pudiera ser empleado como un lenguaje de
+programación para un sistema operativo portable. Y si bien en 1970
+era visto como un lenguaje bastante de alto nivel, hoy en día es lo
+más bajo nivel en que programa la mayor parte de los desarrolladores
+del mundo.
+
+C no tiene soporte nativo para /cadenas/ de caracteres. El soporte es
+provisto a través de /familias/ de funciones en la biblioteca estándar
+del lenguaje, que están siempre disponibles en cualquier
+implementación estándar de C. Las familias principales son =strcat=,
+=strcpy=, =printf= y =gets=. Estas funciones trabajan con cadenas que
+siguen la siguiente estructura:
+
+- Son arreglos de 1 o más caracteres (=char=, 8 bits)
+- /Deben/ terminar con el byte de terminación =NUL= (=\0=)
+
+El problema con estas funciones es que sólo algunas de las funciones
+derivadas implementan verificaciones de límites, y algunas son incluso
+capaces de crear cadenas ilegales (que no concluyan con el terminador
+=\0=).
+
+El problema aparece cuando el programador no tiene el cuidado
+necesario al trabajar con datos de los cuales no tiene /certeza/. Por
+ejemplo, veamos el siguiente código vulnerable:
+
+#+begin_src c
+#include <stdio.h>
+int main(int argc, char **argv) {
+        char buffer[256];
+        if(argc > 1) strcpy(buffer, argv[1]);
+        printf("Escribiste %s\n", buffer);
+        return 0;
+}
+#+end_src
+
+El problema con este código reside en el =strcpy(buffer, argv[1])= —
+Dado que el código es recibido del usuario, no tenemos la /certeza/
+de que el argumento que recibamos (empleando =argv[1]=) quepa en el
+arreglo =buffer[256]=. Esto es, si llamamos al programa ejemplo con
+una cadena de 120 caracteres:
+
+#+begin_src sh
+$ ./ejemplo1 `perl -e 'print "A" x 120'`
+Escribiste: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAA
+$
+#+end_src
+
+
+La ejecución resulta exitosa. Sin embargo, si lo invocamos con un
+parámetro demasiado largo para el arreglo:
+
+#+begin_src sh
+$ ./ejemplo1 `perl -e 'print "A" x 500'`
+Escribiste: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Segmentation fault
+$
+#+end_src
+
+*** De una falla a un ataque
+
+En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
+error exitosamente y detuvo la ejecución — Pero no lo hizo: El
+=Segmentation fault= no fue generado al sobreescribir el buffer ni al
+intentar procesarlo, sino después de terminar de hacerlo: Al llegar
+nuestro código al =return 0=.
+
+#+attr_latex: width=0.8\textwidth
+#+caption: Estado de la memoria después del =strcpy()=
+#+begin_src ditaa :file ltxpng/overflow_500.png :cmdline -E
+  0x00000000 <----             ----> 0xFFFFFFFF
+                                                  
+      ----=----+----+----+----+----+----+
+     argc, argv| sfp| ret| buffer       |
+      ----=----+----+----+----+----+----+
+                 4b   4b   256 bytes
+     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+#+end_src
+
+Para volver de una función a quien la invocó, incluso si dicha
+función es =main()=, lo que hace =return= es restaurar el viejo =SFP=
+y hacer que el apuntador a siguiente dirección /brinque/ a la
+dirección que tiene en =RET=. Sin embargo, como podemos ver en el
+esquema, =RET= fue sobreescrito por la dirección =0x41414141=
+(=AAAA=). Dado que esa dirección no forma parte del espacio del
+proceso actual, se lanza una excepción por violación de segmento, y
+el proceso es terminado.
+
+Ahora, lo que observamos implica que el código /está demostrado
+vulnerable/, pero no lo hemos /explotado/ aún. El siguiente paso es,
+conociendo el acomodo exacto de la memoria, sobreescribir únicamente
+lo necesario para poder apoderarnos del flujo del programa — Esto es,
+sobreescribir =RET= con una dirección válida. Para esto, necesitamos
+conocer la longitud desde el inicio del buffer hasta donde terminan
+=RET= y =SFP=, en nuestro caso, 264 bytes (256 del buffer mas 4 de
+=RET= mas 4 de =SFP=).
+
+Citando al texto de Enrique Sánchez,
+
+#+BEGIN_QUOTE
+¿Por qué ocurre un desbordamiento de stack? Imagina un vaso y una
+botella de cerveza. ¿Qué ocurre si sirves la botella completa en el
+vaso? Se va a derramar. Imagina que tu variable es el vaso, y la
+entrada del usuario es la cerveza. Puede ocurrir que el usuario sirva
+tanto líquido como el que cabe en el vaso, pero puede también seguir
+sirviendo hasta que se derrame. La cerveza se derramaría en todas
+direcciones, pero la memoria no crece de esa manera, es sólo un
+arreglo bidimensional, y sólo crece en una dirección.
+
+Ahora, ¿qué más pasa cuando desbordas a un contenedor? El líquido
+sobrante va a mojar la botana, los papeles, la mesa, etc. En el caso
+de los papeles, destruirá cualquier cosa que hubieras apuntado (como
+el teléfono que acabas de anotar de esa linda chica). Cuando tu
+variable se desborde, ¿qué va a sobrescribir? Al EBP, al EIP, y lo
+que les siga, dependiendo de la función, y si es la última función,
+las variables de ambiente. Puede que el programa aborte y tu shell
+resulte inutilizado a causa de las variables sobreescritas.
+#+END_QUOTE
+
+Hay dos técnicas principales: /Brincar/ a un punto determinado del
+programa, y /brincar/ hacia dentro del stack. Veamos la primera:
+
+Si el atacante está intentando burlar una validación simple de
+usuarios, como la siguiente:
+
+#+begin_src c
+if (valid_user(usr, pass)) {
+  /* (...) */
+} else {
+  printf("Error!\n");
+  exit 1;
+}
+#+end_src
+
+Y detecta que =valid_user()= es susceptible a un desbordamiento, le
+bastaría con incrementar en 4 la dirección de retorno. La conversión
+de este =if= a ensamblador es, primero, brincar hacia la etiqueta
+=valid_user=, y (empleando al valor que ésta regrese en =%EBX=) ir a
+la siguiente instrucción, o brincar a la etiqueta =FAIL=. Esto puede
+hacerse con la instrucción =BNE $0, %EBX, FAIL= (/Branch if Not
+Equal/, /Brinca si no es igual/, que recibe como argumentos dos
+valores a ser comparados, en este caso el registro =%EBX= y el número
+0, y la etiqueta destino, =FAIL=). Cambiar la
+dirección destino significa burlar la verificación.
+
+Ahora, por otro lado, el atacante podría querer que el sistema haga
+algo más complejo — Que ejecute código arbitrario que él
+proporicione. Para esto, el ataque más frecuente es brincar /hacia
+adentro del stack/.
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Ejecutando el código arbitrario inyectado al buffer
+#+begin_src ditaa :file ltxpng/overflow_jump.png :cmdline -E
+  0x00000000 <----             ----> 0xFFFFFFFF
+            0xbffff9c0             0xbffff8b8
+               |                        |
+               V                        V
+      ----=----+----+----+----+----+----+
+     argc, argv| sfp| ret| buffer       |
+      ----=----+----+----+----+----+----+
+               | 4b   4b   256 bytes  ^
+               |                      |
+	       +--0xbffff8c0----------+
+#+end_src
+
+Para hacerlo, si en vez de proporcionar simplemente una cadena
+suficientemente grande para sobrepasar el buffer le diéramos una
+cadena con código ejecutable válido, y sobreescribiera la dirección de
+retorno con la dirección de su código /dentro del buffer/, tendría
+256 bytes de espacio para especificar código arbitrario. Este código
+típicamente se llama /shellcode/, pues se emplea para obtener un
+/shell/ (un intérprete de comandos) que ejecuta con los privilegios
+del proceso explotado.
+
+** Mecanismos de mitigación
+
+Claro está, el mundo no se queda quieto. Una vez que estos mecanismos
+de ataque se dieron a conocer, comenzó un fuerte trabajo para crear
+mecanismos de mitigación de daños.
+
+La principal y más importante medida es crear una cultura de
+programadores conscientes y prácticas seguras. Esto cruza
+necesariamente el no emplear funciones que no hagan verificación de
+límites. La desventaja de esto es que hace falta cambiar al /factor
+humano/, lo cual resulta prácticamente imposible de lograr con
+suficiente profundidad. Muchos desarrolladores esgrimen argumentos en
+contra de estas prácticas, como la pérdida de rendimiento que estas
+funciones requieren, y muchos otros sencillamente nunca se dieron por
+enterados de la necesidad de programar correctamente.
+
+Por esto, se han ido creando diversos mecanismos automatizados de
+protección ante los desbordamientos de buffer. Ninguno de estos
+mecanismos es /perfecto/, pero sí ayudan a reducir los riesgos ante
+los atacantes menos persistentes o habilidosos.
+
+*** Secciones de texto no ejecutables
+
+Comenzamos la sección hablando de la protección que puede imponer el
+MMU por regiones, evitando la modificación de código ejecutable — El
+MMU también puede evitar la ejecución de código en el área de stack,
+lo cual anula la posibilidad de /brincar al stack/. Esta protección
+existe desde hace muchos años, y desafortunadamente no es muy
+efectiva: Una vez que tiene acceso a un buffer vulnerable, el atacante
+puede /brincar a libc/, esto es, por ejemplo, proporcionar como
+parámetro el nombre de un programa a ejecutar, e indicar como retorno
+la dirección de la función =system= o =execve= de la =libc=.
+
+Las secciones de texto no ejecutables son, pues, un obstáculo ante un
+atacante, aunque no representan una dificultad mucho mayor.
+
+*** Aleatorización del espacio de direcciones
+
+Otra técnica es que, en tiempo de carga y a cada ejecución, el proceso
+reciba diferentes direcciones base para sus diferentes áreas. Esto
+hace más difícil para el atacante poder indicar a qué dirección
+destino brincar.
+
+Un atacante puede emplear varias técnicas para ayudarse a /adivinar/
+detalles acerca del acomodo en memoria de un proceso, y, con un
+buffer suficientemente grande, es común ver /cadenas de NOP/, esto
+es, una extensión grand de operaciones nulas, seguidas del
+/shellcode/, para aumentar las probabilidades de que el control se
+transfiera a un punto útil.
+
+*** Empleo de /canarios/
+
+Se llama /canario/ a un valor aleatorio de protección[fn:: Este uso
+proviene de la costumbre antigua de los mineros de tener un canario en
+una jaula en la mina. Como el canario es muy sensible ante la falta de
+oxígeno, si el canario moría servía como indicador a los mineros de
+que debían abandonar la mina de inmediato, antes de correr la misma
+suerte.], insertado entre los buffers y la dirección de retorno, que
+es verificado antes de regresar de una función. Si se presentó un
+desbordamiento de buffer, el valor del /canario/ será reemplazado por
+basura, y el sistema podrá detener la ejecución del proceso
+comprometido antes de que brinde privilegios elevados al atacante.
+
+Un atacante tiene dos mecanismos ante un sistema que requiere del
+canario: Uno es el atacar no directamente a la función en cuestión,
+sino que al /manejador de señales/ que es notificado de la anomalía,
+y otro es, ya que se tiene acceso a la memoria del proceso,
+/averiguar el valor del canario/. Esto requiere ataques bastante más
+sofisticados que los vistos en esta sección, pero definitivamente ya
+no fuera del alcance de los atacantes.
+
+** Bibliotecas de ligado estático y ligado dinámico
+** Recuperación de datos del intercambio
 
 * Consideraciones de rendimiento
 #+begin_src c
@@ -2044,16 +2436,6 @@ tarea muy compleja, que típicamente implica rastrear y verificar del
     }
    }
 #+end_src
-* Consideraciones de seguridad
-** Desbordamientos de buffer (/buffer overflows/)
-
-
-** Bibliotecas de ligado estático y ligado dinámico
-** Secciones de texto no ejecutables
-- Problemática con los programas /auto-relocalizables/
-  (self-relocatable): ¿código auto-modificable?
-** Aleatorización de las direcciones
-** Recuperación de datos del intercambio
 
 * Otros recursos
 

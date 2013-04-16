@@ -31,7 +31,7 @@
 - Los mecanismos principales de manejo de estructuras de memoria son
   bastante ingenuos \rarrow inseguros
   - Cualquier error en el manejo de memoria es una vulnerabilidad en
-    potenciay
+    potencia
 
 ** Referencias bibliográficas
 #+begin_center
@@ -42,6 +42,8 @@ fuertemente:
   Phrack, 1996)
 - [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito)
 
+
+* Organización de memoria: El stack
 ** Vuelta a la organización de la memoria
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: height=0.5\textheight
@@ -117,8 +119,8 @@ func:
         subl $20,%esp
 #+end_src
 #+latex:\end{column}\end{columns}
-#+attr_latex: width=0.9\textwidth
-#+caption: Marco del stack con la llamada a =func(1,2,3)= en arquitectura x86 (32 bit)
+#+attr_latex: width=0.85\textwidth
+#+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 #+begin_src ditaa :file ltxpng/stackframe.png :cmdline -E
   0x00000000 <----                   ----> 0xFFFFFFFF
                                                   
@@ -146,8 +148,7 @@ func:
 ** El eslabón más débil: Funciones de manejo de cadenas
 - El diseño del lenguaje C incluye soporte para cadenas a través de su
   biblioteca estándar
-- Arreglos /inmutables/ de caracteres (8bit), terminados por un =\0=
-  (=NUL=)
+- Arreglos de caracteres (8bit), terminados por un =\0= (=NUL=)
 - Presenta /familias/ de funciones relacionadas para su manejo,
   principalmente:
   - =strcat=
@@ -186,7 +187,8 @@ Escribiste: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 $
 #+end_src
 #+begin_center
-Invocamos al programa vulnerable con un parámetro largo (pero válido):
+Invocamos al programa vulnerable con un parámetro demasiado largo
+para el arreglo:
 #+end_center
 #+begin_src sh
 $ ./ejemplo1 `perl -e 'print "A" x 500'`
@@ -214,10 +216,16 @@ Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
                  4b   4b   256 bytes
    \0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 #+end_src
+
+** ¿Qué significa nuestro =Segmentation fault=?
 - El =Segmentation fault= se debe a que la /dirección de retorno/ es
   la 0x41414141
   - No es un segmento válido y ejecutable
+- El código está /demostrado vulnerable/
+  - ...Pero no lo hemos podido explotar aún
 
+
+* De una falla a un ataque
 ** Convirtiendo una falla de segmento en un ataque
 - Conociendo el acomodo /exacto/ de la memoria, podemos predecir
   cuánto mide el espacio de cada una de las variables
@@ -269,6 +277,8 @@ if (valid_user(usr, pass)) {
 - Tenemos 256 bytes para inyectar el /shellcode/ y ejecutar código
   arbitrario con los privilegios del proceso víctima
 
+
+* Mitigación
 ** Técnicas de mitigación
 - Claro está, desde hace años se han desarrollado maneras de mitigar
   el daño causado

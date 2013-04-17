@@ -2476,7 +2476,6 @@ no fuera del alcance de los atacantes.
   de los pros y contras de una migración de 32 a 64 bits.
 - [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto
   propiamente sea del nivel adecuado. En todo caso, buscar algo de Valgrind.
-- [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][Hacker Bypasses Windows 7/8 Address Space Layout Randomization]] (Slashdot)
 - [[http://ghostbar.ath.cx/2013/01/27/less-swap/][Less swap]] (blog de Jose Luis Rivas) — Controlando el "swappiness" de
   Linux vía =vm.swappiness=
 # My old X61 has 2G in RAM and 3G in Swap. It seems my using-habit for
@@ -2512,8 +2511,27 @@ no fuera del alcance de los atacantes.
 - [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
   explícitas/completas que las de Linux
 
+- [[/biblio/Windows_Internals_sample_chapters.pdf][Understanding the Linux Virtual Memory Manager]], por Mel Gorman
+  (2004). Un libro bajo licencia libre, parte de la colección [[http://www.informit.com/imprint/series_detail.aspx?ser=335494][Bruce
+  Perens' Open Source Series]]; aborda a profundidad los mecanismos y
+  algoritmos relativos a la memoria empleados por el sistema operativo
+  Linux. Entra en detalles técnicos con bastante profundidad,
+  presentándolos poco a poco, por lo que no resulta demasiado complejo
+  de leer. El primer tercio del libro (216 páginas) describe los
+  mecanismos, y los dos tercios restantes siguen el código
+  comentado. El libro está también [[http://www.makelinux.net/books/lvmm/][disponible en formato HTML]] en
+
 - [[http://www.swansontec.com/sregisters.html][The art of picking Intel registers]] explica el uso de los
   principales registros en la arquitectura x86
 
+- [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
+  disponible en el sitio Web del curso)
+
 - [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing the Stack for fun and profit]], /Aleph One/, 1996: Uno de los
   primeros artículos publicados acerca de los /buffers rebasados/
+
+- [[http://kingcope.wordpress.com/2013/01/24/attacking-the-windows-78-address-space-randomization/][Attacking the Windows 7/8 Address Space Randomization]] explica cómo
+  puede burlarse la protección ALSR (aleatorización de direcciones) en
+  Windows 7 y 8, logrando una dirección predecible de memoria hacia la
+  cual brincar. Puede interesarles también leer la [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][discusión en
+  Slashdot]] una vez que esto fue hecho público.

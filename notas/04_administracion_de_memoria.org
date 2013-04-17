@@ -2139,6 +2139,7 @@ func:
         subl $20,%esp
 #+end_src
 
+#+html: <div class="figure">
 #+attr_latex: width=0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 #+begin_src ditaa :file ltxpng/stackframe.png :cmdline -E
@@ -2149,6 +2150,7 @@ func:
     +------------+--------+----+----+----+----+----+
       12 bytes    8 bytes   4b   4b   4b   4b   4b
 #+end_src
+#+html: <p align="center">Marco del stack con llamada a =func(1,2,3)= en x86-32</p></div>
 
 *** C y las funciones de manejo de cadenas
 
@@ -2230,6 +2232,7 @@ error exitosamente y detuvo la ejecución — Pero no lo hizo: El
 intentar procesarlo, sino después de terminar de hacerlo: Al llegar
 nuestro código al =return 0=.
 
+#+html: <div class="figure">
 #+attr_latex: width=0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
 #+begin_src ditaa :file ltxpng/overflow_500.png :cmdline -E
@@ -2241,6 +2244,7 @@ nuestro código al =return 0=.
                  4b   4b   256 bytes
      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 #+end_src
+#+html: <p align="center">Estado de la memoria después del <tt>strcpy()</tt></p></div>
 
 Para volver de una función a quien la invocó, incluso si dicha
 función es =main()=, lo que hace =return= es restaurar el viejo =SFP=
@@ -2313,6 +2317,7 @@ algo más complejo — Que ejecute código arbitrario que él
 proporicione. Para esto, el ataque más frecuente es brincar /hacia
 adentro del stack/.
 
+#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 #+begin_src ditaa :file ltxpng/overflow_jump.png :cmdline -E
@@ -2327,6 +2332,7 @@ adentro del stack/.
                |                      |
 	       +--0xbffff8c0----------+
 #+end_src
+#+html: <p align="center">Ejecutando el código arbitrario inyectado al buffer</p></div>
 
 Para hacerlo, si en vez de proporcionar simplemente una cadena
 suficientemente grande para sobrepasar el buffer le diéramos una
@@ -2358,19 +2364,29 @@ protección ante los desbordamientos de buffer. Ninguno de estos
 mecanismos es /perfecto/, pero sí ayudan a reducir los riesgos ante
 los atacantes menos persistentes o habilidosos.
 
-*** Secciones de texto no ejecutables
+*** Secciones de datos no ejecutables
 
 Comenzamos la sección hablando de la protección que puede imponer el
-MMU por regiones, evitando la modificación de código ejecutable — El
-MMU también puede evitar la ejecución de código en el área de stack,
-lo cual anula la posibilidad de /brincar al stack/. Esta protección
-existe desde hace muchos años, y desafortunadamente no es muy
-efectiva: Una vez que tiene acceso a un buffer vulnerable, el atacante
-puede /brincar a libc/, esto es, por ejemplo, proporcionar como
-parámetro el nombre de un programa a ejecutar, e indicar como retorno
-la dirección de la función =system= o =execve= de la =libc=.
+MMU por regiones, evitando la modificación de código ejecutable.
 
-Las secciones de texto no ejecutables son, pues, un obstáculo ante un
+En la arquitectura x86, dominante en el mercado de computadoras
+personales desde hace muchos años, esta característica existía en
+varios procesadores basados en el modelo de segmentación de memoria,
+pero desapareció al cambiarse el modelo predominante por uno de
+memoria plana paginada, y fue hasta alrededor del 2001 en que fue
+introducida de vuelta, bajo los nombres /bit NX/ (/Never eXecute/,
+Nunca ejecutar) o /bit XD/ (/eXecute Disable/, Deshabilitar
+ejecución), como una característica particular de las extensiones PAE.
+
+Empleando este mecanismo, el MMU puede evitar la ejecución de código
+en el área de stack, lo cual anula la posibilidad de /brincar al
+stack/. Esta protección desafortunadamente no es muy efectiva: Una vez
+que tiene acceso a un buffer vulnerable, el atacante puede /brincar a
+libc/, esto es, por ejemplo, proporcionar como parámetro el nombre de
+un programa a ejecutar, e indicar como retorno la dirección de la
+función =system= o =execve= de la =libc=.
+
+Las secciones de datos no ejecutables son, pues, un obstáculo ante un
 atacante, aunque no representan una dificultad mucho mayor.
 
 *** Aleatorización del espacio de direcciones
@@ -2399,6 +2415,21 @@ es verificado antes de regresar de una función. Si se presentó un
 desbordamiento de buffer, el valor del /canario/ será reemplazado por
 basura, y el sistema podrá detener la ejecución del proceso
 comprometido antes de que brinde privilegios elevados al atacante.
+
+#+html: <div class="figure">
+#+attr_latex: width=0.8\textwidth
+#+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
+#+begin_src ditaa :file ltxpng/canary.png :cmdline -E
+  0x00000000 <----                        ----> 0xFFFFFFFF
+                                  <----AAAAAAAAAAAAAAA...
+                           qR'z2a&5f50s
+      ----=----+----+----+--------------+--------------+
+     argc, argv| sfp| ret| canario cYEL | buffer cRED  |
+      ----=----+----+----+--------------+--------------+
+                 4b   4b   12 bytes        256 bytes
+
+#+end_src
+#+html: <p align="center">Marco de stack con un <em>canario</em> aleatorio protector de 12 bytes (<tt>qR'z2a&amp;5f50s</tt>): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.</p></div>
 
 Un atacante tiene dos mecanismos ante un sistema que requiere del
 canario: Uno es el atacar no directamente a la función en cuestión,

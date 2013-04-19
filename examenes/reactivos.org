@@ -216,3 +216,113 @@
 1. ¿Por qué un sistema operativo /de propósito general/ no puede
    ofrecer garantías /de tiempo real duro/ en una computadora
    /estándar/?
+* Administración de memoria
+
+1. Diagrama el acomodo del espacio en memoria de un proceso. ¿Qué
+   diferencias principales y qué similitudes tienen la /sección de
+   datos/ con el /espacio de libres/? ¿Y el /espacio de libres/ con el
+   /stack/?
+
+2. ¿Qué es la /fragmentación interna/? ¿Y la /fragmentación externa/?
+   ¿En qué se parecen? ¿En qué se distinguen?
+
+3. Tienes un sistema con 4MB de memoria, basado en particiones de
+   memoria de tamaño variable. El sistema tiene cinco /agujeros/
+   disponibles:
+
+   1. 216KB a partir de los 192KB
+   2. 1168KB a partir de los 704KB
+   3. 384KB a partir de los 2640KB
+   4. 96KB a partir de los 3280KB
+   5. 208KB a partir de los 3888KB
+
+   Indica cómo responderá a las siguientes solicitudes (ocurridas en
+   el órden que te las presento) bajo los esquemas de primer ajuste,
+   mejor ajuste y peor ajuste: 190KB, 64KB, 320KB, 720KB.
+
+4. Un proceso en un sistema con arquitectura de memoria basada en la
+   /segmentación/ tiene la siguiente tabla de segmentos:
+
+    | Segmento | Inicio | Tamaño | Permisos |
+    |----------+--------+--------+----------|
+    |        0 |    240 |    600 | RX       |
+    |        1 |   2300 |     16 | R        |
+    |        2 |     90 |    100 | RW       |
+    |        3 |   1320 |    950 | RW       |
+    |        4 |      - |     96 | RX       |
+
+   Para cada una de las siguientes solicitudes, indica qué dirección
+   física correspondería, y –de ser el caso– qué excepción se
+   generará.
+
+   1. Lectura, 0-430
+   2. Escritura, 0-150
+   3. Lectura, 1,15
+   4. Escritura, 2-130
+   5. Ejecución, 4-25
+
+5. La paginación fue concebida cuando las arquitecturas más comunes
+   tenían espacios de direccionamiento de 16 bits. Este espacio de
+   direccionamiento puede dividirse, por ejemplo, en 128 páginas de
+   512 bytes cada una (7 bits indicando la página, 9 bits indicando el
+   desplazamiento). Sin embargo, al pasar a los 32 bits, el espacio
+   requerido crece considerablemente: Con el tamaño más habitual de
+   páginas (4KB, 12 bits), requerimos de 1048576 entradas (20 bits) en
+   la tabla de páginas — Y la tabla de páginas ocupa 5MB de memoria
+   por proceso. Y al pasar a 64 bits, esta sobrecarga administrativa
+   es muchísimo más grande aún.
+
+   Describe un mecanismo que permita reducir el tamaño de la tabla de
+   páginas.
+
+6. El buffer de traducción adelantada (TLB) de un sistema en
+   particular presenta una efectividad del 95%. Obtener un valor del
+   TLB nos toma 10ns. La memoria principal tarda 120ns en recuperar un
+   valor. ¿Cuál es el tiempo promedio para completar una operación a
+   memoria?
+
+7. Con la siguiente cadena de referencia, y empleando cuatro marcos de
+   memoria física, desarrolla la asignación bajo los esquemas FIFO,
+   OPT y LRU:
+   #+BEGIN_QUOTE
+   1, 3, 2, 1, 5, 3, 4, 1, 5, 2, 6, 7, 5, 7, 2, 5, 3, 5, 3, 1
+   #+END_QUOTE
+   Asumiendo que cada fallo de página toma 8 milisegundos en ser
+   atendido, ¿cuál es la diferencia en rendimiento?
+   # 1   4   5
+   #  3   1   2
+   #   2   6   3
+   #    5   7   1
+   #
+   # 1      7 1
+   #  3   2
+   #   2 4 6 3
+   #    5
+   #
+   # 1   7 1
+   #  3   6 4 2
+   #   5
+   #    2    3
+
+8. Un equipo está presentando rendimiento muy deficiente. Ante un
+   análisis de utilización a lo largo de un día, encontramos que el
+   promedio de uso de CPU está al 20% y el uso de la interfaz al disco
+   duro que aloja a la memoria virtual al 95%. ¿En qué condición
+   estamos?
+
+   Elige de la siguiente lista las dos respuestas que /mayor impacto/
+   tendrían para mejorar el rendimiento del sistema. Fundamenta con
+   una breve explicación por qué elegiste a esas dos. En todos los
+   casos, asume que la velocidad o capacidad nueva no variará en más
+   de 30% sobre de la actual.
+
+   1. Reemplazar al CPU por uno más rápido
+   2. Instalar un disco más grande para la memoria virtual
+   3. Aumentar el grado de multiprogramación
+   4. Reducir el grado de multiprogramación
+   5. Instalar más memoria principal
+   6. Instalar un disco duro más rápido
+
+9. Describe en qué consiste un ataque de /desbordamiento de pila/
+   (/stack overflow/), y un mecanismo de protección del sistema para
+   contrarrestarlos.

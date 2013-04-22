@@ -1,6 +1,148 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Sistemas de archivos
 
+* Concepto de archivo
+
+De los roles que cumple el sistema operativo, probablemente el que más
+consciente tengan en general sus usuarios es el de la gestión del
+espacio de almacenamiento, esto es, el sistema de archivos. Al día de
+hoy, todos los usuarios de equipo de cómputo dan por sentado y
+comprenden a grandes rasgos la organización del espacio de
+almacenamiento en un /directorio jerárquico/, con unidades de
+almacenamiento llamadas /archivos/, de diferentes tipos según su
+función. En la primer parte de esta unidad revisaremos algo más a
+profundidad a este modelo, para posteriormente ver los detalles de la
+gestión del espacio físico donde éstos están alojados.
+
+La abstracción que hoy conocemos como /archivos/ es una de las que más
+tiempo han vivido y se han mantenido a lo largo de la historia de la
+computación, sobreviviendo a lo largo de prácticamente todas las
+generaciones de sistemas operativos.
+
+En primer término, un archivo es un /tipo de datos abstracto/ — Esto
+es, en programación moderna podríamos verlo como una estructura que
+exclusivamente permite que la manipulemos por medio de una interfaz
+/orientada a objetos/: Los procesos en el sistema sólo pueden tener
+acceso a los archivos por medio de la interfaz ofrecida por el sistema
+operativo.[fn:: Veremos más adelante que esto no es /necesariamente/
+cierto, sin embargo, el uso de los dispositivos /en crudo/ es tan bajo
+que podemos ignorarlos para propósitos de esta discusión] Abordaremos
+los detalles de esta interfaz [[#operaciones_con_archivos][en breve]].
+
+Para el usuario, los archivos son la /unidad lógica mínima/ al hablar
+habla de almacenamiento: Todo el almacenamiento /persistente/ (que
+sobrevive en el tiempo, sea a reinicios del sistema, a pérdida de
+corriente o a otras circunstancias en el transcurso normal de
+ejecución) en el sistema al que tiene acceso, se efectúa dentro de
+archivos; el espacio libre en los diferentes dispositivos no tiene
+mayor existencia fuera de saber que está /potencialmente/ disponible.
+
+Dentro de cada /volúmen/ (cada medio de almacenamiento), los archivos
+disponibles conforman a un /directorio/, y son típicamente
+identificados por un /nombre/. Hablaremos más adelante acerca de
+las diferentes construcciones semánticas que pueden conformar a los
+directorios.
+
+** Operaciones con archivos
+#<<operaciones_con_archivos>>
+
+Cada sistema operativo definirá la interfaz de archivos acorde con su
+semántica, pero en líneas generales, siempre encontraremos:
+
+- Crear :: Asigna espacio en el dispositivo y en su directorio para
+           alojar a un nuevo archivo.
+
+- Borrar :: Elimina al archivo del directorio y, de ser procedente,
+            libera el espacio del dispositivo
+
+- Abrir :: Solicita al sistema operativo verificar si tenemos el
+           acceso para el /modo de acceso/ al archivo que indiquemos y
+           si el medio lo soporta (por ejemplo, a pesar de contar con
+           los permisos, no podemos abrir para escritura un archivo en
+           un disco de sólo lectura). Abrir un archivo es necesario
+           para todas las siguientes operaciones.
+
+- Leer :: Cuando indicamos al sistema que queremos leer de un archivo
+          hacia determinado buffer, éste copia el siguiente /pedazo/
+          de información a éste. Este /pedazo/ podría ser una línea o
+          un bloque de longitud definida, dependiendo del modo en que
+          se solicite la lectura. El sistema mantiene un apuntador a
+          la última posición leída, para poder sencillamente continuar
+          con la lectura.
+
+- Escribir :: Teniendo un archivo ya existente, guarda información en
+              él. Puede ser que escriba desde su primer posición
+              (/truncando/ al archivo, esto es, borrando toda la
+              información que pudiera ya tener), o /agregando/ al
+              archivo, esto es, iniciando con el apuntador de
+              escritura al final del mismo.
+
+- Reposicionar :: (/seek/) Tanto la lectura como la escritura se hacen
+                  siguiendo a un /apuntador/, que indica cuál fue la
+                  última posición del archivo a la que accesó el
+                  proceso actual. Al reposicionar el apuntador,
+                  podemos /brincar/ a otro punto del archivo.
+
+Hay varias otras operaciones comunes que pueden implementarse con
+llamadas compuestas a estas operaciones (por ejemplo, /copiar/ un
+archivo puede implementarse como /crear/ un archivo nuevo en modo de
+escritura, abrir en modo de lectura al fuente, e ir /leyendo/ de éste
+y /escribiendo/ al nuevo hasta llegar al fin de archivo).
+
+Las operaciones que presentamos recién no son /todas/ las operaciones
+existentes; dependiendo del sistema operativo, habrá algunas
+adicionales; estas las presentamos como la base general sobre la cual
+trabajaremos.
+
+** Tablas de archivos abiertos
+
+Tanto el sistema operativo como cada uno de los procesos mantienen
+normalmente /tablas de archivos abiertos/. Estas mantienen información
+acerca de todos los archivos actualmente abiertos, presentándolos
+hacia el proceso por medio de un /descriptor de archivo/; una vez que
+un archivo fue abierto, las operaciones que se realizan dentro de éste
+no son empleando su nombre, sino que su descriptor de archivos.
+
+En un sistema operativo multitareas, más de un proceso podría abrir el
+mismo archivo a la vez; lo que cada uno de ellos pueda hacer, y cómo
+esto impacte a lo que vean los demás procesos, depende de la semántica
+que implemente el sistema.
+
+
+
+Ahora, ¿por qué mencionamos que estas tablas son mantenidas tanto por
+el sistema operativo como por cada uno de los procesos? ¿No nos lleva
+esto a una situación en que mantenemos información redundante?
+
+La respuesta es que la información que cada uno debe manejar es
+distinta. El sistema operativo necesita:
+
+- Conteo de usuarios del archivo :: Cuando se solicita, por ejemplo,
+     /desmontar/ una partición (por ejemplo, para expulsar una unidad
+     removible) o eliminar un archivo, el sistema debe poder
+     determinar cuándo es momento de declarar la solicitud como
+     /efectuada/. Si algún proceso tiene abierto a un archivo, y
+     particularmente si tiene cambios pendientes de guardar, el
+     sistema no debe permitir que el archivo /desaparezca/ de su
+     visión.
+- Modos de acceso :: Aunque un usuario tenga permisos de acceso a
+     determinado recurso, el sistema puede determinar negarlo si
+     llevaría a un inconsistente. Por ejemplo, si dos procesos abren
+     un mismo archivo para escritura, es probable que los cambios que
+     realice uno sobreescriban a los que haga el otro.
+
+Por otro lado, el proceso necesita:
+
+- Descriptor de archivo :: Relación entre el nombre del archivo
+     abierto y el identificador numérico que maneja internamente el
+     proceso. Un archivo abierto por varios procesos tendrá
+     descriptores de archivo distintos en cada uno de ellos. El
+     descriptor de archivo es un número entero.
+
+- Permisos :: Los modos válidos de acceso para un archivo. Esto no
+              necesariamente es igual al 
+
+
 * Generalidades
 
 Un /sistema de archivos/ es la estructura por medio de la cual el

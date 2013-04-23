@@ -312,13 +312,12 @@ reconozca al tipo de un archivo:
      =/usr/bin/bash=, y le especifica como argumento al archivo en
      cuestión.
 
-- Metadatos externos :: El sistema de archivos HFS (/Hierarchical File
-     System/, /Sistema de Archivos Jerárquico/) empleado por las Apple
-     Macintosh desde 1984 separa en dos /divisiones/ (/forks/) la
-     información de un archivo: Los datos que propiamente constituyen
-     al archivo en cuestión son la /división de datos/ (/data fork/),
-     y la información /acerca del archivo/ se guardan en una
-     estructura independiente llamada /división de recursos/
+- Metadatos externos :: Los sistemas de archivos empleado por las
+     Apple Macintosh desde 1984 separan en dos /divisiones/ (/forks/)
+     la información de un archivo: Los datos que propiamente
+     constituyen al archivo en cuestión son la /división de datos/
+     (/data fork/), y la información /acerca del archivo/ se guardan
+     en una estructura independiente llamada /división de recursos/
      (/resource fork/).
 
      Esta idea resultó fundamental para varias de las características
@@ -524,8 +523,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 #+end_src
 #+html: <p align="center">Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura</p></div>
 
-
-** Dispositivos orientados a bloques
+** Transferencias orientados a bloques
 
 Un sistema de archivos es la representación que se da a un conjunto
 de archivos y directorios sobre un /dispositivo orientado a bloques/;
@@ -547,6 +545,244 @@ vez de una lectura, la operación que efectuamos fue una de escritura
 memoria (o fue leído hace mucho, y puede haber sido expirado del
 caché), el sistema tendrá que leerlo nuevamente, modificarlo en
 memoria, y volver a guardarlo a disco.
+
+
+* Organización de archivos
+
+Hasta ahora, nos hemos enfocado en qué es y cómo se maneja un
+archivo. Sin embargo, no hablaríamos de /sistemas de archivos/ si no
+tuviéramos una gran cantidad de archivos. Es común que en un sólo
+medio de almacenamiento de un equipo de uso doméstico tengamos a
+/decenas de miles/ de archivos, y en equipos dedicados, no está fuera
+de lugar tener cientos o miles de veces tanto. Por tanto, tenemos que
+ver también cómo se organiza una gran cantidad de archivos.
+
+** Evolución del concepto de /directorio/
+
+El concepto dominante en almacenaimiento hoy en día es el /directorio
+jerárquico/. Demos un breve repaso acerca de su historia.
+
+*** Sistemas de archivos /planos/
+
+Los primeros sistemas de archivos limitaban el concepto de directorio
+a una representación plana de los archivos que lo conformaban, sin
+ningún concepto de /jeraarquía de directorios/ como el que hoy nos es
+natural. Esto se debía, en primer término, a lo limitado del espacio
+de almacenamiento de las primeras computadoras en implementar esta
+metáfora (los usuarios no dejaban sus archivos a largo plazo en el
+disco, sino que los tenían ahí meramente cuando les eran útiles), y en
+segundo término, a que no se había aún desarrollado un concepto de
+separación, permisos y privilegios como el que poco después
+aparecería.
+
+En las computadoras personales los sistemas de archivos eran también
+planos en un primer momento, pero por otra razón: En los sistemas
+/profesionales/ ya se había desarrollado el concepto; al aparecer la
+primer computadora personal en 1975, ya existían incluso las primeras
+versiones de Unix diseñadas para trabajo en red. La prioridad en los
+sistemas personales era mantener el código del sistema operativo
+simple, mínimo. Con unidades de disco capaces de manejar entre 80 y
+160KB, no tenía mucho sentido implementar directorios — Si un usuario
+quisiera llevar a cabo una división temática de su trabajo, lo
+colocaría en distintos /discos flexibles/. El sistema operativo CP/M
+nunca soportó jerarquías de directorios, como tampoco lo hizo la
+primer versión de MS-DOS[fn:: el soporte de jerarquías de directorios
+fue introducido apenas en la versión 2, junto con el soporte a discos
+duros de 10MB, con la IBM XT].
+
+El sistema de archivos original de la Apple Macintosh, MFS, estaba
+construido sobre un modelo plano, pero presentando la /ilusión/ de
+directorios de una forma comparable a las etiquetas: Existían bajo
+/ciertas/ vistas (pero notoriamente no en los diálogos de abrir y
+grabar archivos), pero el nombre de cada uno de los archivos tenía que
+ser único, dado que el direcorio al que pertenecía era básicamente
+sólo un atributo del archivo.
+
+Y contrario a lo que dicta la intuición, el modelo de directorio plano
+no ha desaparecido: El sistema de /almacenamiento en la nube/ ofrecido
+por el servicio /Amazon S3/ (/Simple Storage Service/, /Servicio
+Simple de Almacenamiento/) maneja únicamente /objetos/ (comparable con
+nuestra definición de archivos) y /cubetas/ (que reconoceríamos como
+/unidades/ o /volúmenes/), y permite referirse a un objeto o un
+conjunto de objetos en base a /filtros/ sobre el total que conforman a
+una cubeta.
+
+Probablemente a futuro nos encontremos con más ofertas como la de
+Amazon S3, pero por ahora, continuemos sobre la línea histórica de los
+directorios.
+
+*** Directorios de profundidad limitada
+
+Las primeras implementaciones de directorios eran /de un sólo nivel/:
+El total de archivos en un sistema podía estar dividido en
+directorios, fuera por tipo de archivo (separando, por ejemplo,
+programas de sistema, programas de usuario y textos del correo), por
+usuario (facilitando una separación lógica de los archivos de un
+usuario de pertenecientes a los demás usuarios del sistema)
+
+El directorio /raiz/ (base) se llama en este esquema /MFD/ (/Master
+File Directory/, /Directorio Maestro de Archivos/), y cada uno de los
+directorios derivados es un /UFD/ (/User File Directory/, /Directorio
+de Archivos de Usuario/).
+
+#+html: <div class="figure">
+#+attr_latex: width=0.5\textwidth
+#+caption: Directorio simple, limitado a un sólo nivel de profundidad
+#+begin_src dot :exports results :file ltxpng/directorio_simple.png
+  digraph G {
+          subgraph cluster0 {
+                  label = "MFD";
+                  color=lightgray
+                  style=filled;
+                  sys;
+                  mail;
+                  usr1;
+                  usr2;
+                  usr3;
+          }
+          subgraph cluster1 {
+                  label="UFD: sys";
+                  color=lightgray
+                  style=filled;
+                  list;
+                  copy;
+                  edit;
+                  login;
+          }
+          subgraph cluster2 {
+                  label="UFD: mail";
+                  color=lightgray
+                  style=filled;
+                  m_usr1;
+                  m_usr2;
+                  m_usr3;
+          }
+          subgraph cluster3 {
+                  label="UFD: usr1";
+                  color=lightgray
+                  style=filled;
+                  test_c1;
+                  a_out;
+          }
+          subgraph cluster4 {
+                  label="UFD: usr2";
+                  color=lightgray
+                  style=filled;
+                  tarea_c;
+                  instrucciones;
+          }
+          subgraph cluster5 {
+                  label="UFD: usr3";
+                  color=lightgray
+                  style=filled;
+                  tarea_c2;
+                  a_out2;
+          }
+          sys -> list;
+          sys -> copy;
+          sys -> edit;
+          sys -> login;
+  
+          usr1 -> test_c1;
+          usr1 -> a_out;
+          usr2 -> tarea_c;
+          usr2 -> instrucciones;
+          usr3 -> tarea_c2;
+          usr3 -> a_out2;
+          mail -> m_usr1;
+          mail -> m_usr2;
+          mail -> m_usr3;
+  
+          test_c1 [label="test.c"];
+          a_out [label="a.out"];
+          tarea_c [label="tarea.c"];
+          tarea_c2 [label="tarea.c"];
+          a_out2 [label="a.out"];
+          m_usr1 [label="usr1"];
+          m_usr2 [label="usr2"];
+          m_usr3 [label="usr3"];
+  }
+#+end_src
+
+#+results:
+[[file:ltxpng/directorio_simple.png]]
+#+html: <p align="center">Directorio simple, limitado a un sólo nivel de profundidad</p></div>
+
+Este esquema resuelve el problema principal del nombre global único:
+Antes de los directorios, cada usuario tenía que cuidar que los
+nombres de sus archivos fueran únicos en el sistema, y ya teniendo
+cada uno su propio espacio, se volvió una tarea mucho más simple. La
+desventaja es que, si el sistema restringe a cada usuario a escribir
+en su UFD, se vuelve fundamentalmente imposible trabajar en algún
+proyecto conjunto: No puede haber un directorio que esté tanto dentro
+de =usr1= como de =usr2=, y los usuarios encontrarán más dificil
+llevar un proyecto conjunto.
+
+*** Directorios estructurados como árbol
+
+El siguiente paso natural para este esquema es permitir una /jerarquía
+ilimitada/: En vez de exigir que exista una capa de directorios, se le
+puede /dar la vuelta/ al argumento, y permitir que cada directorio
+pueda contener a otros archivos o directorios a niveles
+arbitrarios. Esto permite que cada usuario (y que el administrador del
+sistema) estructure su información siguiendo criterios lógicos y
+piense en el espacio de almacenamiento como un espacio a largo plazo.
+
+#+html: <div class="figure">
+#+attr_latex: width=0.5\textwidth
+#+caption: Directorio estucturado como árbol
+#+begin_src dot :exports results :file ltxpng/directorio_arbol.png
+digraph G {
+  root -> bin;
+  root -> home;
+  root -> lib;
+  
+  bin -> ls;
+  bin -> cp;
+  bin -> ed;
+  bin -> login;
+
+  lib -> libc;
+
+  home -> usr1;
+  home -> usr2;
+  home -> usr3;
+
+  usr1 -> test_c1;
+  usr1 -> a_out;
+  usr2 -> tarea_c2;
+  usr2 -> instrucciones;
+  usr3 -> tarea_c;
+  usr3 -> a_out2;
+  
+  root [label="/"];
+  a_out [label="a.out"];
+  test_c1 [label="test.c"];
+  a_out2 [label="a.out"];
+  tarea_c [label="tarea.c"];
+  tarea_c2 [label="tarea.c"];
+}
+#+end_src
+
+#+results:
+[[file:ltxpng/directorio_arbol.png]]
+#+html: <p align="center">Directorio estructurado como árbol</p></div>
+
+Junto con esta estructura nacen las /rutas de búsqueda/ (/search
+path/): Tanto los programas como las bibliotecas de sistema ahora
+pueden estar en cualquier lugar del sistema de archivos. Al definirle
+al sistema una /ruta de búsqueda/, el usuario operador puede
+desentenderse del lugar exacto en el que está determinado programa —
+El sistema se encargará de buscar en todos los directorios mencionados
+los programas o bibliotecas que éste requiera.
+
+*** El directorio como un /grafo dirigido acíclico/
+
+** Operaciones con directorios
+
+** Otros esquemas de organización
+
+* El medio físico
 
 * Generalidades
 

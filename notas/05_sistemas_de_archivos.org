@@ -39,9 +39,9 @@ mayor existencia fuera de saber que está /potencialmente/ disponible.
 
 Dentro de cada /volúmen/ (cada medio de almacenamiento), los archivos
 disponibles conforman a un /directorio/, y son típicamente
-identificados por un /nombre/. Hablaremos más adelante acerca de
-las diferentes construcciones semánticas que pueden conformar a los
-directorios.
+identificados por un /nombre/ o una /ruta/. Hablaremos más adelante
+acerca de las diferentes construcciones semánticas que pueden
+conformar a los directorios.
 
 ** Operaciones con archivos
 #<<operaciones_con_archivos>>
@@ -59,16 +59,26 @@ semántica, pero en líneas generales, siempre encontraremos:
            acceso para el /modo de acceso/ al archivo que indiquemos y
            si el medio lo soporta (por ejemplo, a pesar de contar con
            los permisos, no podemos abrir para escritura un archivo en
-           un disco de sólo lectura). Abrir un archivo es necesario
-           para todas las siguientes operaciones.
+           un disco de sólo lectura), y asigna un /descriptor de
+           archivos/ que identifica la relación entre el proceso y el
+           archivo en cuestión. Abrir un archivo es necesario para
+           todas las siguientes operaciones.
+
+- Cerrar :: Indica al sistema que /el proceso en cuestión/ terminó de
+            trabajar con el archivo; el sistema entonces debe vaciar
+            los buffers a disco y eliminar la entrada que representa a
+            esta combinación archivo-proceso de las tablas activas,
+            invalidando al /descriptor de archivo/. Si un proceso
+            cierra un archivo y quiere volver a emplearlo, tendrá que
+            abrirlo explícitamente.
 
 - Leer :: Cuando indicamos al sistema que queremos leer de un archivo
           hacia determinado buffer, éste copia el siguiente /pedazo/
           de información a éste. Este /pedazo/ podría ser una línea o
           un bloque de longitud definida, dependiendo del modo en que
           se solicite la lectura. El sistema mantiene un apuntador a
-          la última posición leída, para poder sencillamente continuar
-          con la lectura.
+          la última posición leída, para poder /continuar/ con la
+          lectura.
 
 - Escribir :: Teniendo un archivo ya existente, guarda información en
               él. Puede ser que escriba desde su primer posición
@@ -94,6 +104,11 @@ existentes; dependiendo del sistema operativo, habrá algunas
 adicionales; estas las presentamos como la base general sobre la cual
 trabajaremos.
 
+Vale la pena mencionar que esta semántica para el manejo de archivos
+presenta a cada archivo como si fuera una /unidad de cinta/,
+permitiéndonos avanzar o retroceder la cabeza lectora/escritora dentro
+de ella.
+
 ** Tablas de archivos abiertos
 
 Tanto el sistema operativo como cada uno de los procesos mantienen
@@ -107,8 +122,6 @@ En un sistema operativo multitareas, más de un proceso podría abrir el
 mismo archivo a la vez; lo que cada uno de ellos pueda hacer, y cómo
 esto impacte a lo que vean los demás procesos, depende de la semántica
 que implemente el sistema.
-
-
 
 Ahora, ¿por qué mencionamos que estas tablas son mantenidas tanto por
 el sistema operativo como por cada uno de los procesos? ¿No nos lleva
@@ -127,9 +140,15 @@ distinta. El sistema operativo necesita:
      visión.
 - Modos de acceso :: Aunque un usuario tenga permisos de acceso a
      determinado recurso, el sistema puede determinar negarlo si
-     llevaría a un inconsistente. Por ejemplo, si dos procesos abren
+     llevaría a una inconsistencia. Por ejemplo, si dos procesos abren
      un mismo archivo para escritura, es probable que los cambios que
      realice uno sobreescriban a los que haga el otro.
+- Ubicación en disco :: Para evitar que cada proceso tenga que
+     consultar las tablas en disco para encontrar al archivo, o sus
+     fragmentos.
+- Información de bloqueo :: En caso de que los modos de acceso del
+     archivo requieran protección mutua, puede implementarse por
+     medio de un bloqueo.
 
 Por otro lado, el proceso necesita:
 
@@ -138,10 +157,396 @@ Por otro lado, el proceso necesita:
      proceso. Un archivo abierto por varios procesos tendrá
      descriptores de archivo distintos en cada uno de ellos. El
      descriptor de archivo es un número entero.
-
 - Permisos :: Los modos válidos de acceso para un archivo. Esto no
-              necesariamente es igual al 
+              necesariamente es igual a los permisos que tiene el
+              archivo en cuestión en disco, sino que el /subconjunto/
+              de dichos permisos bajo los cuales está operando para
+              este proceso en particular — Si un archivo fue abierto
+              en modo de sólo lectura, por ejemplo, este campo
+              sólo permitirá la lectura.
 
+** Acceso concurrente: Bloqueo de archivos
+
+Dado que los archivos pueden emplearse como mecanismo de comunicación
+entre procesos que no guarden relación entre sí, incluso a lo largo
+del tiempo, y para emplear un archivo basta indicar su nombre o ruta,
+los sistemas operativos multitarea implementan mecanismos de bloqueo
+para evitar que varios procesos intentando emplear de forma
+concurrente a un archivo se corrompan mutuamente.
+
+Algunos sistemas operativos permiten establecer bloqueos sobre
+determinadas regiones de los archivos, aunque la semántica más común
+es operar sobre el archivo como una sola unidad.
+
+En general, la nomenclatura que se sigue para los bloqueos es:
+
+- Compartido :: (/Shared lock/) Podría verse como equivalente a un
+                bloqueo (o /candado/) para realizar lectura — Varios
+                procesos pueden adquirir al mismo tiempo un bloqueo de
+                lectura, e indica que todos los que posean dicho
+                /candado/ tienen la expectativa de que el archivo no
+                sufrirá modificaciones.
+- Exclusivo :: (/Exclusive lock/) Un bloqueo o /candado/ exclusivo
+               puede ser adquirido por un sólo proceso, e indica que
+               realizará operaciones que modifiquen al archivo (o, si
+               la semántica del sistema operativo permite expresarlo,
+               a la /porción/ del archivo que indica).
+
+Respecto al /mecanismo/ de bloqueo, hay también dos tipos,
+dependiendo de qué tan explícito tiene que ser su manejo:
+
+- Mandatorio u obligatorio :: (/Mandatory locking/) Una vez que un
+     proceso adquiere un candado obligatorio, el sistema operativo se
+     encargará de imponer las restricciones corresponidentes de acceso
+     a todos los demás procesos, independientemente de si éstos fueron
+     programados para considerar la existencia de dicho bloqueo o no.
+- Consultivo o asesor :: (/Advisory locking/) Este tipo de bloqueos
+     es manejado exclusivamente entre los procesos involucrados, y
+     depende del programador de /cada uno/ de los programas en
+     cuestión el solicitar y respetar dicho bloqueo.
+
+Haciendo un paralelo con los mecanismos presentados en la [[./02_administracion_de_procesos.org][unidad de
+administración de procesos]], los mecanismos que emplean mutexes,
+semáforos o variables de condición serían /consultivos/, y únicamente
+los que emplean monitores (en que la única manera de llegar a la
+información es a través del mecanismo que la protege) serían
+/mandatorios/.
+
+De esta matriz de $2\times2$ tipos de bloqueo, no todos los sistemas
+operativos implementan las cuatro posibilidaddes. Como regla general,
+en los sistemas Windows se maneja un esquema de bloqueo obligatorio, y
+en sistemas Unix es de bloqueo consultivo.[fn:: Esto explica por qué
+en Windows es tan común que el sistema mismo nos rechace hacer
+determinada operación porque /el archivo está abierto por otro
+programa/ (bloqueo mandatorio compartido), mientras que en Unix esta
+responsabilidad recae en cada uno de los programas de aplicación]
+
+Cabe mencionar que el manejo de bloqueos con archivos requiere del
+mismo cuidado que el de bloqueo por recursos que el que vimos en
+/administración de procesos/: Dos procesos intentando adquirir un
+candado exclusivo sobre dos archivos pueden caer en un bloqueo mutuo
+tal como ocurre con cualquier otro recurso externo.
+
+** Tipos de archivo
+
+Si los archivos son, como dijimos, la /unidad lógica mínima/ con la
+que se puede guardar información en almacenamiento secundario,
+naturalmente sigue que existen archivos de diferentes tipos — Un
+archivo puede ser un documento de texto, un binario ejecutable, un
+archivo de audio o video, y un larguísimo etcetera, e intentar emplear
+a un archivo como uno de un tipo distinto puede resultar desde una
+frustración al usuario porque el programa no responde como éste
+quiere, hasta en pérdidas económicas.[fn:: Por ejemplo, imprimir un
+archivo binario resulta en una gran cantidad de hojas inútiles,
+particularmente tomando en cuenta que hay caracteres de control como
+el ASCII 12 (avance de forma, /form feed/), que llevan a las
+impresoras que operan en modo texto a iniciar una nueva página; llevar
+a un usuario a correr un archivo ejecutable /disfrazado/ de un
+documento inocuo, como veremos a continuación, fue un importante
+vector de infección de muchos virus.]
+
+Hay tres estrategias principales para que el sistema operativo
+reconozca al tipo de un archivo:
+
+- Extensión :: En los sistemas CP/M de los 1970, el nombre de cada
+               archivo se dividía en dos porciones, empleando como
+               separador al punto: El nombre del archivo y su
+               extensión. El sistema mantenía una lista de extensiones
+               conocidas, para las cuales sabría cómo actuar, y este
+               diseño se extendería a las aplicaciones, que sólo
+               abrirían a aquellos archivos cuyas extensiones
+               supieran manejar.
+
+	       Esta estrategia fue heredada por VMS y MS-DOS, de
+               donde la adoptó Windows; ya en el contexto de un
+               entorno gráfico, Windows agrega, más allá de las
+               extensiones directamente ejecutables, la relación de
+               extensiones con los programas capaces de trabajar con
+               ellas, permitiendo invocar a un programa con sólo dar
+               ``doble click'' en un documento.
+
+	       Como nota, este esquema de asociación de tipo de
+               archivo permite ocultar las extensiones toda vez que ya
+               no requieren ser del conocimiento del usuario, sino que
+               son gestionadas por el sistema operativo, abre una vía
+               de ataque automatizado que se popularizó en su momento:
+               El envío de correos con extensiones engañosas
+               duplicadas — Esto es, el programa maligno (un /programa
+               troyano/) se envía a todos los contactos del usuario
+               infectado, presentándose por ejemplo como una imágen,
+               con el nombre =inocente.png.exe=. Por el esquema de
+               ocultamiento mencionado, éste se presenta al usuario
+               como =inocente.png=, pero al abrirlo, el sistema
+               operativo lo reconoce como un ejecutable, y lo ejecuta
+               en vez de abrirlo en un visor de imágenes.
+
+- Números mágicos :: La alternativa que emplean los sistemas Unix es,
+     como siempre, simple y /elegante/, aunque indudablemente presenta
+     eventuales lagunas: El sistema mantiene una lista compilada de
+     las /huellas digitales/ de los principales formatos que debe
+     manejar,[fn:: Una de las ventajas de este esquema es que cada
+     administrador de sistema puede ampliar la lista con las huellas
+     digitales que requiera localmente] para reconocer el contenido
+     de un archivo basado en sus primeros bytes.
+
+     Casi todos los formatos de archivo incluyen lo necesario para que
+     se lleve a cabo este reconocimiento, y cuando no es posible
+     hacerlo, se intenta por medio de ciertas reglas /heurísticas/.
+     Por ejemplo, todos los archivos de imágen en /formato de
+     intercambio gráfico/ (GIF) inician con la cadena =GIF87a= o
+     =GIF89a=, dependiendo de la versión; los archivos del lenguaje de
+     descripción de páginas PostScript inician con la cadena =%!=, el
+     /Formato de Documentos Portátiles/ (PDF) con =%PDF=, etcétera. Un
+     documento en formatos definidos alrededor de XML inicia con
+     =<!DOCTYPE=.  Algunos de estos formatos no están /anclados/ al
+     inicio, sino que en un punto específico del primer bloque.
+
+     Un caso especial de números mágicos es el llamado /hashbang/
+     (=#!=). Esto indica a un sistema Unix que el archivo en cuestión
+     (típicamente un archivo de texto, incluyendo código fuente en
+     algún lenguaje de /script/) debe tratarse como un ejecutable, y
+     empleando como /intérprete/ al comando indicado inmediatamente
+     después del /hashbang/. Es por esto que podemos ejecutar
+     directamente, por ejemplo, los archivos que inician con
+     =#!/usr/bin/bash=: El sistema operativo invoca al programa
+     =/usr/bin/bash=, y le especifica como argumento al archivo en
+     cuestión.
+
+- Metadatos externos :: El sistema de archivos HFS (/Hierarchical File
+     System/, /Sistema de Archivos Jerárquico/) empleado por las Apple
+     Macintosh desde 1984 separa en dos /divisiones/ (/forks/) la
+     información de un archivo: Los datos que propiamente constituyen
+     al archivo en cuestión son la /división de datos/ (/data fork/),
+     y la información /acerca del archivo/ se guardan en una
+     estructura independiente llamada /división de recursos/
+     (/resource fork/).
+
+     Esta idea resultó fundamental para varias de las características
+     /amigables al usuario/ que presentó Macintosh desde su
+     introducción — Particularmente, para presentar un entorno gráfico
+     que respondiera ágilmente, sin tener que buscar los datos base de
+     una aplicación dentro de un archivo de mucho mayor tamaño. La
+     /división de recursos/ cabe en pocos sectores de disco, y si
+     tomamos en cuenta que las primeras Macintosh funcionaban
+     únicamente con discos flexibles, el tiempo invertido en leer una
+     lista de iconos podría ser demasiada.
+
+     La división de recursos puede contener todo tipo de
+     información; los programas ejecutables son los que le dan un
+     mayor uso, dado que incluyen desde los aspectos gráficos (icono
+     a mostrar para el archivo, ubicación de la ventana a ser
+     abierta, etc.) hasta aspectos funcionales, como la traducción de
+     sus cadenas al lenguaje particular del sistema en que está
+     instalado. Esta división permite una gran flexibilidad, dado que
+     no es necesario tener acceso al fuente del programa para crear
+     traducciones y temas.
+
+     En el tema particular que en esta sección nos concierne, la
+     división de recursos incluye un campo /creador/, que indica qué
+     programa fue el que creó al archivo, mismo que será llamado
+     en caso de que el usuario invoque directamente al archivo.
+
+     Las versiones actuales de MacOS ya no emplean esta técnica, sino
+     que una llamada /appDirectory/, para propósitos de esta
+     discusión, la técnica base es la misma.
+
+** Estructura de los archivos y métodos de acceso
+
+La razón principal de la existencia del sistema de archivos son /los
+archivos/. Un archivo almacena información de /algún tipo/,
+estructurado o no estructurado.
+
+La mayor parte de los sistemas operativos maneja únicamente archivos
+/sin estructura/ — Cada aplicación es responsable de preparar la
+información de forma congruente, y la responsabilidad del sistema
+operativo es únicamente entregarlo como un conjunto de bytes. Ha
+habido sistemas de archivos históricos, como IBM CICS (1968), IBM MVS
+(1974) o DEC VMS (1977), que administraban ciertos tipos de datos en
+un formato básico de /base de datos/.
+
+El que el sistema operativo no imponga estructura a un archivo no
+significa, claro está, que la aplicación que lo genera no lo haga. La
+razón por la que los sistemas creados en los últimos 30 años no han
+implementado este esquema de base de datos es que le /resta/
+flexibilidad al sistema: El que una aplicación tuviera que ceñirse a
+los tipos de datos y alineación de campos del sistema operativo
+impedía su adecuación, y el que la funcionalidad de un archivo tipo
+base de datos dependiera de la versión del sistema operativo creaba
+un /acoplamiento/ demasiado rígido entre el sistema operativo y las
+aplicaciones: Hoy en día es mucho más común ver que los programas que
+requieren gestores de base de datos interactúen con uno, implementado
+independientemente en espacio de usuario, o incluso que /liguen/ con
+un gestor implementado como biblioteca, como es el caso de /SQLite/
+(que es empleado por herramientas de adquisición de datos tan de bajo
+nivel como /systemtap/, y por herramientas tan de escritorio como el
+gestor de fotografías /shotwell/ o el navegador /Firefox/.
+
+Podemos ver aún un remanente de los archivos estructurados en los
+sistemas derivados de MS-DOS: En estos sistemas, un archivo puede ser
+/de texto/ o /binario/. Un archivo de texto está compuesto por una
+serie de caracteres que forman /líneas/, y la separación entre una
+línea y otra constituye de un /retorno de carro/ (=CR=, caracter
+ASCII 13) seguido de un /salto de línea/ (=LF=, caracter ASCII
+10).[fn:: Esta lógica es herencia de las máquinas de escribir
+manuales, en que el /salto de línea/ (avanzar el rodillo a la línea
+siguiente) era una operación distinta a la del /retorno de carro/
+(devolver la cabeza de escritura al inicio de la línea). En la época
+de los teletipos, como medida para evitar que se perdieran caracteres
+mientras la cabeza volvía hasta la izquierda, se decidió separar el
+inicio de nueva línea en los dos pasos que tienen las máquinas de
+escribir, para inducir una demora que evitara la pérdida de
+información.]
+
+El acceso a los archivos puede realizarse de diferentes maneras:
+
+- Acceso secuencial :: Mantiene la semántica por medio de la cual
+     pudiéramos leer de nuestros archivos fuera la equivalente a
+     unidad de cinta que mencionamos en la sección [[#operaciones_con_archivos][Operaciones con
+     archivos]]: El mecanismo principal para leer o escribir es ir
+     avanzando consecutivamente por los bloques que conforman al
+     archivo hasta llegar a su final.
+
+     Típicamente emplearemos este mecanismo de lectura para leer a
+     memoria código (programas o bibliotecas) o documentos, sea
+     enteros o fracciones de los mismos. Para un contenido
+     estructurado, como una base de datos, resultaría absolutamente
+     ineficiente, dado que no conocemos el punto de inicio o
+     finalización de cada uno de los registros, y probablemente
+     tendríamos que hacer /barridos secuenciales/ del archivo completo
+     para cada una de las búsquedas.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Archivo de acceso secuencial
+#+begin_src ditaa :file ltxpng/acceso_secuencial.png :cmdline -E
+          Lectura -=->
+             |
+             V
+-=-+--------------------------------------------------------------------------+-=-
+   |...Nombre##Gonzalo;Apellido##Oliva;Nombre##Raquel;Apellido##Domínguez;E...|
+-=-+--------------------------------------------------------------------------+-=-
+#+end_src
+#+html: <p align="center">Archivo de acceso secuencial</p></div>
+
+- Acceso aleatorio :: El empleo de gestores como /SQLite/ u otros
+     muchos motores de base de datos más robustos no nos exime de
+     pensar en nuestro archivo como una tabla estructurada. Si la
+     única semántica por medio de la cual pudiéramos leer de nuestros
+     archivos fuera la equivalente a una unidad de cinta, implementar
+     el acceso a un punto determinado del archivo podría resultar
+     demasiado gravoso.
+
+     Afortunadamente, el que el sistema operativo no imponga registros
+     de longitud fija no impide que /el programa gestor/ lo haga. Si
+     en el archivo al cual apunta el descriptor de archivos =FD=
+     tenemos 2000 registros de 75 bytes cada uno y necesitamos
+     recuperar el registro número 65 hacia el buffer =registro=,
+     /reposicionamos/ el apuntador de lectura al byte $65 \times 75 =
+     4875$ (=seek(FD, 4875)=) y leemos los siguientes 75 bytes en
+     =registro= (=read(FD, *registro, 75)=).
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Archivo de acceso aleatorio
+#+begin_src ditaa :file ltxpng/acceso_aleatorio.png :cmdline -E
+
+       +--------+-----------+-----------+-------------------+--------------+-------------+
+       | Nombre | Apellido  | Teléfono  | Correo            | ultimaSesion | usuarioDesde|
+     0 +--------+-----------+-----------+-------------------+--------------+-------------+
+       :        :           :           :                   :              :             :
+       : ...    : ...       : ...       : ...               : ...          : ...         :
+  4800 +--------+-----------+-----------+-------------------+--------------+-------------+
+       | José   | Chávez    | 5154-4553 | chavez@aqui.no.es | 2013.04.05   | 2012.01.15  |
+  4875 +--------+-----------+-----------+-------------------+--------------+-------------+
+------>| Oliva  | Gonzalo   |           |                   |              |             |
+  4950 +--------+-----------+-----------+-------------------+--------------+-------------+
+       | Raquel | Domínguez |           | rdomgz@aca.si.es  |              |             |
+  5025 +--------+-----------+-----------+-------------------+--------------+-------------+
+       :        :           :           :                   :              :             :
+       : ...    : ...       : ...       : ...               : ...          : ...         :
+150000 +--------+-----------+-----------+-------------------+--------------+-------------+
+#+end_src
+#+html: <p align="center">Archivo de acceso aleatorio</p></div>
+
+- Acceso relativo a índice :: En los últimos años se han popularizado
+     los gestores de base de datos /no estructurados/ u /orientados a
+     texto/, llamados genéricamente /NoSQL/. Estos gestores pueden
+     guardar registros de tamaño variable en disco, por lo que no
+     podríamos encontrar la ubicación correcta por medio de los
+     mecanismos de acceso aleatorio.
+
+     Para implementar este acceso, se divide al conjunto de datos en
+     dos secciones (incluso, posiblemente, en dos archivos
+     independientes): La primer sección es una lista corta de
+     identificadores, cada uno con el punto de inicio y término de
+     los datos a los que apunta. Para leer un registro, se emplea
+     acceso aleatorio sobre el índice, y el apuntador se avanza a la
+     ubicación específica que se solicita.
+
+     En el transcurso de un uso intensivo de esta estructura, dado que
+     la porción de índice es muy frecuentemente consultada y
+     relativamente muy pequeña, muy probablemente se mantenga completa
+     en memoria, y el acceso a cada uno de los registros puede
+     resolverse en tiempo muy bajo.
+
+     La principal desventaja de este modelo de indexación sobre
+     registros de longitud variable es que sólo resulta eficiente
+     para contenido /mayormente de lectura/: Cada vez que se produce
+     una escritura y cambia la longitud de los datos almacenados, se
+     va generando fragmentación en el archivo, y para resolverla
+     probablemente se hace necesario suspender un tiempo la ejecución
+     de todos los procesos que estén empleando al archivo en cuestión
+     (e invalidar, claro, todas las copias en caché de los
+     índices). Ahora bien, mientras se mantenga como mayormente de
+     lectura, este formato tendrá la ventaja de no desperdiciar
+     espacio en los campos nulos o de valor irrelevante para algunos
+     de los registros.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
+#+begin_src ditaa :file ltxpng/acceso_relativo_a_indice.png :cmdline -E
++-----------+--------+--------+
+| Apellido  | Inicio | Tamaño |
++-----------+--------+--------+
+| Chávez    |     0  |    132 |
++-----------+--------+--------+
+| Domínguez |   163  |    200 |        +--------------------+
++-----------+--------+--------+     63 |...fono##5154-4553;E|  82
+| Godoy     |   428  |     62 |     83 |mail##chavez@aqui.no| 102
++-----------+--------+--------+    103 |.es;ultimaSesion##20| 122
+| Oliva     |    132 |     31 +------->+13.04.05;Nombre##Gon| 142
++-----------+--------+--------+    143 |zalo;Apellido##Oliva| 162
+| Vázquez   |   408  |     20 |    163 |;Nombre##Raquel;Apel| 182
++-----------+--------+--------+    183 |lido##Domínguez;E...| 202
+| Zapata    |   363  |     45 |        +--------------------+
++-----------+--------+--------+
+#+end_src
+#+html: <p align="center">Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura</p></div>
+
+
+** Dispositivos orientados a bloques
+
+Un sistema de archivos es la representación que se da a un conjunto
+de archivos y directorios sobre un /dispositivo orientado a bloques/;
+un /dispositivo orientado a bloques/ es uno que, para cualquier
+transferencia que solicitemos desde o hacia él, nos responderá con un
+bloque de tamaño predefinido.
+
+Esto es, si bien el sistema operativo nos presenta una abstracción
+por medio de la cual la lectura (=read()=) puede ser de un tamaño
+arbitrario, todas las transferencias de datos desde cualquiera de los
+discos serán de un múltiplo del tamaño de bloques (típicamente 512
+bytes).
+
+Cuando leemos, como en el ejemplo anterior, sólamente un registro
+de 75 bytes, el sistema operativo lee el bloque completo y
+probablemente lo mantiene en un caché en la memoria principal; si en
+vez de una lectura, la operación que efectuamos fue una de escritura
+(=write()=), y el sector que vamos a modificar no ha sido leído aún a
+memoria (o fue leído hace mucho, y puede haber sido expirado del
+caché), el sistema tendrá que leerlo nuevamente, modificarlo en
+memoria, y volver a guardarlo a disco.
 
 * Generalidades
 
@@ -306,32 +711,6 @@ para este fin:
              bidireccional de un modo muy similar al de la
              comunicación entre dos procesos en red.
 
-** Archivos con estructura
-
-La razón principal de la existencia del sistema de archivos son /los
-archivos/. Un archivo almacena información de /algún tipo/,
-estructurado o no estructurado.
-
-La mayor parte de los sistemas operativos maneja únicamente archivos
-/sin estructura/ — Cada aplicación es responsable de preparar la
-información de forma congruente, y la responsabilidad del sistema
-operativo es únicamente entregarlo como un conjunto de bytes. Ha
-habido sistemas de archivos históricos, como IBM CICS (1968), IBM MVS
-(1974) o DEC VMS (1977), que administraban ciertos tipos de datos en
-un formato básico de /base de datos/.
-
-** /Forks/ de datos y de recursos
-
-En el sistema operativo MacOS (1984), empleando HFS (Hierarchical File
-System, Sistema de Archivos Jerárquico), se introdujo un mecanismo
-para permitir al sistema operativo saber cómo se manejaría un archivo
-/sin tener que abrir el archivo completo/ (por cuestiones de
-rendimiento principalmente): el /fork de datos/ y el /fork de
-recursos/ (data fork, resource fork). El /fork de datos/ contiene a la
-información del archivo propiamente, mientras que el /fork de
-recursos/ tiene el icono que se presenta al usuario en la interfaz
-gráfica (incluso la /posición/ donde este icono será mostrado), el
-programa encargado de manipularlo, preferencias, etc.
 
 * Esquema general de un sistema de archivos
 
@@ -430,13 +809,13 @@ lo cual permite particiones de hasta 16TB.
 Como segundo ejemplo podemos referirnos al /Sistema de Archivos Ágil
 de Berkeley/ (Berkeley Fast File System, FFS).
 
-* TODO Organización y acceso a archivos
-* TODO Estructura de los directorios
-* TODO Estructura de los sistemas de archivos
-* TODO Métodos de asignación
-* TODO Administración del espacio libre
+* Organización y acceso a archivos
+* Estructura de los directorios
+* Estructura de los sistemas de archivos
+* Métodos de asignación
+* Administración del espacio libre
 
-* TODO Particularidades de medios: Cuando no es un disco
+* Particularidades de medios: Cuando no es un disco
 
 Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
 * Otros recursos

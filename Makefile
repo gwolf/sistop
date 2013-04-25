@@ -7,6 +7,12 @@ publish_src_html = ./html/*
 publish_src_pdf = ./pdf/*
 publish_src_pdf = ./biblio/*
 
+dir_semestre = por_semestre/2013-2
+dir_laminas = laminas
+
+idx_semestre = $(dir_semestre)/index.org
+idx_laminas = $(dir_laminas)/index.org
+
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
@@ -22,14 +28,14 @@ pdf:
 	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
 beamer:
-	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > laminas/index.org
-	echo '#+AUTHOR: Gunnar Wolf' >> laminas/index.org
-	echo '#+EMAIL: gwolf@sistop.org' >> laminas/index.org
-	echo '#+LANGUAGE: es' >> laminas/index.org
-	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> laminas/index.org
-	echo '* Láminas disponibles' >> laminas/index.org
-	echo '| *Fecha* | Título |' >> laminas/index.org
-	echo '|--|--|' >> laminas/index.org
+	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)
+	echo '#+AUTHOR: Gunnar Wolf' >> $(idx_laminas)
+	echo '#+EMAIL: gwolf@sistop.org' >> $(idx_laminas)
+	echo '#+LANGUAGE: es' >> $(idx_laminas)
+	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> $(idx_laminas)
+	echo '* Láminas disponibles' >> $(idx_laminas)
+	echo '| *Fecha* | Título |' >> $(idx_laminas)
+	echo '|--|--|' >> $(idx_laminas)
 	for i in `ls laminas/*.org | grep -v index.org | sort -n`; do \
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
@@ -37,11 +43,39 @@ beamer:
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
 		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
-	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> laminas/index.org; \
+	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> $(idx_laminas); \
 	done
-	emacs -Q --batch --visit=laminas/index.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
-	rm laminas/index.org
+	emacs -Q --batch --visit=$(idx_laminas) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	rm $(idx_laminas)
 
+semestre:
+	[ -d $(dir_semestre) ] || mkdir -p $(dir_semestre);
+	echo '#+TITLE: SISTEMAS OPERATIVOS — Información para los alumnos del semestre actual' > $(idx_semestre)
+	echo '#+AUTHOR: Gunnar Wolf' >> $(idx_semestre)
+	echo '#+EMAIL: gwolf@sistop.org' >> $(idx_semestre)
+	echo '#+LANGUAGE: es' >> $(idx_semestre)
+	echo '#+OPTIONS: toc:nil' >> $(idx_semestre)
+	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> $(idx_semestre)
+	echo '* Listas' >> $(idx_semestre)
+	echo '- [[./lista.html#sec-1][Asistencia]]' >> $(idx_semestre)
+	echo '- [[./lista.html#sec-2][Tareas y participaciones]]' >> $(idx_semestre)
+	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
+	emacs -Q --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	mv docente/lista.html $(dir_semestre)
+	echo '* Exámenes resueltos' >> $(idx_semestre)
+	for i in `ls examenes/resueltos/*.org | sort -n`; do \
+	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
+	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
+	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
+	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
+		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
+	    fi ; \
+	    cp $$pdf $(dir_semestre); \
+	    pdf_aqui=`basename $$pdf`; \
+	    echo "- [[./$$pdf_aqui][$$title]] ($$date)" >> $(idx_semestre); \
+	done
+
+	emacs -Q --batch --visit=$(idx_semestre) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 clean-publish-cache:
 	rm -f ~/.org-timestamps/notas*.cache
 
@@ -50,7 +84,7 @@ clean: clean-publish-cache
 	rm -rf html
 	rm -rf pdf
 
-push: push_html push_pdf push_biblio push_beamer
+push: push_html push_pdf push_biblio push_beamer push_semestre
 
 push_html: html
 	rsync -av --delete ./html/* $(publish_dest)/html
@@ -62,6 +96,9 @@ push_biblio:
 	rsync -av --delete ./biblio/* $(publish_dest)/biblio
 
 push_beamer:
-	rsync -av --delete ./laminas/* $(publish_dest)/laminas
+	rsync -av --delete ./$(dir_laminas)/* $(publish_dest)/$(dir_laminas)
+
+push_semestre: semestre
+	rsync -av --delete ./$(dir_semestre)/* $(publish_dest)/$(dir_semestre)
 
 all: pdf html beamer

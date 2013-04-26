@@ -714,7 +714,8 @@ digraph G {
   - El sistema emplea una /ruta de búsqueda/ para encontrarlos /por su
     nombre/
   - Ejemplo Unix: =/usr/local/bin:/usr/bin:/bin:~/bin=
-  - Ejemplo Windows =c:\WINDOWS\system32;c:\WINDOWS;c:\WINDOWS\System32\Wbem=
+  - Ejemplo Windows: =c:\WINDOWS\system32;c:\WINDOWS;=
+    =c:\WINDOWS\System32\Wbem=
 
 ** El directorio como un /grafo dirigido/
 - Muchas veces vemos al directorio como un árbol
@@ -726,7 +727,7 @@ digraph G {
 ** El directorio como un /grafo dirigido/
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
-#+begin_src dot :exports results :file ltxpng/directorio_DAG.png
+#+begin_src dot :exports results :file ltxpng/directorio_DG.png
 digraph G {
   root -> home;
 
@@ -755,9 +756,9 @@ digraph G {
 #+end_src
 
 ** El directorio como un /grafo dirigido/: detallando...
-#+attr_latex: width=0.4\textwidth
+#+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/, mostrando los /enlaces ocultos/ =.= y =..=
-#+begin_src dot :exports results :file ltxpng/directorio_DAG_completo.png
+#+begin_src dot :exports results :file ltxpng/directorio_DG_completo.png
 digraph G {
   root -> root [label="."];
   root -> root [label=".."];
@@ -840,7 +841,7 @@ Las ligas duras presentan dos restricciones principales:
    - Pueden causar problemas (veremos en un momento: /Recorrer los
      directorios/)
 
-** Ligas simbólicas
+** Ligas simbólicas (sistemas Unix)
 - Otro mecanismo para que un objeto /aparezca/ en más de un punto del directorio
 - Es un archivo /especial/ que incluye el nombre de otro objeto
   (¿archivo?) destino
@@ -864,7 +865,7 @@ Las ligas duras presentan dos restricciones principales:
 - ¿Principal diferencia? No se /siguen/ automáticamente
   - Tiene que hacerlo la aplicación — Y pocas lo hacen
 
-** Volviendo a nuestro grafo dirigido detallado
+** Volviendo a nuestro grafo dirigido
 - No podemos ya decir /formalmente/ que sea un grafo dirigido
   /acíclico/
   - =.= y =..= crean ciclos
@@ -948,9 +949,8 @@ Las ligas duras presentan dos restricciones principales:
 - ¿Cómo presenta el sistema operativo a los diferentes sistemas de
   archivos presentes?
 
-** Un /árbol/ con /puntos de montaje/
-- Esquema empleado en los sistemas Unix y derivados
-- El sistema /completo/ está estructurado en torno a un sólo árbol
+** Unix: Un /árbol/ con /puntos de montaje/
+- El sistema /completo/ está estructurado en torno a /un sólo árbol/
 - Cada sistema de archivos se /monta/ en el lugar que el administrador
   determina
   - El /punto de montaje/ es un directorio en el sistema de archivos
@@ -963,85 +963,291 @@ Las ligas duras presentan dos restricciones principales:
 
 ** Un árbol con distintos sistemas de archivo /montados/
 #+attr_latex: width=\textwidth
-#+caption: 
+#+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
 #+begin_src dot :exports results :file ltxpng/puntos_de_montaje.png
   digraph G {
-	  subgraph cluster0 {
-	          label = "usr";
-		  color = lightblue;
-		  style = filled;
-		  usr;
-		  usrbin;
-		  usrlib;
-		  bash;
-		  perl;
-	  }
+          rankdir = TB;
+          subgraph cluster0 {
+                  label = "sda1";
+                  color = lightgray;
+                  style = filled;
+                  root -> var;
+                  root -> bin;
+                  root -> sbin;
+          }
           subgraph cluster1 {
-	          label = "home";
-		  color = pink;
-		  style = filled;
-		  home;
-		  juan;
-		  pedro;
-		  irene;
-		  tarea_c;
-		  prueba_pl;
-	  }
-	  subgraph cluster2 {
-		  label="proc"
-		  color=yellow;
-		  style=filled;
-		  proc;
-		  procstuff;
-	  }
+                  label = "sda2";
+                  color = lightblue;
+                  style = filled;
+                  usr -> usrbin;
+                  usr -> usrlib;
+                  usrbin -> bash;
+                  usrbin -> perl;
+          }
+          subgraph cluster2 {
+                  label="proc"
+                  color=yellow;
+                  style=filled;
+                  proc -> 1;
+                  proc -> 2;
+                  proc -> 3;
+          }
           subgraph cluster3 {
-	          label = "Raiz";
-		  color = lightgray;
-		  style = filled;
-		  root;
-		  var;
-	  }
-	  
-	  root -> proc;
-	  root -> var;
-	  root -> home;
-	  root -> usr;
-	  
-	  usr -> usrbin;
-	  usr -> usrlib;
-	  usrbin -> bash;
-	  usrbin -> perl;
-	  
-	  juan -> home;
-	  pedro -> home;
-	  irene -> home;
-	  tarea_c -> juan;
-	  prueba_pl -> pedro [style="dotted"]
-	  prueba_pl -> irene;
-	  
-	  procstuff -> proc;
-	  
-	  root [shape=box, label="/"];
-	  usr [shape=box];
-	  proc [shape=box];
-	  var [shape=box];
-	  home [shape=box];
-	  usrbin [shape=box, label="bin"];
-	  usrlib [shape=box, label="lib"];
-	  juan [shape=box];
-	  pedro [shape=box];
-	  irene [shape=box];
-	  tarea_c [label="tarea.c"];
-	  prueba_pl [label="prueba.pl"];
-	  procstuff [label="..."];
+                  label = "sdb1";
+                  color = pink;
+                  style = filled;
+                  home -> juan;
+                  home -> pedro;
+                  home -> irene;
+                  juan -> tarea_c;
+                  pedro -> proyecto_pl [style=dotted];
+                  irene -> proyecto_pl;
+          }
+          
+          root -> proc;
+          root -> home;
+          root -> usr;
+          
+          root [shape=box, label="/"];
+          bin [shape=box];
+          sbin [shape=box];
+          usr [shape=box];
+          proc [shape=box];
+          var [shape=box];
+          home [shape=box];
+          usrbin [shape=box, label="bin"];
+          usrlib [shape=box, label="lib"];
+          juan [shape=box];
+          pedro [shape=box];
+          irene [shape=box];
   }
+  
 #+end_src
 
 
+** Windows: sistema de archivos virtual de dos niveles
+- La estrategia empleada por Windows es muy distinta
+- Cada uno de los sistemas de archivo /detectados/ recibe un
+  /identificador de volumen/ y es montado automáticamente
+- Los usuarios pueden ver a todos los volúmenes montados
+  - Nomenclatura =VOL:\Dir 1\Dir 2\Archivo.ext=
+- Dentro de cada uno de los volúmenes encuentran directorios
+  estructurados como árbol
+- Algunos volúmenes están preasignados por herencia
+  - =A= y =B= para unidades de disco flexible
+  - =C= para el disco de inicio del sistema
+  - Siguientes particiones, medios removibles o conexiones sobre red:
+    =D=, =E=, =F=, etc.
+
+** Visión del árbol en un sistema Windows
+#+attr_latex: height=0.7\textheight
+#+caption: Vista de un sistema de archivos Windows
+#+begin_src dot :exports results :file ltxpng/montaje_windows.png
+digraph G {
+	rankdir=LR;
+	subgraph cluster0 {
+		label = "C:"
+		color = lightblue;
+		style="filled"
+		raiz_c [shape=box, label="\\"];
+		windows [shape=box, label="Windows"];
+		archprog [shape=box, label="Archivos de programa"]
+		docset [shape=box, label="Documents and Settings"]
+		usr1 [shape=box, label="Usuario 1"]
+		desktop [shape=box, label="Escritorio"]
+		menu [shape=box, label="Menú Inicio"]
+		misdoc [shape=box, label="Mis documentos"]
+		system32 [shape=box];
+		prog1 [label="prog1.exe"];
+		prog2 [label="prog2.exe"];
+		prog3 [label="prog3.exe"];
+
+		raiz_c -> windows;
+		windows -> system32;
+		system32 -> prog1;
+		system32 -> prog2;
+		system32 -> prog3;
+		raiz_c -> archprog;
+		raiz_c -> docset;
+		docset -> usr1;
+		usr1 -> desktop;
+		usr1 -> menu;
+		usr1 -> misdoc;
+	}
+
+	subgraph cluster1 {
+		label = "D:"
+		color = yellow;
+		style="filled"
+		raiz_d [shape=box, label="\\"];
+		doc [shape=box, label="Documentos"]
+		pres [shape=box, label="Presentaciones"]
+		doc1 [label="Avance del proyecto.docx"]
+		doc2 [label="Datos 2000-2004.doc"]
+		pres1 [label="Presentación.ppt"]
+
+		raiz_d -> doc;
+		raiz_d -> pres;
+		doc -> doc1;
+		doc -> doc2;
+		pres -> pres1;
+	}
+
+	raiz [shape=box, label="<Mi PC>"];
+	raiz -> raiz_c
+	raiz -> raiz_d
+}
+#+end_src
+
 * Sistemas de archivos remotos
 ** La red y los sistemas de archivos
+- /Modelo cliente-servidor/
+  - Un equipo que tiene algún recurso que puede ofrecer a otros es un
+    /servidor/
+  - Todo equipo que use sus recursos es /cliente/
+  - Dos computadoras pueden ser /clientes/ y /servidores/ mutuos al
+    mismo tiempo
 - Uno de los primeros usos de las redes fue compartir archivos
   - De forma /explícita/: Transferencia manual con programas
     especializados (p.ej. FTP)
   - De forma /implícita/ y /automática/: Sistema de archivos sobre la
     red
+
+** Llamadas a procedimientos remotos (/RPC/)
+- Mecanismo de mensajes (y manejo básico de sesión) que causen que una
+  computadora remota ejecute determinada acción
+- Pero al mismo tiempo, es un /protocolo específico/ de
+  /descubrimiento de recursos/ y /abstracción/ desarrollado en los
+  1980s por Sun Microsystems
+  - Hay muchos protocolos comparables \rarrow =DCE/RPC= (OSF), =DCOM=
+    (Microsoft)
+  - Hoy en día, =SOAP= y =XML-RPC=
+    - Con mayor independencia de proveedor, pero con mayor complejidad
+- Permite al programador delegar en un /servicio/ el manejo de las
+  conexiones en red
+  - Y limitarse a atender la conexión /ya establecida/
+
+** Network File System (NFS)
+- /Network File System/ NFS (Unix), construido sobre Sun-RPC (1984)
+- Diseñado para aprovechar el hardware existente
+  - Un sólo servidor de archivos
+  - Todas las estaciones de trabajo /montan/ los directorios =/home=
+  - Incluso pueden montar otras partes del sistema
+  - Estaciones /diskless/
+
+** Semántica básica de NFS
+- Implementa la semántica de un sistema local Unix sobre la red
+  - Se integra transparentemente en cualquier sistema Unix
+- Los sistemas remotos se montan con el mismo comando y lógica que
+  los locales
+  - =# mount archivos.unam.mx:/home /home=
+
+** Ventajas de NFS
+- Implementación muy sencilla
+- Integración semántica directa (para sistemas tipo Unix)
+- Protocolo muy ligero
+  - Al no hacer verificaciones por operación ni implementar cifrado,
+    es muy conveniente para manejar archivos muy grandes
+
+** Desventajas de NFS
+- /Escrituras síncronas/ \rarrow Seguras, pero lentas
+  - Implementaciones posteriores incluyen manejo de caché de escritura
+- Manejo de seguridad / credenciales trivial / ingenuo
+  - Acceso controlado por dirección IP
+  - Requiere correspondencia de nombre-UID de usuarios
+
+** Server Message Block (SMB)
+- /Familia/ de protocolos de compartición de archivos empleado en
+  sistemas Microsoft (desde ~1990)
+- Primeras implementaciones, sobre un protocolo de red propio
+  (NetBEUI); migrado gradualmente para operar sobre TCP/IP
+  - 100% sobre TCP/IP desde el 2000
+  - También conocido como CIFS (/Common Internet File System/)
+- Se ajusta más cercanamente a la semántica de MS-DOS/Windows
+  - /Tiende/ a emplearse montando el directorio compartido como una
+    unidad en /Mi PC/:
+
+    => NET USE W: \\servidor\directorio=
+  - En Windows, puede referirse a un archivo directamente por su ruta
+    (aunque varios programas no lo implementan)
+
+** Ventajas de SMB
+- Hoy en día, implementaciones bastante universales, para cualquier
+  sistema operativo
+  - /Samba/ \rarrow Implementación hecha (originalmente) por
+    /ingeniería inversa/
+- Fácil de integrar en entornos basados en Windows
+- Si bien las versiones viejas presentan problemas de seguridad, las
+  implementaciones actuales son bastante confiables
+  - Particularmente en relación al cifrado de credenciales
+- Mecanismo de /bloqueo oportunista/ (explicamos pronto)
+
+** Desventajas de SMB
+- Protocolo pensado para una red /pequeña/
+  - Demasiado /platicador/, puede llevar a congestiones de red
+- Resolución de direcciones poco confiable
+  - Originalmente basada 100% en /broadcast/
+  - Posteriormente, empleando un servidor /WINS/
+  - Actualmente, sobre DNS dinámico
+- Semántica de autenticación poco clara
+  - Esquemas de autenticación /por recurso/, /por usuario/, basados
+    en directorio
+  - Imposibilidad de establecer sesiones múltiples
+
+** Bloqueo oportunista (/OpLock/)
+- Bloqueo orientado al /renidmiento/, no a la sincronización
+- Busca mejorar el manejo del caché e ignorar (un poco) la semántica
+  de abrir/cerrar archivos
+  - Para lotes :: Si un archivo es abierto y cerrado muchas veces
+                  (comportamiento común con los archivos =.BAT= de
+                  MS-DOS), este bloqueo /demora/ al =close()=,
+                  esperando que pronto haya un =open()= al mismo.
+  - Exclusivos :: Una vez otorgado, el cliente asume que es el único
+                  manipulando al archivo, y mantener en caché local
+                  todos los cambios; el servidor puede /romper/ o
+                  /revocar/ este bloqueo, obligando a una
+                  sincronización.
+
+** Sistemas de archivos distribuidos
+- Los dos esquemas presentados trabajan con una visión clara
+  cliente/servidor
+- Un sistema de archivos /distribuído/ busca crear recursos
+  /compartidos/, en que diversos equipos /se repartan/ la carga y
+  /compartan/ sus recursos
+  - Buscando una /fácil escalabilidad/
+- Problema complejo: Operar sin la certeza de que todos los nodos
+  estén siempre conectados
+- Implementación ejemplo: /Andrew File System/ (Carnegie Mellon
+  University, 1989)
+
+** Lógica básica de Andrew File System
+- Uso típico en organizaciones grandes (>25,000 estaciones)
+- Empleo agresivo de caché
+- /Ocultamiento / agnosticismo/ a ubicación
+  - Un /volumen/ puede migrarse a través de una red mientras está
+    siendo empleado
+  - Credenciales y ubicación provistos por un servicio /Kerberos/
+
+
+** Modelo de Consistencia Débil (/Weak Consistency Model/)
+- Al abrir un archivo, se copia completo al cliente
+  - Lecturas y escrituras se dirigen a la copia local
+- Al cerrar el archivo, se copia de vuelta al /servidor de origen/
+  - El /servidor de origen/ se /compromete/ a notificar a los
+    clientes si un archivo abierto fue modificado (/callback/)
+- Los cambios a un archivo abierto por un usuario no son visibles de
+  inmediato
+- Una vez que se cierra un archivo, los cambios hechos a éste son
+  sólo visibles a sesiones abiertas posteriormente
+
+** Para qué sí es, para qué no
+- AFS está pensado para /ciertos/ tipos de uso, no para /otros/
+- Asume modificaciones a /archivos completos/
+  - Es muy /caro/ mantener una base de datos compartida
+  - No hay bloqueos por rango
+  - Popularizó el concepto de /maildir/: Cada correo es guardado como
+    un archivo independiente en un directorio (para facilitar las
+    escrituras), en vez del archivo /mbox/ empleado anteriormente
+- A diferencia de NFS, /no/ busca ser universal
+  - Necesariamente hay un /espacio local/ y un /espacio compartido/
+  - No maneja /diskless/

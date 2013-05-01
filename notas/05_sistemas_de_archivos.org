@@ -1335,8 +1335,142 @@ archivos y directorios que le solicitará el usuario, a través de los
 módulos de red, sabe cómo obtenerlos y presentarlos /como si fueran
 locales/.
 
+Al hablar de sistemas de archivos en red, casi siempre lo haremos
+siguiendo un /modelo cliente-servidor/. Estos términos no se refieren
+a las prestaciones relativas de una computadora, sino al rol que ésta
+juega /dentro de cada conexión/ — Esto es, designamos como /cliente/ a
+la computadora que solicita un servicio, y como /servidor/ a la que lo
+provee; es frecuente que dos computadoras sean tanto servidor como
+cliente la una de la otra en distintos servicios.
+
 *** Network File System (NFS)
-*** Server Message Block (SMB)
+
+El /Sistema de Archivos en Red/ (/Network File System/, mejor conocido
+por sus siglas, /NFS/) fue creado por Sun Microsystems, y desde 1984
+forma parte de su sistema operativo — Resultó una implementación tan
+exitosa que a los pocos años formaba parte de todos los sistemas tipo
+Unix.
+
+NFS está construido sobre el mecanismo /RPC/ (/Remote Procedure Call/,
+/Llamada a Procedimientos Remotos/), un mecanismo de mensajes y manejo
+básico de sesión que actúa como una capa superior a TCP/IP, incluyendo
+facilidades de /descubrimiento de recursos/ y /abstracción/. RPC puede
+ser comparado con protocolos como /DCE/RPC/ de OSF, /DCOM/ de
+Microsoft, y hoy en día, /SOAP/ y /XML-RPC/. Estos mecanismos permiten
+al programador delegar en un /servicio/ el manejo de las conexiones de
+red, particularmente (en el caso que en este momento nos importa) la
+persistencia de sesiones en caso de desconexión, y limitar su atención
+a una /conexión establecida/.
+
+La motivación de origen para la creación de NFS fue presentar una
+solución que aprovechara el hardware existente y centralizara la
+administración: Ofrecer las facilidades para contar con redes donde
+hubiera un /servidor de archivos/, y donde las estaciones de trabajo
+tuvieran únicamente una instalación básica,[fn:: Incluso manejando
+estaciones de trabajo /diskless/, esto es, computadoras sin disco
+duro, cuyo sistema de arranque tiene la capacidad de solicitar al
+servidor le envíe incluso el núcleo del sistema operativo que
+ejecutará] y el entorno de usuario completo estuviera disponible en
+cualquiera de las estaciones.
+
+NFS ofrece sobre la red un sistema de archivos con la semántica Unix
+completa — Para montar un sistema remoto, basta montarlo[fn:: Para
+montar un sistema remoto, usaríamos un comando como =mount
+archivos.unam.mx:/home /home= ] y usarlo como si fuera local. El
+manejo de permisos, usuarios, e incluso las ligas duras y simbólicas
+se manejan exactamente como se haría localmente.
+
+NFS es un protocolo muy ligero — No implementa cifrado ni
+verificaciones adicionales, pero al día de hoy, es uno de los mejores
+mecanismos para el envío de grandes cantidades de información — Pero
+siempre en redes que sean /completamente confiables/.
+
+Ahora, NFS se presenta como uno de los componentes de una solución
+completa. Dado que se espera que la información de usuarios y permisos
+sea /consistente/ en todos los clientes; Sun ofrecía también un
+esquema llamado /Yellow Pages/ (posteriormente renombrado a NIS,
+/Network Information System/) para compartir la información de
+autenticación y listas de usuarios.
+
+La desventaja, en entornos sin NIS, es que los permisos se manejan
+según el ID numérico del usuario. Si en diferentes sistemas el mismo
+usuario tiene diferentes IDs, los permisos no coincidirán. Es más,
+dado que el control de acceso principal es únicamente por dirección
+IP, para tener acceso irrestricto a los archivos de otros usuarios en
+NFS basta con tener control pleno de una computadora cualquiera en la
+red para poder /asumir o usurpar la identidad/ de cualquier otro
+usuario.
+
+Por último, para garantizar que las escrituras a archivos se llevaran
+a cabo cuando eran solicitadas (en contraposición a asumir éxito y
+continuar), todas las escrituras en un principio sobre NFS eran
+manejadas de forma síncrona, esto es, tras grabar un archivo, el
+cliente no continuaba con la ejecución hasta no tener confirmación por
+parte del servidor de que los datos estaban ya guardados en
+disco.
+
+Versiones posteriores del protocolo mejoraron sobre los puntos débiles
+aquí mencionados. Al día de hoy, casi 30 años después de su
+presentación, NFS es aún un sistema de archivos en red muy ampliamente
+empleado.
+
+*** Common Internet File System (CIFS)
+
+El equivalente a NFS en los entornos donde predominan los sistemas
+Windows es el protocolo CIFS (/Common Internet File System/, Sistema
+de Archivos Común para Internet). Aparece en los sistemas primarios de
+Microsoft alrededor de 1990[fn:: El desarrollo de SMB nació como /LAN
+Manager/, originalmente para OS/2], originalmente bajo el nombre SMB
+(/Server Message Block/, /Bloque de Mensaje del Servidor/).
+
+Las primeras implementaciones estaban orientadas al protocolo /NBF/,
+frecuentemente conocido como /NetBEUI/, aunque a partir de Windows
+2000 se ha reimplementado completamente para operar sobre TCP/IP. Es a
+partir de este momento que se le comienza a denominar /CIFS/, aunque
+el nombre /SMB/ sigue siendo ampliamente utilizado.[fn:: Es a este
+nombre que la implementación de CIFS para sistemas Unix, /Samba/,
+fue llamado de esta manera.]
+
+CIFS se ajusta mucho más a la semántica de los sistemas MS-DOS y
+Windows, aunque dado el lapso de tiempo que ha existido, ha pasado por
+varios cambios fundamentales, que al día de hoy complican su uso.
+
+Para tener acceso a un volumen compartido por SMB se introdujo el
+comando =NET=;[fn:: Este comando es empleado en MS-DOS, pero está
+también disponible en Windows, y al día de hoy es una de las
+principales herramientas para administrar usuarios.] basta indicar a
+DOS o Windows =NET USE W: \\servidor\directorio= para que el recurso
+compartido bajo el nombre =directorio= dentro del equipo conocido como
+=servidor= aparezca en el árbol /Mi PC/, y el usuario pueda emplear
+sus contenidos como si fuera un sistema de archivos local.
+
+Cuando fue introducido al mercado, los sistemas Microsoft no manejaban
+aún el concepto de usuarios, por lo que la única medida de seguridad
+que implementaba SMB era el manejo de hasta dos contraseñas por
+directorio compartido: Con una, el usuario obtenía acceso de sólo
+lectura, y con la otra, de lectura y escritura. Tras la aparición de
+Windows NT, se agregó un esquema de identificación por
+usuaro/contraseña, que posibilita el otorgamiento de permisos con una
+/granularidad/ mucho menor.[fn:: Esto significa, que puede
+controlarse el acceso permitido más finamente, a nivel archivo
+individual y usuario individual.]
+
+SMB fue pensado originalmente para una red /pequeña/, con hasta un par
+de decenas de equipos. La mayor parte de los paquetes eran enviados en
+modo /de difusión/ (/broadcast/), por lo que era fácil llegar a la
+saturación, y no existía un esquema centralizado de resolución de
+nombres, con lo que era frecuente /no encontrar/ a determinado
+equipo.
+
+Los cambios que CIFS presenta a lo largo de los años son muy
+profundos. Las primeras implementaciones presentan fuertes problemas
+de confiabilidad, rendimiento y seguridad, además de estar planteadas
+para su uso en un sólo tipo de sistema operativo; al día de hoy, estos
+puntos han todos mejorado fuertemente. En sistemas Unix, la principal
+implementación, /Samba/, fue creada haciendo ingeniería inversa sobre
+el protocolo; a lo largo de los años, se ha convertido en un esquema
+tan robusto que es hoy por hoy tomado como implementación refrencia.
+
 *** Sistemas de archivos distribuídos: Andrew File System (AFS)
 
 

@@ -1473,6 +1473,76 @@ tan robusto que es hoy por hoy tomado como implementación refrencia.
 
 *** Sistemas de archivos distribuídos: Andrew File System (AFS)
 
+Los dos ejemplos de sistema de archivos en red presentados hasta ahora
+comparten una visión /tradicional/ del modelo cliente-servidor: Al ver
+el comando que inicializa una conexión, e incluso a ver la
+información que guarda el núcleo del cliente respecto a cualquiera de
+los archivos, resulta claro cuál es el servidor para cada uno de
+ellos.
+
+/Andrew File System/, desarrolaldo en la Carnegie Mellon
+University[fn:: Como parte del /Proyecto Andrew/, denominado así por
+el nombre de los fundadores de esta universidad: Andrew Carnegie y
+Andrew Mellon] y publicado en 1989, plantea presentar un verdadero
+/sistema de archivos distribuído/, en el cual los /recursos
+compartidos/ no tengan que estar en un servidor en particular, sino
+que un conjunto de equipos se repartan la carga (esto es,
+/agnosticismo a la ubicación/). AFS busca también una /fácil
+escalabilidad/, la capacidad de agregar tanto espacio de
+almacenamiento como equipos con rol de servidor. AFS permite inclusive
+migrar completamente un volumen mientras está siendo empleado, de
+forma transparente.
+
+Ante la complejidad e inestabilidad adicional que nos presentan con
+tanta frecuencia las redes grandes[fn:: El uso típico de AFS se
+planteaba para organizaciones grandes, del órden de decenas de miles
+de estaciones] (y lo hacían mucho más hace 30 años): AFS debe operar
+tan confiablemente como sea posible, /incluso sin la certeza de que la
+red opera correctamente/.
+
+AFS construye fuertemente sobre el modelo de /tickets/ y credenciales
+de /Kerberos/, pero se aleja sensiblemente de la semántica de
+operación de archivos que hasta ahora hemos manejado. Muchos eventos,
+operaciones y estados van ligados al /momento en el tiempo/ en que se
+presentan, a través de un /modelo de consistencia débil/ (/weak
+consistency model/). Muy a grandes rasgos, esto significa que:
+
+- Cuando se abre un archivo, éste se copia completo al cliente. Todas
+  las lecturas /y escrituras/ (a diferencia de los esquemas
+  tradicionales, en que éstas son enviadas al servidor /lo antes
+  posible/ y de forma síncrona) se dirigen únicamente a la copia
+  local.
+
+- Al cerrar el archivo, éste se copia de vuelta al /servidor de
+  origen/, el cual se /compromete/ a notificar a los clientes si un
+  archivo abierto fue modificado (esto es, a /hacer una llamada/ o
+  /callback/). Los clientes pueden entonces intentar incorporar los
+  cambios a su versión de trabajo, o continuar con la copia ya
+  obtenida — Es /esperable/ que si un segundo cliente realiza alguna
+  modificación, incorpore los cambios hechos por el primero, pero esto
+  se deja a la implementación del programa en cuestión.
+
+Esto significa en pocas palabras que los cambios a un archivo abierto
+por un usuario no son visibles a los demás de inmediato; sólo una vez
+que se cierra un archivo, los cambios hechos a éste son puestos a
+disposición de las sesiones abiertas actuales, y sólo son enviados
+como /versión actual/ a las sesiones abiertas posteriormente.
+
+Con este cambio semántico, debe quedar claro que AFS no busca ser un
+sistema para todo uso ni un reemplazo universal de los sistemas de
+archivos locales, en contraposición de los sistemas de archivos
+centralizados. AFS no plantea en ningún momento una operación
+/diskless/. Bajo el esquema aquí descrito, las lecturas y escrituras
+resultan baratas, porque se realizan exclusivamente sobre el caché
+local, pero abrir y cerrar un archivo puede ser muy caro, porque debe
+transferirse el archivo completo.
+
+Hay aplicaciones que verdaderamente sufrirían si
+tuvieran que implementarse sobre un sistema de archivos distribuído —
+Por ejemplo, si una base de datos se distribuyera sobre AFS, la
+carencia de mecanismos de bloqueo sobre /secciones/ del archivo, y el
+requisito de operar sobre /archivos completos/ harían impracticable
+compartir un archivo de uso intensivo y aleatorio.
 
 * El medio físico
 

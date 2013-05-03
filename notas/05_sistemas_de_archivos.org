@@ -1642,6 +1642,39 @@ permitirán representar en dicho disco nuestro sistema operativo:
      Veremos más adelante algunas estructuras avanzadas que permiten
      mayor eficiencia en este sentido.
 
+** Diferentes sistemas de archivos
+
+Un sistema operativo puede dar soporte a varios distintos sistemas de
+archivos; muchas razones pueden influir para elegir qué sistema de
+archivos emplearemos para nuestra información — Algunas razones para
+elegir a uno u otro son que el rendimiento de cada uno puede estaar
+afinado ante diferentes patrones de carga, necesidad de emplear un
+dispositivo móvil para intercambiar datos con distintos sistemas, e
+incluso restricciones de hardware.[fn:: Por ejemplo, los /cargadores
+de arranque/ en algunas plataformas requieren poder leer el volumen
+donde está alojada la imágen del sistema operativo — Lo cual obliga a
+que esté en un sistema de archivos nativo a la plataforma.]
+
+A lo largo de esta sección iremos comentando cómo los principales
+conceptos que revisaremos se han implementado en distintos sistemas de
+archivos; nos referiremos principalmente a una familia de sistema de
+archivos simple de comprender, aunque muestra claramente su edad: La
+familia FAT. Ilustraremos algunos ejemplos específicos empleando
+también otros sistemas de archivos.
+
+El sistema FAT fue creado hacia fines de los 1970, y muestra claras
+evidencias de haber sido pensado para discos flexibles. Sin embargo,
+a través de varias extensiones que se han presentado con el paso de
+los años (algunas con compatibilidad hacia atrás, otras no), sigue
+siendo uno de los sistemas más empleados al día de hoy, a pesar de
+que ya no es recomendado como sistema primario por ningún sistema
+operativo de escritorio.
+
+Si bien FAT tuvo su mayor difusión con los sistemas operativos de la
+familia MS-DOS, es un sistema de archivos nativo para una gran
+cantidad de otros sistemas, lo cual se hace obvio al revisar el
+soporte a atributos extendidos que maneja.
+
 ** El volumen
 
 Lo primero que requiere saber el sistema operativo para poder montar
@@ -1673,6 +1706,12 @@ operaciones que podamos realizar, muchos sistemas de archivos
 mantienen /copias adicionales/ del superbloque, a veces dispersas a
 lo largo del sistema de archivos, para poder recuperarlo en caso de
 que se corrompa.
+
+En el caso de FAT, el volumen indica no sólo la /generación/ del
+sistema de archivos que se está empleando (FAT12, FAT16 o FAT32, en
+los tres casos denominados así por la cantidad de bits para
+referenciar a cada uno de los bloques lógicos o /clusters/), sino el
+tamaño de los clusters, que puede ir desde los 2 y hasta los 32 Kb.
 
 *** Volúmenes /crudos/
 
@@ -1712,7 +1751,7 @@ abstracción de los sistemas de archivos:
                     hoy en día, aunque es indudablemente un tema que
                     se presta para discusión e investigación.
 
-** El directorio
+** El directorio y los i-nodos
 # <<el_directorio>>
 
 El directorio es la estructura que relaciona a los archivos como son
@@ -1721,7 +1760,147 @@ las estructuras que los describen ante el sistema operativo — Los
 /i-nodos/.
 
 A lo largo de la historia de los sistemas de archivos, se han
-implementado muy distintos esquemas de organización
+implementado muy distintos esquemas de organización.
+
+*** El directorio raiz
+
+Una vez que el sistema de archivos está montado, todas las referencias
+a archivos dentro de éste deben pasar a través del directorio. El
+directorio raiz está siempre en una ubicación /bien conocida/ dentro
+del sistema de archivos — Típicamente vamos a encontrarlo al inicio
+del volumen, aunque en los 1980, los diseñadores del sistema AmigaOS
+decidieron ubicar al directorio en el sector /central/ de los
+volúmenes. Un disco flexible tenía 80 /pistas/ (típicamente
+denominadas /cilindros/ cuando hablamos de discos duros), con lo que,
+al ubicar al directorio en la pista 40, el tiempo promedio de
+movimiento de cabezas para llegar a él se reducía a la mitad. Si
+todas las operaciones de abrir un archivo tienen que pasar por el
+directorio, esto resultaba en una mejoría muy significativa.
+
+El directorio es la estructura que determina el formato que debe
+seguir el nombre de cada uno de los archivos y directorios: Es común
+que en un sistema moderno, el nombre de un archivo pueda tener hasta
+256 caracteres, incluyendo espacios, caracteres acentuados. Algunos
+sistemas de archivos son /sensibles a mayúsculas/, como es el caso de
+los sistemas nativos a Unix (el archivo =ejemplo.txt= es distinto de
+=Ejemplo.TXT=), mientras que otros no lo son, como es el caso de NTFS
+y VFAT (=ejemplo.txt= y =Ejemplo.TXT= son idénticos ante el sistema
+operativo).
+
+Todas las versiones de FAT siguen para los nombres de archivos un
+esquema claramente antiguo: Los nombres de archivo pueden medir hasta
+8 caracteres, con una extensión opcional de 3 caracteres más, dando un
+total de 11. El sistema no sólo no es sensible a mayúsculas y
+minúsculas, sino que todos los nombres deben guardarse completamente
+en mayúsculas, y permite sólo ciertos caracteres no
+alfanuméricos. Este sistema de archivos no implementa la separación
+entre directorio e i-nodo, que hoy es la norma, por lo que cada una de
+las entradas en el directorio mide exactamente 32 bytes. Como es de
+esperarse en un formato que ha vivido tanto tiempo y ha pasado por
+tantas generaciones como FAT, algunos de estos campos han cambiado
+substancialmente sus significados:
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
+#+begin_src ditaa :file ltxpng/directorio_fat.png :cmdline -E
+ |    8    |  3  | 1 | 1 |    5     |   2    |  2   |   4   |    2    |   4    |
+ +---------+-----+---+---+----------+--------+------+-------+---------+--------+
+ | ARCHIVO | EXT |   |   | Creacion | Acceso |      | Modif | Cluster | Tamaño |
+ +---------+-----+-+-+-+-+----------+--------+--+---+-------+---------+--------+
+                   ^   ^                        ^
+                   |   |                        |
+         Atributos-+   |  Cluster alto (FAT32)--+
+         Reservado-----+
+#+end_src
+#+html: <p align="center">Formato de la entrada del directorio bajo FAT (Mohammed, 2007)</p></div>
+
+La extensión VFAT fue agregada con el lanzamiento de Windows 95. Esta
+extensión permitía que, si bien el nombre /real/ de un archivo
+seguiría estando limitada al formato presentado, pudieran agregarse
+entradas adicionales al directorio utilizando el atributo de /etiqueta
+de volumen/ de maneras que un sistema MS-DOS debiera ignorar.
+
+Esto presenta una complicación adicional al hablar del directorio
+/raiz/ de una unidad: Si bien los directorios derivados no tienen este
+límite, al estar el directorio raiz ubicado en una sección fija del
+disco, tiene una longitud límite máxima: En un disco flexible (que
+hasta el día de hoy, por su limitada capacidad, se formatea bajo
+FAT12), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
+tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
+= 7168$ bytes, esto es, $7168 \over 32 = 224$ entradas como máximo. Y
+si bien esto no nos suena a muy limitado, [[https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names][ocupar cuatro entradas por
+archivo]] cuando tiene un nombre medianamente largo va reduciendo
+fuertemente el panorama.
+
+El problema no resulta tan severo como podría parecer: Para FAT32, el
+directorio raiz ya no está ubicado en un espacio reservado, sino que
+como parte del espacio de datos, por lo cual es extensible en caso de
+requerirse.
+
+#+caption: Entradas representando archivo con nombre largo bajo VFAT (Peter Clark)
+#+attr_html: width="652" height="331"
+#+attr_latex: width=\textwidth
+[[./img/directorio_vfat.png]]
+
+Los primeros sistemas de archivos estaban pensados para unidades de
+muy baja capacidad; por mucho tiempo, las implementaciones del
+directorio eran simplemente listas lineales con los archivos que
+estaban alojados en el volumen. Como vimos, muchos de estos primeros
+sistemas no contemplaban directorios jerárquicos, sino que presentaban
+un único espacio /plano/ de nombres; cuando estos sistemas fueron
+evolucionando para soportar directorios anidados, por compatibilidad
+hacia atrás (y por consideraciones de rendimiento que veremos a
+continuación) siguieron almacenando únicamente al directorio raiz en
+esta posición privilegiada, y manejando a todos los directorios que
+derivaran de éste como si fueran archivos, repartidos por el disco.
+
+En un sistema que implementa los directorios como listas lineales,
+entre más archivos haya, el tiempo que toma casi cualquier operación
+se incrementa linealmente (dado que potencialmente tenemos que leer
+al directorio completo para encontrar a un archivo). Y las listas
+lineales presentan un segundo problema: Cómo reaccionar cuando se
+/llena/ el espacio que tienen asignado.
+
+Como ya mencionamos, FAT asigna un espacio fijo al directorio raiz,
+pero los subdirectorios pueden crecer abritrariamente. Un
+subdirectorio es básicamente un archivo con un tipo especial de
+archivo — Si el bit 4 del byte 12 de una entrada de directorio está
+encendido, los datos correspondientes al archivo serán interpretados
+como una tabla de directorios.
+
+Queda claro que FAT es un sistema heredado, y que exhibe muchas
+prácticas que ya no vemos en diseños modernos de sistemas de
+archivos. Vimos que dentro de la entrada de directorio de cada archivo
+está prácticamente su /i-nodo/ completo: La información de permisos,
+atributos, fechas de creaación — Y muy particularmente, el apuntador
+al cluster de inicio (bytes 26-28, mas los 20-22 para FAT32). Esto
+exhibe una de las grandes debilidades de FAT: La tendencia a la
+fragmentación.
+
+La familia FAT obtiene su nombre de la Tabla de Asignación de Archivos
+(/File Allocation Table/), que aparece antes del directorio, en los
+primeros sectores del disco.[fn:: Tan importante es esta tabla que se
+guarda /por duplicado/, e incluso por triplicado, dependiendo de la
+versión de FAT.] Cada byte de la FAT representa a un cluster en el
+área de datos; cada entrada en el directorio indica, en su campo
+/cluster/, cuál es el primer cluster que conforma al archivo. Ahora
+bien, conforme se usa un disco, y los archivos crecen y se eliminan,
+y van llenando los espacios vacíos que van dejando, FAT va asignando
+espacio /conforme encuentra nuevos clusters/, sin cuidar que sea
+espacio continuo. Los apuntadores al /siguiente cluster/ se van
+marcando en la tabla, cluster por cluster, y el último cluster de
+cada archivo recibe el valor especial (dependiendo del tipo de FAT)
+=0xFFF=, =0xFFFF= o =0xFFFFFFFF=.
+
+Ahora bien, si los directorios son sencillamente archivos que reciben
+un tratamiento especial, estos son también susceptibles a la
+fragmentación. Dentro de un sistema Windows 95 o superior (empleando
+VFAT), con directorios anidados a cuatro o cinco niveles como lo
+establece su jerarquía estándar, el puro hecho de recorrerlos para
+encontrar determinado archivo puede resultar muy penalizado por la
+fragmentación.
+
 
 # ** Herramientas de comunicación entre procesos
 
@@ -1779,6 +1958,11 @@ implementado muy distintos esquemas de organización
 # embargo, cada vez es menos común por la forma menos transparente de
 # operación que tienen los dispositivos (y que veremos posteriormente).
 
+
+*** Determinando el espacio libre
+# https://en.wikipedia.org/wiki/File_Allocation_Table#FS_Information_Sector
+# En FAT32, se agrega espacio para acelerar algunas tareas del
+# sistema, como el cálculo del espacio disponible.
 
 ** Direccionamiento directo e indirecto
 
@@ -1850,6 +2034,11 @@ Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash st
   hace 15 años eran verdaderamente novedosas, y hoy forman parte de
   casi todos los sistemas de archivos con uso amplio, e incluso
   algunas que no se han logrado implementar y que BeFS sí ofrecía.
+
+- [[http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][FAT Root Directory Structure on Floppy Disk and File Information]]
+  (Mufti Mohammed, Codeguru, 2007)
+
+- [[http://www.beginningtoseethelight.org/fat16/index.htm][File Allocation Table - 16bit]] (Peter Clark)
 
 - [[http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf][A Fast File System for UNIX]] (Marshall Kirk Mckusick, William N. Joy,
   Samuel J. Lefler, Robert S. Fabry, 1984)

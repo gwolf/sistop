@@ -108,6 +108,16 @@ cuantos términos
     actual
 
 
+** Ejemplificando con FAT
+- Para esta sección, iremos ejemplificando los conceptos
+  refiriéndonos a una familia de sistema de archivos sencillo y
+  ampliamente utilizada
+  - FAT — FAT12, FAT16, FAT32
+- Se origina a fines de los 1970, fue adoptado por diversas
+  arquitecturas de los 1980
+  - Incluyendo, claro, IBM con MS-DOS
+- Sigue siendo uno de los sistemas más empleados del mundo
+
 
 * El volumen
 ** Base para emplear un sistema de archivos
@@ -137,6 +147,15 @@ cuantos términos
   debe proteger de toda posible corrupción
 - Muchos sistemas de archivos contemplan mantener /copias adicionales/
   del superbloque dispersas a lo largo del sistema de archivos
+
+** El superbloque y FAT
+- No guarda /tanta/ información en un sistema así de simple
+- Indica principalmente la /generación/ del sistema de archivos
+  (FAT12, FAT16, FAT32)
+  - 12, 16 o 32 bits para referenciar a cada uno de los bloques
+    lógicos o /clusters/
+- Indica el tamaño empleado en este volumen para los /clusters/
+  - Desde 2 y hasta 32KB
 
 ** Volúmenes crudos
 - Una de los principales tareas de un sistema operativo es
@@ -178,8 +197,85 @@ cuantos términos
 * El directorio
 ** Rol del directorio
 - Estructura que relaciona a los archivos como son presentados al
-  usuario –identificados por una ruta y un nombre– con las estructuras
-  que los describen ante el sistema operativo — Los /i-nodos/.
+  usuario –identificados por una ruta y un nombre
+  - Con las estructuras que los describen ante el sistema operativo —
+    Los /i-nodos/.
+- A lo largo de la historia de los sistemas de archivos, se han
+  implementado muy distintos esquemas de organización
 
-A lo largo de la historia de los sistemas de archivos, se han
-implementado muy distintos esquemas de organización
+** El directorio raiz
+- Una vez que montamos un sistema de archivos, todas las referencias
+  a archivos dentro de éste deben pasar a través del directorio raiz
+  - Y probablemente directorios adicionales
+- Está siempre en una /ubicación bien conocida/ en el disco,
+  típicamente al inicio
+  - Por su volumen de uso, en los 1980, los diseñadores de AmigaOS
+    decidieron ponerlo /al centro/
+  - Sector 40 (de 80 que tenían los floppies)
+  - ¿Resultado? Reducción a la mitad de la demora por movimiento de cabezas
+
+** Formato del nombre de los archivos
+- El directorio determina formato y restricciones para los nombres de
+  archivos y directorios
+- En un sistema moderno, es común que un archivo pueda tener hasta
+  256 caracteres arbitrarios
+  - Incluyendo mayúsculas, minúsculas, espacios, acentos, ...
+- Hay sistemas de archivos /sensibles a mayúsculas/, como los
+  derivados de Unix (=ejemplo.txt= $\ne$ =Ejemplo.TXT=) o /insensibles
+  a mayúsculas/, como los derivados de MS-DOS (=ejemplo.txt= =
+  =Ejemplo.TXT=)
+
+** Entrada de directorio en FAT
+- Esquema claramente antiguo de nombres de archivos
+  - 8 caracteres (+3 para la extensión)
+  - Expresado en mayúsculas; muy pocos caracteres legales no alfanuméricos
+- FAT /no separa/ entre directorio e i-nodo, como hoy es la norma
+  - Cada entrada en el directorio mide exactamente 32 bytes
+- Como ha tenido tantas generaciones, varios de los campos que veremos
+  a continuación tienen más de un significado
+
+** Entrada de directorio en FAT
+#+attr_latex: width=\textwidth
+#+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
+#+begin_src ditaa :file ltxpng/directorio_fat.png :cmdline -E
+ |    8    |  3  | 1 | 1 |    5     |   2    |  2   |   4   |    2    |   4    |
+ +---------+-----+---+---+----------+--------+------+-------+---------+--------+
+ | ARCHIVO | EXT |   |   | Creacion | Acceso |      | Modif | Cluster | Tamaño |
+ +---------+-----+-+-+-+-+----------+--------+--+---+-------+---------+--------+
+                   ^   ^                        ^
+                   |   |                        |
+         Atributos-+   |  Cluster alto (FAT32)--+
+         Reservado-----+
+#+end_src
+
+** La extensión VFAT
+- Introducida junto con Windows 95 para permitir nombres de archivo largos
+  - Sin romper compatibilidad con la amplia base de sistemas ya existentes
+- El nombre /real/ de un archivo sigue siendo en formato 8.3
+  - Se pueden agregar /entradas adicionales/ al directorio, usando un
+    atributo de /etiqueta de volumen/
+  - Los sistemas MS-DOS ignoran dichas entradas
+
+** La extensión VFAT
+#+caption: Entradas representando archivo con nombre largo bajo VFAT (Peter Clark)
+#+attr_latex: width=\textwidth
+[[../img/directorio_vfat.png]]
+
+** Tamaño máximo del directorio
+- Bajo FAT12 y FAT16, el /tamaño del directorio raiz/ está limitado
+- Está ubicado entre las FAT y el inicio de los datos
+  - Esto es, en los 14 bloques desde el 20 hasta el 33
+- En un floppy, le caben hasta $512 \times 14 = 7168$ bytes
+  - A 32 bytes por entrada de FAT, $7168 \over 32 = 224$ entradas
+    como máximo
+- No está mal /para un floppy/...
+  - ¿Y considerando VFAT? El espacio disponible se reduce fuertemente
+- Por eso, FAT32 ya trata al directorio raiz como parte de la /región de datos/
+
+** El directorio es un archivo
+
+** FAT y la fragmentación
+
+** Fragmentación de directorios
+
+** Representando en la tabla de asignación de archivos

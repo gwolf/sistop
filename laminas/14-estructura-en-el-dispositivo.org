@@ -1,0 +1,185 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Sistemas de archivos: Archivos y directorios
+#+DATE: 2013-05-03 — 2013-05-??
+
+* Definiciones base
+
+** Bajando de nivel
+- En esta unidad, hemos visto a los elementos del sistema de archivos
+  como son presentados al usuario final
+- Sin entrar en detalles respecto a la organización de la información
+  en un /dispositivo persistente/
+- Las estructuras que hemos mencionado han quedado explíticamente
+  pendientes de definición
+- Comenzamos ahora a ver las principales estructuras y mecanismos
+  para /implementar/ un sistema de archivos
+
+** Discos y otras hierbas
+- Cuando hablamos de almacenamiento, nos resulta natural hablar de /discos/
+  - Disco: Medio giratorio, de acceso aleatorio
+  - Típicamente magnético u óptico
+- No siempre es el caso
+  - Primeros años del cómputo: Medios secuenciales (tarjetas o cintas,
+    (de papel o magnéticas)
+- Hoy en día, tendencia a ir adoptando mediosde /estado sólido/
+  - Dispositivos sin partes móviles
+  - Guardan la información en un tipo de /memoria/ que no requiere
+    corriente constante para mantener la información
+
+** Mantengámosnos idealizados
+- El hablar de almacenamiento en estado sólido supone algunas
+  consideraciones adicionales que no podemos perder de vista
+- Por ahora, sigamos pensando en almacenamiento en /discos/
+- Hacia el final de la unidad veremos algunas de estas
+  características diferenciadoras
+  - Y el impacto que pueden tener en los sistemas de archivos
+
+** ¿Cómo se ve un disco?
+- /Por ahora/, mantengamos la visión de un /disco/ como un arreglo
+  muy grande
+- De bloques, todos ellos de tamaño fijo (fijado por el /hardware/)
+- Cada bloque, /directamente direccionable/
+
+** Términos que se nos presentan
+#+BEGIN_CENTER
+Para trabajar a /este nivel/ de la implementación, presentemos unos
+cuantos términos
+#+END_CENTER
+- Partición
+- Volumen
+- Metadatos
+- I-nodo
+- Mapa de bits de espacio libre
+
+** Partición
+- Subdivisión de un disco
+- El administrador del sistema puede emplearlas para definir la forma
+  en que se emplea el espacio disponible
+- Un disco puede tener cero, una o varias particiones
+- Cada partición puede contener un sistema de archivos independiente
+
+** Volumen
+- Colección de bloques en el disco
+- /Inicializados/ con un sistema de archivos
+- Pueden presentarse al usuario como una /unidad/
+- Típicamente coincide con una /partición/
+  - Aunque veremos algunos casos en que no es así
+- Se /describe/ ante el sistema operativo en el /bloque de control de volumen/
+  - O /superbloque/ (Unix), /Tabla maestra de archivos/ (/MFT/, Windows)
+
+** Directorio raiz
+- Estructura base con la relación entre nombres de archivo y números
+  de /i-nodo/
+- Típicamente (por rendimiento) sólo almacena los archivos del
+  /primer nivel jerárquico/
+  - Directorios interiores, referenciados desde éste
+
+** Metadatos
+- Toda la información que haya /acerca de/ un archivo
+  - que /no sea/ el archivo mismo
+- En un sistema de archivos estándar:
+  - Nombre
+  - Tipo
+  - Tamaño
+  - Fechas de creación, último acceso y modificación
+  - Ubicación en disco
+- Ojo: /¡No están en un sólo lugar!/
+
+** I-nodo
+- Viene de la expresión /nodo de información/
+- En sistemas Windows, frecuentemente se les llama /Bloque de control
+  del archivo/ (FCB)
+- La estructura en disco que guarda /la mayor parte/ de los metadatos
+  da cada archivo
+- Proporciona un vínculo entre la /entrada en el directorio/ y los
+  contenidos del archivo
+- Incluye permisos, propietario, tipo de archivo, fechas
+- Incluye también la /relación de bloques/ que ocupa el archivo en
+  disco
+
+** Mapa de bits (/bitmap/) de espacio libre
+- Auxiliar para gestionar el espacio /libre/ del disco
+- Es una de varias estrategias para presentar esta información (no la
+  única)
+- Representa el estado de un bloque entero por cada bit
+  - Bastante compacto — con bloques de 4096 bits, 100GB pueden
+    representarse en 23MB ($100 \times 10^9 \over 4096$)
+  - Razonable para mantener en memoria para un sistema de escritorio
+    actual
+
+
+
+* El volumen
+** Base para emplear un sistema de archivos
+- El volumen es descrito por el superbloque
+  - /No contiene/ a los archivos, ni al directorio, ni estructuras
+    que apunten hacia ellos
+  - Sólo información acerca del volumen
+- ¿Qué /tipo/ de sistema de archivos es?
+- Descripción básica del sistema de archivos
+  - Extensión del sistema
+  - Tamaño de los /bloques lógicos/
+  - Etiqueta que lo describa ante el usuario
+
+** Bloques físicos y lógicos
+- El tamaño de los /bloques físicos/ es establecido por el hardware
+  - Tamaño de las transferencias del controlador al disco
+- Típicamente se /agrupan/ en /bloques lógicos/ (también llamados
+  /grupos/ o /clusters/)
+  - Por razones de rendimiento
+  - Para alcanzar a direccionar mayor espacio
+  - Revisaremos este tema al hablar de el /directorio/
+
+** Superbloque: Estructura repetida
+- El /superbloque/ es fundamental para poder abrir el sistema de
+  archivos
+- Es tan importante (y tan poco frecuentemente modificado) que se
+  debe proteger de toda posible corrupción
+- Muchos sistemas de archivos contemplan mantener /copias adicionales/
+  del superbloque dispersas a lo largo del sistema de archivos
+
+** Volúmenes crudos
+- Una de los principales tareas de un sistema operativo es
+  la organización del espacio de almacenamiento en sistemas de
+  archivos
+- Pero en algunos casos, puede tener sentido /no/ aprovechar esta
+  característica
+  - Principalmente, por rendimiento
+  - Emplear un /dispositivo orientado a bloques/ sin emplear un
+    sistema de archivos se denomina emplear /dispositivos crudos/ o
+    /dispositivos en crudo/
+- ¿Cuándo se usa?
+
+** Volúmenes crudos como /espacio de intercambio/
+- La gestión de la /memoria virtual/ puede beneficiarse de /no/
+  cruzar por la abstracción del sistema operativo
+- El espacio de intercambio (/swap/) es manejado directamente, no a
+  través de sistemas de archivos
+- ¿Pero no es el gestor de memoria virtual parte del sistema
+  operativo?
+  - El uso del dispositivo es en crudo, incluso si es desde espacio
+    del sistema operativo
+  - Además, en un sistema /microkernel/ puede ejecutarse como proceso
+    de usuario
+
+** Volúmenes crudos para bases de datos
+- Varios gestores de bases de datos relacionales administran
+  volúmenes muy grandes de datos
+  - Datos estrictamente estructurados
+- Algunos gestores pueden optimizar los accesos al disco evitando las
+  capas de abstracción del sistema operativo
+  - Recomendado por Oracle, MaxDB, DB2, ...
+- Sin embargo, muchos gestores han abandonado esta modalidad
+  - Mayor complejidad de administración
+  - Mejoría de rendimiento muy limitada
+- Afirmación polémica, se presta a discusión e investigación
+
+
+* El directorio
+** Rol del directorio
+- Estructura que relaciona a los archivos como son presentados al
+  usuario –identificados por una ruta y un nombre– con las estructuras
+  que los describen ante el sistema operativo — Los /i-nodos/.
+
+A lo largo de la historia de los sistemas de archivos, se han
+implementado muy distintos esquemas de organización

@@ -537,11 +537,11 @@ un /dispositivo orientado a bloques/ es uno que, para cualquier
 transferencia que solicitemos desde o hacia él, nos responderá con un
 bloque de tamaño predefinido.
 
-Esto es, si bien el sistema operativo nos presenta una abstracción
-por medio de la cual la lectura (=read()=) puede ser de un tamaño
+Esto es, si bien el sistema operativo nos presenta una abstracción por
+medio de la cual la lectura (=read()=) puede ser de un tamaño
 arbitrario, todas las transferencias de datos desde cualquiera de los
-discos serán de un múltiplo del tamaño de bloques (típicamente 512
-bytes).
+discos serán de un múltiplo del tamaño de bloques, definido por el
+hardware (típicamente 512 bytes).
 
 Cuando leemos, como en el ejemplo anterior, sólamente un registro
 de 75 bytes, el sistema operativo lee el bloque completo y
@@ -1544,225 +1544,243 @@ carencia de mecanismos de bloqueo sobre /secciones/ del archivo, y el
 requisito de operar sobre /archivos completos/ harían impracticable
 compartir un archivo de uso intensivo y aleatorio.
 
-* El medio físico
 
-* Generalidades
 
-Un /sistema de archivos/ es la estructura por medio de la cual el
-sistema operativo organiza y presenta las abstracciones necesarias
-para la organización a largo plazo de la información (típicamente) en
-un dispositivo /persistente/.
+* Plasmando la estructura en el dispositivo
 
-El sistema de archivo que elijamos o implementemos debe tomar en
-cuenta por un lado las características físicas del medio que empleará,
-y por el otro las necesidades del sistema a crear. Por ejemplo:
+Hasta ahora, hemos visto a los elementos del sistema de archivos tal
+como son presentados al usuario final, sin entrar en detalles respecto
+a cómo organiza toda esta información el sistema operativo en un
+/dispositivo persistente/ — Mencionamos algunas estructuras base, pero
+dejándolas explícitamente pendientes de definición. En esta sección
+nos ocuparemos de detallar las principales estructuras y mecanismos
+empleados para que un sistema de archivos sea, más allá de una
+estructura formal ideal, una entidad guardada en un dispositivo.
 
-- Tiempo de acceso necesario para realizar una operación: Cinta ≫
-  Floppy ≫ Disco duro > Disco duro /inteligente/ ≈ Flash > NVRAM ≫ RAM
+A lo largo de la historia del cómputo, el almacenamiento no siempre
+fue hecho en discos (dispositivos giratorios de acceso aleatorio). En
+un principio, los medios principales de acceso estrictamente
+secuencial (tarjetas perforadas, cintas de papel, cintas magnéticas),
+y desde hace algunos años, estamos viendo una migración a
+/almacenamiento de estado sólido/, a dispositivos sin partes móviles
+que guardan la información en un tipo particular de memoria.
 
-- Forma de acceso presentada al sistema: Secuencial (cinta), bloques
-  con referencia de direccionamiento física (floppy, disco duro),
-  bloques consecutivos (disco duro /inteligente/, Flash, NVRAM, RAM
+Los sistemas de archivo están en general desarrollados pensando en
+/discos/, y a lo largo de esta sección, nos referiremos como /el
+disco/ al medio de almacenamiento persistente en el cual esté
+plasmado el sistema de archivos. Hacia el final de la sección
+abordaremos algunos de los aspectos que debemos considerar al hablar
+de sistemas de archivos respaldados en medios distintos a un
+disco.
 
-- Tipo de sistema: ¿Multiusuario? ¿Multiproceso? ¿Embebido? ¿Uso
-  genérico?
+Mientras tanto, mantengamos una visión aún bastante idealizada y
+abstracta: Asumamos que un /disco/ es visto por el sistema operativo
+como un arreglo muy grande de /bloques/ de tamaño fijo, cada uno de
+ellos /directamente direccionable/, y definamos los conceptos que nos
+permitirán representar en dicho disco nuestro sistema operativo:
 
-- Uso esperado del medio: Fijo / transportable → Impacto no sólo en
-  estrategias de almacenamiento, sino que de compatibilidad con una
-  gama más amplia de equipos.
-
-Hay programas de ámbito especializado que no emplean sistemas de
-archivos para el almacenamiento de su información. Principalmente,
-estos son gestores de bases de datos que, dada la naturaleza altamente
-regular y predecible de la información que manejan, permiten trabajar
-con /dispositivos crudos/ (esto es, particiones gestionadas por ellos,
-e invisibles a los demás programas). Esto es partiendo de la lógica
-que hacerlo de esta manera evita tener que atravesar capas
-innecesarias de abstracción y busca un mejor rendimiento al trabajar
-tan cerca como sea posible del hardware subyacente. Esta técnica, sin
-embargo, cada vez es menos común por la forma menos transparente de
-operación que tienen los dispositivos (y que veremos posteriormente).
-
-** Conceptos básicos
-
-- Disco :: Dispositivo en el que se almacena la información
-           (independientemente del tipo de medio que sea). Define un
-           /tamaño de bloque/, que es la unidad de información que
-           puede almacenar con una sóla operación (típicamente 512
-           bytes).
-
-	   Si bien un sistema de archivos puede implementarse sobre
-	   medios de muy distinta naturaleza, por la carga histórica
-	   de ser el medio primario de almacenamiento permanente, a lo
-	   largo de esta sección nos referiremos a /disco/ como el
-	   medio genérico, incluso si hablamos de sistemas de archivos
-	   virtuales o sobre memorias de /estado sólido/.
 - Partición :: Una subdivisión de un disco, por medio de la cual el
                administrador/usuario del sistema puede definir la
-               forma en que se emplea el espacio de un disco. Un disco
-               puede tener varias particiones, y cada una de ellas
-               puede tener un sistema de archivos independiente.
+               forma en que se emplea el espacio que éste ofrece. Un
+               disco puede tener varias particiones, y cada una de
+               ellas puede tener un sistema de archivos independiente.
+
 - Volumen :: Colección de bloques /inicializados/ con un sistema de
              archivos que pueden presentarse al usuario como una
              unidad. Típicamente un volumen coincide con una
              partición (pero no siempre es el caso).
-- Superbloque :: El área del volumen que contiene la /información
-                 crítica/ de éste: Su capacidad, tipo de sistema de
-                 archivo, nombre/etiqueta, etc.
-- Archivo :: La estructura primaria del sistema de archivos: Relaciona
-             un /nombre de archivo/ con la información que éste
-             representa.
 
-	     Desde el punto de vista de los procesos, el sistema
-	     /guarda/ o /recupera/ la información /en/ un archivo; el
-	     archivo tiene un /nombre/ por medio del que se le identifica.
-- Directorio :: Casi todos los sistemas de archivos en uso hoy en día
-                implementan una /jerarquía maestra/ en la cual se
-                ubican los archivos. Esta jerarquía se presenta
-                típicamente como un árbol — Un /grafo acíclico/ que
-                proporciona /rutas únicas/ para la ubicación lógica de
-                cada uno de los archivos.
-- Metadatos :: Información acerca de un archivo que no es el archivo
-               mismo. Por ejemplo, el nombre, tamaño o tipo del
-               archivo, su propietario, el control de acceso, sus
-               fechas de creación, último acceso y modificación, etc.
-- I-nodo o bloque de control de archivo (/FCB/) :: La estructura en
-     disco que guarda los metadatos de cada archivo, proporcionando un
-     vínculo entre la /entrada en el directorio/ y la información que
-     referida.
+	     El volumen se /describe/ ante el sistema operativo en el
+             /bloque de control de volumen/, también conocido como
+             /superbloque/ en Unix, o /Tabla Maestra de Archivos/
+             (/Master File Table/) en NTFS.
 
-* Concepto y tipos de archivos
-
-Unix introdujo el concepto de que /todo es un archivo/: En el sistema
-Unix original, todos los dispositivos podían ser controlados a través
-de un /archivo especial/ que, en vez de almacenar información, apunta
-a estructuras en el sistema que controlan a cada dispositivo. Este
-concepto sobrevive en los sistemas derivados de Unix al día de hoy,
-aunque varias clases de dispositivo rompen esta lógica. El sistema
-operativo /Plan9/ de Bell Labs hace mantiene y amplía este concepto e
-introduce los /espacios de nombres mutables/, que presenta con
-interfaz de archivo archivos prácticamente cualquier objeto empleado
-por el sistema.
-
-** Archivos de dispositivo
-
-Las principales estructuras relacionadas que encontraremos en un
-sistema tipo Unix son:
-
-- Dispositivos de caracteres :: Dispositivos con los cuales la
-     información es leída o escrita un caracter a la vez y se
-     presentan como /streams/ (flujos) de información, ya sea
-     entrante, saliente o mixta. Algunos pueden permitir operaciones
-     adicionales (por ejemplo, rebobinado), pero la manipulación de la
-     información se efectúa de forma secuencial.
-
-     Ejemplos: Impresora, unidad de cinta, modem
-- Dispositivos de bloques :: Dispositivos que presentan una interfaz
-     de /acceso aleatorio/ y entregan o reciben la información en
-     /bloques/ de tamaño predeterminado.
-
-     El ejemplo más claro de este tipo de dispositivos es una unidad
-     de disco o una de sus particiones.
-
-** Ligas
-
-Las ligas son objetos que ocupan un espacio en el directorio, pero
-/apuntan/ a un archivo distinto, cuya información está en otro lugar
-del sistema de archivos o con otro nombre; la información que
-almacenan es el nombre del archivo destino.
-
-Las ligas simbólicas pueden ser /relativas/ (indicando la ruta a
-partir de la ubicación en que está) o /absolutas/ (indicando la ruta a
-partir de la raiz).
-
-El archivo destino puede estar en otro sistema de archivos montado en
-el sistema.
-
-Diferentes sistemas operativos implementan esquemas semejantes
-(p.ej. los /accesos directos/ en Windows), con diferentes grados de
-transparencia ante las aplicaciones.
-
-Es importante no confundir las /ligas simbólicas/ con las /ligas
-duras/, que abordaremos más adelante.
-
-** Herramientas de comunicación entre procesos
-
-Muy frecuentemente, dos procesos (relacionados o no en el árbol de
-procesos) tienen que intercambiar información a lo largo de su ciclo
-de vida. Si bien sería posible hacerlo a través de una interfaz de
-memoria compartida y envío de mensajes, muchas veces es más fácil
-emplear un archivo como si fuera un dispositivo de datos o una
-conexión en red. En Unix contamos con los siguientes tipos de archivo
-para este fin:
-
-- /Named pipes/ :: Se traduciría literalmente como /tuberías con
-                   nombre/. Representan un mecanismo de IPC
-                   (comunicación entre procesos) que permite que dos
-                   procesos no relacionados se comuniquen de forma
-                   unidireccional: Uno abre el archivo para escritura,
-                   el otro para lectura, y lo que el primero
-                   "deposite" en el archivo, el segundo lo recibirá
-                   como entrada.
-- Sockets :: (Unix domain sockets, sockets de dominio Unix). Mecanismo
-             de comunicación bidireccional similar al de los /named
-             pipes/, pero más completo, permitiendo comunicación
-             bidireccional de un modo muy similar al de la
-             comunicación entre dos procesos en red.
-
-
-* Esquema general de un sistema de archivos
-
-Hay una serie de estructuras básicas que se repiten prácticamente en
-todos los sistemas operativos diseñados en las últimas décadas:
-
-- Superbloque :: El descriptor primario del sistema de archivos;
-                 incluye la /firma/ del sistema de archivos empleado
-                 para permitir su identificación por parte del sistema
-                 operativo, y otros datos básicos (como tamaño del
-                 sistema de archivos, tamaño del bloque, etiqueta,
-                 etc.)
-
-- Directorio raiz :: La estructura base con el listado de nombres de
-     archivo. Típicamente sólo almacena los archivos que están en el
-     /primer nivel jerárquico/ del directorio, y los directorios
-     derivados son únicamente referenciados desde éste.
+- Directorio raiz :: La estructura base con la relación entre nombres
+     de archivo y números de /i-nodo/. Típicamente sólo almacena los
+     archivos que están en el /primer nivel jerárquico/ del sistema, y
+     los directorios derivados son únicamente referenciados desde
+     éste.
 
      El directorio normalmente incluye sólo el nombre de cada uno de
-     los archivos y el número de /I-nodo/ que lo describe.
+     los archivos y el número de /i-nodo/ que lo describe, todos los
+     /metadatos/ adicionales están en los respectivos /i-nodos/.
 
-- I-nodos :: La estructura que vincula a una entrada de directorio con
-             la información propiamente almacenada en el archivo es el
-             I-nodo (nomenclatura Unix: Nodo de información; conocido
-             también como FCB, /File Control Block/).
+- Metadatos :: Recibe este nombre toda la información /acerca de/ un
+               archivo que /no es/ el archivo mismo. Por ejemplo, el
+               nombre, tamaño o tipo del archivo, su propietario, el
+               control de acceso, sus fechas de creación, último
+               acceso y modificación, ubicación en disco, etc.
 
-	     La información almacenada incluye los permisos y
-	     propietarios del archivo y la /relación de bloques/ que
-	     ocupa en el disco. Veremos más adelante los esquemas más
-	     comunes para presentar esta relación de bloques.
+- I-nodo :: Del inglés /i-node/, /information node/ (nodo de
+            información); en los sistemas tipo Windows, normalmente se
+            le denomina /bloque de control de archivo/ (/FCB/). Es la
+            estructura en disco que guarda los /metadatos/ de cada
+            archivo, proporcionando un vínculo entre la /entrada en el
+            directorio/ y la información que referida.
 
-#+begin_center
-[[./img/inode_addr.png]]
+	    La información almacenada incluye todos los metadatos
+            relacionados con el archivo /a excepción del nombre/
+            (mismo que radica únicamente en el /directorio/): Los
+            permisos y propietarios del archivo, sus fechas de
+            creación, última modificación y último acceso, y la
+            /relación de bloques/ que ocupa en el disco. Veremos más
+            adelante los esquemas más comunes para presentar esta
+            relación de bloques.
 
-Practical File System Design, p.12
-#+end_center
+- /Mapa de bits/ de espacio libre :: La función del bitmap es poder gestionar
+     el espacio libre del disco. Recordemos que el disco se presenta
+     asignado por /bloques/, típicamente de 4096 bytes — En el bitmap
+     cada bloque se representa con un bit, con lo que aquí podemos
+     encontrar de forma compacta el espacio ocupado y disponible, así
+     como el lugar adecuado para crear un nuevo archivo.
 
-- Bitmap :: La función del bitmap es poder gestionar el espacio libre
-            del disco. Recordemos que el disco se presenta asignado
-            por /bloques/, típicamente de 4096 bytes — En el bitmap
-            cada bloque se representa con un bit, con lo que aquí
-            podemos encontrar de forma compacta el espacio ocupado y
-            disponible, así como el lugar adecuado para crear un nuevo
-            archivo.
+     El bitmap para un disco de 100GB puede, de esta manera,
+     representarse en 23MB ($100 \times 10^9 \over 4096$), cantidad
+     que puede razonablemente mantener en memoria un sistema de
+     escritorio promedio hoy en día.
 
-	    El bitmap para un disco de 100GB puede, de esta manera,
-            representarse en 23MB ($100 \times 10^9 \over 4096$),
-            cantidad que puede razonablemente mantener en memoria un
-            sistema de escritorio promedio hoy en día.
+     Veremos más adelante algunas estructuras avanzadas que permiten
+     mayor eficiencia en este sentido.
 
-	    Veremos más adelante algunas estructuras avanzadas que
-            permiten mayor eficiencia en este sentido.
+** El volumen
 
-* Direccionamiento directo e indirecto
+Lo primero que requiere saber el sistema operativo para poder montar
+un volumen es su estructura general: En primer término, de qué /tipo/
+de sistema de archivos se trata, y acto seguido, la descripción básica
+del mismo: Su extensión, el tamaño de los /bloques lógicos/ que
+maneja, si tiene alguna /etiqueta/ que describa su función ante el
+usuario, etc. Esta información está contenida en el /bloque de control
+de volumen/, también conocido como /superbloque/ o /tabla maestra de
+archivos/.[fn:: Y aquí hay que aclarar: El superbloque /no contiene a
+los archivos/, ni siquiera a las estructuras que apuntan hacia ellos,
+sólo describe al volumen para que pueda ser montado]
+
+Tras leer la información del superbloque, el sistema operativo
+determina en primer término si puede proceder — Si no sabe cómo
+trabajar con el sistema de archivos en cuestión, por ejemplo, no
+puede presentar información útil alguna al usuario.
+
+Habíamos mencionado ya que el tamaño de bloques (típicamente, 512
+bytes) es establecido por el hardware. Es muy común que, tanto por
+razones de eficiencia como para alcanzar a direccionar mayor espacio,
+el sistema de archivos /agrupe/ a varios bloques físicos en un bloque
+lógico. Veremos más acerca de en base a qué determina su tamaño de
+bloques cada sistema de archivos en la siguiente sección, al hablar de
+[[#el_directorio][el directorio]].
+
+Dado que describir al volumen es la más fundamental de las
+operaciones que podamos realizar, muchos sistemas de archivos
+mantienen /copias adicionales/ del superbloque, a veces dispersas a
+lo largo del sistema de archivos, para poder recuperarlo en caso de
+que se corrompa.
+
+*** Volúmenes /crudos/
+
+Si bien una de los principales tareas de un sistema operativo es
+la organización del espacio de almacenamiento en sistemas de
+archivos y su gestión para compartirse entre diversos usuarios y
+procesos, hay algunos casos en que un dispositivo orientado a bloques
+puede ser puesto a disposición de un proceso en particular para que
+éste lo gestione directamente. Este modo de uso se denomina el de
+/dispositivos crudos/ o /dispositivos en crudo/ (/raw devices/).
+
+Podemos encontrar dos casos de uso primarios hoy en día para
+dispositivos orientados a bloques no administrados a través de la
+abstracción de los sistemas de archivos:
+
+- Espacio de intercambio :: Como vimos en la [[04_administracion_de_memoria.org#acomodo_de_paginas][unidad anterior]], la
+     gestión de la porción de la memoria virtual que está en disco es
+     mucho más eficiente cuando se hace sin cruzar por la abstracción
+     del sistema operativo — Esto es, cuando se hace en un volumen en
+     crudo. Y si bien el gestor de memoria virtual es parte innegable
+     del sistema operativo, en un sistema /microkernel/ puede estar
+     ejecutándose como proceso de usuario.
+
+- Bases de datos :: Las bases de datos relacionales pueden incluir
+                    volúmenes muy grandes de datos estrictamente
+                    estructurados. Algunos gestores de bases de
+                    datos, como Oracle, MaxDB o DB2, recomiendan a
+                    sus usuarios el uso de volúmenes crudos, para
+                    optimizar los accesos a disco sin tener que cruzar
+                    por tantas capas del sistema operativo.
+
+		    La mayor parte de los gestores de bases de datos
+                    desde hace varios años no manejan esta modalidad,
+                    sin embargo, por la complejidad adicional que
+                    supone para el administrador del sistema y por lo
+                    limitado de la ventaja en rendimiento que supone
+                    hoy en día, aunque es indudablemente un tema que
+                    se presta para discusión e investigación.
+
+** El directorio
+# <<el_directorio>>
+
+El directorio es la estructura que relaciona a los archivos como son
+presentados al usuario –identificados por una ruta y un nombre– con
+las estructuras que los describen ante el sistema operativo — Los
+/i-nodos/.
+
+A lo largo de la historia de los sistemas de archivos, se han
+implementado muy distintos esquemas de organización
+
+# ** Herramientas de comunicación entre procesos
+
+# Muy frecuentemente, dos procesos (relacionados o no en el árbol de
+# procesos) tienen que intercambiar información a lo largo de su ciclo
+# de vida. Si bien sería posible hacerlo a través de una interfaz de
+# memoria compartida y envío de mensajes, muchas veces es más fácil
+# emplear un archivo como si fuera un dispositivo de datos o una
+# conexión en red. En Unix contamos con los siguientes tipos de archivo
+# para este fin:
+
+# - /Named pipes/ :: Se traduciría literalmente como /tuberías con
+#                    nombre/. Representan un mecanismo de IPC
+#                    (comunicación entre procesos) que permite que dos
+#                    procesos no relacionados se comuniquen de forma
+#                    unidireccional: Uno abre el archivo para escritura,
+#                    el otro para lectura, y lo que el primero
+#                    "deposite" en el archivo, el segundo lo recibirá
+#                    como entrada.
+# - Sockets :: (Unix domain sockets, sockets de dominio Unix). Mecanismo
+#              de comunicación bidireccional similar al de los /named
+#              pipes/, pero más completo, permitiendo comunicación
+#              bidireccional de un modo muy similar al de la
+#              comunicación entre dos procesos en red.
+
+
+# El sistema de archivo que elijamos o implementemos debe tomar en
+# cuenta por un lado las características físicas del medio que empleará,
+# y por el otro las necesidades del sistema a crear. Por ejemplo:
+
+# - Tiempo de acceso necesario para realizar una operación: Cinta $\gg$
+#   Floppy $\gg$ Disco duro > Disco duro /inteligente/ $\approx$ Flash >
+#   NVRAM $\gg$ RAM
+
+# - Forma de acceso presentada al sistema: Secuencial (cinta), bloques
+#   con referencia de direccionamiento física (floppy, disco duro),
+#   bloques consecutivos (disco duro /inteligente/, Flash, NVRAM, RAM
+
+# - Tipo de sistema: ¿Multiusuario? ¿Multiproceso? ¿Embebido? ¿Uso
+#   genérico?
+
+# - Uso esperado del medio: Fijo / transportable → Impacto no sólo en
+#   estrategias de almacenamiento, sino que de compatibilidad con una
+#   gama más amplia de equipos.
+
+# Hay programas de ámbito especializado que no emplean sistemas de
+# archivos para el almacenamiento de su información. Principalmente,
+# estos son gestores de bases de datos que, dada la naturaleza altamente
+# regular y predecible de la información que manejan, permiten trabajar
+# con /dispositivos crudos/ (esto es, particiones gestionadas por ellos,
+# e invisibles a los demás programas). Esto es partiendo de la lógica
+# que hacerlo de esta manera evita tener que atravesar capas
+# innecesarias de abstracción y busca un mejor rendimiento al trabajar
+# tan cerca como sea posible del hardware subyacente. Esta técnica, sin
+# embargo, cada vez es menos común por la forma menos transparente de
+# operación que tienen los dispositivos (y que veremos posteriormente).
+
+
+** Direccionamiento directo e indirecto
 
 Los límites de un sistema de archivos vienen de una serie de
 decisiones de diseño, y hay varias estrategias que se han ido
@@ -1774,7 +1792,13 @@ cantidad de datos que pueden ser direccionados. Este límite es dado
 por el producto del tamaño de bloque por la longitud de sus
 direcciones.
 
-** Ejemplo: FAT
+#+begin_center
+[[./img/inode_addr.png]]
+
+Practical File System Design, p.12
+#+end_center
+
+*** Ejemplo: FAT
 
 Un ejemplo de un sistema de archivos sencillo, y de direccionamiento
 estrictamente directo, con muy largo tiempo en uso y al mismo tiempo
@@ -1802,18 +1826,17 @@ importante fue en 1996, FAT32, con espacio de direccionamiento de 28
 bits y tamaño de cluster de entre 1 y 8 sectores (512 y 4096 bytes),
 lo cual permite particiones de hasta 16TB.
 
-** Ejemplo: FFS
+*** Ejemplo: FFS
 
 Como segundo ejemplo podemos referirnos al /Sistema de Archivos Ágil
 de Berkeley/ (Berkeley Fast File System, FFS).
 
-* Organización y acceso a archivos
-* Estructura de los directorios
-* Estructura de los sistemas de archivos
-* Métodos de asignación
-* Administración del espacio libre
 
-* Particularidades de medios: Cuando no es un disco
+* El medio físico
+
+** Particiones y volúmenes multi-disco
+
+** Particularidades de medios: Cuando no es un disco
 
 Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
 * Otros recursos

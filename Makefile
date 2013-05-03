@@ -12,6 +12,7 @@ dir_laminas = laminas
 
 idx_semestre = $(dir_semestre)/index.org
 idx_laminas = $(dir_laminas)/index.org
+exam_resueltos = examenes/resueltos
 
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
@@ -63,7 +64,8 @@ semestre:
 	emacs -Q --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	mv docente/lista.html $(dir_semestre)
 	echo '* Exámenes resueltos' >> $(idx_semestre)
-	for i in `ls examenes/resueltos/*.org | sort -n`; do \
+	mkdir -p $(exam_resueltos)/ltxpng
+	for i in `ls $(exam_resueltos)/*.org | sort -n`; do \
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
@@ -81,6 +83,7 @@ clean-publish-cache:
 
 clean: clean-publish-cache
 	rm -f ltxpng/*.png dot notas/*.tex notas/*.html notas/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
+	rm -fr $(dir_semestre) $(idx_semestre) $(exam_resueltos)/*.tex $(exam_resueltos)/*.pdf
 	rm -rf html
 	rm -rf pdf
 

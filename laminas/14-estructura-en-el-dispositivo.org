@@ -108,7 +108,7 @@ cuantos términos
     actual
 
 
-** Ejemplificando con FAT
+** Ejemplificaremos con FAT
 - Para esta sección, iremos ejemplificando los conceptos
   refiriéndonos a una familia de sistema de archivos sencillo y
   ampliamente utilizada
@@ -148,7 +148,7 @@ cuantos términos
 - Muchos sistemas de archivos contemplan mantener /copias adicionales/
   del superbloque dispersas a lo largo del sistema de archivos
 
-** El superbloque y FAT
+** FAT: El superbloque
 - No guarda /tanta/ información en un sistema así de simple
 - Indica principalmente la /generación/ del sistema de archivos
   (FAT12, FAT16, FAT32)
@@ -227,7 +227,7 @@ cuantos términos
   a mayúsculas/, como los derivados de MS-DOS (=ejemplo.txt= =
   =Ejemplo.TXT=)
 
-** Entrada de directorio en FAT
+** FAT: Entrada de directorio
 - Esquema claramente antiguo de nombres de archivos
   - 8 caracteres (+3 para la extensión)
   - Expresado en mayúsculas; muy pocos caracteres legales no alfanuméricos
@@ -236,9 +236,9 @@ cuantos términos
 - Como ha tenido tantas generaciones, varios de los campos que veremos
   a continuación tienen más de un significado
 
-** Entrada de directorio en FAT
+** FAT: Entrada de directorio
 #+attr_latex: width=\textwidth
-#+caption: Formato de la entrada del directorio bajo FAT ([[http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
+#+caption: Formato de la entrada del directorio bajo FAT32 ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
 #+begin_src ditaa :file ltxpng/directorio_fat.png :cmdline -E
  |    8    |  3  | 1 | 1 |    5     |   2    |  2   |   4   |    2    |   4    |
  +---------+-----+---+---+----------+--------+------+-------+---------+--------+
@@ -250,7 +250,7 @@ cuantos términos
          Reservado-----+
 #+end_src
 
-** La extensión VFAT
+** FAT: La extensión VFAT
 - Introducida junto con Windows 95 para permitir nombres de archivo largos
   - Sin romper compatibilidad con la amplia base de sistemas ya existentes
 - El nombre /real/ de un archivo sigue siendo en formato 8.3
@@ -258,12 +258,12 @@ cuantos términos
     atributo de /etiqueta de volumen/
   - Los sistemas MS-DOS ignoran dichas entradas
 
-** La extensión VFAT
+** FAT: La extensión VFAT
 #+caption: Entradas representando archivo con nombre largo bajo VFAT ([[http://www.beginningtoseethelight.org/fat16/index.htm][Peter Clark]])
 #+attr_latex: width=\textwidth
 [[../img/directorio_vfat.png]]
 
-** Tamaño máximo del directorio
+** FAT: Tamaño máximo del directorio
 - Bajo FAT12 y FAT16, el /tamaño del directorio raiz/ está limitado
 - Está ubicado entre las FAT y el inicio de los datos
   - Esto es, en los 14 bloques desde el 20 hasta el 33
@@ -290,7 +290,7 @@ cuantos términos
   - O un /hash/, que asegure encontrar rápido los datos de /un
     archivo/ en particular
 
-** Eliminando archivos
+** FAT: Eliminando archivos
 - Cuando se crea un directorio, todas las entradas llevan en el campo
   de nombre caracteres =00= (=NUL=)
 - Dado que el tamaño del directorio es limitado, tenemos que poder
@@ -299,7 +299,7 @@ cuantos términos
   entradas, y mantenerla disponible para guardar sobre ella /el
   siguiente archivo/ que sea creado
 
-** Eliminando archivos en FAT
+** FAT: Eliminando archivos
 - En FAT, /eliminar/ un archivo es muy barato
   - Pero /reaprovecharlo/ es más caro
 - Una entrada en el directorio se muestra como /eliminada/ con sólo
@@ -336,22 +336,22 @@ cuantos términos
   - Un archivo no puede /crecer/
 
 ** Asignación contigua de archivos
-#+attr_latex: height=0.7\textheight
+#+attr_latex: height=0.65\textheight
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
 #+begin_src ditaa :file ltxpng/fs_asignacion_contigua.png :cmdline -E
 +------------------------+   Directorio
 | {s} cFFF               |   +----+
-|  0         8         F |   |cRED+-->00 + 6
+|  0    4    8    B    F |   |cRED+-->0x30 + 6
 |  +------+----+-------+ |   +----+
-| 0| cRED |cYEL|cGRE   | |   |cYEL+-->06 + 4
+| 3| cRED |cYEL|cGRE   | |   |cYEL+-->0x36 + 4
 |  +------+----+ +-----+ |   +----+
-| 1|             |cBLU | |   |cGRE+-->0A + 17
+| 4|             |cBLU | |   |cGRE+-->0x3A + 17
 |  +-------+-----+--+--+ |   +----+
-| 2|cBLU   | cFFF   |  | |   |cBLU+-->1B + 9
+| 5|cBLU   | cFFF   |  | |   |cBLU+-->0x4B + 9
 |  +-------+--------+  | |   +----+
-| 3|       cPNK        | |   |cPNK+-->2C + 26
+| 6|       cPNK        | |   |cPNK+-->0x5C + 26
 |  |    +--------------+ |   +----+
-| 4|    |      cFFF    | |
+| 7|    |      cFFF    | |
 |  +----+--------------+ |
 +------------------------+
 #+end_src
@@ -374,25 +374,25 @@ cuantos términos
 
 ** Asignación ligada
 #+attr_latex: height=0.7\textheight
-#+caption: Asignción ligada de archivos: Directorio con apuntador al inicio
+#+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
 #+begin_src ditaa :file ltxpng/fs_asignacion_ligada.png :cmdline -E
 +---------------------+     Directorio
 |     cFFF        {s} |     +----+
-|  0       8        F |     |cRED+-->00
+|  0       8        F |     |cRED+-->0x30
 |  +-------+--------+ |     +----+
-| 0|cRED 08|cRED 20 | |     |cBLU+-->10
+| 3|cRED 08|cRED 20 | |     |cBLU+-->0x40
 |  +-------+--------+ |     +----+
-| 1|cBLU 28|cYEL 30 | |     |cYEL+-->18
+| 4|cBLU 28|cYEL 30 | |     |cYEL+-->0x48
 |  +-------+--------+ |     +----+
-| 2|cRED FF|cBLU 48 | |     |cGRE+-->58
+| 5|cRED FF|cBLU 48 | |     |cGRE+-->0x78
 |  +-------+--------+ |     +----+
-| 3|cYEL FF|cFFF 00 | |
+| 6|cYEL FF|cFFF 00 | |
 |  +-------+--------+ |
-| 4|cGRE FF|cBLU FF | |
+| 7|cGRE FF|cBLU FF | |
 |  +-------+--------+ |
-| 5|cFFF 00|cGRE 40 | |
+| 8|cFFF 00|cGRE 40 | |
 |  +-------+--------+ |
-| 6|cFFF 00|cFFF 00 | |
+| 9|cFFF 00|cFFF 00 | |
 |  +-------+--------+ |
 +---------------------+
 #+end_src
@@ -440,31 +440,76 @@ cuantos términos
 #+begin_src ditaa :file ltxpng/fs_asignacion_indexada.png :cmdline -E
 +---------------------+    Directorio        Índices
 |{s} cFFF             |    +----+            +--------------------+
-|  0        8       F |    |cF00+-->00       |(00)cF66 08, 18, 30 |
+|  0        8       F |    |cF00+-->30       |(30)cF66 38, 48, 60 |
 |  +--------+-------+ |    +----+            +--------------------+
-| 0|cF00    |cF66   | |    |c0F0+-->20
+| 3|cF00    |cF66   | |    |c0F0+-->50
 |  +--------+-------+ |    +----+            +--------------------+
-| 1|cFFF    |cF66   | |    |c00F+-->58       |(20)c6F6 2B         |
+| 4|cFFF    |cF66   | |    |c00F+-->88       |(50)c6F6 5B         |
 |  +--------+-------+ |    +----+            +--------------------+
-| 2|c0F0    |c6F6   | |
+| 5|c0F0    |c6F6   | |
 |  +--------+-------+ |                      +--------------------+
-| 3|cF66    |cFFF   | |                      |(58)c66F 48, 50, 60 |
+| 6|cF66    |cFFF   | |                      |(88)c66F 78, 80, 90 |
 |  +--------+-------+ |                      +----------+---------+
-| 4|cFFF    |c66F   | |                                 |
+| 7|cFFF    |c66F   | |                                 |
 |  +--------+-------+ |                                 V
-| 5|c66F    |c00F   | |                      +----------+---------+
-|  +--------+-------+ |                      |(70)c66F 68         |
-| 6|c66F    |c66F   | |                      +--------------------+
+| 8|c66F    |c00F   | |                      +----------+---------+
+|  +--------+-------+ |                      |(A0)c66F 98         |
+| 9|c66F    |c66F   | |                      +--------------------+
 |  +--------+-------+ |
-| 7|c00F    |cFFF   | |
+| A|c00F    |cFFF   | |
 |  +--------+-------+ |
-| 8|cFFF    |cFFF   | |
+| B|cFFF    |cFFF   | |
 |  +--------+-------+ |
 +---------------------+
 #+end_src
 
-** Apuntadores directos, indirectos y /colitas/
+** Apuntadores directos e indirectos
+- Al emplear asignación indexada, crece el espacio disponible en el
+  directorio
+  - Prácticamente todos los metadatos se van al i-nodo
+  - Pero el espacio del i-nodo es también finito
+- Las direcciones en disco para un archivo /razonablemente chico/
+  pueden caber completamente en un sólo i-nodo \rarrow /Apuntadores
+  directos/
+  - P.ej. archivos /rojo/ y /verde/ del ejemplo anterior
+- Cuando un archivo tiene más bloques que los que caben en un i-nodo,
+  éste asigna clusters adicionales con los /niveles de indirección/
+  requeridos
+  - P.ej. archivo /azul/ del ejemplo anterior
+- Pero los niveles de indirección pueden /anidarse/
 
+** Apuntadores de indirección a varios niveles
+#+caption: Estructura típica de un i-nodo en Unix (Silberschatz, p. 440)
+#+attr_latex: height=0.65\textheight
+[[../img/fs_apuntadores_indirectos.png]]
+
+** La lógica de la indirección multinivel
+- Varios sistemas de archivos (la idea apareció originalmente en UFS,
+  Unix de los 1980s) buscan dar un rendimiento /acorde al tamaño del
+  archivo/
+  - Aumentando los niveles de indirección según crece el archivo
+- Por ejemplo:
+  - Si en el bloque del i-nodo (que contiene también los metadatos)
+    caben 100 apuntadores
+  - Y el tamaño de cluster fuera de 4K
+  - En un cluster vacío caben 128 apuntadores ($4096 \over 32$)
+- Reservamos los /últimos 3 apuntadores/ para los /bloques indirectos/
+
+** Ejemplo de indirección multinivel
+- Un archivo de hasta $(100-3) \times 2KB = 194KB$ puede
+  ser representado directamente en el i-nodo
+  - Un sólo acceso a disco para obtener los clusters
+- Un archivo de hasta $(100-3 + 128) \times 2KB = 450KB$ puede
+  representarse con el bloque de indirección sencilla
+  - Dos accesos a disco
+- Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
+  \times 128) ) \times 2KB = 33218KB$
+  - Hasta 131 accesos a disco
+  - ¡Va valiendo la pena que los múltiples niveles sean adyacentes!
+- Empleando triple indirección, hasta $(100-3 + 128 + (128
+  \times 128) + (128 \times 128 \times 128) ) \times 2KB = 4227522KB
+  \approx 4GB$
+  - Pero hasta 16516 accesos a disco
 
 ** FAT: La tabla de asignación de archivos
 - El directorio de FAT apunta al /primer/ cluster que ocupa cada uno
@@ -478,7 +523,7 @@ cuantos términos
     (triplicado en FAT12)
   - Ante daño físico — Los discos antes eran mucho menos confiables
 
-** Leyendo la tabla de asignación de archivos (FAT)
+** FAT: Leyendo la tabla de asignación de archivos
 - Cada entrada de la FAT mide lo que la longitud /correspondiente a su
   versión/ (12, 16 o 32 bits), y puede tener uno de cuatro valores
   posibles:
@@ -493,19 +538,46 @@ cuantos términos
   - Fin :: =0xFFF=, =0xFFFF= o =0xFFFFFFFF=
            - Último cluster de un archivo.
 
-** FAT y la fragmentación
+** FAT: Fragmentación por diseño
 - Por flexibilidad, FAT permite la /fragmentación de archivos/
   - Queda claro por el diseño del sistema: El descriptor en FAT de
     cada cluster /debe apuntar/ al siguiente
   - Esto significa que muy frecuentemente los archivos /no estarán
     contiguos/
 
-** Vista de la tabla de asignación de archivos (FAT)
+** FAT: Vista de la tabla de asignación de archivos
 #+caption: Ejemplo de entradas en la tabla de asignación de archivos ([[http://www.beginningtoseethelight.org/fat16/index.htm][Peter Clark]])
 #+attr_latex: width=\textwidth
 [[../img/tabla_fat.png]]
 
-** ¿Y los subdirectorios?
+** ¿Cómo lidian con la fragmentación otros sistemas?
+- La fragmentación es uno de los puntos más débiles de FAT (y los
+  sistemas operativos de su época)
+- Una estrategia seguida por varios sistemas tipo Unix es la de los
+  /grupos de asignación/
+- Los directorios (y los i-nodos dentro de éste) son ubicados
+  /esparcidos por el disco/
+  - Los archivos pertenecientes a un directorio son asignados /cerca/
+    de éste
+  - Esto garantiza menor desplazamiento de cabezas entre el
+    directorio, el i-nodo y los datos
+  - Si no hay espacio para hacer una asignación contigua, los datos
+    /pueden/ guardarse /lejos/ de su directorio
+    - Esto pasa implícitamente al usar /ligas duras/
+
+** Evitando la fragmentación por grupos
+- La fragmentación /se produce/
+  - Pero es mucho menos nociva
+  - Obtenemos sus ventajas con /un mínimo/ de sus desventajas
+- Importancia del espacio vacío
+  - Conforme se va llenando el disco, es más difícil encontrar espacio
+    para seguir esta estrategia
+- Reserva de espacio
+  - Unix típicamente /reserva/ $\approx 5\%$ /para uso del administrador/
+  - Permite recuperar de situaciones críticas
+  - Busca también no llegar a los umbrales de saturación descritos
+
+** FAT: ¿Y los subdirectorios?
 - Vimos cómo está estructurado el /directorio raiz/
 - Vimos también que siempre está en un /lugar bien conocido/ en el
   disco
@@ -515,11 +587,11 @@ cuantos términos
   - De /tipo especial/: El byte de tipo (=0x0B=) vale 16
   - Es almacenado en disco /exactamente/ como un archivo
 
-** Los directorios y la fragmentación
+** FAT: Los directorios y la fragmentación
 - Si un subdirectorio es un archivo especial, está sujeto a la fragmentación
 - Cuando se asigna espacio para un subdirectorio, se asigna un sólo
   cluster
-  - 2048 bytes \rarrow 64 entradas hasta 32768 bytes \rarrow 1024 entradas
+  - 2048 bytes hasta 32768 bytes (64 a 1024 entradas)
   - La ubicación del archivo apunta a donde éste está alojado; la FAT
     guarda =0xFFFF=
 - Cuando se llena este cluster, se agrega otro al final del directorio
@@ -530,23 +602,21 @@ cuantos términos
   - Entre más grande el tamaño de cluster, más entradas por cluster
     \rarrow menos movimiento de cabezas
 
-** ¿Qué problema puede haber?
+* Otros aspectos
+
+** FAT: ¿Qué problemas podría haber?
 - FAT es un sistema relativamente frágil
 - Puede presentarse corrupción de metadatos
   - Particularmente corrupción de la estructura de las FAT
 - ¿Qué hacen los programas =CHKDSK= o =SCANDISK=?
+  - Verifican que ambas copias del FAT /concuerden/
+  - /Desarrollan/ cada una de las /cadenas/ que describen un archivo,
+    buscando inconsistencias
+- Principales inconsistencias
+  - Archivos cruzados (/Cross-linked file/)
+  - Archivos huérfanos
+- ¿Por qué ocurren estos problemas?
 
-- La lista de clusters que comprende un archivo es /una lista ligada
-  simple/
-  - ¿Y por qué no una /lista doblemente ligada/?
-
-** Fragmentación de directorios
-
-** Estrategias preventivas contra la fragmentación
-
-** Directorios dispersos
-
-* Otros aspectos
 ** La coherencia del sistema de archivos
 ** Coherencia de datos /vs./ metadatos
 ** Sistemas de archivo con bitácora

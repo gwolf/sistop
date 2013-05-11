@@ -380,17 +380,17 @@ cuantos términos
 |     cFFF        {s} |     +----+
 |  0       8        F |     |cRED+-->0x30
 |  +-------+--------+ |     +----+
-| 3|cRED 08|cRED 20 | |     |cBLU+-->0x40
+| 3|cRED 38|cRED 50 | |     |cBLU+-->0x40
 |  +-------+--------+ |     +----+
-| 4|cBLU 28|cYEL 30 | |     |cYEL+-->0x48
+| 4|cBLU 58|cYEL 60 | |     |cYEL+-->0x48
 |  +-------+--------+ |     +----+
-| 5|cRED FF|cBLU 48 | |     |cGRE+-->0x78
+| 5|cRED FF|cBLU 78 | |     |cGRE+-->0x88
 |  +-------+--------+ |     +----+
 | 6|cYEL FF|cFFF 00 | |
 |  +-------+--------+ |
 | 7|cGRE FF|cBLU FF | |
 |  +-------+--------+ |
-| 8|cFFF 00|cGRE 40 | |
+| 8|cFFF 00|cGRE 70 | |
 |  +-------+--------+ |
 | 9|cFFF 00|cFFF 00 | |
 |  +-------+--------+ |
@@ -496,19 +496,19 @@ cuantos términos
 - Reservamos los /últimos 3 apuntadores/ para los /bloques indirectos/
 
 ** Ejemplo de indirección multinivel
-- Un archivo de hasta $(100-3) \times 2KB = 194KB$ puede
+- Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede
   ser representado directamente en el i-nodo
   - Un sólo acceso a disco para obtener los clusters
-- Un archivo de hasta $(100-3 + 128) \times 2KB = 450KB$ puede
+- Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
   representarse con el bloque de indirección sencilla
   - Dos accesos a disco
 - Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
-  \times 128) ) \times 2KB = 33218KB$
+  \times 128) ) \times 4KB = 66436KB$
   - Hasta 131 accesos a disco
   - ¡Va valiendo la pena que los múltiples niveles sean adyacentes!
 - Empleando triple indirección, hasta $(100-3 + 128 + (128
-  \times 128) + (128 \times 128 \times 128) ) \times 2KB = 4227522KB
-  \approx 4GB$
+  \times 128) + (128 \times 128 \times 128) ) \times 2KB = 8455044
+  \approx 8GB$
   - Pero hasta 16516 accesos a disco
 
 ** FAT: La tabla de asignación de archivos
@@ -584,7 +584,7 @@ cuantos términos
 - ¿Qué hay con los subdirectorios?
 #+latex: \pause
 - Un subdirectorio es /sencillamente un archivo/
-  - De /tipo especial/: El byte de tipo (=0x0B=) vale 16
+  - De /tipo especial/: El byte de /atributos/ (=0x0B=) vale 16
   - Es almacenado en disco /exactamente/ como un archivo
 
 ** FAT: Los directorios y la fragmentación

@@ -351,7 +351,7 @@ reconozca al tipo de un archivo:
      discusión, la técnica base es la misma.
 
 ** Estructura de los archivos y métodos de acceso
-
+# <<archivos_estructurados>>
 La razón principal de la existencia del sistema de archivos son /los
 archivos/. Un archivo almacena información de /algún tipo/,
 estructurado o no estructurado.
@@ -1865,9 +1865,9 @@ lineales presentan un segundo problema: Cómo reaccionar cuando se
 Como ya mencionamos, FAT asigna un espacio fijo al directorio raiz,
 pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente un archivo con un tipo especial de
-archivo — Si el bit 4 del byte 12 de una entrada de directorio está
-encendido, los datos correspondientes al archivo serán interpretados
-como una tabla de directorios.
+archivo — Si el cuarto bit del byte 12 de una entrada de directorio
+está encendido, los datos correspondientes al archivo serán
+interpretados como una tabla de directorios.
 
 Queda claro que FAT es un sistema heredado, y que exhibe muchas
 prácticas que ya no vemos en diseños modernos de sistemas de
@@ -1901,6 +1901,391 @@ establece su jerarquía estándar, el puro hecho de recorrerlos para
 encontrar determinado archivo puede resultar muy penalizado por la
 fragmentación.
 
+*** La eliminación de entradas del directorio
+
+Sólo unos pocos sistemas de archivos guardan sus directorios ordenados
+— Si bien esto facilitaría las operaciones más frecuentes que se
+realizan sobre de ellos (en particular, la búsqueda — Cada vez que un
+directorio es recorrido hasta encontrar un archivo tiene que leerse
+potencialmente completo), mantenerlo ordenado ante cualquier
+modificación resultaría mucho más /caro/, dado que tendría que
+reescribirse el directorio completo al crearse o eliminarse un archivo
+dentro de éste, y lo que es más importante, más /peligroso/, dado que
+aumentaría el tiempo que los datos del directorio están en un estado
+inconsistente, aumentando la probabilidad de que ante una interrupción
+repentina (fallo de sistema, corte eléctrico, desconexión del
+dispositivo, etc.) se presentara corrupción de la información llevando
+a pérdida de datos.
+
+Ordenar las entradas del directorio teniendo sus contenidos ya en
+memoria y, en general, diferir las modificaciones al directorio
+resulta mucho más conveniente en el caso general. Esto vale también
+para la eliminación de archivos — Presentamos, pues, la estrategia que
+sigue FAT . Recordemos que el diseño de FAT fue aún cuando el medio
+principal de almacenamiento era el disco flexible, decenas de veces
+más lento que el disco duro, y con mucha menor confiabilidad.
+
+Cuando se le solicita a un sistema de archivos FAT eliminar un
+archivo, éste no se borra del directorio, ni su información se libera
+de la tabla de asignación de archivos, sino que se /marca/ para ser
+ignorado, reemplazando el primer caracter de su nombre por =0xE5=. Ni
+la entrada de directorio, ni la /cadena/ de clusters correspondiente
+en las tablas de asignación,[fn:: Abordaremos este tema en breve, al
+hablar de [[#tablas_fat][las tablas de asignación de archivos]]] son eliminadas — Sólo son marcadas como
+/disponibles/. El espacio de almacenamiento que el archivo eliminado
+ocupa debe, entonces, ser /sumado/ al espacio libre que tiene el
+volumen. Es apenas cuando se crea un nuevo archivo empleando esa misma
+entrada que el sistema operativo marca /realmente/ como desocupados
+los clusters en la tabla de asignación.[fn:: Pero, claro, estos
+clusters podrían mantenerse como ocupados /por el nuevo archivo/,
+ahorrando el trabajo de volver a asignarlos]
+
+Es por esto que desde los primeros días de las PC existen tantas
+herramientas de recuperación (o /des-borramiento/) de archivos:
+Siempre que no haya sido creado un archivo nuevo que ocupe la entrada
+de directorio en cuestión, recuperar un archivo es tan simple como
+volver a ponerle el primer caracter a su nombre.
+
+Este es un ejemplo de un /mecanismo flojo/ (en contraposición de los
+/mecanismos ansiosos/, como los vistos en la sección de [[04_administracion_de_memoria.org#pag_sobre_demanda][paginación
+sobre demanda]]). Eliminar un archivo toma un trabajo mínimo, mismo que
+es /diferido/ al momento de reutilización de la entrada de directorio.
+
+* Esquemas de asignación de espacio
+
+Hasta ahora hemos mencionado que la /entrada de directorio/ apunta al
+punto donde inicia el espacio empleado por el archivo, pero no hemos
+detallado en cómo se implementa la asignación y administración de
+dicho espacio. Haremos un breve repaso de los tres principales
+mecanismos, después de lo cual detallaremos cómo es la implementación
+de FAT, hablando un poco de sus virtudes y debilidades.
+
+** Asignación contigua
+
+Los primeros sistemas de archivos en disco empleaban un esquema de
+/asignación contigua/. Para implementar un sistema de archivos de este
+tipo, no haría falta el contar con una /tabla de asignación de
+archivos/: Bastaría con la información que vimos que forma parte del
+directorio de FAT — La extensión del archivo y la dirección de su
+primer cluster.
+
+#+html: <div class="figure">
+#+attr_latex: width=0.7\textwidth
+#+caption: Asignción contigua de archivos: Directorio con inicio y longitud
+#+begin_src ditaa :file ltxpng/fs_asignacion_contigua.png :cmdline -E
++------------------------+   Directorio
+| {s} cFFF               |   +----+
+|  0    4    8    B    F |   |cRED+-->0x30 + 6
+|  +------+----+-------+ |   +----+
+| 3| cRED |cYEL|cGRE   | |   |cYEL+-->0x36 + 4
+|  +------+----+ +-----+ |   +----+
+| 4|             |cBLU | |   |cGRE+-->0x3A + 17
+|  +-------+-----+--+--+ |   +----+
+| 5|cBLU   | cFFF   |  | |   |cBLU+-->0x4B + 9
+|  +-------+--------+  | |   +----+
+| 6|       cPNK        | |   |cPNK+-->0x5C + 26
+|  |    +--------------+ |   +----+
+| 7|    |      cFFF    | |
+|  +----+--------------+ |
++------------------------+
+#+end_src
+#+html: <p align="center">Asignción contigua de archivos: Directorio con inicio y longitud</p></div>
+
+La principal ventaja de este mecanismo de asignación, claro está, es
+la simplicidad de su implementación. Brinda además la mejor velocidad
+de transferencia del archivo, dado que al estar cada uno de los
+archivos en espacio contiguo en el disco, el movimiento de cabezas se
+mantiene al mínimo. Sin embargo, este mecanismo se vuelve sumamente
+inconveniente en medios que soporten lectura y escritura: Es muy
+sensible a la /fragmentación externa/; si un archivo requiere crecer,
+debe ser movido íntegramente a un bloque más grande (lo cual toma
+demasiado tiempo), y el espacio que libera un archivo en caso de
+reducirse su necesidad de espacio queda /atrapado/ entre bloques
+asignados; podemos tener mucho más espacio disponible que el que
+podamos asignar a un nuevo archivo.
+
+Los esquemas de asignación contigua se emplean hoy en día
+principalmente en sistemas de archivo de sólo lectura — Por ejemplo,
+lo emplea el sistema principal que utilizan los CD-ROMs, el
+/ISO-9660/, dado que está pensado para aprovechar al máximo un espacio
+que, una vez grabado, sólo podrá abrirse en modo de sólo lectura.
+
+** Asignación ligada
+
+Un enfoque completamente distinto sería el de /asignación
+ligada/. Este esquema brinda mucho mayor flexibilidad al usuario,
+sacrificando la simplicidad y la velocidad: Cada entrada en el
+directorio apunta a un primer /grupo/ de sectores (o /cluster/), y
+éste contiene un apuntador que indica cuál es el siguiente.
+
+Para hacer esto, hay dos mecanismos: El primero, reservar un espacio
+al final de cada cluster para guardar el apuntador, y el segundo,
+crear una tabla independiente, que guarde únicamente los apuntadores.
+
+En el primer caso, si manejamos clusters de 2048 bytes, y reservamos
+los 4 bytes (32 bits) finales de cada uno, nos encontraríamos con una
+incomodidad al programador: Frecuentemente, los programadores buscan
+alinear sus operaciones con las fronteras de las estructuras
+subyacentes, para optimizar los accesos (por ejemplo, evitar que un
+sólo registro de base de datos requiera ser leído de dos distintos
+bloques en disco). El programador tendría que diseñar sus estructuras
+para ajustarse a la poco ortodoxa cantidad de 2044 bytes.
+
+Y más allá de esta inconveniencia, guardar los apuntadores al final de
+cada cluster hace mucho más lento el manejo de nuestros archivos: Si
+no tenemos en una sola ubicación la relación de clusters que conforman
+a un archivo, para propósitos prácticos, todas las transferencias
+tendrán que ser /secuenciales/: Si queremos llegar directamente a
+determinado bloque del archivo, habrá que atravesar todos los bloques
+previos para encontrar su ubicación.
+
+Particularmente por este segundo punto es mucho más común el empleo de
+una /tabla de asignación de archivos/ — Y precisamente así es como
+opera FAT (de hecho, esta tabla es la que le da su nombre). La tabla
+de asignación es un mapa de los clusters, representando a cada uno por
+el espacio necesario para guardar un apuntador.
+
+#+html: <div class="figure">
+#+attr_latex: width=0.7\textwidth
+#+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
+#+begin_src ditaa :file ltxpng/fs_asignacion_ligada.png :cmdline -E
++---------------------+     Directorio
+|     cFFF        {s} |     +----+
+|  0       8        F |     |cRED+-->0x30
+|  +-------+--------+ |     +----+
+| 3|cRED 38|cRED 50 | |     |cBLU+-->0x40
+|  +-------+--------+ |     +----+
+| 4|cBLU 58|cYEL 60 | |     |cYEL+-->0x48
+|  +-------+--------+ |     +----+
+| 5|cRED FF|cBLU 78 | |     |cGRE+-->0x88
+|  +-------+--------+ |     +----+
+| 6|cYEL FF|cFFF 00 | |
+|  +-------+--------+ |
+| 7|cGRE FF|cBLU FF | |
+|  +-------+--------+ |
+| 8|cFFF 00|cGRE 70 | |
+|  +-------+--------+ |
+| 9|cFFF 00|cFFF 00 | |
+|  +-------+--------+ |
++---------------------+
+#+end_src
+#+html: <p align="center">Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster</p></div>
+
+Empleando asignación ligada, tenemos muchas ventajas. En primer lugar,
+desaparece la /fragmentación externa/.[fn:: El concepto que manejan los
+usuarios en general como /fragmentación/ es muy distinto, y sí se
+presenta bajo este esquema: Cada archivo se separa en pequeños
+/fragmentos/ que pueden terminar esparcidos por todo el disco,
+impactando fuertemente en el rendimiento del sistema]
+
+Ahora, la /asignación ligada/ no sólo resulta más lenta que la
+contigua, sino que presenta una mayor /sobrecarga administrativa/: El
+espacio desperdiciado para almacenar los apuntadores típicamente es
+cercano al 1% del disponible en el medio.
+
+Este esquema también presenta /fragilidad de metadatos/: Si alguno de
+los apuntadores se pierde o corrompe, lleva a que se pierda el archivo
+/completo/ desde ese punto y hasta su final (y abre la puerta a la
+corrupción de otro archivo, si el apuntador queda apuntando hacia un
+bloque empleado por éste). Hay dos maneras de mitigar este problema:
+El empleado por FAT es guardar una (o, bajo FAT12, dos) copias
+adicionales de la tabla de asignación, mismas que el sistema
+verificará que se mantengan consistentes. Por otro lado, podría
+manejarse una estructura de /lista doblemente ligada/ (en vez de una
+/lista ligada/ sencilla) en que cada elemento apunte tanto al
+siguiente como al anterior. En ambos casos, sin embargo, la sobrecarga
+administrativa se duplica.
+
+** Asignación indexada
+
+Por último, tenemos la /asignación indexada/, el mecanismo empleado
+por casi todos los sistemas de archivos modernos. En este esquema, se
+crea una estructura intermedia entre el directorio y los datos, única
+para cada archivo: el /i-nodo/ (o /nodo de información/). Cada i-nodo
+guarda los metadatos y la lista de bloques del archivo, reduciendo la
+probabilidad de que se presente la /corrupción de apuntadores/ que
+mencionamos al hablar de la asignación ligada.
+
+La sobrecarga administrativa bajo este esquema potencialmente es mucho
+mayor: Al asignar el i-nodo, éste se crea ocupando como mínimo un
+cluster completo. Para un archivo que quepa en un sólo cluster, esto
+es un desperdicio del 100% de espacio; para archivos más grandes, la
+sobrecarga relativa disminuye, pero se mantiene siempre superior a la
+de la asignación indexada.
+
+#+html: <div class="figure">
+#+attr_latex: width=0.9\textwidth
+#+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
+#+begin_src ditaa :file ltxpng/fs_asignacion_indexada.png :cmdline -E
++---------------------+    Directorio        Índices
+|{s} cFFF             |    +----+            +--------------------+
+|  0        8       F |    |cF00+-->30       |(30)cF66 38, 48, 60 |
+|  +--------+-------+ |    +----+            +--------------------+
+| 3|cF00    |cF66   | |    |c0F0+-->50
+|  +--------+-------+ |    +----+            +--------------------+
+| 4|cFFF    |cF66   | |    |c00F+-->88       |(50)c6F6 5B         |
+|  +--------+-------+ |    +----+            +--------------------+
+| 5|c0F0    |c6F6   | |
+|  +--------+-------+ |                      +--------------------+
+| 6|cF66    |cFFF   | |                      |(88)c66F 78, 80, 90 |
+|  +--------+-------+ |                      +----------+---------+
+| 7|cFFF    |c66F   | |                                 |
+|  +--------+-------+ |                                 V
+| 8|c66F    |c00F   | |                      +----------+---------+
+|  +--------+-------+ |                      |(A0)c66F 98         |
+| 9|c66F    |c66F   | |                      +--------------------+
+|  +--------+-------+ |
+| A|c00F    |cFFF   | |
+|  +--------+-------+ |
+| B|cFFF    |cFFF   | |
+|  +--------+-------+ |
++---------------------+
+#+end_src
+#+html: <p align="center">Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)</p></div>
+
+Un esquema de asignación indexada nos da un mejor manejo de caché que
+la asignación ligada: Si bien en dicho caso es común guardar copia de
+la tabla de asignación en memoria para mayor agilidad, con la
+asignación indexada bastará hacer caché /únicamente de la información
+importante/, esto es, únicamente de los archivos que estamos empleando
+actualmente. Al hacer caché únicamente de lo que es relevante al
+sistema en un momento dado, se da mejor uso a un recurso más escaso
+(y, por tanto, valioso): La memoria.
+
+Ahora, ¿qué pasa cuando la lista de clusters de un archivo no cabe en
+un i-nodo? Podemos ver este ejemplo en el archivo azul del esquema
+ejemplo: En este caso, cada i-nodo puede guardar únicamente tres
+apuntadores. Al tener un archivo con cuatro clusters, se hace
+necesario extender el i-nodo con una lista adicional. La
+implementación más común de este esquema es que, dependiendo del
+tamaño del archivo, se empleen apuntadores con los niveles de
+indirección que /vayan haciendo falta/.
+
+#+caption: Estructura típica de un i-nodo en Unix (Silberschatz, p. 440)
+#+attr_latex: width=0.7\textwidth
+[[../img/fs_apuntadores_indirectos.png]]
+
+¿Qué tan grande sería el archivo máximo direccionable bajo este
+esquema y únicamente tres indirecciones? Supongamos cantidades
+que podríamos encontrar frecuentemente hoy en día: Clusters de 4KB y
+direcciones de 32 bits. Esto significa que en un cluster vacío caben
+128 apuntadores ($4096 \over 32$). Supongamos también que en el i-nodo
+los metadatos ocupan 224 bytes, dejando espacio para 100 apuntadores:
+
+- Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede ser
+  representado directamente en el i-nodo, y requeriremos de un sólo
+  acceso a disco para obtener su lista de clusters
+- Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
+  representarse con el bloque de indirección sencilla, y obtener su
+  lista de clusters nos significa dos accesos a disco adicionales.
+- Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
+  \times 128) ) \times 4KB = 66436KB$, pero aquí ya tendremos que
+  hacer hasta 131 accesos a disco. A partir de este punto, el sistema
+  operativo reducirá fuertemente el tiempo de acceso si puede lograr
+  que todos los clusters que apunten a esta información estén cerca
+  unos de otros.
+- Empleando triple indirección, llegamos hasta $(100-3 + 128 + (128
+  \times 128) + (128 \times 128 \times 128) ) \times 2KB = 8455044
+  \approx 8GB$, más de lo que puede representarse en 32 bits. La
+  cantidad de bloques que tendríamos que leer, sin embargo, para
+  encontrar todos los clusters nos significarían hasta 16516 accesos a
+  disco.
+
+** Las tablas en FAT
+# <<tablas_fat>>
+
+Volvamos al caso que estamos tomando como ejemplo, el sistema de
+archivos FAT. En este sistema, cada entrada del directorio apunta al
+primer cluster que ocupa ada uno de los archivos, y se emplea un
+esquema de asignación ligada. El directorio tiene también un campo
+indicando la /longitud total/ del archivo, pero esto no es empleado
+para leer la información, sino para poderla presentar más ágilmente al
+usuario.
+
+La estructura fundamental de este sistema de archivos es la tabla de
+asignación de archivos (/File Allocation Table/) — Tanto que de ella
+toma su nombre FAT. Esta estructura ocupa los primeros sectores del
+disco, antes incluso del directorio, y por su importancia, se almacena
+por duplicado (los discos flexibles son mucho menos confiables que los
+discos duros, y el sistema de archivos fue introducido antes de que la
+PC pudiera emplear un disco duro).
+
+Cada entrada de la FAT mide lo que la longitud /correspondiente a su
+versión (12, 16 o 32 bits), y puede tener uno de cuatro valores
+posibles:
+
+- Libre :: El valor =0x000=, =0x0000= o =0x00000000= (dependiendo de
+           la versión de FAT) indica que el cluster está disponible, y
+           puede ser asignado por el sistema de archivos cuando haga falta.
+- Siguiente :: Cuando el valor es menor hasta =0xFF6=, =0xFFF6= o
+               =0xFFFFFFF6=, indica la ubicación del /siguiente
+               cluster/ del archivo.
+- Dañado :: Si el valor de una entrada es =0xFF7=, =0xFFF7= o
+            =0xFFFFFFF7=, indica que el cluster es un espacio del
+            disco dañado, y no debe ser utilizado para almacenar datos.
+- Fin :: Los valores =0xFFF=, =0xFFFF= o =0xFFFFFFFF= indican que se
+         trata del último cluster de un archivo.
+
+Una característica que puede llamar la atención de FAT es que
+parecería permitir la fragmentación de archivos /por diseño/: Dado que
+el descriptor de cada cluster /debe apuntar/ al siguiente, podemos
+asumir que el /caso común/ es que los clusters no ocuparán contiguos
+en el disco. Claro está, la tabla puede apuntar a varios clusters
+adyacentes, pero el sistema de archivos mismo no hace nada para que
+así sea.
+
+#+caption: Ejemplo de entradas en la tabla de asignación de archivos ([[http://www.beginningtoseethelight.org/fat16/index.htm][Peter Clark]])
+#+attr_latex: width=\textwidth
+[[../img/tabla_fat.png]]
+
+Cuando revisamos el formato del directorio de FAT omitimos un detalle
+importante: Revisamos sólamente el directorio raiz, y no mencionamos
+cómo es que se implementan los subdirectorios. Los subdirectorios en
+FAT son archivos de un /tipo/ especial — Podemos verlos como una
+suerte de [[#archivos_estructurados][archivos estructurados]], gestionados por el sistema
+operativo. Lo único que distingue a un directorio de un archivo normal
+es que, en la entrada que lo describe en su directorio padre, el byte
+de /atributos/ (=0x0B=) tiene activado el quinto bit.
+
+Un directorio es almacenado en disto /exactamente/ como cualquier otro
+archivo. Si se le asigna únicamente un cluster, y el tamaño del
+cluster es pequeño (2KB), podrá almacenar sólo 64 entradas, y cada
+cluster adicional le dará 64 entradas más. Y como tal, está sujeto
+también a la fragmentación: Conforme se agregan entradas al
+directorio, éste crece. Llegado el momento, requiere clusters
+adicionales. Y si un directorio termina disperso por todo el disco,
+resultará –como cualquier otro archivo– más lento leerlo y trabajar
+con él. Siempre que abramos un archivo dentro de un directorio grande,
+o que lo recorramos para abrir algún archivo en algún subdirectorio
+suyo, tendremos que buscar todos sus fragmentos a lo largo del disco.
+
+Ante estos dos aspectos, no podemos perder de vista la edad que tiene
+FAT. Otros sistemas de archivos más modernos han resuelto este
+problema a través de los /grupos de asignación/: Los directorios del
+sistema son /esparcidos/ a lo largo del volumen, y /se intenta/ ubicar
+a los archivos cerca de los directorios desde donde son referidos[fn::
+Claro está, en el caso de los archivos que están como /ligas duras/
+desde varios directorios, pueden ubicarse sólo cerca de uno de
+ellos]. Esto tiene por consecuencia que los archivos que presentan
+/cercanía temática/ quedan ubicados cerca unos de otros — Y dado que
+es probable que sean empleados aproximadamente al mismo tiempo, esto
+reduce las distancias que recorrerán las cabezas. Además, al esparcir
+los archivos, se distribuye también mejor el espacio libre, por lo
+cual el impacto de los cambios de tamaño de un archivo en lo relativo
+a la fragmentación se limita a los que forman parte del mismo bloque
+de asignación.
+
+Los sistemas de archivos que están estructurados siguiendo esta lógica
+de grupos de asignación no evitan la fragmentación, pero sí la mayor
+parte de sus consecuencias negativas. Para mantener este esquema
+operando confiablemente, eso sí, requieren de mantener disponibilidad
+de espacio — Al presentarse saturación, esta estrategia pierde
+efectividad. Para evitar que esto ocurra, es muy frecuente en los
+sistemas Unix que haya un cierto porcentaje (típicamente cercano al
+5%) del disco que esté disponible únicamente para el administrador —
+En caso de que el sistema de archivos pase del 95%, los usuarios no
+podrán escribir ya a él, pero el administrador puede efectuar tareas
+de mantenimiento para volver a un rango operacional.
 
 # ** Herramientas de comunicación entre procesos
 
@@ -1959,62 +2344,13 @@ fragmentación.
 # operación que tienen los dispositivos (y que veremos posteriormente).
 
 
-*** Determinando el espacio libre
+# *** Determinando el espacio libre
 # https://en.wikipedia.org/wiki/File_Allocation_Table#FS_Information_Sector
 # En FAT32, se agrega espacio para acelerar algunas tareas del
 # sistema, como el cálculo del espacio disponible.
 
-** Direccionamiento directo e indirecto
 
-Los límites de un sistema de archivos vienen de una serie de
-decisiones de diseño, y hay varias estrategias que se han ido
-desarrollando para lidiar con estos límites. Veremos aquí lo relativo
-a la capacidad máxima de los sistemas de archivos.
-
-Todo sistema de archivos tiene límites máximos en relación a la
-cantidad de datos que pueden ser direccionados. Este límite es dado
-por el producto del tamaño de bloque por la longitud de sus
-direcciones.
-
-#+begin_center
-[[./img/inode_addr.png]]
-
-Practical File System Design, p.12
-#+end_center
-
-*** Ejemplo: FAT
-
-Un ejemplo de un sistema de archivos sencillo, y de direccionamiento
-estrictamente directo, con muy largo tiempo en uso y al mismo tiempo
-una muy amplia base instalada son los basados en FAT (MS-DOS en
-adelante).
-
-#+begin_center
-[[./img/fat.png]]
-
-https://en.wikipedia.org/wiki/File_Allocation_Table#Layout
-#+end_center
-
-En su primer implementación, FAT12 (MS-DOS < 3.3) manejaba
-direccionamiento de 12 bits y /clusters/ tamaño fijo, de 8 bloques de
-512 bytes (4096 bytes). 12 bits permite direccionar hasta 4096
-posiciones independientes, por lo que el tamaño máximo de partición
-que podía manejar era de 16MB.
-
-Al introducirse FAT16 en 1984, la principal ventaja fue /menor espacio
-desperdiciado/ dado que para el mismo disco duro los clusters podían
-ser de menor número de sectores.
-
-El sistema de archivos FAT tuvo varias revisiones menores; la última
-importante fue en 1996, FAT32, con espacio de direccionamiento de 28
-bits y tamaño de cluster de entre 1 y 8 sectores (512 y 4096 bytes),
-lo cual permite particiones de hasta 16TB.
-
-*** Ejemplo: FFS
-
-Como segundo ejemplo podemos referirnos al /Sistema de Archivos Ágil
-de Berkeley/ (Berkeley Fast File System, FFS).
-
+* Fallos y recuperación
 
 * El medio físico
 
@@ -2057,7 +2393,7 @@ Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash st
 - [[http://lwn.net/Articles/529077/][A hash-based DoS attack on Btrfs]] (LWN)
 
 - [[http://linux.slashdot.org/story/12/12/15/0055217/denial-of-service-attack-found-in-btrfs-file-system][Denial-of-Service Attack Found In Btrfs File-System]] (Slashdot)
-
+/
 - [[http://bugs.debian.org/cgi-bin/bugreport.cgi?archive=no&bug=682840][Default /etc/apache2/mods-available/disk_cache.conf is incompatible
   with ext3]] (bug de Debian ilustrando los límites en números de
   archivos para Ext3)

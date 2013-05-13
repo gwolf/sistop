@@ -655,7 +655,7 @@ cuantos términos
 - Parte importante de los distintos sistemas de archivos son los
   /programas de verificación de integridad/
   - En Windows, =CHKDSK= y =SCANDISK=
-  - En Unix, =fsck.*= (p.ej. =fsck.vfat=, =fsck.ext2=, etc.)
+  - En Unix, =fsck.vfat=, =fsck.ext2=, etc.
 - Hacen un /barrido/ del sistema de archivos, buscando evidencias de
   inconsistencia
   - Siguiendo todas las cadenas de clusters de archivos o tablas de
@@ -715,9 +715,12 @@ inconsistentes:
     poco común)
 - Periódicamente, se avanza por la bitácora, grabando las estructuras
   a disco, y avanzando el apuntador
-- En caso de fallo, el sistema operativo lee dónde quedó el apuntador,
-  /avanza/ las operaciones faltantes, y /converge/ rápidamente a un
-  sistema de archivos estable
+
+** Sistemas de archivos con bitácora (/journaling file systems/)
+- En caso de fallo, el sistema operativo:
+  - Lee dónde quedó el apuntador
+  - /Avanza/ las operaciones faltantes
+  - /Converge/ rápidamente a un sistema de archivos estable
 - Todas las operaciones deben ser /idempotentes/
   - Su ejecución repetida no debe alterar el resultado
 
@@ -765,8 +768,10 @@ inconsistentes:
           4 -> directoriob;
           5 -> 65;
   
-          ultimaop [label = "Última operación", shape="box"];
-          ultimaop -> 4;
+          ultimaop [label = "Última operación", shape="box", color="pink", style="filled"];
+          ultimaop -> 5 [style="dotted"];
+          cabeza [label = "Siguiente entrada", shape="box", color="green", style="filled"];
+          cabeza -> 3 [style="dotted"];
   }
 #+end_src
 

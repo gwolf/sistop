@@ -98,10 +98,13 @@
   dirección /lineal/: /Direccionamiento Lógico de Bloques/ (/Logical
   Block Addressing/, /LBA/)
   - Ya no /tridimensional/
-- Sistema operativo y aplicaciones ya sólo hacen referencia por esta
-  ubicación, no conocen las ubicaciones físicas
+- $LBA = ((C \times HPC) + H) \times SPT + S - 1$
+  - $HPC$ = cabezas por cilindro
+  - $SPT$ = sectores por track
 
 ** LBA y la reubicación
+- Sistema operativo y aplicaciones ya sólo hacen referencia por esta
+  ubicación, no conocen las ubicaciones físicas
 - LBA permite al controlador de disco utilizar más eficientemente el
   espacio
   - Número de sectores por track variable
@@ -111,6 +114,270 @@
   - Diferentes algoritmos de reubicación \rarrow Mantener tanto como
     se pueda el mapeo de los bloques contiguos a ojos del sistema
 
-* Medios no-magnéticos
+* Estado sólido
+
+** Medios de /estado sólido/
+- Desde hace cerca de una década va creciendo consistentemente el uso
+  de medios de almacenamiento de /estado sólido/
+  - Medios /sin partes móviles/
+- Las unidades de estado sólido tienen características muy distintas
+  a las de los /discos/
+  - Pero mayormente seguimos empleando los mismos sistemas de archivos
+- Las métricas de confiabilidad y rendimiento tienen que ser replanteadas
+- Un claro espacio de investigación e implementación actual
+
+** Emulación de disco: ¿Un acierto o un error?
+- Casi todos los discos de estado sólido se presentan al sistema
+  operativo como un disco /estándar/
+- Ventajas:
+  - Permite que sean empleados sin cambios al sistema operativo
+  - No hay que pensar en controladores específicos
+- Desventaja
+  - No se aprovechan sus características únicas
+  - Se tienen que adecuar a las restricciones (artificiales) de
+    sistemas pensados para medios rotativos
+
+** Estado sólido basado en RAM
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en RAM: DDRdrive X1 ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_ddr_drivex1.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Primeros discos de estado sólido
+- Memoria RAM estándar, con una batería de respaldo
+- Extremadamente rápido (velocidad igual a la de acceso a memoria)
+- Muy caro
+- Riesgo de pérdida de datos si se acaba la batería
+#+latex: \end{column} \end{columns}
+
+** Estado sólido basado en Flash con interfaz SATA
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en Flash con interfaz SATA ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_sata.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Se comporta como un disco duro estándar
+- Usos principales:
+  - Industria aeroespacial, militar (desde $\sim 1995$)
+    - Por su muy alta resistencia a la vibración
+  - Servidores, alto rendimiento
+    - Ciertas tecnologías presentan velocidad muy superior a la de
+      medios rotativos
+  - Presente en /netbooks/, dispositivos móviles (integrado a la
+    tarjeta madre)
+#+latex: \end{column} \end{columns}
+
+
+** Estado sólido Flash para /transporte temporal/
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en Flash con interfaz USB ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_usb.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Mecanismo de transporte de archivos personales
+- Muy bajo costo
+  - Muchos modelos con calidad deficiente
+- Muy distintos modelos de conector
+  - SD, USB, MMC, etc.
+  - Mismo tipo de dispositivo
+- Muy alta varianza en capacidad, rendimiento y durabilidad según la
+  generación tecnológica
+#+latex: \end{column} \end{columns}
+
+** Diferencias del medio
+- Tiempo constante de acceso al medio
+  - Desaparece la demora rotacional y de movimiento de brazo
+- Tamaño de sector: Típicamente 4KB (ya no 512 bytes, estándar desde
+  los 1950s)
+  - Debería traducirse a una alineación de estructuras — No siempre
+    es el caso
+- Diferencia de velocidad
+  - Lectura más rápida, escritura más lenta
+  - Ciclos de borrado previos a la escritura
+- Desgaste del medio: $\approx$ miles a cientos de miles de escrituras
+  - Nivelamiento de uso (/wear leveling/)
+  - Efectuado en el controlador (transparente al sistema operativo)
+
+** Espacio para mejoramiento / investigación
+- Esta es un área frustrantemente ignorada
+  - Con los diferentes perfiles que requieren los distintos usos de
+    los medios Flash
+- Cada vez más empleada
+- Un buen ámbito para desarrollar proyectos de investigación
 
 * Manejo avanzado de volúmenes
+
+** ¿Diferencia entre /volumen/ y /partición/?
+- En un equipo estándar de escritorio, estos dos términos son
+  intercambiables
+- Pero es cada vez más frecuente hablar de /arreglos/ de discos
+  - Alejándonos –por otro camino– del concepto de disco magnético
+    rotativo estándar
+- Principales ejes:
+  - Confiabilidad
+  - Rendimiento
+  - Espacio por volumen
+
+** RAID
+- /Arreglo Redundante de Discos Independientes/ (/Redundant Array of
+  Independent Disks/)
+  - Originalmente: De discos /Baratos/ (/Inexpensive/)
+- /Diferentes/ técnicas de combinar un conjunto de discos,
+  presentándose como uno sólo a /capas superiores/
+- Originalmente (1990s) implementado sólo en el controlador (en
+  hardware)
+  - Hoy lo implementan casi todos los sistemas operativos como opción
+  - Diferencia no-nula (pero despreciable) en rendimiento
+- Hay muchas alternativas basadas en las /ideas/ de RAID
+  - Integrando más niveles del almacenamiento
+  - JFS+LSM (AIX), LVM (Linux), ZFS (Solaris, *BSD), ...
+
+** Niveles de RAID
+#+BEGIN_CENTER
+RAID define diferentes niveles de operación; varios de ellos no son
+ya empleados hoy en día. Los principales en uso son:
+#+END_CENTER
+- 0 :: Concatenación
+- 1 :: Espejeo
+- 5 :: Paridad dividida por bloques (/block-interleaved parity/)
+- 6 :: Paridad por redundancia P+Q
+
+** RAID 0: Concatenación
+- Espacio total: Suma de los espacios de todas sus unidades
+- Mejoría en velocidad (más cabezas independientes)
+- Sin mejoría en confiabilidad
+#+attr_latex: width=\textwidth
+#+caption: Cinco discos organizados en RAID 0
+#+begin_src dot :exports results :file ltxpng/raid_0.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                   label = "Volumen (5TB)";
+                   1 [label = "Disco\n1: 1TB", shape="circle"];
+                   2 [label = "Disco\n2: 1TB", shape="circle"];
+                   3 [label = "Disco\n3: 1TB", shape="circle"];
+                   4 [label = "Disco\n4: 1TB", shape="circle"];
+                   5 [label = "Disco\n5: 1TB", shape="circle"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   3 -> 4 [label = "+"];
+                   4 -> 5 [label = "+"];
+          }
+  }
+#+end_src
+
+** RAID 1: Espejo
+- Espacio total: Uno sólo de los volúmenes
+- Mejoría en velocidad (el primero que entregue los datos)
+- Confiabilidad: Soporta la pérdida de un disco
+#+caption: Dos discos organizados en RAID 1
+#+attr_latex: width=0.6\textwidth
+#+begin_src dot :exports results :file ltxpng/raid_1.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                   label = "Volumen (1TB)";
+                   1 [label = "Disco\n1: 1TB", shape="circle"];
+                   2 [label = "Disco\n2: 1TB", shape="circle"];
+                   1 -> 2 [label = "=", dir="both"];
+          }
+  }
+#+end_src
+
+** RAID 5: Paridad dividida por bloques
+- Espacio total: Suma de los espacios de todas sus unidades /menos
+  una/
+- Reducción en velocidad (todas las unidades deben leer el sector y
+  recalcular el resultado)
+- Soporta la pérdida de un disco
+  - El disco de paridad es otro /a cada bloque/
+#+attr_latex: width=0.9\textwidth
+#+caption: Cinco discos organizados en RAID 5
+#+begin_src dot :exports results :file ltxpng/raid_5.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                   label = "Volumen (4TB)";
+                   1 [label = "Disco\n1: 1TB", shape="circle"];
+                   2 [label = "Disco\n2: 1TB", shape="circle"];
+                   3 [label = "Disco\n3: 1TB", shape="circle"];
+                   4 [label = "Disco\n4: 1TB", shape="circle"];
+                   5 [label = "Disco\n5: 1TB", shape="circle", color="blue"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   3 -> 4 [label = "+"];
+                   1 -> 5 [color="blue", label = "PAR"];
+                   2 -> 5 [color="blue", label = "PAR"];
+                   3 -> 5 [color="blue", label = "PAR"];
+                   4 -> 5 [color="blue", label = "PAR"];
+          }
+  }
+#+end_src
+
+** RAID 6: Paridad por redundancia P+Q
+- Espacio total: Suma de los espacios de todas sus unidades /menos
+  dos/
+- Reducción en velocidad (todas las unidades deben leer el sector y
+  recalcular el resultado)
+- Soporta la pérdida de dos discos
+  - El disco de paridad es otro /a cada bloque/
+#+attr_latex: width=0.6\textwidth
+#+caption: Cinco discos organizados en RAID 6
+#+begin_src dot :exports results :file ltxpng/raid_6.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                   label = "Volumen (3TB)";
+                   1 [label = "Disco\n1: 1TB", shape="circle"];
+                   2 [label = "Disco\n2: 1TB", shape="circle"];
+                   3 [label = "Disco\n3: 1TB", shape="circle"];
+                   4 [label = "Disco\n4: 1TB", shape="circle", color="green"];
+                   5 [label = "Disco\n5: 1TB", shape="circle", color="blue"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   1 -> 4 [color="green", label = "PAR P"];
+                   2 -> 4 [color="green", label = "PAR P"];
+                   3 -> 4 [color="green", label = "PAR P"];
+                   1 -> 5 [color="blue", label = "PAR Q"];
+                   2 -> 5 [color="blue", label = "PAR Q"];
+                   3 -> 5 [color="blue", label = "PAR Q"];
+          }
+  }
+#+end_src
+
+** Combinando niveles de RAID
+- Pueden combinarse dos niveles para obtener los beneficios de ambos
+- Ejemplos más comunes: RAID 1+0 (o RAID 10)
+  - Concatenación de unidades espejeadas
+#+attr_latex: height=0.5\textheight
+#+caption: Seis discos organizados en RAID 1+0
+#+begin_src dot :exports results :file ltxpng/raid_10.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster3 {
+                   label = "Volumen resultante (3TB)";
+                   1 -> 3 [label = "+"];
+                   3 -> 5 [label = "+"];
+                   2 -> 4 [label = "+", style="dotted"];
+                   4 -> 6 [label = "+", style="dotted"];
+          }
+          1 [label = "Disco\n1: 1TB", shape="circle"];
+          2 [label = "Disco\n2: 1TB", shape="circle"];
+          3 [label = "Disco\n3: 1TB", shape="circle"];
+          4 [label = "Disco\n4: 1TB", shape="circle"];
+          5 [label = "Disco\n5: 1TB", shape="circle"];
+          6 [label = "Disco\n6: 1TB", shape="circle"];
+
+          1 -> 2 [label = "=", dir="both", color="blue"];
+          3 -> 4 [label = "=", dir="both", color="blue"];
+          5 -> 6 [label = "=", dir="both", color="blue"];
+  }
+#+end_src
+
+** Combinando niveles de RAID
+- Ojo: Comparación con RAID 0+1
+  - Espejo de unidades concatenadas
+- RAID 1+0: Tolera la pérdida de cualquiera de los discos de
+  cualquiera de los espejos
+- RAID 0+1: Tolera la pérdida de cualquiera de los discos dentro de un mismo espejo
+

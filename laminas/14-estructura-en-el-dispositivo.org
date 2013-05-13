@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Sistemas de archivos: Estructura en el dispositivo
-#+DATE: 2013-05-03 — 2013-05-??
+#+DATE: 2013-05-03 — 2013-05-13
 
 * Definiciones base
 
@@ -602,7 +602,7 @@ cuantos términos
   - Entre más grande el tamaño de cluster, más entradas por cluster
     \rarrow menos movimiento de cabezas
 
-* Otros aspectos
+* Fallos y recuperación
 
 ** FAT: ¿Qué problemas podría haber?
 - FAT es un sistema relativamente frágil
@@ -617,6 +617,188 @@ cuantos términos
   - Archivos huérfanos
 - ¿Por qué ocurren estos problemas?
 
+** Problema generalizado a los distintos sistemas de archivos
+- Prácticamente todos los sistemas de archivos tienen que cuidar estos
+  aspectos
+  - Distintos /síntomas/ — A diferente organización de la información,
+    diferentes probables fallos
+- Los /controladores de disco inteligentes/ agravan este problema
+  - Caché incorporado
+  - Notifican escrituras exitosas al sistema operativo antes de
+    haberlas ejecutado
+
 ** La coherencia del sistema de archivos
+- Cada operación en el sistema de archivos requiere varias
+  modificaciones al disco
+- Por ejemplo, para crear un archivo:
+  - Crear la entrada en directorio
+  - Encontrar los clusters a emplear
+  - Marcarlos en la tabla
+  - Guardar los datos
+- Si hay un fallo, corte de corriente, o el usuario retira el
+  dispositivo antes de tiempo, puede que esta información se haya
+  registrado sólo /parcialmente/
+  - El sistema de archivos /presenta inconsistencias/ o /está en un
+    estado inconsistente/
+
 ** Coherencia de datos /vs./ metadatos
-** Sistemas de archivo con bitácora
+- Hay que mantener en mente la separación entre /datos/ y /metadatos/
+- Si todos los cambios en las estructuras se realizaron, pero /los
+  datos del usuario/ no se registraron al disco, /no estamos/ en un
+  estado inconsistente
+  - Sí, hubo pérdida de información
+  - Pero /la estructura/ del sistema de archivos no presenta ningún problema
+  - No pone en riesgo ninguna /operación posterior/, ni implica a
+    otros archivos
+
+** Verificación de la integridad
+- Parte importante de los distintos sistemas de archivos son los
+  /programas de verificación de integridad/
+  - En Windows, =CHKDSK= y =SCANDISK=
+  - En Unix, =fsck.*= (p.ej. =fsck.vfat=, =fsck.ext2=, etc.)
+- Hacen un /barrido/ del sistema de archivos, buscando evidencias de
+  inconsistencia
+  - Siguiendo todas las cadenas de clusters de archivos o tablas de
+    i-nodos y verificando que no haya /archivos cruzados/
+    (compartiendo erróneamente bloques)
+  - Verificando que todos los directorios sean alcanzables y legales
+  - Recalculando espacio vacío, bitmap de libres, etc.
+- Son siempre procesos /intensivos/ y complejos
+  - Y deben ejecutarse con el sistema de archivos /fuera de línea/ (o
+    en /sólo lectura/)
+
+** Evitando o recuperando de estados inconsistentes
+#+BEGIN_CENTER
+Hay dos estrategias principales para enfrentarse a los estados
+inconsistentes:
+#+END_CENTER
+- Actualizaciones suaves (/soft updates/)
+- Sistemas de archivo con bitácora (/journaling file systems/)
+- Sistemas de archivo estructurados en bitácora (/log-structured
+  file systems/)
+
+** Actualizaciones suaves (/soft updates/)
+- Organiza las escrituras a disco de modo que el estado resultante /no
+  pueda/ ser inconsistente
+  - Permite inconsistencias /no destructivas/: Marcar como asignado
+    espacio libre
+- Verifica /dependencias/ antes de escribir
+  - Por ejemplo: No libera el espacio de un archivo antes de haber
+    marcado su entrada como eliminada del directorio
+- El programa de verificación (=fsck=) se vuelve una tarea /ejecutable
+  en el fondo/, principalmente actuando como /recolector de basura/
+  - Busca espacio marcado como asignado, pero no referenciado
+
+** Actualizaciones suaves y archivos temporales
+- Puede ahorrarse por completo muchas escrituras a disco
+  - La creación de un archivo temporal (creación/obtención de
+    descriptor/remoción) no tiene siquiera que llegar al disco
+  - El proceso puede escribir sus datos en /espacio libre
+    no-referenciado/, la estructura del sistema de archivos no se
+    altera
+
+** Uso de actualizaciones suaves
+- La idea fue presentada hacia 1999, e implementada en FreeBSD hacia
+  2002
+- Está implementado en UFS, empleado por varios sistemas operativos de
+  la familia *BSD
+- Pero no ha sido adoptado en otras familias de sistemas operativos
+  - NetBSD retiró el soporte en 2012 (v6.0), /prefiriendo/ el empleo
+    de bitácora
+
+** Sistemas de archivos con bitácora (/journaling file systems/)
+- Antes de efectuar cualquier operación /de metadatos/ (una
+  /transacción/), ésta se graba a una bitácora
+  - Una transacción puede comprender varias operaciones independientes
+  - La bitácora es típicamente una /lista ligada circular/
+  - En algunas implementaciones, también los /datos/ mismos (aunque es
+    poco común)
+- Periódicamente, se avanza por la bitácora, grabando las estructuras
+  a disco, y avanzando el apuntador
+- En caso de fallo, el sistema operativo lee dónde quedó el apuntador,
+  /avanza/ las operaciones faltantes, y /converge/ rápidamente a un
+  sistema de archivos estable
+- Todas las operaciones deben ser /idempotentes/
+  - Su ejecución repetida no debe alterar el resultado
+
+** Sistemas de archivos con bitácora (/journaling file systems/)
+#+attr_latex: width=\textwidth
+#+caption: Sistema de archivos con bitácora
+#+begin_src dot :exports results :file ltxpng/fs_journaling.png
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                  label = "Bitácora"
+                  color = lightblue;
+                  style = "filled";
+                  1 [shape="box3d", label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
+                  2 [shape="box3d", label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
+                  3 [shape="box3d", label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
+                  4 [shape="box3d", label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
+                  5 [shape="box3d", label = "Agrega el\ncluster 65 a\nunomas.txt"];
+  
+                  1 -> 2 [label = "72"];
+                  2 -> 3 [label = "68"];
+                  3 -> 4 [label = "69"];
+                  4 -> 5 [label = "70"];
+                  5 -> 1 [label = "71"];
+          }
+  
+          subgraph cluster1 {
+                  label = "Datos";
+                  color = yellow;
+                  style = "filled";
+                  directorioa [label = "Directorio a", shape="box"];
+                  directoriob [label = "Directorio b", shape="box"];
+                  65;
+                  directorioa -> 12 -> 34 -> 26 [style="dotted"];
+                  directoriob -> 37 -> 38 -> 39 [style="dotted"];
+                  
+  }
+          1 -> directorioa;
+          2 -> 12;
+          2 -> 34;
+          2 -> 26;
+          3 -> 37;
+          3 -> 38;
+          3 -> 39;
+          4 -> directoriob;
+          5 -> 65;
+  
+          ultimaop [label = "Última operación", shape="box"];
+          ultimaop -> 4;
+  }
+#+end_src
+
+** Sistemas de archivos con bitácora (/journaling file systems/)
+- La bitácora /no incluye/ (por lo general) datos, /sólo metadatos/
+  - Por rendimiento
+  - Porque la bitácora tendría que ser mucho más grande
+- Es el esquema más empleado hoy en día
+- Presente en casi todos los sistemas de archivos modernos
+- Ojo: /No exime/ de la verificación de sistema de archivos
+  - Sigue siendo necesaria periódicamente (periodos largos)
+  - Aunque no como procedimiento habitual tras una detención abrupta
+  - Se recomienda principalmente para recuperar ante efectos de bugs
+    en la implementación
+
+** Sistemas estructurados en bitácora (/log-structured file systems/)
+- Llevan el concepto de /bitácora/ al límite
+- En vez de tener un área reservada para la bitácora, /el total/ del
+  sistema de archivos es una gran bitácora
+- Siguen una organización radicalmente diferente del resto de los
+  sistemas de archivo
+  - Dependen de un /caché agresivo/ para la lectura
+  - Orientados a facilitar las escrituras, haciéndolas secuenciales
+- Aptos sólo para ciertos tipos de carga
+  - Tremendamente ineficientes para otros
+
+** Sistemas estructurados en bitácora (/log-structured file systems/)
+- Siguen siendo en buena medida sujetos actualmente a investigación
+- Hay varias implementaciones, pero casi todas se han
+  detenido/abandonado
+  - O reducido fuertemente su ritmo de desarrollo
+- Pero han llevado al desarrollo de conceptos importantes que hoy se
+  están aplicando en sistemas de archivo /más estándar/
+  - Especialmente en el área de sistemas de archivos orientados a
+    /dispositivos no-magnéticos o no-rotativos/

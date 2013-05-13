@@ -1,0 +1,116 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Sistemas de archivos: El medio físico
+#+DATE: 2013-05-13
+
+* Detalles del medio magnético
+
+** Empleando discos duros: /Notación C-H-S/
+- A lo largo de los últimos 40 años, el principal medio de
+  almacenamiento ha sido el /disco duro/
+- Para hacer referencia a un sector específico de datos, la notación
+  tradicional empleada es la C-H-S (/Cilindro - Cabeza - Sector/)
+- Permite referir a cualquier punto del disco dentro de un espacio
+  tridimensional
+
+** Mapeo de un disco duro a /C-H-S/
+#+caption: Coordenadas de un disco duro, presentando cada uno de sus sectores en C-H-S (Silberschatz, p.458)
+#+attr_latex: height=0.7\textheight
+[[../img/disco_duro.png]]
+
+** Algoritmos de planificación de acceso a disco
+- Si el disco es la parte más lenta de un sistema de cómputo, vale la
+  pena dedicar tiempo a encontrar el mejor ordenamiento posible para
+  lecturas y escrituras
+- Veremos algunos de los algoritmos históricos
+  - Como referencia
+  - Para comparar sus puntos de partida
+- Pero no profundizaremos mucho al respecto — Estos esquemas /ya no se emplean/
+  - Fuera del desarrollo de controladores embebidos
+  - Veremos también las razones para su abandono
+- Trabajaremos partiendo del cilindro 53, con la cadena de referencia
+  /98, 183, 37, 122, 14, 124, 65, 67/
+
+** Acceso a disco en FIFO
+- Como en los otros subsistemas que hemos visto, el primer algoritmo
+  es atender a las solicitudes /en órden de llegada/
+- Algoritmo /justo/, aunque poco eficiente
+- Movimiento total de cabezas para la cadena de referencia: 640
+  cilindros
+  - Con movimientos tan aparentemente absurdos como 122 \rarrow 14
+    \rarrow 124
+
+** Acceso a disco en FIFO
+#+caption: Planificación de disco FIFO
+#+attr_latex: height=0.7\textheight
+[[../img/algoritmo_disco_fifo.png]]
+
+** Tiempo más corto a continuación (SSTF)
+- /Shortest Seek Time First/ — Corresponde conceptualmente a /Shortest
+  Job First/ (de /planificación de procesos/)
+- Reduce el desplazamiento total a partir de FIFO de 640 a sólo 236 cilindros
+- Puede llevar a la inanición
+  - Al favorecer a las solicitudes cercanas, las lejanas pueden quedar
+    a la espera indefinidamente
+
+** Acceso a disco en SSTF
+#+caption: Planificación de disco SSTF (Tiempo más corto a continuación)
+#+attr_latex: height=0.7\textheight
+[[../img/algoritmo_disco_sstf.png]]
+
+** Acceso a disco en elevador (SCAN)
+- Evita la inanición, buscando minimizar el movimiento de las cabezas
+- Opera como elevador: La cabeza recorre el disco de extremo a extremo
+  - Atiende a todas las solicitudes que haya pendientes /en el camino/
+- Los recorridos pueden ser mayores a SSTF
+- Pero garantíza que no habrá inanición
+  - En este recorrido en particular, también 236 cilindros (iniciando
+    en 53 y /hacia abajo/)
+- Modificación menor que mejora el rendimiento: LOOK
+  - Verificar si hay algún otro sector pendiente en la dirección
+    actual; si no, dar la vuelta anticipadamente
+  - Reduciría el recorrido a 208 cilindros
+
+** Acceso a disco en SCAN (elevador)
+#+caption: Planificación de disco SCAN (elevador)
+#+attr_latex: height=0.7\textheight
+[[../img/algoritmo_disco_scan.png]]
+
+** ¿Por qué ya no se emplean estos algoritmos?
+- Requieren más información de la disponible
+  - Están orientados a reducir el traslado /de la cabeza/
+  - Ignoran la /demora rotacional/
+  - En distintos discos, el impacto de uno será superior al del otro
+- Distintas prioridades para distintas solicitudes
+  - Si el sistema operativo prefiere priorizar expresamente, estos
+    algoritmos no ofrecen la /expresividad/ necesaria
+  - Por ejemplo, acceso a memoria virtual sobre acceso a archivos
+- Abstracciones a niveles más bajos (p.ej. LBA, que veremos a
+  continuación)
+- Dispositivos /virtuales/
+
+** La transición a /LBA/
+- C-H-S impone muchas restricciones al acomodo de la información
+  - No permite mapearse naturalmente a dispositivos que no sean discos
+    rotativos
+  - Hacia principios de los 1990, el /BIOS/ imponía límites
+    innecesarios al almacenamiento (p.ej. número máximo de cilindros)
+- Los controladores de disco comenzaron a exponer al sistema una
+  dirección /lineal/: /Direccionamiento Lógico de Bloques/ (/Logical
+  Block Addressing/, /LBA/)
+  - Ya no /tridimensional/
+- Sistema operativo y aplicaciones ya sólo hacen referencia por esta
+  ubicación, no conocen las ubicaciones físicas
+
+** LBA y la reubicación
+- LBA permite al controlador de disco utilizar más eficientemente el
+  espacio
+  - Número de sectores por track variable
+- Responder /preventivamente/ a fallos en el medio físico
+  - Reubicar sectores /difíciles de leer/ antes de que presenten
+    pérdida de datos
+  - Diferentes algoritmos de reubicación \rarrow Mantener tanto como
+    se pueda el mapeo de los bloques contiguos a ojos del sistema
+
+* Medios no-magnéticos
+
+* Manejo avanzado de volúmenes

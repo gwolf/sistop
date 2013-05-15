@@ -614,8 +614,73 @@ cuantos términos
     buscando inconsistencias
 - Principales inconsistencias
   - Archivos cruzados (/Cross-linked file/)
-  - Archivos huérfanos
+  - Cadenas perdidas o /huérfanas/
 - ¿Por qué ocurren estos problemas?
+
+** FAT: Principales inconsistencias
+#+attr_latex: width=0.8\textwidth
+#+caption: Principales inconsistencias que pueden presentarse en los sistemas de archivos tipo FAT
+#+BEGIN_SRC dot :exports results :file ltxpng/fs_inconsistencias_fat.png
+digraph G
+{
+	node [style=filled, fillcolor=white];
+	
+	subgraph cluster_fat {
+		node [shape = box, label = ""];
+		label = "Tabla de asignación"
+		
+		{rank=same; 1 2 3 4} ->
+		{rank=same; 5 6 7 8} ->
+		{rank=same; 9 10 11 12} ->
+		{rank=same; 13 14 15 16} [style=invis];
+		
+		2 -> 5 -> 1 -> 15;
+		15 [label="FF"];
+		
+		3 -> 6 -> 9 -> 8 -> 4;
+		4 [label="FF"];
+		
+		14 -> 7 -> 11;
+		11 [label="FF"];
+	}
+	
+	subgraph cluster_dir {
+		label="directorio";
+		a [label = "archivo1.txt", fillcolor="#ffffcc"];
+		b [label = "a.out", fillcolor="#ccccff"];
+		c [label = "proyecto.c", fillcolor="#ffccff"];
+	}
+	
+	subgraph cluster_leyenda {
+		style=invis;
+		c -> caja_cross -> caja_huerf [style=invis];
+		c -> txt_cross -> txt_huerf [style=invis];
+		caja_cross [label="", shape=box, fillcolor="#ffaaaa"];
+		caja_huerf [label="", shape=box, fillcolor="#ff3333"];
+		txt_cross [label="Archivo cruzado", shape=plaintext];
+		txt_huerf [label="Cadena perdida", shape=plaintext];
+	}
+	
+	a -> 2;
+	b -> 3;
+	c -> 1;
+	
+	2 [fillcolor="#ffffcc"];
+	5 [fillcolor="#ffffcc"];
+	1 [fillcolor="#ffaaaa"];
+	15 [fillcolor="#ffaaaa"];
+	
+	3 [fillcolor="#ccccff"];
+	6 [fillcolor="#ccccff"];
+	9 [fillcolor="#ccccff"];
+	8 [fillcolor="#ccccff"];
+	4 [fillcolor="#ccccff"];
+	
+	14 [fillcolor="#ff3333"];
+	7 [fillcolor="#ff3333"];
+	11 [fillcolor="#ff3333"];
+}
+#+END_SRC
 
 ** Problema generalizado a los distintos sistemas de archivos
 - Prácticamente todos los sistemas de archivos tienen que cuidar estos
@@ -728,50 +793,59 @@ inconsistentes:
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
 #+begin_src dot :exports results :file ltxpng/fs_journaling.png
-  digraph G {
-          rankdir=LR;
-          subgraph cluster0 {
+digraph G
+{
+	rankdir=RL;
+          subgraph cluster_jrnl {
                   label = "Bitácora"
                   color = lightblue;
                   style = "filled";
-                  1 [shape="box3d", label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
-                  2 [shape="box3d", label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
-                  3 [shape="box3d", label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
-                  4 [shape="box3d", label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
-                  5 [shape="box3d", label = "Agrega el\ncluster 65 a\nunomas.txt"];
+		  node [shape="box"];
+                  1 [label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
+                  2 [label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
+                  3 [label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
+                  4 [label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
+                  5 [label = "Agrega el\ncluster 65 a\nunomas.txt"];
   
-                  1 -> 2 [label = "72"];
-                  2 -> 3 [label = "68"];
-                  3 -> 4 [label = "69"];
-                  4 -> 5 [label = "70"];
-                  5 -> 1 [label = "71"];
-          }
+                  1 -> 2 [label = "72", penwidth=3];
+                  2 -> 3 [label = "68", penwidth=3];
+                  3 -> 4 [label = "69", penwidth=3];
+                  4 -> 5 [label = "70", penwidth=3];
+                  5 -> 1 [label = "71", penwidth=3];
+		  {rank=same; 1 2}
+		  {rank=same; 4 5}
+
+}
   
-          subgraph cluster1 {
+          subgraph cluster_datos {
                   label = "Datos";
                   color = yellow;
                   style = "filled";
-                  directorioa [label = "Directorio a", shape="box"];
-                  directoriob [label = "Directorio b", shape="box"];
+                  dira [label = "Directorio a", shape="box3d"];
+                  dirb [label = "Directorio b", shape="box3d"];
+                  dira -> 12 -> 34 -> 26 [style="dashed"];
+                  dirb -> 37 -> 38 -> 39 [style="dashed"];
                   65;
-                  directorioa -> 12 -> 34 -> 26 [style="dotted"];
-                  directoriob -> 37 -> 38 -> 39 [style="dotted"];
-                  
-  }
-          1 -> directorioa;
+
+		  {rank=same; 12 37 65}
+		  {rank=same; 34 38}
+		  {rank=same; 26 39}
+}
+          1 -> dira;
           2 -> 12;
           2 -> 34;
           2 -> 26;
           3 -> 37;
           3 -> 38;
           3 -> 39;
-          4 -> directoriob;
+          4 -> dirb;
           5 -> 65;
   
-          ultimaop [label = "Última operación", shape="box", color="pink", style="filled"];
-          ultimaop -> 5 [style="dotted"];
-          cabeza [label = "Siguiente entrada", shape="box", color="green", style="filled"];
-          cabeza -> 3 [style="dotted"];
+          ultimaop [label = "Última operación\nefectuada", shape="box", color="pink", style="filled"];
+          cabeza [label = "Siguiente entrada\na reemplazar", shape="box", color="green", style="filled"];
+          ultimaop -> 5 [style="dotted",constraint=false];
+          cabeza -> 3 [style="dotted",constraint=false];
+	  cabeza -> ultimaop [style=invis];
   }
 #+end_src
 

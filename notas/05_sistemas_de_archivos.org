@@ -2352,13 +2352,377 @@ de mantenimiento para volver a un rango operacional.
 
 * Fallos y recuperación
 
-* El medio físico
+El sistema de archivos en el cual estamos estamos basando nuestros
+ejemplos, FAT, es /relativamente frágil/: No es difícil que se nos
+presente una situación de /corrupción de metadatos/, y muy
+particularmente, de la estructura de las tablas de asignación. Los
+usuarios de sistemas basados en FAT en Windows sin duda conocen a los
+programas =CHKDSK= y =SCANDISK= — Dos programas que implementan la
+misma funcionalidad base, y difieren principalmente en su interfaz al
+usuario: =CHKDSK= existe desde los primeros años de MS-DOS, y está
+pensado para su uso interactivo en línea de comando; =SCANDISK= se
+ejecuta desde el entorno gráfico, y presenta la particularidad de que
+no requiere (aunque sí recomienda fuertemente) /acceso exclusivo/ al
+sistema de archivos mientras se ejecuta. ¿En qué basan su operación
+estos programas?
 
-** Particiones y volúmenes multi-disco
+A lo largo de la vida de un sistema de archivos, conforme los archivos
+se van asignando y liberando, van cambiando su tamaño, y conforme
+montamos y des-montamos al sistema de archivos, pueden ir apareciendo
+/inconsistencias/ en su estructura. En los sistemas tipo FAT, las
+principales (que no las únicas) inconsistencias son:
+
+- Archivos cruzados :: En inglés, /cross-linked file/. Recordemos que
+     la entrada en el directorio de un archivo incluye un apuntador al
+     primer /cluster/ de una /cadena/. Cada cadena debe ser única,
+     esto es, ningún /cluster/ debe pertenecer a más de un
+     archivo. Si dos archivos incluyen al mismo /cluster/, esto
+     indica una inconsistencia, y la única forma de resolverla es
+     /truncar/ a uno de los archivos en el punto inmediato anterior a
+     este cruce.
+
+- Cadenas perdidas o /huérfanas/ :: En inglés, /lost clusters/. Cuando
+     hay espacio marcado como ocupado en la tabla de asignación, pero
+     no hay ninguna entrada de directorio haciendo referencia a ella,
+     el espacio está efectivamente bloqueado y, desde la perspectiva
+     del usuario, inutilizado.
+
+#+HTML: <div class="figure">
+#+ATTR_LATEX: width=0.7\textwidth
+#+CAPTION: Inconsistencias en un sistema de archivos tipo FAT
+#+BEGIN_SRC dot :exports results :file ltxpng/inconsistencias_fat.png
+digraph G
+{
+	node [style=filled, fillcolor=white];
+	
+	subgraph cluster_fat {
+		node [shape = box, label = ""];
+		label = "Tabla de asignación"
+		
+		{rank=same; 1 2 3 4} ->
+		{rank=same; 5 6 7 8} ->
+		{rank=same; 9 10 11 12} ->
+		{rank=same; 13 14 15 16} [style=invis];
+		
+		2 -> 5 -> 1 -> 15;
+		15 [label="FF"];
+		
+		3 -> 6 -> 9 -> 8 -> 4;
+		4 [label="FF"];
+		
+		14 -> 7 -> 11;
+		11 [label="FF"];
+	}
+	
+	subgraph cluster_dir {
+		label="directorio";
+		a [label = "archivo1.txt", fillcolor="#ffffcc"];
+		b [label = "a.out", fillcolor="#ccccff"];
+		c [label = "proyecto.c", fillcolor="#ffccff"];
+	}
+	
+	subgraph cluster_leyenda {
+		style=invis;
+		c -> caja_cross -> caja_huerf [style=invis];
+		c -> txt_cross -> txt_huerf [style=invis];
+		caja_cross [label="", shape=box, fillcolor="#ffaaaa"];
+		caja_huerf [label="", shape=box, fillcolor="#ff3333"];
+		txt_cross [label="Archivo cruzado", shape=plaintext];
+		txt_huerf [label="Cadena perdida", shape=plaintext];
+	}
+	
+	a -> 2;
+	b -> 3;
+	c -> 1;
+	
+	2 [fillcolor="#ffffcc"];
+	5 [fillcolor="#ffffcc"];
+	1 [fillcolor="#ffaaaa"];
+	15 [fillcolor="#ffaaaa"];
+	
+	3 [fillcolor="#ccccff"];
+	6 [fillcolor="#ccccff"];
+	9 [fillcolor="#ccccff"];
+	8 [fillcolor="#ccccff"];
+	4 [fillcolor="#ccccff"];
+	
+	14 [fillcolor="#ff3333"];
+	7 [fillcolor="#ff3333"];
+	11 [fillcolor="#ff3333"];
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:ltxpng/inconsistencias_fat.png]]
+#+HTML: <p align="center">Inconsistencias en un sistema de archivos tipo FAT</p></div>
+
+Cada sistema de archivos podrá presentar un distinto conjunto de
+inconsistencias ante los fallos, dependiendo de sus estructuras
+básicas y de la manera en que cada sistema operativo las maneja.
+
+En la década de los 1980 comenzaron a entrar a mercado los
+/controladores de disco inteligentes/, y en menos de diez años
+dominaban ya el mercado. Estos controladores, con buses tan disímiles
+como SCSI, IDE, o los más modernos, SAS y SATA, introdujeron muchos
+cambios que fueron disociando cada vez más al sistema operativo de la
+gestión física directa de los dispositivos; en la sección [[#medio_fisico][El medio
+físico]] abordaremos más a profundidad lo que esto ha significado para
+el desarrollo de sistemas de archivos y algoritmos relacionados. Sin
+embargo, en este tema, los /controladores inteligentes/ resultan
+relevantes porque, si bien antes el sistema operativo podía
+determinar con toda certeza si una operación se había realizado o no,
+hoy en día los controladores dan un /acuse de recibo/ a la
+información en el momento en que la colocan en el caché incorporado
+del dispositivo — En caso de un fallo de corriente, esta información
+puede no haber sido escrita por completo al disco.
+
+Recordemos que las operaciones con los metadatos que conforman al
+sistema de archivos no son atómicas. Por poner un ejemplo, crear un
+archivo en un volumen FAT requiere:
+
+1. Encontrar una lista de clusters disponibles suficiente para
+   almacenar la información que conformará al archivo
+2. Encontrar el siguiente espacio disponible en el directorio
+3. Crear en el espacio encontrado una entrada con el nombre que
+   estamos dando al archivo, apuntando al primero de los clusters
+4. Marcar en la tabla de asignación la secuencia por todos estos
+   clusters
+5. Guardar los datos del archivo en cuestión en los clusters
+   correspondientes
+
+Cualquier fallo que se presente después del tercer paso (cuando
+hacemos la primer modificación) tendrá como consecuencia que el
+archivo resulte corrupto, y muy probablemente que el sistema de
+archivos todo /presente inconsistencias/ o /esté en un estado
+inconsistente/.
+
+** Datos y metadatos
+
+Formalmente, en el ejemplo recién mencionado, el sistema de archivos
+estará consistente siempre que se terminen los pasos 3 y 4 — La
+consistencia del sistema de archivos es independiente de la validez de
+los datos del archivo. Lo que busca el sistema de archivos, más que
+asegurar la integridad de los /datos/ de uno de los archivos, es
+asegurar la de los /metadatos/: Los datos que describen la
+estructura. En caso de que un usuario desconecte una unidad a media
+operación, es casi seguro que se presentará pérdida de información,
+pero el sistema de archivos debe buscar no presentar ningún problema
+que ponga en riesgo /operaciones posteriores/ o /archivos no
+relacionados/.
+
+** Verificación de la integridad
+
+Cada sistema operativo incluye programas para realizar verificación
+(y, en su caso, corrección) de la integridad de sus sistemas de
+archivo. En el caso de MS-DOS y Windows, estos programas son =CHKDSK=
+y =SCANDISK= (diferenciados principalmente en que el primero tiene una
+interfaz de línea de comando, mientras que el segundo tiene intefaz
+gráfica); en los sistemas Unix, el programa general se llama =fsck=,
+y típicamente emplea a asistentes según el tipo de sistema a revisar
+— =fsck.vfat=, =fsck.ext2=, etc.
+
+Estos programas hacen un /barrido/ del sistema de archivos, buscando
+evidencias de inconsistencia. Esto lo hacen, en líneas generales:
+
+- Siguiendo todas las cadenas de clusters de archivos o tablas de
+  i-nodos, y verificando que no haya archivos cruzados (compartiendo
+  erróneamente bloques)
+- Verificando que todas las cadenas de clusters, así como todos los
+  directorios, sean alcanzables y sigan una estructura válida
+- Recalculando la correspondencia entre las estructuras encontradas y
+  los diferentes bitmaps y totales de espacio vacío
+
+Estas operaciones son siempre procesos intensivos y complejos. Como
+requieren una revisión profunda del volúmen entero, es frecuente que
+duren entre decenas de minutos y horas. Además, para poder llevar a
+cabo su tarea deben ejecutarse teniendo acceso exclusivo al volumen a
+revisar, lo cual típicamente significa colocar al sistema completo en
+modo de mantenimiento.
+
+Dado el elevado costo que tiene verificar el volumen entero, en la
+década de 1990 surgieron varios esquemas orientados a evitar la
+necesidad de invocar a estos programas de verificación: Las
+/actualizaciones suaves/, los /sistemas de archivos con bitácora/, y
+los /sistemas de archivos estructurados en bitácora/.
+
+** Actualizaciones suaves (/soft updates/)
+
+Este esquema aparentemente es el más simple de los que presentaremos,
+pero su implementación resultó mucho más compleja de lo inicialmente
+estimado, y en buena medida por esta causa hoy en día no ha sido
+empleado más ampliamente. La idea básica detrás de este esquema es
+estructurar el sistema de archivos de una forma más simple y organizar
+las escrituras al mismo de modo que el estado resultante /no pueda/
+ser inconsistente, ni siquiera en caso de fallo, y de exigir que todas
+las operaciones de actualización de metadatos se realicen de forma
+/síncrona/.[fn:: Esto es, no se le reporta éxito en alguna operación
+de archivos al usuario sino hasta que ésta es completada y grabada a
+disco]
+
+Ante la imposibilidad de tener un sistema /siempre consistente/, esta
+exigencia se relajó para permitir inconsistencias /no destructivas/:
+Pueden presentarse /cadenas perdidas/, dado que esto no pone en
+riesgo a ningún archivo, sólo disminuye el espacio total disponible.
+
+Esto, aunado a una reestructuración del programa de verificación
+(=fsck=) como una tarea /ejecutable en el fondo/ y en una tarea de
+/recolector de basura/, que no requiere intervención humana (dado que
+no pueden presentarse inconsistencias destructivas), permite que un
+sistema de archivos que no fue /limpiamente desmontado/ pueda ser
+montado y utilizado de inmediato, sin peligro de pérdida de
+información o de corrupción.
+
+Al requerir que todas las operaciones sean síncronas, parecería que
+el rendimiento global del sistema de archivos tendría que verse
+afectado, pero por ciertos patrones de acceso muy frecuentes, resulta
+incluso beneficioso. Al mantenerse un ordenamiento lógico de las
+dependencias de todas las operaciones que están pendientes, el
+sistema operativo puede /combinar/ a muchas de estas y reducir de
+forma global las escrituras a disco — Por ejemplo, si varios archivos
+son creados en el mismo directorio de forma consecutiva, cada uno de
+ellos a través de una llamada =open()= independiente, el sistema
+operativo combinará a todos estos accesos en uno sólo, reduciendo el
+número de llamadas. Al crear un archivo de uso temporal, un patrón
+frecuente en sistemas Unix es solicitar al sistema la creación de un
+archivo, abrir el archivo recién creado, y ya teniendo al descriptor
+de archivo, eliminarlo — En este caso, con estas tres operaciones
+seguidas, /soft updates/ podría ahorrarse por completo la escritura a
+disco.
+
+Esta estrategia fue implementada hacia 2002 en el sistema operativo
+FreeBSD, y fue adoptada por los principales sistemas de la
+familia *BSD, aunque NetBSD lo retiró en 2012, prefiriendo el empleo
+de sistemas con bitácora — Muy probablemente, la lógica destrás de
+esta decisión sea la cantidad de sistemas que emplean esta segunda
+estrategia que veremos a continuación, y lo complejo de mantener
+dentro del núcleo dos estrategias tan distintas.
+
+Además de esto, esta estrategia también se vio impactada por los
+controladores inteligentes: Si un disco está sometido a carga
+intensa, no hay garantía para el sistema operativo del órden que
+seguirán /en verdad/ sus solicitudes, que se /forman/ en el caché
+propio del disco. Dado que las actualizaciones suaves dependen tan
+profundamente de confiar en el ordenamiento, esto introduce aún más
+complejidad en el proceso.
+
+** Sistemas de archivo con bitácora (/journaling file systems/)
+
+Este esquema tiene su origen en el ámbito de las bases de datos
+distribuídas. Consiste en separar un área del volumen y dedicarla a
+llevar una bitácora con todas las /transacciones/ de metadatos.[fn::
+Existen implementaciones que registran también los datos en la
+bitácora, pero tanto por el tamaño que ésta requiere como por el
+impacto en velocidad que significa, son poco utilizadas.] Una
+/transacción/ es un conjunto de operaciones que deben aparecer como
+atómicas.
+
+La bitácora es generalmente implementada como una /lista ligada
+circular/, con un apuntador que indica cuál fue la última operación
+realizada exitosamente. Periódicamente, o cuando la carga de
+transferencia de datos disminuye, el sistema verifica qué operaciones
+quedan pendientes, y /avanza/ sobre la bitácora, marcando cada una de
+las transacciones conforme las realiza.
+
+En caso de tener que recuperarse de una condición de fallo, el
+sistema operativo sólo tiene que leer la bitácora, encontrar cuál fue
+la última operación comprometida, y aplicar las restantes.
+
+Una restricción de este esquema es que las transacciones guardadas en
+la bitácora deben ser /idempotentes/ — Esto es, si una de ellas es
+efectuada dos veces, el efecto debe ser exactamente el mismo que si
+hubiera sido efectuada una sóla vez. Por poner un ejemplo, no sería
+válido que una transacción indicara "Agregar al directorio /x/ un
+archivo llamado /y/", dado que si la falla se produce después de
+procesar esta transacción pero antes de avanzar al apuntador de la
+bitácora, el directorio /x/ quedaría con dos archivos /y/ — Una
+situación inconsistente. En todo caso, tendríamos que indicar
+"registrar al archivo /y/ en la posición /z/ del directorio /x/"; de
+esta manera, incluso si el archivo ya había sido registrado, puede
+volverse a registrar sin peligro.
+
+#+HTML: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Sistema de archivos con bitácora
+#+begin_src dot :exports results :file ltxpng/fs_journaling.png
+digraph G
+{
+	rankdir=RL;
+          subgraph cluster_jrnl {
+                  label = "Bitácora"
+                  color = lightblue;
+                  style = "filled";
+		  node [shape="box"];
+                  1 [label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
+                  2 [label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
+                  3 [label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
+                  4 [label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
+                  5 [label = "Agrega el\ncluster 65 a\nunomas.txt"];
+  
+                  1 -> 2 [label = "72", penwidth=3];
+                  2 -> 3 [label = "68", penwidth=3];
+                  3 -> 4 [label = "69", penwidth=3];
+                  4 -> 5 [label = "70", penwidth=3];
+                  5 -> 1 [label = "71", penwidth=3];
+		  {rank=same; 1 2}
+		  {rank=same; 4 5}
+
+}
+  
+          subgraph cluster_datos {
+                  label = "Datos";
+                  color = yellow;
+                  style = "filled";
+                  dira [label = "Directorio a", shape="box3d"];
+                  dirb [label = "Directorio b", shape="box3d"];
+                  dira -> 12 -> 34 -> 26 [style="dashed"];
+                  dirb -> 37 -> 38 -> 39 [style="dashed"];
+                  65;
+
+		  {rank=same; 12 37 65}
+		  {rank=same; 34 38}
+		  {rank=same; 26 39}
+}
+          1 -> dira;
+          2 -> 12;
+          2 -> 34;
+          2 -> 26;
+          3 -> 37;
+          3 -> 38;
+          3 -> 39;
+          4 -> dirb;
+          5 -> 65;
+  
+          ultimaop [label = "Última operación\nefectuada", shape="box", color="pink", style="filled"];
+          cabeza [label = "Siguiente entrada\na reemplazar", shape="box", color="green", style="filled"];
+          ultimaop -> 5 [style="dotted",constraint=false];
+          cabeza -> 3 [style="dotted",constraint=false];
+	  cabeza -> ultimaop [style=invis];
+  }
+#+end_src
+
+#+RESULTS:
+[[file:ltxpng/fs_journaling.png]]
+#+HTML: <p align="center">Sistema de archivos con bitácora</p></div>
+
+Este esquema es el más implementado hoy en día, y está presente en
+casi todos los sistemas de archivos modernos. Si bien con un sistema
+con bitácora no hace falta verificar el sistema de archivos completo
+tras una detención abrupta, esta no nos exime de que, de tiempo en
+tiempo, el sistema de archivos sea verificado: Es altamente
+recomendado hacer una verificación periódica en caso de presentarse
+alguna corrupción, sea por algún bug en la implementación, fallos en
+el medio físico, o factores similarmente poco frecuentes.
+
+** Sistemas de archivos estructurados en bitácora (/log-structured file systems/)
+
+* El medio físico
+# <<medio_fisico>>
 
 ** Particularidades de medios: Cuando no es un disco
 
 Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
+
+** Particiones y volúmenes multi-disco
 * Otros recursos
 - Practical File System Design (Dominic Giampaolo, 1999): El autor fue
   parte del equipo que implementó el sistema operativo BeOS, un

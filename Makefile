@@ -42,11 +42,11 @@ beamer:
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
-		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
+		emacs --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
 	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> $(idx_laminas); \
 	done
-	emacs -Q --batch --visit=$(idx_laminas) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	rm $(idx_laminas)
 
 semestre:
@@ -61,7 +61,7 @@ semestre:
 	echo '- [[./lista.html#sec-1][Asistencia]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-2][Tareas y participaciones]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
-	emacs -Q --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	emacs --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	mv docente/lista.html $(dir_semestre)
 	echo '* Exámenes resueltos' >> $(idx_semestre)
 	mkdir -p $(exam_resueltos)/ltxpng
@@ -70,14 +70,14 @@ semestre:
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
-		emacs -Q --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
+		emacs --batch --visit=$$i --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
 	    cp $$pdf $(dir_semestre); \
 	    pdf_aqui=`basename $$pdf`; \
 	    echo "- [[./$$pdf_aqui][$$title]] ($$date)" >> $(idx_semestre); \
 	done
 
-	emacs -Q --batch --visit=$(idx_semestre) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	emacs --batch --visit=$(idx_semestre) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 clean-publish-cache:
 	rm -f ~/.org-timestamps/notas*.cache
 

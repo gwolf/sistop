@@ -53,7 +53,7 @@
     a la espera indefinidamente
 
 ** Acceso a disco en SSTF
-#+caption: Planificación de disco SSTF (Tiempo más corto a continuación)
+#+caption: Planificación de disco SSTF (Tiempo más corto a continuación) (Silberschatz, p. 465)
 #+attr_latex: height=0.7\textheight
 [[../img/algoritmo_disco_sstf.png]]
 
@@ -71,7 +71,7 @@
   - Reduciría el recorrido a 208 cilindros
 
 ** Acceso a disco en SCAN (elevador)
-#+caption: Planificación de disco SCAN (elevador)
+#+caption: Planificación de disco SCAN (elevador) (Silberschatz, p. 466)
 #+attr_latex: height=0.7\textheight
 [[../img/algoritmo_disco_scan.png]]
 
@@ -79,7 +79,8 @@
 - Requieren más información de la disponible
   - Están orientados a reducir el traslado /de la cabeza/
   - Ignoran la /demora rotacional/
-  - En distintos discos, el impacto de uno será superior al del otro
+  - La demora rotacional va entre $1 \over 10$ y $1 over 3$ del
+    tiempo de traslado de cabezas
 - Distintas prioridades para distintas solicitudes
   - Si el sistema operativo prefiere priorizar expresamente, estos
     algoritmos no ofrecen la /expresividad/ necesaria
@@ -100,7 +101,7 @@
   - Ya no /tridimensional/
 - $LBA = ((C \times HPC) + H) \times SPT + S - 1$
   - $HPC$ = cabezas por cilindro
-  - $SPT$ = sectores por track
+  - $SPT$ = sectores por pista
 
 ** LBA y la reubicación
 - Sistema operativo y aplicaciones ya sólo hacen referencia por esta

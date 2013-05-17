@@ -2715,14 +2715,382 @@ el medio físico, o factores similarmente poco frecuentes.
 
 ** Sistemas de archivos estructurados en bitácora (/log-structured file systems/)
 
+Si llevamos el concepto del sistema de archivos con bitácora a su
+límite, y designamos a /la totalidad/ del espacio en el volumen como
+la bitácora, hablamos de un sistema de archivos /estructurado en
+bitácora/. Obviamente, este tipo de sistemas de archivos presenta una
+organización completa radicalmente diferente de los sistemas de
+archivo tradicionales.
+
+Las ideas básicas detrás de la primer implementación de un sistema de
+archivos de esta naturaleza (Ousterhut y Rosenblum, 1992) apuntan al
+empleo agresivo de caché de gran capacidad, y con un fuerte mecanismo
+de /recolección de basura/, reacomodando la información que esté más
+cerca de la /cola/ de la bitácora (y liberando toda aquella que
+resulte redundante).
+
+Este tipo de sistemas de archivos facilita las escrituras,
+haciéndolas siempre secuenciales, y buscan –a través del empleo del
+caché ya mencionado– evitar que las cabezas tengan que desplazarse
+con demasiada frecuencia para recuperar fragmentos de archivos.
+
+Una consecuencia directa de esto es que los sistemas de archivos
+estructurados en bitácora fueron los primeros en ofrecer /fotografías/
+(/snapshots/) del sistema de archivos: Es posible apuntar a un
+momento en el tiempo, y –con el sistema de archivos aún en operación–
+montar una copia de sólo lectura con la información del sistema de
+archivos /completa/ (incluyendo los datos de los archivos).
+
+Los sistemas de archivo estructurados en bitácora, sin embargo, no
+están optimizados para cualquier carga de trabajo. Por ejemplo, una
+base de datos relacional, en que cada uno de los registros es
+típicamente actualizados de forma independiente de los demás, y ocupan
+apenas fracciones de un bloque, resultaría tremendamente
+ineficiente. La implementación referencia de Ousterhut y Rosenblum fue
+parte de los sistemas *BSD, pero dada su tendencia a la /extrema
+fragmentación/, fue eliminado de ellos.
+
+Este tipo de sistemas de archivo ofrece características muy
+interesantes, aunque es un campo que aún requiere de mucha
+investigación e implementaciones ejemplo. Muchas de las
+implementaciones en sistemas libres han llegado a niveles de
+funcionalidad aceptables, pero por diversas causas han ido perdiendo
+el interés o el empuje de sus desarrolladores, y su ritmo de
+desarrollo ha decrecido. Sin embargo, varios conceptos muy
+importantes han nacido bajo este tipo de sistemas de archivos,
+algunos de los cuales (como el de las /fotografías/) se han ido
+aplicando a sistemas de archivo estándar.
+
+Por otro lado, dado el fuerte crecimiento que están registrando los
+medios de almacenamiento de estado sólido (abordaremos [[#estado_solido][en breve]]
+algunas de sus características), y dado que estos sistemas aprovechan
+mejor varias de sus características, es probable que el interés en
+estos sistemas de archivos resurja.
+
 * El medio físico
 # <<medio_fisico>>
 
-** Particularidades de medios: Cuando no es un disco
+Hasta este punto, y siguiendo las prácticas a que la realidad de los
+últimos 40 años nos han acostumbrado, hemos empleado el término
+genérico de /disco/ para nuestra discusión.
 
-Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
+En esta sección, abordaremos en primer término las características
+principales del medio aún prevalente, los discos duros magnéticos
+rotativos, y presentaremos una introducción a las diferencias que
+encontraremos en otros medios, como los discos ópticos y los de
+estado sólido, y las implicaciones que éstos tienen sobre lo que
+venimos discutiendo a lo largo de la unidad.
+
+** Discos magnéticos rotativos
+
+El principal medio de almacenamiento que hemos empleado en los
+últimos 40 años es el /disco magnético/. Hay dos tipos diferentes de
+disco, aunque la lógica de su funcionamiento es la misma: Los /discos
+duros/ y los /discos flexibles/ (o /floppies/).
+
+La principal diferencia entre estos es que los primeros son
+típicamente almacenamiento /interno/ en los equipos de cómputo, y los
+segundos están pensados para ser almacenamiento /transportable/. Los
+discos duros tienen mucha mayor capacidad y son mucho más rápidos,
+pero a cambio de ello, mucho más sensibles a la contaminación por
+partículas de polvo y a daños mecánicos.
+
+Un disco flexible es una hoja de material plástico, muy similar al
+empleado en las cintas magnéticas, resguardado por un estuche
+plástico. Al insertarse el disco en la unidad lectora, esta lo hace
+girar sujetándolo por el centro, y las cabezas lectoras[fn:: en un
+principio una sola; posteriormente aparecieron las unidades de doble
+cara, con dos cabezas lectoras] se deslizan por una ventana que tiene
+el estuche. La mayor parte de los discos flexibles presentaban
+velocidades de rotación de entre 300 y 400 revoluciones por minuto.
+
+A lo largo de más de 20 años se presentaron muy diferentes formatos
+físicos siguiendo esta misma lógica, designándose principalmente por
+su tamaño (en pulgadas). La capacidad de los discos, claro está, fue
+creciendo con el paso de los años — Esto explica la aparente
+contradicción de que los discos más chicos físicamente tenían más
+capacidad que los más grandes.
+
+#+caption: Principales formatos de disco flexible en el mercado
+|-----------------------+-------------+---------------+--------------|
+|                       |  8 pulgadas | 5.25 pulgadas | 3.5 pulgadas |
+|-----------------------+-------------+---------------+--------------|
+| Fecha de introducción |        1971 |          1976 |         1982 |
+| Capacidad             | 150KB-1.2MB |   110KB-1.2MB | 264KB-2.88MB |
+| Velocidad (kbit/s)    |          33 |       125-500 |     250-1000 |
+| Pistas por pulgada    |          48 |         48-96 |          135 |
+|-----------------------+-------------+---------------+--------------|
+
+El nombre de /disco duro/ o /disco flexible/ se debe al medio empleado
+para el almacenamiento de la información: Mientras que los discos
+flexibles emplean, como mencionamos, una hoja plástica flexible, los
+discos duros son metálicos. Los discos están /permanentemente/
+montados sobre un eje, lo que permite que tengan una velocidad de giro
+entre 20 y 50 veces más rápida que los discos flexibles — Entre 4,200 y
+15,000 revoluciones por minuto (RPM), esto es, con una demora
+rotacional de entre 2 y 7.14 milisegundos..
+
+Además, a excepción de algunos modelos tempranos, los discos duros
+constituyen un paquete cerrado que incluye las cabezas de lectura y
+escritura, y toda la electrónica de control. Esto permite que los
+discos duros tengan densidades de almacenamiento y velocidades de
+transmisión muy superiores a la de los discos flexibles: Los primeros
+discos duros que se comercializaron para computadoras personales eran
+de 10MB (aproximadamente 70 discos flexibles de su época), y
+actualmente hay ya discos de 4TB. La velocidad máxima de transferencia
+sostenida hoy en día es superior a los 100MB por segundo, 100 veces
+más rápido que la última generación de discos flexibles.
+
+Para medir la eficiencia de un disco duro, el otro dato importante es
+el tiempo que toma la cabeza en moverse a través de la superficie del
+disco. Hoy en día, las velocidades más comunes son de 20ms para un
+/recorrido completo/ (desde el primer hasta el último sector), y entre
+0.2ms y 0.8ms para ir de un cilindro al inmediato siguiente. Como
+punto de comparación, el recorrido completo en una unidad de disco
+flexible toma aproximadamente 100ms, y el tiempo de un cilindro al
+siguiente va entre 3 y 8ms.
+
+*** Notación C-H-S
+
+Independientemente de la tecnología, la manera en que el sistema
+operativo hace referencia a la ubicación de un bloque de información
+en el disco es conocido como la /notación C-H-S/ — Indicando el
+cilindro, cabeza y sector (/Cylinder, Head, Sector/) de la
+información. Esto permite mapear el espacio de almacenamiento de un
+disco a un espacio tridimensional, con cual resulta trivial ubicar a
+alguna estructura en una región contigua.
+
+#+attr_html: height="451" width="625"
+#+attr_latex: width=0.8\textwidth
+#+caption: Coordenadas de un disco duro, presentando cada uno de sus sectores en C-H-S (Silberschatz, p.458)
+[[./img/disco_duro.png]]
+
+La /cabeza/ indica a cuál de las superficies del disco nos referimos;
+en un disco flexible, tenemos sólo dos cabezas, pero en un disco duro
+es común tener varios /platos/ paralelos. Todas las cabezas van fijas
+a un mismo motor, y no pueden moverse de forma independiente.
+
+El /cilindro/ indica la distancia del centro a la orilla del disco.
+
+Un /sector/ es un segmento de arco de uno de los cilindros.
+
+Es frecuente ver referencias a una /pista/ (/track/), esto es, a un
+cilindro en una de las superficies del disco — Un archivo almacenado
+secuencialmente ocupa /sectores adyacentes/ a lo largo de una misma
+pista.
+
+*** Algoritmos de planificación de acceso a disco
+
+Como hemos visto, las transferencias a disco son uno de los procesos
+más lentos de los que gestiona el sistema operativo. Cuando éste
+tiene varias solicitudes de transferencia pendientes, resulta
+importante encontrar un mecanismo óptimo para realizar la
+transferencia, minimizando el tiempo de demora. Presentaremos a
+grandes rasgos tres de los algoritmos de planificación de acceso a
+disco — Pero abordaremos también el por qué estos hoy en día casi no
+son empleados.
+
+Como con los demás escenarios que hemos abordado analizando
+algoritmos, para analizar su rendimiento tenemos que presentar una
+/cadena de referencia/. En este caso, trabajaremos con un disco
+hipotético de 200 cilindros, la cadena de solicitudes /98, 183, 37,
+122, 14, 124, 65, 67/, y teniendo la cabeza al inicio de la operación
+en el cilindro 53.
+
+Al igual que cuando hablamos de algoritmos de asignación de procesador
+y de reemplazo de páginas, el primero y más sencillo de implementar es
+el /FIFO/ — /Primero en llegar, primero en servirse/. Este algoritmo puede
+verse como muy /justo/, aunque sea muy poco eficiente: El movimiento
+total de cabezas para el caso planteado es de 640 cilindros,
+equivalente a poco más que recorrer de extremo a extremo el disco
+completo tres veces. Esto es, despreciando la demora rotacional y el
+tiempo que le toma al brazo detenerse por completo antes de volver a
+moverse, esta lectura tomaría un mínimo de 60ms, siendo el recorrido
+completo del disco 20ms.
+
+Podemos encontrar al causante de buena parte de esta demora en la
+quinta posición de la cadena de referencia: Entre solicitudes para el
+cilindro 122 y 124, tenemos una solicitud al 14, que significa un
+desplazamiento de $(122-14) + (124-14) = 218$ sectores.
+
+#+attr_latex: width=0.6\textwidth
+#+attr_html: width=429 height=285
+#+caption: Planificación de disco FIFO (Silberschatz, p. 464)
+[[./img/algoritmo_disco_fifo.png]]
+
+Ahora bien, si el factor que impone la principal demora es el
+movimiento de la cabeza, el segundo algoritmo busca reducir al mínimo
+el movimiento de la cabeza: /SSTF/ (/Shortest Seek Time First/,
+/Tiempo de búsqueda más corto a continuación/) es el equivalente en
+este ámbito del /Shortest Job First/ que vimos en planificación de
+procesos — con la ventaja de que no estamos prediciendo
+comportamiento futuro, sino que tenemos ya la lista de solicitudes
+pendientes. Empleando SSTF, el tiempo de desplazamiento para este
+caso se reduce a tan sólo 236 cilindros — muy cerca del mínimo
+absoluto posible.
+
+Una desventaja de SSTF es que puede llevar a la inanición: Si hay una
+gran densidad de solicitudes para cilindros en determinada zona del
+disco, una solicitud para un cilindro alejado puede quedar a la espera
+indefinidamente.
+
+#+attr_html: width=617 height=430
+#+attr_latex: width=0.6\textwidth
+#+caption: Planificación de disco SSTF (Tiempo más corto a continuación) (Silberschatz, p. 465)
+[[./img/algoritmo_disco_sstf.png]]
+
+El tercer algoritmo es conocido coloquialmente como /el algoritmo del
+elevador/ (/SCAN/). Este algoritmo busca evitar la inanición,
+minimizando al mismo tiempo el movimiento de las cabezas. Su lógica es
+que la cabeza debe recorrer el disco de extremo a extremo, atendiendo
+a todas las solicitudes que haya pendientes en su camino. Si bien los
+recorridos para ciertos patrones pueden resultar superiores a los que
+daría SSTF, la garantía de que ningún proceso esperará
+indefinidamente lo hace muy atractivo.
+
+Una modificación a este algoritmo sería, cada vez que la cabeza se
+detenga para satisfacer una solicitud, verificar si hay alguna otra
+solicitud pendiente en la /dirección actual/, y de no ser así,
+emprender el camino de regreso sin llegar a la orilla del disco. Esta
+modificación es frecuentemente descrita como /LOOK/.
+
+Atender la cadena de referencia con la que estamos trabajando bajo
+SCAN, asumiendo un estado inicial /descendente/ (esto es, la cabeza
+está en el cilindro 53 y va bajando) da un recorrido total de 236
+cilindros; empleando LOOK, se reduce a 208 cilindros.
+
+#+attr_html: width="514" height="344"
+#+attr_latex: width=0.6\textwidth
+#+caption: Planificación de disco SCAN (elevador)  (Silberschatz, p. 466)
+[[./img/algoritmo_disco_scan.png]]
+
+*** Limitaciones de los algoritmos presentados
+
+Ahora, mencionamos que estos algoritmos hoy en día ya casi no se
+usan. Hay varias razones para ello. En primer término, todos ellos
+están orientados a reducir el traslado /de la cabeza/, pero ignoran
+la /demora rotacional/. Como vimos, en los discos duros actuales, la
+demora rotacional va entre $1 \over 10$ y $1 \over 3$ del tiempo
+total de recorrido de la cabeza. Y si bien el sistema podría
+considerar esta demora como un factor adicional al planificar el
+siguiente movimiento de forma que se redujera el tiempo de espera,
+los algoritmos descritos obviamente requieren ser replanteados por
+completo.
+
+Por otro lado, el sistema operativo muchas veces requiere dar
+distintas prioridades a los diferentes tipos de solicitud. Por
+ejemplo, sería esperable dar preferencia a los accesos a memoria
+virtual por encima de las solicitudes de abrir un nuevo archivo. Estos
+algoritmos tampoco permiten expresar esta necesidad.
+
+Pero el tercer punto es mucho más importante aún: Del mismo modo en
+que los procesadores se van haciendo más rápidos y que la memoria
+es cada vez de mayor capacidad, los controladores de discos también
+son cada vez más /inteligentes/, y /esconden/ cada vez más
+información del sistema operativo, por lo cual éste cada vez más
+carece de la información necesaria acerca del acomodo /real/ de la
+información como para planificar correctamente sus accesos.
+
+Uno de los cambios más importantes en este sentido fue la transición
+del empleo de la notación C-H-S al esquema de /direccionamiento lógico
+de bloques/ (/Logical Block Addressing/, /LBA/) a principios de
+los 1990. Hasta ese momento, el sistema operativo tenía información de
+la ubicación /física/ de todos los bloques en el disco.
+
+Una de las desventajas, sin embargo, de este esquema es que el mismo
+BIOS tenía que conocer la /geometría/ de los discos — Y el BIOS
+presentaba límites duros en este sentido: Principalmente, no le era
+posible referenciar más allá de 64 cilindros. Al aparecer la interfaz
+de discos IDE (/Electrónica integrada al dispositivo/) e ir
+reemplazando a la ST-506, se introdujo LBA, que en un primer término
+de la dirección C-H-S a una dirección /lineal/, presentando el disco
+al sistema operativo ya no como un espacio /tridimensional/, sino que
+como un gran arreglo de bloques. En este primer momento, la
+equivalencia de una dirección C-H-S a una LBA era:
+
+#+BEGIN_QUOTE
+$LBA = ((C \times HPC) + H) \times SPT + S - 1$
+#+END_QUOTE
+
+Donde $HPC$ es el número de cabezas por cilindro, $SPT$ es el número
+de sectores por pista.
+
+LBA significó mucho más que una nueva notación — Marcó el inicio de
+la transferencia de inteligencia y control del CPU al controlador de
+disco. Podemos ver el impacto de esto directamente en dos factores:
+
+- Sectores variables por cilindro :: En casi todos los discos previos
+     a LBA[fn:: Como muy notorias excepciones tenemos a las unidades
+     de disco /Commodore 1541/ y /Macintosh Superdrive/, que empleaban
+     velocidad variable por cilindro para aprovechar mejor el medio
+     magnético; en ambos casos, sin embargo, terminaron desapareciendo
+     por cuestiones de costos y de complejidad al sistema], el número
+     de sectores por pista se mantenía constante, se tratara de las
+     pistas más internas o más externas. Esto significa que, a igual
+     calidad de la cobertura magnética del medio, los sectores
+     ubicados en la parte exterior del disco desperdiciaban mucho
+     espacio (ya que el /área por bit/ era mucho mayor).
+
+     #+attr_html: width="402" height="402"
+     #+attr_latex: width=0.4\textwidth
+     #+caption: Disco formateado bajo /densidad de bits por zona/, con más sectores por pista en las pistas exteriores. (Imagen: Wikipedia)
+     [[./img/zone_bit_recording.png]]
+
+     Bajo LBA, los discos duros comenzaron a emplear un esquema de
+     /densidad de bits por zona/ (/zone bit recording/), con la que en
+     los cilindros más externos se aumenta.
+
+- Reubicación de sectores :: Conforme avanza el uso de un disco, es
+     posible que algunos sectores vayan resultando /difíciles/ de
+     leer por daños microscópicos a la superficie. El controlador es
+     capaz de detectar estos problemas, y de hecho, casi siempre
+     puede rescatar la información de dichos sectores de forma
+     imperceptible al usuario.
+
+     Los discos duros ST-506 típicamente venían acompañados por una
+     /lista de defectos/, una lista de coordenadas C-H-S que desde su
+     fabricación habían presentado errores. El usuario debía ingresar
+     estos defectos al formatear el disco /a bajo nivel/.
+
+     Hoy en día, el controlador del disco detecta estos fallos y se
+     los /brinca/, presentando un mapa LBA lineal y completo. Los
+     discos duros típicamente vienen con cierto número de /sectores de
+     reserva/ para que, conforme se van detectando potenciales daños,
+     estos puedan reemplazarse de forma transparente.
+
+Sumemos a esto que los controladores de disco tienen ya incluso caché
+para las operaciones de lectura y escritura — El controlador del disco
+es hoy en día capaz de implementar estos mismos algoritmos de forma
+completamente autónoma del sistema operativo.
+
+Resulta claro que, dados estos cambios en la manera en que hacemos
+referencia a los bloques del disco, el sistema operativo no cuenta ya
+con la información necesaria para emplear los algoritmos de
+planificación de acceso a disco.
+
+
+** Almacenamiento en estado sólido
+# <<estado_solido>>
+
+Desde hace cerca de una década va creciendo consistentemente el uso de
+medios de almacenamiento de /estado sólido/ — Esto es, medios sin
+partes móviles. Las características de estos medios de almacenamiento
+son muy distintas de las de los discos. Si bien las estructuras que
+emplean hoy en día prácticamente todos los sistemas de archivos en uso
+mayoritario están pensadas y estructuradas siguiendo la lógica de los
+medios magnéticos rotativos, la necesidad de emplear las estructuras
+adecuadas es clara. Este es indudablemente un área bajo intensa
+investigación y desarrollo, y que seguramente nos ofrecerá
+importantes novedades en los próximos años.
+
+
+
+# Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
 
 ** Particiones y volúmenes multi-disco
+
+
+
 * Otros recursos
 - Practical File System Design (Dominic Giampaolo, 1999): El autor fue
   parte del equipo que implementó el sistema operativo BeOS, un
@@ -2761,3 +3129,9 @@ Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash st
 - [[http://bugs.debian.org/cgi-bin/bugreport.cgi?archive=no&bug=682840][Default /etc/apache2/mods-available/disk_cache.conf is incompatible
   with ext3]] (bug de Debian ilustrando los límites en números de
   archivos para Ext3)
+
+- [[http://delivery.acm.org/10.1145/150000/146943/p26-rosenblum.pdf][The Design and Implementation of a Log-Structured File System]] (John
+  K. Ousterhout, Mendel Rosenblum, 1992)
+
+- [[http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf][LogFS — Finally a scalable flash file system]] (Jörn Engel, Robert
+  Mertens, 2005)

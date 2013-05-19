@@ -2714,7 +2714,7 @@ alguna corrupción, sea por algún bug en la implementación, fallos en
 el medio físico, o factores similarmente poco frecuentes.
 
 ** Sistemas de archivos estructurados en bitácora (/log-structured file systems/)
-
+# <<log_structured>>
 Si llevamos el concepto del sistema de archivos con bitácora a su
 límite, y designamos a /la totalidad/ del espacio en el volumen como
 la bitácora, hablamos de un sistema de archivos /estructurado en
@@ -3083,11 +3083,185 @@ adecuadas es clara. Este es indudablemente un área bajo intensa
 investigación y desarrollo, y que seguramente nos ofrecerá
 importantes novedades en los próximos años.
 
+Lo primero que llama la atención de estos medios de almacenamiento es
+que, a pesar de ser fundamentalmente distintos a los discos
+magnéticos, se presentan ante el sistema operativo como si fueran lo
+mismo: En lo que podría entenderse como un esfuerzo para ser
+utilizados pronto y sin cambios, se conectan a través de la misma
+interfaz y empleando la misma semántica que un disco rotativo. Esto no
+sólo evita que se aprovechen sus características únicas, adoptando
+restricciones y criterios de diseño que ahora resultan indudablemente
+artificiales, sino que incluso se exponen a mayor stress por no
+emplearse de la forma que les resultaría natural. Antes de ver por
+qué, veamos un poco los tipos de discos de estado solido que hay; esto
+nos dará pie a entender las características a las que en este párrafo
+hacemos referencia.
+
+Al hablar de la tecnología sobre la cual se implementa este tipo de
+almacenamiento, encontraremos dos medios principales:
+
+- NVRAM :: Unidades /RAM No Volátil/. Almacenan la información en
+           memoria RAM estándar, con un respaldo de batería para
+           mantener la información cuando se desconecta la corriente
+           externa. Las primeras unidades de estado sólido eran de
+           este estilo; hoy en día son poco comunes en el mercado,
+           pero siguen existiendo.
+
+	   Su principal ventaja es la velocidad y durabilidad: El
+           tiempo de acceso o escritura de datos es el mismo que el
+           que esperaríamos de la memoria principal del sistema, y al
+           no haber demoras mecánicas, este tiempo es el mismo
+           independientemente de la dirección que se solicite.
+
+	   Su principal desventaja es el precio: En líneas generales,
+           la memoria RAM es, por volumen de almacenamiento, cientos
+           de veces más cara que el medio magnético. Y si bien el
+           medio no se degrada con el uso, la batería sí, lo que
+           podría poner en peligro a la supervivencia de la
+           información.
+
+	   Estas unidades típicamente se instalan internamente como
+           una tarjeta de expansión.
+
+	   #+caption: Unidad de estado sólido basado en RAM: DDRdrive X1 ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+	   #+attr_latex: width=0.5\textwidth
+	   #+attr_html: height="200" width="300"
+	   [[./img/estado_solido_ddr_drivex1.jpg]]
+
+- Memoria /flash/ :: Derivada de los /EEPROM/ (/Electrically Erasable
+     Programmable Read-Only Memory/, /Memoria de Sólo Lectura
+     Programable y Borrable Eléctricamente/). Los EEPROM tienen la
+     característica de que, además de lectura y escritura, hay un
+     tercer tipo de operación que deben implementar: El /borrado/. Un
+     EEPROM ya utilizado debe borrarse antes de volverse a escribir a
+     él. La principal característica que distingue a las memorias
+     /flash/ de los EEPROMs tradicionales es que el espacio de
+     almacenamiento está dividido en /páginas/ o /bloques/, y el
+     controlador puede leer, borrar o escribir a cada uno de ellos por
+     separado.
+
+     El uso de dispositivos /flash/ para almacenamiento de información
+     inició hacia 1995 como respuesta a las necesidades de las
+     industrias aeroespacial y militar, dada la frecuencia de los
+     daños a la información que presentaban los medios magnéticos por
+     la vibración. Hoy en día hay dispositivos /flash/ de muy bajo
+     costo y capacidad, aunque presentan una gran variabilidad tanto
+     en su tiempo de acceso como en su durabilidad. En este sentido,
+     podemos hablar de dos tipos principales de dispositivos /flash/:
+
+  - Almacenamiento primario (SSD) :: Las llamadas formalmente
+       /unidad de estado sólido/ (/Solid State Drive/)[fn:: Un
+       error muy común es confundir la /D/ con /Disk/, que
+       denotaría que llevan un /disco/, un /medio rotativo/] son
+       unidades Flash de alta velocidad y capacidad, y típicamente
+       presentan una interfaz similar a la que tienen los discos
+       duros (hoy en día, la más común es SATA).
+
+       #+caption: Unidad de estado sólido basado en Flash con interfaz SATA ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+       #+attr_html: height="262" width="400"
+       #+attr_latex: width=0.5\textwidth
+       [[./img/estado_solido_sata.jpg]]
+
+       Su velocidad de lectura es muy superior y su velocidad de
+       escritura (incluyendo el borrado) es comparable a la de los
+       discos magnéticos. Su precio por el mismo volumen de
+       almacenamento es entre 5 y 10 veces el de los discos
+       magnéticos.
+
+       Podemos encontrar este tipo de unidades tanto como unidades
+       independientes en servidores, equipos de alto desempeño e
+       incluso algunas subportátiles (/netbooks/) o como un
+       componente de la tarjeta madre en dispositivos móviles como
+       teléfonos y tabletas.
+
+  - Transporte de archivos :: Esta tecnología también está presente en
+       las diversas unidades extraíbles o móviles, como las unidades
+       USB, SD, Memory Stick, Compact Flash, etc. La principal
+       diferencia entre estas son los diferentes conectores que
+       emplean; todas estas tecnologías presentan dispositivos que
+       varían fuertemente en capacidad, velocidad y durabilidad.
+
+       #+caption: Unidad de estado sólido basado en Flash con interfaz USB ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+       #+attr_html: height="300" width="335"
+       #+attr_latex: width=0.5\textwidth
+       [[./img/estado_solido_usb.jpg]]
 
 
-# Ver: [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]]
+Independientemente del tipo, las unidades de estado sólido presentan
+ventajas ante los discos rotativos, como un muy bajo consumo
+eléctrico, operación completamente silenciosa, y resistencia a la
+vibración o a los golpes. Además, el medio es /verdaderamente/ de
+acceso aleatorio: Al no ser ya un disco, desaparecen tanto la demora
+de movimiento de cabezas como la rotacional.
 
-** Particiones y volúmenes multi-disco
+*** Desgaste del medio
+
+La memoria Flash presenta patrons de desgaste muy distintos de los que
+podemos ver en otros medios. La memoria Flash tiene capacidad de
+aguantar un cierto número de operaciones de borrado por página.[fn::
+Dependiendo de la calidad, va entre las 3,000 y 100,000] Las
+estructuras tradicionales de sistemas de archivos basados en disco
+/concentran/ una gran cantidad de modificaciones en ciertas regiones
+clave: Las tablas de asignación y directorios registran muchos más
+cambios que la región de datos.
+
+Casi todos los controladores de discos Flash cuentan con mecanismos de
+/nivelamiento de escrituras/ (/write leveling/). Este mecanismo busca
+reducir el desgaste focalizado modificando el mapeo de los sectores
+que ve el sistema operativo respecto a los que son grabados /en
+verdad/ en el medio: En vez de actualizar un bloque (por ejemplo, un
+directorio) /en su lugar/, el controlador le asigna un nuevo bloque de
+forma transparente, y marca el bloque original como libre.
+
+Los mecanismos más simples de nivelamiento de escrituras lo hacen
+únicamente intercambiando los bloques libres con los recién
+reescritos; mecanismos más avanzados buscan nivelar el nivel de
+reescritura en toda la unidad reubicando también a los bloques que
+típicamente sólo se leen.
+
+*** Emulación de discos
+
+Hoy en día, la casi totalidad de medios de estado sóldo se presentan
+ante el sistema con una interfaz que emula la de los discos, la /FTL/
+(/Flash Translation Layer/, /Capa de Traducción de Flash/). La ventaja
+de esta emulación es que no hizo falta desarrollar controladores
+adicionales para comenzar a emplear estos medios. La desventaja, sin
+embargo, es que al ocultarse el funcionamiento /real/ de las unidades
+de estado sólido, el sistema operativo no puede aprovechar las
+ventajas estructurales — Y más importante aún, no puede evitar las
+debilidades inherentes al medio.
+
+Uno de los ejemplos más claros de esta falta de control real del medio
+la ilustra el [[https://lwn.net/Articles/353411/][artículo de Valerie Aurora (2009)]], que menciona que
+tanto la poca información públicamente disponible acerca del
+funcionamiento de los controladores como los patrones de velocidad y
+desgaste de los mismos apuntan a que la estructura subyacente de casi
+todos los medios de estado sólido es la de un /sistema de archivos
+estructurado en bitácora/. Aurora indica que hay varias operaciones
+que no pueden ser traducidas eficientemente a través de esta capa de
+emulación, y que seguramente permitirían un mucho mejor
+aprovechamiento del medio. Como mencionamos en la sección que describe
+los [[#log_structured][sistemas de archivo estructurados en bitácora]], si bien varios de
+estos sistemas de archivos han presentado implementaciones
+completamente utilizables, la falta de interés ha llevado a que muchos
+de estos proyectos sean abandonados.
+
+En su [[http://lwn.net/Articles/528617/][artículo de 2012]], Neil Brown apunta a que Linux tiene una
+interfaz apta para hablar directamente con dispositivos de estado
+sólido, llamada =mtd= — /memory technology devices/, /dispositivos de
+tecnología de memoria/.
+
+Como lo mencionamos al inicio de esta sección, si bien los discos
+duros se han empleado por ya 50 años y los sistemas de archivos están
+claramente desarrollados para aprovechar sus detalles físicos y
+lógicos, el uso de los dispositivos de estado sólido apenas está
+despegando en la última década. Y si bien esta primer aproximación que
+nos permite emplear esta tecnologíá transparentemente es
+/suficientemente buena/ para muchos de los usos básicos, sin duda hay
+espacio para mejorar. Este es un tema que seguramente brinda amplio
+espacio para investigación y desarrollo para los próximos años.
+
+* Particiones y volúmenes multi-disco
 
 
 
@@ -3125,7 +3299,7 @@ importantes novedades en los próximos años.
 - [[http://lwn.net/Articles/529077/][A hash-based DoS attack on Btrfs]] (LWN)
 
 - [[http://linux.slashdot.org/story/12/12/15/0055217/denial-of-service-attack-found-in-btrfs-file-system][Denial-of-Service Attack Found In Btrfs File-System]] (Slashdot)
-/
+
 - [[http://bugs.debian.org/cgi-bin/bugreport.cgi?archive=no&bug=682840][Default /etc/apache2/mods-available/disk_cache.conf is incompatible
   with ext3]] (bug de Debian ilustrando los límites en números de
   archivos para Ext3)
@@ -3135,3 +3309,8 @@ importantes novedades en los próximos años.
 
 - [[http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf][LogFS — Finally a scalable flash file system]] (Jörn Engel, Robert
   Mertens, 2005)
+
+- [[https://lwn.net/Articles/353411/][Log-structured file systems: There's one in every SSD]] (Valerie
+  Aurora, 2009)
+
+- [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]] (Neil Brown, 2012)

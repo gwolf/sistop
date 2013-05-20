@@ -1,0 +1,180 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Virtualización
+#+DATE: 2013-05-20
+
+* Introducción
+** ¿Qué significa /virtualizar/?
+- Proveer algo que no está allí, aunque parece estarlo
+- Ofrecer y mantener una ilusión
+  - Un truco de magia
+
+#+BEGIN_CENTER
+La /virtualización/ es, en términos generales, ofrecer recursos que no
+existen en realidad — Y mantener la ilusión, tan bien como sea
+posible.
+#+END_CENTER
+
+** Ámbitos de virtualización
+- Es un término de moda
+- Lleva existiendo –de diferentes maneras– por muchas décadas
+- Cubriremos algunas estrategias y tecnologías de virtualización
+  comunes hoy en día
+  - Con diferentes usos y propósitos
+  - Muchos de los cuales utilizamos día a día sin pernsar en ello
+
+* Emulación
+** ¿Qué es /emular/?
+- La técnica de virtualización disponible hace más tiempo en
+  /computadoras personales/
+- El /procesador anfitrión/ traduce cada una de las instrucciones,
+  simulando /en tiempo de ejecución/ hardware inexistente
+- Fue muy popular hacia la segunda mitad de los 1980 y a principios de
+  los 1990, durante la explosión de las arquitecturas
+- Es /altamente/ ineficiente — Resulta muy caro en tiempo de cómputo
+
+** Emulación de una arquitectura existente
+- Se puede hacer a diferentes profundidades
+  - Desde emular el sistema completo (juego de instrucciones, chipset,
+    buses, etc.)
+  - Hasta emular únicamente /parte/ del chipset (muy común en
+    arquitecturas m680x0)
+- La arquitectura /Amiga/ de Commodore es la primera de uso personal
+  en ofrecer varios programas emuladores
+  - Macintosh y Atari ST (misma plataforma m680x0) a velocidad nativa
+  - Plataforma PC (incluso XT 8088) /muy/ lenta
+
+** Utilidad actual de la emulación
+- A difrencia de lo que ocurría hace 20 años, hoy en díá este tipo de
+  emulación es muy socorrido en el ``mundo real''
+- Los sistemas /embebidos/ son cada vez más comunes
+  - Computadoras pequeñas, limitadas en recursos (memoria,
+    almacenamiento, velocidad)
+  - Diseñadas para correr con el menor consumo energético posible
+  - Aún a costa de un menor rendimiento
+- Celuluares, cámaras, ruteadores, scanners, controladores de equipo
+  industrial...
+  - Parte muy importante del mercado
+- Emular m680x0 o ARM en un procesador estándar de escritorio resulta
+  en velocidad comparable al hardware nativo
+
+** Algunos emuladores disponibles en Debian GNU/Linux
+=qemu= (multiplataforma), =apple2=, =atari800=, =dosemu= (aplicaciones
+MS-DOS modo real), =e-uae= (Amiga m680x0, sin MMU), =nestra= (Nintento
+NES), =pose= (PDAs Palm), =specemu= (ZX Spectrum 48k), =stella= (Atari
+2600), =vice= (Commodore PET, VIC20, 64, 128, CBM-II, PLUS/4), =xtrs=
+(TRS-80), =aranym= (Atari ST), =coldfire= (Frescale Coldfire 5206),
+=dosbox= (aplicaciones MS-DOS modo real con soporte de gráficos),
+=hatari= (Atari STe), =hercules= (IBM System/370, ESA/390,
+z/Architecture), =pearpc= (PowerPC), =simh= (Equipos históricos DEC,
+Honeywell, HP, IBM y otros), =dgen= (Sega Genesis/MegaDrive)
+
+** Emulando arquitecturas inexistentes
+- También podemos emular ua arquitectura que /nunca ha sido
+  implementada/
+- La idea viene también de los 1970
+  - En pos de la portabilidad, UCSD definió un /p-system/, a ser
+    ejecutado en una /p-machine/
+  - Esta computadora nunca existiría en realidad, pero varias
+    arquitecturas existentes ofrecerían /emuladores de p-machines/
+- La arquitectura de la p-machine está definida en torno al lenguaje
+  Pascal
+- Todo programa hecho para correr en una /p-machine/ correría en
+  cualquier arquitectura que lo implementara
+- Los /p-systems/ gozaron de relativa popularidad hasta mediados de
+  los 1980, con implementaciones en arquitecturas 6502, Z80 y 80x86
+
+** Arquitecturas planteadas meramente en teoría
+- Hay arquitecturas que fueron concebidas exclusivamente para
+  propósitos académicos
+- Donald Knuth diseñó la arquitectura /MIX/ en los 1960 como
+  /arquitectura ideal/ para los ejemplos de su célebre libro /The Art
+  of Computer Programming/ (y su sucesora /MMIX/ en 1999)
+- Es una arquitectura apta para la enseñanza, pero inviable para un
+  sistema real
+  - MIX plantea un sistema híbrido binario-decimal, de 6 bits en modo
+    binario o 2 dígitos en modo decimal
+  - MMIX es una arquitectura RISC con 256 registros de 64 bits
+- Existen MIXWARE y MMIXWARE, emuladores (incompletos) de MIX y de
+  MMIX
+
+** Arquitecturas emuladas, de uso diario — E inexistentes
+- En la década de los 1990, Sun Microsystems retomó las ideas de los
+  /p-systems/, y diseñó la arquitectura /Java/
+- Java está pensado para ser una arquitectura idealizada
+  - Nativamente orientada a objetos
+  - Buscando dar una completa /portabilidad/ al código
+- /Write Once, Run Anywhere/
+- Microsoft retomó varios años más tarde esta misma idea, creando la
+  arquitectura /.NET/
+  - Su principal contribución es estar planteada como independiente
+    del lenguaje de programación
+- Desde el 2000, las comunidades (principalmente) de /Perl/ y /Python/
+  han implementado /Parrot/
+  - Máquina virtual apta para lenguajes de script
+
+** ¿Por qué utilizar/emular estas arquitecturas?
+- Las abstracciones presentadas por estas máquinas virtuales resultan
+  demasiado complejas para ser implementadas directamente en hardware
+- Son, sin embargo, muy útiles al programador, que sabrá sacarles buen
+  jugo
+- Sun diseñó la arquitectura /MAJC/ (1999) para ejecutar directamente
+  código Java
+  - Los chips resultaban demasiado complejos y caros
+  - Fracaso comercial
+- MAJC implementaba una arquitectura VLIW y optimización basada en
+  múltiples hilos de ejecución
+  - Ideas retomadas para generaciones actuales de CPUs
+
+** /Transmeta/: El procesador emulador
+- En el 2000, /Transmeta/ anunció su procesador /Crusoe/, orientado al
+  mercado de bajo consumo energético
+- Su arquitectura está diseñada para ejecutar código /diseñado para
+  otras arquitecturas/
+  - Traducido a través del microcódigo: /Code Morphing Software/
+    (/Software de transformación de código/)
+- La única arquitectura implementada en CMS es la Intel x86
+  - Pero las dos generaciones de procesadores Transmeta (Crusoe y
+    Efficeon) son completamente distintas
+  - Gracias a CMS, esta difrencia es transparente al usuario
+- Tecnología muy interesante, y aplicada ya fuera de Transmeta
+  - A pesar de esto, Transmeta colapsó como empresa.
+
+** La emulación, mejorada
+- Las técnicas utilizadas para la emulación han mejorado tremendamente
+  en los úlitmos diez años
+- Los emuladores hacen hoy traducción predictiva y compilación del
+  código a ejectuar a formatos nativos (traducción dinámica)
+- También guardan copias convertidas/compiladas del código a emular
+  - /Compilador JIT/ — /Just in Time/; /Compilador Justo a Tiempo/
+- En líneas generales, la vieja fama de la lentitud de las máquinas
+  virtuales ya no se justifica
+- Las máquinas virtuales pueden llamar a código nativo para puntos
+  críticos donde haga falta optimización
+- ...Y las usamos transparentemente, todos los días
+
+** Qemu: Un caso muy especial
+- =Bochs= es un emulador libre de x86; existe desde 1994, orientado a
+  las estaciones de trabajo Unix
+- Bochs implementó un BIOS básico de PC, y la emulación de los
+  principales dispositivos (discos, consola, VGA, puertos...)
+- =Plex86= (originalmente =FreeMWare=, 1999, en clara alusión a
+  =VMWare=) ofrece una fuerte aceleración a Bochs
+  - A través de la /traducción dinámica/
+  - Permitiendo que en arquitectura x86 el código nativo
+    /no-peligroso/ corra directamente en el CPU sin pasar por
+    emulación
+  - Aislando/emulando las partes /peligrosas/
+- En 2003, =Qemu= retoma este trabajo y agrega el módulo de kernel
+  =kqemu= (gratis, no-libre), atrapando estas llamadas con mucho mejor
+  rendimiento (igualando al de VMWare)
+- Qemu es la base para... Lo que veremos a continuación
+
+* Virtualización asistida por hardware (HVM)
+
+* Paravirtualización
+
+* Contenedores
+
+* Traducción de APIs
+
+* Conclusión

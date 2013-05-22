@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Virtualización
-#+DATE: 2013-05-20
+#+DATE: 2013-05-20 — 2013-05-22
 
 * Introducción
 ** ¿Qué significa /virtualizar/?
@@ -388,9 +388,164 @@ posible.
   distintas infraestructuras conforme nuestros requisitos lo marquen
 - Simplifica la creación de interfaces de administración y monitoreo
 
-
 * Contenedores
 
+** ¿Qué es un contenedor?
+- Una manera distinta de virtualizar
+- Más sutil, menos flexible
+- Empleando /un mismo núcleo/ de sistema operativo
+  - Empujando la virtualización /una capa/ hacia arriba
+- Con mayores limitantes, pero importantes ventajas
+
+** Herederos de =chroot=
+- Los sistemas Unix han ofrecido la llamada al sistema =chroot= desde
+  1982
+- Bill Joy la introdujo cuando trabajaba en 4.2BSD para probar la
+  construcción de nuevas versiones del sistema operativo sin
+  modificar el sistema /vivo/
+- =chroot= permite /encerrar/ a un proceso dentro de un directorio
+  - Un proceso al que se le aplica =chroot= no puede ver el sistema de
+    archivos fuera del directorio especificado
+  - ...No sin aplicar algunos trucos
+- =chroot= sólo afecta la /visión de la raiz del sistema de
+  archivos/
+  - No es (ni busca ser) un verdadero aislamiento
+
+** No lo es... ¿Por qué no lo adecuamos?
+- Los /contenedores/ construyen sobre =chroot=, ampliando el
+  aislamiento a otros componentes del sistema
+- El primer sistema en ofrecer esta facilidad fue FreeBSD, con sus
+  /jails/, desde la versión 4.0 (2000)
+- Están también implementados ahora en Linux (/vserver/ desde 2002,
+  hoy /lxc/), Solaris 10 en adelante (/Zones/, 2005) y NetBSD/FreeBSD
+  (/Sysjail/, utilizando =systrace=, 2006)
+- Idea similar en Windows: /Parallels Virtuozzo/
+
+** Principios básicos de los contenedores
+- La nomenclatura básica cambia según la implementación
+  - Cada /servidor virtual/ puede llamarse /contenedor/, /contexto de
+    seguridad/, etc.
+- El kernel oculta y aísla la información de cada contexto de los
+  demás:
+  - Tablas de procesos
+  - Señales, IPC
+  - Conexiones, sockets e interfaces de red
+  - Reglas de firewall
+  - Dispositivos
+  - Límites en consumo de recursos (RAM, CPU)
+- Formalmente, los contenedores no implementan /virtualización/, sino
+  /restricción/
+  - Pero brindan al usuario la /ilusión/ de una /máquina virtual/
+    inexistente
+
+** Vareidad, pero con un límite
+- A través de los contenedores, la virtualización es /casi/ completa
+- Se ven un poco las /costuras/, pero para propósitos prácticos, cada
+  /contenedor/ es un sistema independiente
+  - Excepto por el núcleo
+- Podemos tener cualquier distribución corriendo dentro de nuestros
+  contenedores al mismo tiempo
+- Única restricción: Todos corren con el mismo núcleo (misma versión,
+  mismos módulos, etc.)
+- Sysjail (OpenBSD) permite huéspedes *BSD y Linux a través de
+  /emulación de llamadas al sistema/ (la cubrimos en la siguiente
+  sección)
+  - Pero el núcleo /real/ sigue siendo OpenBSD
+
+** Consumo de recursos óptimo
+- Un contexto sin actividad tiene un consumo de recursos mínimo
+- Los procesos que no tienen actividad no consumen CPU
+- Los procesos en memoria inactivos van siendo paginados a disco
+- Queda como excepción /Sysjail/ (OpenBSD), una implementación de
+  contenedores en espacio de usuario a través de =systrace=, que /sí/
+  es notablemente más lenta que el sistema en hardware nativo
+
 * Traducción de APIs
+** Traduciendo de una /interfaz/ que no tengo
+- Otro tipo de virtualización, frecuentemente confundida con la
+  emulación
+- Consiste en implementar una capa que permita traducir una
+  arquitectura de /software/, no de hardware
+- Permite correr software diseñado para diferentes sistemas
+  operativos simultáneamente
+  - Bajo el mismo OS real
+  - En la misma computadora
+- El grado de integración dependerá de la similitud entre el sistema
+  real y el... ¿huesped? ¿emulado?
+
+** Entre Unixes
+- Los diferents Unixes libres implementan capas de traducción para
+  poder ofrecer compatibilidad binaria a programas compilados para
+  Unixes propietarios
+- En Linux, \approx 1994-1999, se mantuvo el [[http://www.linuxjournal.com/article/2809][subsistema iBCS2 (/Intel
+  Binary Compatibility Specification 2/)]], ofreciendo compatibildad
+  binaria con:
+  - 386BSD, FreeBSD, NetBSD, BSDI/386
+  - SVR3, SVR4 SCO
+  - Sistema V: Wyse V/386; Xenix V/386 y Xenix V/286
+- iBCS2 fue retirado de Linux hacia 1999, cuando se volvió innecesario
+  - Al ser Linux fuertemente más popular que los sistemas mencionados
+- En los diferentes BSDs hay subsistemas de compatibilidad,
+  principalmente orientados a Linux
+
+** Nivel de compatibilidad Unix-Unix
+- Dado que en estos casos la capa de compatibilidad es muy ligera, la
+  integración de los binarios es prácticamente perfecta
+  - Los sistemas son /semánticamente equivalentes/
+  - Los diferentes Unixes ofrecen la misma estructura lógica
+  - Incluso el mismo acomodo y nomenclatura de archivos
+- Principalmente orientados a correr software no libre
+  - Si se tiene el fuente, basta recompilar el software para correrlo
+    nativamente y sin capas de emulación
+  - Puede requerirse /cierto/ esfuerzo para recompilar, pero
+    generalmente no es /tanto/
+
+** Sistemas de diferente naturaleza
+- Las traducciones de API más atractivas (pero también más difíciles)
+  son las que ofrecen la integración de aplicaciones hechas para
+  sistemas operativos muy distintos
+  - [[http://www.winehq.org][/Wine/ (Wine Is Not an Emulator)]], para correr aplicaciones de
+    Windows en Linux
+  - [[http://cygwin.com/][Cygwin]] y [[http://blogs.msdn.com/b/sfu/][Microsoft Interix / Services for Unix]], para correr
+    aplicaciones Unix en Windows
+- La integración /no es perfecta/
+  - Se ven claramente las /costuras/ en las muy diferentes metáforas
+    ofrecidas por ambos sistemas
+  - Típicamente el administrador puede controlar/configurar los
+    puntos de /armonización/
+- La compatibilidad no es completa, y es común encontrar aplicaciones
+  que no funcionan o se rompen
 
 * Conclusión
+** Algunos casos comunes de uso
+- Mejor aprovechamiento / consolidación de recursos
+- Migraciones
+- Seguridad
+- Redundancia / alta disponibilidad
+- Despliegue de escritorios virtuales
+- Simplificación de mantenimiento
+- Desarrollo (especialmente depuración) para sistemas embebidos
+
+** Diferentes necesidades, diferentes soluciones
+- Hay una gran riqueza en la oferta de herramientas de virtualización
+- Cada herramienta y estrategia tiene características muy distintas
+- Hasta hace poco estaba completamente fuera del radar
+  - Nos ofrece soluciones muy interesantes a una amplia categoría de
+    problemas
+- Las ofertas de cómputo /en la nube/ cruzan necesariamente por
+  virtualización
+  - Particularmente por hardware, paravirtualización y contenedores
+- Al ser un área en desarrollo explosivo, hay mucho espacio donde
+  podemos participar y desarrollar
+
+** ¿Y la nube?
+- La /infraestructura como un servicio/, una de las modalidades del
+  /cómputo en la nube/ implica necesariamente virtualización
+- Varios programas de administración de /nubes privadas/ gestionan y
+  monitorean también sistemas virtualizados
+- Una /nube/ puede verse como un conjunto de servidores configurados
+  para brindar recursos reales a máquinas virtuales
+  - Disco, memoria, tiempo de procesamiento, etc.
+- La administración de servicios /en la nube/, así como sus ventajas y
+  desventajas, salen del ámbito del curso
+  - Pero sin duda será de interés de varios de ustedes

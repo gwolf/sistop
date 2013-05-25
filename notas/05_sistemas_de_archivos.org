@@ -1547,7 +1547,7 @@ compartir un archivo de uso intensivo y aleatorio.
 
 
 * Plasmando la estructura en el dispositivo
-
+# <<estructura_en_dispositivo>>
 Hasta ahora, hemos visto a los elementos del sistema de archivos tal
 como son presentados al usuario final, sin entrar en detalles respecto
 a cómo organiza toda esta información el sistema operativo en un
@@ -3261,9 +3261,411 @@ nos permite emplear esta tecnologíá transparentemente es
 espacio para mejorar. Este es un tema que seguramente brinda amplio
 espacio para investigación y desarrollo para los próximos años.
 
-* Particiones y volúmenes multi-disco
+* Manejo avanzado de volúmenes
 
+En la sección /[[#estructura_en_dispositivo][Plasmando la estructura en el dispositivo]]/ presentamos
+muy escuetamente al concepto de /volumen/. Mencionamos que un volumen
+/típicamente/ coincide con una partición, aunque no siempre es el
+caso — Y no profundizamos más al respecto. En esta sección
+describiremos uno de los mecanismos en que podemos combinar
+diferentes /dispositivos físicos/ en un sólo volumen, y cómo –bajo
+las diferentes modalidades que presentaremos– lleva a ganar en
+confiabilidad, rendimiento y espacio disponible.
 
+Abordaremos un esquema llamado /RAID/, /Arreglo Redundante de Discos
+Baratos/ (/Redundant Array of Inexpensive Disks/)[fn:: Ocasionalmente
+se presenta a RAID como acrónimo de /Arreglo Redundante de Discos
+Independientes/ (/Redundant Array of Independent Disks/)], propuesto
+en 1988 por David Patterson, Garth Gibson y Randy Katz ante el
+diferencial que se presentaba (y se sigue presentando) entre el
+avance en velocidad y confiabilidad del cómputo en relación al
+almacenamiento magnético. Bajo los esquemas RAID queda sobreentendido
+que los diferentes discos que forman parte de un volumen son del
+mismo tamaño. Si se remplaza un disco de un arreglo por uno más
+grande, la capacidad /en exceso/ que tenga éste sobre los demás
+discos será desperdiciada.
+
+Por muchos años, los arreglos RAID se hacían a través de controladores
+dedicados, presentándose como un dispositivo único al sistema
+operativo. Hoy en día, prácticamente todos los sistemas operativos
+incluyen la capacidad de integrar varias unidades independientes en un
+arreglo por software; esto conlleva un impacto en rendimiento, aunque
+muy pequeño. Hay también, y abordaremos algunas de estas
+implementaciones hacia el final de esta sección, varias
+implementaciones derivadas de RAID que han incorporado conceptos de
+capas superiores en algunos sistemas operativos modernos.
+
+RAID no es un sólo esquema, sino que es un /conjunto de esquemas/,
+cada uno de ellos diseñado para mejorar distintos aspectos del
+almacenamiento en discos. Veamos las características de los
+principales niveles en uso hoy en día.
+
+** RAID 0: División en /franjas/
+
+Este esquema nos brinda una mejoría tanto en espacio total, dado que
+presenta a un volumen grande en vez de varios discos probablemente más
+pequeños, simplificando la tarea del administrador, como de velocidad,
+dado que las lecturas y escrituras al volumen ya no estarán sujetas al
+movimiento de una sola cabeza, sino que habrá una cabeza independiente
+por cada uno de los discos que tengamos en el volumen.
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Cinco discos organizados en RAID 0
+#+begin_src dot :exports results :file ltxpng/raid_0.png
+  digraph G {
+          rankdir=LR;
+	  node [shape=circle];
+          subgraph cluster0 {
+                   label = "Volumen (5TB)";
+                   1 [label = "Disco\n1: 1TB"];
+                   2 [label = "Disco\n2: 1TB"];
+                   3 [label = "Disco\n3: 1TB"];
+                   4 [label = "Disco\n4: 1TB"];
+                   5 [label = "Disco\n5: 1TB"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   3 -> 4 [label = "+"];
+                   4 -> 5 [label = "+"];
+          }
+  }
+#+end_src
+
+Los discos que participan en un volumen RAID 0 no son sencillamente
+/concatenados/, sino que los datos son /divididos en franjas/ (en
+inglés, el proceso se conoce como /striping/, de la palabra /stripe/,
+franja; algunas traducciones al español se refieren a este proceso
+como /bandeado/). Esto hace que la carga sea repartida de forma
+uniforme entre todos los discos, y asegura que todas las
+transferencias mayores al tamaño de una franja provengan de más de un
+disco independiente.
+
+#+attr_latex: width=0.6\textwidth
+#+caption: División de datos en /franjas/
+#+begin_src ditaa :file ltxpng/franjas_raid_0.png :cmdline -E
+          +---------+ +---------+ +---------+
+          |{s}      | |{s}      | |{s}      |
++-----+   |  +---+  | |  +---+  | |  +---+  |
+|  A  +-->+  |A1 |  | |  |A2 |  | |  |A3 |  |
++-----+   |  +---+  | |  +---+  | |  +---+  |
+|  B  +-->|  |B1 |  | |  |B2 |  | |  |B3 |  |
++-----+   |  +---+  | |  +---+  | |  +---+  |
+|  C  +-->|  |C1 |  | |  |C2 |  | |  |C3 |  |
++-----+   |  +---+  | |  +---+  | |  +---+  |
+|  D  +-->|  |D1 |  | |  |D2 |  | |  |D3 |  |
++-----+   |  +---+  | |  +---+  | |  +---+  |
+          | Disco 1 | | Disco 2 | | Disco 3 |
+          +---------+ +---------+ +---------+
+#+end_src
+
+La confiabilidad del volumen, sin embargo, disminuye
+respecto a si cada uno de los discos se manejara por separado: Basta
+con que uno de los discos presente daños para que la información
+contenida en el volumen se pierda.
+
+Puede construirse un arreglo bajo RAID nivel 0 con un mínimo de dos
+discos.
+
+** RAID 1: Espejo
+
+Este nivel está principalmente orientado a aumentar la confiabilidad
+de la información: Los datos son grabados de forma /simultánea e
+idéntica/ en todos los discos que formen parte del volumen. El costo
+de mantener los datos en espejo, claro está, es el del espacio
+empleado: En su configuración habitual, de dos discos por volumen, el
+50% del espacio de almacenamiento se pierde por fungir como respaldo
+del otro 50%.
+
+La velocidad de acceso a los datos bajo RAID 1 es mayor a la que
+tendríamos con un disco tradicional: Basta con que obtengamos la
+respuesta de uno de los discos; el controlador RAID (sea el sistema
+operativo o una implementación en hardware) puede incluso programar
+las solicitudes de lectura para que se vayan repartiendo entre ambas
+unidades. La velocidad de escritura se ve levemente reducida, dado
+que hay que esperar a que ambos discos escriban la información.
+
+#+caption: Dos discos organizados en RAID 1
+#+attr_latex: width=0.3\textwidth
+#+begin_src dot :exports results :file ltxpng/raid_1.png
+  digraph G {
+          rankdir=LR;
+	  node [shape=circle];
+          subgraph cluster0 {
+                   label = "Volumen (1TB)";
+                   1 [label = "Disco\n1: 1TB"];
+                   2 [label = "Disco\n2: 1TB"];
+                   1 -> 2 [label = "=", dir = both];
+          }
+  }
+#+end_src
+
+Un arreglo RAID nivel 1 se construye típicamente con dos discos.
+
+** Los niveles 2, 3 y 4 de RAID
+
+Los siguientes tres niveles de RAID combinan propiedades de los
+primeros junto con un algoritmo de verificación de integridad y
+corrección de errores. Estos han caído casi por completo en el desuso
+dado que los otros niveles, y muy en particular el nivel 5, ofrecen
+las mismas características, pero con mayor confiabilidad
+
+** RAID 5: Paridad dividida por bloques
+
+El nivel 5 de RAID proporciona un muy buen equilibrio respecto a las
+características que venimos mencionando: nos brinda el espacio total
+de almacenamiento de todos los discos que formen parte del volumen
+/menos uno/. Para cada una de las /franjas/, RAID5 calcula un bloque
+de /paridad/. Ahora, este bloque de paridad no siempre va al mismo
+disco, sino que se va repartiendo entre todos los discos del volumen,
+/desplazándose/ a cada franja, de modo que /cualquiera de los discos
+puede fallar/, y el arreglo continuará operando sin pérdida de
+información. Esta falla se notifica al administrador del sistema,
+quien debe reemplazar el disco lo más pronto posible (dado que, de no
+hacerlo, la falla en un segundo disco resultará en la pérdida de toda
+la información).
+
+#+attr_latex: width=0.7\textwidth
+#+caption: División de datos en /franjas/, con paridad, para RAID 5
+#+begin_src ditaa :file ltxpng/franjas_raid_5.png :cmdline -E
++-------------+ +-------------+ +-------------+ +-------------+ +-------------+
+|{s} cFFF     | |{s} cFFF     | |{s} cFFF     | |{s} cFFF     | |{s} cFFF     |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+| |cFFFA1   | | | |cFFFA2   | | | |cFFFA3   | | | |cFFFA4   | | | |cDDDpA   | |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+| |cFFFB1   | | | |cFFFB2   | | | |cFFFB3   | | | |cDDDpB   | | | |cFFFB4   | |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+| |cFFFC1   | | | |cFFFC2   | | | |cDDDpC   | | | |cFFFC3   | | | |cFFFC4   | |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+| |cFFFD1   | | | |cDDDpD   | | | |cFFFD2   | | | |cFFFD3   | | | |cFFFD4   | |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+| |cDDDpE   | | | |cFFFE1   | | | |cFFFE2   | | | |cFFFE3   | | | |cFFFE4   | |
+| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
+|cFFFDisco 1  | |   Disco 2   | |   Disco 3   | |   Disco 4   | |   Disco 5   |
++-------------+ +-------------+ +-------------+ +-------------+ +-------------+
+#+end_src
+
+Dependiendo de la configuración, la velocidad de acceso de este nivel
+puede ser es ligeramente menor que la que obtendríamos de los discos
+sin RAID, o ligeramente menor a la que obtendríamos con RAID
+nivel 0. Dado que la electrónica en los discos actuales nos
+notificará explícitamente en caso de fallo de lectura, al leer
+información podemos leer únicamente los discos que contengan la
+información (e ignorar al de paridad); si nuestro RAID está
+configurado para verificar la paridad en lecturas, claro está, todas
+las lecturas tendrán que obtener la franja correspondiente de todos
+los discos del arreglo para poder calcularla.
+
+Las escrituras son invariablemente más lentas que lo que obtenemos
+tanto en ausencia de RAID como en niveles 0 y 1, dado que siempre
+tendrá que recalcularse la paridad; en el caso de una escritura
+mínima, menor a una franja, tendrá que leerse la franja entera de
+todos los discos participantes en el arreglo, recalcularse la
+paridad, y grabarse en el disco correspondiente.
+
+Cuando uno de los discos falla, el arreglo comienza a trabajar en el
+/modo interino de recuperación de datos/ (/Interim data recovery
+mode/), en el que todas las lecturas involucran a todos los discos, ya
+que tienen que estar recalculando y /rellenando/ la información que
+provendría del disco dañado.
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Cinco discos organizados en RAID 5
+#+begin_src dot :exports results :file ltxpng/raid_5.png
+  digraph G {
+          rankdir=LR;
+	  node [shape=circle];
+          subgraph cluster0 {
+                   label = "Volumen (4TB)";
+                   1 [label = "Disco\n1: 1TB"];
+                   2 [label = "Disco\n2: 1TB"];
+                   3 [label = "Disco\n3: 1TB"];
+                   4 [label = "Disco\n4: 1TB"];
+                   5 [label = "Disco\n5: 1TB", color="blue"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   3 -> 4 [label = "+"];
+                   1 -> 5 [color="blue", label = "PAR"];
+                   2 -> 5 [color="blue", label = "PAR"];
+                   3 -> 5 [color="blue", label = "PAR"];
+                   4 -> 5 [color="blue", label = "PAR"];
+          }
+  }
+#+end_src
+
+Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
+aunque es común verlos más /anchos/, pues de este modo se desperdicia
+menos espacio en paridad. Si bien teóricamente un arreglo nivel 5
+puede ser arbitrariamente ancho, en la práctica es muy raro ver
+arreglos con más de 5 discos: Tener un arreglo más ancho aumentaría la
+probabilidad de falla. Si un arreglo que está ya operando en el modo
+interino de recuperación de datos se encuentra con una falla en
+cualquiera de sus discos, tendrá que reportar un fallo irrecuperable.
+
+** RAID 6: Paridad por redundancia P+Q
+
+Se trata nuevamente de un nivel de RAID muy poco utilizado. Se basa en
+el mismo principio que el de RAID 5 pero, empleando dos distintos
+algoritmos para calcular la paridad, permite la pérdida de hasta dos
+de los discos del arreglo. La complejidad computacional es
+sensiblemente mayor a la de RAID 5, no sólo porque se trata de un
+segundo cálculo de paridad, sino porque este cálculo debe hacerse
+empleando un algoritmo distinto y más robusto — Si bien para obtener
+la paridad $P$ basta con hacer una operación /XOR/ sobre todos los
+segmentos de una /franja/, la segunda paridad $Q$ típicamente emplea
+al /algoritmo Reed-Solomon/, /paridad diagonal/ o /paridad dual
+ortogonal/. Esto conlleva a una mayor carga al sistema, en caso de que
+sea RAID por software, o a que el controlador sea de mayor costo por
+implementar mayor complejidad, en caso de ser hardware dedicado.
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Cinco discos organizados en RAID 6
+#+begin_src dot :exports results :file ltxpng/raid_6.png
+  digraph G {
+          rankdir=LR;
+	  node [shape=circle];
+          subgraph cluster0 {
+                   label = "Volumen (3TB)";
+                   1 [label = "Disco\n1: 1TB"];
+                   2 [label = "Disco\n2: 1TB"];
+                   3 [label = "Disco\n3: 1TB"];
+                   4 [label = "Disco\n4: 1TB", color="green"];
+                   5 [label = "Disco\n5: 1TB", color="blue"];
+                   1 -> 2 [label = "+"];
+                   2 -> 3 [label = "+"];
+                   1 -> 4 [color="green", label = "PAR P"];
+                   2 -> 4 [color="green", label = "PAR P"];
+                   3 -> 4 [color="green", label = "PAR P"];
+                   1 -> 5 [color="blue", label = "PAR Q"];
+                   2 -> 5 [color="blue", label = "PAR Q"];
+                   3 -> 5 [color="blue", label = "PAR Q"];
+          }
+  }
+#+end_src
+
+El nivel 6 de RAID puede implementarse con 4 o más unidades, y si
+bien el espacio dedicado a la redundancia se incrementa a dos discos,
+la redundancia adicional que ofrece este esquema permite crear
+volúmenes con un mayor número de discos.
+
+** Niveles combinados de RAID
+
+Viendo desde el punto de vista de la abstracción presentada, RAID
+toma una serie de dispositivos de bloques y los /combina/ en otro
+dispositivo de bloques. Esto significa que puede tomarse una serie de
+volúmenes RAID y combinarlos en uno solo, aprovechando las
+características de los diferentes niveles.
+
+Si bien pueden combinarse arreglos de todo tipo, hay combinaciones más
+frecuentes que otras. Con mucho, la más popular es la de los niveles
+1 + 0 — Esta combinación, frecuentemente llamada sencillamente /RAID
+10/, ofrece un máximo de redundancia y rendimiento, sin sacrificar
+demasiado espacio.
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Seis discos organizados en RAID 1+0
+#+begin_src dot :exports results :file ltxpng/raid_10.png
+  digraph G {
+          rankdir=LR;
+	  node [shape=circle];
+	  
+          subgraph cluster_resulta {
+                  label = "Volumen RAID1\nresultante (3TB)";
+		  subgraph cluster_vol1 {
+			  label = "Subvolumen\nRAID0 1 (1TB)";
+			  1 -> 2 [label = "=", dir = both, color="blue"];
+		  }
+		  subgraph cluster_vol2 {
+			  label = "Subvolumen\nRAID0 2 (1TB)";
+			  3 -> 4 [label = "=", dir = both, color="blue"];
+		  }
+		  subgraph cluster_vol3 {
+			  label = "Subvolumen\nRAID0 3 (1TB)";
+			  5 -> 6 [label = "=", dir = both, color="blue"];
+		  }
+		  1 -> 3 [label = "+"];
+		  3 -> 5 [label = "+"];
+                  2 -> 4 [label = "+", style="dotted"];
+                  4 -> 6 [label = "+", style="dotted"];
+          }
+          1 [label = "Disco\n1: 1TB"];
+          2 [label = "Disco\n2: 1TB"];
+          3 [label = "Disco\n3: 1TB"];
+          4 [label = "Disco\n4: 1TB"];
+          5 [label = "Disco\n5: 1TB"];
+          6 [label = "Disco\n6: 1TB"];
+  }
+#+end_src
+
+Con RAID nivel 10 creamos volúmenes que suman por franjas unidades en
+espejo (un volumen RAID 0 compuesto de varios volúmenes RAID 1). En
+caso de fallar cualquiera de las unidades del arreglo, ésta puede ser
+reemplazada fácilmente, y su reemplazo no significará un trabajo tan
+intensivo para el arreglo entero, sólo para su disco espejo.
+
+Bajo este esquema, en el peor de los casos, en un volumen con $n$
+discos físicos tendríamos $n \over 2$ volúmenes nivel 1, y por tanto
+podríamos soportar la pérdida de hasta $n \over 2$ discos — Siempre
+que estos no formen parte de un mismo volumen nivel 1.
+
+Ahora bien, esta combinación nos ilustra cómo el órden de los
+factores /sí altera/ el producto: Si en vez de la concatenación de
+varias unidades espejeadas (un volumen nivel 0 compuesto de varios
+volúmenes nivel 1) armáramos nuestro arreglo en órden inverso, esto
+es, como el espejeo de varias unidades concatenadas por franjas,
+parecería que obtenemos los mismos beneficios — Pero analizando lo
+que ocurre en caso de falla, resulta claro que el nivel de
+redundancia resulta mucho menor.
+
+#+attr_latex: width=0.65\textwidth
+#+caption: Seis discos organizados en RAID 0+1
+#+begin_src dot :exports results :file ltxpng/raid_01.png
+  digraph G {
+	  node [shape=circle];
+          rankdir=LR;
+
+          subgraph cluster_resulta {
+                  label = "Volumen RAID0\nresultante (3TB)";
+		  subgraph cluster_vol1 {
+			  label = "Subvolumen RAID1\n 1 (3TB)";
+			  1 -> 2 [label = "+"];
+			  2 -> 3 [label = "+"];
+		  }
+		  subgraph cluster_vol2 {
+			  label = "Subvolumen RAID1\n2 (3TB)";
+			  4 -> 5 [label = "+", style = dotted];
+			  5 -> 6 [label = "+", style = dotted];
+		  }
+		  1 -> 4 [label = "=", dir = both, color = blue];
+		  2 -> 5 [label = "=", dir = both, color = blue];
+		  3 -> 6 [label = "=", dir = both, color = blue];
+          }
+          1 [label = "Disco\n1: 1TB"];
+          2 [label = "Disco\n2: 1TB"];
+          3 [label = "Disco\n3: 1TB"];
+          4 [label = "Disco\n4: 1TB"];
+          5 [label = "Disco\n5: 1TB"];
+          6 [label = "Disco\n6: 1TB"];
+  }
+#+end_src
+
+En este caso, nuestro arreglo soportará también el fallo de hasta $n
+\over 2$ de sus discos, pero únicamente si ocurren en el mismo volumen
+del espejo. Si se perdieran al mismo tiempo el disco 1 (del
+subvolumen 1) y el disco 5 (del subvolumen 2), tendríamos pérdida de
+datos.
+
+** Más allá de RAID
+
+Los esquemas RAID vienen, sin embargo, de fines de la década de 1980,
+y en los más de 20 años desde que fueron planteados, si bien han
+cambiado el panorama del almacenamiento, han sido ya superados. En
+nuestro caso, profundizamos en estos esquemas y no los desarrollos
+posteriores dada la limpieza conceptual que presentan, y dado que
+otros esquemas incluso hacen referencia al nivel de RAID que
+/estarían reemplazando/ en su documentación.
+
+Varios sistemas operativos ofrecen hoy el concepto de un /gestor de
+volúmenes lógicos/: Una interfaz que permite, como dos pasos
+independientes, agregar diferentes /volúmenes físicos/ a un 
 
 * Otros recursos
 - Practical File System Design (Dominic Giampaolo, 1999): El autor fue
@@ -3314,3 +3716,6 @@ espacio para investigación y desarrollo para los próximos años.
   Aurora, 2009)
 
 - [[http://lwn.net/Articles/528617/][JFFS2, UBIFS, and the growth of flash storage]] (Neil Brown, 2012)
+
+- [[http://www.cs.cmu.edu/%7Egarth/RAIDpaper/Patterson88.pdf][A case for Redundant Arrays of Inexpensive Disks]] (Patterson,
+  Gibson, Katz 1988)

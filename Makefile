@@ -61,6 +61,7 @@ semestre:
 	echo '- [[./lista.html#sec-1][Asistencia]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-2][Tareas y participaciones]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
+	echo '- [[./lista.html#sec-5][Calificaciones finales]]' >> $(idx_semestre)
 	emacs --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	mv docente/lista.html $(dir_semestre)
 	echo '* Exámenes resueltos' >> $(idx_semestre)

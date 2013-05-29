@@ -6,6 +6,229 @@
 #+LATEX_HEADER: \usepackage[spanish]{babel}
 #+LANGUAGE: es
 
+* Introducción a los sistemas operativos
+1. Se denomina así al modelo de cómputo en que se realizan procesos en
+   paralelo entre procesadores que no comparten un espacio común de
+   memoria
+   - R: distribuido
+
+2. La "era de oro" de las arquitecturas de 8 bits se caracterizó por...
+   (Seleccione al menos una respuesta.)
+   1. La popularización de diversos dispositivos de entrada y salida
+   2. Venían de serie con unidades de disco de 5.25"
+   3. Tuvo muchas arquitecturas incompatibles entre sí
+   4. Las computadoras personales actuales son básicamente evolución de las arquitecturas de 8 bits
+   5. Estaban enfocadas al mercado de las pequeñas y medianas empresas
+   6. Popularizaron la programación en BASIC
+
+3. ¿En qué se diferencía la multitarea preventiva de la cooperativa?
+   Para todas las opciones, lee: "A diferencia de la multitarea
+   cooperativa, la preventiva..."
+   (Seleccione al menos una respuesta.)
+   1. Es inmune a que un cálculo demasiado largo o un ciclo infinito dejen a la computadora efectivamente congelada
+   2. Es la más utilizada hoy en día
+   3. Ocurre sólo cuando el proceso hace una llamada al sistema
+   4. Se emplea principalmente en sistemas multiusuario
+   5. Requiere apoyo de hardware
+
+4. Llamamos almacenamiento primario a...
+   (Seleccione una respuesta.)
+   1. Las unidades de almacenamiento no volátil de largo plazo (discos, memoria Flash, USB, etc.)
+   2. La capa de memoria que corre a mayor velocidad y está más cerca del procesador
+   3. Los registros, espacio de memoria de extremadamente alta velocidad ubicados dentro del mismo procesador
+   4. La memoria RAM del sistema
+
+5. La Ley de Moore postula que para que sigamos ganando velocidad de
+   cómputo una vez que la carrera de los GHz nos llevó al punto en que
+   la eficiencia térmica evita que podamos seguir subiendo el reloj de
+   las computadoras de uso general, es necesario diseñar chips con más
+   núcleos y adoptar el multiprocesamiento.  (Verdadero/Falso)
+
+6. Las computadoras nacieron en el mercado de los aficionados o
+   hobbyistas a mediados de la década de 1970. Las primeras
+   aparecieron poco después de que el hardware necesario para
+   construir teclados y monitores a costos menores a US$1,000
+   (Verdadero/Falso)
+
+7. Los primeros microprocesadores contaban con únicamente un registro
+   de propósito general, que operaba a grandes rasgos como una pila
+   (stack). ¿Cómo se llamaba a este único registro?
+   - R: acumulador
+
+8. El cómputo es un campo en constante evolución. Hoy en día tenemos
+   el problema de la diferencia de velocidad entre la memoria y el
+   procesador, que nos obliga a emplear memorias intermedias
+   (caché). Las tendencias indican que el problema se va reduciendo, y
+   en unos años la memoria podrá ser accesada prácticamente a la misma
+   velocidad que el reloj del CPU.
+   (Verdadero/Falso)
+
+9. Un sistema operativo ofrece una serie de recursos o características
+   principales, tanto a sus usuarios como a sus programadores.
+   (Relaciona cada concepto con su descripción.)
+   - Conceptos:
+     - Aislamiento
+     - Administración de recursos
+     - Abstracción
+     - No es una característica que ofrezca el sistema operativo
+   - Descripciones:
+     - Implementar políticas que repartan la atención del sistema de
+       forma efectiva y acorde a las necesidades establecidas entre
+       los diferentes procesos o usuarios.
+     - Cada proceso y cada usuario no tendrán que preocuparse por
+       otros que estén usando el mismo sistema — Idealmente, su
+       experiencia será la misma que si el sistema estuviera
+       exclusivamente dedicado a su atención. Requiere que el sistema
+       operativo cuente con ayuda del hardware.
+     - Presentar una interfaz consistente al usuario (puede ser
+       gráfica o textual), eliminando las diferencias que provendrían
+       de manejar distintos tipos de hardware
+     - Los programadores no deben tener que preocuparse de los
+       detalles del acceso a hardware, o de la confiuración particular
+       de una computadora. El programador debe poder enfocarse en
+       resolver los problemas o necesidades particulares de sus
+       usuarios.
+
+10. ¿Cuál es el máximo de información (en bytes) que puede transferir
+    a memoria en un segundo (iniciando la transferencia en ese
+    momento) un disco con un tiempo de acceso de 15ms y una tasa de
+    transferencia de 80MB/s?
+
+11. Los sistemas de tiempo compartido trajeron una verdadera
+    revolución en la forma de uso de los recursos de
+    cómputo. Relaciona los conceptos para indicar qué característica
+    va relacionada con qué cambio
+    - Conceptos:
+      - Terminales (teletipos, teclado+CRT)
+      - Sistemas de archivos (archivos, directorios)
+      - Bibliotecas de sistema
+      - Colas de priorización
+    - Descripciones:
+      - Algunos procesos tienen mayor carga de interactividad, otros
+        son fundamentales para el funcionamiento del sistema, y otros
+        son de usuarios muy importantes. ¿Cómo lo resolvemos?
+      - Colecciones de código disponibles para ser ligadas desde los
+        diferentes programas para ofrecer funcionalidad básica
+      - Uso interactivo, mayor facilidad de programación y depuración
+      - Abstracciones necesarias para soportar el modelo de uso
+        multiusuario
+12. ¿Cuáles son las principales características de los distintos
+    modelos de multiprocesamiento?
+    - Conceptos:
+      - Cómputo en la nube
+      - NUMA
+      - Web Services
+      - SMP
+      - Cluster o cúmulo
+      - Grid o malla
+    - Descripciones:
+      - Modelo de distribución del cómputo en que se pueden proveer
+        (como un servicio) recursos de cómputo para necesidades
+        específicas sobre demanda, bajo tres modalidades principales
+      - Cada procesador tiene afinidad por ciertos bancos de memoria,
+        aunque puede también direccionar a los que le quedan más
+        lejos.
+      - Computadoras independientes, con características idénticas o
+        muy similares de hardware, conectadas a través de una red
+        local (LAN)
+      - Computadoras independientes, posiblemente con características
+        de hardware muy distintas entre sí, conectadas típicamente por
+        redes de área amplia (WAN) como Internet
+      - Mecanismo de llamada a procedimientos remotos (RPC) que está
+        basado en el protocolo HTTP y algún lenguaje de marcado
+        estructurado como XML, JSON o YAML
+      - Todos los procesadores tienen el mismo acceso a la memoria y
+        los dispositivos del sistema
+
+13. Las primeras computadoras de proceso en lotes (batch processing)
+    no contaban aún con hardware de protección, cualquiera de sus
+    usuarios podía ejecutar cualquier instrucción (Verdadero/Falso)
+
+14. De la siguiente lista de eventos, marca aquellos que corresponden
+    a interrupciones (y no a aquellos que corresponden a excepciones)
+    1. El usuario accionó alguna tecla en el teclado
+    2. Se produjo un acceso ilegal a memoria fuera del segmento
+       (segmentation fault)
+    3. El proceso en ejecución lanzó una llamada al sistema
+    4. Llegó un paquete a la interfaz de red
+    5. Se produjo una división sobre cero
+    6. El proceso en ejecución estuvo activo ya demasiado tiempo, es
+       hora de un cambio de contexto
+    7. Los datos solicitados al controlador de disco duro ya están
+       disponibles
+
+15. Si el procesador de un sistema corre a 1GHz, la latencia de la
+    memoria es de 130ns, y el bus de memoria puede sostener un ancho
+    de banda de 3000 MB/s, asumiendo que no hay ningún otro proceso en
+    ejecución que entorpezca el proceso, ¿cuántos ciclos de reloj
+    tiene que esperar el procesador al solicitar una palabra (64
+    bits)?
+
+16. Algunos dispositivos requieren de bloqueo para garantizar a un
+    programa su acceso exclusivo. ¿Cuáles de los siguientes entrarían
+    en ese supuesto? (Seleccione al menos una respuesta.)
+    1. Teclado
+    2. Unidad de cinta
+    3. Discos
+    4. Impresora
+
+17. ¿Es cierto que los sistemas microkernel presentan interfaces más
+    claras que los monolíticos? (Verdadero/Falso)
+
+18. Un programa típicamente pasa por varias etapas en su ejecución,
+    algunas de las cuales están limitadas por el procesador, mientras
+    que las otras están limitadas por la entrada/salida. Los
+    componentes del sistema que están ocupados en cada caso son
+    distintos.
+
+    ¿Qué tipo de sistemas nacieron para responder a esta necesidad?
+
+19. ¿Qué factores principales hicieron que se diera el primer paso
+    hacia el desarrollo de los sistemas operativos con el nacimiento
+    de los sistemas de proceso en lote (batch processing)? (Seleccione al menos una respuesta.)
+    1. Ofrecer una vista abstracta de los recursos de la computadora
+    2. La dificultad de programar
+    3. Seguridad personal de los programadores (ante descargas
+       eléctricas)
+    4. Permitir que el procesador trabajara en más de un proceso a la
+       vez
+    5. Depuración más fácil
+    6. El tiempo que demoraba la programación del sistema
+
+20. En 1984, esta computadora tomó las ideas desarrolladas en Xerox
+    PARC en los 1970 y se convirtió en el primer equipo exitoso a
+    escala comercial en ofrecer la metáfora WIMP (Windows, Icons,
+    Menus, Pointer) en una interfaz usuario nativamente gráfica (GUI -
+    Graphical User Interface)
+
+21. Los sistemas Unix llegaron a las computadoras personales desde
+    principios de los 1980, pero sólo se popularizaron hasta ya
+    entrados los 1990. Completa las afirmaciones con la respuesta que
+    les corresponda.
+    - Conceptos:
+      - GCC, GNU y HURD
+      - sparc (Sun), Alpha (Digital), Silicon Graphics (SGI)
+      - 386/BSD, Linux, NetBSD
+      - A/UX (Apple), Xenix (Microsoft), SCO (Santa Cruz Operation)
+    - Descripciones:
+      - Algunos sistemas Unix en el escritorio en la década de 1980
+        fueron:
+      - Ya en los 1990 surgieron varios sistemas Unix libres
+        completamente viables para su uso. Aunque uno tuvo resbalones
+        legales para iniciar, técnicamente era un Unix completo, y hoy
+        se pueden utilizar varios de sus descendientes. Algunos de
+        estos son
+      - Con la llegada de las computadoras personales suficientemente
+        potentes y capaces, el mercado de las llamadas "estaciones de
+        trabajo" se fue achicando hasta prácticamente
+        desaparecer. Algunas de las compañías y arquitecturas que
+        desaparecieron fueron:
+      - A mediados de los 1980 nació la Fundación de Software Libre
+        (FSF), e inició la implementación de un compilador de C, un
+        entorno usuario Unix, con un núcleo microkernel (este último
+        nunca alcanzó la madurez). El compilador, el proyecto del
+        sistema Unix y el microkernel se llamaban respectivamente:
+
 * Administración de procesos
 ** Conceptos de procesos e hilos
  1. ¿Qué diferencia hay entre un programa y un proceso?

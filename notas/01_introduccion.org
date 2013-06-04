@@ -954,6 +954,88 @@ principalmente:
        consumo de recursos (y por tanto, el pago) según la demanda que
        alcancen.
 
+  El tema del cómputo en la nube va muy de la mano del que abordaremos
+  a continuación: La virtualización.
+
+* Virtualización
+
+La /virtualización/ no es un concepto nuevo, sin embargo, tras largos
+años de estar relegado muy a un segundo plano, hoy en día se vuelve
+fundamental cuando hablamos de sistemas operativos, particularmente en
+rol de servidores. Abordaremos este tema en este momento desde una
+óptica más bien descriptiva, y posteriormente profundizaremos en
+algunos de sus asepectos.
+
+En primer término, debemos tener claro que con /virtualización/ no nos
+referimos a una única tecnología o metodología; es un término que
+agrupa a muy distintas tecnologías, que llevan existiendo –de
+diferentes maneras– varias décadas. Cada una de ellas tiene su lugar,
+con diferentes usos y propósitos, algunos de los cuales utilizamos día
+a día sin pensar en ello.
+
+Del mismo modo, aunque abordaremos diversas tecnologías que pueden
+clasificarse como virtualización, las líneas divisorias entre ellos no
+siempre es tan clara. Una implementación específica puede caer en más
+de una categoría, o puede ir migrando naturalmente de un tipo hacia
+otro.
+
+Podemos entender como /virtualizar/ el proveer algo que no está ahí,
+aunque parece estarlo. Más específicamente, presentar a un sistema con
+algo que se comporte como hardware, sin que exista en realidad — Un
+acto de ilusionismo o de magia, en cual que obviamente buscaremos
+presentar de forma tan convincente que la ilusión se mantenga tanto
+como sea posible.
+
+La naturaleza de dicho hardware, y el cómo se implementa, dependen del
+tipo de virtualización del que hablemos.
+
+Para casi todos los casos que presentaremos, emplearemos los términos:
+
+- Anfitrión :: El hardware /real/, que realizará el trabajo de
+               virtualización. En inglés se le denomina /host/.
+
+- Huésped :: El o los sistemas que el anfitrión presenta a los
+             sistemas operativos o aplicaciones que ejecutará. En
+             inglés se le denomina /guest/.
+
+** Emulación
+
+La técnica de virtualización más sencilla, y que hace más tiempo
+existe en las computadoras personales, es la emulación. Emular
+consiste en implementar /en software/ algo que se presente como una
+computadora completa, típicamente de una arquitectura hardware
+distinta a la nativa.[fn:: A lo largo de esta discusión, nos
+referiremos a la /arquitectura hardware/ como al juego de
+instrucciones que puede ejecutar /nativamente/ un procesador. Por
+ejemplo, un procesador x86 moderno puede ejecutar nativamente código
+i386 y x86_64, pero no ARM] El emulador puede ser visto (de una forma
+tremendamente simplificada) como una lista de equivalencias, de cada
+una de las instrucciones en la arquitectura /huésped/ a la
+arquitectura del sistema /anfitrión/.
+
+Vale la pena recalcar que una emulación no se limita con traducir del
+lenguaje y estructura de un procesador a otro — Para que una
+computadora pueda ser utilizada, requiere de una serie de chips de
+apoyo — Desde los controladores de cada uno de los /buses/ hasta los
+periféricos básicos (teclado, video). Casi todas las emulaciones
+incluirán un paso más allá: Los periféricos mismos (discos, interfaces
+de red, puertos). Todo esto tiene que ser implementado por el
+emulador.
+
+Resulta obvio que emular un sistema completo es /altamente/
+ineficiente. Los sistemas huéspedes resultantes típicamente tendrán un
+rendimiento cientos o miles de veces menor al del anfitrión.
+
+Ahora bien, ¿qué pasa cuando hay dos arquitecturas de cómputo que
+emplean al mismo procesador? Este caso fue relativamente común en los
+1980 y 1990; si bien en general las computadoras de 8 bits no tenían
+el poder de cómputo necesario para implementar la emulación de
+arquitecturas similares, al aparecer tres líneas de computadoras
+basadas en el CPU Motorola 68000 (Apple Macintosh, Atari ST y
+Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
+aparecieron emuladores que permitían ejecutar programas de los
+distintos 
+
 * Otros recursos
 
 - [[http://cs.gordon.edu/courses/cs322/lectures/history.html][CS322: A Brief History of Computer Operating Systems]]

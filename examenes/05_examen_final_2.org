@@ -1,0 +1,66 @@
+#+TITLE: Examen final, segunda vuelta
+#+AUTHOR: Sistemas Operativos (Grupo 1 – Gunnar Wolf)
+#+DATE: 2013-06-07
+#+OPTIONS: num:t toc:nil
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[margin=2.5cm]{geometry}
+#+LATEX_HEADER: \usepackage[spanish]{babel}
+#+LANGUAGE: es
+
+1. Para las siguientes afirmaciones, indica con una /P/ si se refiere
+   a /multitarea preventiva/, y con una /C/ Si se refiere a  la
+   /multitarea cooperativa/.
+
+   1. Es inmune a que un cálculo demasiado largo o un ciclo infinito
+   2. Emplea algoritmos de planificación de procesos como FCFS
+      dejen a la computadora efectivamente congelada
+      (primero llegado, primero servido), SPN (proceso más corto a
+      continuación) o HPRN (proceso más penalizado a continuación)
+   3. Es la más utilizada hoy en día en computadoras de uso general
+   4. El proceso activo continúa ejecutando hasta que hace una llamada
+      al sistema
+   5. Requiere apoyo de hardware
+
+2. Describe los tres principales patrones de trabajo para la
+   /paralelización de la ejecución/ en varios hilos:
+   1. Jefe / trabajador:
+   2. Equipo de trabajo:
+   3. Línea de ensamblado:
+
+3. Con la siguiente cadena de referencia, y empleando cuatro marcos de
+   memoria física, desarrolla la asignación bajo los esquemas FIFO
+   (primero llegado primero servido) y LRU (menos recientemente
+   utilizado):
+   #+BEGIN_QUOTE
+   2, 8, 3, 8, 9, 5, 3, 2, 7, 3, 9, 8, 5, 4, 9, 3
+   #+END_QUOTE
+   Asumiendo que cada fallo de página toma 8 milisegundos traer en ser
+   atendido (intercambiar la página con la que está en disco), en cada
+   uno de los casos, ¿cuánto tiempo pierde el proceso en realizar
+   transferencias de memoria?
+
+4. Describe el mecanismo empleado por la familia de sistemas de
+   archivos FAT para expresar la relación entre cada uno de los
+   archivos en el directorio con el espacio que ocupan en el disco, y
+   para ubicar el espacio vacío disponible.
+
+   1. /Opcional (por un punto más)/: ¿Cómo se hace esto mismo en un
+      sistema operativo moderno, basado en /i-nodos/
+
+   2. /Opcional (por otro punto más)/: El proceso de verificación de
+      /integridad/ de la información que acabas de describir
+      (realizado por =CHKDSK= en DOS y Windows o =fsck= en Unix)
+      resulta complejo y toma mucho tiempo. Describe un mecanismo para
+      reducir la necesidad de llamar a estos programas.
+#+latex: \vfill
+-----
+#+latex: \vfill
+#+BEGIN_CENTER
+Recuerda que en esta segunda vuelta del examen final, la calificación
+que obtengas /será definitiva y directa/, vale el 100% de la
+calificación a asentar en actas. Se aplicará el redondeo hacia la
+calificación inmediata superior a partir de /x.6/ (para todo $x \ge
+6$)
+
+*¡Buena suerte!*
+#+END_CENTER

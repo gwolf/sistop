@@ -1165,7 +1165,7 @@ comunes.]
 #+begin_src dot :exports results :file ltxpng/puntos_de_montaje.png
   digraph G {
           rankdir = TB;
-          subgraph cluster0 {
+          subgraph cluster_root {
                   label = "sda1";
                   color = lightgray;
                   style = filled;
@@ -1173,7 +1173,7 @@ comunes.]
                   root -> bin;
                   root -> sbin;
           }
-          subgraph cluster1 {
+          subgraph cluster_sda2 {
                   label = "sda2";
                   color = lightblue;
                   style = filled;
@@ -1182,7 +1182,7 @@ comunes.]
                   usrbin -> bash;
                   usrbin -> perl;
           }
-          subgraph cluster2 {
+          subgraph cluster_proc {
                   label="proc"
                   color=yellow;
                   style=filled;
@@ -1190,7 +1190,7 @@ comunes.]
                   proc -> 2;
                   proc -> 3;
           }
-          subgraph cluster3 {
+          subgraph cluster_sdb1 {
                   label = "sdb1";
                   color = pink;
                   style = filled;
@@ -1201,10 +1201,18 @@ comunes.]
                   pedro -> proyecto_pl [style=dotted];
                   irene -> proyecto_pl;
           }
+          subgraph cluster_sda3 {
+                   label = "sda3"
+                   color = green;
+                   style = filled;
+                   usrlocal -> locbin;
+                   usrlocal -> locgames;
+          }
           
           root -> proc;
           root -> home;
           root -> usr;
+          usr -> usrlocal;
           
           root [shape=box, label="/"];
           bin [shape=box];
@@ -1218,8 +1226,12 @@ comunes.]
           juan [shape=box];
           pedro [shape=box];
           irene [shape=box];
+          usrlocal [shape=box, label="local"];
+          locgames [shape=box, label="games"];
+          locbin [shape=box, label="bin"];
   }
   
+    
 #+end_src
 
 #+results:
@@ -1257,60 +1269,67 @@ comportamiento y configuración específicos.
 #+attr_latex: width=0.7\textwidth
 #+caption: Vista de un sistema de archivos Windows
 #+begin_src dot :exports results :file ltxpng/montaje_windows.png
-digraph G {
-	rankdir=LR;
-	subgraph cluster0 {
-		label = "C:"
-		color = lightblue;
-		style="filled"
-		raiz_c [shape=box, label="\\"];
-		windows [shape=box, label="Windows"];
-		archprog [shape=box, label="Archivos de programa"]
-		docset [shape=box, label="Documents and Settings"]
-		usr1 [shape=box, label="Usuario 1"]
-		desktop [shape=box, label="Escritorio"]
-		menu [shape=box, label="Menú Inicio"]
-		misdoc [shape=box, label="Mis documentos"]
-		system32 [shape=box];
-		prog1 [label="prog1.exe"];
-		prog2 [label="prog2.exe"];
-		prog3 [label="prog3.exe"];
-
-		raiz_c -> windows;
-		windows -> system32;
-		system32 -> prog1;
-		system32 -> prog2;
-		system32 -> prog3;
-		raiz_c -> archprog;
-		raiz_c -> docset;
-		docset -> usr1;
-		usr1 -> desktop;
-		usr1 -> menu;
-		usr1 -> misdoc;
-	}
-
-	subgraph cluster1 {
-		label = "D:"
-		color = yellow;
-		style="filled"
-		raiz_d [shape=box, label="\\"];
-		doc [shape=box, label="Documentos"]
-		pres [shape=box, label="Presentaciones"]
-		doc1 [label="Avance del proyecto.docx"]
-		doc2 [label="Datos 2000-2004.doc"]
-		pres1 [label="Presentación.ppt"]
-
-		raiz_d -> doc;
-		raiz_d -> pres;
-		doc -> doc1;
-		doc -> doc2;
-		pres -> pres1;
-	}
-
-	raiz [shape=box, label="<Mi PC>"];
-	raiz -> raiz_c
-	raiz -> raiz_d
-}
+  digraph G {
+          rankdir=LR;
+          subgraph cluster0 {
+                  label = "C:"
+                  color = lightblue;
+                  style="filled"
+                  raiz_c [shape=box, label="\\"];
+                  windows [shape=box, label="Windows"];
+                  archprog [shape=box, label="Archivos de programa"]
+                  docset [shape=box, label="Documents and Settings"]
+                  usr1 [shape=box, label="Usuario 1"]
+                  desktop [shape=box, label="Escritorio"]
+                  menu [shape=box, label="Menú Inicio"]
+                  misdoc [shape=box, label="Mis documentos"]
+                  system32 [shape=box];
+                  prog1 [label="prog1.exe"];
+                  prog2 [label="prog2.exe"];
+                  prog3 [label="prog3.exe"];
+  
+                  raiz_c -> windows;
+                  windows -> system32;
+                  system32 -> prog1;
+                  system32 -> prog2;
+                  system32 -> prog3;
+                  raiz_c -> archprog;
+                  raiz_c -> docset;
+                  docset -> usr1;
+                  usr1 -> desktop;
+                  usr1 -> menu;
+                  usr1 -> misdoc;
+          }
+  
+          subgraph cluster1 {
+                  label = "D:"
+                  color = yellow;
+                  style="filled"
+                  raiz_d [shape=box, label="\\"];
+                  doc [shape=box, label="Documentos"]
+                  pres [shape=box, label="Presentaciones"]
+                  doc1 [label="Avance del proyecto.docx"]
+                  doc2 [label="Datos 2000-2004.doc"]
+                  pres1 [label="Presentación.ppt"]
+  
+                  raiz_d -> doc;
+                  raiz_d -> pres;
+                  doc -> doc1;
+                  doc -> doc2;
+                  pres -> pres1;
+          }
+  
+          raiz [shape=box, label="<Mi PC>"];
+          raiz -> COM1;
+          raiz -> CON;
+          raiz -> LPT1;
+          raiz -> raiz_c;
+          raiz -> raiz_d;
+  
+          COM1 [shape=note, label="COM1:"]
+          LPT1 [shape=note, label="LPT1:"]
+          CON [shape=note, label="CON:"]
+  }
 #+end_src
 
 #+results:
@@ -3719,3 +3738,6 @@ independientes, agregar diferentes /volúmenes físicos/ a un
 
 - [[http://www.cs.cmu.edu/%7Egarth/RAIDpaper/Patterson88.pdf][A case for Redundant Arrays of Inexpensive Disks]] (Patterson,
   Gibson, Katz 1988)
+
+- [[http://insecurityit.blogspot.mx/2013/06/unidades-de-estado-solido-el-reto-de-la.html][Unidades de estado sólido. El reto de la computación forense en el
+  mundo de los semiconductores]] (Cano Martinez, 2013)

@@ -681,11 +681,44 @@ ligeramente distinto de otros.
 #+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
 [[./img/llamando_syscall.png]]
 
-#+attr_latex: width=0.7\textwidth
-#+attr_html: height="206"
-#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Imagen: /Operating system Concepts Essentials/; Silberschatz, Galvin, Gagne; p.22)
-[[./img/llamada_al_sistema.png]]
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
+#+begin_src dot :exports results :file ltxpng/llamada_al_sistema.png
+digraph G {
+	rankdir = LR
+	subgraph cluster_user {
+		label = "Espacio de usuario";
+		color = "#ccffcc";
+		style = filled;
+		ejecucion [shape=box, label="Ejecución\ndel proceso..."];
+		llamada [shape=box, label="Llamada\nal sistema"];
+		espacio3 [style=invis];
+		retorno [shape=box, label="Regresa de\nla llamada\nal sistema"];
+		continua [shape=box, label="Continúa la\nejecución..."];
+		ejecucion -> llamada;
+		llamada -> espacio3 -> retorno [style=invis];
+		retorno -> continua;
+	}
+	subgraph cluster_kernel {
+		label = "Espacio de núcleo";
+		color="#ffcccc";
+		style=filled;
+		espacio1 [style=invis];
+		espacio2 [style=invis];
+		syscall [shape=box, label="Ejecución de\nla llamada\nal sistema"];
+		espacio5 [style=invis];
+		espacio4 [style=invis];
+		espacio1 -> espacio2 -> syscall -> espacio4 -> espacio5 [style=invis];
+	}
+	llamada -> syscall [label="Entrega ejecución\lal núcleo. Entra en\lmodo protegido."];
+	syscall -> retorno [label="Vuelve al\rflujo normal.\rSale de\rmodo protegido"];
+}
+#+end_src
 
+#+results:
+[[file:ltxpng/llamada_al_sistema.png]]
+#+html: <p align="center">Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Imagen: /Operating system Concepts Essentials/; Silberschatz, Galvin, Gagne; p.22)</p></div>
 
 *** Llamadas al sistema, arquitecturas y APIs
 
@@ -1033,8 +1066,201 @@ el poder de cómputo necesario para implementar la emulación de
 arquitecturas similares, al aparecer tres líneas de computadoras
 basadas en el CPU Motorola 68000 (Apple Macintosh, Atari ST y
 Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
-aparecieron emuladores que permitían ejecutar programas de los
-distintos 
+aparecieron emuladores que permitían ejecutar programas de una línea
+en la otra, prácticamente a velocidad nativa.
+
+Hoy en día, la emulación se emplea mucho para hacer /desarrollos
+cruzados/: Mucho más que para emplear software /ya escrito y
+compilado/, la mayor parte de la emulación tradicional hoy se emplea
+para el /desarrollo de software/. Hoy en día, la mayor parte de las
+computadoras vendidas son sistemas /embebidos/[fn:: Computadoras
+pequeñas, limitadas en recursos, y típicamente carentes de una
+interfaz usuario — Desde puntos de acceso y ruteadores hasta los
+controladores de cámaras, equipos de sonido, automóviles, y un
+larguísimo etcétera] o dispositivos móviles, que hacen imposible (o,
+por lo menos, muy difícil) desarrollar software directamente en
+ellos. Los programadores desarrollan en equipos de escritorio, corren
+entornos de prueba en emuladores del equipo destino. Incluso dada la
+emulación plena de la arquitectura hardware, dada la asimetría entre
+los equipos de escritorio y los embebidos, es común que la velocidad
+del emulador sea muy similar –incluso superior– a la del hardware
+emulado.
+
+*** Emulando arquitecturas inexistentes
+
+Pero la emulación no se limita a hardware existente, y no sólo se
+emplea por la comodidad de no depender de la velocidad de equipos
+específicos. Podemos crear emuladores para arquitecturas que /nunca
+han sido implementadas/ en hardware real.
+
+Esta idea viene de los 1970, cuando comenzó la explosión de
+arquitecturas. La Universidad de California en San Diego propuso una
+arquitectura llamada /p-system/, o /sistema-p/, la cual definiría una
+serie de instrucciones a las que hoy llamaríamos /código intermedio/ o
+/bytecode/, a ser ejecutado en una /máquina-p/, o /p-machine/. El
+lenguaje base para este sistema fue el /Pascal/, mismo que fue
+adoptado muy ampliamente de manera principal en entornos académicos a
+lo largo de los 1970 y 1980 por su limpieza y claridad
+estructural. Todo programa compilado para correr en en un /sistema-p/
+correría sin modificaciones en cualquier arquitectura hardware que lo
+implementara.
+
+Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
+1980, logrando implementaciones para las arquitecturas de
+microcomputadoras más populares — El MOS 6502, el Zilog Z80 y el Intel
+80x86.
+
+Hay una diferencia muy importante entre la emulación de una
+arquitectura real y la de una arquitectura inexistente: Emular una
+computadora entera requiere que reimplementemos no sólo las
+instrucciones de su procesador, sino que /todos los chips de apoyo/,
+¡incluso hay que convertir la entrada del teclado en las
+interrupciones que generaría un controlador de teclado! Emular una
+arquitectura hipotética permite manejar diversos componentes de forma
+abstracta, y permite definir estructuras de mucho más alto nivel que
+las que encontraríamos implementadas en hardware. Por ejemplo, si bien
+resultaría impráctico crear como tipo de datos nativo para una
+arquitectura en hardware una abstracción como las cadenas de
+caracteres, estas sí existen como /ciudadanos de primera clase/ en
+casi todas las arquitecturas meramente virtuales.
+
+Hoy en día, esta idea ha sido ampliamente adoptada y forma parte de
+nuestra vida diaria. En la década de los 1990, /Sun Microsystems/
+desarrolló e impulsó la arquitectura /Java/, actualizando la idea de
+las /máquinas-p/ a los paradigmas de desarrollo que aparecieron a lo
+largo de 20 años, y dado que el cómputo había dejado de ser un campo
+especializado y escaso para masificarse, invirtiendo fuertemente en
+publicidad para impulsar su adopción.
+
+Uno de los slogans que mejor describen la intención de Sun fue /WORA/:
+/Write Once, Run Anywhere/ (Escribe una vez, corre donde sea). El
+equivalente a una /máquina-p/ (rebautizada como /JVM/: /Máquina
+Virtual Java/) se implementaría para las arquitecturas hardware más
+limitadas y más poderosas. Sun creó también al lenguaje Java, diseñado
+para aprovechar la arquitectura de la JVM, enfatizando en la
+orientación a objetos e incorporando facilidades multi-hilos. Al día
+de hoy existen distintas implementaciones de la JVM, de diferentes
+empresas y grupos de desarrolladores y con diferentes focos de
+especialización, pero todas ellas deben poder ejecutar el /bytecode/
+de Java.
+
+A principios de los años 2000, y como resultado del litigio con Sun
+que imposibilitó a Microsoft a desarrollar extensiones propietarias a
+Java (esto es, desarrollar máquinas virtuales que se salieran del
+estándar de la JVM), Microsoft desarrolló la arquitectura /.NET/; su
+principal aporte en este campo es la separación definitiva entre
+lenguaje de desarrollo y código intermedio producido: La máquina
+virtual de /.NET/ está centrado en el /CLI/ (/Common Language
+Infrastructure/, Infraestructura de Lenguajes Comunes), compuesta a su
+vez por el /CIL/ (/Common Intermediate Language/, Lenguaje Intermedio
+Común, que es la especificación del /bytecode/ o código intermedio) y
+el /CLR/ (/Common Language Runtime/, Ejecutor del Lenguaje Común, que
+es la implementación de la máquina virtual sobre la arquitectura
+hardware nativa).
+
+#+attr_latex: width=0.6\textwidth
+#+attr_html: height="600"
+#+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
+[[./img/maquina_virtual_dotnet.png]]
+
+En los 1990s, una de las principales críticas a Java (y esta crítica
+podría ampliarse hacia cualqueir otra plataforma comparable) era el
+desperdicio de recursos de procesamiento al tener que traducir, una y
+otra vez, el código intermedio para su ejecución en el
+procesador. Hacia el 2010, el panorama había ya cambiado
+fuertemente. Hoy en día las máquinas virtuales implementan varias
+técnicas para reducir el tiempo que se desperdicia emulando:
+
+- Traducción dinámica :: Compilación parcial del código a ejecutar a
+     formatos nativos, de modo que sólo la primera vez que se ejecuta
+     el código intermedio tiene que ser traducido
+- Traducción predictiva :: Anticipar cuáles serán las siguientes
+     secciones de código que tendrán que ser ejecutadas para,
+     paralelamente al avance del programa, irlas traduciendo a código
+     nativo de forma preventiva
+- Compilación /justo a tiempo/ (JIT) :: Almacenar copia del código ya
+     traducido de un programa, de modo que no tenga que traducirse ni
+     siquiera a cada ejecución, sino que sólo una vez en la vida de
+     la máquina virtual
+
+A través de estos puntos principales, el rendimiento de las
+arquitecturas emuladas es ya prácticamente idéntico al del código
+compilado nativamente.
+
+*** De lo abstracto a lo concreto
+
+Si bien las arquitecturas de máquinas virtuales planteadas en el
+apartado anterior se plantearon directamente para no ser
+implementadas en hardware, el éxito comercial de la plataforma llevó
+a crear una línea de chips que ejecutara /nativamente/ código
+intermedio Java, con lo cual podríam ahorrarse pasos y obtener mejor
+rendimiento de los sistemas destino. Sun definió la arquitectura
+/MAJC/ (/Microprocessor Architecture for Java Computing/, Arquitectura
+de microprocesadores para el cómputo con Java) en la segunda mitad de
+los 1990, e incluso produjo un chip de esta arquitectura, el
+/MAJC 5200/.
+
+La arquitectura MAJC introdujo conceptos importantes que han sido
+retomados para el diseño de procesadores posteriores, pero la
+complejidad llevó a un rendimiento deficiente, y el chip resultó un
+fracaso comercial.
+
+Pero bajo este mismo apartado podemos mencionar otra idea muy
+interesante: Transitando en el sentido inverso al de Sun con MAJC,
+/Transmeta/, una empresa hasta entonces desconocida, anunció en el
+2000 el procesador /Crusoe/, orientado al mercado de bajo consumo
+energético. Este procesador, en vez de implementar una arquitectura ya
+existente para entrar a un mercado ya muy competido y dinámico, centró
+su oferta en que Crusoe trabajaría mano a mano con un módulo llamado
+CMS (/Code Morphing Software/, Software de Transformación de Código),
+siendo así el primer procesador diseñado para /emular por hardware/ a
+otras arquitecturas. Crusoe fue lanzado al mercado con el CMS para la
+arquitectura x86 de Intel, y efectivamente, la emulación era
+completamente transparente al usuario.[fn:: Empleando Transmeta, se
+podían observar ciertos comportamientos curiosos: Por ejemplo, dado el
+amplio espacio de caché que implementaba el CMS, el código ejecutable
+se mantenía /ya traducido/ listo para el procesador, por lo cual la
+primera vez que se ejecutaba una función era notablemente más lenta
+que en ejecuciones posteriores. Sin embargo, si bien estas diferencias
+son medibles y no deben escapar a la vista de quien está analizando a
+conciencia estos procesadores, resultaban invisibles para el usuario
+final.] El procesador mismo, además, no implementaba algunas
+características que hoy en día se consideran fundamentales, como una
+unidad de manejo de memoria, dado que eso podía ser implementado por
+software en el CMS. Separando de esta manera las características
+complejas a una segunda capa, podían mantenerse más bajos tanto el
+número de transistores (y, por tanto, el gasto eneergético) y los
+costos de producción.
+
+La segunda generación de chips Transmeta, /Efficeon/, estaba basada
+en una arquitectura muy distinta, buscando un rendimiento mejorado,
+pero gracias al CMS, esto resulta imperceptible al usuario.
+
+A pesar de estas ideas interesantes y novedosas, Transmeta no pudo
+mantener el dinamismo necesario para despegar, y cesó sus operaciones
+en 2009.
+
+** Virtualización asistida por hardware
+
+Actualmente se escucha mucho hablar de la virtualización como una
+herramienta para la consolidación de servicios, de gran ayuda para los
+administradores de sistemas. Este uso se refiere principalmente a lo
+que veremos en este apartado, así como en los dos siguientes,
+[[#paravirt][paravirtualización]] y [[#contenedores][contenedores]]. Y si bien este /zumbido/ de la
+virtualización se ha producido mayormente a partir del 2006-2007, no
+se trata de tecnologías o ideas novedosas — Existe desde fines de
+los 1960. Hasta hace algunos años, sin embargo, se mantenía dentro
+del ámbito de los servidores a gran escala, fuera del alcance de la
+mayor parte de los usuarios. Repasemos un poco la génesis de esta
+herramienta, para poder comprender mejor cómo opera y cómo se
+implementa.
+
+** Paravirtualización
+# <<paravirt>>
+** Contenedores
+# <<contenedores>>
+** Traducción de APIs
+
 
 * Otros recursos
 

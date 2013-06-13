@@ -269,7 +269,7 @@ para poder administrar los archivos de las diversas aplicaciones a
 través de una sencilla interfaz de línea de comando, y lanzar las
 aplicaciones propiamente.
 
-La PC de IBM fuer la primer arquitectura de computadoras personales en
+La PC de IBM fue la primer arquitectura de computadoras personales en
 desarrollar una amplia familia de /clones/, computadoras compatibles
 diseñadas para correr con el mismo sistema operativo, y que
 eventualmente capturaron prácticamente el 100% del
@@ -733,7 +733,7 @@ MacOS X es interesante, porque también implementa POSIX, ofreciendo la
 /semántica/ de dos sistemas muy distintos entre sí.
 
 Los lenguajes basados en /máquinas virtuales abstractas/, como Java o
-la familia .Net, exponen un API con mucha mayor distancia respecto al
+la familia .NET, exponen un API con mucha mayor distancia respecto al
 sistema operativo; la máquina virtual se presenta como un
 pseudo-sistema operativo intermedio que se ejecuta dentro del real, y
 esta distinción se hace especialmente notoria cuando buscamos conocer
@@ -1254,6 +1254,145 @@ del ámbito de los servidores a gran escala, fuera del alcance de la
 mayor parte de los usuarios. Repasemos un poco la génesis de esta
 herramienta, para poder comprender mejor cómo opera y cómo se
 implementa.
+
+En 1964, IBM creó la primer /familia de computadoras/, la
+serie 360. Presentaron la entonces novedosa idea de que una
+organización podía adquirir un modelo sencillo y, si sus necesidades
+se ajustaban al modelo de cómputo, podrían migrar facilmente hacia
+modelos más poderosos dado que tendrían /compatibilidad binaria/.
+
+Uno de los modelos de esta familia fue la /S-360-67/, con la
+característica distintiva en ser la única de la serie 360 en ofrecer
+una unidad de manejo de memoria (MMU), con lo cual permitía la
+reubicación de programas en memoria. Esto, sin embargo, creaba un
+problema: El software desarrollado para los equipos más pequeños de la
+familia estaba creado bajo un paradigma de usuario único, y si bien
+podría ser ejecutado en este modelo, eso llevaría a un desperdicio de
+recursos (dado que el modelo 67 tenía todo lo necesario para operar en
+modo multitarea).
+
+La respuesta de IBM fue muy ingeniosa: Desarrollar un sistema
+operativo mínimo, /CP/ (/Control Program/, Programa de Control) con el
+único propósito de crear y gestionar /máquinas virtuales/ dentro del
+hardware S/360-67, dentro de /cada una de las cuales/ pudiera
+ejecutarse /sin requerir modificaciones/ un sistema operativo estándar
+de la serie 360. De entre los varios sistemas operativos disponibles
+para la S/360, el que más frecuentemente se utilizó fue el /CMS/,[fn::
+Originalmente, las siglas CMS eran por el /Cambridge Monitor System/,
+por haber sido desarrollado en la división de investigación de IBM en
+Cambridge, pero posteriormente fue renombrado a /Conversational
+Monitor System/, /Sistema de Monitoreo Conversacional/] un sistema
+sencillo, interactivo y monousuario. La combinación CP/CMS
+proporcionaba un sistema operativo multiusuario, con plena protección
+entre procesos, y con compatibilidad con los modelos más modestos de
+la serie 360.
+
+Aún después de la vida útil de la serie 360 original, IBM mantuvo
+compatibilidad con este modelo hacia la serie 370, e incluso hoy, 50
+años más tarde, lo encontramos aún como /z/VM/ en la línea de
+/Sistemas z/.
+
+Vale la pena mencionar que tanto CP como CMS fueron distribuídos desde
+el principio de forma consistente con lo que hoy conocemos como
+/software libre/: IBM los distribuía en fuentes, con permiso de
+modificación y redistribución, y sus diferentes usuarios fueron
+enviando las mejorías que realizaban de vuelta a IBM, de modo que hoy
+en día incorpora el trabajo de 50 años de desarrolladores.
+
+*** El hipervisor
+
+El modelo CP/CMS lleva a una separación bastante limpia entre un
+/multiplexador de hardware/ (CP) y el sistema operativo propiamente
+dicho (CMS). Y si bien la dupla puede ser vista como un sólo sistema
+operativo, conforme se fueron ejecutando en máquinas virtuales
+sistemas operativos más complejos se hizo claro que CP tendría que
+ser /otra cosa/. Partiendo del concepto de que el sistema operativo
+es el /supervisor/ de la actividad de los usuarios, yendo un paso más
+hacia arriba, se fue popularizando el nombre de /hipervisor/ para el
+programa que administra y virtualiza a los supervisores. Algunas
+características primarias que definen qué es un hipervisor son:
+
+- Es únicamente un /micro-sistema operativo/, dado que no cubre
+  muchas de las áreas clásicas ni presenta las interfaces abstractas
+  al usuario final — Sistemas de archivos, mecanismos de comunicación
+  entre procesos, gestión de memoria virtual, evasión de bloqueos,
+  etcétera.
+
+- Se limita a gestionar bloques de memoria física contiguos y fijos,
+  asignación de dispositivos y /poco/ más que eso.
+
+- Normalmente no tiene una interfaz usuario directa, sino que es
+  administrado a través de llamadas privilegiadas desde alguno de los
+  sistemas operativos huésped.
+
+Estas líneas se han ido haciendo borrosas con el tiempo. Hoy en día,
+por ejemplo, muchos hipervisores entienden a los sistemas de archivo,
+permitiendo que los espacios de almacenamiento ofrecidos a sus
+sistemas operativos huésped sean simples archivos para el sistema
+anfitrión (y no particiones o dispositivos enteros). Algunos
+hipervisores, como /KVM/ bajo Linux se presentan integrados como un
+componente más de un sistema operativo estándar.
+
+*** Virtualización asistida por hardware en x86
+
+Hasta alrededor del año 2005, la virtualización no se mencionaba muy
+frecuentemente. Si bien había hardware virtualizable 40 años atrás,
+era hardware bastante especializado — y caro. Ese año, Intel sacó al
+mercado los procesadores con las extensiones necesarias para la
+virtualización, bajo el nombre /Vanderpool Technology/ (o /VT-x/). Al
+año siguiente, AMD hizo lo propio, denominándolas /extensiones
+Pacifica/. Hoy en día, casi todas las computadoras de escritorio de
+rango medio-alto tienen el sopote necesario para llevar a cabo
+virtualización asistida por hardware. Y si bien en un principio el
+tema tardó en tomar tracción, llevó a un replanteamiento completo de
+la metodología de trabajo tanto de administradores de sistemas como
+de programadores.
+
+En contraste con las arquitecturas diseñadas desde un principio para
+la virtualización, los usuarios de computadoras personales (inclusive
+cuando estas son servidores en centros de datos — Siguen estando
+basadadas en la misma arquitectura básica) se enfrentan a una mucho
+mayor variedad de dispositivos para todo tipo de tareas. Y si bien la
+virtualización permite aparentar varias computadoras distintas
+corriendo sobre el mismo procesador, esta no incluye a los
+dispositivos. Al presentarse una máquina virtual, el sistema anfitrión
+esta casi siempre[fn:: Hay mecanismos para reservar y dirigir un
+dispositivo físico existente a una máquina virtual específica, pero
+hacerlo implica que éste dispositivo no será /multiplexado/ hacia las
+demás máquinas virtuales que se ejecuten paralelamente] emulando
+hardware. Claro está, lo más frecuente es que el hipervisor ofrezca a
+los huéspedes la emulación de dispositivos relativamente viejos y
+simples.[fn:: Por ejemplo, KVM bajo Linux emula tarjetas de red tipo
+NE2000, tarjetas de sonido tipo Soundblaster16 y tarjetas de video
+Cirrus Logic, todos ellos de la década de los 1990] Esto no significa
+que estén limitados a las prestaciones del equipo emulado (por
+ejemplo, a los 10Mbps para los que estaba diseñada una tarjeta de red
+NE2000), sino que la interfaz del núcleo para enviar datos a dicho
+dispositivo es una sencilla y que ha sido empleada tanto tiempo que
+presenta muy poca inestabilidad.
+
+Y este último punto permite acercarnos a una de las ventajas que
+ofrecen los sistemas operativos virtualizados — La estabilidad. Los
+controladores de dispositivos provistos por fabricante han sido
+responsabilizados una y otra vez, y con justa razón, de la
+inestabilidad de los sistemas operativos de escritorio. En particular,
+son en buena medida culpables de la fama de inestabilidad que obtuvo
+Windows. Los fabricantes de hardware no siempre gozan de suficiente
+conocimiento acerca del sistema operativo como para escribir
+controladores suficientemente seguros y de calidad, y por muchos años,
+los sistemas Windows no implementaban mayor verificación al
+comportamiento de los controladores — que, siendo un sistema
+monolítico, eran código ejecutado con privilegios de núcleo.
+
+Al emplear el sistema operativo huésped únicamente controladores
+ampliamente probados y estabilizados a lo largo de muchos años, la
+estabilidad que ofrece una máquina virtualizada muchas veces supera a
+la que obtendría ejecutándose de forma nativa. Claro, el conjunto de
+máquinas virtuales que se ejecute dentro de un sistema anfitrión
+sigue siendo susceptible a cualquier inestabilidad del mismo sistema
+anfitrión, sin embargo, es mucho menos probable que un programa mal
+diseñado logre congelarse esperando respuesta del hardware (emulado),
+y mucho menos afectar a los demás huéspedes.
 
 ** Paravirtualización
 # <<paravirt>>

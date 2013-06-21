@@ -479,9 +479,80 @@ cuantos términos
 - Pero los niveles de indirección pueden /anidarse/
 
 ** Apuntadores de indirección a varios niveles
-#+caption: Estructura típica de un i-nodo en Unix (Silberschatz, p. 440)
-#+attr_latex: height=0.65\textheight
-[[../img/fs_apuntadores_indirectos.png]]
+#+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesario para cada cluster
+
+#+attr_latex: height=0.7\textheight
+#+begin_src dot :exports results :file ltxpng/fs_apuntadores_indirectos.png
+  digraph G {
+          overlap=false;
+          ranksep=1;
+  
+          node [style=rounded];
+          inodo [shape=record, label="I-nodo|{Metadatos|{Permisos|Usuario|Grupo}|Horas|{Creación|Modificación|Acceso}|{Bloques\ndirectos|{<d1> 1|<d2> 2|<d3> 3}}|<s> Indirección\nsencilla|<d> Doble\nindirección|<t> Triple\nindirección}"];
+          senc [shape=record, label="<label> Sencilla|{<1> 1|<2> 2|<3> 3}"];
+          doble [shape=record, label="<label> Doble|{<1> 1|<2> 2|<3> 3}"];
+          triple [shape=record, label="<label> Triple|{<1> 1| |}"];
+          di1 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
+          di2 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
+          di3 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
+          tr1 [shape=record, label="{<1> 1| |}"];
+          tr1_1 [shape=record, label="{<1> 1| |}"];
+          inodo:s -> senc:label;
+          inodo:d -> doble:label;
+          inodo:t -> triple:label;
+  
+          doble:1 -> di1;
+          doble:2 -> di2;
+          doble:3 -> di3;
+          triple:1 -> tr1;
+          tr1:1 -> tr1_1;
+  
+          subgraph cluster_simple {
+                  style=filled;
+                  label="Dos accesos a disco"
+                  color="#eeeeee"
+                  {rank=same; senc doble triple 1 2 3}
+          }
+  
+          subgraph cluster_dbl {
+                  style=filled;
+                  label="Tres accesos a disco"
+                  color="#dddddd"
+                  {rank=same; di1 di2 di3 tr1 4 5 6}
+          }
+  
+          subgraph cluster_trpl {
+                  style=filled;
+                  label="Cuatro accesos a disco"
+                  color="#cccccc"
+                  {rank=same; tr1_1 7 8 9 10 11 12 13 14 15}
+          }
+  
+          subgraph cluster_quad {
+                  style=filled;
+                  label="Cinco accesos a disco"
+                  color="#bbbbbb"
+                  {rank=same; 16}
+          }
+  
+          inodo:d1 -> 1;
+          inodo:d2 -> 2;
+          inodo:d3 -> 3;
+          senc:1 -> 4;
+          senc:2 -> 5;
+          senc:3 -> 6;
+          di1:1 -> 7;
+          di1:2 -> 8;
+          di1:3 -> 9
+          di2:1 -> 10;
+          di2:2 -> 11;
+          di2:3 -> 12;
+          di3:1 -> 13;
+          di3:2 -> 14;
+          di3:3 -> 15;
+          tr1_1:1 -> 16;
+  }
+#+end_src
 
 ** La lógica de la indirección multinivel
 - Varios sistemas de archivos (la idea apareció originalmente en UFS,

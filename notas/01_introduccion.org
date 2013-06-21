@@ -718,7 +718,7 @@ digraph G {
 
 #+results:
 [[file:ltxpng/llamada_al_sistema.png]]
-#+html: <p align="center">Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Imagen: /Operating system Concepts Essentials/; Silberschatz, Galvin, Gagne; p.22)</p></div>
+#+html: <p align="center">Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema</p></div>
 
 *** Llamadas al sistema, arquitecturas y APIs
 
@@ -1396,10 +1396,231 @@ y mucho menos afectar a los demás huéspedes.
 
 ** Paravirtualización
 # <<paravirt>>
-** Contenedores
-# <<contenedores>>
-** Traducción de APIs
 
+La virtualización asistida por hardware, por conveniente que resulte,
+sigue presentando algunas desventajas:
+
+- No todos los procesadores cuentan con las extensiones de
+  virtualización. Si bien cada vez es más común encontrarlas, es aún
+  en líneas generales un factor de diferenciación entre las líneas
+  económicas y de lujo.
+- La capa de emulación, si bien es delgada, conlleva un cierto peso.
+- Si bien es posible virtualizar arquitecturas como la x86, hay
+  muchas arquitecturas para las cuales no existen las extensiones
+  hardware necesarias.
+
+La /paravirtualización/, o /virtualización asistida por el sistema
+operativo/, parte de un planteamiento distinto: En vez de /engañar/ al
+sistema operativo para que funcione sobre un sistema que parece real
+pero no lo es, la paravirtualización busca hacerlo /con pleno
+conocimiento y cooperación/ por parte de los sistemas huéspedes.  Esto
+es, la paravirtualización consiste en alojar a sistemas operativos
+huésped que, a sabiendas de que están corriendo en hardware
+virtualizado, /no hacen llamadas directas a hardware/ sino que las
+traducen a llamadas al sistema operativo anfitrión.
+
+Vale la pena reiterar en este punto: Los sistemas operativos huésped
+bajo un entorno paravirtualizado saben que no están corriendo sobre
+hardware real, por lo que en vez de enviar las instrucciones que
+controlen al hardware, envían llamadas al sistema a su
+hipervisor. Hasta cierto punto, podríamos ver al proceso de adecuación
+de un sistema para que permita ser paravirtualizado como equivalente
+a adecuar al sistema operativo para que corra en una arquitectura
+nueva — Muy parecida a la del hardware /real/, sí, pero con
+diferencias fundamentales en aspectos profundos.
+
+Y si bien ya vimos en la sección anterior que la virtualización puede
+ayudar a presentar un sistema idealizado que reduzca la inestabilidad
+en un sistema operativo, al hablar de paravirtualización este
+beneficio naturalmente crece: Los controladores de hardware sencillos
+y bien comprendidos que empleábamos para comunicarnos con
+dispositivos emulados se convierten casi en simples pasarelas de
+llamadas al sistema, brindando además de una sobrecarga mínima, aún
+mayor estabilidad por simplicidad del código.
+
+*** Paravirtualización y software libre
+
+La paravirtualización resulta muy atractiva, presentando muy obvias
+ventajas. Pero a pesar de que es posible emplearla en cualquier
+arquitectura hardware, no siempre es posible emplearla.
+
+Como mencionamos recién, para un sistema operativo, dar soporte a una
+arquitectura de paravirtualización es casi equivalente a traducirlo a
+una arquitectura hardware. Para que los autores de un entorno que
+implemente paravirtualización logren que un sistema operativo nuevo
+pueda ser ejecutado en su arquitectura, deben poder manipular y
+modificar su código fuente: De otra manera, ¿cómo se le podría adecuar
+para que supiera desenvolverse en un entorno no nativo?
+
+El proyecto de gestión de virtualización y paravirtualización /Xen/,
+hoy impulsado por la empresa /XenSource/, nació como un proyecto
+académico de la Universidad de Cambridge, presentando su versión 1.x a
+través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of
+Virtualization]]). Este artículo presenta su experiencia
+paravirtualizando a una versión entonces actual de Linux y de Windows
+XP. Sin embargo, Xen sólo pudo ser empleado por muchos años como
+plataforma de paravirtualización de Linux porque, dado que la
+adaptación de Windows se realizó bajo los términos del /Academic
+Licensing Program/, que permitía a los investigadores acceso y
+modificación al código fuente, pero no su redistribución — La versión
+paravirtualizable de Windows XP existe, pero no puede distribuirse
+fuera de XenSource.
+
+En tanto, el trabajo necesario para lograr la paravirtualización de
+un sistema operativo libre, como Linux, FreeBSD u otros, puede ser
+libremente redistribuído. No sólo eso, sino que el esfuerzo de
+realizar la adaptación pudo compartirse entre desarrolladores de todo
+el mundo, dado que esta entonces novedosa tecnología resultaba de gran
+interes.
+
+*** Paravirtualización de dispositivos
+
+Las ideas derivadas de la paravirtualización pueden emplearse también
+bajo entornos basados en virtualización plena: Si el sistema operativo
+está estructurado de una forma modular (sin que esto necesariamente
+signifique que es un sistema /microkernel/, sino que permita la carga
+dinámica de controladores o /drivers/ para el hardware, como
+prácticamente la totalidad de sistemas disponibles comercialmente hoy
+en día), no hace falta modificar al sistema operativo completo para
+gozar de los beneficios de la paravirtualización en algunas áreas.
+
+De esta manera, si bien podemos ejecutar un sistema operativo /sin
+modificaciones/ que espera ser ejecutado en hardware real, los
+dispositivos que típicamente generan más actividad de entrada y
+salida[fn:: Medios de almacenamiento, interfaz de red y salida de
+video] pueden ser atendidos por drivers paravirtuales. Claro, varios
+aspectos que son parte del núcleo /duro/ del sistema, como la
+administración de memoria o el manejo de interrupciones (incluyendo al
+temporizador) tendrán que seguirse manejando a través de una
+emulación, aunque mucho más delgada.
+
+Según mediciones empíricas, hechas en 2007 por Qumranet (quienes
+liderearon el desarrollo del módulo de virtualización asistido por
+hardware /KVM/ en Linux), las clases de dispositivos =virtio= y =pv=
+resultaron entre 5 y 10 veces más rápidas que la emulación de
+dispositivos reales.
+
+Mediante esta estrategia es posible ejecutar sistemas operativos
+propietarios, como los de la familia Windows, con buena parte de las
+ventajas de la paravirtualización, sobre entornos de virtualización
+asistida por hardware.
+
+** Contenedores, o /virtualización a nivel sistema operativo/
+# <<contenedores>>
+
+Una estrategia completamente distinta para la creación de máquinas
+virtuales es la de /contenedores/. A diferencia de emulación,
+virtualización asistida por hardware y paravirtualización, al emplear
+contenedores /sólo se ejecuta un sistema operativo/, que es el mismo
+para los sistemas anfitrión y huesped. El anfitrión implementará una
+serie de medidas para /aumentar el grado de separación/ que mantiene
+entre procesos, agregando la noción de /contextos/ o /grupos/ que
+describiremos en breve. Dado que el sistema operativo es de suyo el
+único autorizado para tener acceso directo al hardware, no hace falta
+ejecutar un hipervisor.
+
+Podría presentarse un símil: Las tecnologías antes descritas de
+virtualización implementan /hardware virtual/ para cada sistema
+operativo, mientras que los contenedores más bien presentan un
+/sistema operativo virtual/ para el conjunto de procesos que definen
+el comportamiento de cada máquina virtual — Muchos autores presentan a
+la virtualización por contenedores bajo el nombre /virtualización a
+nivel sistema operativo/. Y si bien el efecto a ojos del usuario
+puede ser comparable, este método más que una multiplexación de
+máquinas virtuales sobre hardware real opera a través de
+restricciones adicionales sobre los procesos de usuario.
+
+Al operar a un nivel más alto, un contenedor presenta algunas
+limitantes adicionales (principalmente, se pierde la flexibilidad de
+ejecutar sistemas operativos distintos), pero obtiene también
+importantes ventajas.
+
+El desarrollo histórico de los contenedores puede rastrearse a la
+llamada al sistema =chroot()=, que restringe la visión del sistema de
+archivos de un proceso a sólo el directorio hacia el cual ésta fue
+invocada.[fn:: La llamada =chroot()= fue creada por Bill Joy en 1982
+para ayudarse en el desarrollo del sistema Unix 4.2BSD. Joy buscaba
+probar los cambios que iba haciendo en los componentes en espacio de
+usuario del sistema sin modificar su sistema /vivo/ y en producción,
+esto es, sin tener que reinstalar y reiniciar cada vez, y con esta
+llamada le fue posible instalar los cambios dentro de un directorio
+específico y probarlos como si fueran en la raiz.] Esto es, si dentro
+de un proceso se invoca =chroot('/usr/local')= y posteriormente se le
+pide abrir el archivo =/boot.img=, a pesar de que éste indique una
+ruta absoluta, el archivo que se abrirá será =/usr/local/boot.img=
+
+Ahora bien, =chroot()= no es (ni busca ser) un verdadero aislamiento,
+sólo proporciona un inicio[fn:: Como referencia a por qué no es un
+verdadero aislamiento, puede referirse al artículo /How to break out
+of a =chroot()= jail/ (Simes, 2002)] — Pero conforme más usuarios
+comenzaban a utilizarlo para servicios en producción, se hizo claro
+que resultaría útil ampliar la conveniencia de =chroot()= a un
+verdadero aislamiento.
+
+El primer sistema en incorporar esta funcionalidad fue /FreeBSD/,
+creando el subsistema /Jails/ a partir de su versión 4.0, del
+año 2000. No tardaron mucho en aparecer implementaciones comparables
+en los distintos sistemas Unix. Hay incluso un producto propietario,
+el /Parallels Virtuozzo Containers/, que implementa esta
+funcionalidad para sistemas Windows.
+
+Un punto importante a mencionar cuando hablamos de contenedores es que
+se pierde buena parte de la universalidad mencionada en las secciones
+anteriores. Si bien las diferentes implementaciones comparten
+principios básicos de operación, la manera en que implementan la
+separación e incluso la nomenclatura que emplean difieren
+fuertemente.
+
+El núcleo del sistema crea un /grupo/ para cada /contenedor/ (también
+conocido como /contexto de seguridad/), aislándolos entre sí por lo
+menos en los siguientes áreas:
+
+- Tablas de procesos :: Los procesos en un sistema Unix se presentan
+     como un árbol, en cuya raiz está siempre el proceso 1,
+     =init=. Cada contenedor inicia su existencia ejecutando un =init=
+     propio y enmascarando su identificador de proceso real por el
+     número 1
+- Señales, comunicación entre procesos :: Ningún proceso de un
+     contenedor debe poder interferir con la ejecución de uno en otro
+     contenedor. El núcleo restringe toda comunicación entre procesos,
+     regiones de memoria compartida y envío de señales entre procesos
+     de distintos grupos.
+- Interfaces de red :: Varía según cada sistema operativo e
+     implementación, pero en líneas generales, cada contenedor tendrá
+     una interfaz de red con una /dirección de acceso a medio (MAC)/
+     distinta.[fn:: Es común referirse a las direcciones MAC como
+     direcciones físicas, sin embargo, todas las tarjetas de red
+     permiten configurar su dirección, por lo cual la apelación
+     /física/ resulta engañosa.] Claro está, cada una de ellas
+     recibirá una diferente dirección IP, y el núcleo ruteará e
+     incluso aplicará reglas de firewall entre ellas.
+- Dispositivos hardware :: Normalmente los sistemas huesped no tienen
+     acceso directo a ningún dispositivo en hardware. En algunos
+     casos, el acceso a dispositivos será multiplexado, y en otros, un
+     dispositivo puede especificarse a través de su
+     configuración. Cabe mencionar que, dado que esta multiplexión no
+     requiere /emulación/ sino que únicamente una cuidadosa
+     /planificación/, no resulta tan oneroso como la emulación.
+- Límites en consumo de recursos :: Casi todas las implementaciones
+     permiten asignar cotas máximas para el consumo de recursos
+     compartidos, como espacio de memoria o disco o tiempo de CPU
+     empleados por cada uno de los contenedores.
+- Nombre del equipo :: Aunque parezca trivial, el nombre con el que
+     una computadora /se designa a sí misma/ debe también ser
+     aislado. Cada contenedor debe poder tener un nombre único e
+     independiente.
+
+Una de las principales características que atrae a muchos
+administradores a elegir la virtualización por medio de contenedores
+es un consumo de recursos óptimo: Bajo los demás métodos de
+virtualización (y particularmente al hablar de emulación y de
+virtualización asistida por hardware), una máquina virtual siempre
+ocupará algunos recursos, así esté inactiva. El hipervisor tendrá que
+estar notificando a los temporizadores, enviando los paquetes de red
+recibidos, etcétera. Bajo un esquema de contenedores, una máquina
+virtual que no tiene trabajo se convierte sencillamente en un grupo
+de procesos /dormidos/, probables candidatos a ser /paginados/ a
+disco.
 
 * Otros recursos
 
@@ -1407,3 +1628,11 @@ y mucho menos afectar a los demás huéspedes.
 - [[http://lwn.net/Articles/532771/][Making EPERM friendlier]] (LWN): Explica algunas de las limitantes de
   la semántica POSIX: Falta de granularidad en el reporte de mensajes
   de error (=EPERM=), y =errno= global por hilo.
+- [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of Virtualization]] Paul Barham, Boris Dragovic
+  et. al. 2003
+- [[http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf][KVM: The Linux Virtual Machine Monitor]]; Avi Kivity, Yaniv Kamay,
+  Dor Laor, Uri Lublin, Anthony Liguori (Qumranet / IBM), 2007
+- [[http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007%24kvm_pv_drv.pdf][KVM PV devices]], Dor Laor (Qumranet), 2007
+- [[http://www.bpfh.net/computing/docs/chroot-break.html][How to break out of a =chroot()= jail]]; Simes, 2002
+- [[http://lwn.net/Articles/256389/][Notes from a container]]; Jonathan Corbet, 2007, Linux Weekly News
+- [[https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt][CGROUPS]]; Paul Menage (Google), 2004-2006, kernel.org

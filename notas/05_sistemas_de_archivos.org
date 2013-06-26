@@ -2272,18 +2272,25 @@ los metadatos ocupan 224 bytes, dejando espacio para 100 apuntadores:
 - Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
   representarse con el bloque de indirección sencilla, y obtener su
   lista de clusters nos significa dos accesos a disco adicionales.
-- Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
-  \times 128) ) \times 4KB = 66436KB$, pero aquí ya tendremos que
-  hacer hasta 131 accesos a disco. A partir de este punto, el sistema
+- Con el bloque de doble indirección, podemos referirnos a archivos
+  mucho más grandes:
+
+  $(100-3 + 128 + (128\times 128) ) \times 4KB = 66436KB \approx 65MB$
+
+  Sin embargo, aquí ya debe llamarnos la atención otro importante
+  punto: Si queremos acceder a estos 65MB, tendremos que realizar
+  hasta 131 accesos a disco. A partir de este punto, el sistema
   operativo reducirá fuertemente el tiempo de acceso si puede lograr
   que todos los clusters que apunten a esta información estén cerca
   unos de otros.
-- Empleando triple indirección, llegamos hasta $(100-3 + 128 + (128
-  \times 128) + (128 \times 128 \times 128) ) \times 2KB = 8455044
-  \approx 8GB$, más de lo que puede representarse en 32 bits. La
-  cantidad de bloques que tendríamos que leer, sin embargo, para
-  encontrar todos los clusters nos significarían hasta 16516 accesos a
-  disco.
+- Empleando triple indirección, llegamos hasta:
+
+  $(100-3 + 128 + (128 \times 128) + (128 \times 128 \times 128) )
+  \times 2KB = 8455044KB \approx 8GB$
+
+  Esto es más de lo que puede representarse en 32 bits. La cantidad de
+  bloques que tendríamos que leer, sin embargo, para encontrar todos
+  los clusters nos significarían hasta 16516 accesos a disco.
 
 ** Las tablas en FAT
 # <<tablas_fat>>

@@ -151,15 +151,17 @@ capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
 Si bien el sistema operativo no maneja multiprocesamiento, a través de
 los hilos de usuario sí podemos crear procesos con multitarea interna.
 
-Los procesos que implementan hilos ganan un poco en el rendimiento,
-pero mucho para compartir espacio de memoria sin tenerlo que
-establecer explícitamente a través de mecanismos de comunicación entre
-procesos. Muchas veces (dependiendo de la plataforma) los hilos de
-usuario utilizan multitarea cooperativa para pasar el control de un
-hilo a otro. Cualquier llamada al sistema /bloqueante/ (como obtener
-datos de un archivo para utilizarlos inmediatamente) interrumpirá la
-ejecución de todos los hilos, dado que el control de ejecución es
-entregado al sistema operativo.
+Los procesos que implementan hilos ganan un poco en el rendimiento
+gracias a no tener que reemplazar al PCB activo, pero además de esto,
+ganan mucho más por la ventaja de compartir espacio de memoria sin
+tener que establecerlo explícitamente a través de /mecanismos de
+comunicación entre procesos/ (/IPC/ — /Inter Process
+Communications/). Dependiendo de la plataforma, a veces los hilos de
+usuario inclusive utilizan multitarea cooperativa para pasar el
+control dentro de un mismo proceso. Cualquier llamada al sistema
+/bloqueante/ (como obtener datos de un archivo para utilizarlos
+inmediatamente) interrumpirá la ejecución de todos los hilos, dado que
+el control de ejecución es entregado al sistema operativo.
 
 El siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
@@ -176,7 +178,9 @@ recursos más comparable con una situación de multiproceso estándar.
 
 Hay tres patrones en los que caen generalmente los modelos de hilos;
 podemos emplear a más de uno de estos patrones en diferentes áreas de
-nuestra aplicación:
+nuestra aplicación, e incluso podemos /anidarlos/ (esto es, podríamos
+tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
+un /equipo de trabajo/):
 
 - Jefe / trabajador :: Un hilo tiene una tarea distinta de todos los
      demás: El hilo /jefe/ genera o recopila tareas que requieren ser
@@ -184,10 +188,46 @@ nuestra aplicación:
      /trabajadores/.
 
      Este modelo es el más común para procesos que implementan
-     servidores y para aplicaciones gráficas (GUIs), en que hay una
-     porción del programa (el hilo /jefe/) esperando a que ocurran
-     eventos externos. El jefe realiza poco trabajo, aunque puede
-     llevar contabilidad de los trabajos realizados.
+     servidores (es el modelo clásico del servidor Web /Apache/) y
+     para aplicaciones gráficas (GUIs), en que hay una porción del
+     programa (el hilo /jefe/) esperando a que ocurran eventos
+     externos. El jefe realiza poco trabajo, se limita a /invocar/ a
+     los trabajadores a hacer el trabajo /de verdad/; como mucho,
+     puede llevar contabilidad de los trabajos realizados.
+
+     Típicamente, los hilos realizan su operación, posiblemente
+     notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.4\textwidth
+     #+caption: Patrón de hilos jefe/trabajador
+     #+begin_src dot :exports results :file ltxpng/jefe_trabajador.png
+       digraph G {
+               layout = dot;
+               inicio [shape=box,label="...",style=dotted];
+               subgraph cluster_hilos {
+                       color=blue;
+                       jefe [shape = box, label="Jefe (espera evento)"];
+                       fin1 [shape = point];
+                       fin2 [shape = point];
+                       fin3 [shape = point];
+                       hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                       hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                       hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+                       jefe -> hilo1:a;
+                       hilo1:c -> fin1;
+                       jefe -> hilo2:a;
+                       hilo2:c -> fin2;
+                       jefe -> hilo3:a;
+                       hilo3:c -> fin3;
+               }
+               inicio -> jefe;
+       }
+     #+end_src
+
+     #+results:
+     [[file:ltxpng/jefe_trabajador.png]]
+     #+html: <p align="center">Patrón de hilos jefe/trabajador</p></div>
 
 - Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
@@ -198,6 +238,50 @@ nuestra aplicación:
      cálculo, dado que éste se irá ensamblando progresivamente, pedazo
      por pedazo.
 
+     Sus principales diferencias con el patrón /jefe/trabajador/
+     consisten en que el trabajo a realizar por cada uno de los hilos
+     se plantea en un principio, esto es, el paso de /división de
+     trabajo/ no es un hilo más, sino que prepara los datos para que
+     éstos sean lanzados en paralelo. Estos datos no son resultado de
+     /eventos independientes/ (como en el caso anterior), sino que
+     partes de un sólo cálculo. Por consecuencia, resulta natural que
+     en este modelo los resultados generados por los diferentes hilos
+     son /agregados/ o /totalizados/ al terminar su procesamiento. Los
+     hilos no /terminan/, sino que /son esperados/ y continúa la
+     ejecución lineal.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.5\textwidth
+     #+caption: Patrón de hilos /Equipo de trabajo/
+     #+begin_src dot :exports results :file ltxpng/equipo_trab.png
+       digraph G {
+               layout = dot;
+               inicio [shape=box,label="...",style=dotted];
+               continua [shape=box,label="...",style=dotted];
+               division [shape=box, label="División de trabajo"];
+               union [shape=box, label="Agregación de resultados"];
+               subgraph cluster_hilos {
+                       color=blue;
+                       hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                       hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                       hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+               }
+               inicio -> division;
+               division -> hilo1:a [label="Datos 1"];
+               hilo1:c -> union [label="Resultados 1"];
+               division -> hilo2:a [label="Datos 2"];
+               hilo2:c -> union [label="Resultados 2"];
+               division -> hilo3:a [label="Datos 3"];
+               hilo3:c -> union [label="Resultados 3"];
+               union -> continua;
+       }
+
+     #+end_src
+
+     #+results:
+     [[file:ltxpng/equipo_trab.png]]
+     #+html: <p align="center">Patrón de hilos <em>Equipo de trabajo</em></p></div>
+
 - Línea de ensamblado :: Si una tarea larga puede dividirse en pasos
      sobre bloques de la información total a procesar, cada hilo puede
      enfocarse a hacer sólo una tarea y pasarle los datos a otro hilo
@@ -206,10 +290,50 @@ nuestra aplicación:
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
 
-#+attr_html: height="308"
-#+attr_latex: width=0.7\textwidth
-#+caption: Esquematización de los modelos de hilos: Jefe/trabajador, Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
-[[./img/modelos_de_hilos.png]]
+     Un punto importante a tener en cuenta en una línea de ensamblado
+     es que, si bien los hilos trabajan de forma secuencial, pueden
+     estar ejecutándose paralelamente sobre bloques consecutivos de
+     información, eventos, etc.
+
+     Este patrón es claramente distinto de los dos anteriormente
+     presentados; si bien en los anteriores los diferentes hilos (a
+     excepción del hilo /jefe/) eran casi siempre idénticos, aunque
+     operando sobre distintos conjuntos de datos, en este caso son
+     completamente distintos.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.6\textwidth
+     #+caption: Patrón de hilos /Línea de ensamblado/
+     #+begin_src dot :exports results :file ltxpng/linea_ensamblado.png
+       digraph G {
+               layout = dot;
+               rankdir=LR;
+               inicio [shape=box,label="...",style=dotted];
+               fin [shape=box,label="...",style=dotted];
+               subgraph cluster_hilos {
+                       color=blue;
+                       nodesep=2;
+                       hilo1 [shape=record,label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                       hilo2 [shape=record,label="Hilo\n2|{<m>m|<n>n}"];
+                       hilo3 [shape=record,label="Hilo\n3|{<w>w|<x>x|<y>y|<z>z}"];
+                       hilo1:c -> hilo2:m;
+                       hilo2:n-> hilo3:w;
+               }
+               inicio -> hilo1:a;
+               hilo3:z -> fin;
+       }
+     #+end_src
+
+     #+results:
+     [[file:ltxpng/linea_ensamblado.png]]
+     #+html: <p align="center">Patrón de hilos <em>Línea de ensamblado</em></p></div>
+
+
+# #+attr_html: height="308"
+# #+attr_latex: width=0.7\textwidth
+# #+caption: Esquematización de los modelos de hilos: Jefe/trabajador,
+# Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
+# [[./img/modelos_de_hilos.png]]
 
 * Concurrencia
 

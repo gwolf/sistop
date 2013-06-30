@@ -180,6 +180,32 @@ programador se convierte en /podar/ ese no-determinismo.
 - Los hilos /trabajadores/ efectúan el trabajo.
 - Modelo común para procesos servidor, GUIs que procesan eventos
 - El jefe puede llevar la contabilidad de los trabajos realizados
+** Patrones de trabajo: Jefe / trabajador
+#+attr_latex: height=0.7\textheight
+#+caption: Patrón de hilos jefe/trabajador
+#+begin_src dot :exports results :file ltxpng/jefe_trabajador.png
+  digraph G {
+          layout = dot;
+          inicio [shape=box,label="...",style=dotted];
+          subgraph cluster_hilos {
+                  color=blue;
+                  jefe [shape = box, label="Jefe (espera evento)"];
+                  fin1 [shape = point];
+                  fin2 [shape = point];
+                  fin3 [shape = point];
+                  hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                  hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                  hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+                  jefe -> hilo1:a;
+                  hilo1:c -> fin1;
+                  jefe -> hilo2:a;
+                  hilo2:c -> fin2;
+                  jefe -> hilo3:a;
+                  hilo3:c -> fin3;
+          }
+          inicio -> jefe;
+  }
+#+end_src
 
 ** Patrones de trabajo: Equipo de trabajo
 - A partir de hilos idénticos
@@ -189,6 +215,34 @@ programador se convierte en /podar/ ese no-determinismo.
 - Puede combinarse con jefe/trabajador para generar
   previsualizaciones (la tarea se realiza progresivamente)
 
+** Patrones de trabajo: Equipo de trabajo
+#+attr_latex: height=0.7\textheight
+#+caption: Patrón de hilos /Equipo de trabajo/
+#+begin_src dot :exports results :file ltxpng/equipo_trab.png
+  digraph G {
+          layout = dot;
+          inicio [shape=box,label="...",style=dotted];
+          continua [shape=box,label="...",style=dotted];
+          division [shape=box, label="División de trabajo"];
+          union [shape=box, label="Agregación de resultados"];
+          subgraph cluster_hilos {
+                  color=blue;
+                  hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                  hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                  hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+          }
+          inicio -> division;
+          division -> hilo1:a [label="Datos 1"];
+          hilo1:c -> union [label="Resultados 1"];
+          division -> hilo2:a [label="Datos 2"];
+          hilo2:c -> union [label="Resultados 2"];
+          division -> hilo3:a [label="Datos 3"];
+          hilo3:c -> union [label="Resultados 3"];
+          union -> continua;
+  }
+#+end_src
+
+
 ** Patrones de trabajo: Línea de ensamblado
 - Una tarea larga que puede dividirse en pasos
 - Cada hilo se enfoca en una sóla tarea
@@ -196,10 +250,28 @@ programador se convierte en /podar/ ese no-determinismo.
 - Ayuda a mantener las rutinas simples de comprender
 - Permite continuar procesando datos cuando hay hilos esperando E/S
 
-** Patrones de trabajo: Esquematizando
-#+attr_latex: width=0.7\textwidth
-#+caption: Esquematización de los modelos de hilos: Jefe/trabajador, Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
-[[../img/modelos_de_hilos.png]]
+** Patrones de trabajo: Línea de ensamblado
+#+attr_latex: width=\textwidth
+#+caption: Patrón de hilos /Línea de ensamblado/
+#+begin_src dot :exports results :file ltxpng/linea_ensamblado.png
+  digraph G {
+          layout = dot;
+          rankdir=LR;
+          inicio [shape=box,label="...",style=dotted];
+          fin [shape=box,label="...",style=dotted];
+          subgraph cluster_hilos {
+                  color=blue;
+                  nodesep=2;
+                  hilo1 [shape=record,label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                  hilo2 [shape=record,label="Hilo\n2|{<m>m|<n>n}"];
+                  hilo3 [shape=record,label="Hilo\n3|{<w>w|<x>x|<y>y|<z>z}"];
+                  hilo1:c -> hilo2:m;
+                  hilo2:n-> hilo3:w;
+          }
+          inicio -> hilo1:a;
+          hilo3:z -> fin;
+  }
+#+end_src
 
 * Los hilos para el sistema operativo
 

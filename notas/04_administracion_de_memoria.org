@@ -320,50 +320,7 @@ resuelta cada vez que sea requerido.
 #+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
-#+begin_src dot :exports results :file ltxpng/tipo_resol_direcc.png
-  digraph G {
-          subgraph cluster0 {
-                  label="Tiempo de compilación";
-                  color=lightgray;
-		  style=filled;
-                  compilador;
-                  objmod;
-          }
-          subgraph cluster1 {
-                  label="Tiempo de carga";
-                  color=lightgray;
-		  style=filled;
-                  ligado;
-		  modulo;
-		  cargador;
-          }
-          subgraph cluster2 {
-                  label="Tiempo de ejecución";
-                  color=lightgray;
-		  style=filled;
-                  imagenram;
-          }
-          fuente -> compilador -> objmod -> ligado -> modulo -> cargador -> imagenram;
-          otrosobj -> ligado;
-          bibliosist -> cargador;
-          dll -> imagenram [label = "Carga dinámica"];
-
-          fuente [label="Programa\nfuente"];
-          compilador [label="Compilador o\nensamblador",
-                      shape = box];
-          objmod [label="Módulo\nobjeto"];
-          otrosobj [label="Otros\nobjetos"];
-          ligado [label="Editor de\nligado",
-                  shape = box];
-          modulo [label="Módulo\ncargable"];
-          bibliosist [label="Biblioteca\nde sistema"]
-          cargador [label="Cargador",
-                    shape = box];
-          dll [label="Biblioteca\nde sistema\nde carga\ndinámica"];
-          imagenram [label="Imagen del\nbinario en\nmemoria",
-                     shape = box];
-  }
-#+end_src
+#+include: fig/tipo_resol_direcc.dot
 
 #+results:
 [[file:ltxpng/tipo_resol_direcc.png]]

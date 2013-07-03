@@ -1,0 +1,56 @@
+#+begin_src dot :exports results :file ltxpng/fs_journaling.png
+digraph G
+{
+	rankdir=RL;
+        subgraph cluster_jrnl {
+                label = "Bitácora"
+                color = lightblue;
+                style = "filled";
+		node [shape="box"];
+                1 [label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
+                2 [label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
+                3 [label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
+                4 [label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
+                5 [label = "Agrega el\ncluster 65 a\nunomas.txt"];
+
+                1 -> 2 [label = "72", penwidth=3];
+                2 -> 3 [label = "68", penwidth=3];
+                3 -> 4 [label = "69", penwidth=3];
+                4 -> 5 [label = "70", penwidth=3];
+                5 -> 1 [label = "71", penwidth=3];
+		{rank=same; 1 2}
+		{rank=same; 4 5}
+
+	}
+
+        subgraph cluster_datos {
+                label = "Datos";
+                color = yellow;
+                style = "filled";
+                dira [label = "Directorio a", shape="box3d"];
+                dirb [label = "Directorio b", shape="box3d"];
+                dira -> 12 -> 34 -> 26 [style="dashed"];
+                dirb -> 37 -> 38 -> 39 [style="dashed"];
+                65;
+
+		{rank=same; 12 37 65}
+		{rank=same; 34 38}
+		{rank=same; 26 39}
+	}
+        1 -> dira;
+        2 -> 12;
+        2 -> 34;
+        2 -> 26;
+        3 -> 37;
+        3 -> 38;
+        3 -> 39;
+        4 -> dirb;
+        5 -> 65;
+
+	ultimaop [label = "Última operación\nefectuada", shape="box", color="pink", style="filled"];
+        cabeza [label = "Siguiente entrada\na reemplazar", shape="box", color="green", style="filled"];
+        ultimaop -> 5 [style="dotted",constraint=false];
+        cabeza -> 3 [style="dotted",constraint=false];
+	cabeza -> ultimaop [style=invis];
+}
+#+end_src

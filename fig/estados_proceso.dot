@@ -1,0 +1,21 @@
+#+begin_src dot :exports results :file ltxpng/estados_proceso.png
+digraph G {
+	layout = dot;
+	node [shape = box];
+
+	Nuevo;
+	Listo;
+	Ejecución;
+	Bloqueado;
+	Terminado;
+
+	Nuevo -> Listo [label = Admitir];
+	Listo -> Ejecución [weight = 2, label = "Activar\nejecución"];
+	Ejecución -> Listo [weight = -2, label = "Tiempo\nterminado"];
+	Ejecución -> Bloqueado [label = "Esperar\nevento"];
+	Bloqueado -> Listo [weight = 2, label = "Ocurrió\nevento"];
+	Ejecución -> Terminado [weight = 2];
+	Bloqueado -> Terminado [minlen = 2, weight = -2, style = dotted];
+	Listo -> Terminado [minlen = 2, weight = -2, style = dotted];
+}
+#+end_src

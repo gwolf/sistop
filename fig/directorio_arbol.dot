@@ -1,0 +1,38 @@
+#+begin_src dot :exports results :file ltxpng/directorio_arbol.png
+digraph G {
+  root -> bin;
+  root -> home;
+  root -> lib;
+  
+  bin -> ls;
+  bin -> cp;
+  bin -> ed;
+  bin -> login;
+
+  lib -> libc;
+
+  home -> usr1;
+  home -> usr2;
+  home -> usr3;
+
+  usr1 -> test_c1;
+  usr1 -> a_out;
+  usr2 -> tarea_c2;
+  usr2 -> instrucciones;
+  usr3 -> tarea_c;
+  usr3 -> a_out2;
+  
+  root [label="<raiz>", shape=box];
+  bin [shape=box];
+  home [shape=box];
+  lib [shape=box];
+  usr1 [shape=box];
+  usr2 [shape=box];
+  usr3 [shape=box];
+  a_out [label="a.out"];
+  test_c1 [label="test.c"];
+  a_out2 [label="a.out"];
+  tarea_c [label="tarea.c"];
+  tarea_c2 [label="tarea.c"];
+}
+#+end_src

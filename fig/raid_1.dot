@@ -1,0 +1,12 @@
+#+begin_src dot :exports results :file ltxpng/raid_1.png
+digraph G {
+        rankdir=LR;
+	node [shape=circle];
+        subgraph cluster0 {
+                label = "Volumen (1TB)";
+                1 [label = "Disco\n1: 1TB"];
+                2 [label = "Disco\n2: 1TB"];
+                1 -> 2 [label = "=", dir = both];
+        }
+}
+#+end_src

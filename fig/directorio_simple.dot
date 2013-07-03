@@ -1,0 +1,64 @@
+#+begin_src dot :exports results :file ltxpng/directorio_simple.png
+  digraph G {
+          subgraph cluster0 {
+                  label = "MFD";
+                  color=lightgray
+                  style=filled;
+                  sys;
+                  mail;
+                  usr1;
+                  usr2;
+          }
+          subgraph cluster1 {
+                  label="UFD: sys";
+                  color=lightgray
+                  style=filled;
+                  list;
+                  copy;
+                  edit;
+                  login;
+          }
+          subgraph cluster2 {
+                  label="UFD: mail";
+                  color=lightgray
+                  style=filled;
+                  m_usr1;
+                  m_usr2;
+          }
+          subgraph cluster3 {
+                  label="UFD: usr1";
+                  color=lightgray
+                  style=filled;
+                  test_c1;
+                  a_out;
+          }
+          subgraph cluster4 {
+                  label="UFD: usr2";
+                  color=lightgray
+                  style=filled;
+                  tarea_c;
+                  instrucciones;
+          }
+          sys -> list;
+          sys -> copy;
+          sys -> edit;
+          sys -> login;
+  
+          usr1 -> test_c1;
+          usr1 -> a_out;
+          usr2 -> tarea_c;
+          usr2 -> instrucciones;
+          mail -> m_usr1;
+          mail -> m_usr2;
+  
+          sys [shape=box];
+          mail [shape=box];
+          usr1 [shape=box];
+          usr2 [shape=box];
+          test_c1 [label="test.c"];
+          a_out [label="a.out"];
+          tarea_c [label="tarea.c"];
+          m_usr1 [label="usr1"];
+          m_usr2 [label="usr2"];
+  }
+#+end_src

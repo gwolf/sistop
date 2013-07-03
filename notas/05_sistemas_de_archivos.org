@@ -653,70 +653,7 @@ de Archivos de Usuario/).
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Directorio simple, limitado a un sólo nivel de profundidad
-#+begin_src dot :exports results :file ltxpng/directorio_simple.png
-  digraph G {
-          subgraph cluster0 {
-                  label = "MFD";
-                  color=lightgray
-                  style=filled;
-                  sys;
-                  mail;
-                  usr1;
-                  usr2;
-          }
-          subgraph cluster1 {
-                  label="UFD: sys";
-                  color=lightgray
-                  style=filled;
-                  list;
-                  copy;
-                  edit;
-                  login;
-          }
-          subgraph cluster2 {
-                  label="UFD: mail";
-                  color=lightgray
-                  style=filled;
-                  m_usr1;
-                  m_usr2;
-          }
-          subgraph cluster3 {
-                  label="UFD: usr1";
-                  color=lightgray
-                  style=filled;
-                  test_c1;
-                  a_out;
-          }
-          subgraph cluster4 {
-                  label="UFD: usr2";
-                  color=lightgray
-                  style=filled;
-                  tarea_c;
-                  instrucciones;
-          }
-          sys -> list;
-          sys -> copy;
-          sys -> edit;
-          sys -> login;
-  
-          usr1 -> test_c1;
-          usr1 -> a_out;
-          usr2 -> tarea_c;
-          usr2 -> instrucciones;
-          mail -> m_usr1;
-          mail -> m_usr2;
-  
-          sys [shape=box];
-          mail [shape=box];
-          usr1 [shape=box];
-          usr2 [shape=box];
-          test_c1 [label="test.c"];
-          a_out [label="a.out"];
-          tarea_c [label="tarea.c"];
-          m_usr1 [label="usr1"];
-          m_usr2 [label="usr2"];
-  }
-#+end_src
+#+include: fig/directorio_simple.dot
 
 #+results:
 [[file:ltxpng/directorio_simple.png]]
@@ -745,44 +682,7 @@ piense en el espacio de almacenamiento como un espacio a largo plazo.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Directorio estucturado en árbol
-#+begin_src dot :exports results :file ltxpng/directorio_arbol.png
-digraph G {
-  root -> bin;
-  root -> home;
-  root -> lib;
-  
-  bin -> ls;
-  bin -> cp;
-  bin -> ed;
-  bin -> login;
-
-  lib -> libc;
-
-  home -> usr1;
-  home -> usr2;
-  home -> usr3;
-
-  usr1 -> test_c1;
-  usr1 -> a_out;
-  usr2 -> tarea_c2;
-  usr2 -> instrucciones;
-  usr3 -> tarea_c;
-  usr3 -> a_out2;
-  
-  root [label="<raiz>", shape=box];
-  bin [shape=box];
-  home [shape=box];
-  lib [shape=box];
-  usr1 [shape=box];
-  usr2 [shape=box];
-  usr3 [shape=box];
-  a_out [label="a.out"];
-  test_c1 [label="test.c"];
-  a_out2 [label="a.out"];
-  tarea_c [label="tarea.c"];
-  tarea_c2 [label="tarea.c"];
-}
-#+end_src
+#+include: fig/directorio_arbol.dot
 
 #+results:
 [[file:ltxpng/directorio_arbol.png]]
@@ -821,33 +721,7 @@ objeto/ está presente en más de un punto del árbol.
 #+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
-#+begin_src dot :exports results :file ltxpng/directorio_DAG.png
-digraph G {
-  root -> home;
-
-  home -> usr1;
-  home -> usr2;
-
-  usr1 -> test_c1;
-  usr1 -> a_out;
-  usr1 -> proyecto;
-  usr2 -> tarea_c2;
-  usr2 -> proyecto;
-
-  proyecto -> README;
-  proyecto -> proy_c;
-
-  root [label="<raiz>", shape=box];
-  home [shape=box];
-  usr1 [shape=box];
-  usr2 [shape=box];
-  proyecto [shape=box];
-  a_out [label="a.out"];
-  test_c1 [label="test.c"];
-  tarea_c2 [label="tarea.c"];
-  proy_c [label="proy.c"];
-}
-#+end_src
+#+include: fig/directorio_DAG.dot
 
 #+results:
 [[file:ltxpng/directorio_DAG.png]]
@@ -928,44 +802,7 @@ Los directorios =.= y =..=
 #+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido/, mostrando los /enlaces ocultos/ =.= y =..=
-#+begin_src dot :exports results :file ltxpng/directorio_DAG_completo.png
-digraph G {
-  root -> root [label="."];
-  root -> root [label=".."];
-
-  root -> home;
-  home -> home [label="."];
-  home -> root [label=".."];
-
-  home -> usr1;
-  usr1 -> home [label=".."];
-  usr1 -> usr1 [label="."];
-  home -> usr2;
-  usr2 -> home [label=".."];
-  usr2 -> usr2 [label="."];
-
-  usr1 -> test_c1;
-  usr1 -> a_out;
-  usr1 -> proyecto [style="dotted"];
-  proyecto -> proyecto [label="."];
-  proyecto -> usr2 [label=".."];
-  usr2 -> tarea_c2;
-  usr2 -> proyecto;
-
-  proyecto -> README;
-  proyecto -> proy_c;
-
-  root [label="<raiz>", shape=box];
-  home [shape=box];
-  usr1 [shape=box];
-  usr2 [shape=box];
-  proyecto [shape=box];
-  a_out [label="a.out"];
-  test_c1 [label="test.c"];
-  tarea_c2 [label="tarea.c"];
-  proy_c [label="proy.c"];
-}
-#+end_src
+#+include: fig/directorio_DAG_completo.dot
 
 #+results:
 [[file:ltxpng/directorio_DAG_completo.png]]
@@ -1162,77 +999,7 @@ comunes.]
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
-#+begin_src dot :exports results :file ltxpng/puntos_de_montaje.png
-  digraph G {
-          rankdir = TB;
-          subgraph cluster_root {
-                  label = "sda1";
-                  color = lightgray;
-                  style = filled;
-                  root -> var;
-                  root -> bin;
-                  root -> sbin;
-          }
-          subgraph cluster_sda2 {
-                  label = "sda2";
-                  color = lightblue;
-                  style = filled;
-                  usr -> usrbin;
-                  usr -> usrlib;
-                  usrbin -> bash;
-                  usrbin -> perl;
-          }
-          subgraph cluster_proc {
-                  label="proc"
-                  color=yellow;
-                  style=filled;
-                  proc -> 1;
-                  proc -> 2;
-                  proc -> 3;
-          }
-          subgraph cluster_sdb1 {
-                  label = "sdb1";
-                  color = pink;
-                  style = filled;
-                  home -> juan;
-                  home -> pedro;
-                  home -> irene;
-                  juan -> tarea_c;
-                  pedro -> proyecto_pl [style=dotted];
-                  irene -> proyecto_pl;
-          }
-          subgraph cluster_sda3 {
-                   label = "sda3"
-                   color = green;
-                   style = filled;
-                   usrlocal -> locbin;
-                   usrlocal -> locgames;
-          }
-          
-          root -> proc;
-          root -> home;
-          root -> usr;
-          usr -> usrlocal;
-          
-          root [shape=box, label="/"];
-          bin [shape=box];
-          sbin [shape=box];
-          usr [shape=box];
-          proc [shape=box];
-          var [shape=box];
-          home [shape=box];
-          usrbin [shape=box, label="bin"];
-          usrlib [shape=box, label="lib"];
-          juan [shape=box];
-          pedro [shape=box];
-          irene [shape=box];
-          usrlocal [shape=box, label="local"];
-          locgames [shape=box, label="games"];
-          locbin [shape=box, label="bin"];
-  }
-  
-    
-#+end_src
+#+include: fig/puntos_de_montaje.dot
 
 #+results:
 [[file:ltxpng/puntos_de_montaje.png]]
@@ -1268,69 +1035,7 @@ comportamiento y configuración específicos.
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Vista de un sistema de archivos Windows
-#+begin_src dot :exports results :file ltxpng/montaje_windows.png
-  digraph G {
-          rankdir=LR;
-          subgraph cluster0 {
-                  label = "C:"
-                  color = lightblue;
-                  style="filled"
-                  raiz_c [shape=box, label="\\"];
-                  windows [shape=box, label="Windows"];
-                  archprog [shape=box, label="Archivos de programa"]
-                  docset [shape=box, label="Documents and Settings"]
-                  usr1 [shape=box, label="Usuario 1"]
-                  desktop [shape=box, label="Escritorio"]
-                  menu [shape=box, label="Menú Inicio"]
-                  misdoc [shape=box, label="Mis documentos"]
-                  system32 [shape=box];
-                  prog1 [label="prog1.exe"];
-                  prog2 [label="prog2.exe"];
-                  prog3 [label="prog3.exe"];
-  
-                  raiz_c -> windows;
-                  windows -> system32;
-                  system32 -> prog1;
-                  system32 -> prog2;
-                  system32 -> prog3;
-                  raiz_c -> archprog;
-                  raiz_c -> docset;
-                  docset -> usr1;
-                  usr1 -> desktop;
-                  usr1 -> menu;
-                  usr1 -> misdoc;
-          }
-  
-          subgraph cluster1 {
-                  label = "D:"
-                  color = yellow;
-                  style="filled"
-                  raiz_d [shape=box, label="\\"];
-                  doc [shape=box, label="Documentos"]
-                  pres [shape=box, label="Presentaciones"]
-                  doc1 [label="Avance del proyecto.docx"]
-                  doc2 [label="Datos 2000-2004.doc"]
-                  pres1 [label="Presentación.ppt"]
-  
-                  raiz_d -> doc;
-                  raiz_d -> pres;
-                  doc -> doc1;
-                  doc -> doc2;
-                  pres -> pres1;
-          }
-  
-          raiz [shape=box, label="<Mi PC>"];
-          raiz -> COM1;
-          raiz -> CON;
-          raiz -> LPT1;
-          raiz -> raiz_c;
-          raiz -> raiz_d;
-  
-          COM1 [shape=note, label="COM1:"]
-          LPT1 [shape=note, label="LPT1:"]
-          CON [shape=note, label="CON:"]
-  }
-#+end_src
+#+include: fig/montaje_windows.dot
 
 #+results:
 [[file:ltxpng/montaje_windows.png]]
@@ -2183,80 +1888,10 @@ indirección que /vayan haciendo falta/.
 #+html: <div class="figure">
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)
 #+attr_latex: width=0.9\textwidth
-#+begin_src dot :exports results :file ltxpng/fs_apuntadores_indirectos.png
-  digraph G {
-          overlap=false;
-          ranksep=1;
-  
-          node [style=rounded];
-          inodo [shape=record, label="I-nodo|{Metadatos|{Permisos|Usuario|Grupo}|Horas|{Creación|Modificación|Acceso}|{Bloques\ndirectos|{<d1> 1|<d2> 2|<d3> 3}}|<s> Indirección\nsencilla|<d> Doble\nindirección|<t> Triple\nindirección}"];
-          senc [shape=record, label="<label> Sencilla|{<1> 1|<2> 2|<3> 3}"];
-          doble [shape=record, label="<label> Doble|{<1> 1|<2> 2|<3> 3}"];
-          triple [shape=record, label="<label> Triple|{<1> 1| |}"];
-          di1 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          di2 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          di3 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          tr1 [shape=record, label="{<1> 1| |}"];
-          tr1_1 [shape=record, label="{<1> 1| |}"];
-          inodo:s -> senc:label;
-          inodo:d -> doble:label;
-          inodo:t -> triple:label;
-  
-          doble:1 -> di1;
-          doble:2 -> di2;
-          doble:3 -> di3;
-          triple:1 -> tr1;
-          tr1:1 -> tr1_1;
-  
-          subgraph cluster_simple {
-                  style=filled;
-                  label="Dos accesos a disco"
-                  color="#eeeeee"
-                  {rank=same; senc doble triple 1 2 3}
-          }
-  
-          subgraph cluster_dbl {
-                  style=filled;
-                  label="Tres accesos a disco"
-                  color="#dddddd"
-                  {rank=same; di1 di2 di3 tr1 4 5 6}
-          }
-  
-          subgraph cluster_trpl {
-                  style=filled;
-                  label="Cuatro accesos a disco"
-                  color="#cccccc"
-                  {rank=same; tr1_1 7 8 9 10 11 12 13 14 15}
-          }
-  
-          subgraph cluster_quad {
-                  style=filled;
-                  label="Cinco accesos a disco"
-                  color="#bbbbbb"
-                  {rank=same; 16}
-          }
-  
-          inodo:d1 -> 1;
-          inodo:d2 -> 2;
-          inodo:d3 -> 3;
-          senc:1 -> 4;
-          senc:2 -> 5;
-          senc:3 -> 6;
-          di1:1 -> 7;
-          di1:2 -> 8;
-          di1:3 -> 9
-          di2:1 -> 10;
-          di2:2 -> 11;
-          di2:3 -> 12;
-          di3:1 -> 13;
-          di3:2 -> 14;
-          di3:3 -> 15;
-          tr1_1:1 -> 16;
-  }
-#+end_src
+#+include: fig/fs_apuntadores_indirectos.dot
 
 #+results:
-[[file:ltxpng/directorio_simple.png]]
+[[file:ltxpng/fs_apuntadores_indirectos.png]]
 #+html: <p align="center">Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)</p></div>
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
@@ -2488,74 +2123,14 @@ principales (que no las únicas) inconsistencias son:
      el espacio está efectivamente bloqueado y, desde la perspectiva
      del usuario, inutilizado.
 
-#+HTML: <div class="figure">
-#+ATTR_LATEX: width=0.7\textwidth
-#+CAPTION: Inconsistencias en un sistema de archivos tipo FAT
-#+BEGIN_SRC dot :exports results :file ltxpng/inconsistencias_fat.png
-digraph G
-{
-	node [style=filled, fillcolor=white];
-	
-	subgraph cluster_fat {
-		node [shape = box, label = ""];
-		label = "Tabla de asignación"
-		
-		{rank=same; 1 2 3 4} ->
-		{rank=same; 5 6 7 8} ->
-		{rank=same; 9 10 11 12} ->
-		{rank=same; 13 14 15 16} [style=invis];
-		
-		2 -> 5 -> 1 -> 15;
-		15 [label="FF"];
-		
-		3 -> 6 -> 9 -> 8 -> 4;
-		4 [label="FF"];
-		
-		14 -> 7 -> 11;
-		11 [label="FF"];
-	}
-	
-	subgraph cluster_dir {
-		label="directorio";
-		a [label = "archivo1.txt", fillcolor="#ffffcc"];
-		b [label = "a.out", fillcolor="#ccccff"];
-		c [label = "proyecto.c", fillcolor="#ffccff"];
-	}
-	
-	subgraph cluster_leyenda {
-		style=invis;
-		c -> caja_cross -> caja_huerf [style=invis];
-		c -> txt_cross -> txt_huerf [style=invis];
-		caja_cross [label="", shape=box, fillcolor="#ffaaaa"];
-		caja_huerf [label="", shape=box, fillcolor="#ff3333"];
-		txt_cross [label="Archivo cruzado", shape=plaintext];
-		txt_huerf [label="Cadena perdida", shape=plaintext];
-	}
-	
-	a -> 2;
-	b -> 3;
-	c -> 1;
-	
-	2 [fillcolor="#ffffcc"];
-	5 [fillcolor="#ffffcc"];
-	1 [fillcolor="#ffaaaa"];
-	15 [fillcolor="#ffaaaa"];
-	
-	3 [fillcolor="#ccccff"];
-	6 [fillcolor="#ccccff"];
-	9 [fillcolor="#ccccff"];
-	8 [fillcolor="#ccccff"];
-	4 [fillcolor="#ccccff"];
-	
-	14 [fillcolor="#ff3333"];
-	7 [fillcolor="#ff3333"];
-	11 [fillcolor="#ff3333"];
-}
-#+END_SRC
+#+html: <div class="figure">
+#+attr_latex: width=0.7\textwidth
+#+caption: Inconsistencias en un sistema de archivos tipo FAT
+#+include: fig/inconsistencias_fat.dot
 
-#+RESULTS:
+#+results:
 [[file:ltxpng/inconsistencias_fat.png]]
-#+HTML: <p align="center">Inconsistencias en un sistema de archivos tipo FAT</p></div>
+#+html: <p align="center">Inconsistencias en un sistema de archivos tipo FAT</p></div>
 
 Cada sistema de archivos podrá presentar un distinto conjunto de
 inconsistencias ante los fallos, dependiendo de sus estructuras
@@ -2744,62 +2319,7 @@ volverse a registrar sin peligro.
 #+HTML: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
-#+begin_src dot :exports results :file ltxpng/fs_journaling.png
-digraph G
-{
-	rankdir=RL;
-          subgraph cluster_jrnl {
-                  label = "Bitácora"
-                  color = lightblue;
-                  style = "filled";
-		  node [shape="box"];
-                  1 [label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
-                  2 [label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
-                  3 [label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
-                  4 [label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
-                  5 [label = "Agrega el\ncluster 65 a\nunomas.txt"];
-  
-                  1 -> 2 [label = "72", penwidth=3];
-                  2 -> 3 [label = "68", penwidth=3];
-                  3 -> 4 [label = "69", penwidth=3];
-                  4 -> 5 [label = "70", penwidth=3];
-                  5 -> 1 [label = "71", penwidth=3];
-		  {rank=same; 1 2}
-		  {rank=same; 4 5}
-
-}
-  
-          subgraph cluster_datos {
-                  label = "Datos";
-                  color = yellow;
-                  style = "filled";
-                  dira [label = "Directorio a", shape="box3d"];
-                  dirb [label = "Directorio b", shape="box3d"];
-                  dira -> 12 -> 34 -> 26 [style="dashed"];
-                  dirb -> 37 -> 38 -> 39 [style="dashed"];
-                  65;
-
-		  {rank=same; 12 37 65}
-		  {rank=same; 34 38}
-		  {rank=same; 26 39}
-}
-          1 -> dira;
-          2 -> 12;
-          2 -> 34;
-          2 -> 26;
-          3 -> 37;
-          3 -> 38;
-          3 -> 39;
-          4 -> dirb;
-          5 -> 65;
-  
-          ultimaop [label = "Última operación\nefectuada", shape="box", color="pink", style="filled"];
-          cabeza [label = "Siguiente entrada\na reemplazar", shape="box", color="green", style="filled"];
-          ultimaop -> 5 [style="dotted",constraint=false];
-          cabeza -> 3 [style="dotted",constraint=false];
-	  cabeza -> ultimaop [style=invis];
-  }
-#+end_src
+#+include: fig/fs_journaling.dot
 
 #+RESULTS:
 [[file:ltxpng/fs_journaling.png]]
@@ -3412,24 +2932,7 @@ por cada uno de los discos que tengamos en el volumen.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 0
-#+begin_src dot :exports results :file ltxpng/raid_0.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (5TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB"];
-                   5 [label = "Disco\n5: 1TB"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   3 -> 4 [label = "+"];
-                   4 -> 5 [label = "+"];
-          }
-  }
-#+end_src
+#+include: fig/raid_0.dot
 
 Los discos que participan en un volumen RAID 0 no son sencillamente
 /concatenados/, sino que los datos son /divididos en franjas/ (en
@@ -3486,18 +2989,7 @@ que hay que esperar a que ambos discos escriban la información.
 
 #+caption: Dos discos organizados en RAID 1
 #+attr_latex: width=0.3\textwidth
-#+begin_src dot :exports results :file ltxpng/raid_1.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (1TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   1 -> 2 [label = "=", dir = both];
-          }
-  }
-#+end_src
+#+include: fig/raid_1.dot
 
 Un arreglo RAID nivel 1 se construye típicamente con dos discos.
 
@@ -3570,27 +3062,7 @@ provendría del disco dañado.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 5
-#+begin_src dot :exports results :file ltxpng/raid_5.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (4TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB"];
-                   5 [label = "Disco\n5: 1TB", color="blue"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   3 -> 4 [label = "+"];
-                   1 -> 5 [color="blue", label = "PAR"];
-                   2 -> 5 [color="blue", label = "PAR"];
-                   3 -> 5 [color="blue", label = "PAR"];
-                   4 -> 5 [color="blue", label = "PAR"];
-          }
-  }
-#+end_src
+#+include: fig/raid_5.dot
 
 Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
 aunque es común verlos más /anchos/, pues de este modo se desperdicia
@@ -3619,28 +3091,7 @@ implementar mayor complejidad, en caso de ser hardware dedicado.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 6
-#+begin_src dot :exports results :file ltxpng/raid_6.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (3TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB", color="green"];
-                   5 [label = "Disco\n5: 1TB", color="blue"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   1 -> 4 [color="green", label = "PAR P"];
-                   2 -> 4 [color="green", label = "PAR P"];
-                   3 -> 4 [color="green", label = "PAR P"];
-                   1 -> 5 [color="blue", label = "PAR Q"];
-                   2 -> 5 [color="blue", label = "PAR Q"];
-                   3 -> 5 [color="blue", label = "PAR Q"];
-          }
-  }
-#+end_src
+#+include: fig/raid_6.dot
 
 El nivel 6 de RAID puede implementarse con 4 o más unidades, y si
 bien el espacio dedicado a la redundancia se incrementa a dos discos,
@@ -3663,38 +3114,7 @@ demasiado espacio.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Seis discos organizados en RAID 1+0
-#+begin_src dot :exports results :file ltxpng/raid_10.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-	  
-          subgraph cluster_resulta {
-                  label = "Volumen RAID1\nresultante (3TB)";
-		  subgraph cluster_vol1 {
-			  label = "Subvolumen\nRAID0 1 (1TB)";
-			  1 -> 2 [label = "=", dir = both, color="blue"];
-		  }
-		  subgraph cluster_vol2 {
-			  label = "Subvolumen\nRAID0 2 (1TB)";
-			  3 -> 4 [label = "=", dir = both, color="blue"];
-		  }
-		  subgraph cluster_vol3 {
-			  label = "Subvolumen\nRAID0 3 (1TB)";
-			  5 -> 6 [label = "=", dir = both, color="blue"];
-		  }
-		  1 -> 3 [label = "+"];
-		  3 -> 5 [label = "+"];
-                  2 -> 4 [label = "+", style="dotted"];
-                  4 -> 6 [label = "+", style="dotted"];
-          }
-          1 [label = "Disco\n1: 1TB"];
-          2 [label = "Disco\n2: 1TB"];
-          3 [label = "Disco\n3: 1TB"];
-          4 [label = "Disco\n4: 1TB"];
-          5 [label = "Disco\n5: 1TB"];
-          6 [label = "Disco\n6: 1TB"];
-  }
-#+end_src
+#+include: fig/raid_10.dot
 
 Con RAID nivel 10 creamos volúmenes que suman por franjas unidades en
 espejo (un volumen RAID 0 compuesto de varios volúmenes RAID 1). En
@@ -3718,35 +3138,7 @@ redundancia resulta mucho menor.
 
 #+attr_latex: width=0.65\textwidth
 #+caption: Seis discos organizados en RAID 0+1
-#+begin_src dot :exports results :file ltxpng/raid_01.png
-  digraph G {
-	  node [shape=circle];
-          rankdir=LR;
-
-          subgraph cluster_resulta {
-                  label = "Volumen RAID0\nresultante (3TB)";
-		  subgraph cluster_vol1 {
-			  label = "Subvolumen RAID1\n 1 (3TB)";
-			  1 -> 2 [label = "+"];
-			  2 -> 3 [label = "+"];
-		  }
-		  subgraph cluster_vol2 {
-			  label = "Subvolumen RAID1\n2 (3TB)";
-			  4 -> 5 [label = "+", style = dotted];
-			  5 -> 6 [label = "+", style = dotted];
-		  }
-		  1 -> 4 [label = "=", dir = both, color = blue];
-		  2 -> 5 [label = "=", dir = both, color = blue];
-		  3 -> 6 [label = "=", dir = both, color = blue];
-          }
-          1 [label = "Disco\n1: 1TB"];
-          2 [label = "Disco\n2: 1TB"];
-          3 [label = "Disco\n3: 1TB"];
-          4 [label = "Disco\n4: 1TB"];
-          5 [label = "Disco\n5: 1TB"];
-          6 [label = "Disco\n6: 1TB"];
-  }
-#+end_src
+#+include: fig/raid_01.dot
 
 En este caso, nuestro arreglo soportará también el fallo de hasta $n
 \over 2$ de sus discos, pero únicamente si ocurren en el mismo volumen

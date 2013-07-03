@@ -1,0 +1,23 @@
+#+begin_src dot :exports results :file ltxpng/equipo_trab.png
+digraph G {
+        layout = dot;
+        inicio [shape=box,label="...",style=dotted];
+        continua [shape=box,label="...",style=dotted];
+        division [shape=box, label="División de trabajo"];
+        union [shape=box, label="Agregación de resultados"];
+        subgraph cluster_hilos {
+                color=blue;
+                hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+        }
+        inicio -> division;
+        division -> hilo1:a [label="Datos 1"];
+        hilo1:c -> union [label="Resultados 1"];
+        division -> hilo2:a [label="Datos 2"];
+        hilo2:c -> union [label="Resultados 2"];
+        division -> hilo3:a [label="Datos 3"];
+        hilo3:c -> union [label="Resultados 3"];
+        union -> continua;
+}
+#+end_src

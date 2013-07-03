@@ -494,37 +494,7 @@ costo-beneficio suficiente para usarse como memoria primaria.
 #+html: <div class="figure">
 #+attr_latex: height=0.5\textheight
 #+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
-#+begin_src dot :exports results :file ltxpng/jerarquia_memoria.png
-digraph G {
-	layout = dot;
-	node [shape = box];
-	rankdir = TB;
-	
-	Registros ;
-	Cache ;
-	Principal [label = "Memoria principal"];
-	Electr [label = "Disco electrónico"];
-	Magnet [label = "Disco magnético"];
-	Optico [label = "Disco óptico"];
-	Cinta [label = "Cintas magnéticas"];
-	
-	Registros -> Cache [dir = both];
-	
-	Cache -> Principal [dir = both];
-	
-	Principal -> Electr [dir = both];
-	Principal -> Magnet [dir = both];
-	
-	Electr -> Magnet [dir = both];
-	
-	Electr -> Optico [dir = both];
-	Magnet -> Optico [dir = both];
-	
-        Optico -> Cinta [dir = both];
-	Electr -> Cinta [dir = both, minlen=2];
-	Magnet -> Cinta [dir = both, minlen=2];
-}
-#+end_src
+#+include: fig/jerarquia_memoria.png
 
 #+results:
 [[file:ltxpng/jerarquia_memoria.png]]
@@ -684,37 +654,7 @@ ligeramente distinto de otros.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
-#+begin_src dot :exports results :file ltxpng/llamada_al_sistema.png
-digraph G {
-	rankdir = LR
-	subgraph cluster_user {
-		label = "Espacio de usuario";
-		color = "#ccffcc";
-		style = filled;
-		ejecucion [shape=box, label="Ejecución\ndel proceso..."];
-		llamada [shape=box, label="Llamada\nal sistema"];
-		espacio3 [style=invis];
-		retorno [shape=box, label="Regresa de\nla llamada\nal sistema"];
-		continua [shape=box, label="Continúa la\nejecución..."];
-		ejecucion -> llamada;
-		llamada -> espacio3 -> retorno [style=invis];
-		retorno -> continua;
-	}
-	subgraph cluster_kernel {
-		label = "Espacio de núcleo";
-		color="#ffcccc";
-		style=filled;
-		espacio1 [style=invis];
-		espacio2 [style=invis];
-		syscall [shape=box, label="Ejecución de\nla llamada\nal sistema"];
-		espacio5 [style=invis];
-		espacio4 [style=invis];
-		espacio1 -> espacio2 -> syscall -> espacio4 -> espacio5 [style=invis];
-	}
-	llamada -> syscall [label="Entrega ejecución\lal núcleo. Entra en\lmodo protegido."];
-	syscall -> retorno [label="Vuelve al\rflujo normal.\rSale de\rmodo protegido"];
-}
-#+end_src
+#+include: fig/llamada_al_sistema.dot
 
 #+results:
 [[file:ltxpng/llamada_al_sistema.png]]

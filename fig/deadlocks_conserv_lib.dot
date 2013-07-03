@@ -1,0 +1,58 @@
+#+begin_src dot :exports results :file ltxpng/deadlocks_conserv_lib.png
+  digraph G {
+          color=white;
+          layout = dot;
+          rankdir = LR;
+          r0 [shape=point];
+          r1 [shape=point];
+          r2 [shape=point];
+          r3 [shape=point];
+          r4 [shape=point];
+          r5 [shape=point];
+          r6 [shape=point];
+          caro_os [label="Más caro\n(complejo)\npara el\nsistema operativo",color="white"];
+          barato_usr [label="Más barato\n(sencillo)\npara procesos\nusuario",color="white"];
+          caro_usr [label="Más caro\n(complejo)\npara procesos\nusuario",color="white"];
+          barato_os [label="Más barato\n(sencillo)\npara el\nsistema operativo",color="white"];
+          liberal [label="Liberal",color="white",fontsize=18];
+          conservador [label="Conservador",color="white",fontsize=18];
+          liberal -> r0 -> r1 -> r2 -> r3 -> r4 -> r5 -> r6 -> conservador [arrowhead=none,weight=4];
+          {rank=same; caro_os ->  liberal -> barato_usr [style=invis]}
+          {rank=same; barato_os ->  conservador -> caro_usr [style=invis]}
+          subgraph cluster_bloq_pos {
+                  bgcolor="#eeeeee";
+                  fontsize=18;
+                  label="Bloqueo posible";
+                  {rank=same; siempre r0}
+                  siempre -> r0 [minlen=3];
+                  siempre [color="#eeeeee", label="Siempre otorgar\n(Avestruz)"];
+          }
+          subgraph cluster_evita {
+                  bgcolor="#dddddd";
+                  fontsize=18;
+                  label = "Evasión de bloqueos\n(Con conocimiento previo)";
+                  ret_y_esp [color="#dddddd", label="Retención\ny espera"];
+                  banquero [color="#dddddd", label="Algoritmo\ndel banquero"];
+                  {rank=same; ret_y_esp -> r1 [minlen=3]};
+                  {rank=same; banquero -> r2 [minlen=3]};
+          }
+          subgraph cluster_previene {
+                  bgcolor="#cccccc";
+                  fontsize=18;
+                  label="Prevención de bloqueos\n(Sin conocimiento previo)";
+                  serializacion [color="#cccccc", label = "Serialización"];
+                  one_shot [color="#cccccc", label = "Solicitud\nde una vez"];
+                  jerarquica [color="#cccccc", label = "Asignación\njerárquica"];
+                  {rank=same; jerarquica -> r3 [minlen=3]};
+                  {rank=same; one_shot -> r4 [minlen=3]};
+                  {rank=same; serializacion -> r5 [minlen=3]};
+          }
+          subgraph cluster_nunca {
+                  bgcolor="#bbbbbb";
+                  fontsize=18;
+                  label="No otorgamiento";
+                  nunca [color="#bbbbbb", label = "Nunca otorgar"];
+                  {rank=same; nunca -> r6 [minlen=3]};
+          }
+  }
+#+end_src

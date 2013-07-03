@@ -1,0 +1,69 @@
+#+begin_src dot :exports results :file ltxpng/puntos_de_montaje.png
+digraph G {
+        rankdir = TB;
+        subgraph cluster_root {
+                label = "sda1";
+                color = lightgray;
+                style = filled;
+                root -> var;
+                root -> bin;
+                root -> sbin;
+        }
+        subgraph cluster_sda2 {
+                label = "sda2";
+                color = lightblue;
+                style = filled;
+                usr -> usrbin;
+                usr -> usrlib;
+                usrbin -> bash;
+                usrbin -> perl;
+        }
+        subgraph cluster_proc {
+                label="proc"
+                color=yellow;
+                style=filled;
+                proc -> 1;
+                proc -> 2;
+                proc -> 3;
+        }
+        subgraph cluster_sdb1 {
+                label = "sdb1";
+                color = pink;
+                style = filled;
+                home -> juan;
+                home -> pedro;
+                home -> irene;
+                juan -> tarea_c;
+                pedro -> proyecto_pl [style=dotted];
+                irene -> proyecto_pl;
+        }
+        subgraph cluster_sda3 {
+                label = "sda3"
+                color = green;
+                style = filled;
+                usrlocal -> locbin;
+                usrlocal -> locgames;
+        }
+
+        root -> proc;
+        root -> home;
+        root -> usr;
+        usr -> usrlocal;
+
+        root [shape=box, label="/"];
+        bin [shape=box];
+        sbin [shape=box];
+        usr [shape=box];
+        proc [shape=box];
+        var [shape=box];
+        home [shape=box];
+        usrbin [shape=box, label="bin"];
+        usrlib [shape=box, label="lib"];
+        juan [shape=box];
+        pedro [shape=box];
+        irene [shape=box];
+        usrlocal [shape=box, label="local"];
+        locgames [shape=box, label="games"];
+        locbin [shape=box, label="bin"];
+}
+#+end_src

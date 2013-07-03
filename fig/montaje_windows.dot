@@ -1,0 +1,63 @@
+#+begin_src dot :exports results :file ltxpng/montaje_windows.png
+digraph G {
+        rankdir=LR;
+        subgraph cluster0 {
+                label = "C:"
+                color = lightblue;
+                style="filled"
+                raiz_c [shape=box, label="\\"];
+                windows [shape=box, label="Windows"];
+                archprog [shape=box, label="Archivos de programa"]
+                docset [shape=box, label="Documents and Settings"]
+                usr1 [shape=box, label="Usuario 1"]
+                desktop [shape=box, label="Escritorio"]
+                menu [shape=box, label="Menú Inicio"]
+                misdoc [shape=box, label="Mis documentos"]
+                system32 [shape=box];
+                prog1 [label="prog1.exe"];
+                prog2 [label="prog2.exe"];
+                prog3 [label="prog3.exe"];
+
+                raiz_c -> windows;
+                windows -> system32;
+                system32 -> prog1;
+                system32 -> prog2;
+                system32 -> prog3;
+                raiz_c -> archprog;
+                raiz_c -> docset;
+                docset -> usr1;
+                usr1 -> desktop;
+                usr1 -> menu;
+                usr1 -> misdoc;
+        }
+
+        subgraph cluster1 {
+                label = "D:"
+                color = yellow;
+                style="filled"
+                raiz_d [shape=box, label="\\"];
+                doc [shape=box, label="Documentos"]
+                pres [shape=box, label="Presentaciones"]
+                doc1 [label="Avance del proyecto.docx"]
+                doc2 [label="Datos 2000-2004.doc"]
+                pres1 [label="Presentación.ppt"]
+
+                raiz_d -> doc;
+                raiz_d -> pres;
+                doc -> doc1;
+                doc -> doc2;
+                pres -> pres1;
+        }
+
+        raiz [shape=box, label="<Mi PC>"];
+        raiz -> COM1;
+        raiz -> CON;
+        raiz -> LPT1;
+        raiz -> raiz_c;
+        raiz -> raiz_d;
+
+        COM1 [shape=note, label="COM1:"]
+        LPT1 [shape=note, label="LPT1:"]
+        CON [shape=note, label="CON:"]
+}
+#+end_src

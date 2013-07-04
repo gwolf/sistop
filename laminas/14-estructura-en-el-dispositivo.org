@@ -239,16 +239,7 @@ cuantos términos
 ** FAT: Entrada de directorio
 #+attr_latex: width=\textwidth
 #+caption: Formato de la entrada del directorio bajo FAT32 ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
-#+begin_src ditaa :file ltxpng/directorio_fat.png :cmdline -E
- |    8    |  3  | 1 | 1 |    5     |   2    |  2   |   4   |    2    |   4    |
- +---------+-----+---+---+----------+--------+------+-------+---------+--------+
- | ARCHIVO | EXT |   |   | Creacion | Acceso |      | Modif | Cluster | Tamaño |
- +---------+-----+-+-+-+-+----------+--------+--+---+-------+---------+--------+
-                   ^   ^                        ^
-                   |   |                        |
-         Atributos-+   |  Cluster alto (FAT32)--+
-         Reservado-----+
-#+end_src
+#+include: fig/entrada_directorio_fat.ditaa
 
 ** FAT: La extensión VFAT
 - Introducida junto con Windows 95 para permitir nombres de archivo largos
@@ -338,23 +329,7 @@ cuantos términos
 ** Asignación contigua de archivos
 #+attr_latex: height=0.65\textheight
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
-#+begin_src ditaa :file ltxpng/fs_asignacion_contigua.png :cmdline -E
-+------------------------+   Directorio
-| {s} cFFF               |   +----+
-|  0    4    8    B    F |   |cRED+-->0x30 + 6
-|  +------+----+-------+ |   +----+
-| 3| cRED |cYEL|cGRE   | |   |cYEL+-->0x36 + 4
-|  +------+----+ +-----+ |   +----+
-| 4|             |cBLU | |   |cGRE+-->0x3A + 17
-|  +-------+-----+--+--+ |   +----+
-| 5|cBLU   | cFFF   |  | |   |cBLU+-->0x4B + 9
-|  +-------+--------+  | |   +----+
-| 6|       cPNK        | |   |cPNK+-->0x5C + 26
-|  |    +--------------+ |   +----+
-| 7|    |      cFFF    | |
-|  +----+--------------+ |
-+------------------------+
-#+end_src
+#+include: fig/fs_asignacion_contigua.ditaa
 
 ** Asignación ligada
 - Puede proveerse mucho más flexibilidad al usuario si se permite la
@@ -375,27 +350,7 @@ cuantos términos
 ** Asignación ligada
 #+attr_latex: height=0.7\textheight
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
-#+begin_src ditaa :file ltxpng/fs_asignacion_ligada.png :cmdline -E
-+---------------------+     Directorio
-|     cFFF        {s} |     +----+
-|  0       8        F |     |cRED+-->0x30
-|  +-------+--------+ |     +----+
-| 3|cRED 38|cRED 50 | |     |cBLU+-->0x40
-|  +-------+--------+ |     +----+
-| 4|cBLU 58|cYEL 60 | |     |cYEL+-->0x48
-|  +-------+--------+ |     +----+
-| 5|cRED FF|cBLU 78 | |     |cGRE+-->0x88
-|  +-------+--------+ |     +----+
-| 6|cYEL FF|cFFF 00 | |
-|  +-------+--------+ |
-| 7|cGRE FF|cBLU FF | |
-|  +-------+--------+ |
-| 8|cFFF 00|cGRE 70 | |
-|  +-------+--------+ |
-| 9|cFFF 00|cFFF 00 | |
-|  +-------+--------+ |
-+---------------------+
-#+end_src
+#+include: fig/fs_asignacion_ligada.ditaa
 
 ** Revisando la asignación ligada
 - Ventajas:
@@ -437,31 +392,7 @@ cuantos términos
 ** Asignación indexada
 #+attr_latex: height=0.6\textheight
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
-#+begin_src ditaa :file ltxpng/fs_asignacion_indexada.png :cmdline -E
-+---------------------+    Directorio        Índices
-|{s} cFFF             |    +----+            +--------------------+
-|  0        8       F |    |cF00+-->30       |(30)cF66 38, 48, 60 |
-|  +--------+-------+ |    +----+            +--------------------+
-| 3|cF00    |cF66   | |    |c0F0+-->50
-|  +--------+-------+ |    +----+            +--------------------+
-| 4|cFFF    |cF66   | |    |c00F+-->88       |(50)c6F6 5B         |
-|  +--------+-------+ |    +----+            +--------------------+
-| 5|c0F0    |c6F6   | |
-|  +--------+-------+ |                      +--------------------+
-| 6|cF66    |cFFF   | |                      |(88)c66F 78, 80, 90 |
-|  +--------+-------+ |                      +----------+---------+
-| 7|cFFF    |c66F   | |                                 |
-|  +--------+-------+ |                                 V
-| 8|c66F    |c00F   | |                      +----------+---------+
-|  +--------+-------+ |                      |(A0)c66F 98         |
-| 9|c66F    |c66F   | |                      +--------------------+
-|  +--------+-------+ |
-| A|c00F    |cFFF   | |
-|  +--------+-------+ |
-| B|cFFF    |cFFF   | |
-|  +--------+-------+ |
-+---------------------+
-#+end_src
+#+include: fig/fs_asignacion_indexada.ditaa
 
 ** Apuntadores directos e indirectos
 - Al emplear asignación indexada, crece el espacio disponible en el
@@ -480,79 +411,8 @@ cuantos términos
 
 ** Apuntadores de indirección a varios niveles
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesario para cada cluster
-
 #+attr_latex: height=0.7\textheight
-#+begin_src dot :exports results :file ltxpng/fs_apuntadores_indirectos.png
-  digraph G {
-          overlap=false;
-          ranksep=1;
-  
-          node [style=rounded];
-          inodo [shape=record, label="I-nodo|{Metadatos|{Permisos|Usuario|Grupo}|Horas|{Creación|Modificación|Acceso}|{Bloques\ndirectos|{<d1> 1|<d2> 2|<d3> 3}}|<s> Indirección\nsencilla|<d> Doble\nindirección|<t> Triple\nindirección}"];
-          senc [shape=record, label="<label> Sencilla|{<1> 1|<2> 2|<3> 3}"];
-          doble [shape=record, label="<label> Doble|{<1> 1|<2> 2|<3> 3}"];
-          triple [shape=record, label="<label> Triple|{<1> 1| |}"];
-          di1 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          di2 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          di3 [shape=record, label="{<1> 1|<2> 2|<3> 3}"];
-          tr1 [shape=record, label="{<1> 1| |}"];
-          tr1_1 [shape=record, label="{<1> 1| |}"];
-          inodo:s -> senc:label;
-          inodo:d -> doble:label;
-          inodo:t -> triple:label;
-  
-          doble:1 -> di1;
-          doble:2 -> di2;
-          doble:3 -> di3;
-          triple:1 -> tr1;
-          tr1:1 -> tr1_1;
-  
-          subgraph cluster_simple {
-                  style=filled;
-                  label="Dos accesos a disco"
-                  color="#eeeeee"
-                  {rank=same; senc doble triple 1 2 3}
-          }
-  
-          subgraph cluster_dbl {
-                  style=filled;
-                  label="Tres accesos a disco"
-                  color="#dddddd"
-                  {rank=same; di1 di2 di3 tr1 4 5 6}
-          }
-  
-          subgraph cluster_trpl {
-                  style=filled;
-                  label="Cuatro accesos a disco"
-                  color="#cccccc"
-                  {rank=same; tr1_1 7 8 9 10 11 12 13 14 15}
-          }
-  
-          subgraph cluster_quad {
-                  style=filled;
-                  label="Cinco accesos a disco"
-                  color="#bbbbbb"
-                  {rank=same; 16}
-          }
-  
-          inodo:d1 -> 1;
-          inodo:d2 -> 2;
-          inodo:d3 -> 3;
-          senc:1 -> 4;
-          senc:2 -> 5;
-          senc:3 -> 6;
-          di1:1 -> 7;
-          di1:2 -> 8;
-          di1:3 -> 9
-          di2:1 -> 10;
-          di2:2 -> 11;
-          di2:3 -> 12;
-          di3:1 -> 13;
-          di3:2 -> 14;
-          di3:3 -> 15;
-          tr1_1:1 -> 16;
-  }
-#+end_src
+#+include: fig/fs_apuntadores_indirectos.dot
 
 ** La lógica de la indirección multinivel
 - Varios sistemas de archivos (la idea apareció originalmente en UFS,
@@ -691,67 +551,7 @@ cuantos términos
 ** FAT: Principales inconsistencias
 #+attr_latex: width=0.8\textwidth
 #+caption: Principales inconsistencias que pueden presentarse en los sistemas de archivos tipo FAT
-#+BEGIN_SRC dot :exports results :file ltxpng/fs_inconsistencias_fat.png
-digraph G
-{
-	node [style=filled, fillcolor=white];
-	
-	subgraph cluster_fat {
-		node [shape = box, label = ""];
-		label = "Tabla de asignación"
-		
-		{rank=same; 1 2 3 4} ->
-		{rank=same; 5 6 7 8} ->
-		{rank=same; 9 10 11 12} ->
-		{rank=same; 13 14 15 16} [style=invis];
-		
-		2 -> 5 -> 1 -> 15;
-		15 [label="FF"];
-		
-		3 -> 6 -> 9 -> 8 -> 4;
-		4 [label="FF"];
-		
-		14 -> 7 -> 11;
-		11 [label="FF"];
-	}
-	
-	subgraph cluster_dir {
-		label="directorio";
-		a [label = "archivo1.txt", fillcolor="#ffffcc"];
-		b [label = "a.out", fillcolor="#ccccff"];
-		c [label = "proyecto.c", fillcolor="#ffccff"];
-	}
-	
-	subgraph cluster_leyenda {
-		style=invis;
-		c -> caja_cross -> caja_huerf [style=invis];
-		c -> txt_cross -> txt_huerf [style=invis];
-		caja_cross [label="", shape=box, fillcolor="#ffaaaa"];
-		caja_huerf [label="", shape=box, fillcolor="#ff3333"];
-		txt_cross [label="Archivo cruzado", shape=plaintext];
-		txt_huerf [label="Cadena perdida", shape=plaintext];
-	}
-	
-	a -> 2;
-	b -> 3;
-	c -> 1;
-	
-	2 [fillcolor="#ffffcc"];
-	5 [fillcolor="#ffffcc"];
-	1 [fillcolor="#ffaaaa"];
-	15 [fillcolor="#ffaaaa"];
-	
-	3 [fillcolor="#ccccff"];
-	6 [fillcolor="#ccccff"];
-	9 [fillcolor="#ccccff"];
-	8 [fillcolor="#ccccff"];
-	4 [fillcolor="#ccccff"];
-	
-	14 [fillcolor="#ff3333"];
-	7 [fillcolor="#ff3333"];
-	11 [fillcolor="#ff3333"];
-}
-#+END_SRC
+#+include: fig/inconsistencias_fat.dot
 
 ** Problema generalizado a los distintos sistemas de archivos
 - Prácticamente todos los sistemas de archivos tienen que cuidar estos
@@ -863,62 +663,7 @@ inconsistentes:
 ** Sistemas de archivos con bitácora (/journaling file systems/)
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
-#+begin_src dot :exports results :file ltxpng/fs_journaling.png
-digraph G
-{
-	rankdir=RL;
-          subgraph cluster_jrnl {
-                  label = "Bitácora"
-                  color = lightblue;
-                  style = "filled";
-		  node [shape="box"];
-                  1 [label = "Agrega\narch1.txt como\ndirectorio a\nentrada 17"];
-                  2 [label = "Asigna los\nclusters\n12, 34, 26\na arch1.txt"];
-                  3 [label = "Libera los\nclusters\n37, 38, 39\nde otroarch.c"];
-                  4 [label = "Elimina a\notroarch.c\ndel directorio b\nentrada 6"];
-                  5 [label = "Agrega el\ncluster 65 a\nunomas.txt"];
-  
-                  1 -> 2 [label = "72", penwidth=3];
-                  2 -> 3 [label = "68", penwidth=3];
-                  3 -> 4 [label = "69", penwidth=3];
-                  4 -> 5 [label = "70", penwidth=3];
-                  5 -> 1 [label = "71", penwidth=3];
-		  {rank=same; 1 2}
-		  {rank=same; 4 5}
-
-}
-  
-          subgraph cluster_datos {
-                  label = "Datos";
-                  color = yellow;
-                  style = "filled";
-                  dira [label = "Directorio a", shape="box3d"];
-                  dirb [label = "Directorio b", shape="box3d"];
-                  dira -> 12 -> 34 -> 26 [style="dashed"];
-                  dirb -> 37 -> 38 -> 39 [style="dashed"];
-                  65;
-
-		  {rank=same; 12 37 65}
-		  {rank=same; 34 38}
-		  {rank=same; 26 39}
-}
-          1 -> dira;
-          2 -> 12;
-          2 -> 34;
-          2 -> 26;
-          3 -> 37;
-          3 -> 38;
-          3 -> 39;
-          4 -> dirb;
-          5 -> 65;
-  
-          ultimaop [label = "Última operación\nefectuada", shape="box", color="pink", style="filled"];
-          cabeza [label = "Siguiente entrada\na reemplazar", shape="box", color="green", style="filled"];
-          ultimaop -> 5 [style="dotted",constraint=false];
-          cabeza -> 3 [style="dotted",constraint=false];
-	  cabeza -> ultimaop [style=invis];
-  }
-#+end_src
+#+include: fig/fs_journaling.dot
 
 ** Sistemas de archivos con bitácora (/journaling file systems/)
 - La bitácora /no incluye/ (por lo general) datos, /sólo metadatos/

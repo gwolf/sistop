@@ -106,21 +106,7 @@ En inglés, /deadlock/
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades /1/ y /2/.
 
-#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
-digraph G {
-	layout = circo;
-
-	A [label = "Proceso\nA"];
-	B [label = "Proceso\nB"];
-	1 [label = "Unidad\n1", shape = box];
-	2 [label = "Unidad\n2", shape = box];
-
-	A -> 1 [label = "Asignada"];
-	B -> 2 [label = "Asignada"];
-	2 -> A [label = "Solicitada", style = dotted];
-	1 -> B [label = "Solicitada", style = dotted];
-}
-#+end_src
+#+include: fig/bloqueo_mutuo_simple.dot
 #+results:
 [[file:ltxpng/bloqueo_mutuo_simple.png]]
 

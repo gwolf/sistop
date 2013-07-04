@@ -418,14 +418,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso secuencial
-#+begin_src ditaa :file ltxpng/acceso_secuencial.png :cmdline -E
-          Lectura -=->
-             |
-             V
--=-+--------------------------------------------------------------------------+-=-
-   |...Nombre##Gonzalo;Apellido##Oliva;Nombre##Raquel;Apellido##Domínguez;E...|
--=-+--------------------------------------------------------------------------+-=-
-#+end_src
+#+include: fig/acceso_secuencial.ditaa
 #+html: <p align="center">Archivo de acceso secuencial</p></div>
 
 - Acceso aleatorio :: El empleo de gestores como /SQLite/ u otros
@@ -448,24 +441,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso aleatorio
-#+begin_src ditaa :file ltxpng/acceso_aleatorio.png :cmdline -E
-
-       +--------+-----------+-----------+-------------------+--------------+-------------+
-       | Nombre | Apellido  | Teléfono  | Correo            | ultimaSesion | usuarioDesde|
-     0 +--------+-----------+-----------+-------------------+--------------+-------------+
-       :        :           :           :                   :              :             :
-       : ...    : ...       : ...       : ...               : ...          : ...         :
-  4800 +--------+-----------+-----------+-------------------+--------------+-------------+
-       | José   | Chávez    | 5154-4553 | chavez@aqui.no.es | 2013.04.05   | 2012.01.15  |
-  4875 +--------+-----------+-----------+-------------------+--------------+-------------+
------->| Gonzalo| Oliva     |           |                   |              |             |
-  4950 +--------+-----------+-----------+-------------------+--------------+-------------+
-       | Raquel | Domínguez |           | rdomgz@aca.si.es  |              |             |
-  5025 +--------+-----------+-----------+-------------------+--------------+-------------+
-       :        :           :           :                   :              :             :
-       : ...    : ...       : ...       : ...               : ...          : ...         :
-150000 +--------+-----------+-----------+-------------------+--------------+-------------+
-#+end_src
+#+include: fig/acceso_aleatorio.ditaa
 #+html: <p align="center">Archivo de acceso aleatorio</p></div>
 
 - Acceso relativo a índice :: En los últimos años se han popularizado
@@ -510,23 +486,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
-#+begin_src ditaa :file ltxpng/acceso_relativo_a_indice.png :cmdline -E
-+-----------+--------+--------+
-| Apellido  | Inicio | Tamaño |
-+-----------+--------+--------+
-| Chávez    |     0  |    132 |
-+-----------+--------+--------+
-| Domínguez |   163  |    200 |        +--------------------+
-+-----------+--------+--------+     63 |...fono##5154-4553;E|  82
-| Godoy     |   428  |     62 |     83 |mail##chavez@aqui.no| 102
-+-----------+--------+--------+    103 |.es;ultimaSesion##20| 122
-| Oliva     |    132 |     31 +------->+13.04.05;Nombre##Gon| 142
-+-----------+--------+--------+    143 |zalo;Apellido##Oliva| 162
-| Vázquez   |   408  |     20 |    163 |;Nombre##Raquel;Apel| 182
-+-----------+--------+--------+    183 |lido##Domínguez;E...| 202
-| Zapata    |   363  |     45 |        +--------------------+
-+-----------+--------+--------+
-#+end_src
+#+include: fig/acceso_relativo_a_indice.ditaa
 #+html: <p align="center">Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura</p></div>
 
 ** Transferencias orientadas a bloques
@@ -1527,16 +1487,7 @@ substancialmente sus significados:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
-#+begin_src ditaa :file ltxpng/directorio_fat.png :cmdline -E
- |    8    |  3  | 1 | 1 |    5     |   2    |  2   |   4   |    2    |   4    |
- +---------+-----+---+---+----------+--------+------+-------+---------+--------+
- | ARCHIVO | EXT |   |   | Creacion | Acceso |      | Modif | Cluster | Tamaño |
- +---------+-----+-+-+-+-+----------+--------+--+---+-------+---------+--------+
-                   ^   ^                        ^
-                   |   |                        |
-         Atributos-+   |  Cluster alto (FAT32)--+
-         Reservado-----+
-#+end_src
+#+include: fig/entrada_directorio_fat.ditaa
 #+html: <p align="center">Formato de la entrada del directorio bajo FAT (Mohammed, 2007)</p></div>
 
 La extensión VFAT fue agregada con el lanzamiento de Windows 95. Esta
@@ -1696,23 +1647,7 @@ primer cluster.
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
-#+begin_src ditaa :file ltxpng/fs_asignacion_contigua.png :cmdline -E
-+------------------------+   Directorio
-| {s} cFFF               |   +----+
-|  0    4    8    B    F |   |cRED+-->0x30 + 6
-|  +------+----+-------+ |   +----+
-| 3| cRED |cYEL|cGRE   | |   |cYEL+-->0x36 + 4
-|  +------+----+ +-----+ |   +----+
-| 4|             |cBLU | |   |cGRE+-->0x3A + 17
-|  +-------+-----+--+--+ |   +----+
-| 5|cBLU   | cFFF   |  | |   |cBLU+-->0x4B + 9
-|  +-------+--------+  | |   +----+
-| 6|       cPNK        | |   |cPNK+-->0x5C + 26
-|  |    +--------------+ |   +----+
-| 7|    |      cFFF    | |
-|  +----+--------------+ |
-+------------------------+
-#+end_src
+#+include: fig/fs_asignacion_contigua.ditaa
 #+html: <p align="center">Asignción contigua de archivos: Directorio con inicio y longitud</p></div>
 
 La principal ventaja de este mecanismo de asignación, claro está, es
@@ -1772,27 +1707,7 @@ el espacio necesario para guardar un apuntador.
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
-#+begin_src ditaa :file ltxpng/fs_asignacion_ligada.png :cmdline -E
-+---------------------+     Directorio
-|     cFFF        {s} |     +----+
-|  0       8        F |     |cRED+-->0x30
-|  +-------+--------+ |     +----+
-| 3|cRED 38|cRED 50 | |     |cBLU+-->0x40
-|  +-------+--------+ |     +----+
-| 4|cBLU 58|cYEL 60 | |     |cYEL+-->0x48
-|  +-------+--------+ |     +----+
-| 5|cRED FF|cBLU 78 | |     |cGRE+-->0x88
-|  +-------+--------+ |     +----+
-| 6|cYEL FF|cFFF 00 | |
-|  +-------+--------+ |
-| 7|cGRE FF|cBLU FF | |
-|  +-------+--------+ |
-| 8|cFFF 00|cGRE 70 | |
-|  +-------+--------+ |
-| 9|cFFF 00|cFFF 00 | |
-|  +-------+--------+ |
-+---------------------+
-#+end_src
+#+include: fig/fs_asignacion_ligada.ditaa
 #+html: <p align="center">Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster</p></div>
 
 Empleando asignación ligada, tenemos muchas ventajas. En primer lugar,
@@ -1840,31 +1755,7 @@ de la asignación indexada.
 #+html: <div class="figure">
 #+attr_latex: width=0.9\textwidth
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
-#+begin_src ditaa :file ltxpng/fs_asignacion_indexada.png :cmdline -E
-+---------------------+    Directorio        Índices
-|{s} cFFF             |    +----+            +--------------------+
-|  0        8       F |    |cF00+-->30       |(30)cF66 38, 48, 60 |
-|  +--------+-------+ |    +----+            +--------------------+
-| 3|cF00    |cF66   | |    |c0F0+-->50
-|  +--------+-------+ |    +----+            +--------------------+
-| 4|cFFF    |cF66   | |    |c00F+-->88       |(50)c6F6 5B         |
-|  +--------+-------+ |    +----+            +--------------------+
-| 5|c0F0    |c6F6   | |
-|  +--------+-------+ |                      +--------------------+
-| 6|cF66    |cFFF   | |                      |(88)c66F 78, 80, 90 |
-|  +--------+-------+ |                      +----------+---------+
-| 7|cFFF    |c66F   | |                                 |
-|  +--------+-------+ |                                 V
-| 8|c66F    |c00F   | |                      +----------+---------+
-|  +--------+-------+ |                      |(A0)c66F 98         |
-| 9|c66F    |c66F   | |                      +--------------------+
-|  +--------+-------+ |
-| A|c00F    |cFFF   | |
-|  +--------+-------+ |
-| B|cFFF    |cFFF   | |
-|  +--------+-------+ |
-+---------------------+
-#+end_src
+#+include: fig/fs_asignacion_indexada.ditaa
 #+html: <p align="center">Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)</p></div>
 
 Un esquema de asignación indexada nos da un mejor manejo de caché que
@@ -2316,14 +2207,14 @@ situación inconsistente. En todo caso, tendríamos que indicar
 esta manera, incluso si el archivo ya había sido registrado, puede
 volverse a registrar sin peligro.
 
-#+HTML: <div class="figure">
+#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
 #+include: fig/fs_journaling.dot
 
-#+RESULTS:
+#+results:
 [[file:ltxpng/fs_journaling.png]]
-#+HTML: <p align="center">Sistema de archivos con bitácora</p></div>
+#+html: <p align="center">Sistema de archivos con bitácora</p></div>
 
 Este esquema es el más implementado hoy en día, y está presente en
 casi todos los sistemas de archivos modernos. Si bien con un sistema
@@ -2943,23 +2834,11 @@ uniforme entre todos los discos, y asegura que todas las
 transferencias mayores al tamaño de una franja provengan de más de un
 disco independiente.
 
+#+html: <div class="figure">
 #+attr_latex: width=0.6\textwidth
 #+caption: División de datos en /franjas/
-#+begin_src ditaa :file ltxpng/franjas_raid_0.png :cmdline -E
-          +---------+ +---------+ +---------+
-          |{s}      | |{s}      | |{s}      |
-+-----+   |  +---+  | |  +---+  | |  +---+  |
-|  A  +-->+  |A1 |  | |  |A2 |  | |  |A3 |  |
-+-----+   |  +---+  | |  +---+  | |  +---+  |
-|  B  +-->|  |B1 |  | |  |B2 |  | |  |B3 |  |
-+-----+   |  +---+  | |  +---+  | |  +---+  |
-|  C  +-->|  |C1 |  | |  |C2 |  | |  |C3 |  |
-+-----+   |  +---+  | |  +---+  | |  +---+  |
-|  D  +-->|  |D1 |  | |  |D2 |  | |  |D3 |  |
-+-----+   |  +---+  | |  +---+  | |  +---+  |
-          | Disco 1 | | Disco 2 | | Disco 3 |
-          +---------+ +---------+ +---------+
-#+end_src
+#+include: fig/franjas_raid_0.ditaa
+#+html: <p align="center">División de datos en <em>franjas</em></p></div>
 
 La confiabilidad del volumen, sin embargo, disminuye
 respecto a si cada uno de los discos se manejara por separado: Basta
@@ -3016,25 +2895,11 @@ quien debe reemplazar el disco lo más pronto posible (dado que, de no
 hacerlo, la falla en un segundo disco resultará en la pérdida de toda
 la información).
 
+#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: División de datos en /franjas/, con paridad, para RAID 5
-#+begin_src ditaa :file ltxpng/franjas_raid_5.png :cmdline -E
-+-------------+ +-------------+ +-------------+ +-------------+ +-------------+
-|{s} cFFF     | |{s} cFFF     | |{s} cFFF     | |{s} cFFF     | |{s} cFFF     |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-| |cFFFA1   | | | |cFFFA2   | | | |cFFFA3   | | | |cFFFA4   | | | |cDDDpA   | |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-| |cFFFB1   | | | |cFFFB2   | | | |cFFFB3   | | | |cDDDpB   | | | |cFFFB4   | |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-| |cFFFC1   | | | |cFFFC2   | | | |cDDDpC   | | | |cFFFC3   | | | |cFFFC4   | |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-| |cFFFD1   | | | |cDDDpD   | | | |cFFFD2   | | | |cFFFD3   | | | |cFFFD4   | |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-| |cDDDpE   | | | |cFFFE1   | | | |cFFFE2   | | | |cFFFE3   | | | |cFFFE4   | |
-| +---------+ | | +---------+ | | +---------+ | | +---------+ | | +---------+ |
-|cFFFDisco 1  | |   Disco 2   | |   Disco 3   | |   Disco 4   | |   Disco 5   |
-+-------------+ +-------------+ +-------------+ +-------------+ +-------------+
-#+end_src
+#+include: fig/franjas_raid_5.ditaa
+#+html: <p align="center">División de datos en <em>franjas</em>, con paridad, para RAID 5</p></div>
 
 Dependiendo de la configuración, la velocidad de acceso de este nivel
 puede ser es ligeramente menor que la que obtendríamos de los discos

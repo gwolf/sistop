@@ -1,0 +1,17 @@
+#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
+  max   +-------------------+
+        |  Pila de llamadas |
+        +---------+---------+
+        |         |         |
+        |         V         |
+        |  cGRE             |
+        |         ^         |
+        |         |         |
+        +---------+---------+
+        | Espacio de libres |
+        +-------------------+
+        | Sección de datos  |
+        +-------------------+
+        | Sección de texto  |
+  0     +-------------------+
+#+end_src

@@ -88,22 +88,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 ** Esquematizando el ejemplo clásico
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
-#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
-digraph G {
-	layout = circo;
-
-	A [label = "Proceso\nA"];
-	B [label = "Proceso\nB"];
-	1 [label = "Unidad\n1", shape = box];
-	2 [label = "Unidad\n2", shape = box];
-
-	A -> 1 [label = "Asignada"];
-	B -> 2 [label = "Asignada"];
-	2 -> A [label = "Solicitada", style = dotted];
-	1 -> B [label = "Solicitada", style = dotted];
-}
-#+end_src
-
+#+include: fig/bloqueo_mutuo_simple.dot
 #+results:
 [[file:ltxpng/bloqueo_mutuo_simple.png]]
 
@@ -129,64 +114,7 @@ digraph G {
 ** Espectro liberal-conservador de políticas
 #+attr_latex: width=\textwidth
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
-#+begin_src dot :exports results :file ltxpng/deadlocks_conserv_lib.png
-  digraph G {
-          color=white;
-          layout = dot;
-          rankdir = LR;
-          r0 [shape=point];
-          r1 [shape=point];
-          r2 [shape=point];
-          r3 [shape=point];
-          r4 [shape=point];
-          r5 [shape=point];
-          r6 [shape=point];
-          caro_os [label="Más caro\n(complejo)\npara el\nsistema operativo",color="white"];
-          barato_usr [label="Más barato\n(sencillo)\npara procesos\nusuario",color="white"];
-          caro_usr [label="Más caro\n(complejo)\npara procesos\nusuario",color="white"];
-          barato_os [label="Más barato\n(sencillo)\npara el\nsistema operativo",color="white"];
-          liberal [label="Liberal",color="white",fontsize=18];
-          conservador [label="Conservador",color="white",fontsize=18];
-          liberal -> r0 -> r1 -> r2 -> r3 -> r4 -> r5 -> r6 -> conservador [arrowhead=none,weight=4];
-          {rank=same; caro_os ->  liberal -> barato_usr [style=invis]}
-          {rank=same; barato_os ->  conservador -> caro_usr [style=invis]}
-          subgraph cluster_bloq_pos {
-                  bgcolor="#eeeeee";
-                  fontsize=18;
-                  label="Bloqueo posible";
-                  {rank=same; siempre r0}
-                  siempre -> r0 [minlen=3];
-                  siempre [color="#eeeeee", label="Siempre otorgar\n(Avestruz)"];
-          }
-          subgraph cluster_evita {
-                  bgcolor="#dddddd";
-                  fontsize=18;
-                  label = "Evasión de bloqueos\n(Con conocimiento previo)";
-                  ret_y_esp [color="#dddddd", label="Retención\ny espera"];
-                  banquero [color="#dddddd", label="Algoritmo\ndel banquero"];
-                  {rank=same; ret_y_esp -> r1 [minlen=3]};
-                  {rank=same; banquero -> r2 [minlen=3]};
-          }
-          subgraph cluster_previene {
-                  bgcolor="#cccccc";
-                  fontsize=18;
-                  label="Prevención de bloqueos\n(Sin conocimiento previo)";
-                  serializacion [color="#cccccc", label = "Serialización"];
-                  one_shot [color="#cccccc", label = "Solicitud\nde una vez"];
-                  jerarquica [color="#cccccc", label = "Asignación\njerárquica"];
-                  {rank=same; jerarquica -> r3 [minlen=3]};
-                  {rank=same; one_shot -> r4 [minlen=3]};
-                  {rank=same; serializacion -> r5 [minlen=3]};
-          }
-          subgraph cluster_nunca {
-                  bgcolor="#bbbbbb";
-                  fontsize=18;
-                  label="No otorgamiento";
-                  nunca [color="#bbbbbb", label = "Nunca otorgar"];
-                  {rank=same; nunca -> r6 [minlen=3]};
-          }
-  }
-#+end_src
+#+include: fig/deadlocks_conserv_lib.dot
 
 #+begin_center
 #+latex: {\scriptsize Volveremos a este diagrama hacia el final del tema}
@@ -627,31 +555,7 @@ condiciones de Coffman /pueden presentarse/.
 ** Ejemplo 1
 #+attr_latex: width=0.6\textwidth
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
-
-#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
-digraph G {
-	layout = neato;
-	1 [label = "1"];
-	2 [label = "2"];
-	3 [label = "3"];
-	4 [label = "4"];
-	5 [label = "5"];
-	6 [label = "6"];
-	7 [label = "7"];
-	A [label = "A", shape = box];
-	B [label = "B", shape = box];
-	C [label = "C", shape = box];
-	D [label = "D", shape = box];
-	E [label = "E", shape = box];
-	F [label = "F", shape = box];
-	A -> 1 -> B
-	3 -> B;
-	F -> 6 -> B;
-	2 -> B;
-	4 -> C -> 2;
-	C -> 5 -> E -> 7 -> D -> 4;
-}
-#+end_src
+#+include: fig/deteccion_bloqueos.dot
 
 ** Resolviendo el ejemplo 1
 1. Reducimos por /B/, dado que actualmente no está esperando a ningún

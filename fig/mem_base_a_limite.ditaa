@@ -1,0 +1,22 @@
+#+begin_src ditaa :file ltxpng/mem_base_a_limite.png :cmdline -E
+  1024K +-------------------+  0x100000
+        | Espacio cPNK      |
+        | Libre             |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+  556K  +-------------------+<-0x08b000<--569749 (base+límite)
+        | Proceso 3 cGRE    | +0x010000   +65536 (límite)
+  492K  +-------------------+<-0x07b000<--504214 (base)
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        |                   |
+        | Proceso 1         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
+#+end_src

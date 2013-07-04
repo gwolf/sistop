@@ -122,28 +122,7 @@ recursos que tuviera asignados y notificando a su usuario.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
-#+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  1024K +-------------------+  0x100000
-        | Espacio cPNK      |
-        | Libre             |
-        |                   |
-        |                   |
-        |                   |
-        |                   |
-  556K  +-------------------+<-0x08b000<--569749 (base+límite)
-        | Proceso 3 cGRE    | +0x010000   +65536 (límite)
-  492K  +-------------------+<-0x07b000<--504214 (base)
-        |                   |
-        |                   |
-        | Proceso 2         |
-  256K  +-------------------+  0x040000
-        |                   |
-        | Proceso 1         |
-  128K  +-------------------+  0x020000
-        | Sistema Operativo |
-        | cBLU              |
-  0     +-------------------+  0x000000
-#+end_src
+#+include: fig/mem_base_a_limite.ditaa
 #+html: <p align="center">Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite</p></div>
 
 ** La memoria /caché/
@@ -245,23 +224,7 @@ relativa a su ejecución.
 #+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Regiones de la memoria para un proceso
-#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
-  max   +-------------------+
-        |  Pila de llamadas |
-        +---------+---------+
-        |         |         |
-        |         V         |
-        |  cGRE             |
-        |         ^         |
-        |         |         |
-        +---------+---------+
-        | Espacio de libres |
-        +-------------------+
-        | Sección de datos  |
-        +-------------------+
-        | Sección de texto  |
-  0     +-------------------+
-#+end_src
+#+include: fig/proceso_en_memoria.ditaa
 #+html: <p align="center">Regiones de la memoria para un proceso</p></div>
 
 
@@ -437,29 +400,7 @@ varios bloques libres en uno solo.
 #+attr_html: height="250"
 #+attr_latex: width=0.6\textwidth
 #+caption: Compactación de la memoria de procesos en ejecución
-#+begin_src ditaa :file ltxpng/compactacion.png :cmdline -E
-      +----------------+         +----------------+
-      | cPNK Libre     |         |                |
-      +----------------+         |                |
-      |                |         |                |
-      | Proceso 4 cF0F +------+  |                |
-      +----------------+      |  | cPNK Libre     |
-      |                |      |  |                |
-      | cPNK Libre     |      |  |                |
-      |                |      |  +----------------+
-      +----------------+      |  |                |
-      | Proceso 3 cYEL +----+ +->| Proceso 4 cF0F |
-      +----------------+    |    +----------------+
-      |                |    +--->| Proceso 3 cYEL |
-      | Proceso 2 cRED +--+      +----------------+
-      +----------------+  |      |                |
-      | cPNK Libre     |  +----->| Proceso 2 cRED |
-      +----------------+         +----------------+
-      | Proceso 1 cGRE |         | Proceso 1 cGRE |
-      +----------------+         +----------------+
-      | Sist. Oper.cBLU|         | Sist. Oper.cBLU|
-      +----------------+         +----------------+
-#+end_src
+#+include: fig/compactacion_memoria.ditaa
 #+html: <p align="center">Compactación de la memoria de procesos en ejecución</p></div>
 
 La compactación tiene un costo alto — Involucra mover prácticamente la
@@ -688,22 +629,7 @@ desplazamiento).
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
-#+begin_src ditaa :file ltxpng/direccion_a_pag_y_despl.png :cmdline -E
-Dirección especificada — 0001 1101 0111 0010
-
-           Página (7 bits)
-                ^
-                |
-            /---+---\
-            |       |
-             0001110 101110010
-              (0x0E)  (0x172)
-                    |         |
-                    \----+----/
-                         |
-                         V
-             Desplazamiento (9 bits)
-#+end_src
+#+include: fig/direccion_a_pag_y_despl.ditaa
 #+html: <p align="center">Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes</p></div>
 
 Para poder realizar este mapeo, el MMU requiere de una /tabla de
@@ -956,25 +882,7 @@ manejo de cifrado (=openssl=), compresión (=zlib=), imágenes
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
-#+begin_src ditaa :file ltxpng/memoria_compartida.png :cmdline -E
-  +----------------+   +----------------+   +----------------+     +------------+
-  | Proceso A cYEL |   | Proceso B cGRE |   | Proceso C cRED |     | Páginas de |
-  +--------+-------+   +--------+-------+   +--------+-------+     |  memoria   |
-  | Página | Marco |   | Página | Marco |   | Página | Marco |     +------------+
-  +--------+-------+   +--------+-------+   +--------+-------+     |   1 cYEL   |
-  |cYEL  1 | 3 cBLU|   |cGRE  1 | 3 cBLU|   |cRED  1 | 3 cBLU|     +------------+
-  +--------+-------+   +--------+-------+   +--------+-------+     |   2 cBLU   |
-  |cYEL  2 | 5 cBLU|   |cGRE  2 | 5 cBLU|   |cRED  2 | 5 cBLU|     +------------+
-  +--------+-------+   +--------+-------+   +--------+-------+     |   3 cBLU   |
-  |cYEL  3 | 2 cBLU|   |cGRE  3 | 2 cBLU|   |cRED  3 | 2 cBLU|     +------------+
-  +--------+-------+   +--------+-------+   +--------+-------+     |   4 cGRE   |
-  |cYEL  4 | 1 cYEL|   |cGRE  4 | 4 cGRE|   |cRED  4 | 6 cRED|     +------------+
-  +--------+-------+   +--------+-------+   +--------+-------+     |   5 cBLU   |
-                                                                   +------------+
-  +------------------------------+                                 |   6 cRED   |
-  | cBLU Memoria compartida      |                                 +------------+
-  +------------------------------+
-#+end_src
+#+include: fig/memoria_compartida.ditaa
 #+html: <p align="center">Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.</p></div>
 
 Claro está, para ofrecer este modelo, el sistema operativo debe poder
@@ -1036,23 +944,7 @@ canales explícitos de comunicación entre procesos.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
-#+begin_src ditaa :file ltxpng/cow_recien_hecho.png :cmdline -E
-                            +---------+
-                            | Memoria |
-  +--------------+          +---------+             +--------------+
-  |  Proc. Padre |   +----->|abcdefgh |<----+       |  Proc. Hijo  |
-  +---+----------+   |      +---------+     |       +---+----------+
-  | 1 | abcdefgh +---+      |cGRE     |     +-------+ 1 | abcdefgh |
-  +---+----------+          +---------+             +---+----------+
-  | 2 | ijklmnop +--------->|ijklmnop |<------------+ 2 | ijklmnop |
-  +---+----------+          +---------+             +---+----------+
-  | 3 | qrstuvwx +---+      |cGRE     |     +-------+ 3 | qrstuvwx |
-  +---+----------+   |      +---------+     |       +---+----------+
-                     +----->|qrstuvwx |<----+
-                            +---------+
-                            |cGRE     |
-                            +---------+
-#+end_src
+#+include: fig/cow_recien_hecho.ditaa
 #+html: <p align="center">Memoria de dos procesos inmediatamente después de la creación del proceso hijo por <tt>fork()</tt></p></div>
 
 Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
@@ -1065,23 +957,7 @@ de las páginas seguirá siendo compartido.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
-#+begin_src ditaa :file ltxpng/cow_pagina_modificada.png :cmdline -E
-                            +---------+
-                            | Memoria |
-  +--------------+          +---------+             +--------------+
-  |  Proc. Padre |   +----->|abcdefgh |             |  Proc. Hijo  |
-  +---+----------+   |      +---------+             +---+----------+
-  | 1 | abcdefgh +---+      |abCDefgh |<------------+ 1 | abCDefgh |
-  +---+----------+          +---------+             +---+----------+
-  | 2 | ijklmnop +--------->|ijklmnop |<------------+ 2 | ijklmnop |
-  +---+----------+          +---------+             +---+----------+
-  | 3 | qrstuvwx +---+      |cGRE     |     +-------+ 3 | qrstuvwx |
-  +---+----------+   |      +---------+     |       +---+----------+
-                     +----->|qrstuvwx |<----+
-                            +---------+
-                            |cGRE     |
-                            +---------+
-#+end_src
+#+include: fig/cow_pagina_modificada.ditaa
 #+html: <p align="center">Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.</p></div>
 
 Incluso cuando se ejecutan nuevos programas a través de =execve()=,
@@ -1391,32 +1267,7 @@ sin requerir una nueva transferencia.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo FIFO de reemplazo de páginas
-#+begin_src ditaa :file ltxpng/reemplazo_pag_fifo.png :cmdline -E
-  Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |     |     |     |     |
-   V     V     V     V           V     V     V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-
-... Cadena de referencia ------->
-   0     3     2     1     2     0     1     7     0     1
-   |                 |     |                 |     |     |
-   V                 V     V                 V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_fifo.ditaa
 #+html: <p align="center">Algoritmo FIFO de reemplazo de páginas.</p></div>
 
 La principal ventaja de este algoritmo es, como ya lo hemos
@@ -1454,31 +1305,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
-#+begin_src ditaa :file ltxpng/reemplazo_pag_opt.png :cmdline -E
-Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |           |
-   V     V     V     V           V           V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-... Cadena de referencia ----------->
-   0     3     2     1     2     0     1     7     0     1
-   |                 |                       |
-   V                 V                       V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_opt.ditaa
 #+html: <p align="center">Algoritmo óptimo de reemplazo de páginas (OPT)</p></div>
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
@@ -1507,31 +1334,7 @@ ha sido empleada hace más tiempo
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
-#+begin_src ditaa :file ltxpng/reemplazo_pag_lru.png :cmdline -E
-Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |           |     |     |
-   V     V     V     V           V           V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-... Cadena de referencia ----------->
-  0     3     2     1     2     0     1     7     0     1
-  |                 |           |           |
-  V                 V           V           V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_lru.ditaa
 #+html: <p align="center">Algoritmo de reemplazo de páginas menos recientemente utilizadas (LRU)</p></div>
 
 Para nuestra cadena de referencia, LRU genera 12 fallos, en el punto
@@ -2100,14 +1903,7 @@ func:
 #+html: <div class="figure">
 #+attr_latex: width=0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
-#+begin_src ditaa :file ltxpng/stackframe.png :cmdline -E
-  0x00000000 <----                   ----> 0xFFFFFFFF
-                                                  
-    +------------+--------+----+----+----+----+----+
-    | buffer2    |buffer1 | sfp| ret| a  | b  | c  |
-    +------------+--------+----+----+----+----+----+
-      12 bytes    8 bytes   4b   4b   4b   4b   4b
-#+end_src
+#+include: fig/stackframe.ditaa
 #+html: <p align="center">Marco del stack con llamada a =func(1,2,3)= en x86-32</p></div>
 
 *** C y las funciones de manejo de cadenas
@@ -2193,15 +1989,7 @@ nuestro código al =return 0=.
 #+html: <div class="figure">
 #+attr_latex: width=0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
-#+begin_src ditaa :file ltxpng/overflow_500.png :cmdline -E
-  0x00000000 <----             ----> 0xFFFFFFFF
-                                                  
-      ----=----+----+----+----+----+----+
-     argc, argv| sfp| ret| buffer       |
-      ----=----+----+----+----+----+----+
-                 4b   4b   256 bytes
-     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#+end_src
+#+include: fig/overflow_500.ditaa
 #+html: <p align="center">Estado de la memoria después del <tt>strcpy()</tt></p></div>
 
 Para volver de una función a quien la invocó, incluso si dicha
@@ -2278,18 +2066,7 @@ adentro del stack/.
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
-#+begin_src ditaa :file ltxpng/overflow_jump.png :cmdline -E
-  0x00000000 <----             ----> 0xFFFFFFFF
-            0xbffff9c0             0xbffff8b8
-               |                        |
-               V                        V
-      ----=----+----+----+----+----+----+
-     argc, argv| sfp| ret| buffer       |
-      ----=----+----+----+----+----+----+
-               | 4b   4b   256 bytes  ^
-               |                      |
-	       +--0xbffff8c0----------+
-#+end_src
+#+include: fig/overflow_jump.ditaa
 #+html: <p align="center">Ejecutando el código arbitrario inyectado al buffer</p></div>
 
 Para hacerlo, si en vez de proporcionar simplemente una cadena
@@ -2377,16 +2154,7 @@ comprometido antes de que brinde privilegios elevados al atacante.
 #+html: <div class="figure">
 #+attr_latex: width=0.8\textwidth
 #+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
-#+begin_src ditaa :file ltxpng/canary.png :cmdline -E
-  0x00000000 <----                        ----> 0xFFFFFFFF
-                                  <----AAAAAAAAAAAAAAA...
-                           qR'z2a&5f50s
-      ----=----+----+----+--------------+--------------+
-     argc, argv| sfp| ret| canario cYEL | buffer cRED  |
-      ----=----+----+----+--------------+--------------+
-                 4b   4b   12 bytes        256 bytes
-
-#+end_src
+#+include: fig/overflow_canary.png
 #+html: <p align="center">Marco de stack con un <em>canario</em> aleatorio protector de 12 bytes (<tt>qR'z2a&amp;5f50s</tt>): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.</p></div>
 
 Un atacante tiene dos mecanismos ante un sistema que requiere del

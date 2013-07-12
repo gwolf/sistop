@@ -453,10 +453,15 @@ al descrito en el apartado anterior (registro base y
 desplazamiento). Claro está, esto debe también hacerse con apoyo del
 MMU.
 
-#+caption: Ejemplo de segmentación (Silberschatz, p.305)
+#+html: <div class="figure">
+#+caption: Ejemplo de segmentación
 #+attr_html: height="445"
 #+attr_latex: width=0.7\textwidth
-[[./img/segmentacion_de_memoria.png]]
+#+include: fig/segmentacion_de_memoria.dot
+
+#+results:
+file:ltxpng/segmentacion_de_memoria.png
+#+html: <p align="center">Ejemplo de segmentación</p></div>
 
 Una de las implementaciones más obvias y directas de un espacio de
 memoria segmentado es asignar un segmento distinto a cada una de las
@@ -638,6 +643,12 @@ marcos, convirtiendo la /dirección lógica/ (aquella que conoce el
 proceso) en la /dirección física/ (la ubicación en que /realmente/ se
 encuentra en la memoria del sistema).
 
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
+#+include: fig/hardware_de_paginacion.dot
+#+html: <p align="center">Esquema del proceso de paginación, ilustrando el rol del MMU</p></div>
+
 Podemos tomar como ejemplo para explicar este mecanismo el esquema
 presentado en el libro de Silberschatz, Galvin y Gagné. Este nos
 presenta un esquema minúsculo: Un /espacio de direccionamiento/ de 32
@@ -646,10 +657,12 @@ la página es representada con los 3 bits /más significativos/ de la
 dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
+#+html: <div class="figure">
 #+attr_html: height="477"
 #+attr_latex: width=0.5\textwidth
-#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes (Silberschatz, p.292)
-[[./img/ejemplo_de_paginacion.png]]
+#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
+#+include: fig/ejemplo_de_paginacion.ditaa
+#+html: <p align="center">Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes (Silberschatz, p.292)</p></div>
 
 El proceso que se nos presenta tiene una visión de la memoria como la
 columna del lado izquierdo: Le parece que existen 4 páginas, y tiene

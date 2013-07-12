@@ -1,0 +1,34 @@
+#+begin_src dot :expots results :file ltxpng/segmentacion_de_memoria.dot
+digraph G {
+	rankdir="LR";
+	
+	layout = dot;
+	subgraph cluster_logico {
+		label = "Espacio lógico de direccionamiento";
+		seg0 [shape=box, label = "Segmento 0:\nSección principal\ndel programa"];
+		seg1 [shape=ellipse, label = "Segmento 1:\nTabla de\nsímbolos"];
+		seg2 [shape=diamond, label = "Segmento 2:\nBiblioteca de\nfunciones C"];
+		seg3 [shape=trapezium, label = "Segmento 3:\nPila (stack)\nde llamadas"];
+		seg4 [shape=hexagon, label = "Segmento 4:\nBiblioteca ligada\ndinámicamente"];
+		seg5 [shape=plaintext, label = "..."];
+		seg1 -> seg3 [style=invis];
+		seg2 -> seg4 [style=invis];
+        }
+
+	tabla [shape=record, label="Tabla de segmentos|{ID|Base|Límite}|{<0>0|320|<l0>96}|{<1>1|630|<l1>180}|{<2>2|1300|<l2>64}|{<3>3|860|<l3>128}|{<4>4|1024|<l4>128}"];
+	//tabla [shape=record, label="{ID|<0>0|<1>1|<2>2|<3>3|<4>4}|{Base|320|630|1300|860|1024}|{Límite|<l0>96|<l1>630|<l2>64|<l3>128|<l4>128}"];
+
+	fis [shape=record, label="0-319|<0>320-415|415-629|<1>630-809|810-859|<3>860-987|988-1023|<4>1024-1156|1156-1299|<2>1300-1364"];
+
+	seg0 -> tabla:0;
+	tabla:l0 -> fis:0;
+	seg1 -> tabla:1;
+	tabla:l1 -> fis:1;
+	seg2 -> tabla:2;
+	tabla:l2 -> fis:2;
+	seg3 -> tabla:3;
+	tabla:l3 -> fis:3;
+	seg4 -> tabla:4;
+	tabla:l4 -> fis:4;
+}
+#+end_src

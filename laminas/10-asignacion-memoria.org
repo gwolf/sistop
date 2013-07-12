@@ -210,7 +210,7 @@ Señales que indican necesidad de compactar
 ** Conceptualización de la segmentación
 #+attr_latex: height=0.7\textheight
 #+caption: Ejemplo de segmentación (Silberschatz, p.305)
-[[../img/segmentacion_de_memoria.png]]
+#+include: fig/segmentacion_de_memoria.dot
 
 ** Facilidades que nos brinda la segmentación
 - Ayuda a incrementar la /modularidad/ de nuestro programa, incluso
@@ -372,9 +372,9 @@ presente=no).
   - A pesar de usar un /modelo plano/ (no segmentado)
 
 ** Esquematización del proceso de paginación
-#+attr_latex: height=0.7\textheight
-#+caption: Esquema del proceso de paginación (Silberschatz, p.290)
-[[../img/hardware_de_paginacion.png]]
+#+attr_latex: width=\textwidth
+#+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
+#+include: fig/hardware_de_paginacion.dot
 
 ** Ubicación física y lógica \rarrow Marcos y páginas
 - Cada página corresponde a un /marco/ (/frame/) en la memoria física
@@ -391,7 +391,7 @@ presente=no).
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 #+include: fig/direccion_a_pag_y_despl.ditaa
 
-** La tabla de páginas (/page table/)
+** [#B] La tabla de páginas (/page table/)
 - Guarda la relación entre cada /página/ y el /marco/ correspondiente
 - El MMU no puede ya operar basado en unos cuantos registros
   - En un esquema limitado como el recién presentado, tenemos hasta
@@ -408,7 +408,7 @@ presente=no).
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: width=0.8\textwidth
 #+caption: Ejemplo de paginación (Silberschatz, p.292)
-[[../img/ejemplo_de_paginacion.png]]
+#+include: fig/ejemplo_de_paginacion.ditaa
 #+latex: \end{column}\begin{column}{0.5\textwidth}
 - Direccionamiento: 5 bits
 - Página: 3 bits

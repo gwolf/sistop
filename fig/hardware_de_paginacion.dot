@@ -1,0 +1,33 @@
+#+begin_src dot :exports results :file hardware_de_paginacion.png
+digraph G {
+	rankdir=LR;
+	cpu [shape=box, label="Procesador"];
+	split [shape=point];
+	tr1 [shape=record, label="<p>Página|<d>Desplazamiento"];
+	tr2 [shape=record, label="<m>Marco|<d>Desplazamiento"];
+	tabla [shape=record, label="Tabla de páginas|{p1|m8}|{p2|m3}|{p3|m4}|{<p>p4|<m>m1}|{p5|m2}|..."];
+	join [shape=point];
+	fis [shape=record, label="Memoria|8xx|7xx|6xx|5xx|4xx|3xx|2xx|<1>1xx|0xx"];
+
+	subgraph cluster_mmu {
+		bgcolor="#cccccc";
+		color="#cccccc";
+		label="Unidad de manejo de memoria (MMU)"
+		tr1;
+		tr2;
+		tabla;
+		split;
+		join;
+	}
+
+	cpu -> split [label="Dirección lógica\n045c", dir=none];
+	split -> tr1:p [label="04"];
+	split -> tr1:d [label="5c"];
+	tr1:d -> tr2:d [label="5c"];
+	tr1:p -> tabla:p;
+	tabla:m -> tr2:m;
+	tr2:m -> join [dir=none, label="01"];
+	tr2:d -> join [dir=none, label="5c"];
+	join -> fis:1 [label="Dirección física\n015c"];
+}
+#+end_src

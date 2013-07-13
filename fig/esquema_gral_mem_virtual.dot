@@ -1,0 +1,40 @@
+#+begin_src dot :exports results :file ltxpng/esquema_gral_mem_virtual.png
+digraph G {
+	rankdir=LR;
+	virt [shape=record, label="<p5>página 5|<p4>página 4|<p3>página 3|<p2>página 2|<p1>página 1|<p0>página 0|Memoria\nvirtual"];
+	mmap [shape=record, label="{<p5>5|<m3>3}|{<p4>4|<m5>5\nS}|{<p3>3|<m2>2}|{<p2>2|<m0>0}|{<p1>1|<m1>1}|{<p0>0|<m4>4\nS}|Mapa de\nmemoria"];
+	fis [shape=record, label="<m5>marco 5|<m4>marco 4|<m3>marco 3|<m2>marco 2|<m1>marco 1|<m0>marco 0|Memoria\nfísica"];
+	subgraph cluster_disco {
+		label="Almacenamiento secundario";
+		bgcolor="#cccccc";
+		1 [shape=square, style=filled, fillcolor="#000000", label=""];
+		2 [shape=square, style=filled, fillcolor="#000000", label=""];
+		3 [shape=square, style=filled, fillcolor="#000000", label=""];
+		4 [shape=square, style=filled, fillcolor="#000000", label=""];
+		5 [shape=square, style=filled, fillcolor="#ffffff", label=""];
+		6 [shape=square, style=filled, fillcolor="#000000", label=""];
+		7 [shape=square, style=filled, fillcolor="#000000", label=""];
+		8 [shape=square, style=filled, fillcolor="#ffffff", label=""];
+		9 [shape=square, style=filled, fillcolor="#ffffff", label=""];
+		{rank=same 1 2 3} ->
+		{rank=same 4 5 6} ->
+		{rank=same 7 8 9} [style=invis];
+	}
+
+	virt:p0 -> mmap:p0;
+	virt:p1 -> mmap:p1;
+	virt:p2 -> mmap:p2;
+	virt:p3 -> mmap:p3;
+	virt:p4 -> mmap:p4;
+	virt:p5 -> mmap:p5;
+
+	mmap:m0 -> fis:m0;
+	mmap:m1 -> fis:m1;
+	mmap:m2 -> fis:m2;
+	mmap:m3 -> fis:m3;
+	mmap:m4 -> 8;
+	mmap:m5 -> 5;
+	fis:m2 -> 9 [style=dashed];
+	
+}
+#+end_src

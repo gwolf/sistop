@@ -1,7 +1,6 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Sistemas de archivos
 
-* Concepto de archivo
 
 De los roles que cumple el sistema operativo, probablemente el que más
 consciente tengan en general sus usuarios es el de la gestión del
@@ -14,10 +13,47 @@ función. En la primer parte de esta unidad revisaremos algo más a
 profundidad a este modelo, para posteriormente ver los detalles de la
 gestión del espacio físico donde éstos están alojados.
 
-La abstracción que hoy conocemos como /archivos/ es una de las que más
-tiempo han vivido y se han mantenido a lo largo de la historia de la
-computación, sobreviviendo a lo largo de prácticamente todas las
-generaciones de sistemas operativos.
+La abstracción que hoy conocemos como /sistemas de archivos/ es una de
+las que más tiempo han vivido y se han mantenido a lo largo de la
+historia de la computación, sobreviviendo a lo largo de prácticamente
+todas las generaciones de sistemas operativos. Sin embargo, para poder
+analizar cómo es que el sistema operativo representa la información en
+el dispositivo físico, comenzaremos discutiendo cómo es que esta
+información es comprendida por los niveles más altos — Por los
+programas en espacio de usuario.
+
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Capas de abstracción para implementar los sistemas de archivos
+#+include: fig/capas_acceso_a_discos.org
+#+html: <p align="center">Capas de abstracción para implementar los sistemas de archivos</p></div>
+
+La información /cruda/ tiene que pasar una serie de
+transformaciones. Yendo de niveles superiores a niveles más bajos, un
+programa estructura sus datos en /archivos/, siguiendo el /formato/
+que resulte mas pertinente al tipo de información a representar. Un
+conjunto de archivos hoy en día es típicamente representado en una
+estructura de /directorios/, y aunque existen otros mecanismos para su
+organización, estos no están tan ampliamente difundidos. Y cuando un
+sistema opera con más de un dispositivo físico, encontraremos
+principalmente dos mecanismos para integrar a dichos dispositivos en
+un /sistema de archivos virtual/, brindnado al usuario una interfaz
+uniforme. Por último, los archivos son una estructura meramente lógica
+— Deben ser convertidos para ser representados en un /dispositivo
+orientado a bloques/ como los diversos tipos de unidades que conocemos
+–aunque esta nomenclatura es a veces incorrecta– como /discos/.
+
+Del diagrama presentado, pues, toca al objeto de nuestro estudio –el
+sistema operativo– recibir del espacio de usuario las llamadas al
+sistema que presentan la interfaz de archivos y directorios, integrar
+el sistema de archivos virtual, y traducir la información resultante a
+un sistema de archivos.
+
+En esta unidad tocaremos también algunos conceptos relacionados con
+los subsistemas de entrada y salida, aunque estos pertenecen
+mayormente a otras unidades, al igual que los controladores.
+
+* Concepto de archivo
 
 En primer término, un archivo es un /tipo de datos abstracto/ — Esto
 es, en programación moderna podríamos verlo como una estructura que

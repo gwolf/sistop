@@ -1,0 +1,33 @@
+#+begin_src dot :exports :file ltxpng/capas_acceso_a_discos.png
+graph G {
+	ratio=2;
+	layout = dot;
+	node [shape = box, fillcolor="#ffffff", style=filled];
+	ranksep=0.1;
+	aplic -- bibl_sist --
+	syscall -- virtfs -- sistema_arch -- subsist_es -- driver --
+	bus -- disco [style=invis];
+
+	subgraph cluster_usr {
+		bgcolor="#dddddd";
+		label = "Espacio de usuario";
+		aplic [label = "Aplicaciones"];
+		bibl_sist [label = "Bibliotecas del sistema"];
+	}
+	subgraph cluster_os {
+		bgcolor="#bbbbbb";
+		label = "Sistema operativo";
+		syscall [label = "Llamadas al sistema"];
+		virtfs [label = "Sistema de archivos virtual"];
+		sistema_arch [label = "Sistemas de archivos"];
+		subsist_es [label = "Subsistema de Entrada y Salida"];
+		driver [label = "Controladores"];
+	}
+	subgraph cluster_hw {
+		bgcolor="#999999";
+		label = "Hardware";
+		bus [label = "Bus de datos"];
+		disco [label = "Discos (duros, flexibles),\nunidades Flash, etc."];
+	}
+}
+#+end_src

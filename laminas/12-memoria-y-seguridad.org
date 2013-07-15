@@ -47,23 +47,7 @@ fuertemente:
 ** Vuelta a la organización de la memoria
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: height=0.5\textheight
-#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
-  max   +-------------------+
-        |  Pila de llamadas |
-        +---------+---------+
-        |         |         |
-        |         V         |
-        |  cGRE             |
-        |         ^         |
-        |         |         |
-        +---------+---------+
-        | Espacio de libres |
-        +-------------------+
-        | Sección de datos  |
-        +-------------------+
-        | Sección de texto  |
-  0     +-------------------+
-#+end_src
+#+include: fig/proceso_en_memoria.ditaa
 #+latex: \end{column}\begin{column}{0.4\textwidth}
   - Pila de llamadas
   - Espacio de /libres/
@@ -121,14 +105,7 @@ func:
 #+latex:\end{column}\end{columns}
 #+attr_latex: width=0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
-#+begin_src ditaa :file ltxpng/stackframe.png :cmdline -E
-  0x00000000 <----                   ----> 0xFFFFFFFF
-                                                  
-    +------------+--------+----+----+----+----+----+
-    | buffer2    |buffer1 | sfp| ret| a  | b  | c  |
-    +------------+--------+----+----+----+----+----+
-      12 bytes    8 bytes   4b   4b   4b   4b   4b
-#+end_src
+#+include: fig/stackframe.ditaa
 
 ** ¿Qué hizo el código compilado?
 - Los tres primeros =pushl=: /Debajo/ de la pila, agrega los tres
@@ -207,15 +184,7 @@ Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
   - De hecho, /no lo fue/
 #+attr_latex: width=0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
-#+begin_src ditaa :file ltxpng/overflow_500.png :cmdline -E
-  0x00000000 <----             ----> 0xFFFFFFFF
-                                                  
-      ----=----+----+----+----+----+----+
-     argc, argv| sfp| ret| buffer       |
-      ----=----+----+----+----+----+----+
-                 4b   4b   256 bytes
-   \0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#+end_src
+#+include: fig/overflow_500.ditaa
 
 ** ¿Qué significa nuestro =Segmentation fault=?
 - El =Segmentation fault= se debe a que la /dirección de retorno/ es
@@ -261,18 +230,7 @@ if (valid_user(usr, pass)) {
   programa ejecute código arbitrario
 #+attr_latex: width=0.7\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
-#+begin_src ditaa :file ltxpng/overflow_jump.png :cmdline -E
-  0x00000000 <----             ----> 0xFFFFFFFF
-            0xbffff9c0             0xbffff8b8
-               |                        |
-               V                        V
-      ----=----+----+----+----+----+----+
-     argc, argv| sfp| ret| buffer       |
-      ----=----+----+----+----+----+----+
-               | 4b   4b   256 bytes  ^
-               |                      |
-	       +--0xbffff8c0----------+
-#+end_src
+#+include: fig/overflow_jump.ditaa
 - El flujo de ejecución del proceso está comprometido
 - Tenemos 256 bytes para inyectar el /shellcode/ y ejecutar código
   arbitrario con los privilegios del proceso víctima

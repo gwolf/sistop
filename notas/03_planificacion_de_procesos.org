@@ -193,33 +193,7 @@ breve.]  tendríamos:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
-#+begin_src ditaa :file ltxpng/planificador.png :cmdline -E
-
-+----+----+----+----+----+----+----+   +----+----+----+----+----+----+----+----+----+----+
-|cGRE A                            |   |cBLK Núcleo                                      |
-+----+----+----+----+----+----+----+   +----+----+----+----+----+----+----+----+----+----+
-|
-|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
-|         |cRED B        |    |cYEL C                                                     |
-|         +----+----+----+    +----+----+----+----+----+----+----+----+----+----+----+----+
-0         |              5    |                  10                       15                       20
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-V    |    V    |    |    |    V    |    |    |    *    |    |    |    |    |    |    |    |    |    V
-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-|cGRE                    |cBLK     |cRED          |cBLK     |cYEL                    |cBLK     |cGRE|
-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-
-+----+----+----+----+
-|cBLU D             |
-+----+----+----+----+
-|
-20                      25                       30                       35                       40
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-V    *    |    |    |    |    |    |    |    |    |    |    |    |    *    |    |    |    *    |    |
-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-|cGRE|cBLK     |cYEL                    |cBLK     |cBLU               |cBLK     |cYEL     |cBLK     |
-+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planificador.ditaa
 #+html: <p align="center">Ejecución de cuatro procesos con <em>ticks</em> de 50 ciclos y cambios de contexto de 20 ciclos</p></div>
 
 Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
@@ -319,25 +293,7 @@ Consideremos los siguientes procesos: (Finkel 1988, p.35)
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Primero llegado, primero servido (FCFS)
-#+begin_src ditaa :file ltxpng/fcfs.png :cmdline -E
-  +--------------+                             +----+------------------------+
-  |cBLU  A       |                             |cBLK|cGRE      D             |
-  +--------------+                             +----+------------------------+
-  |                                            |
-  |    +---------+------------------------+    |
-  |    |cBLK     |cRED       B            |    |              +--------------+------------------------+
-  |    +---------+------------------------+    |              |cBLK          |cPNK        E           |
-  |    |                                       |              +--------------+------------------------+
-  |    |         +------------------------+---------+         |
-  |    |         |cBLK                    |cYEL C   |         |
-  |    |         +------------------------+---------+         |
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU          |cRED                    |cYEL     |cGRE                    |cPNK                    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_fcfs.ditaa
 #+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
 
 Si bien un esquema FCFS reduce al mínimo la /sobrecarga
@@ -387,26 +343,7 @@ los cambios de contexto), obtendríamos los siguientes resultados:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/)
-#+begin_src ditaa :file ltxpng/rr1.png :cmdline -E
-    A                                             D
-  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
-  |cBLU|cBLK|cBLU|cBLK     |cBLU|              |cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|cBLK|cGRE|
-  +----+----+----+---------+----+              +----+----+----+----+----+----+----+----+----+
-  |      B                                     |
-  |    +----+----+----+---------+----+----+----+----+----+
-  |    |cRED|cBLK|cRED|cBLK     |cRED|cBLK|cRED|cBLK|cRED|
-  |    +----+----+----+---------+----+----+----+----+----+
-  |    |            C                          |                E
-  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
-  |    |         |cBLK|cYEL|cBLK     |cYEL|    |              |cPNK|cBLK|cPNK|cBLK|cPNK|cBLK|cPNK|cPNK|
-  |    |         +----+----+---------+----+    |              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU|cRED|cBLU|cRED|cYEL|cBLU|cRED|cYEL|cRED|cGRE|cRED|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cGRE|cPNK|cPNK|
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_rr1.ditaa
 #+html: <p align="center">Ronda (<em>Round Robin</em>)</p></div>
 
 La /ronda/ puede ser ajustada modificando la duración de
@@ -444,27 +381,8 @@ un /quantum/ de 4 /ticks/, tendremos:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/), con $q=4$
-#+begin_src ditaa :file ltxpng/rr4.png :cmdline -E
-    A                                             D
-  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
-  |cBLU          |                             |cBLK|cGRE               |cBLK               |cGRE|
-  +----+----+----+                             +----+----+----+----+----+----+----+----+----+----+
-  |      B                                     |
-  |    +----+----+----+---------+----+----+----+----+
-  |    |cBLK     |cRED               |cBLK     |cRED|
-  |    +----+----+----+---------+----+----+----+----+
-  |    |            C                          |                E
-  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
-  |    |         |cBLK               |cYEL     |              |cBLK     |cPNK               |cBLK|cPNK|
-  |    |         +----+----+---------+---------+              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU          |cRED               |cYEL     |cRED|cGRE               |cPNK               |cGRE|cPNK|
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
-#+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+#+include: fig/planif_rr4.ditaa
+#+html: <p align="center">Ronda (<em>Round Robin</em>), con <em>q=4</em></p></div>
 
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
 respuesta, aumentarlo hasta convertirlo en un FCFS efectivo degenera
@@ -534,26 +452,7 @@ siguiente resultado:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: El proceso más corto a continuación (SPN)
-#+begin_src ditaa :file ltxpng/spn.png :cmdline -E
-    A                                             D
-  +----+----+----+                             +----+----+----+----+----+----+
-  |cBLU          |                             |cBLK|cGRE                    |
-  +----+----+----+                             +----+----+----+----+----+----+
-  |      B                                     |
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |cBLK               |cRED                    |
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |            C                          |                E
-  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
-  |    |         |cYEL     |                   |              |cBLK          |cPNK                    |
-  |    |         +----+----+                   |              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU          |cYEL     |cRED                    |cGRE                    |cPNK                    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_spn.ditaa
 #+html: <p align="center">El proceso más corto a continuación (SPN)</p></div>
 
 Como era de esperarse, SPN favorece a los procesos cortos. Sin
@@ -639,26 +538,7 @@ Veamos el comportamiento en nuestro ejemplo:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
-#+begin_src ditaa :file ltxpng/srr.png :cmdline -E
-  0 A  1    2    3                             0 D  2    3    4    5    6
-  +----+----+----+----+                        +----+----+----+----+----+----+
-  |cBLU|cBLU|cBLK|cBLU|                        |cBLK|cGRE|cGRE|cGRE|cGRE|cGRE|
-  +----+----+----+----+                        +----+----+----+----+----+----+
-  |    0 B  2    3    4    5    6    7    8    |9
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |cBLK|cRED|cBLK|cRED|cRED|cBLK|cRED|cBLK|cRED|
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |         0 C  2    4    6    7    8    |              0 E  2    4    6    7    8    9    10
-  |    |         +----+----+----+----+----+----+              +----+----+----+----+----+----+----+----+
-  |    |         |cBLK          |cYEL|cBLK|cYEL|              |cBLK          |cPNK|cPNK|cPNK|cPNK|cPNK|
-  |    |         +----+----+----+----+----+----+              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU|cBLU|cRED|cBLU|cRED|cRED|cYEL|cRED|cYEL|cRED|cGRE|cGRE|cGRE|cGRE|cGRE|cPNK|cPNK|cPNK|cPNK|cPNK|
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_srr.ditaa
 #+html: <p align="center">Ronda egoísta (SRR) con <em>a = 2</em> y <em>b = 1</em></p></div>
 
 Mientras $\frac{b}{a} < 1$, la prioridad de un proceso entrante
@@ -712,26 +592,7 @@ ejecuta:
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) básica
-#+begin_src ditaa :file ltxpng/fb_bas.png :cmdline -E
-  0 A       1                   2              0 D  1    2                   3              4
-  +----+----+----+----+----+----+----+         +----+----+----+----+----+----+----+----+----+----+
-  |cBLU|cBLK|cBLU|cBLK          |cBLU|         |cGRE|cGRE|cGRE|cBLK          |cGRE|cBLK     |cGRE|
-  +----+----+----+----+----+----+----+         +----+----+----+----+----+----+----+----+----+----+
-  |    0 B            1              2    3    |                                       4
-  |    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |    |cRED|cBLK     |cRED|cBLK     |cRED|cRED|cBLK                                   |cRED|
-  |    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |    |         0 C       1                   |              0 E  1    2          3             4
-  |    |         +----+----+----+              |              +----+----+----+----+----+----+----+----+
-  |    |         |cYEL|cBLK|cYEL|              |              |cPNK|cPNK|cPNK|cBLK|cPNK|cBLK     |cPNK|
-  |    |         +----+----+----+              |              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU|cRED|cBLU|cYEL|cRED|cYEL|cBLU|cRED|cRED|cGRE|cGRE|cGRE|cPNK|cPNK|cPNK|cGRE|cPNK|cRED|cGRE|cPNK|
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_fb_bas.ditaa
 #+html: <p align="center">Retroalimentación multinivel (FB) básica</p></div>
 
 Podemos observar que prácticamente todos los números apuntan a que
@@ -781,26 +642,7 @@ retroalimentación multinivel con un incremento exponencial al
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) con $q$ exponencial
-#+begin_src ditaa :file ltxpng/fb_exp.png :cmdline -E
-  0 A       1                                    D  0    1                        2
-  +----+----+----+----+                        +----+----+----+----+----+----+----+----+----+
-  |cBLU|cBLK|cBLU     |                        |cBLK|cGRE|cGRE     |cBLK          |cGRE     |
-  +----+----+----+----+                        +----+----+----+----+----+----+----+----+----+
-  |    0 B                 1              2    |
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |cRED|cBLK          |cRED     |cBLK|cRED     |
-  |    +----+----+----+----+----+----+----+----+----+
-  |    |           C  0              1         |                E  0    1                   2
-  |    |         +----+----+----+----+----+    |              +----+----+----+----+----+----+----+----+
-  |    |         |cBLK|cYEL|cBLK     |cYEL|    |              |cBLK|cPNK|cPNK     |cBLK     |cPNK     |
-  |    |         +----+----+----+----+----+    |              +----+----+----+----+----+----+----+----+
-  0    |         |         5                   |   10         |             15                       20
-  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-  V    V    |    V    |    |    |    |    |    V    |    |    V    |    |    |    |    |    |    |    |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-  |cBLU|cRED|cBLU     |cYEL|cRED     |cYEL|cRED     |cGRE|cGRE     |cPNK|cPNK     |cGRE     |cPNK     |
-  +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
-#+end_src
+#+include: fig/planif_fb_exp.ditaa
 #+html: <p align="center">Retroalimentación multinivel (FB) con <em>q</em> exponencial</p></div>
 
 Vemos en este caso que, a pesar de que esta estrategia favorece a los
@@ -1276,25 +1118,7 @@ estructura conocida como /pipeline/ (tubería):
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
-#+BEGIN_SRC ditaa :file ltxpng/pipeline.png :cmdline -E
-  Instrucción
-       |  +--------+--------+--------+--------+--------+
-    1 -+  | IF     | ID     | EX     | MEM    | WB cGRE|
-       |  +--------+--------+--------+--------+--------+--------+
-    2 -+           | IF     | ID     | EX     | MEMcGRE| WB     |
-       |           +--------+--------+--------+--------+--------+--------+
-    3 -+                    | IF     | ID     | EX cGRE| MEM    | WB     |
-       |                    +--------+--------+--------+--------+--------+--------+
-    4 -+                             | IF     | ID cGRE| EX     | MEM    | WB     |
-       |                             +--------+--------+--------+--------+--------+--------+
-    5 -+                                      | IF cGRE| ID     | EX     | MEM    | WB     |
-       |                                      +--------+--------+--------+--------+--------+
-       V
-            
-     Reloj +-------+-------+--------+---------+--------+--------+--------+--------+--------+--->
-           |       |       |        |         |        |        |        |        |        |
-           0       1       2        3         4        5        6        7        8        9  
-#+END_SRC
+#+include: fig/pipeline.ditaa
 #+html: <p align="center">Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un <em>pipeline</em></p></div>
 
 La complejidad de los procesadores actuales ha crecido ya por encima
@@ -1323,22 +1147,7 @@ el esquema.
 #+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
-#+BEGIN_SRC ditaa :file ltxpng/hyperthread.png :cmdline -E
-hilo 1      +----+----+----+----+----+----+----+----+----+----+
------------>|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
-            +----+----+----+----+----+----+----+----+----+----+
-
-hilo 0 +----+----+----+----+----+----+----+----+----+----+
------->|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|cGRE|cRED|
-       +----+----+----+----+----+----+----+----+----+----+
-
-tiempo 1    2    3    4    5    6    7    8    9    10   11   12
-       |    |    |    |    |    |    |    |    |    |    |    |
--------+----+----+----+----+----+----+----+----+----+----+----+--->
-+----+                   +----+
-|cGRE| Ciclo de cómputo  |cRED| Espera por memoria
-+----+                   +----+
-#+END_SRC
+#+include: fig/hyperthread.ditaa
 #+html: <p align="center">Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (<em>hyperthreaded</em>) se presenta como dos procesadores</p></div>
 
 Hay que recordar que, a pesar de que se /presenten/ como hilos

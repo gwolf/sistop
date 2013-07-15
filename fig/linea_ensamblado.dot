@@ -1,0 +1,19 @@
+#+begin_src dot :exports results :file ltxpng/linea_ensamblado.png
+digraph G {
+        layout = dot;
+        rankdir=LR;
+        inicio [shape=box,label="...",style=dotted];
+        fin [shape=box,label="...",style=dotted];
+        subgraph cluster_hilos {
+                color=blue;
+                nodesep=2;
+                hilo1 [shape=record,label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                hilo2 [shape=record,label="Hilo\n2|{<m>m|<n>n}"];
+                hilo3 [shape=record,label="Hilo\n3|{<w>w|<x>x|<y>y|<z>z}"];
+                hilo1:c -> hilo2:m;
+                hilo2:n-> hilo3:w;
+        }
+        inicio -> hilo1:a;
+        hilo3:z -> fin;
+}
+#+end_src

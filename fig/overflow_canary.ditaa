@@ -1,0 +1,10 @@
+#+begin_src ditaa :file ltxpng/overflow_canary.png :cmdline -E
+  0x00000000 <----                        ----> 0xFFFFFFFF
+                                  <----AAAAAAAAAAAAAAA...
+                           qR'z2a&5f50s
+      ----=----+----+----+--------------+--------------+
+     argc, argv| sfp| ret| canario cYEL | buffer cRED  |
+      ----=----+----+----+--------------+--------------+
+                 4b   4b   12 bytes        256 bytes
+
+#+end_src

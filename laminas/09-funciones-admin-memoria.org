@@ -184,28 +184,7 @@ Esto se traduce a:
 ** Registros base y límite: Ejemplo (2)
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
-#+begin_src ditaa :file ltxpng/base_a_limite.png :cmdline -E
-  1024K +-------------------+  0x100000
-        | Espacio cPNK      |
-        | Libre             |
-        |                   |
-        |                   |
-        |                   |
-        |                   |
-  556K  +-------------------+<-0x08b000<--569749 (base+límite)
-        | Proceso 3 cGRE    | +0x010000   +65536 (límite)
-  492K  +-------------------+<-0x07b000<--504214 (base)
-        |                   |
-        |                   |
-        | Proceso 2         |
-  256K  +-------------------+  0x040000
-        |                   |
-        | Proceso 1         |
-  128K  +-------------------+  0x020000
-        | Sistema Operativo |
-        | cBLU              |
-  0     +-------------------+  0x000000
-#+end_src
+#+include: fig/mem_base_a_limite.ditaa
 
 ** Registros base y límite: Ejemplo (3)
 #+begin_center
@@ -233,23 +212,7 @@ Comportamiento del MMU
   - Sección de texto
 #+latex: \end{column}\begin{column}{0.5\textwidth}
 #+attr_latex: height=0.5\textheight
-#+begin_src ditaa :file ltxpng/proceso_en_memoria.png :cmdline -E
-  max   +-------------------+
-        |  Pila de llamadas |
-        +---------+---------+
-        |         |         |
-        |         V         |
-        |  cGRE             |
-        |         ^         |
-        |         |         |
-        +---------+---------+
-        | Espacio de libres |
-        +-------------------+
-        | Sección de datos  |
-        +-------------------+
-        | Sección de texto  |
-  0     +-------------------+
-#+end_src
+#+include fig/proceso_en_memoria.png
 #+latex: \end{column}\end{columns}
 
 ** Sección de texto
@@ -343,49 +306,5 @@ Comportamiento del MMU
 ** Proceso de compilación y carga
 #+attr_latex: width=\textwidth
 #+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones  (Silberschatz, p.281)
-#+begin_src dot :exports results :file ltxpng/tipo_resol_direcc.png
-  digraph G {
-          rankdir = LR;
-          subgraph cluster0 {
-                  label="Tiempo de compilación";
-                  color=lightgray;
-		  style=filled;
-                  compilador;
-                  objmod;
-          }
-          subgraph cluster1 {
-                  label="Tiempo de carga";
-                  color=lightgray;
-		  style=filled;
-                  ligado;
-		  modulo;
-		  cargador;
-          }
-          subgraph cluster2 {
-                  label="Tiempo de ejecución";
-                  color=lightgray;
-		  style=filled;
-                  imagenram;
-          }
-          fuente -> compilador -> objmod -> ligado -> modulo -> cargador -> imagenram;
-          otrosobj -> ligado;
-          bibliosist -> cargador;
-          dll -> imagenram [label = "Carga dinámica"];
-
-          fuente [label="Programa\nfuente"];
-          compilador [label="Compilador o\nensamblador",
-                      shape = box];
-          objmod [label="Módulo\nobjeto"];
-          otrosobj [label="Otros\nobjetos"];
-          ligado [label="Editor de\nligado",
-                  shape = box];
-          modulo [label="Módulo\ncargable"];
-          bibliosist [label="Biblioteca\nde sistema"]
-          cargador [label="Cargador",
-                    shape = box];
-          dll [label="Biblioteca\nde sistema\nde carga\ndinámica"];
-          imagenram [label="Imagen del\nbinario en\nmemoria",
-                     shape = box];
-  }
-#+end_src
+#+include: fig/tipo_resol_direcc.dot
 

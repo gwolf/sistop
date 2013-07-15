@@ -7,7 +7,7 @@ publish_src_html = ./html/*
 publish_src_pdf = ./pdf/*
 publish_src_pdf = ./biblio/*
 
-dir_semestre = por_semestre/2013-2
+dir_semestre = por_semestre/2014-1
 dir_laminas = laminas
 
 idx_semestre = $(dir_semestre)/index.org
@@ -61,8 +61,8 @@ semestre:
 	echo '- [[./lista.html#sec-1][Asistencia]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-2][Tareas y participaciones]]' >> $(idx_semestre)
 	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
-	echo '- [[./lista.html#sec-5][Globales]]' >> $(idx_semestre)
-	echo '- [[./lista.html#sec-6][Finales para actas]]' >> $(idx_semestre)
+#	echo '- [[./lista.html#sec-5][Globales]]' >> $(idx_semestre)
+#	echo '- [[./lista.html#sec-6][Finales para actas]]' >> $(idx_semestre)
 	emacs --batch --visit=docente/lista.org --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
 	mv docente/lista.html $(dir_semestre)
 	echo '* Exámenes resueltos' >> $(idx_semestre)

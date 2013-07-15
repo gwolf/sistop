@@ -1,0 +1,27 @@
+#+begin_src dot :exports results :file ltxpng/directorio_DAG.png
+digraph G {
+  root -> home;
+
+  home -> usr1;
+  home -> usr2;
+
+  usr1 -> test_c1;
+  usr1 -> a_out;
+  usr1 -> proyecto;
+  usr2 -> tarea_c2;
+  usr2 -> proyecto;
+
+  proyecto -> README;
+  proyecto -> proy_c;
+
+  root [label="<raiz>", shape=box];
+  home [shape=box];
+  usr1 [shape=box];
+  usr2 [shape=box];
+  proyecto [shape=box];
+  a_out [label="a.out"];
+  test_c1 [label="test.c"];
+  tarea_c2 [label="tarea.c"];
+  proy_c [label="proy.c"];
+}
+#+end_src

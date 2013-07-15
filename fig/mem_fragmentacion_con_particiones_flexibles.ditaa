@@ -1,0 +1,26 @@
+#+begin_src ditaa :file ltxpng/fragmentacion_con_particiones_flexibles.png :cmdline -E
+  1024K +-------------------+  0x100000
+        | Espacio Libre cPNK|
+        |                   |
+        |                   |
+  832K  +-------------------+  0x0d0000
+        | Proceso 6         |
+        |                   |
+  704K  +-------------------+  0x0b0000
+        | Proceso 5         |
+        |                   |
+  556K  +-------------------+  0x08b000
+        | Espacio libre cPNK|
+  492K  +-------------------+  0x07b000
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        | Espacio Libre cPNK|
+  192K  +-------------------+  0x030000
+        | Proceso 4         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
+#+end_src

@@ -1,0 +1,23 @@
+#+begin_src ditaa :file ltxpng/compactacion_memoria.png :cmdline -E
+      +----------------+         +----------------+
+      | cPNK Libre     |         |                |
+      +----------------+         |                |
+      |                |         |                |
+      | Proceso 4 cF0F +------+  |                |
+      +----------------+      |  | cPNK Libre     |
+      |                |      |  |                |
+      | cPNK Libre     |      |  |                |
+      |                |      |  +----------------+
+      +----------------+      |  |                |
+      | Proceso 3 cYEL +----+ +->| Proceso 4 cF0F |
+      +----------------+    |    +----------------+
+      |                |    +--->| Proceso 3 cYEL |
+      | Proceso 2 cRED +--+      +----------------+
+      +----------------+  |      |                |
+      | cPNK Libre     |  +----->| Proceso 2 cRED |
+      +----------------+         +----------------+
+      | Proceso 1 cGRE |         | Proceso 1 cGRE |
+      +----------------+         +----------------+
+      | Sist. Oper.cBLU|         | Sist. Oper.cBLU|
+      +----------------+         +----------------+
+#+end_src

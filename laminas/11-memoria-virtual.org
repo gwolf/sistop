@@ -31,9 +31,9 @@
   - Completamente transparente al proceso
 
 ** Esquema general empleando memoria virtual
-#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual (Silberschatz, p.320)
+#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
 #+attr_latex: height=0.65\textheight
-[[../img/esquema_gral_mem_virtual.png]]
+#+include: fig/esquema_gral_mem_virtual.dot
 
 ** Pequeño cambio de nomenclatura
 - El /intercambio/ (swap) deja de ser un /último recurso/
@@ -291,32 +291,7 @@ Por ejemplo, a partir de la cadena de referencia:
 ** Primero en entrar, primero en salir (FIFO) (2)
 #+attr_latex: width=0.9\textwidth
 #+caption: Algoritmo FIFO de reemplazo de páginas: 15 fallos
-#+begin_src ditaa :file ltxpng/reemplazo_pag_fifo.png :cmdline -E
-  Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |     |     |     |     |
-   V     V     V     V           V     V     V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 | | 3 | | 2 | | 2 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 | | 0 | | 3 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-
-... Cadena de referencia ------->
-   0     3     2     1     2     0     1     7     0     1
-   |                 |     |                 |     |     |
-   V                 V     V                 V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 7 | | 7 | | 7 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 2 | | 2 | | 2 | | 1 | | 1 | | 1 | | 1 | | 1 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_fifo.ditaa
 
 ** Primero en entrar, primero en salir (FIFO) (3)
 - Típicamente programado empleando una lista ligada circular
@@ -358,31 +333,7 @@ S | 3 | | 3 | | 3 | | 3 | | 2 | | 2 | | 2 | | 2 | | 2 | | 1 |
 ** Algoritmo óptimo (OPT) o mínimo (MIN) (2)
 #+attr_latex: width=0.9\textwidth
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT): 9 fallos
-#+begin_src ditaa :file ltxpng/reemplazo_pag_opt.png :cmdline -E
-Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |           |
-   V     V     V     V           V           V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 4 | | 4 | | 4 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 3 | | 3 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-... Cadena de referencia ----------->
-   0     3     2     1     2     0     1     7     0     1
-   |                 |                       |
-   V                 V                       V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_opt.ditaa
 
 ** Algoritmo óptimo (OPT) o mínimo (MIN) (3)
 - Óptimo demostrado, pero no aplicable
@@ -404,31 +355,7 @@ S | 3 | | 3 | | 3 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
 ** Menos recientemente utilizado (LRU) (2)
 #+attr_latex: width=0.9\textwidth
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU): 12 fallos
-#+begin_src ditaa :file ltxpng/reemplazo_pag_lru.png :cmdline -E
-Cadena de referencia ----------->
-   7     0     1     2     0     3     0     4     2     3
-   |     |     |     |           |           |     |     |
-   V     V     V     V           V           V     V     V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 7 | | 7 | | 7 | | 2 | | 2 | | 2 | | 2 | | 4 | | 4 | | 4 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C |   | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 3 | | 3 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S |   | |   | | 1 | | 1 | | 1 | | 3 | | 3 | | 3 | | 2 | | 2 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-
-... Cadena de referencia ----------->
-  0     3     2     1     2     0     1     7     0     1
-  |                 |           |           |
-  V                 V           V           V
-M +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-A | 0 | | 0 | | 0 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 | | 1 |
-R +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-C | 3 | | 3 | | 3 | | 3 | | 3 | | 0 | | 0 | | 0 | | 0 | | 0 |
-O +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-S | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 2 | | 7 | | 7 | | 7 |
-  +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+
-#+end_src
+#+include: fig/reemplazo_pag_lru.ditaa
 
 ** Menos recientemente utilizado (LRU) (3)
 - Para nuestra cadena de referencia, resulta en el punto medio entre

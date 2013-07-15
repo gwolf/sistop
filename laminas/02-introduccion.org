@@ -339,39 +339,10 @@ xt_t$
 #+caption: Jerarquía de almacenamiento (Silberschatz, Galvin, Gagne; p. 11)
 [[../img/jerarquia.png]]
 ** Jerarquía de almacenamiento (vista más real)
-#+attr_latex: width=\textwidth
+#+attr_latex: height=0.7\textheight
+##+attr_latex: width=\textwidth
 #+caption: La realidad de los niveles es menos rígida... (e incluso esta representación admite varias mejorías)
-#+begin_src dot :file ltxpng/jearquia_memoria.png
-digraph G {
-	layout = dot;
-	node [shape = box];
-	rankdir = LR;
-	
-	Registros ;
-	Cache ;
-	Principal [label = "Memoria principal"];
-	Electr [label = "Disco electrónico"];
-	Magnet [label = "Disco magnético"];
-	Optico [label = "Disco óptico"];
-	Cinta [label = "Cintas magnéticas"];
-	
-	Registros -> Cache [dir = both];
-	
-	Cache -> Principal [dir = both];
-	
-	Principal -> Electr [dir = both];
-	Principal -> Magnet [dir = both];
-	
-	Electr -> Magnet [dir = both];
-	
-	Electr -> Optico [dir = both];
-	Magnet -> Optico [dir = both];
-	
-        Optico -> Cinta [dir = both];
-	Electr -> Cinta [dir = both, minlen=2];
-	Magnet -> Cinta [dir = both, minlen=2];
-}
-#+end_src
+#+include: fig/jerarquia_memoria.dot
 ** Jerarquía de almacenamiento
 #+BEGIN_CENTER
 #+latex: {\scriptsize
@@ -459,7 +430,7 @@ Paridad, Acarreo
 ** Flujo de control en una llamada al sistema
 #+attr_latex: width=\textwidth
 #+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Silberschatz, Galvin, Gagne; p.22)
-[[../img/llamada_al_sistema.png]]
+#+include: fig/llamada_al_sistema.dot
 ** Tipos de llamadas al sistema (1)
 #+BEGIN_CENTER
 Lista incompleta, meramente ejemplificando

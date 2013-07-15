@@ -1,0 +1,24 @@
+#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
+digraph G {
+	layout = neato;
+	1 [label = "1"];
+	2 [label = "2"];
+	3 [label = "3"];
+	4 [label = "4"];
+	5 [label = "5"];
+	6 [label = "6"];
+	7 [label = "7"];
+	A [label = "A", shape = box];
+	B [label = "B", shape = box];
+	C [label = "C", shape = box];
+	D [label = "D", shape = box];
+	E [label = "E", shape = box];
+	F [label = "F", shape = box];
+	A -> 1 -> B
+	3 -> B;
+	F -> 6 -> B;
+	2 -> B;
+	4 -> C -> 2;
+	C -> 5 -> E -> 7 -> D -> 4;
+}
+#+end_src

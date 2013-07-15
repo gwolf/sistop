@@ -88,22 +88,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 ** Esquematizando el ejemplo clásico
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
-#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
-digraph G {
-	layout = circo;
-
-	A [label = "Proceso\nA"];
-	B [label = "Proceso\nB"];
-	1 [label = "Unidad\n1", shape = box];
-	2 [label = "Unidad\n2", shape = box];
-
-	A -> 1 [label = "Asignada"];
-	B -> 2 [label = "Asignada"];
-	2 -> A [label = "Solicitada", style = dotted];
-	1 -> B [label = "Solicitada", style = dotted];
-}
-#+end_src
-
+#+include: fig/bloqueo_mutuo_simple.dot
 #+results:
 [[file:ltxpng/bloqueo_mutuo_simple.png]]
 
@@ -127,8 +112,10 @@ digraph G {
 - Conservadoras :: Controlan más el proceso de asignación de recursos
 
 ** Espectro liberal-conservador de políticas
-#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
-[[../img/deadlocks_conserv_lib.png]]
+#+attr_latex: width=\textwidth
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
+#+include: fig/deadlocks_conserv_lib.dot
+
 #+begin_center
 #+latex: {\scriptsize Volveremos a este diagrama hacia el final del tema}
 #+end_center
@@ -568,31 +555,7 @@ condiciones de Coffman /pueden presentarse/.
 ** Ejemplo 1
 #+attr_latex: width=0.6\textwidth
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
-
-#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
-digraph G {
-	layout = neato;
-	1 [label = "1"];
-	2 [label = "2"];
-	3 [label = "3"];
-	4 [label = "4"];
-	5 [label = "5"];
-	6 [label = "6"];
-	7 [label = "7"];
-	A [label = "A", shape = box];
-	B [label = "B", shape = box];
-	C [label = "C", shape = box];
-	D [label = "D", shape = box];
-	E [label = "E", shape = box];
-	F [label = "F", shape = box];
-	A -> 1 -> B
-	3 -> B;
-	F -> 6 -> B;
-	2 -> B;
-	4 -> C -> 2;
-	C -> 5 -> E -> 7 -> D -> 4;
-}
-#+end_src
+#+include: fig/deteccion_bloqueos.dot
 
 ** Resolviendo el ejemplo 1
 1. Reducimos por /B/, dado que actualmente no está esperando a ningún
@@ -705,8 +668,9 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Sin embargo...
 
 ** Recapitulando: Conservadores y liberales
-#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
-[[../img/deadlocks_conserv_lib.png]]
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
+#+attr_latex:width=\textwidth
+[[./ltxpng/deadlocks_conserv_lib.png]]
 
 ** El Algoritmo del avestruz
 - Mecanismo más frecuente utilizado por los sistemas operativos de

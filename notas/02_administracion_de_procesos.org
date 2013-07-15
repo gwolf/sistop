@@ -52,27 +52,7 @@ de ejecución. Estos son:
 #+html: <div class="figure">
 #+attr_latex: width=0.4\textwidth
 #+caption: Diagrama de transición entre los estados de un proceso
-#+begin_src dot :exports results :file ltxpng/estados_proceso.png
-digraph G {
-	layout = dot;
-	node [shape = box];
-
-	Nuevo;
-	Listo;
-	Ejecución;
-	Bloqueado;
-	Terminado;
-
-	Nuevo -> Listo [label = Admitir];
-	Listo -> Ejecución [weight = 2, label = "Activar\nejecución"];
-	Ejecución -> Listo [weight = -2, label = "Tiempo\nterminado"];
-	Ejecución -> Bloqueado [label = "Esperar\nevento"];
-	Bloqueado -> Listo [weight = 2, label = "Ocurrió\nevento"];
-	Ejecución -> Terminado [weight = 2];
-	Bloqueado -> Terminado [minlen = 2, weight = -2, style = dotted];
-	Listo -> Terminado [minlen = 2, weight = -2, style = dotted];
-}
-#+end_src
+#+include: fig/estados_proceso.dot
 
 #+results:
 [[file:ltxpng/estados_proceso.png]]
@@ -151,15 +131,17 @@ capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
 Si bien el sistema operativo no maneja multiprocesamiento, a través de
 los hilos de usuario sí podemos crear procesos con multitarea interna.
 
-Los procesos que implementan hilos ganan un poco en el rendimiento,
-pero mucho para compartir espacio de memoria sin tenerlo que
-establecer explícitamente a través de mecanismos de comunicación entre
-procesos. Muchas veces (dependiendo de la plataforma) los hilos de
-usuario utilizan multitarea cooperativa para pasar el control de un
-hilo a otro. Cualquier llamada al sistema /bloqueante/ (como obtener
-datos de un archivo para utilizarlos inmediatamente) interrumpirá la
-ejecución de todos los hilos, dado que el control de ejecución es
-entregado al sistema operativo.
+Los procesos que implementan hilos ganan un poco en el rendimiento
+gracias a no tener que reemplazar al PCB activo, pero además de esto,
+ganan mucho más por la ventaja de compartir espacio de memoria sin
+tener que establecerlo explícitamente a través de /mecanismos de
+comunicación entre procesos/ (/IPC/ — /Inter Process
+Communications/). Dependiendo de la plataforma, a veces los hilos de
+usuario inclusive utilizan multitarea cooperativa para pasar el
+control dentro de un mismo proceso. Cualquier llamada al sistema
+/bloqueante/ (como obtener datos de un archivo para utilizarlos
+inmediatamente) interrumpirá la ejecución de todos los hilos, dado que
+el control de ejecución es entregado al sistema operativo.
 
 El siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
@@ -176,7 +158,9 @@ recursos más comparable con una situación de multiproceso estándar.
 
 Hay tres patrones en los que caen generalmente los modelos de hilos;
 podemos emplear a más de uno de estos patrones en diferentes áreas de
-nuestra aplicación:
+nuestra aplicación, e incluso podemos /anidarlos/ (esto es, podríamos
+tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
+un /equipo de trabajo/):
 
 - Jefe / trabajador :: Un hilo tiene una tarea distinta de todos los
      demás: El hilo /jefe/ genera o recopila tareas que requieren ser
@@ -184,10 +168,24 @@ nuestra aplicación:
      /trabajadores/.
 
      Este modelo es el más común para procesos que implementan
-     servidores y para aplicaciones gráficas (GUIs), en que hay una
-     porción del programa (el hilo /jefe/) esperando a que ocurran
-     eventos externos. El jefe realiza poco trabajo, aunque puede
-     llevar contabilidad de los trabajos realizados.
+     servidores (es el modelo clásico del servidor Web /Apache/) y
+     para aplicaciones gráficas (GUIs), en que hay una porción del
+     programa (el hilo /jefe/) esperando a que ocurran eventos
+     externos. El jefe realiza poco trabajo, se limita a /invocar/ a
+     los trabajadores a hacer el trabajo /de verdad/; como mucho,
+     puede llevar contabilidad de los trabajos realizados.
+
+     Típicamente, los hilos realizan su operación, posiblemente
+     notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.4\textwidth
+     #+caption: Patrón de hilos jefe/trabajador
+#+include: fig/jefe_trabajador.dot
+
+     #+results:
+     [[file:ltxpng/jefe_trabajador.png]]
+     #+html: <p align="center">Patrón de hilos jefe/trabajador</p></div>
 
 - Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
@@ -198,6 +196,27 @@ nuestra aplicación:
      cálculo, dado que éste se irá ensamblando progresivamente, pedazo
      por pedazo.
 
+     Sus principales diferencias con el patrón /jefe/trabajador/
+     consisten en que el trabajo a realizar por cada uno de los hilos
+     se plantea en un principio, esto es, el paso de /división de
+     trabajo/ no es un hilo más, sino que prepara los datos para que
+     éstos sean lanzados en paralelo. Estos datos no son resultado de
+     /eventos independientes/ (como en el caso anterior), sino que
+     partes de un sólo cálculo. Por consecuencia, resulta natural que
+     en este modelo los resultados generados por los diferentes hilos
+     son /agregados/ o /totalizados/ al terminar su procesamiento. Los
+     hilos no /terminan/, sino que /son esperados/ y continúa la
+     ejecución lineal.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.5\textwidth
+     #+caption: Patrón de hilos /Equipo de trabajo/
+#+include: fig/equipo_trab.dot
+
+     #+results:
+     [[file:ltxpng/equipo_trab.png]]
+     #+html: <p align="center">Patrón de hilos <em>Equipo de trabajo</em></p></div>
+
 - Línea de ensamblado :: Si una tarea larga puede dividirse en pasos
      sobre bloques de la información total a procesar, cada hilo puede
      enfocarse a hacer sólo una tarea y pasarle los datos a otro hilo
@@ -206,10 +225,32 @@ nuestra aplicación:
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
 
-#+attr_html: height="308"
-#+attr_latex: width=0.7\textwidth
-#+caption: Esquematización de los modelos de hilos: Jefe/trabajador, Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
-[[./img/modelos_de_hilos.png]]
+     Un punto importante a tener en cuenta en una línea de ensamblado
+     es que, si bien los hilos trabajan de forma secuencial, pueden
+     estar ejecutándose paralelamente sobre bloques consecutivos de
+     información, eventos, etc.
+
+     Este patrón es claramente distinto de los dos anteriormente
+     presentados; si bien en los anteriores los diferentes hilos (a
+     excepción del hilo /jefe/) eran casi siempre idénticos, aunque
+     operando sobre distintos conjuntos de datos, en este caso son
+     completamente distintos.
+
+     #+html: <div class="figure">
+     #+attr_latex: width=0.6\textwidth
+     #+caption: Patrón de hilos /Línea de ensamblado/
+#+include: fig/linea_ensamblado.dot
+
+     #+results:
+     [[file:ltxpng/linea_ensamblado.png]]
+     #+html: <p align="center">Patrón de hilos <em>Línea de ensamblado</em></p></div>
+
+
+# #+attr_html: height="308"
+# #+attr_latex: width=0.7\textwidth
+# #+caption: Esquematización de los modelos de hilos: Jefe/trabajador,
+# Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
+# [[./img/modelos_de_hilos.png]]
 
 * Concurrencia
 
@@ -1842,22 +1883,7 @@ secuencia:
 #+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
-
-#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
-digraph G {
-	layout = circo;
-
-	A [label = "Proceso\nA"];
-	B [label = "Proceso\nB"];
-	1 [label = "Unidad\n1", shape = box];
-	2 [label = "Unidad\n2", shape = box];
-
-	A -> 1 [label = "Asignada"];
-	B -> 2 [label = "Asignada"];
-	2 -> A [label = "Solicitada", style = dotted];
-	1 -> B [label = "Solicitada", style = dotted];
-}
-#+end_src
+#+include: fig/bloqueo_mutuo_simple.dot
 
 #+results:
 [[file:ltxpng/bloqueo_mutuo_simple.png]]
@@ -1877,11 +1903,14 @@ cuando son solicitadas pueden ser vistas como /liberales/, en tanto
 que las que controlan más la asignación de recursos,
 /conservadoras/.
 
-#+attr_html: height="200"
-#+attr_latex: width=0.9\textwidth
-#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos (Finkel, 1988, p.128)
-[[./img/deadlocks_conserv_lib.png]]
+#+html: <div class="figure">
+#+attr_latex: width=\textwidth
+#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
+#+include: fig/deadlocks_conserv_lib.dot
 
+#+results:
+[[file:ltxpng/deadlocks_conserv_lib.png]]
+#+html: <p align="center">Espectro liberal—conservador de esquemas para evitar bloqueos</p></div>
 
 Las líneas principales que describen a las estrategias para enfrentar
 situaciones de bloqueo (La Red, p. 188):
@@ -2302,31 +2331,7 @@ sistema /en un momento dado/):
 #+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
-
-#+begin_src dot :exports results :file ltxpng/deteccion_bloqueos.png
-digraph G {
-	layout = neato;
-	1 [label = "1"];
-	2 [label = "2"];
-	3 [label = "3"];
-	4 [label = "4"];
-	5 [label = "5"];
-	6 [label = "6"];
-	7 [label = "7"];
-	A [label = "A", shape = box];
-	B [label = "B", shape = box];
-	C [label = "C", shape = box];
-	D [label = "D", shape = box];
-	E [label = "E", shape = box];
-	F [label = "F", shape = box];
-	A -> 1 -> B
-	3 -> B;
-	F -> 6 -> B;
-	2 -> B;
-	4 -> C -> 2;
-	C -> 5 -> E -> 7 -> D -> 4;
-}
-#+end_src
+#+include: fig/deteccion_bloqueos.dot
 
 #+html: <p align="center">Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado</p></div>
 
@@ -2471,7 +2476,7 @@ mencionamos únicamente de forma casual, evadiendo definiciones claras:
 definido. Podríamos, como mencionan nuestros ejemplos, hablar de los
 clásicos de acceso rival y secuencial: Impresoras, cintas, terminales
 seriales, etc. Sin embargo, también podemos ver como recursos a otras
-entidades administrads por el sistema operativo — Como el espacio
+entidades administradas por el sistema operativo — Como el espacio
 disponible de memoria o el tiempo de procesamiento, o incluso
 estructuras lógicas /creadas y gestionadas/ por el sistema operativo,
 como archivos, semáforos o monitores. Y para esos casos, prácticamente

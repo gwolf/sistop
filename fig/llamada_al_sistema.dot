@@ -1,0 +1,31 @@
+#+begin_src dot :exports results :file ltxpng/llamada_al_sistema.png
+digraph G {
+	rankdir = LR
+	subgraph cluster_user {
+		label = "Espacio de usuario";
+		color = "#ccffcc";
+		style = filled;
+		ejecucion [shape=box, label="Ejecución\ndel proceso..."];
+		llamada [shape=box, label="Llamada\nal sistema"];
+		espacio3 [style=invis];
+		retorno [shape=box, label="Regresa de\nla llamada\nal sistema"];
+		continua [shape=box, label="Continúa la\nejecución..."];
+		ejecucion -> llamada;
+		llamada -> espacio3 -> retorno [style=invis];
+		retorno -> continua;
+	}
+	subgraph cluster_kernel {
+		label = "Espacio de núcleo";
+		color="#ffcccc";
+		style=filled;
+		espacio1 [style=invis];
+		espacio2 [style=invis];
+		syscall [shape=box, label="Ejecución de\nla llamada\nal sistema"];
+		espacio5 [style=invis];
+		espacio4 [style=invis];
+		espacio1 -> espacio2 -> syscall -> espacio4 -> espacio5 [style=invis];
+	}
+	llamada -> syscall [label="Entrega ejecución\lal núcleo. Entra en\lmodo protegido."];
+	syscall -> retorno [label="Vuelve al\rflujo normal.\rSale de\rmodo protegido"];
+}
+#+end_src

@@ -1,0 +1,61 @@
+#+begin_src dot :exports results :file ltxpng/inconsistencias_fat.png
+digraph G
+{
+	node [style=filled, fillcolor=white];
+
+	subgraph cluster_fat {
+		node [shape = box, label = ""];
+		label = "Tabla de asignación"
+
+		{rank=same; 1 2 3 4} ->
+		{rank=same; 5 6 7 8} ->
+		{rank=same; 9 10 11 12} ->
+		{rank=same; 13 14 15 16} [style=invis];
+
+		2 -> 5 -> 1 -> 15;
+		15 [label="FF"];
+
+		3 -> 6 -> 9 -> 8 -> 4;
+		4 [label="FF"];
+
+		14 -> 7 -> 11;
+		11 [label="FF"];
+	}
+
+	subgraph cluster_dir {
+		label="directorio";
+		a [label = "archivo1.txt", fillcolor="#ffffcc"];
+		b [label = "a.out", fillcolor="#ccccff"];
+		c [label = "proyecto.c", fillcolor="#ffccff"];
+	}
+
+	subgraph cluster_leyenda {
+		style=invis;
+		c -> caja_cross -> caja_huerf [style=invis];
+		c -> txt_cross -> txt_huerf [style=invis];
+		caja_cross [label="", shape=box, fillcolor="#ffaaaa"];
+		caja_huerf [label="", shape=box, fillcolor="#ff3333"];
+		txt_cross [label="Archivo cruzado", shape=plaintext];
+		txt_huerf [label="Cadena perdida", shape=plaintext];
+	}
+
+	a -> 2;
+	b -> 3;
+	c -> 1;
+
+	2 [fillcolor="#ffffcc"];
+	5 [fillcolor="#ffffcc"];
+	1 [fillcolor="#ffaaaa"];
+	15 [fillcolor="#ffaaaa"];
+
+	3 [fillcolor="#ccccff"];
+	6 [fillcolor="#ccccff"];
+	9 [fillcolor="#ccccff"];
+	8 [fillcolor="#ccccff"];
+	4 [fillcolor="#ccccff"];
+
+	14 [fillcolor="#ff3333"];
+	7 [fillcolor="#ff3333"];
+	11 [fillcolor="#ff3333"];
+}
+#+end_src

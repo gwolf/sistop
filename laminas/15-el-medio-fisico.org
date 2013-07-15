@@ -250,24 +250,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Sin mejoría en confiabilidad
 #+attr_latex: width=\textwidth
 #+caption: Cinco discos organizados en RAID 0
-#+begin_src dot :exports results :file ltxpng/raid_0.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (5TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB"];
-                   5 [label = "Disco\n5: 1TB"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   3 -> 4 [label = "+"];
-                   4 -> 5 [label = "+"];
-          }
-  }
-#+end_src
+#+include: fig/raid_0.dot
 
 ** RAID 1: Espejo
 - Espacio total: Uno sólo de los volúmenes
@@ -275,18 +258,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Confiabilidad: Soporta la pérdida de un disco
 #+caption: Dos discos organizados en RAID 1
 #+attr_latex: width=0.6\textwidth
-#+begin_src dot :exports results :file ltxpng/raid_1.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (1TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   1 -> 2 [label = "=", dir = both];
-          }
-  }
-#+end_src
+#+include: fig/raid_1.dot
 
 ** RAID 5: Paridad dividida por bloques
 - Espacio total: Suma de los espacios de todas sus unidades /menos
@@ -297,27 +269,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Soporta la pérdida de un disco (cualquiera de ellos)
 #+attr_latex: width=0.9\textwidth
 #+caption: Cinco discos organizados en RAID 5
-#+begin_src dot :exports results :file ltxpng/raid_5.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (4TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB"];
-                   5 [label = "Disco\n5: 1TB", color="blue"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   3 -> 4 [label = "+"];
-                   1 -> 5 [color="blue", label = "PAR"];
-                   2 -> 5 [color="blue", label = "PAR"];
-                   3 -> 5 [color="blue", label = "PAR"];
-                   4 -> 5 [color="blue", label = "PAR"];
-          }
-  }
-#+end_src
+#+include: fig/raid_5.dot
 
 ** RAID 6: Paridad por redundancia P+Q
 - Espacio total: Suma de los espacios de todas sus unidades /menos
@@ -328,28 +280,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Soporta la pérdida de dos discos (cualquiera de ellos)
 #+attr_latex: width=0.6\textwidth
 #+caption: Cinco discos organizados en RAID 6
-#+begin_src dot :exports results :file ltxpng/raid_6.png
-  digraph G {
-          rankdir=LR;
-	  node [shape=circle];
-          subgraph cluster0 {
-                   label = "Volumen (3TB)";
-                   1 [label = "Disco\n1: 1TB"];
-                   2 [label = "Disco\n2: 1TB"];
-                   3 [label = "Disco\n3: 1TB"];
-                   4 [label = "Disco\n4: 1TB", color="green"];
-                   5 [label = "Disco\n5: 1TB", color="blue"];
-                   1 -> 2 [label = "+"];
-                   2 -> 3 [label = "+"];
-                   1 -> 4 [color="green", label = "PAR P"];
-                   2 -> 4 [color="green", label = "PAR P"];
-                   3 -> 4 [color="green", label = "PAR P"];
-                   1 -> 5 [color="blue", label = "PAR Q"];
-                   2 -> 5 [color="blue", label = "PAR Q"];
-                   3 -> 5 [color="blue", label = "PAR Q"];
-          }
-  }
-#+end_src
+#+include: fig/raid_6.dot
 
 ** Combinando niveles: RAID 1+0 (o RAID 10)
 #+latex: \begin{columns}\begin{column}{0.6\textwidth}
@@ -360,37 +291,7 @@ ya empleados hoy en día. Los principales en uso son:
 #+latex: \end{column} \begin{column}{0.4\textwidth}
 #+attr_latex: width=0.7\textwidth
 #+caption: Seis discos organizados en RAID 1+0
-#+begin_src dot :exports results :file ltxpng/raid_10.png
-  digraph G {
-	  node [shape=circle];
-	  
-          subgraph cluster_resulta {
-                  label = "Volumen RAID1\nresultante (3TB)";
-		  subgraph cluster_vol1 {
-			  label = "Subvolumen\nRAID0 1 (1TB)";
-			  1 -> 2 [label = "=", dir = both, color="blue"];
-		  }
-		  subgraph cluster_vol2 {
-			  label = "Subvolumen\nRAID0 2 (1TB)";
-			  3 -> 4 [label = "=", dir = both, color="blue"];
-		  }
-		  subgraph cluster_vol3 {
-			  label = "Subvolumen\nRAID0 3 (1TB)";
-			  5 -> 6 [label = "=", dir = both, color="blue"];
-		  }
-		  1 -> 3 [label = "+"];
-		  3 -> 5 [label = "+"];
-                  2 -> 4 [label = "+", style="dotted"];
-                  4 -> 6 [label = "+", style="dotted"];
-          }
-          1 [label = "Disco\n1: 1TB"];
-          2 [label = "Disco\n2: 1TB"];
-          3 [label = "Disco\n3: 1TB"];
-          4 [label = "Disco\n4: 1TB"];
-          5 [label = "Disco\n5: 1TB"];
-          6 [label = "Disco\n6: 1TB"];
-  }
-#+end_src
+#+include: fig/raid_10.dot
 #+latex: \end{column}\end{columns}
 
 ** Combinación inconveniente de RAID: 0+1
@@ -404,33 +305,5 @@ ya empleados hoy en día. Los principales en uso son:
 #+latex: \end{column} \begin{column}{0.4\textwidth}
 #+attr_latex: width=0.65\textwidth
 #+caption: Seis discos organizados en RAID 0+1
-#+begin_src dot :exports results :file ltxpng/raid_01.png
-  digraph G {
-	  node [shape=circle];
-	  rankdir = TB;
-
-          subgraph cluster_resulta {
-                  label = "Volumen RAID0\nresultante (3TB)";
-		  subgraph cluster_vol1 {
-			  label = "Subvolumen RAID1\n 1 (3TB)";
-			  1 -> 2 [label = "+"];
-			  2 -> 3 [label = "+"];
-		  }
-		  subgraph cluster_vol2 {
-			  label = "Subvolumen RAID1\n2 (3TB)";
-			  4 -> 5 [label = "+", style = dotted];
-			  5 -> 6 [label = "+", style = dotted];
-		  }
-		  1 -> 4 [label = "=", dir = both, color = blue];
-		  2 -> 5 [label = "=", dir = both, color = blue];
-		  3 -> 6 [label = "=", dir = both, color = blue];
-          }
-          1 [label = "Disco\n1: 1TB"];
-          2 [label = "Disco\n2: 1TB"];
-          3 [label = "Disco\n3: 1TB"];
-          4 [label = "Disco\n4: 1TB"];
-          5 [label = "Disco\n5: 1TB"];
-          6 [label = "Disco\n6: 1TB"];
-  }
-#+end_src
+#+include: fig/raid_01.dot
 #+latex: \end{column}\end{columns}

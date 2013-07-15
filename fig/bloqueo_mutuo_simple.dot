@@ -1,0 +1,15 @@
+#+begin_src dot :exports results :file ltxpng/bloqueo_mutuo_simple.png
+digraph G {
+	layout = circo;
+
+	A [label = "Proceso\nA"];
+	B [label = "Proceso\nB"];
+	1 [label = "Unidad\n1", shape = box];
+	2 [label = "Unidad\n2", shape = box];
+
+	A -> 1 [label = "Asignada"];
+	B -> 2 [label = "Asignada"];
+	2 -> A [label = "Solicitada", style = dotted];
+	1 -> B [label = "Solicitada", style = dotted];
+}
+#+end_src

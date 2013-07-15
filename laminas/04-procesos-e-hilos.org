@@ -67,27 +67,7 @@ de ejecución. Estos son:
 ** Estados de un proceso
 #+attr_latex: height=0.7\textheight
 #+caption: Diagrama de transición entre los estados de un proceso
-#+begin_src dot :exports results :file ltxpng/estados_proceso.png
-digraph G {
-	layout = dot;
-	node [shape = box];
-
-	Nuevo;
-	Listo;
-	Ejecución;
-	Bloqueado;
-	Terminado;
-
-	Nuevo -> Listo [label = Admitir];
-	Listo -> Ejecución [weight = 2, label = "Activar\nejecución"];
-	Ejecución -> Listo [weight = -2, label = "Tiempo\nterminado"];
-	Ejecución -> Bloqueado [label = "Esperar\nevento"];
-	Bloqueado -> Listo [weight = 2, label = "Ocurrió\nevento"];
-	Ejecución -> Terminado [weight = 2];
-	Bloqueado -> Terminado [minlen = 2, weight = -2, style = dotted];
-	Listo -> Terminado [minlen = 2, weight = -2, style = dotted];
-}
-#+end_src
+#+include: fig/estados_proceso.dot
 
 #+results:
 [[file:ltxpng/estados_proceso.png]]
@@ -180,6 +160,10 @@ programador se convierte en /podar/ ese no-determinismo.
 - Los hilos /trabajadores/ efectúan el trabajo.
 - Modelo común para procesos servidor, GUIs que procesan eventos
 - El jefe puede llevar la contabilidad de los trabajos realizados
+** Patrones de trabajo: Jefe / trabajador
+#+attr_latex: height=0.7\textheight
+#+caption: Patrón de hilos jefe/trabajador
+#+include: fig/jefe_trabajador.dot
 
 ** Patrones de trabajo: Equipo de trabajo
 - A partir de hilos idénticos
@@ -189,6 +173,11 @@ programador se convierte en /podar/ ese no-determinismo.
 - Puede combinarse con jefe/trabajador para generar
   previsualizaciones (la tarea se realiza progresivamente)
 
+** Patrones de trabajo: Equipo de trabajo
+#+attr_latex: height=0.7\textheight
+#+caption: Patrón de hilos /Equipo de trabajo/
+#+include: fig/equipo_trab.dot
+
 ** Patrones de trabajo: Línea de ensamblado
 - Una tarea larga que puede dividirse en pasos
 - Cada hilo se enfoca en una sóla tarea
@@ -196,10 +185,10 @@ programador se convierte en /podar/ ese no-determinismo.
 - Ayuda a mantener las rutinas simples de comprender
 - Permite continuar procesando datos cuando hay hilos esperando E/S
 
-** Patrones de trabajo: Esquematizando
-#+attr_latex: width=0.7\textwidth
-#+caption: Esquematización de los modelos de hilos: Jefe/trabajador, Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
-[[../img/modelos_de_hilos.png]]
+** Patrones de trabajo: Línea de ensamblado
+#+attr_latex: width=\textwidth
+#+caption: Patrón de hilos /Línea de ensamblado/
+#+include: fig/linea_ensamblado.dot
 
 * Los hilos para el sistema operativo
 

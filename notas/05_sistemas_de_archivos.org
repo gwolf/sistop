@@ -22,11 +22,9 @@ el dispositivo físico, comenzaremos discutiendo cómo es que esta
 información es comprendida por los niveles más altos — Por los
 programas en espacio de usuario.
 
-#+html: <div class="figure">
-#+attr_latex: width=\textwidth
+#+attr_latex: height=0.5\textheight
 #+caption: Capas de abstracción para implementar los sistemas de archivos
-#+include: fig/capas_acceso_a_discos.org
-#+html: <p align="center">Capas de abstracción para implementar los sistemas de archivos</p></div>
+[[./img/dot/capas_acceso_a_discos.png]]
 
 La información /cruda/ tiene que pasar una serie de
 transformaciones. Yendo de niveles superiores a niveles más bajos, un
@@ -451,11 +449,9 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      tendríamos que hacer /barridos secuenciales/ del archivo completo
      para cada una de las búsquedas.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso secuencial
-#+include: fig/acceso_secuencial.ditaa
-#+html: <p align="center">Archivo de acceso secuencial</p></div>
+[[./img/ditaa/acceso_secuencial.png]]
 
 - Acceso aleatorio :: El empleo de gestores como /SQLite/ u otros
      muchos motores de base de datos más robustos no nos exime de
@@ -474,11 +470,9 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      4875$ (=seek(FD, 4875)=) y leemos los siguientes 75 bytes en
      =registro= (=read(FD, *registro, 75)=).
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso aleatorio
-#+include: fig/acceso_aleatorio.ditaa
-#+html: <p align="center">Archivo de acceso aleatorio</p></div>
+[[./img/ditaa/acceso_aleatorio.png]]
 
 - Acceso relativo a índice :: En los últimos años se han popularizado
      los gestores de base de datos /no estructurados/ u /orientados a
@@ -519,11 +513,9 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      sincronía entre índice y datos, nos enfrentamos a una muy
      probable corrupción de datos.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
-#+include: fig/acceso_relativo_a_indice.ditaa
-#+html: <p align="center">Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura</p></div>
+[[./img/ditaa/acceso_relativo_a_indice.png]]
 
 ** Transferencias orientadas a bloques
 
@@ -646,14 +638,9 @@ File Directory/, /Directorio Maestro de Archivos/), y cada uno de los
 directorios derivados es un /UFD/ (/User File Directory/, /Directorio
 de Archivos de Usuario/).
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Directorio simple, limitado a un sólo nivel de profundidad
-#+include: fig/directorio_simple.dot
-
-#+results:
-[[file:ltxpng/directorio_simple.png]]
-#+html: <p align="center">Directorio simple, limitado a un sólo nivel de profundidad</p></div>
+[[./img/dot/directorio_simple.png]]
 
 Este esquema resuelve el problema principal del nombre global único:
 Antes de los directorios, cada usuario tenía que cuidar que los
@@ -675,14 +662,9 @@ arbitrarios. Esto permite que cada usuario (y que el administrador del
 sistema) estructure su información siguiendo criterios lógicos y
 piense en el espacio de almacenamiento como un espacio a largo plazo.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Directorio estucturado en árbol
-#+include: fig/directorio_arbol.dot
-
-#+results:
-[[file:ltxpng/directorio_arbol.png]]
-#+html: <p align="center">Directorio estructurado en árbol</p></div>
+[[./img/dot/directorio_arbol.png]]
 
 Junto con esta estructura nacen las /rutas de búsqueda/ (/search
 path/): Tanto los programas como las bibliotecas de sistema ahora
@@ -714,14 +696,9 @@ En un grafo dirigido, un mismo nodo puede tener varios directorios
 sea parte del directorio personal de dos usuarios. Esto es, /el mismo
 objeto/ está presente en más de un punto del árbol.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
-#+include: fig/directorio_DAG.dot
-
-#+results:
-[[file:ltxpng/directorio_DAG.png]]
-#+html: <p align="center">Directorio como un /grafo dirigido acíclico/: El directorio <tt>proyecto</tt> está tanto en el directorio <tt>/home/usr1</tt> como en el directorio <tt>/home/usr2</tt></p></div>
+[[./img/dot/directorio_DAG.png]]
 
 Un sistema de archivos puede permitir la organización como un /grafo
 dirigido/, aunque es común que la interfaz que presenta al usuario se
@@ -795,14 +772,9 @@ anterior más apegada a la realidad: En los sistemas operativos (tanto
 Unix como Windows), todo directorio tiene dos entradas especiales:
 Los directorios =.= y =..=
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido/, mostrando los /enlaces ocultos/ =.= y =..=
-#+include: fig/directorio_DAG_completo.dot
-
-#+results:
-[[file:ltxpng/directorio_DAG_completo.png]]
-#+html: <p align="center">Directorio como un /grafo dirigido/: El directorio <tt>proyecto</tt> está tanto en el directorio <tt>/home/usr1</tt> como en el directorio <tt>/home/usr2</tt></p></div>
+[[./img/dot/directorio_DAG_completo.png]]
 
 En todos los directorios, =.= es una liga dura al mismo directorio, y
 =..= es una liga al directorio padre. Claro está, como sólo puede
@@ -992,14 +964,9 @@ escrituras únicamente en el sistema ya montado; estas complican
 fuertemente algunos aspectos semánticos, por lo cual resultan poco
 comunes.]
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
-#+include: fig/puntos_de_montaje.dot
-
-#+results:
-[[file:ltxpng/puntos_de_montaje.png]]
-#+html: <p align="center">Árbol formado del montaje de <tt>sda1</tt> en la raiz, <tt>sda2</tt> como <tt>/usr</tt>, <tt>sdb1</tt> como <tt>/home</tt>, y el directorio virtual <tt>proc</tt></p></div>
+[[./img/dot/puntos_de_montaje.png]]
 
 La manera en que esto se presenta en sistemas Windows es muy
 distinta. Ahí, cada uno de los sistemas de archivos /detectados/
@@ -1028,14 +995,9 @@ Es posible modificar esta nomenclatura y configurar a los discos para
 estar en otra ubicación, pero muchas aplicaciones dependen ya de este
 comportamiento y configuración específicos.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Vista de un sistema de archivos Windows
-#+include: fig/montaje_windows.dot
-
-#+results:
-[[file:ltxpng/montaje_windows.png]]
-#+html: <p align="center">Vista de un sistema de archivos Windows</p></div>
+[[./img/dot/montaje_windows.png]]
 
 ** Sistemas de archivos remotos
 
@@ -1520,11 +1482,9 @@ esperarse en un formato que ha vivido tanto tiempo y ha pasado por
 tantas generaciones como FAT, algunos de estos campos han cambiado
 substancialmente sus significados:
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
-#+include: fig/entrada_directorio_fat.ditaa
-#+html: <p align="center">Formato de la entrada del directorio bajo FAT (Mohammed, 2007)</p></div>
+[[./img/ditaa/entrada_directorio_fat.png]]
 
 La extensión VFAT fue agregada con el lanzamiento de Windows 95. Esta
 extensión permitía que, si bien el nombre /real/ de un archivo
@@ -1680,11 +1640,9 @@ archivos/: Bastaría con la información que vimos que forma parte del
 directorio de FAT — La extensión del archivo y la dirección de su
 primer cluster.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
-#+include: fig/fs_asignacion_contigua.ditaa
-#+html: <p align="center">Asignción contigua de archivos: Directorio con inicio y longitud</p></div>
+[[./img/ditaa/fs_asignacion_contigua.png]]
 
 La principal ventaja de este mecanismo de asignación, claro está, es
 la simplicidad de su implementación. Brinda además la mejor velocidad
@@ -1740,11 +1698,9 @@ opera FAT (de hecho, esta tabla es la que le da su nombre). La tabla
 de asignación es un mapa de los clusters, representando a cada uno por
 el espacio necesario para guardar un apuntador.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
-#+include: fig/fs_asignacion_ligada.ditaa
-#+html: <p align="center">Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster</p></div>
+[[./img/ditaa/fs_asignacion_ligada.png]]
 
 Empleando asignación ligada, tenemos muchas ventajas. En primer lugar,
 desaparece la /fragmentación externa/.[fn:: El concepto que manejan los
@@ -1788,11 +1744,9 @@ es un desperdicio del 100% de espacio; para archivos más grandes, la
 sobrecarga relativa disminuye, pero se mantiene siempre superior a la
 de la asignación indexada.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.9\textwidth
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
-#+include: fig/fs_asignacion_indexada.ditaa
-#+html: <p align="center">Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)</p></div>
+[[./img/ditaa/fs_asignacion_indexada.png]]
 
 Un esquema de asignación indexada nos da un mejor manejo de caché que
 la asignación ligada: Si bien en dicho caso es común guardar copia de
@@ -1812,14 +1766,9 @@ implementación más común de este esquema es que, dependiendo del
 tamaño del archivo, se empleen apuntadores con los niveles de
 indirección que /vayan haciendo falta/.
 
-#+html: <div class="figure">
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)
 #+attr_latex: width=0.8\textwidth
-#+include: fig/fs_apuntadores_indirectos.dot
-
-#+results:
-[[file:ltxpng/fs_apuntadores_indirectos.png]]
-#+html: <p align="center">Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)</p></div>
+[[./img/dot/fs_apuntadores_indirectos.png]]
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
 esquema y únicamente tres indirecciones? Supongamos cantidades
@@ -2050,14 +1999,9 @@ principales (que no las únicas) inconsistencias son:
      el espacio está efectivamente bloqueado y, desde la perspectiva
      del usuario, inutilizado.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Inconsistencias en un sistema de archivos tipo FAT
-#+include: fig/inconsistencias_fat.dot
-
-#+results:
-[[file:ltxpng/inconsistencias_fat.png]]
-#+html: <p align="center">Inconsistencias en un sistema de archivos tipo FAT</p></div>
+[[./img/dot/inconsistencias_fat.png]]
 
 Cada sistema de archivos podrá presentar un distinto conjunto de
 inconsistencias ante los fallos, dependiendo de sus estructuras
@@ -2243,14 +2187,9 @@ situación inconsistente. En todo caso, tendríamos que indicar
 esta manera, incluso si el archivo ya había sido registrado, puede
 volverse a registrar sin peligro.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
-#+include: fig/fs_journaling.dot
-
-#+results:
-[[file:ltxpng/fs_journaling.png]]
-#+html: <p align="center">Sistema de archivos con bitácora</p></div>
+[[./img/dot/fs_journaling.png]]
 
 Este esquema es el más implementado hoy en día, y está presente en
 casi todos los sistemas de archivos modernos. Si bien con un sistema
@@ -2450,62 +2389,10 @@ Veamos, pues, de forma gráfica la respuesta que presentarían los
 distintos algoritmos ante la cadena de referencia dada, y procedamos a
 comparar a los algoritmos en cuestión.
 
-#+begin_comment
-#+tblname: mov_cabeza_por_algoritmo
-| Tiempo | FIFO | Despl FIFO | SSTF | Despl SSTF | SCAN | Despl SCAN | LOOK | Despl LOOK | C-SCAN | Despl C-SCAN |
-|--------+------+------------+------+------------+------+------------+------+------------+--------+--------------|
-|      0 |   53 |          0 |   53 |          0 |   53 |          0 |   53 |          0 |     53 |            0 |
-|      1 |   98 |         45 |   65 |         12 |   37 |         16 |   37 |         16 |     37 |           16 |
-|      2 |  183 |        130 |   67 |         14 |   14 |         39 |   14 |         39 |     14 |           39 |
-|      3 |   37 |        276 |   37 |         44 |    0 |         53 |   65 |         90 |    183 |          208 |
-|      4 |  122 |        361 |   14 |         67 |   65 |        118 |   67 |         92 |    124 |          267 |
-|      5 |   14 |        469 |   98 |        151 |   67 |        120 |   98 |        123 |    122 |          269 |
-|      6 |  124 |        579 |  122 |        175 |   98 |        151 |  122 |        147 |     98 |          293 |
-|      7 |   65 |        638 |  124 |        177 |  122 |        175 |  124 |        149 |     67 |          324 |
-|      8 |   67 |        640 |  183 |        236 |  124 |        177 |  183 |        208 |     65 |          326 |
-|      9 |      |            |      |            |  183 |        236 |      |            |        |              |
-#+TBLFM: @3$3..@10$3=@-1$3 + abs(@-1$2 - @0$2)::@3$5..@10$5=@-1$5 + abs(@-1$4 - @0$4)::@3$7..@11$7=@-1$7 + abs(@-1$6 - @0$6)::@3$9..@10$9=@-1$9 + abs(@-1$8 - @0$8)::@3$11..@10$11=@-1$11 + abs(@-1$10 - @0$10)
-#+end_comment
-
 
 #+attr_latex: width=0.9\textwidth
 #+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 53. Para SCAN, LOOK y C-SCAN, asumimos que iniciamos con la cabeza en dirección decreciente.
-#+begin_src gnuplot :var data=mov_cabeza_por_algoritmo :exports results :file ltxpng/mov_cabeza_por_algoritmo.png
-reset
-set term png fontscale 1.5 size 1024,768
-
-set multiplot
-
-set origin 0.0, 0.5
-set size 1, 0.5
-unset xlabel
-set ylabel 'Cilindro actual'
-set xtics nomirror
-set ytics nomirror
-set border 1+2
-unset key
-
-plot data using 1:2 with linespoints linetype rgb "#880000" linewidth 2, \
-     data using 1:4 with linespoints linetype rgb "#888800" linewidth 2, \
-     data using 1:6 with linespoints linetype rgb "#880088" linewidth 2, \
-     data using 1:8 with linespoints linetype rgb "#008888" linewidth 2, \
-     data using 1:10 with linespoints linetype rgb "#008800" linewidth 2
-
-set origin 0.0, 0.0
-set size 1, 0.5
-set xlabel 'Operaciones'
-set ylabel 'Cilindros totales recorridos'
-set key top left
-set xtics nomirror
-set ytics nomirror
-set border 1+2
-
-plot data using 1:3 with linespoints linetype rgb "#880000" linewidth 2 title 'FIFO', \
-     data using 1:5 with linespoints linetype rgb "#888800" linewidth 2 title 'SSTF', \
-     data using 1:7 with linespoints linetype rgb "#880088" linewidth 2 title 'SCAN', \
-     data using 1:9 with linespoints linetype rgb "#008888" linewidth 2 title 'LOOK', \
-     data using 1:11 with linespoints linetype rgb "#008800" linewidth 2 title 'C-SCAN'
-#+end_src
+[[./img/gnuplot/mov_cabeza_por_algoritmo.png]]
 
 - FIFO :: Al igual que cuando hablamos de algoritmos de asignación de
           procesador y de reemplazo de páginas, el primero y más
@@ -2940,7 +2827,7 @@ por cada uno de los discos que tengamos en el volumen.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 0
-#+include: fig/raid_0.dot
+[[./img/dot/raid_0.png]]
 
 Los discos que participan en un volumen RAID 0 no son sencillamente
 /concatenados/, sino que los datos son /divididos en franjas/ (en
@@ -2951,11 +2838,9 @@ uniforme entre todos los discos, y asegura que todas las
 transferencias mayores al tamaño de una franja provengan de más de un
 disco independiente.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.6\textwidth
 #+caption: División de datos en /franjas/
-#+include: fig/franjas_raid_0.ditaa
-#+html: <p align="center">División de datos en <em>franjas</em></p></div>
+[[./img/ditaa/franjas_raid_0.png]]
 
 La confiabilidad del volumen, sin embargo, disminuye
 respecto a si cada uno de los discos se manejara por separado: Basta
@@ -2985,7 +2870,7 @@ que hay que esperar a que ambos discos escriban la información.
 
 #+caption: Dos discos organizados en RAID 1
 #+attr_latex: width=0.3\textwidth
-#+include: fig/raid_1.dot
+[[./img/dot/raid_1.png]]
 
 Un arreglo RAID nivel 1 se construye típicamente con dos discos.
 
@@ -3012,11 +2897,9 @@ quien debe reemplazar el disco lo más pronto posible (dado que, de no
 hacerlo, la falla en un segundo disco resultará en la pérdida de toda
 la información).
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: División de datos en /franjas/, con paridad, para RAID 5
-#+include: fig/franjas_raid_5.ditaa
-#+html: <p align="center">División de datos en <em>franjas</em>, con paridad, para RAID 5</p></div>
+[[./img/ditaa/franjas_raid_5.png]]
 
 Dependiendo de la configuración, la velocidad de acceso de este nivel
 puede ser es ligeramente menor que la que obtendríamos de los discos
@@ -3044,7 +2927,7 @@ provendría del disco dañado.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 5
-#+include: fig/raid_5.dot
+[[./img/dot/raid_5.png]]
 
 Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
 aunque es común verlos más /anchos/, pues de este modo se desperdicia
@@ -3073,7 +2956,7 @@ implementar mayor complejidad, en caso de ser hardware dedicado.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Cinco discos organizados en RAID 6
-#+include: fig/raid_6.dot
+[[./img/dot/raid_6.png]]
 
 El nivel 6 de RAID puede implementarse con 4 o más unidades, y si
 bien el espacio dedicado a la redundancia se incrementa a dos discos,
@@ -3096,7 +2979,7 @@ demasiado espacio.
 
 #+attr_latex: width=0.7\textwidth
 #+caption: Seis discos organizados en RAID 1+0
-#+include: fig/raid_10.dot
+[[./img/dot/raid_10.png]]
 
 Con RAID nivel 10 creamos volúmenes que suman por franjas unidades en
 espejo (un volumen RAID 0 compuesto de varios volúmenes RAID 1). En
@@ -3120,7 +3003,7 @@ redundancia resulta mucho menor.
 
 #+attr_latex: width=0.65\textwidth
 #+caption: Seis discos organizados en RAID 0+1
-#+include: fig/raid_01.dot
+[[./img/dot/raid_01.png]]
 
 En este caso, nuestro arreglo soportará también el fallo de hasta $n
 \over 2$ de sus discos, pero únicamente si ocurren en el mismo volumen

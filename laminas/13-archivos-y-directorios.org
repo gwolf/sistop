@@ -367,7 +367,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 - Podemos /reposicionar/ al apuntador (/cabeza lectora/)
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso secuencial
-#+include: fig/acceso_secuencial.ditaa
+[[../img/ditaa/acceso_secuencial.png]]
 
 ** Usos para el acceso secuencial
 - El acceso secuencial es la forma /más natural/ de manipular archivos
@@ -406,7 +406,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 ** Archivo de acceso aleatorio
 #+attr_latex: width=\textwidth
 #+caption: Archivo de acceso aleatorio
-#+include: fig/acceso_aleatorio.ditaa
+[[../img/ditaa/acceso_aleatorio.png]]
 
 ** Acceso /relativo a índice/
 - A últimos años se han popularizado los /gestores de base de datos no
@@ -425,7 +425,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 ** Acceso /relativo a índice/
 #+attr_latex: width=\textwidth
 #+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
-#+include: fig/acceso_relativo_a_indice.ditaa
+[[../img/ditaa/acceso_relativo_a_indice.png]]
 
 ** Acerca del acceso /relativo a índice/
 - El índice entero puede típicamente mantenerse en memoria, el tiempo
@@ -548,7 +548,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 ** Directorios de /profundidad fija/
 #+attr_latex: width=\textwidth
 #+caption: Directorio simple, limitado a un sólo nivel de profundidad
-#+include: fig/directorio_simple.dot
+[[../img/dot/directorio_simple.png]]
 
 ** Directorios estructurados en /árbol/
 - Podemos verlo como paso natural obvio
@@ -560,7 +560,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 ** Directorios estructurados en /árbol/
 #+attr_latex: width=\textwidth
 #+caption: Directorio estucturado en árbol
-#+include: fig/directorio_arbol.dot
+[[../img/dot/directorio_arbol.png]]
 
 ** Consecuencias del directorio como un árbol
 - Cada usuario, y el sistema entero, estructura su información
@@ -585,12 +585,12 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 ** El directorio como un /grafo dirigido/
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
-#+include: fig/directorio_DAG.dot
+[[../img/dot/directorio_DAG.png]]
 
 ** El directorio como un /grafo dirigido/: detallando...
 #+attr_latex: width=0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/, mostrando los /enlaces ocultos/ =.= y =..=
-#+include: fig/directorio_DAG_completo.dot
+[[../img/dot/directorio_DAG_completo.png]]
 
 ** Detalles extra en los grafos dirigidos
 - En la gráfica anterior, aparecen dos entradas /curiosas/ en cada
@@ -759,7 +759,7 @@ Las ligas duras presentan dos restricciones principales:
 ** Un árbol con distintos sistemas de archivo /montados/
 #+attr_latex: width=\textwidth
 #+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
-#+include: fig/puntos_de_montaje.dot
+[[../img/dot/puntos_de_montaje.png]]
 
 ** Windows: sistema de archivos virtual de dos niveles
 - La estrategia empleada por Windows es muy distinta
@@ -778,7 +778,7 @@ Las ligas duras presentan dos restricciones principales:
 ** Visión del árbol en un sistema Windows
 #+attr_latex: height=0.7\textheight
 #+caption: Vista de un sistema de archivos Windows
-#+include: fig/montaje_windows.dot
+[[../img/dot/montaje_windows.png]]
 
 * Sistemas de archivos remotos
 ** La red y los sistemas de archivos

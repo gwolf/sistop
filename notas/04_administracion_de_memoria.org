@@ -119,11 +119,9 @@ más adelante en esta misma unidad]. El sistema operativo entonces
 procedería terminando la ejecución del proceso, reclamando todos los
 recursos que tuviera asignados y notificando a su usuario.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
-#+include: fig/mem_base_a_limite.ditaa
-#+html: <p align="center">Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite</p></div>
+[[./img/ditaa/mem_base_a_limite.png]]
 
 ** La memoria /caché/
 
@@ -221,11 +219,9 @@ relativa a su ejecución.
      pila ocupa la parte /más alta/ del espacio en memoria, y /crece
      hacia abajo/.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Regiones de la memoria para un proceso
-#+include: fig/proceso_en_memoria.ditaa
-#+html: <p align="center">Regiones de la memoria para un proceso</p></div>
+[[./img/ditaa/proceso_en_memoria.png]]
 
 
 ** Resolución de direcciones
@@ -280,14 +276,9 @@ mantiene en las instrucciones a ser ejecutadas por el proceso la
 etiqueta relativa al módulo actual, /inicio/ + 5986 bytes, y es
 resuelta cada vez que sea requerido.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
-#+include: fig/tipo_resol_direcc.dot
-
-#+results:
-[[file:ltxpng/tipo_resol_direcc.png]]
-#+html: <p align="center">Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)</p></div>
+[[./img/dot/tipo_resol_direcc.png]]
 
 * Asignación de memoria contigua
 
@@ -396,12 +387,9 @@ ejecución, cuando el sistema operativo comience a detectar un alto
 ejecución para que ocupen espacios contiguos, permitiendo unificar
 varios bloques libres en uno solo.
 
-#+html: <div class="figure">
-#+attr_html: height="250"
 #+attr_latex: width=0.6\textwidth
 #+caption: Compactación de la memoria de procesos en ejecución
-#+include: fig/compactacion_memoria.ditaa
-#+html: <p align="center">Compactación de la memoria de procesos en ejecución</p></div>
+[[./img/ditaa/compactacion_memoria.png]]
 
 La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
@@ -453,15 +441,9 @@ al descrito en el apartado anterior (registro base y
 desplazamiento). Claro está, esto debe también hacerse con apoyo del
 MMU.
 
-#+html: <div class="figure">
 #+caption: Ejemplo de segmentación
-#+attr_html: height="445"
 #+attr_latex: width=0.7\textwidth
-#+include: fig/segmentacion_de_memoria.dot
-
-#+results:
-file:ltxpng/segmentacion_de_memoria.png
-#+html: <p align="center">Ejemplo de segmentación</p></div>
+[[./img/dot/segmentacion_de_memoria.png]]
 
 Una de las implementaciones más obvias y directas de un espacio de
 memoria segmentado es asignar un segmento distinto a cada una de las
@@ -631,11 +613,9 @@ separar la dirección en memoria entre los primeros $m$ bits
 (referentes a la página) y los últimos $n$ bits (referentes al
 desplazamiento).
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
-#+include: fig/direccion_a_pag_y_despl.ditaa
-#+html: <p align="center">Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes</p></div>
+[[./img/ditaa/direccion_a_pag_y_despl.png]]
 
 Para poder realizar este mapeo, el MMU requiere de una /tabla de
 páginas/ (/page table/), que /resuelve/ la relación entre páginas y
@@ -643,11 +623,9 @@ marcos, convirtiendo la /dirección lógica/ (aquella que conoce el
 proceso) en la /dirección física/ (la ubicación en que /realmente/ se
 encuentra en la memoria del sistema).
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
-#+include: fig/hardware_de_paginacion.dot
-#+html: <p align="center">Esquema del proceso de paginación, ilustrando el rol del MMU</p></div>
+[[./img/dot/hardware_de_paginacion.png]]
 
 Podemos tomar como ejemplo para explicar este mecanismo el esquema
 presentado en el libro de Silberschatz, Galvin y Gagné. Este nos
@@ -657,11 +635,9 @@ la página es representada con los 3 bits /más significativos/ de la
 dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
-#+include: fig/ejemplo_de_paginacion.ditaa
-#+html: <p align="center">Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes (Silberschatz, p.292)</p></div>
+[[./img/ditaa/ejemplo_de_paginacion.png]]
 
 El proceso que se nos presenta tiene una visión de la memoria como la
 columna del lado izquierdo: Le parece que existen 4 páginas, y tiene
@@ -824,11 +800,9 @@ de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
 
-#+html: <div class="figure">
 #+caption: Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
 #+attr_latex: width=0.8\textwidth
-#+include: ./fig/paginacion_jerarquica.dot
-#+html: <p align="center">Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)</p></div>
+[[./img/dot/paginacion_jerarquica.png]]
 
 Este esquema funciona adecuadamente para equipos con direccionamiento
 de hasta 32 bits. Sin embargo, recordemos que cada nivel de páginas
@@ -894,11 +868,9 @@ modernos, los principales son =Qt= y =Gtk=); bibliotecas para el
 manejo de cifrado (=openssl=), compresión (=zlib=), imágenes
 (=libpng=, =libjpeg=), etc.].
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
-#+include: fig/memoria_compartida.ditaa
-#+html: <p align="center">Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.</p></div>
+[[./img/ditaa/memoria_compartida.png]]
 
 Claro está, para ofrecer este modelo, el sistema operativo debe poder
 garantizar que las páginas correspondientes a las /secciones de texto/
@@ -956,11 +928,9 @@ comparten /todas/ sus páginas de memoria — Sin embargo, siendo dos
 procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
-#+include: fig/cow_recien_hecho.ditaa
-#+html: <p align="center">Memoria de dos procesos inmediatamente después de la creación del proceso hijo por <tt>fork()</tt></p></div>
+[[./img/ditaa/cow_recien_hecho.png]]
 
 Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
 (/Copy on Write/ o /CoW/). Las páginas de memoria de ambos procesos
@@ -969,11 +939,9 @@ procesos modifica a cualquier dato en una de estas páginas, ésta se
 copia a un nuevo marco, y deja de ser una página compartida. El resto
 de las páginas seguirá siendo compartido.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
-#+include: fig/cow_pagina_modificada.ditaa
-#+html: <p align="center">Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.</p></div>
+[[./img/ditaa/cow_pagina_modificada.png]]
 
 Incluso cuando se ejecutan nuevos programas a través de =execve()=,
 es posible que una buena parte de la memoria se mantenga compartida,
@@ -1000,11 +968,9 @@ a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
 disco duro), a través de un esquema de /intercambio/ (/swap/).
 
-#+html: <div class="figure">
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
 #+attr_latex: width=0.7\textwidth
-#+include: fig/esquema_gral_mem_virtual.dot
-#+html: <p align="center">Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual</p></div>
+[[./img/dot/esquema_gral_mem_virtual.png]]
 
 Es importante apuntar que la memoria virtual es gestionada /de forma
 automática y transparente/ por el sistema operativo. No hablaríamos
@@ -1064,11 +1030,9 @@ memoria. Si el proceso intenta emplear una página que esté marcada
 como no válida, esto causa un fallo de página, que lleva a que el
 sistema operativo lo suspenda y traiga a memoria la página solicitada:
 
-#+html: <div class="figure">
 #+caption: Pasos que atraviesa la respuesta a un fallo de página
 #+attr_latex: width=0.6\textwidth
-#+include: fig/respuesta_a_fallo_de_pagina.dot
-#+html: <p align="center">Pasos que atraviesa la respuesta a un fallo de página</p></div>
+[[./img/dot/respuesta_a_fallo_de_pagina.png]]
 
 1. Verifica en el PCB si esta solicitud corresponde a una página que
    ya ha sido asignada a este proceso.
@@ -1261,22 +1225,10 @@ con algunas de cadenas de referencia y bajo ciertos algoritmos puede
 haber una /regresión/, en que aumentar la cantidad de marcos también
 aumenta la cantidad de fallos.
 
-#+begin_comment
-#+tblname: anomalia_de_belady
-| Marcos | Fallos |
-|--------+--------|
-|      1 |     12 |
-|      2 |     12 |
-|      3 |      9 |
-|      4 |     10 |
-|      5 |      5 |
-|      6 |      5 |
-|      7 |      5 |
-#+end_comment
-
 #+attr_latex: width=0.7\textwidth
+#+attr_html: height=320
 #+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
-#+include: fig/anomalia_belady.gnuplot
+[[./img/gnuplot/anomalia_belady.png]]
 
 Para los algoritmos que veremos a continuación, asumiremos una memoria
 con tres marcos, y con la siguiente cadena de referencia:
@@ -1298,11 +1250,9 @@ páginas de memoria (7, 0, 1) causarán fallos de página. La siguiente
 (2) causará uno, pero la quinta referencia (0) puede ser satisfecha
 sin requerir una nueva transferencia.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo FIFO de reemplazo de páginas
-#+include: fig/reemplazo_pag_fifo.ditaa
-#+html: <p align="center">Algoritmo FIFO de reemplazo de páginas.</p></div>
+[[./img/ditaa/reemplazo_pag_fifo.png]]
 
 La principal ventaja de este algoritmo es, como ya lo hemos
 mencionado, la simplicidad, tanto para programarlo como para
@@ -1336,11 +1286,9 @@ algoritmo, el enunciado será elegir como página víctima a aquella
 página que /no vaya a ser utilizada/ por un tiempo máximo.
 
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
-#+include: fig/reemplazo_pag_opt.ditaa
-#+html: <p align="center">Algoritmo óptimo de reemplazo de páginas (OPT)</p></div>
+[[./img/ditaa/reemplazo_pag_opt.png]]
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
 mantiene como curiosidad teórica porque requiere conocimiento a priori
@@ -1365,11 +1313,9 @@ ejecución.
 Cuando necesita elegir una página víctima, LRU elige la página que no
 ha sido empleada hace más tiempo
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
-#+include: fig/reemplazo_pag_lru.ditaa
-#+html: <p align="center">Algoritmo de reemplazo de páginas menos recientemente utilizadas (LRU)</p></div>
+[[./img/ditaa/reemplazo_pag_lru.png]]
 
 Para nuestra cadena de referencia, LRU genera 12 fallos, en el punto
 medio entre OPT y FIFO.
@@ -1768,9 +1714,9 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
-#+attr_html: height="382"
+#+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
-#+include: fig/hiperpaginacion.gnuplot
+[[./img/gnuplot/hiperpaginacion.png]]
 
 Los síntomas de la hiperpaginación son muy claros, y no son difíciles
 de detectar. ¿Qué estrategia puede emplear el sistema operativo una
@@ -1934,11 +1880,9 @@ func:
         subl $20,%esp
 #+end_src
 
-#+html: <div class="figure">
 #+attr_latex: width=0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
-#+include: fig/stackframe.ditaa
-#+html: <p align="center">Marco del stack con llamada a =func(1,2,3)= en x86-32</p></div>
+[[./img/ditaa/stackframe.png]]
 
 *** C y las funciones de manejo de cadenas
 
@@ -2020,11 +1964,9 @@ error exitosamente y detuvo la ejecución — Pero no lo hizo: El
 intentar procesarlo, sino después de terminar de hacerlo: Al llegar
 nuestro código al =return 0=.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
-#+include: fig/overflow_500.ditaa
-#+html: <p align="center">Estado de la memoria después del <tt>strcpy()</tt></p></div>
+[[./img/ditaa/overflow_500.png]]
 
 Para volver de una función a quien la invocó, incluso si dicha
 función es =main()=, lo que hace =return= es restaurar el viejo =SFP=
@@ -2097,11 +2039,9 @@ algo más complejo — Que ejecute código arbitrario que él
 proporicione. Para esto, el ataque más frecuente es brincar /hacia
 adentro del stack/.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
-#+include: fig/overflow_jump.ditaa
-#+html: <p align="center">Ejecutando el código arbitrario inyectado al buffer</p></div>
+[[./img/ditaa/overflow_jump.png]]
 
 Para hacerlo, si en vez de proporcionar simplemente una cadena
 suficientemente grande para sobrepasar el buffer le diéramos una
@@ -2185,11 +2125,9 @@ desbordamiento de buffer, el valor del /canario/ será reemplazado por
 basura, y el sistema podrá detener la ejecución del proceso
 comprometido antes de que brinde privilegios elevados al atacante.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.8\textwidth
 #+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
-#+include: fig/overflow_canary.png
-#+html: <p align="center">Marco de stack con un <em>canario</em> aleatorio protector de 12 bytes (<tt>qR'z2a&amp;5f50s</tt>): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.</p></div>
+[[./img/ditaa/overflow_canary.png]]
 
 Un atacante tiene dos mecanismos ante un sistema que requiere del
 canario: Uno es el atacar no directamente a la función en cuestión,
@@ -2252,7 +2190,7 @@ no fuera del alcance de los atacantes.
 # unless the govt gives you permission).
 #
 # So the first thing that comes to my mind is sysctl. If I wanted to
-# cofigure swap it would be with a kernel parameter. So running sysctl
+# configure swap it would be with a kernel parameter. So running sysctl
 # -a | grep swap throws me vm.swappiness = 60, and a little google
 # search tells me more about it.
 #

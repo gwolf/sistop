@@ -190,11 +190,9 @@ Si el tiempo que toma al sistema efectuar un cambio de contexto es de
 ordenamiento [[#Round%20Robin][de ronda]],[fn:: Claro está, veremos este ordenamiento en
 breve.]  tendríamos:
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
-#+include: fig/planificador.ditaa
-#+html: <p align="center">Ejecución de cuatro procesos con <em>ticks</em> de 50 ciclos y cambios de contexto de 20 ciclos</p></div>
+[[img/ditaa/planificador.ditaa]]
 
 Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
 cuyo trabajo en este espacio de tiempo finalizó junto con los
@@ -290,11 +288,9 @@ Consideremos los siguientes procesos: (Finkel 1988, p.35)
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     | 6.2 | 2.2 | 1.74 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Primero llegado, primero servido (FCFS)
-#+include: fig/planif_fcfs.ditaa
-#+html: <p align="center">Primero llegado, primero servido (FCFS)</p></div>
+[[img/ditaa/planif_fcfs.png]]
 
 Si bien un esquema FCFS reduce al mínimo la /sobrecarga
 administrativa/ (que incluye tanto al tiempo requerido por el
@@ -340,11 +336,9 @@ los cambios de contexto), obtendríamos los siguientes resultados:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     | 7.6 | 3.6 | 1.98 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/)
-#+include: fig/planif_rr1.ditaa
-#+html: <p align="center">Ronda (<em>Round Robin</em>)</p></div>
+[[img/ditaa/planif_rr1.png]]
 
 La /ronda/ puede ser ajustada modificando la duración de
 $q$. Conforme incrementamos $q$, la ronda tiende a convertirse en
@@ -378,11 +372,9 @@ un /quantum/ de 4 /ticks/, tendremos:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     | 7.2 | 3.2 | 1.88 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/), con $q=4$
-#+include: fig/planif_rr4.ditaa
-#+html: <p align="center">Ronda (<em>Round Robin</em>), con <em>q=4</em></p></div>
+[[img/ditaa/planif_rr4.png]]
 
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
 respuesta, aumentarlo hasta convertirlo en un FCFS efectivo degenera
@@ -449,11 +441,9 @@ siguiente resultado:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     | 5.6 | 1.6 | 1.32 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: El proceso más corto a continuación (SPN)
-#+include: fig/planif_spn.ditaa
-#+html: <p align="center">El proceso más corto a continuación (SPN)</p></div>
+[[img/ditaa/planif_spn.png]]
 
 Como era de esperarse, SPN favorece a los procesos cortos. Sin
 embargo, un proceso largo puede esperar mucho tiempo antes de ser
@@ -535,11 +525,9 @@ Veamos el comportamiento en nuestro ejemplo:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     | 6.6 | 2.6 | 1.79 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
-#+include: fig/planif_srr.ditaa
-#+html: <p align="center">Ronda egoísta (SRR) con <em>a = 2</em> y <em>b = 1</em></p></div>
+[[img/ditaa/planif_srr.png]]
 
 Mientras $\frac{b}{a} < 1$, la prioridad de un proceso entrante
 eventualmente alcanzará a la de los procesos aceptados, y comenzará a
@@ -589,11 +577,9 @@ ejecuta:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     |   9 |   5 | 2.16 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) básica
-#+include: fig/planif_fb_bas.ditaa
-#+html: <p align="center">Retroalimentación multinivel (FB) básica</p></div>
+[[img/ditaa/planif_fb_bas.png]]
 
 Podemos observar que prácticamente todos los números apuntan a que
 esta es una peor estrategia que las presentadas anteriormente — Los
@@ -639,11 +625,9 @@ retroalimentación multinivel con un incremento exponencial al
 |----------+-----------+-----+--------+-----+-----+-----+-----|
 | Promedio |           |   4 |        |     | 7   | 3   | 1.8 |
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) con $q$ exponencial
-#+include: fig/planif_fb_exp.ditaa
-#+html: <p align="center">Retroalimentación multinivel (FB) con <em>q</em> exponencial</p></div>
+[[img/ditaa/planif_fb_exp.png]]
 
 Vemos en este caso que, a pesar de que esta estrategia favorece a los
 procesos recién llegados, al /tick/ 3, 9 y 10, llegan nuevos procesos,
@@ -1115,11 +1099,9 @@ estructura conocida como /pipeline/ (tubería):
 - Acceso a datos (MEM)
 - Almacenamiento (Writeback, WB)
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
-#+include: fig/pipeline.ditaa
-#+html: <p align="center">Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un <em>pipeline</em></p></div>
+[[img/ditaa/pipeline.png]]
 
 La complejidad de los procesadores actuales ha crecido ya por encima
 de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
@@ -1144,11 +1126,9 @@ mercado como /hyper-threads/). Esto puede llevar a una mayor
 utilización del procesador, siguiendo patrones como el ilustrado en
 el esquema.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
-#+include: fig/hyperthread.ditaa
-#+html: <p align="center">Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (<em>hyperthreaded</em>) se presenta como dos procesadores</p></div>
+[[img/ditaa/hyperthread.png]]
 
 Hay que recordar que, a pesar de que se /presenten/ como hilos
 independientes, el rendimiento de cada uno depende de la secuencia

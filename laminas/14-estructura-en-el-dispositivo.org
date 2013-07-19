@@ -239,7 +239,7 @@ cuantos términos
 ** FAT: Entrada de directorio
 #+attr_latex: width=\textwidth
 #+caption: Formato de la entrada del directorio bajo FAT32 ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
-#+include: fig/entrada_directorio_fat.ditaa
+[[../img/ditaa/entrada_directorio_fat.png]]
 
 ** FAT: La extensión VFAT
 - Introducida junto con Windows 95 para permitir nombres de archivo largos
@@ -329,7 +329,7 @@ cuantos términos
 ** Asignación contigua de archivos
 #+attr_latex: height=0.65\textheight
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
-#+include: fig/fs_asignacion_contigua.ditaa
+[[../img/ditaa/fs_asignacion_contigua.png]]
 
 ** Asignación ligada
 - Puede proveerse mucho más flexibilidad al usuario si se permite la
@@ -350,7 +350,7 @@ cuantos términos
 ** Asignación ligada
 #+attr_latex: height=0.7\textheight
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
-#+include: fig/fs_asignacion_ligada.ditaa
+[[../img/ditaa/fs_asignacion_ligada.png]]
 
 ** Revisando la asignación ligada
 - Ventajas:
@@ -392,7 +392,7 @@ cuantos términos
 ** Asignación indexada
 #+attr_latex: height=0.6\textheight
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
-#+include: fig/fs_asignacion_indexada.ditaa
+[[../img/ditaa/fs_asignacion_indexada.png]]
 
 ** Apuntadores directos e indirectos
 - Al emplear asignación indexada, crece el espacio disponible en el
@@ -412,7 +412,7 @@ cuantos términos
 ** Apuntadores de indirección a varios niveles
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesario para cada cluster
 #+attr_latex: height=0.7\textheight
-#+include: fig/fs_apuntadores_indirectos.dot
+[[../img/dot/fs_apuntadores_indirectos.png]]
 
 ** La lógica de la indirección multinivel
 - Varios sistemas de archivos (la idea apareció originalmente en UFS,
@@ -551,7 +551,7 @@ cuantos términos
 ** FAT: Principales inconsistencias
 #+attr_latex: width=0.8\textwidth
 #+caption: Principales inconsistencias que pueden presentarse en los sistemas de archivos tipo FAT
-#+include: fig/inconsistencias_fat.dot
+[[../img/dot/inconsistencias_fat.png]]
 
 ** Problema generalizado a los distintos sistemas de archivos
 - Prácticamente todos los sistemas de archivos tienen que cuidar estos
@@ -663,7 +663,7 @@ inconsistentes:
 ** Sistemas de archivos con bitácora (/journaling file systems/)
 #+attr_latex: width=\textwidth
 #+caption: Sistema de archivos con bitácora
-#+include: fig/fs_journaling.dot
+[[../img/dot/fs_journaling.png]]
 
 ** Sistemas de archivos con bitácora (/journaling file systems/)
 - La bitácora /no incluye/ (por lo general) datos, /sólo metadatos/

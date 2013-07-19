@@ -49,14 +49,9 @@ de ejecución. Estos son:
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
 
-#+html: <div class="figure">
 #+attr_latex: width=0.4\textwidth
 #+caption: Diagrama de transición entre los estados de un proceso
-#+include: fig/estados_proceso.dot
-
-#+results:
-[[file:ltxpng/estados_proceso.png]]
-#+html: <p align="center">Diagrama de transición entre los estados de un proceso</p></div>
+[[img/dot/estados_proceso.png]]
 
 ** El bloque de control de proceso (PCB)
 
@@ -178,14 +173,9 @@ un /equipo de trabajo/):
      Típicamente, los hilos realizan su operación, posiblemente
      notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
 
-     #+html: <div class="figure">
      #+attr_latex: width=0.4\textwidth
      #+caption: Patrón de hilos jefe/trabajador
-#+include: fig/jefe_trabajador.dot
-
-     #+results:
-     [[file:ltxpng/jefe_trabajador.png]]
-     #+html: <p align="center">Patrón de hilos jefe/trabajador</p></div>
+     [[img/dot/jefe_trabajador.png]]
 
 - Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
@@ -208,14 +198,9 @@ un /equipo de trabajo/):
      hilos no /terminan/, sino que /son esperados/ y continúa la
      ejecución lineal.
 
-     #+html: <div class="figure">
      #+attr_latex: width=0.5\textwidth
      #+caption: Patrón de hilos /Equipo de trabajo/
-#+include: fig/equipo_trab.dot
-
-     #+results:
-     [[file:ltxpng/equipo_trab.png]]
-     #+html: <p align="center">Patrón de hilos <em>Equipo de trabajo</em></p></div>
+     [[img/dot/equipo_trab.png]]
 
 - Línea de ensamblado :: Si una tarea larga puede dividirse en pasos
      sobre bloques de la información total a procesar, cada hilo puede
@@ -236,14 +221,9 @@ un /equipo de trabajo/):
      operando sobre distintos conjuntos de datos, en este caso son
      completamente distintos.
 
-     #+html: <div class="figure">
      #+attr_latex: width=0.6\textwidth
      #+caption: Patrón de hilos /Línea de ensamblado/
-#+include: fig/linea_ensamblado.dot
-
-     #+results:
-     [[file:ltxpng/linea_ensamblado.png]]
-     #+html: <p align="center">Patrón de hilos <em>Línea de ensamblado</em></p></div>
+     [[img/dot/linea_ensamblado.png]]
 
 
 # #+attr_html: height="308"
@@ -1880,14 +1860,9 @@ secuencia:
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
    otro proceso (o queda en espera)
 
-#+html: <div class="figure">
 #+attr_latex: width=0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
-#+include: fig/bloqueo_mutuo_simple.dot
-
-#+results:
-[[file:ltxpng/bloqueo_mutuo_simple.png]]
-#+html: <p align="center">Esquema clásico de un bloqueo mutuo simple: Los procesos <em>A</em> y <em>B</em> esperan mutuamente para el acceso a las unidades de cinta <em>1</em> y <em>2</em>.</p></div>
+[[img/dot/bloqueo_mutuo_simple.png]]
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución. Veremos, pues, algunas
@@ -1903,14 +1878,9 @@ cuando son solicitadas pueden ser vistas como /liberales/, en tanto
 que las que controlan más la asignación de recursos,
 /conservadoras/.
 
-#+html: <div class="figure">
 #+attr_latex: width=\textwidth
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
-#+include: fig/deadlocks_conserv_lib.dot
-
-#+results:
-[[file:ltxpng/deadlocks_conserv_lib.png]]
-#+html: <p align="center">Espectro liberal—conservador de esquemas para evitar bloqueos</p></div>
+[[img/dot/deadlocks_conserv_lib.png]]
 
 Las líneas principales que describen a las estrategias para enfrentar
 situaciones de bloqueo (La Red, p. 188):
@@ -2328,12 +2298,9 @@ sistema /en un momento dado/):
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
 
-#+html: <div class="figure">
 #+attr_latex: width=0.7\textwidth
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
-#+include: fig/deteccion_bloqueos.dot
-
-#+html: <p align="center">Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado</p></div>
+[[img/dot/deteccion_bloqueos.png]]
 
 De la gráfica /Detección de ciclos denotando bloqueos/, podríamos proceder:
 

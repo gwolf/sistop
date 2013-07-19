@@ -1,4 +1,3 @@
-#+begin_src gnuplot :exports results :file ltxpng/hiperpaginacion.png
 reset
 clear
 set term png size 800,400 fontscale 1.5
@@ -48,4 +47,3 @@ set lmargin 0
 set rmargin 2
 set xrange[3:100]
 plot (1/x)
-#+end_src

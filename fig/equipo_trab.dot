@@ -7,9 +7,9 @@ digraph G {
         union [shape=box, label="Agregación de resultados"];
         subgraph cluster_hilos {
                 color=blue;
-                hilo1 [shape=record;label="Hilo\n1|{<a>a|<b>b|<c>c}"];
-                hilo2 [shape=record;label="Hilo\n2|{<a>a|<b>b|<c>c}"];
-                hilo3 [shape=record;label="Hilo\n3|{<a>a|<b>b|<c>c}"];
+                hilo1 [shape=record, label="Hilo\n1|{<a>a|<b>b|<c>c}"];
+                hilo2 [shape=record, label="Hilo\n2|{<a>a|<b>b|<c>c}"];
+                hilo3 [shape=record, label="Hilo\n3|{<a>a|<b>b|<c>c}"];
         }
         inicio -> division;
         division -> hilo1:a [label="Datos 1"];

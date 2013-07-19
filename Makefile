@@ -106,4 +106,38 @@ push_beamer:
 push_semestre: semestre
 	rsync -av --delete ./$(dir_semestre)/* $(publish_dest)/$(dir_semestre)
 
+
+fig: fig_dot fig_ditaa fig_gnuplot
+clean_fig: clean_dot clean_ditaa clean_gnuplot
+
+DOT_FIGS = $(wildcard fig/*.dot)
+DOT_IMGS = $(patsubst fig/%.dot,img/dot/%.png,$(DOT_FIGS))
+img/dot/%.png: fig/%.dot
+	@[ -d img/dot ] || mkdir img/dot
+	dot -Tpng $(patsubst img/dot/%.png,fig/%.dot,$@) > $@
+fig_dot: $(DOT_IMGS)
+clean_dot:
+	-rm -f $(DOT_IMGS)
+
+DITAA_FIGS = $(wildcard fig/*.ditaa)
+DITAA_IMGS = $(patsubst fig/%.ditaa,img/ditaa/%.png,$(DITAA_FIGS))
+img/ditaa/%.png: fig/%.ditaa
+	@[ -d img/ditaa ] || mkdir img/ditaa
+	ditaa -E -o $(patsubst img/ditaa/%.png,fig/%.ditaa,$@) $@
+fig_ditaa: $(DITAA_IMGS)
+clean_ditaa:
+	-rm -f $(DITAA_IMGS)
+
+GNUPLOT_FIGS = $(wildcard fig/*.gnuplot)
+GNUPLOT_IMGS = $(patsubst fig/%.gnuplot,img/gnuplot/%.png,$(GNUPLOT_FIGS))
+img/gnuplot/%.png: fig/%.gnuplot
+	@[ -d img/gnuplot ] || mkdir img/gnuplot
+	gnuplot $(patsubst img/gnuplot/%.png,fig/%.gnuplot,$@) > $@
+fig_gnuplot: $(GNUPLOT_IMGS)
+clean_gnuplot:
+	-rm -f $(GNUPLOT_IMGS)
+
+
 all: pdf html beamer
+
+.PHONY: pdf html clean push

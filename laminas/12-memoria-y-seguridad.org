@@ -47,7 +47,7 @@ fuertemente:
 ** Vuelta a la organización de la memoria
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: height=0.5\textheight
-#+include: fig/proceso_en_memoria.ditaa
+[[../img/ditaa/proceso_en_memoria.png]]
 #+latex: \end{column}\begin{column}{0.4\textwidth}
   - Pila de llamadas
   - Espacio de /libres/
@@ -105,7 +105,7 @@ func:
 #+latex:\end{column}\end{columns}
 #+attr_latex: width=0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
-#+include: fig/stackframe.ditaa
+[[../img/ditaa/stackframe.png]]
 
 ** ¿Qué hizo el código compilado?
 - Los tres primeros =pushl=: /Debajo/ de la pila, agrega los tres
@@ -184,7 +184,7 @@ Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
   - De hecho, /no lo fue/
 #+attr_latex: width=0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
-#+include: fig/overflow_500.ditaa
+[[../img/ditaa/overflow_500.png]]
 
 ** ¿Qué significa nuestro =Segmentation fault=?
 - El =Segmentation fault= se debe a que la /dirección de retorno/ es
@@ -230,7 +230,7 @@ if (valid_user(usr, pass)) {
   programa ejecute código arbitrario
 #+attr_latex: width=0.7\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
-#+include: fig/overflow_jump.ditaa
+[[../img/ditaa/overflow_jump.png]]
 - El flujo de ejecución del proceso está comprometido
 - Tenemos 256 bytes para inyectar el /shellcode/ y ejecutar código
   arbitrario con los privilegios del proceso víctima

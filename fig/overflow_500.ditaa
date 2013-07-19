@@ -1,9 +1,8 @@
-#+begin_src ditaa :file ltxpng/overflow_500.png :cmdline -E
   0x00000000 <----             ----> 0xFFFFFFFF
-                                                  
+
       ----=----+----+----+----+----+----+
      argc, argv| sfp| ret| buffer       |
       ----=----+----+----+----+----+----+
                  4b   4b   256 bytes
      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#+end_src
+

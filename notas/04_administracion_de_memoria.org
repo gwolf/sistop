@@ -658,7 +658,6 @@ dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
 #+html: <div class="figure">
-#+attr_html: height="477"
 #+attr_latex: width=0.5\textwidth
 #+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
 #+include: fig/ejemplo_de_paginacion.ditaa
@@ -799,7 +798,9 @@ más comunes es emplear la entrada /menos recientemente utilizada/
 referencia; esto tiene como consecuencia necesaria que debe haber un
 mecanismo que contabilice los accesos dentro del TLB (lo cual agrega
 tanto latencia como costo); otro mecanismo (con obvias desventajas) es
-el reemplazar una página al azar.
+el reemplazar una página al azar. Veremos con mayor detalle más
+adelante algunos de los mecanismos más empleados para este fin,
+comparando sus puntos a favor y en contra.
 
 *** Subdividiendo la tabla de páginas
 
@@ -823,10 +824,11 @@ de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
 
-#+caption: Paginación en dos niveles (Silberschatz, p. 300)
-#+attr_html: height="495"
-#+attr_latex: width=0.6\textwidth
-[[./img/paginacion_jerarquica.png]]
+#+html: <div class="figure">
+#+caption: Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
+#+attr_latex: width=0.8\textwidth
+#+include: ./fig/paginacion_jerarquica.dot
+#+html: <p align="center">Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)</p></div>
 
 Este esquema funciona adecuadamente para equipos con direccionamiento
 de hasta 32 bits. Sin embargo, recordemos que cada nivel de páginas
@@ -1062,10 +1064,11 @@ memoria. Si el proceso intenta emplear una página que esté marcada
 como no válida, esto causa un fallo de página, que lleva a que el
 sistema operativo lo suspenda y traiga a memoria la página solicitada:
 
-#+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
-#+attr_html: height="466"
-#+attr_latex: width=0.7\textwidth
-[[./img/respuesta_a_fallo_de_pagina.png]]
+#+html: <div class="figure">
+#+caption: Pasos que atraviesa la respuesta a un fallo de página
+#+attr_latex: width=0.6\textwidth
+#+include: fig/respuesta_a_fallo_de_pagina.dot
+#+html: <p align="center">Pasos que atraviesa la respuesta a un fallo de página</p></div>
 
 1. Verifica en el PCB si esta solicitud corresponde a una página que
    ya ha sido asignada a este proceso.
@@ -1257,6 +1260,23 @@ marcos disponibles tendremos una menor cantidad de fallos de página,
 con algunas de cadenas de referencia y bajo ciertos algoritmos puede
 haber una /regresión/, en que aumentar la cantidad de marcos también
 aumenta la cantidad de fallos.
+
+#+begin_comment
+#+tblname: anomalia_de_belady
+| Marcos | Fallos |
+|--------+--------|
+|      1 |     12 |
+|      2 |     12 |
+|      3 |      9 |
+|      4 |     10 |
+|      5 |      5 |
+|      6 |      5 |
+|      7 |      5 |
+#+end_comment
+
+#+attr_latex: width=0.7\textwidth
+#+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
+#+include: fig/anomalia_belady.gnuplot
 
 Para los algoritmos que veremos a continuación, asumiremos una memoria
 con tres marcos, y con la siguiente cadena de referencia:
@@ -1750,7 +1770,7 @@ disco duro. El sistema completo avanza cada vez más lento.
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="382"
 #+attr_latex: width=0.7\textwidth
-[[./img/thrashing.png]]
+#+include: fig/hiperpaginacion.gnuplot
 
 Los síntomas de la hiperpaginación son muy claros, y no son difíciles
 de detectar. ¿Qué estrategia puede emplear el sistema operativo una

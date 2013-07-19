@@ -94,9 +94,9 @@
   - Si no está presente, causa un /fallo de página/
 
 ** Respuesta a un fallo de página
-#+caption: Pasos para responder a un fallo de página (Silberschatz, p.325)
+#+caption: Pasos que atraviesa la respuesta a un fallo de página
 #+attr_latex: height=0.75\textheight
-[[../img/respuesta_a_fallo_de_pagina.png]]
+#+include: fig/respuesta_a_fallo_de_pagina.dot
 
 ** Pasos para atender a un fallo de página
 1. Verificar en PCB: ¿Esta página ya fue asignada al proceso? (¿es válida?)
@@ -320,10 +320,22 @@ Por ejemplo, a partir de la cadena de referencia:
 [[../img/expectativa_fallas_contra_marcos.png]]
 
 ** Anomalía de Belady: Comportamiento de FIFO
+#+begin_comment
+#+tblname: anomalia_de_belady
+| Marcos | Fallos |
+|--------+--------|
+|      1 |     12 |
+|      2 |     12 |
+|      3 |      9 |
+|      4 |     10 |
+|      5 |      5 |
+|      6 |      5 |
+|      7 |      5 |
+#+end_comment
+
 #+attr_latex: height=0.6\textheight
 #+caption: El algoritmo FIFO presenta la anomalía de Belady con la cadena de referencia 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
-[[../img/belady_fifo.png]]
-
+#+include: fig/anomalia_belady.gnuplot
 
 ** Algoritmo óptimo (OPT) o mínimo (MIN) (1)
 - Interes casi puramente téórico
@@ -720,7 +732,7 @@ En inglés, /thrashing/ (literal: /paliza/)
 ** ¿Cómo se ve la hiperpaginación?
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
 #+attr_latex: width=0.8\textwidth
-[[../img/thrashing.png]]
+#+include: fig/hiperpaginacion.gnuplot
 
 ** Respondiendo a la hiperpaginación
 - Los síntomas son muy claros

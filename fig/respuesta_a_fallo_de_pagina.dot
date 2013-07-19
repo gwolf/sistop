@@ -1,0 +1,17 @@
+#+begin_src dot :exports results :file ltxpng/respuesta_a_fallo_de_pagina.png
+digraph G {
+	instruc [shape=record, label="Instrucciones\na ejecutar\n(procesador)|{...|<acceso>Carga dirección P2}"];
+	tabla [shape=record, label="Tabla de páginas\n(MMU)|{P1|dir1}|{<p2>P2|<dir2>-}|{P3|dir3}|{P4|-}|..."];
+
+	sistop [label="Sistema\noperativo"];
+	sec [shape=record, label="Almacenamiento\nsecundario\n(disco)|{||||}|{||||}|{||||}|{<aqui>||||}"];
+	memfis [shape=record, label="Memoria\nfísica|{dir3|dir1|<libre>Libre|Libre|dir5}"];
+
+	instruc:acceso -> tabla:p2 [label = "1: Referencia"];
+	tabla:dir2 -> sistop [label = "2: Atrapa fallo\nde página"];
+	sistop -> sec:aqui [label = "3: La página está\nen almacenamiento\nsecundario"];
+	sec:aqui -> memfis:libre [label="4: Carga a un\nespacio libre de\nmemoria la página\nfaltante"];
+	memfis:libre -> tabla:dir2 [label = "5: Actualiza la\ntabla de páginas"];
+	tabla:p2 -> instruc:acceso [label = "6: Vuelve a\nintentar la\ninstrucción"];
+}
+#+end_src

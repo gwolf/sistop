@@ -1814,7 +1814,7 @@ indirección que /vayan haciendo falta/.
 
 #+html: <div class="figure">
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: width=0.8\textwidth
 #+include: fig/fs_apuntadores_indirectos.dot
 
 #+results:
@@ -2359,7 +2359,7 @@ creciendo con el paso de los años — Esto explica la aparente
 contradicción de que los discos más chicos físicamente tenían más
 capacidad que los más grandes.
 
-#+caption: Principales formatos de disco flexible en el mercado
+#+caption: Principales formatos de disco flexible que se popularizaron en el mercado
 |-----------------------+-------------+---------------+--------------|
 |                       |  8 pulgadas | 5.25 pulgadas | 3.5 pulgadas |
 |-----------------------+-------------+---------------+--------------|
@@ -2379,15 +2379,16 @@ entre 20 y 50 veces más rápida que los discos flexibles — Entre 4,200 y
 rotacional de entre 2 y 7.14 milisegundos..
 
 Además, a excepción de algunos modelos tempranos, los discos duros
-constituyen un paquete cerrado que incluye las cabezas de lectura y
-escritura, y toda la electrónica de control. Esto permite que los
-discos duros tengan densidades de almacenamiento y velocidades de
-transmisión muy superiores a la de los discos flexibles: Los primeros
-discos duros que se comercializaron para computadoras personales eran
-de 10MB (aproximadamente 70 discos flexibles de su época), y
-actualmente hay ya discos de 4TB. La velocidad máxima de transferencia
-sostenida hoy en día es superior a los 100MB por segundo, 100 veces
-más rápido que la última generación de discos flexibles.
+constituyen un paquete cerrado y sellado que incluye las cabezas de
+lectura y escritura, y toda la electrónica de control. Esto permite
+que los discos duros tengan densidades de almacenamiento y velocidades
+de transmisión muy superiores a la de los discos flexibles: Los
+primeros discos duros que se comercializaron para computadoras
+personales eran de 10MB (aproximadamente 70 discos flexibles de su
+época), y actualmente hay ya discos de 4TB. La velocidad máxima de
+transferencia sostenida hoy en día es superior a los 100MB por
+segundo, 100 veces más rápido que la última generación de discos
+flexibles.
 
 Para medir la eficiencia de un disco duro, el otro dato importante es
 el tiempo que toma la cabeza en moverse a través de la superficie del
@@ -2445,72 +2446,152 @@ hipotético de 200 cilindros, la cadena de solicitudes /98, 183, 37,
 122, 14, 124, 65, 67/, y teniendo la cabeza al inicio de la operación
 en el cilindro 53.
 
-Al igual que cuando hablamos de algoritmos de asignación de procesador
-y de reemplazo de páginas, el primero y más sencillo de implementar es
-el /FIFO/ — /Primero en llegar, primero en servirse/. Este algoritmo puede
-verse como muy /justo/, aunque sea muy poco eficiente: El movimiento
-total de cabezas para el caso planteado es de 640 cilindros,
-equivalente a poco más que recorrer de extremo a extremo el disco
-completo tres veces. Esto es, despreciando la demora rotacional y el
-tiempo que le toma al brazo detenerse por completo antes de volver a
-moverse, esta lectura tomaría un mínimo de 60ms, siendo el recorrido
-completo del disco 20ms.
+Veamos, pues, de forma gráfica la respuesta que presentarían los
+distintos algoritmos ante la cadena de referencia dada, y procedamos a
+comparar a los algoritmos en cuestión.
 
-Podemos encontrar al causante de buena parte de esta demora en la
-quinta posición de la cadena de referencia: Entre solicitudes para el
-cilindro 122 y 124, tenemos una solicitud al 14, que significa un
-desplazamiento de $(122-14) + (124-14) = 218$ sectores.
+#+begin_comment
+#+tblname: mov_cabeza_por_algoritmo
+| Tiempo | FIFO | Despl FIFO | SSTF | Despl SSTF | SCAN | Despl SCAN | LOOK | Despl LOOK | C-SCAN | Despl C-SCAN |
+|--------+------+------------+------+------------+------+------------+------+------------+--------+--------------|
+|      0 |   53 |          0 |   53 |          0 |   53 |          0 |   53 |          0 |     53 |            0 |
+|      1 |   98 |         45 |   65 |         12 |   37 |         16 |   37 |         16 |     37 |           16 |
+|      2 |  183 |        130 |   67 |         14 |   14 |         39 |   14 |         39 |     14 |           39 |
+|      3 |   37 |        276 |   37 |         44 |    0 |         53 |   65 |         90 |    183 |          208 |
+|      4 |  122 |        361 |   14 |         67 |   65 |        118 |   67 |         92 |    124 |          267 |
+|      5 |   14 |        469 |   98 |        151 |   67 |        120 |   98 |        123 |    122 |          269 |
+|      6 |  124 |        579 |  122 |        175 |   98 |        151 |  122 |        147 |     98 |          293 |
+|      7 |   65 |        638 |  124 |        177 |  122 |        175 |  124 |        149 |     67 |          324 |
+|      8 |   67 |        640 |  183 |        236 |  124 |        177 |  183 |        208 |     65 |          326 |
+|      9 |      |            |      |            |  183 |        236 |      |            |        |              |
+#+TBLFM: @3$3..@10$3=@-1$3 + abs(@-1$2 - @0$2)::@3$5..@10$5=@-1$5 + abs(@-1$4 - @0$4)::@3$7..@11$7=@-1$7 + abs(@-1$6 - @0$6)::@3$9..@10$9=@-1$9 + abs(@-1$8 - @0$8)::@3$11..@10$11=@-1$11 + abs(@-1$10 - @0$10)
+#+end_comment
 
-#+attr_latex: width=0.6\textwidth
-#+attr_html: width=429 height=285
-#+caption: Planificación de disco FIFO (Silberschatz, p. 464)
-[[./img/algoritmo_disco_fifo.png]]
 
-Ahora bien, si el factor que impone la principal demora es el
-movimiento de la cabeza, el segundo algoritmo busca reducir al mínimo
-el movimiento de la cabeza: /SSTF/ (/Shortest Seek Time First/,
-/Tiempo de búsqueda más corto a continuación/) es el equivalente en
-este ámbito del /Shortest Job First/ que vimos en planificación de
-procesos — con la ventaja de que no estamos prediciendo
-comportamiento futuro, sino que tenemos ya la lista de solicitudes
-pendientes. Empleando SSTF, el tiempo de desplazamiento para este
-caso se reduce a tan sólo 236 cilindros — muy cerca del mínimo
-absoluto posible.
+#+attr_latex: width=0.9\textwidth
+#+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 53. Para SCAN, LOOK y C-SCAN, asumimos que iniciamos con la cabeza en dirección decreciente.
+#+begin_src gnuplot :var data=mov_cabeza_por_algoritmo :exports results :file ltxpng/mov_cabeza_por_algoritmo.png
+reset
+set term png fontscale 1.5 size 1024,768
 
-Una desventaja de SSTF es que puede llevar a la inanición: Si hay una
-gran densidad de solicitudes para cilindros en determinada zona del
-disco, una solicitud para un cilindro alejado puede quedar a la espera
-indefinidamente.
+set multiplot
 
-#+attr_html: width=617 height=430
-#+attr_latex: width=0.6\textwidth
-#+caption: Planificación de disco SSTF (Tiempo más corto a continuación) (Silberschatz, p. 465)
-[[./img/algoritmo_disco_sstf.png]]
+set origin 0.0, 0.5
+set size 1, 0.5
+unset xlabel
+set ylabel 'Cilindro actual'
+set xtics nomirror
+set ytics nomirror
+set border 1+2
+unset key
 
-El tercer algoritmo es conocido coloquialmente como /el algoritmo del
-elevador/ (/SCAN/). Este algoritmo busca evitar la inanición,
-minimizando al mismo tiempo el movimiento de las cabezas. Su lógica es
-que la cabeza debe recorrer el disco de extremo a extremo, atendiendo
-a todas las solicitudes que haya pendientes en su camino. Si bien los
-recorridos para ciertos patrones pueden resultar superiores a los que
-daría SSTF, la garantía de que ningún proceso esperará
-indefinidamente lo hace muy atractivo.
+plot data using 1:2 with linespoints linetype rgb "#880000" linewidth 2, \
+     data using 1:4 with linespoints linetype rgb "#888800" linewidth 2, \
+     data using 1:6 with linespoints linetype rgb "#880088" linewidth 2, \
+     data using 1:8 with linespoints linetype rgb "#008888" linewidth 2, \
+     data using 1:10 with linespoints linetype rgb "#008800" linewidth 2
 
-Una modificación a este algoritmo sería, cada vez que la cabeza se
-detenga para satisfacer una solicitud, verificar si hay alguna otra
-solicitud pendiente en la /dirección actual/, y de no ser así,
-emprender el camino de regreso sin llegar a la orilla del disco. Esta
-modificación es frecuentemente descrita como /LOOK/.
+set origin 0.0, 0.0
+set size 1, 0.5
+set xlabel 'Operaciones'
+set ylabel 'Cilindros totales recorridos'
+set key top left
+set xtics nomirror
+set ytics nomirror
+set border 1+2
 
-Atender la cadena de referencia con la que estamos trabajando bajo
-SCAN, asumiendo un estado inicial /descendente/ (esto es, la cabeza
-está en el cilindro 53 y va bajando) da un recorrido total de 236
-cilindros; empleando LOOK, se reduce a 208 cilindros.
+plot data using 1:3 with linespoints linetype rgb "#880000" linewidth 2 title 'FIFO', \
+     data using 1:5 with linespoints linetype rgb "#888800" linewidth 2 title 'SSTF', \
+     data using 1:7 with linespoints linetype rgb "#880088" linewidth 2 title 'SCAN', \
+     data using 1:9 with linespoints linetype rgb "#008888" linewidth 2 title 'LOOK', \
+     data using 1:11 with linespoints linetype rgb "#008800" linewidth 2 title 'C-SCAN'
+#+end_src
 
-#+attr_html: width="514" height="344"
-#+attr_latex: width=0.6\textwidth
-#+caption: Planificación de disco SCAN (elevador)  (Silberschatz, p. 466)
-[[./img/algoritmo_disco_scan.png]]
+- FIFO :: Al igual que cuando hablamos de algoritmos de asignación de
+          procesador y de reemplazo de páginas, el primero y más
+          sencillo de implementar es el /FIFO/ — /Primero en llegar,
+          primero en servirse/. Este algoritmo puede verse como muy
+          /justo/, aunque sea muy poco eficiente: El movimiento total
+          de cabezas para el caso planteado es de 640 cilindros,
+          equivalente a poco más que recorrer de extremo a extremo el
+          disco completo tres veces. Esto es, despreciando la demora
+          rotacional y el tiempo que le toma al brazo detenerse por
+          completo antes de volver a moverse, esta lectura tomaría un
+          mínimo de 60ms, siendo el recorrido completo del disco 20ms.
+
+	  Podemos encontrar al causante de buena parte de esta demora en la
+	  quinta posición de la cadena de referencia: Entre solicitudes para el
+	  cilindro 122 y 124, tenemos una solicitud al 14, que significa un
+	  desplazamiento de $(122-14) + (124-14) = 218$ sectores.
+
+- SSTF :: Ahora bien, si el factor que impone la principal demora es
+          el movimiento de la cabeza, el segundo algoritmo busca
+          reducir al mínimo el movimiento de la cabeza: /SSTF/
+          (/Shortest Seek Time First/, /Tiempo de búsqueda más corto a
+          continuación/) es el equivalente en este ámbito del
+          /Shortest Job First/ que vimos en planificación de procesos
+          — con la ventaja de que no estamos prediciendo
+          comportamiento futuro, sino que tenemos ya la lista de
+          solicitudes pendientes. Empleando SSTF, el tiempo de
+          desplazamiento para este caso se reduce a tan sólo 236
+          cilindros — muy cerca del mínimo absoluto posible.
+
+	  Una desventaja de SSTF es que puede llevar a la inanición:
+          Si hay una gran densidad de solicitudes para cilindros en
+          determinada zona del disco, una solicitud para un cilindro
+          alejado puede quedar a la espera
+          indefinidamente. Ejemplifiquemo esto con una serie de
+          solicitudes distinta a la que estamos tomando como
+          referencia: Si el sistema tuviera la cadena de solicitudes
+          /15, 175, 13, 20, 14, 32, 40, 5, 6, 7/, SSTF /penalizaría/ a
+          la segunda solicitud (175) hasta terminar con los cilindros
+          bajos.
+
+- Familia de algoritmos /de elevador/ (SCAN, LOOK, C-SCAN) :: Hablamos
+     en este tercer lugar no de un algoritmo, sino que de una
+     /familia/, dado que parten de la misma idea, pero con
+     modificaciones menores llevan a que el patrón de atención
+     resultante sea muy distinto.
+
+     El planteamiento base para el arlgoritmo básico de elevador
+     (SCAN) busca evitar la inanición, minimizando al mismo tiempo el
+     movimiento de las cabezas. Su lógica marca que la cabeza debe
+     recorrer el disco de extremo a extremo, como si fuera un elevador
+     en un edificio alto, atendiendo a todas las solicitudes que haya
+     pendientes en su camino. Si bien los recorridos para ciertos
+     patrones pueden resultar en mayores desplazamientos a los que
+     daría SSTF, la garantía de que ningún proceso esperará
+     indefinidamente lo hace muy atractivo.
+
+     Atender la cadena de referencia con la que estamos trabajando
+     bajo SCAN, asumiendo un estado inicial /descendente/ (esto es, la
+     cabeza está en el cilindro 53 y va bajando) da un recorrido total
+     de 236 cilindros; empleando LOOK, se reduce a 208 cilindros, y
+     evita el movimiento innecesario hasta el límite del disco.
+
+     Una primer (y casi obvia) modificación a este algoritmo sería,
+     cada vez que la cabeza se detenga para satisfacer una solicitud,
+     verificar si hay alguna otra solicitud pendiente en la /dirección
+     actual/, y de no ser así, emprender el camino de regreso sin
+     llegar a la orilla del disco. Esta modificación es frecuentemente
+     descrita como /LOOK/.
+
+     Sin embargo, el patrón de atención a solicitudes de SCAN y LOOK
+     dejan qué desear: Al llegar a un extremo del recorrido, es
+     bastante probable que no haya ninguna solicitud pendiente en la
+     primer mitad del recorrido de vuelta (dado que acaban de ser
+     atendidas). El tiempo que demora atender a una solictud se
+     compone de la suma del desplazamiento de la cabeza y la demora
+     rotacional (que depende de cuál sector del cilindro nos fue
+     solicitado). Para mantener una tasa de transferencia más
+     predecible, el algoritmo /C-SCAN/ (SCAN Circular) realiza las
+     operaciones en el disco únicamente en un sentido — Si el
+     algoritmo lee en órden /descendente/, al llegar a la solicitud
+     del cilindro más bajo, brincará de vuelta hasta el más alto para
+     volver a iniciar desde ahí. Esto tiene como resultado, claro, que
+     el recorrido total aumente (aumentando hasta los 326 para nuestra
+     cadena de referencia.
+
 
 *** Limitaciones de los algoritmos presentados
 

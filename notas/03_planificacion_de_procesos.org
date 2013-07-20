@@ -192,7 +192,7 @@ breve.]  tendríamos:
 
 #+attr_latex: width=\textwidth
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
-[[img/ditaa/planificador.ditaa]]
+[[./img/ditaa/planificador.ditaa]]
 
 Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
 cuyo trabajo en este espacio de tiempo finalizó junto con los
@@ -290,7 +290,7 @@ Consideremos los siguientes procesos: (Finkel 1988, p.35)
 
 #+attr_latex: width=\textwidth
 #+caption: Primero llegado, primero servido (FCFS)
-[[img/ditaa/planif_fcfs.png]]
+[[./img/ditaa/planif_fcfs.png]]
 
 Si bien un esquema FCFS reduce al mínimo la /sobrecarga
 administrativa/ (que incluye tanto al tiempo requerido por el
@@ -338,7 +338,7 @@ los cambios de contexto), obtendríamos los siguientes resultados:
 
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/)
-[[img/ditaa/planif_rr1.png]]
+[[./img/ditaa/planif_rr1.png]]
 
 La /ronda/ puede ser ajustada modificando la duración de
 $q$. Conforme incrementamos $q$, la ronda tiende a convertirse en
@@ -374,7 +374,7 @@ un /quantum/ de 4 /ticks/, tendremos:
 
 #+attr_latex: width=\textwidth
 #+caption: Ronda (/Round Robin/), con $q=4$
-[[img/ditaa/planif_rr4.png]]
+[[./img/ditaa/planif_rr4.png]]
 
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
 respuesta, aumentarlo hasta convertirlo en un FCFS efectivo degenera
@@ -443,7 +443,7 @@ siguiente resultado:
 
 #+attr_latex: width=\textwidth
 #+caption: El proceso más corto a continuación (SPN)
-[[img/ditaa/planif_spn.png]]
+[[./img/ditaa/planif_spn.png]]
 
 Como era de esperarse, SPN favorece a los procesos cortos. Sin
 embargo, un proceso largo puede esperar mucho tiempo antes de ser
@@ -527,7 +527,7 @@ Veamos el comportamiento en nuestro ejemplo:
 
 #+attr_latex: width=\textwidth
 #+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
-[[img/ditaa/planif_srr.png]]
+[[./img/ditaa/planif_srr.png]]
 
 Mientras $\frac{b}{a} < 1$, la prioridad de un proceso entrante
 eventualmente alcanzará a la de los procesos aceptados, y comenzará a
@@ -579,7 +579,7 @@ ejecuta:
 
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) básica
-[[img/ditaa/planif_fb_bas.png]]
+[[./img/ditaa/planif_fb_bas.png]]
 
 Podemos observar que prácticamente todos los números apuntan a que
 esta es una peor estrategia que las presentadas anteriormente — Los
@@ -627,7 +627,7 @@ retroalimentación multinivel con un incremento exponencial al
 
 #+attr_latex: width=\textwidth
 #+caption: Retroalimentación multinivel (FB) con $q$ exponencial
-[[img/ditaa/planif_fb_exp.png]]
+[[./img/ditaa/planif_fb_exp.png]]
 
 Vemos en este caso que, a pesar de que esta estrategia favorece a los
 procesos recién llegados, al /tick/ 3, 9 y 10, llegan nuevos procesos,
@@ -1101,7 +1101,7 @@ estructura conocida como /pipeline/ (tubería):
 
 #+attr_latex: width=\textwidth
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
-[[img/ditaa/pipeline.png]]
+[[./img/ditaa/pipeline.png]]
 
 La complejidad de los procesadores actuales ha crecido ya por encima
 de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
@@ -1128,7 +1128,7 @@ el esquema.
 
 #+attr_latex: width=\textwidth
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
-[[img/ditaa/hyperthread.png]]
+[[./img/ditaa/hyperthread.png]]
 
 Hay que recordar que, a pesar de que se /presenten/ como hilos
 independientes, el rendimiento de cada uno depende de la secuencia

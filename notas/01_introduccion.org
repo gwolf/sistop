@@ -12,12 +12,19 @@ en la vida diaria, más variedad habrá en ellos.
 
 No nos referiremos al sistema operativo como lo ve el usuario final, o
 como lo vende la mercadotecnia — El ambiente gráfico, los programas
-que se ejecutan en éste, la diferencia en el uso son sólo –y si mucho–
+que se ejecutan en éste, los lenguajes en que están desarrollados y en
+que más fácilmente se puede desarrollar para ellos, e incluso el
+conjunto básico de funciones que las bibliotecas base ofrecen son
+básicamente /clientes/ del sistema operativo — Corren sobre de él, y
+ofrecen su implementación a sus usuarios (incluídos, claro, los
+desarrolladores). La diferencia en el uso son sólo –y si mucho–
 /consecuencias/ del diseño de un sistema operativo. Más aún, con el
 mismo sistema operativo –como pueden constatarlo comparando dos
 distribuciones de Linux, o incluso la forma de trabajo de dos usuarios
 en la misma computadora– es posible tener /entornos operativos/
 completamente disímiles.
+
+** ¿Por qué estudiar los sistemas operativos?
 
 La importancia de este curso radica no sólo en comprender los
 mecanismos que emplean los sistemas operativos para cumplir sus tareas
@@ -30,6 +37,38 @@ sistemas operativos y las principales alternativas que nos ofrecen en
 muchos de puntos, o saber diseñar algoritmos y procesos que se ajusten
 mejor al sistema operativo en que vayamos a correrlo, puede resultar
 en una diferencia cualitativa decisiva en nuestros productos.
+
+Como administradores de sistemas, muchas veces podemos enfrentarnos a
+situaciones de bajo rendimiento, de conflictos entre aplicaciones,
+demoras en la ejecución, y comprender lo que ocurre /tras bambalinas/
+resulta fundamental para realizar nuestro trabajo. Los sistemas de
+archivos resultan un área de especial interés para administradores de
+sistemas: ¿Cómo comparar las virtudes y desventajas de tantos sistemas
+existentes? ¿Por qué puede resultarnos conveniente mezclarlos en el
+mismo servidor? ¿Cómo evitar la corrupción o pérdida de información?
+Lo que es más, ¿cómo recuperar información de un disco dañado?
+
+En el área de la seguridad en cómputo, la relación resulta obvia:
+Si nos interesa localizar vulnerabilidades que nos permitan elevar
+nuestro nivel de privilegios, ¿cómo podríamos hacerlo sin comprender
+cómo se engranan los diversos componentes de un sistema? La cantidad
+de tareas que debe cubrir un sistema operativo es tremenda, y veremos
+ejemplos de sitios donde un atacante puede enfocar sus energías. Del
+mismo modo, para quien busca /defender/ un sistema o una red, resulta
+fundamental comprender cuáles son los vectores de ataque más comunes y
+–nuevamente– la relaciónentre los componentes involucrados para poder
+remediar o, mejor, prevenir dichos ataques.
+
+Y claro está, podemos ver al mundo en general, fuera del entorno del
+cómputo, como una serie de modelos interactuantes. Muchos de los
+métodos y algoritmos que aquí veremos pueden emplearse fuera del
+entorno del cómputo, y una vez que comprendamos los problemas de
+concurrencia, de competencia por recursos o de protección y separación
+han sido resueltos en el campo de los sistemas operativos, podemos
+extrapolar estas soluciones a otros campos.
+
+El camino que tenemos por delante es largo, y puede resultar –espero
+que lo resulte– interesante y divertido.
 
 * Funciones y objetivos de los sistemas operativos
 
@@ -67,6 +106,19 @@ con el hardware de la computadora. Sus funciones primarias son:
 		 cuente con ayuda del hardware.
 
 * Evolución de los sistemas operativos
+
+No podríamos comenzar a abordar el tema de los sistemas operativos sin
+revisar brevemente su desarrollo histórico. Esto no sólo nos permitirá
+comprender por qué fueron apareciendo determinadas características y
+patrones de diseño que seguimos empleando décadas más tarde, sino
+(como resulta particularmente bien ejemplificado en el discurso de
+recepción del premio Turing de Fernando Corbató en 1990, /[[http://dl.acm.org/citation.cfm?id=1283947][On building
+systems that will fail]]/), adecuar un sistema existente a un entorno
+cambiante, por mejor diseñado que éste estuviera, lleva casi
+inevitablemente a abrir espacios de comportamiento no previsto — El
+espacio más propicio para que florezcan los fallos. Conocer los
+factores que motivaron a los distintos desarrollos nos puede ayudar a
+prever y prevenir problemas.
 
 ** Proceso por lotes (/batch processing/)
 
@@ -1554,6 +1606,8 @@ disco.
 
 * Otros recursos
 
+- [[http://dl.acm.org/citation.cfm?id=1283947][On building systems that will fail]], Fernando J. Corbató; ACM Turing
+  award lectures, 1990
 - [[http://cs.gordon.edu/courses/cs322/lectures/history.html][CS322: A Brief History of Computer Operating Systems]]
 - [[http://lwn.net/Articles/532771/][Making EPERM friendlier]] (LWN): Explica algunas de las limitantes de
   la semántica POSIX: Falta de granularidad en el reporte de mensajes

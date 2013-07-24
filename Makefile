@@ -17,18 +17,18 @@ exam_resueltos = examenes/resueltos
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
-html:
+html: fig
 	mkdir -p html/ltxpng
 	echo html | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 	ln -s ../pdf html/pdf || true
 	ln -s ../biblio html/biblio || true
 	ln -s ../laminas html/laminas || true
 
-pdf:
+pdf: fig
 	mkdir -p pdf/ltxpng
 	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
-beamer:
+beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)
 	echo '#+AUTHOR: Gunnar Wolf' >> $(idx_laminas)
 	echo '#+EMAIL: gwolf@sistop.org' >> $(idx_laminas)
@@ -83,7 +83,7 @@ semestre:
 clean-publish-cache:
 	rm -f ~/.org-timestamps/notas*.cache
 
-clean: clean-publish-cache
+clean: clean-publish-cache clean_fig
 	rm -f ltxpng/*.png dot notas/*.tex notas/*.html notas/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
 	rm -fr $(dir_semestre) $(idx_semestre) $(exam_resueltos)/*.tex $(exam_resueltos)/*.pdf
 	rm -rf html
@@ -140,4 +140,4 @@ clean_gnuplot:
 
 all: pdf html beamer
 
-.PHONY: pdf html clean push
+.PHONY: fig pdf html clean push

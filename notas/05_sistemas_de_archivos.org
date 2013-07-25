@@ -1,6 +1,7 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Sistemas de archivos
 
+* Introducción
 
 De los roles que cumple el sistema operativo, probablemente el que más
 consciente tengan en general sus usuarios es el de la gestión del
@@ -46,6 +47,16 @@ sistema operativo– recibir del espacio de usuario las llamadas al
 sistema que presentan la interfaz de archivos y directorios, integrar
 el sistema de archivos virtual, y traducir la información resultante a
 un sistema de archivos.
+
+Cabe mencionar que varias de las capas aquí presentadas podrían
+perfectamente ser subdivididas, analizadas por separado, e incluso
+tratarse de forma completamente modular — De hecho, este es
+precisamente el modo en que se implementan de forma transparente
+características hoy en día tan comunes como sistemas de archivos en
+red, o compresión y cifrado de la información. Una referencia más
+detallada acerca de ventajas, desventajas, técnicas y mecanismos de la
+división y comunicación entre capas puede ubicarse en el artículo de
+[[https://dl.acm.org/citation.cfm?doid=174613.174616][Heidemann y Popek (1994)]].
 
 En esta unidad tocaremos también algunos conceptos relacionados con
 los subsistemas de entrada y salida, aunque estos pertenecen
@@ -1225,8 +1236,6 @@ Por ejemplo, si una base de datos se distribuyera sobre AFS, la
 carencia de mecanismos de bloqueo sobre /secciones/ del archivo, y el
 requisito de operar sobre /archivos completos/ harían impracticable
 compartir un archivo de uso intensivo y aleatorio.
-
-
 
 * Plasmando la estructura en el dispositivo
 # <<estructura_en_dispositivo>>
@@ -3066,6 +3075,12 @@ independientes, agregar diferentes /volúmenes físicos/ a un
 
 - [[http://delivery.acm.org/10.1145/150000/146943/p26-rosenblum.pdf][The Design and Implementation of a Log-Structured File System]] (John
   K. Ousterhout, Mendel Rosenblum, 1992)
+
+- [[https://dl.acm.org/citation.cfm?doid%3D174613.174616][File-system development with stackable layers]] (Heidemann y Popek,
+  1994 ACM Transactions on Computer Systems)
+
+- [[https://dl.acm.org/citation.cfm?doid=225535.225537][Serverless network file systems]] (Thomas E. Anderson et. al., 1996,
+  ACM Transactions on Computer Systems)
 
 - [[http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf][LogFS — Finally a scalable flash file system]] (Jörn Engel, Robert
   Mertens, 2005)

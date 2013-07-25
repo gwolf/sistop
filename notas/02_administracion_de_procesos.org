@@ -2269,15 +2269,40 @@ como grafos dirigidos, representamos:
 
 - Los recursos, con círculos
 
-  - Puede representarse como un círculo grande a una /clase de
-    recursos/, y como círculos pequeños dentro de éste a una /serie de
-    recursos idénticos/ (p.ej. las diversas unidades de cinta)
+  - Puede representarse como un círculo grande a una /clase/ o
+    /categoría/ de recursos, y como círculos pequeños dentro de éste a
+    una /serie de recursos idénticos/ (p.ej. las diversas unidades de
+    cinta)
 
 - Las flechas que van de un recurso a un proceso indican que el
   recurso /está asignado/ al proceso
 
 - Las flechas que van de un proceso a un recurso indican que el
   proceso /solicita/ al recurso
+
+Cabe mencionar en este momento que, cuando consideramos categorías de
+recursos, el tener la representación visual de un ciclo no implica
+que haya ocurrido un bloqueo — Este sólo se presentaría cuando todos
+los procesos involucrados estuvieran en espera mutua.
+
+#+attr_latex: width=0.5\textwidth
+#+attr_html: height=373
+#+caption: Al emplear categorías de recursos, un ciclo /no necesariamente/ indica un bloqueo
+[[./img/ciclo_no_bloqueo.png]]
+
+En la figura presentada, si bien $P_1$ y $P_2$ están esperando que se
+liberen recursos de tipo $R_1$ y $R_2$, $P_3$ y $P_4$ siguen operando
+normalmente, y es esperable que lleguen a liberar el recurso por el
+cual están esperando. En el caso ilustrado, dado que el bloqueo se
+presenta únicamente al ser imposible que un proceso /libere/ recursos
+que /ya le fueron asignados/, tendría que presentarse un caso donde
+todos los recursos de una misma categoría estuvieran involucrados en
+una situación de espera circular, como la ilustrada a continuación.
+
+#+attr_latex: width=0.5\textwidth
+#+attr_html: height=267
+#+caption: Situación en que se presenta espera circular, incluso empleando categorías de recursos
+[[./img/bloqueo_con_categorias.png]]
 
 Si tenemos una representación completa de los procesos y recursos en
 el sistema, la estrategia es /reducir/ la gráfica retirando los

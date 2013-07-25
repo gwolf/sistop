@@ -1334,24 +1334,28 @@ En contraste con las arquitecturas diseñadas desde un principio para
 la virtualización, los usuarios de computadoras personales (inclusive
 cuando estas son servidores en centros de datos — Siguen estando
 basadadas en la misma arquitectura básica) se enfrentan a una mucho
-mayor variedad de dispositivos para todo tipo de tareas. Y si bien la
-virtualización permite aparentar varias computadoras distintas
-corriendo sobre el mismo procesador, esta no incluye a los
-dispositivos. Al presentarse una máquina virtual, el sistema anfitrión
-esta casi siempre[fn:: Hay mecanismos para reservar y dirigir un
-dispositivo físico existente a una máquina virtual específica, pero
-hacerlo implica que éste dispositivo no será /multiplexado/ hacia las
-demás máquinas virtuales que se ejecuten paralelamente] emulando
-hardware. Claro está, lo más frecuente es que el hipervisor ofrezca a
-los huéspedes la emulación de dispositivos relativamente viejos y
-simples.[fn:: Por ejemplo, KVM bajo Linux emula tarjetas de red tipo
-NE2000, tarjetas de sonido tipo Soundblaster16 y tarjetas de video
-Cirrus Logic, todos ellos de la década de los 1990] Esto no significa
-que estén limitados a las prestaciones del equipo emulado (por
-ejemplo, a los 10Mbps para los que estaba diseñada una tarjeta de red
-NE2000), sino que la interfaz del núcleo para enviar datos a dicho
-dispositivo es una sencilla y que ha sido empleada tanto tiempo que
-presenta muy poca inestabilidad.
+mayor variedad de dispositivos para todo tipo de tareas.[fn:: Una
+descripción completa de la complejidad a la que debe enfrentarse un
+hipervisor bajo arquitectura x86 excede con mucho el ámbito del
+presente texto; sugiero a los lectores interesados referirse al
+excelente artículo de [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bugnion et. al. (2012)]] detallando la
+implementación de /VMWare/.] Y si bien la virtualización permite
+aparentar varias computadoras distintas corriendo sobre el mismo
+procesador, esta no incluye a los dispositivos. Al presentarse una
+máquina virtual, el sistema anfitrión esta casi siempre[fn:: Hay
+mecanismos para reservar y dirigir un dispositivo físico existente a
+una máquina virtual específica, pero hacerlo implica que éste
+dispositivo no será /multiplexado/ hacia las demás máquinas virtuales
+que se ejecuten paralelamente.] emulando hardware. Claro está, lo más
+frecuente es que el hipervisor ofrezca a los huéspedes la emulación de
+dispositivos relativamente viejos y simples.[fn:: Por ejemplo, KVM
+bajo Linux emula tarjetas de red tipo NE2000, tarjetas de sonido tipo
+Soundblaster16 y tarjetas de video Cirrus Logic, todos ellos de la
+década de los 1990.] Esto no significa que estén limitados a las
+prestaciones del equipo emulado (por ejemplo, a los 10Mbps para los
+que estaba diseñada una tarjeta de red NE2000), sino que la interfaz
+del núcleo para enviar datos a dicho dispositivo es una sencilla y que
+ha sido empleada tanto tiempo que presenta muy poca inestabilidad.
 
 Y este último punto permite acercarnos a una de las ventajas que
 ofrecen los sistemas operativos virtualizados — La estabilidad. Los
@@ -1612,6 +1616,9 @@ disco.
 - [[http://lwn.net/Articles/532771/][Making EPERM friendlier]] (LWN): Explica algunas de las limitantes de
   la semántica POSIX: Falta de granularidad en el reporte de mensajes
   de error (=EPERM=), y =errno= global por hilo.
+- [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bringing Virtualization to the x86 Architecture with the Original
+  VMware Workstation]] (Bugnion et. al., 2012, ACM Transactions on
+  Computer Systems)
 - [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of Virtualization]] Paul Barham, Boris Dragovic
   et. al. 2003
 - [[http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf][KVM: The Linux Virtual Machine Monitor]]; Avi Kivity, Yaniv Kamay,

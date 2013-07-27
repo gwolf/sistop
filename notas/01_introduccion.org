@@ -180,6 +180,7 @@ La palabra /spool/ (/bobina/) se tomó como /acrónimo inverso/ hacia
 de periféricos en línea/.
 
 ** Sistemas multiprogramados
+# <<multiprogramados>>
 
 A lo largo de su ejecución, un programa normalmente pasa por etapas
 con muy distintas características: Al estar en un ciclo fuertemente
@@ -846,6 +847,42 @@ El /multiprocesamiento/ es todo entorno donde hay más de un procesador
 vuelven un recurso más a gestionar por el sistema operativo — Y el que
 haya concurrencia /real/ tiene un fuerte impacto en su diseño.
 
+Si bien en el día a día se usan de forma intercambiable[fn:: O poco
+más que eso, al grado de que rara vez empleamos el término
+/multiprogramación/, mucho más acorde a los equipos que empleamos día
+a día.], es importante enfatizar en la diferencia fundamental entre el
+/multiprocesamiento/, que abordaremos en esta sección, y la
+/multiprogramación/, de la cual hablamos a partir de la sección de
+[[#multiprogramados][sistemas multiprogramados]]. Un sistema multiprogramado nos da la
+/ilusión/ de que está ejecutando varios procesos al mismo tiempo, pero
+en realidad está alternando entre los diversos procesos que compiten
+por su atención. Un sistema multiprocesador tiene la capacidad de
+estar atendiendo /simultáneamente/ a diversos procesos.
+
+#+attr_latex: width=0.5\textwidth
+#+attr_html: height=210
+#+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
+[[./img/ditaa/multiproceso_y_multiprogramacion.png]]
+
+En la figura presentada, el primer diagrama ilustra una ejecución
+estrictamente secuencial: Cada uno de los procesos que demandan
+atención del sistema es ejecutado hasta que termina; el segundo
+muestra cómo se comportaría un sistema multiprogramado, alternando
+entre los tres procesos, de modo que el usuario vea que los tres
+avanzan de forma simultánea; el tercero corresponde a un sistema de
+multitarea pura: Cada proceso es ejecutado por un procesador
+distinto, y avanzan en su ejecución de forma simultánea. El cuarto
+caso, un esquema híbrido, presenta cómo reaccionaría un equipo con
+capacidad de atender a dos procesos al mismo tiempo, pero con tres
+procesos solicitando ser atendidos. Este último esquema es el que más
+comunmente encontraremos en equipos de uso general hoy en día.
+
+Probablemente el tema que abordaremos más recurrentemente del curso
+será precisamente la complejidad que proviene de la multiprogramación;
+la abordaremos particularmente en las unidades [[./02_administracion_de_procesos.org][Administración de
+procesos]] y [[./03_planificación_de_procesos.org][Planificación de procesos]]. Valga la nota en este momento
+únicamente para aclarar la diferencia entre los dos conceptos.
+
 El multiprocesamiento se emplea ampliamente desde los 1960 en los
 entornos de cómputo de alto rendimiento, pero por muchos años se vio
 como el área de especialización de muy pocos — Las computadoras con
@@ -866,9 +903,9 @@ cambiaran de estrategia, introduciendo chips que son, para propósitos
 prácticos, /paquetes/ con 2 o más procesadores dentro.
 
 #+attr_latex: width=0.7\textwidth
-#+attr_html: height="350"
-#+caption: La /Ley de Moore/: Conteo de transistores por procesador de 1971 al 2011. (Imagen de la Wikipedia: /Ley de Moore/)
-[[./img/ley_de_moore.png]]
+#+attr_html: height="512"
+#+caption: La /Ley de Moore/: Conteo de transistores por procesador de 1971 al 2012
+[[./img/gnuplot/ley_de_moore.png]]
 
 Con este cambio, el /reloj/ de los procesadores se ha mantenido casi
 sin cambios, cerca de 1GHz, pero el rendimiento de los equipos sigue

@@ -290,6 +290,11 @@ núcleo?
 - Más rápidos (menos /cambios de contexto/)
 
 - Difícil transición a un entorno multiprocesador
+
+** Monolíticos: Esquematizando
+#+attr_latext: height=0.7\textheight
+[[../img/dot/diseno_monolitico.png]]
+
 ** Microkernel
 - Se delegan a /espacio usuario/ todos los procesos que sea posible
   - p.ej. sistemas de archivos, planificación de procesos,
@@ -305,9 +310,23 @@ núcleo?
   - Requieren más cambios de contexto
 
 - Más difíciles de implementar correctamente
-** Monolítico / microkernel / mixto: Esquema
-#+attr_latex: width=\textwidth
-[[../img/monolithic_micro_hybrid.png]]
+
+** Monolíticos: Esquematizando
+#+attr_latext: height=0.7\textheight
+[[../img/dot/diseno_microkernel.png]]
+
+** Diseño híbrido
+- Hay componentes que pueden migrarse limpiamente de un esquema
+  monolítico a uno microkernel
+- Pero hay componentes para los cuales dicha tarea resulta muy cara
+  - Incluso en sistemas diseñados originalmente como microkernel
+- Hoy en día encontraremos concepciones híbridas, con características
+  de ambos
+
+** Diseño híbrido: Esquematizando
+#+attr_latext: height=0.7\textheight
+[[../img/dot/diseno_hibrido.png]]
+
 
 ** ¿Tiempo de acceso? ¿Tasa de transferencia?
 #+BEGIN_CENTER

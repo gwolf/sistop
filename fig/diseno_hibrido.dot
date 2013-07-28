@@ -1,0 +1,68 @@
+digraph G {
+	node [shape=box, style=filled, fillcolor="white"];
+	edge [style=invis];
+
+	usr1 [label="Aplicación"];
+	usr2 [label="Compilador"];
+	usr3 [label="Navegador"];
+
+	fs [label="Sistema\nde archivos"];
+	video [label="Controlador\nde video"];
+	ipc [label="Comunicación\nentre procesos"];
+	mem [label="Memoria\nvirtual"];
+	netdrv [label="Subsistema\nde red"];
+	proc [label="Planificador\nde procesos"];
+	irq [label="Manejo de\ninterrupciones"];
+
+	hd [label="Disco duro"];
+	ram [label="Memoria"];
+	vga [label="Tarjeta\nde video"];
+	cpu [label="Procesador"];
+	net [label="Tarjeta\nde red"];
+
+	usr1 -> video;
+	usr1 -> fs;
+	usr1 -> ipc;
+
+	usr2 -> fs;
+
+	usr3 -> netdrv;
+	usr3 -> video;
+	usr3 -> ipc;
+
+	netdrv -> net;
+	fs -> hd;
+	mem -> ram;
+	video -> vga;
+	ipc -> proc -> cpu;
+
+	irq -> {hd net cpu vga};
+
+	subgraph cluster_usuario {
+		label = "Procesos (modo usuario)";
+		bgcolor="yellow";
+		{rank=same usr1 usr2 usr3};
+		subgraph cluster_sist {
+			label = "Software de sistema";
+			bgcolor="orange";
+			fs;
+			video;
+		}
+	}
+
+	subgraph cluster_priv {
+		label = "Núcleo (modo privilegiado)";
+		bgcolor = "red";
+		{ipc netdrv} -> {mem irq proc};
+	}
+
+	subgraph cluster_hw {
+		label = "Hardware";
+		bgcolor = "#555555";
+		hd;
+		net;
+		ram;
+		vga;
+		cpu;
+	}
+}

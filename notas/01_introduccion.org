@@ -229,7 +229,7 @@ Un cambio fundamental entre el modelo de /multiprogramación/ y de
 procesos]]/)
 
 - Multitarea /cooperativa/ o /no apropiativa/ :: (/Cooperative
-     multitasking) La implementan los sistemas multiprogramados: Cada
+     multitasking/) La implementan los sistemas multiprogramados: Cada
      proceso tenía control del CPU hasta que éste hacía una llamada al
      sistema (o indicara su /disposición a cooperar/ por medio de la
      llamada =yield=: /ceder el paso/).
@@ -472,6 +472,10 @@ encontrar líneas base.
 		 encuentran todas las rutinas para las diversas tareas
 		 que realiza el sistema operativo.
 
+		 #+attr_html: height=481
+		 #+attr_latex: width=0.7\textwidth
+		 #+caption: Esquematización de los componentes en un sistema monolítico
+		 [[./img/dot/diseno_monolitico.png]]
 
 - Microkernel :: El núcleo del sistema operativo se mantiene en el
                  mínimo posible de funcionalidad, descargando en
@@ -479,7 +483,12 @@ encontrar líneas base.
                  acceso a dispositivos y las diversas políticas de uso
                  del sistema.
 
-Las principales ventaja de diseñar un sistema siguiendo un esquema
+		 #+attr_html: height=499
+		 #+attr_latex: width=0.7\textwidth
+		 #+caption: Esquematización de los componentes en un sistema microkernel
+		 [[./img/dot/diseno_microkernel.png]]
+
+La principal ventaja de diseñar un sistema siguiendo un esquema
 monolítico es la simplificación de una gran cantidad de mecanismos de
 comunicación, que lleva a una mayor velocidad de ejecución (al
 requerir menos cambios de contexto para cualquier operación
@@ -504,16 +513,16 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      usuario como los microkernel (por ejemplo, los sistemas de
      archivos en espacio de usuario, FUSE, en Linux).
 
-#+attr_html: width="100%"
-#+attr_latex: width=\textwidth
-#+caption: Esquematización de la arquitectura básica de los sistemas monolíticos, microkernel e híbridos. ([[https://commons.wikimedia.org/wiki/File:OS-structure2.svg][Imagen de la Wikipedia: Monolithic kernel]])
-[[./img/monolithic_micro_hybrid.png]]
+     #+attr_html: height=471
+     #+attr_latex: width=0.7\textwidth
+     #+caption: Esquematización de los componentes en un sistema híbrido
+     [[./img/dot/diseno_hibrido.png]]
 
 # Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
 # microkernel OS Genode 12.11 can build itself]]. Ver también: [[http://genode.org/documentation/general-overview/index][Genode –
 # General overview]]
 
-* Estructuras y funciones básicas
+* Relación con el hardware: Estructuras y funciones básicas
 
 Repasaremos brevemente algunos conceptos de arquitectura de
 computadoras que nos resultarán fundamentales para abordar el tema que
@@ -565,6 +574,19 @@ programador.
 | *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
 | *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
 | *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
+
+Ahora bien, si bien la relación entre estos medios de almacenamiento
+nos resulta natural a nosotros, para una computadora tienen una
+realidad completamente distinta: Los registros son parte integral del
+procesador, y la memoria está a sólo un paso de distancia (el
+procesador puede referirse a ella directamente, de forma transparente,
+indicando la dirección desde un programa). El caché no existe para
+efectos prácticos: El procesador no hace referencia directa a él, sino
+que es manejado por los controladores de acceso a memoria. Y por
+último, el acceso a disco (miles de veces más lento que el acceso a
+memoria) requiere de la comunicación con controladores externos, con
+lógica propia, que podrían ser vistos como computadoras independientes
+de propósito limitado.
 
 ** Registros
 

@@ -1,6 +1,8 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas Operativos — Administración de procesos
 
+## Revisa plática: Rob Pike: "Concurrency is not parallelism"
+
 * Concepto y estados de un proceso
 
 En un sistema multiprogramado o de tiempo compartido, un /proceso/ es
@@ -2466,10 +2468,10 @@ Por último, cabe mencionar algo que a lo largo de todo este apartado
 mencionamos únicamente de forma casual, evadiendo definiciones claras:
 ¿Qué es un recurso? La realidad es que no está muy bien
 definido. Podríamos, como mencionan nuestros ejemplos, hablar de los
-clásicos de acceso rival y secuencial: Impresoras, cintas, terminales
-seriales, etc. Sin embargo, también podemos ver como recursos a otras
-entidades administradas por el sistema operativo — Como el espacio
-disponible de memoria o el tiempo de procesamiento, o incluso
+clásicos recursos de acceso rival y secuencial: Impresoras, cintas,
+terminales seriales, etc. Sin embargo, también podemos ver como
+recursos a otras entidades administradas por el sistema operativo — El
+espacio disponible de memoria, el tiempo de procesamiento, o incluso
 estructuras lógicas /creadas y gestionadas/ por el sistema operativo,
 como archivos, semáforos o monitores. Y para esos casos, prácticamente
 ninguno de los mecanismos aquí analizados resolvería las
@@ -2500,6 +2502,43 @@ alertar a los administradores o, como lo revisamos en la sección de
 [[#det_y_rec_bloq][detección y recuperación de bloqueos]], aborten (y posiblemente
 reinicien) la ejecución de aquellos procesos que no puedan
 recuperarse.
+
+*** De avestruces, ingenieros y matemáticos
+
+Esta misma contraposición puede leerse, hasta cierto punto en tono de
+broma, como un síntoma de la tensión que caracteriza a nuestra
+profesión: La computación nación como ciencia dentro de los
+departamentos de matemáticas en diversas facultades, sin embargo, al
+pasar de los años ha ido integrando cada vez más a la ingeniería. Y el
+campo, una de las áreas más jóvenes pero al mismo tiempo más
+prolíficas del conocimiento humano, está en una constante discusión y
+definición: ¿Qué somos? ¿Matemáticos, ingenieros, o... alguna otra
+cosa?
+
+La asignación de recursos, pues, puede verse desde el punto de vista
+matemático: Es un problema con un planteamiento de origen, y hay
+varias estrategias distintas (los mecanismos y algoritmos descritos en
+esta sección). Pueden no ser perfectos, pero el problema no ha
+/demostrado/ ser intratable. Y un bloqueo es claramente un error — Una
+situación de excepción, inaceptable. Los matemáticos en nuestro árbol
+genialógico académico nos llaman a no ignorar este problema, a
+resolverlo sin importar la complejidad computacional.
+
+Los ingenieros, más aterrizados en el /mundo real/, tienen como parte
+básica de su formación, sí, el evitar defectos nocivos — Pero también
+contemplan el cálculo de costos, la probabilidad de impacto, los
+umbrales de tolerancia... Para un ingeniero, si un sistema típico
+/corre riesgo/ de caer en un bloqueo mutuo con una probabilidad $p >
+0$, dejando inservibles a dos procesos en un sistema, pero debe
+también considerar no sólo las fallas en hardware y en los diferentes
+componentes del sistema operativo, sino que en todos los demás
+programas que corren en espacio de usuario, y considerando que
+prevenir el bloqueo conlleva un costo adicional en complejidad para el
+desarrollo o en rendimiento del sistema (dado que perderá tiempo
+llevando a cabo las verificaciones ante cualquier nueva solicitud de
+recursos), no debe sorprender a nadie que los ingenieros se inclinen
+por adoptar la estrategia del avestruz — Claro está, siempre que no
+haya opción /razonable/.
 
 * Otros recursos
 

@@ -1,0 +1,58 @@
+graph G {
+	rankdir=LR;
+	edge [constraint=false];
+	node [shape=box];
+
+	subgraph cluster_un_lado {
+		edge [constraint=true];
+		style=invis;
+		agp [label="Salida\ngráfica"];
+		eth [label="Tarjeta de red \nEthernet Gigabit"];
+		subgraph cluster_sata {
+			style=invis;
+			hd1 [label="Disco duro 1"];
+			hd2 [label="Disco duro 2"];
+			sata [shape=point];
+		}
+		snd [label="Sonido"];
+		agp -- eth -- hd1 -- sata -- hd2 -- snd [style=invis];
+	}
+
+	subgraph cluster_central {
+		style=invis;
+		edge [constraint=true];
+		node [shape=square];
+		cpu [label="Procesador\nPentium 4", style=filled,color="#aaaaaa"];
+		nb [label="Puente norte\n\nControlador de\nmemoria\n82875P", style=filled, color="#dddddd"];
+		sb [label="Puente sur\n\nControlador \n de E/S\n82801EB", style=filled,color="#dddddd"];
+		cpu -- nb [label="Socket 478\nFSB\n(604GB/s)", style=bold];
+		nb -- sb [label="Hublink 1.5\n(266MB/s)"];
+	}
+
+	subgraph cluster_otro_lado {
+		style=invis;
+		edge [constraint=true];
+		ram [label="Memoria\nRAM"];
+		subgraph cluster_pata {
+			style=invis;
+			dvd [label="DVD"];
+			dvd2 [label="CD"];
+			pata [shape=point];
+		}
+		pci [label="Tarjetas de\nexpansión\nPCI"];
+		usb [label="Dispositivos\nUSB"];
+		ram -- dvd -- pata -- dvd2 -- pci -- usb [style=invis];
+	}
+
+	nb -- agp [label="AGP 8x\n(2.1GB/s)", style=bold];
+	nb -- eth [label="CSA\n(266MB/s)"];
+	nb -- ram [label="DDR400\n(3.2GB/s\ndoble canal)", color="#000000:#ffffff:#ffffff:#000000", style=bold];
+
+	sb -- sata [label="Serial ATA\n(150MB/s)"];
+	hd1 -- sata -- hd2;
+	sb -- pata [label="ATA paralelo\n(100MB/s)"];
+	dvd -- pata -- dvd2;
+	sb -- snd [label="AC/97\n(1MB/s)"];
+	sb -- usb [label="USB 2.0\n(60 MB\s)"];
+	sb -- pci [label="Canal PCI\n(132MB/s)"];
+}

@@ -1,0 +1,1290 @@
+#+SETUPFILE: ../setup_notas.org
+#+TITLE: Relación con el hardware: Estructuras y funciones básicas
+
+* Jerarquía de almacenamiento
+
+Las computadoras que siguen la arquitectura /von Neumann/, esto es,
+prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
+muchas de las computadoras en uso hoy en día siguen la arquitectura
+/Harvard modificada/, dado que empleando distintos bancos de memoria
+caché, un procesador puede tanto referirse a la siguiente instrucción
+como iniciar una transferencia de memoria primaria. Esta distinción no
+tiene mayor relevancia para este tema, la referencia se incluye
+únicamente por no llevar a confusión.] podrían resumir su operación
+general a alimentar a una /unidad de proceso/ (CPU) con los datos e
+instrucciones almacenados en /memoria/, que pueden incluir llamadas a
+servicio (y respuestas a eventos) originados en medios externos.
+
+Una computadora von Neumann significa básicamente que es una
+computadora de /programa almacenado en la memoria primaria/ — Esto es,
+se usa el mismo almacenamiento para el programa que está siendo
+ejecutado y para sus datos, sirviéndose de un /registro/ especial para
+indicar al CPU cuál es la dirección en memoria de la siguiente
+instrucción a ejecutar.
+
+La arquitectura von Neumann fue planteada, obviamente, sin considerar
+la posterior diferencia entre la velocidad que adquiriría el CPU y la
+memoria. En 1977, John Backus presentó al recibir el premio Turing un
+artículo describiendo el /cuello de botella de von Neumann/. Los
+procesadores son cada vez más rápidos (se logró un aumento de 1000
+veces tanto entre 1975 y 2000 tan sólo en el reloj del sistema), pero
+la memoria aumentó su velocidad a un ritmo mucho menor —
+Aproximadamente un factor de 50 para la tecnología en un nivel
+costo-beneficio suficiente para usarse como memoria primaria.
+
+#+attr_latex: height=0.5\textheight
+#+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
+[[./img/dot/jerarquia_memoria.png]]
+
+Una respuesta parcial a estos problemas es la creación de una jerarquía
+de almacenamiento, yendo de una pequeña área de memoria mucho más cara
+hasta un gran espacio de memoria muy económica. En particular, la
+relación entre las capas superiores está administrada por hardware
+especializado de modo que su existencia resulta transparente al
+programador.
+
+#+caption: Velocidad y gestor de los principales niveles de memoria. (Silberschatz, Galvin, Gagne; p.28)
+| Nivel           | 1                 | 2              | 3              | 4          |
+|-----------------+-------------------+----------------+----------------+------------|
+| *Nombre*        | Registros         | Cache          | Memoria princ. | Disco      |
+| *Tamaño*        | <1KB              | <16MB          | <64GB          | >100GB     |
+| *Tecnología*    | Multipuerto, CMOS | SRAM CMOS      | CMOS DRAM      | Magnética  |
+| *Acceso (ns)*   | 0.25-0.5          | 0.5-25         | 80-250         | 5,000,000  |
+| *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
+| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
+| *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
+
+Ahora bien, si bien la relación entre estos medios de almacenamiento
+nos resulta natural a nosotros, para una computadora tienen una
+realidad completamente distinta: Los registros son parte integral del
+procesador, y la memoria está a sólo un paso de distancia (el
+procesador puede referirse a ella directamente, de forma transparente,
+indicando la dirección desde un programa). El caché no existe para
+efectos prácticos: El procesador no hace referencia directa a él, sino
+que es manejado por los controladores de acceso a memoria.
+
+** Registros
+
+La memoria más rápida de la computadora son los /registros/, ubicados
+dentro de cada /uno de los/ núcleos de cada uno de los CPUs. La
+arquitecturas tipo RISC sólo contmplan la ejecución de instrucciones
+(excepto, claro, las de carga y almacenamiento a memoria primaria)
+entre registros.
+
+Los primeros CPUs trabajaban con pocos registros, muchos de ellos de
+propósito específico — Trabajaban más bien con una lógica de /registro
+acumulador/. Por ejemplo, el MOS 6502 (en el cual se basaron las
+principales computadoras de 8 bits) tenía un acumulador de 8 bits (A),
+dos registros índice de 8 bits (X y Y), un registro de estado del
+procesador de 8 bits (P), un apuntador al /stack/ de 8 bits (S), y un
+apuntador al programa de 16-bit (PC). El otro gran procesador de su
+era, el Zilog Z80, tenía 14 registros (3 de 8 bits y el resto de 16),
+pero sólo uno era un acumulador de propósito general.
+
+El procesador Intel 8088, en el cual se basó la primer generación de
+la arquitectura PC, ofrecía cuatro registros de uso /casi/ general. En
+los 1980 comenzaron a producirse los primeros procesadores tipo RISC,
+muchos de los cuales ofrecían 32 registros, todos ellos de propósito
+general.
+
+#+attr_html: width=444px
+#+attr_latex: width=0.6\textwidth
+#+caption: Ejemplo de registros: Intel 8086/8088 (Imagen de la Wikipedia: /Intel 8086 y 8088/)
+[[./img/registros_8086.png]]
+
+El compilador [fn:: A veces asistido por instrucciones explíticas por
+parte del programador, pero muchas veces como resultado del análisis
+del código] busca realizar tantas operaciones que deban ocurrir
+reiteradamente, donde la rapidez es fundamental, con sus operadores
+cargados en los registros. Pero, lo que es más importante para nuestro
+curso: El estado del CPU en un momento dado está determinado por el
+contenido de los registros. El contenido de la memoria, obviamente,
+debe estar sincronizado con lo que ocurre dentro de éste — Pero el
+estado actual del CPU, lo que está haciendo, las indicaciones respecto
+a las operaciones recién realizadas que se deben entregar al programa
+en ejecución están todos representados en los registros. Debemos
+mantener esto en mente cuando posteriormente hablemos de todas las
+situaciones en que el flujo de ejecución debe ser tomado de un proceso
+y entregado a otro.
+
+** Almacenamiento secundario
+
+En lo tocante al /almacenamiento secundario/, en disco u otros medios:
+El almacenamiento en memoria primaria es /volátil/, esto es, se pierde
+al interrumpirse el suministro eléctrico. Si bien esto no era muy
+importante en la época definitoria de los conceptos que ahora estamos
+presentando, dado que el tiempo total de vida de un conjunto de datos
+en almacenamiento bajo el control del procesador iba únicamente desde
+la entrada y hasta el fin de la ejecución del trabajo del usuario,
+desde la década de 1960 la expectativa de poder almacenar en la
+computadora información /a largo plazo/ y con expectativas razonables
+de permanencia.
+
+De las muchas tecnologías de almacenamiento, la que ha dominado
+fuertemente durante los últimos 40 años ha sido la de los discos
+magnéticos[fn:: Veremos hacia el final del curso detalles acerca de
+las tecnologías de almacenamiento /en estado sólido/, que pueden poner
+fin a esta larga dominación.]. El acceso a disco (miles de veces más
+lento que el acceso a memoria) no es realizado directamente por el
+procesador, sino que requiere de la comunicación con controladores
+externos, con lógica propia, que podrían ser vistos como computadoras
+independientes de propósito limitado.
+
+El procesador no puede referirse directamente más información que la
+que forma parte del almacenamiento primario — Esto es, de la memoria
+RAM. Veremos a continuación, en las secciones de [[#interrupciones][interrupciones y
+excepciones]] y de [[#dma][acceso directo a memoria]], cómo es que se efectúan
+dichas referencias.
+
+** Canales y puentes
+
+Los diferentes componentes de un sistema de cómputo se comunican a
+través de los diferentes /canales/ (generalmente se hace referencia a
+ellos por su nombre en inglés, en inglés, /buses/). Al nivel más
+básico, los canales son líneas de comunicación entre el procesador
+y los demás componentes del chipset[fn:: Los chips que forman parte de
+un equipo, casi siempre provistos por el mismo fabricante que el
+procesador mismo], a los cuales a su vez se conectan los diferentes
+dispositivos del sistema — Desde aquellos que requieren mayor
+velocidad, como la misma memoria, hasta los puertos más sencillos.
+
+Un chipset provee distintos buses, con un agrupamiento lógico
+según la velocidad requerida por sus componentes y otras
+características que determinan su topología.
+
+#+attr_html: height=618px
+#+attr_latex: width=0.6\textwidth
+#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
+[[./img/northbridge_southbridge.png]]
+
+Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
+ha sido característica de las computadoras x86 de los últimos 20 años,
+aunque la tendencia apunta a que se abandone paulatinamente para dar
+paso a procesadores que integren en un sólo paquete todos estos
+componentes. Sin embargo, el acomodo funcional electrónico, al menos
+hasta el momento, sigue basado en estos puntos.] de estos buses es a
+través de una separación en dos chips: El /puente norte/
+(/Northbridge/), conectado directamente al CPU, encargado de gestionar
+los buses de más alta velocidad y que, además, son fundamentales para
+el más básico inicio de la operación del sistema: La memoria y el
+reloj. La comunicación con algunas tarjetas de video se incorpora al
+puente norte a través del canal dedicado /AGP/ (/Advanced Graphics
+Port/, /Puerto Gráfico Avanzado/).
+
+Al puente norte se conecta el /puente sur/ (/Southbridge/), que
+controla el resto de los dispositivos del sistema — Normalmente
+veremos aquí a las interfaces de almacenamiento (SCSI, SATA, IDE), de
+expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
+puertos /heredados/ seriales y paralelos).
+
+*** Contención
+
+Una de las principales razones de la existencia de tantos /canales/
+(buses) distintos en un mismo sistema es a la frecuencia acorde a los
+dispositivos para los cuales está diseñado: La cantidad de datos que
+tiene que viajar entre el procesador y la memoria a lo largo de la
+operación del sistema es muy superior que la que tiene que
+transferirse desde los discos, y a su vez, esta es mucho mayor que la
+que enviarse a la impresora, o la que se recibe del teclado. Claro
+está, los demás dispositivos podrían incrementar su frecuencia para
+participar en un canal más rápido, aunque su costo se incrementaría,
+dado que harían falta componentes capaces de sostener un reloj varios
+órdenes de magnitud más rápido.
+
+Pero incluso obviando la diferencia económica: Cuando el sistema
+requiere transferir datos de o hacia varios dispositivos de la misma
+categoría, es frecuente que ocurra /contención/: Puede saturarse el
+ancho de banda máximo que alcanza uno de los canales y, aún si los
+dispositivos tienen información lista, tendrán que esperar a que los
+demás dispositivos desocupen el canal.
+
+#+attr_html: height=490px
+#+attr_latex: width=0.6\textwidth
+#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
+[[./img/dot/chipset_857.png]]
+
+En la figura podemos ver el diseño general del chipset Intel 875,
+introducido en el 2003, incluyendo el ancho de banda de cada uno de
+los canales del sistema. Hay que recordar que hay canales como el USB
+que permiten la conexión de múltiples dispositivos, los cuales
+deberán compartir el ancho de banda total permitido por el canal: En
+la figura presentamos dos discos duros sobre el canal SATA y dos
+unidades ópticas en el ATA paralelo; el canal USB permite el uso de
+un máximo de 127 unidades por canal, por lo cual la contención puede
+ser muy alta.
+
+** Interrupciones y excepciones
+# <<interrupciones>>
+
+La ejecución de los procesos podría seguir siempre linealmente,
+atendiendo a las instrucciones de los programas como fueron escritas,
+pero en el modelo de uso de cómputo actual, eso no nos serviría de
+mucho: Para que un proceso acepte interacción, su ejecución debe poder
+responder a los /eventos/ que ocurran alrededor del sistema. Y los
+eventos son manejados a través de las /interrupciones/ y /excepciones/
+(o /trampas/).
+
+Cuando ocurre algún evento que requiera la atención del sistema
+operativo, el hardware encargado de procesarlo escribe directamente a
+una ubicación predeterminada de memoria la naturaleza de la solicitud
+(el /vector de interrupción/) y, levantando una solicitud de
+interrupción, /roba/ el procesamiento del proceso que estaba siendo
+ejecutado. El sistema operativo entonces ejecuta su /rutina de manejo
+de interrupciones/ (típicamente comienza grabando el estado de los
+registros del CPU y otra información relativa al estado del proceso
+desplazado) y posteriormente la atiende.
+
+Las interrupciones pueden organizarse por /prioridades/, de modo que
+una interrupción de menor jerarquía no interrumpa a una más
+importante — Dado que las interrupciones muchas veces indican que hay
+datos disponibles en algún buffer, el no atenderlas a tiempo podría
+llevarnos a perder datos.
+
+Hay un número limitado de interrupciones definidas para cada
+arquitectura, mucho más limitado que el número de dispositivos que
+tiene un equipo de cómputo actual. Las interrupciones son, por tanto,
+generadas /por el controlador del canal/ en que son producidas. Si
+bien esto resuelve la escasez de interrupciones, dificulta su
+priorización — Con canales de uso tan variado como el USB[fn:: Algunas
+arquitecturas, particularmente de sistemas embebidos y por un criterio
+altamente económico, están estructuradas íntegramente alrededor de un
+bus USB.], una interrupción puede indicar que hay desde un /teclazo/
+para ser leído hasta un paquete de red esperando a ser procesado — Y
+si bien demorar la atención al primero no llevaría a pérdida notable
+de información, no ateneder el paquete de red sí.
+
+El sistema operativo puede elegir ignorar (/enmascarar/) a ciertas
+interrupciones — Pero hay interrupciones que son /no enmascarables/.
+
+Hacemos la distinción entre interrupciones y excepciones según su
+origen: Una interrupción es generada por causas externas al sistema
+(un dispositivo requiere atención), mientras que una excepción es una
+evento generado por un proceso (una condición en el proceso que
+requiere la intervención del sistema operativo). Si bien hay
+distinciones sutiles entre interrupciones, trampas y excepciones, al
+nivel de discusión que abordaremos basta esta distinción.
+
+Los eventos pueden ser, como mencionamos, indicadores de que hay algún
+dispositivo requiriendo atención, pero pueden también provenir del
+mismo sistema, como una /alarma/ o /temporizador/ (que se emplea para
+obligar a todo programa a entregar el control en un sistema
+multitareas) o indicando una condición de error (por ejemplo, una
+división sobre cero o un error leyendo de disco).
+
+** Acceso directo a memoria (DMA)
+# <<dma>>
+
+La operación de dispositivos de entrada/salida puede ser altamente
+ineficiente. Cuando un proceso está en una sección /limitada por
+entrada-salida/ (esto es, donde la actividad principal es la
+transferencia de información entre la memoria principal y cualquier
+otra área del sistema), si el procesador tiene que encargarse de la
+transferencia de toda la información[fn:: Este modo de operación es
+también conocido como /entrada/salida programada/.], se crearía un
+cuello de botella por la cantidad y frecuencia de interrupciones. Hoy
+en día, para evitar que el sistema se detenga cada que hay una
+transferencia grande de datos, todas las computadoras implementan
+controladores de /acceso directo a memoria/ (DMA) en uno o más de sus
+subsistemas.
+
+El DMA se emplea principalmente al tratar con dispositivos con un
+gran ancho de banda, como unidades de disco, subsistemas multimedia,
+tarjetas de red, e incluso para transferir información entre niveles
+del caché.
+
+Las transferencias DMA se hacen en /bloques/ preestablecidos; en vez
+de que el procesador reciba una interrupción cada que hay una palabra
+lista para ser almacenada en la memoria, el procesador indica al
+controlador DMA la dirección física base de memoria en la cual
+operará, la cantidad de datos a transferir, la /dirección/ en que se
+efectuará la operación (del dispositivo a memoria o de memoria al
+dispositivo), y el /puerto/ del dispositivo en cuestión; el
+controlador DMA efectuará la transferencia solicitada, y sólo una vez
+terminada ésta (o en caso de encontrar algún error en el proceso)
+lanzará una interrupción al sistema; el procesador queda libre para
+realizar otras tareas, sin más limitante que la posible /contención/
+que tendrá que enfrentar en el bus de acceso a la memoria.
+
+*** Coherencia de cache
+
+Cuando se realiza una transferencia DMA de un dispositivo a la
+memoria, puede haber /páginas/ de la memoria en cuestión que estén en
+alguno de los niveles de la memoria caché; dado que el caché está uno
+o más niveles por encima de la memoria principal, es posible que la
+información haya ya cambiado pero el caché retenga la información
+anterior.
+
+Los sistemas de /caché coherente/ implementan mecanismos en hardware
+que notifican a los controladores de caché que las páginas que alojan
+están /sucias/ y deben ser vueltas a cargar para ser empleadas, los
+sistemas /no coherentes/ requieren que el subsistema de memoria del
+sistema operativo hagan esta operación.
+
+Los procesadores actuales implementan típicamente varios niveles de
+caché, estando algunos dentro del mismo CPU, por lo que típicamente
+encontramos sistemas híbridos, en los que los cachés de nivel 2 son
+coherentes, pero los de nivel 1 no, y deben ser manejados por
+software.
+
+** Llamadas al sistema
+
+De forma de cierto modo análoga a las interrupciones, podemos hablar
+de las llamadas al sistema. El sistema operativo protege a un proceso
+de otro, y previene que un proceso ejecutándose en espacio no
+privilegiado tenga acceso directo a los dispositivos. Cuando un
+proceso requiere de alguna de estas acciones, acede a ellas levantando
+una /llamada al sistema/. Las llamadas al sistema pueden agruparse, a
+grandes rasgos, en:
+
+- Control de procesos :: Crear o finalizar un proceso, obtener
+     atributos del proceso, esperar cierto tiempo, asignar o liberar
+     memoria, etc.
+
+- Manipulación de archivos :: Crear, borrar o renombrar un archivo;
+     abrir o cerrar un archivo existente; modificar sus /metadatos/;
+     leer o escribir de un /descriptor de archivo/ abierto, etc.
+
+- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
+     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
+     llamadas son análogas a las de manipulación de archivos, y varios
+     sistemas operativos las ofrecen como una sola.
+
+- Mantenimiento de la información :: Obtener o modificar la hora del
+     sistema; obtener detalles acerca de procesos o archivos, etc.
+
+- Comunicaciones :: Establecer una comunicación con determinado
+                    proceso (local o remoto), aceptar una solicitud de
+                    comunicación de otro proceso, intercambiar
+                    información sobre un canal establecido
+
+- Protección :: Consultar o modificar la información relativa al
+                acceso de objetos en el disco, otros procesos, o la
+                misma sesión de usuario
+
+Cada sistema operativo /expone/ una serie de llamadas al
+sistema. Estas son, a su vez, expuestas al programador a través de las
+/interfaces de aplicación al programador/ (API), que se alínean de
+forma cercana (pero no exacta). Del mismo modo que cada sistema
+operativo ofrece un conjunto de llamadas al sistema distinto, cada
+implmentación de un lenguaje de programación puede ofrecer un API
+ligeramente distinto de otros.
+
+#+attr_latex: width=0.7\textwidth
+#+attr_html: height="350"
+#+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
+[[./img/llamando_syscall.png]]
+
+#+attr_latex: width=\textwidth
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
+[[./img/dot/llamada_al_sistema.png]]
+
+*** Llamadas al sistema, arquitecturas y APIs
+
+Cada familia de sistemas operativos distintas llamadas al sistema, y
+sus lenguajes/bibliotecas implementan distintos APIs. Esto es el que
+distingue principalmente a uno de otro. Por ejemplo, los sistemas
+Windows 95 en adelante implementan Win32, Win16 (compatibilidad con
+Windows previos) y MSDOS; MacOS implementa Cocoa (aplicaciones MacOS
+X) y Carbon (compatibilidad con aplicaciones de MacOS previos), y
+Linux y los *BSDs, POSIX (el estándar que define a Unix). El caso de
+MacOS X es interesante, porque también implementa POSIX, ofreciendo la
+/semántica/ de dos sistemas muy distintos entre sí.
+
+Los lenguajes basados en /máquinas virtuales abstractas/, como Java o
+la familia .NET, exponen un API con mucha mayor distancia respecto al
+sistema operativo; la máquina virtual se presenta como un
+pseudo-sistema operativo intermedio que se ejecuta dentro del real, y
+esta distinción se hace especialmente notoria cuando buscamos conocer
+los detalles del sistea operativo. Sugiero para este curso emplear
+plataformas que presenten de la forma más transparente al sistema
+subyacente.
+
+*** Depuración por /trazas/ (trace)
+
+La mayor parte de los sistemas operativos ofrecen programas que, para
+fines de depuración, /envuelven/ al API del sistema y permiten ver la
+/traza/ de las llamadas al sistema que va realizando un
+proceso. Algunos ejemplos de estas herramientas son =strace= en Linux,
+=truss= en la mayor parte de los Unixes históricos o =ktrace= y
+=kdump= en los *BSD. A partir de Solaris 10 (2005), Sun incluye una
+herramienta mucho más profunda y programable para esta tarea llamada
+=dtrace=, misma que ha sido /portada/ a otros Unixes (*BSD, MacOS).
+
+La salida de una traza nos brinda amplio detalle acerca de la
+actividad realizada por un proceso, y nos permite comprender a grandes
+rasgos su interacción con el sistema. El nivel de información que nos
+da es, sin embargo, a veces demasiado — Consideren la siguiente
+traza, ante uno de los comandos más sencillos: =pwd= (obtener el
+directorio actual)
+
+#+latex: {\scriptsize
+#+begin_src c
+$ strace pwd
+execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
+brk(0)                                  = 0x8414000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773d000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=78233, ...}) = 0
+mmap2(NULL, 78233, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7729000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0po\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1351816, ...}) = 0
+mmap2(NULL, 1366328, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb75db000
+mprotect(0xb7722000, 4096, PROT_NONE)   = 0
+mmap2(0xb7723000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x147) = 0xb7723000
+mmap2(0xb7726000, 10552, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7726000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb75da000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb75da8d0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xb7723000, 8192, PROT_READ)   = 0
+mprotect(0xb775c000, 4096, PROT_READ)   = 0
+munmap(0xb7729000, 78233)               = 0
+brk(0)                                  = 0x8414000
+brk(0x8435000)                          = 0x8435000
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_LARGEFILE) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=1534672, ...}) = 0
+mmap2(NULL, 1534672, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7463000
+close(3)                                = 0
+getcwd("/home/gwolf/vcs/sistemas_operativos", 4096) = 36
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773c000
+write(1, "/home/gwolf/vcs/sistemas_operati"..., 36/home/gwolf/vcs/sistemas_operativos
+) = 36
+close(1)                                = 0
+munmap(0xb773c000, 4096)                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
+#+end_src
+#+latex: }
+
+
+
+
+* Cuando dos cabezas piensan mejor que una
+** Multiprocesamiento
+
+El /multiprocesamiento/ es todo entorno donde hay más de un procesador
+(CPU). En un entorno multiprocesado, el conjunto de procesadores se
+vuelven un recurso más a gestionar por el sistema operativo — Y el que
+haya concurrencia /real/ tiene un fuerte impacto en su diseño.
+
+Si bien en el día a día se usan de forma intercambiable[fn:: O poco
+más que eso, al grado de que rara vez empleamos el término
+/multiprogramación/, mucho más acorde a los equipos que empleamos día
+a día.], es importante enfatizar en la diferencia fundamental entre el
+/multiprocesamiento/, que abordaremos en esta sección, y la
+/multiprogramación/, de la cual hablamos a partir de la sección de
+[[#multiprogramados][sistemas multiprogramados]]. Un sistema multiprogramado nos da la
+/ilusión/ de que está ejecutando varios procesos al mismo tiempo, pero
+en realidad está alternando entre los diversos procesos que compiten
+por su atención. Un sistema multiprocesador tiene la capacidad de
+estar atendiendo /simultáneamente/ a diversos procesos.
+
+#+attr_latex: width=0.5\textwidth
+#+attr_html: height=210
+#+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
+[[./img/ditaa/multiproceso_y_multiprogramacion.png]]
+
+En la figura presentada, el primer diagrama ilustra una ejecución
+estrictamente secuencial: Cada uno de los procesos que demandan
+atención del sistema es ejecutado hasta que termina; el segundo
+muestra cómo se comportaría un sistema multiprogramado, alternando
+entre los tres procesos, de modo que el usuario vea que los tres
+avanzan de forma simultánea; el tercero corresponde a un sistema de
+multitarea pura: Cada proceso es ejecutado por un procesador
+distinto, y avanzan en su ejecución de forma simultánea. El cuarto
+caso, un esquema híbrido, presenta cómo reaccionaría un equipo con
+capacidad de atender a dos procesos al mismo tiempo, pero con tres
+procesos solicitando ser atendidos. Este último esquema es el que más
+comunmente encontraremos en equipos de uso general hoy en día.
+
+Probablemente el tema que abordaremos más recurrentemente del curso
+será precisamente la complejidad que proviene de la multiprogramación;
+la abordaremos particularmente en las unidades [[./02_administracion_de_procesos.org][Administración de
+procesos]] y [[./03_planificación_de_procesos.org][Planificación de procesos]]. Valga la nota en este momento
+únicamente para aclarar la diferencia entre los dos conceptos.
+
+El multiprocesamiento se emplea ampliamente desde los 1960 en los
+entornos de cómputo de alto rendimiento, pero por muchos años se vio
+como el área de especialización de muy pocos — Las computadoras con
+más de un procesador eran prohibitivamente caras, y para muchos
+sistemas, ignorar el problema resultaba una opción válida. Muchos
+sistemas operativos ni siquiera detectaban la existencia de
+procesadores adicionales, y en presencia de éstos, ejecutaban en uno
+sólo.
+
+Esto cambió hacia el 2005. Tras más de 30 años de cumplirse, el modelo
+conocido como la /Ley de Moore/, enunciando que cada dos años la
+densidad de transistores por circuito integrado se duplicaría,
+llevaba a velocidades de CPU que, en el ámbito comercial, excedían los
+3GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
+el diferencial de velocidad con el acceso a memoria era cada vez más
+alto. Esto motivó a que las principales compañías productoras de CPUs
+cambiaran de estrategia, introduciendo chips que son, para propósitos
+prácticos, /paquetes/ con 2 o más procesadores dentro.
+
+#+attr_latex: width=0.7\textwidth
+#+attr_html: height="512"
+#+caption: La /Ley de Moore/: Conteo de transistores por procesador de 1971 al 2012
+[[./img/gnuplot/ley_de_moore.png]]
+
+Con este cambio, el /reloj/ de los procesadores se ha mantenido casi
+sin cambios, cerca de 1GHz, pero el rendimiento de los equipos sigue
+aumentando. Sin embargo, como programadores de sistemas operativos y
+programas de aplicación ya no podemos ignorar esta complejidad
+adicional.
+
+Se denomina /multiprocesamiento simétrico/ (típicamente abreviado SMP)
+a la situación en la que todos los procesadores del sistema son
+iguales y pueden realizar en el mismo tiempo las mismas
+operaciones. Todos los procesadores del sistema tienen acceso a la
+misma memoria (aunque cada uno puede tener su propio /caché/, lo cual
+obliga a mantener en mente los puntos relacionados con la /coherencia
+de caché/ abordados en la sección anterior).
+
+Existe también el /multiprocesamiento asimétrico/; dependiendo de la
+implementación, la asimetría puede residir en diferentes puntos. Puede
+ir desde que los procesadores tengan una /arquitectura/ distinta
+(típicamente dedicada a una tarea específica), en caso en el cual
+pueden verse como /coprocesadores/ o /procesadores coadyuvantes/, casi
+computadoras independientes contribuyendo sus resultados a un mismo
+cómputo. Hoy en día, este sería el caso de las tarjetas gráficas 3D,
+que son computadoras completas con su propia memoria y
+responsabilidades muy distintas del sistema central.
+
+Es posible tener diferentes procesadores con la misma arquitectura
+pero funcionando a diferente frecuencia. Esto conlleva una fuerte
+complejidad adicional, y no se utiliza hoy en día.
+
+Por último, existen los diseños de /Acceso No-Uniforme a Memoria/
+(/Non-Uniform Memory Access/, /NUMA/). En este esquema, cada
+procesador tiene /afinidad/ con bancos específicos de memoria — Para
+evitar que los diferentes procesadores estén esperando al mismo tiempo
+al bus compartido de memoria, cada uno tiene acceso exclusivo a su
+área. Los sistemas NUMA pueden ubicarse como en un punto intermedio
+entre el procesamiento simétrico y el cómputo distribuído, y puede ser
+visto como un /cómputo distribuído fuertemente acoplado/.
+
+** Cómputo distribuído
+
+Se denomina cómputo distribuído a un proceso de cómputo realizado
+entre computadoras independientes, o, más formalmente, entre
+procesadores que /no comparten memoria/ (almacenamiento primario).
+Puede verse que un equipo de diseño NUMA está a medio camino entre una
+computadora multiprocesada y el cómputo distribuído.
+
+Hay diferentes modelos para implementar el cómputo distribuído,
+siempre basados en la transmisión de datos sobre una /red/. Estos son
+principalmente:
+
+- /Cúmulos/ (clusters) :: Computadoras conectadas por una red local
+     (de alta velocidad), corriendo cada una su propia instancia de
+     sistema operativo. Pueden estar orientadas al /alto rendimiento/,
+     /alta disponibilidad/ o al /balanceo de cargas/. Típicamente son
+     equipos homogéneos, y dedicados a la tarea en cuestión.
+
+- /Mallas/ (Grids) :: Computadoras distribuídas geográficamente y
+     conectadas a través de una red de comunicaciones. Las
+     computadoras participantes pueden ser heterogéneas (en
+     capacidades y hasta en arquitectura); la comunicación tiene que
+     adecuarse a enlaces de mucho menor velocidad que en el caso de un
+     cluster, e incluso presentar la elasticidad para permitir las
+     conexiones y desconexiones de nodos en el transcurso del
+     cómputo.
+
+- Cómputo /en la nube/ :: Un caso específico de cómputo distribuído
+     con partición de recursos (al estilo del modelo
+     cliente-servidor); este modelo de servicio está fuertemente
+     orientado a la /tercerización/ de servicios específicos. A
+     diferencia del modelo cliente-servidor tradicional, en un entorno
+     de cómputo en la nube lo más común es que tanto el cliente como
+     el servidor sean procesos que van integrando la información,
+     posiblemente por muchos pasos, y que sólo eventualmente llegarán
+     a un usuario final. La implementación de cada uno de los
+     servicios empleados deja de ser relevante, para volverse un
+     servicio /opaco/. Algunos conceptos relacionados son:
+
+  - Servicios Web :: Mecanismo de descripción de funcionalidad, así
+                     como de solicitud y recepción de resultados,
+                     basado en el estándar HTTP y contenido XML
+
+  - Software como servicio :: El proveedor ofrece una /aplicación
+       completa y cerrada/ sobre la red, /exponiendo/ únicamente su
+       interfaz (API) de consultas
+
+  - Plataforma como servicio :: El proveedor ofrece la /abstracción/
+       de un entorno específico de desarrollo de modo que un equipo de
+       programadores pueda /desplegar/ una aplicación desarrollada
+       sobre dicha plataforma tecnológica. Puede ser visto como un
+       conjunto de piezas de infraestructura sobre de un servidor
+       administrado centralmente.
+
+  - Infraestructura como servicio :: El proveedor ofrece computadoras
+       completas (en hardware real o máquinas virtuales); la principal
+       ventaja de esta modalidad es que los usuarios, si bien retienen
+       la capacidad plena de administración sobre sus /granjas/,
+       tienen mucho mayor flexibilidad para aumentar o reducir el
+       consumo de recursos (y por tanto, el pago) según la demanda que
+       alcancen.
+
+  El tema del cómputo en la nube va muy de la mano del que abordaremos
+  a continuación: La virtualización.
+
+* Virtualización
+
+La /virtualización/ no es un concepto nuevo, sin embargo, tras largos
+años de estar relegado muy a un segundo plano, hoy en día se vuelve
+fundamental cuando hablamos de sistemas operativos, particularmente en
+rol de servidores. Abordaremos este tema en este momento desde una
+óptica más bien descriptiva, y posteriormente profundizaremos en
+algunos de sus asepectos.
+
+En primer término, debemos tener claro que con /virtualización/ no nos
+referimos a una única tecnología o metodología; es un término que
+agrupa a muy distintas tecnologías, que llevan existiendo –de
+diferentes maneras– varias décadas. Cada una de ellas tiene su lugar,
+con diferentes usos y propósitos, algunos de los cuales utilizamos día
+a día sin pensar en ello.
+
+Del mismo modo, aunque abordaremos diversas tecnologías que pueden
+clasificarse como virtualización, las líneas divisorias entre ellos no
+siempre es tan clara. Una implementación específica puede caer en más
+de una categoría, o puede ir migrando naturalmente de un tipo hacia
+otro.
+
+Podemos entender como /virtualizar/ el proveer algo que no está ahí,
+aunque parece estarlo. Más específicamente, presentar a un sistema con
+algo que se comporte como hardware, sin que exista en realidad — Un
+acto de ilusionismo o de magia, en cual que obviamente buscaremos
+presentar de forma tan convincente que la ilusión se mantenga tanto
+como sea posible.
+
+La naturaleza de dicho hardware, y el cómo se implementa, dependen del
+tipo de virtualización del que hablemos.
+
+Para casi todos los casos que presentaremos, emplearemos los términos:
+
+- Anfitrión :: El hardware /real/, que realizará el trabajo de
+               virtualización. En inglés se le denomina /host/.
+
+- Huésped :: El o los sistemas que el anfitrión presenta a los
+             sistemas operativos o aplicaciones que ejecutará. En
+             inglés se le denomina /guest/.
+
+** Emulación
+
+La técnica de virtualización más sencilla, y que hace más tiempo
+existe en las computadoras personales, es la emulación. Emular
+consiste en implementar /en software/ algo que se presente como una
+computadora completa, típicamente de una arquitectura hardware
+distinta a la nativa.[fn:: A lo largo de esta discusión, nos
+referiremos a la /arquitectura hardware/ como al juego de
+instrucciones que puede ejecutar /nativamente/ un procesador. Por
+ejemplo, un procesador x86 moderno puede ejecutar nativamente código
+i386 y x86_64, pero no ARM] El emulador puede ser visto (de una forma
+tremendamente simplificada) como una lista de equivalencias, de cada
+una de las instrucciones en la arquitectura /huésped/ a la
+arquitectura del sistema /anfitrión/.
+
+Vale la pena recalcar que una emulación no se limita con traducir del
+lenguaje y estructura de un procesador a otro — Para que una
+computadora pueda ser utilizada, requiere de una serie de chips de
+apoyo — Desde los controladores de cada uno de los /buses/ hasta los
+periféricos básicos (teclado, video). Casi todas las emulaciones
+incluirán un paso más allá: Los periféricos mismos (discos, interfaces
+de red, puertos). Todo esto tiene que ser implementado por el
+emulador.
+
+Resulta obvio que emular un sistema completo es /altamente/
+ineficiente. Los sistemas huéspedes resultantes típicamente tendrán un
+rendimiento cientos o miles de veces menor al del anfitrión.
+
+Ahora bien, ¿qué pasa cuando hay dos arquitecturas de cómputo que
+emplean al mismo procesador? Este caso fue relativamente común en los
+1980 y 1990; si bien en general las computadoras de 8 bits no tenían
+el poder de cómputo necesario para implementar la emulación de
+arquitecturas similares, al aparecer tres líneas de computadoras
+basadas en el CPU Motorola 68000 (Apple Macintosh, Atari ST y
+Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
+aparecieron emuladores que permitían ejecutar programas de una línea
+en la otra, prácticamente a velocidad nativa.
+
+Hoy en día, la emulación se emplea mucho para hacer /desarrollos
+cruzados/: Mucho más que para emplear software /ya escrito y
+compilado/, la mayor parte de la emulación tradicional hoy se emplea
+para el /desarrollo de software/. Hoy en día, la mayor parte de las
+computadoras vendidas son sistemas /embebidos/[fn:: Computadoras
+pequeñas, limitadas en recursos, y típicamente carentes de una
+interfaz usuario — Desde puntos de acceso y ruteadores hasta los
+controladores de cámaras, equipos de sonido, automóviles, y un
+larguísimo etcétera] o dispositivos móviles, que hacen imposible (o,
+por lo menos, muy difícil) desarrollar software directamente en
+ellos. Los programadores desarrollan en equipos de escritorio, corren
+entornos de prueba en emuladores del equipo destino. Incluso dada la
+emulación plena de la arquitectura hardware, dada la asimetría entre
+los equipos de escritorio y los embebidos, es común que la velocidad
+del emulador sea muy similar –incluso superior– a la del hardware
+emulado.
+
+*** Emulando arquitecturas inexistentes
+
+Pero la emulación no se limita a hardware existente, y no sólo se
+emplea por la comodidad de no depender de la velocidad de equipos
+específicos. Podemos crear emuladores para arquitecturas que /nunca
+han sido implementadas/ en hardware real.
+
+Esta idea viene de los 1970, cuando comenzó la explosión de
+arquitecturas. La Universidad de California en San Diego propuso una
+arquitectura llamada /p-system/, o /sistema-p/, la cual definiría una
+serie de instrucciones a las que hoy llamaríamos /código intermedio/ o
+/bytecode/, a ser ejecutado en una /máquina-p/, o /p-machine/. El
+lenguaje base para este sistema fue el /Pascal/, mismo que fue
+adoptado muy ampliamente de manera principal en entornos académicos a
+lo largo de los 1970 y 1980 por su limpieza y claridad
+estructural. Todo programa compilado para correr en en un /sistema-p/
+correría sin modificaciones en cualquier arquitectura hardware que lo
+implementara.
+
+Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
+1980, logrando implementaciones para las arquitecturas de
+microcomputadoras más populares — El MOS 6502, el Zilog Z80 y el Intel
+80x86.
+
+Hay una diferencia muy importante entre la emulación de una
+arquitectura real y la de una arquitectura inexistente: Emular una
+computadora entera requiere que reimplementemos no sólo las
+instrucciones de su procesador, sino que /todos los chips de apoyo/,
+¡incluso hay que convertir la entrada del teclado en las
+interrupciones que generaría un controlador de teclado! Emular una
+arquitectura hipotética permite manejar diversos componentes de forma
+abstracta, y permite definir estructuras de mucho más alto nivel que
+las que encontraríamos implementadas en hardware. Por ejemplo, si bien
+resultaría impráctico crear como tipo de datos nativo para una
+arquitectura en hardware una abstracción como las cadenas de
+caracteres, estas sí existen como /ciudadanos de primera clase/ en
+casi todas las arquitecturas meramente virtuales.
+
+Hoy en día, esta idea ha sido ampliamente adoptada y forma parte de
+nuestra vida diaria. En la década de los 1990, /Sun Microsystems/
+desarrolló e impulsó la arquitectura /Java/, actualizando la idea de
+las /máquinas-p/ a los paradigmas de desarrollo que aparecieron a lo
+largo de 20 años, y dado que el cómputo había dejado de ser un campo
+especializado y escaso para masificarse, invirtiendo fuertemente en
+publicidad para impulsar su adopción.
+
+Uno de los slogans que mejor describen la intención de Sun fue /WORA/:
+/Write Once, Run Anywhere/ (Escribe una vez, corre donde sea). El
+equivalente a una /máquina-p/ (rebautizada como /JVM/: /Máquina
+Virtual Java/) se implementaría para las arquitecturas hardware más
+limitadas y más poderosas. Sun creó también al lenguaje Java, diseñado
+para aprovechar la arquitectura de la JVM, enfatizando en la
+orientación a objetos e incorporando facilidades multi-hilos. Al día
+de hoy existen distintas implementaciones de la JVM, de diferentes
+empresas y grupos de desarrolladores y con diferentes focos de
+especialización, pero todas ellas deben poder ejecutar el /bytecode/
+de Java.
+
+A principios de los años 2000, y como resultado del litigio con Sun
+que imposibilitó a Microsoft a desarrollar extensiones propietarias a
+Java (esto es, desarrollar máquinas virtuales que se salieran del
+estándar de la JVM), Microsoft desarrolló la arquitectura /.NET/; su
+principal aporte en este campo es la separación definitiva entre
+lenguaje de desarrollo y código intermedio producido: La máquina
+virtual de /.NET/ está centrado en el /CLI/ (/Common Language
+Infrastructure/, Infraestructura de Lenguajes Comunes), compuesta a su
+vez por el /CIL/ (/Common Intermediate Language/, Lenguaje Intermedio
+Común, que es la especificación del /bytecode/ o código intermedio) y
+el /CLR/ (/Common Language Runtime/, Ejecutor del Lenguaje Común, que
+es la implementación de la máquina virtual sobre la arquitectura
+hardware nativa).
+
+#+attr_latex: width=0.6\textwidth
+#+attr_html: height="600"
+#+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
+[[./img/maquina_virtual_dotnet.png]]
+
+En los 1990s, una de las principales críticas a Java (y esta crítica
+podría ampliarse hacia cualqueir otra plataforma comparable) era el
+desperdicio de recursos de procesamiento al tener que traducir, una y
+otra vez, el código intermedio para su ejecución en el
+procesador. Hacia el 2010, el panorama había ya cambiado
+fuertemente. Hoy en día las máquinas virtuales implementan varias
+técnicas para reducir el tiempo que se desperdicia emulando:
+
+- Traducción dinámica :: Compilación parcial del código a ejecutar a
+     formatos nativos, de modo que sólo la primera vez que se ejecuta
+     el código intermedio tiene que ser traducido
+- Traducción predictiva :: Anticipar cuáles serán las siguientes
+     secciones de código que tendrán que ser ejecutadas para,
+     paralelamente al avance del programa, irlas traduciendo a código
+     nativo de forma preventiva
+- Compilación /justo a tiempo/ (JIT) :: Almacenar copia del código ya
+     traducido de un programa, de modo que no tenga que traducirse ni
+     siquiera a cada ejecución, sino que sólo una vez en la vida de
+     la máquina virtual
+
+A través de estos puntos principales, el rendimiento de las
+arquitecturas emuladas es ya prácticamente idéntico al del código
+compilado nativamente.
+
+*** De lo abstracto a lo concreto
+
+Si bien las arquitecturas de máquinas virtuales planteadas en el
+apartado anterior se plantearon directamente para no ser
+implementadas en hardware, el éxito comercial de la plataforma llevó
+a crear una línea de chips que ejecutara /nativamente/ código
+intermedio Java, con lo cual podríam ahorrarse pasos y obtener mejor
+rendimiento de los sistemas destino. Sun definió la arquitectura
+/MAJC/ (/Microprocessor Architecture for Java Computing/, Arquitectura
+de microprocesadores para el cómputo con Java) en la segunda mitad de
+los 1990, e incluso produjo un chip de esta arquitectura, el
+/MAJC 5200/.
+
+La arquitectura MAJC introdujo conceptos importantes que han sido
+retomados para el diseño de procesadores posteriores, pero la
+complejidad llevó a un rendimiento deficiente, y el chip resultó un
+fracaso comercial.
+
+Pero bajo este mismo apartado podemos mencionar otra idea muy
+interesante: Transitando en el sentido inverso al de Sun con MAJC,
+/Transmeta/, una empresa hasta entonces desconocida, anunció en el
+2000 el procesador /Crusoe/, orientado al mercado de bajo consumo
+energético. Este procesador, en vez de implementar una arquitectura ya
+existente para entrar a un mercado ya muy competido y dinámico, centró
+su oferta en que Crusoe trabajaría mano a mano con un módulo llamado
+CMS (/Code Morphing Software/, Software de Transformación de Código),
+siendo así el primer procesador diseñado para /emular por hardware/ a
+otras arquitecturas. Crusoe fue lanzado al mercado con el CMS para la
+arquitectura x86 de Intel, y efectivamente, la emulación era
+completamente transparente al usuario.[fn:: Empleando Transmeta, se
+podían observar ciertos comportamientos curiosos: Por ejemplo, dado el
+amplio espacio de caché que implementaba el CMS, el código ejecutable
+se mantenía /ya traducido/ listo para el procesador, por lo cual la
+primera vez que se ejecutaba una función era notablemente más lenta
+que en ejecuciones posteriores. Sin embargo, si bien estas diferencias
+son medibles y no deben escapar a la vista de quien está analizando a
+conciencia estos procesadores, resultaban invisibles para el usuario
+final.] El procesador mismo, además, no implementaba algunas
+características que hoy en día se consideran fundamentales, como una
+unidad de manejo de memoria, dado que eso podía ser implementado por
+software en el CMS. Separando de esta manera las características
+complejas a una segunda capa, podían mantenerse más bajos tanto el
+número de transistores (y, por tanto, el gasto eneergético) y los
+costos de producción.
+
+La segunda generación de chips Transmeta, /Efficeon/, estaba basada
+en una arquitectura muy distinta, buscando un rendimiento mejorado,
+pero gracias al CMS, esto resulta imperceptible al usuario.
+
+A pesar de estas ideas interesantes y novedosas, Transmeta no pudo
+mantener el dinamismo necesario para despegar, y cesó sus operaciones
+en 2009.
+
+** Virtualización asistida por hardware
+
+Actualmente se escucha mucho hablar de la virtualización como una
+herramienta para la consolidación de servicios, de gran ayuda para los
+administradores de sistemas. Este uso se refiere principalmente a lo
+que veremos en este apartado, así como en los dos siguientes,
+[[#paravirt][paravirtualización]] y [[#contenedores][contenedores]]. Y si bien este /zumbido/ de la
+virtualización se ha producido mayormente a partir del 2006-2007, no
+se trata de tecnologías o ideas novedosas — Existe desde fines de
+los 1960. Hasta hace algunos años, sin embargo, se mantenía dentro
+del ámbito de los servidores a gran escala, fuera del alcance de la
+mayor parte de los usuarios. Repasemos un poco la génesis de esta
+herramienta, para poder comprender mejor cómo opera y cómo se
+implementa.
+
+En 1964, IBM creó la primer /familia de computadoras/, la
+serie 360. Presentaron la entonces novedosa idea de que una
+organización podía adquirir un modelo sencillo y, si sus necesidades
+se ajustaban al modelo de cómputo, podrían migrar facilmente hacia
+modelos más poderosos dado que tendrían /compatibilidad binaria/.
+
+Uno de los modelos de esta familia fue la /S-360-67/, con la
+característica distintiva en ser la única de la serie 360 en ofrecer
+una unidad de manejo de memoria (MMU), con lo cual permitía la
+reubicación de programas en memoria. Esto, sin embargo, creaba un
+problema: El software desarrollado para los equipos más pequeños de la
+familia estaba creado bajo un paradigma de usuario único, y si bien
+podría ser ejecutado en este modelo, eso llevaría a un desperdicio de
+recursos (dado que el modelo 67 tenía todo lo necesario para operar en
+modo multitarea).
+
+La respuesta de IBM fue muy ingeniosa: Desarrollar un sistema
+operativo mínimo, /CP/ (/Control Program/, Programa de Control) con el
+único propósito de crear y gestionar /máquinas virtuales/ dentro del
+hardware S/360-67, dentro de /cada una de las cuales/ pudiera
+ejecutarse /sin requerir modificaciones/ un sistema operativo estándar
+de la serie 360. De entre los varios sistemas operativos disponibles
+para la S/360, el que más frecuentemente se utilizó fue el /CMS/,[fn::
+Originalmente, las siglas CMS eran por el /Cambridge Monitor System/,
+por haber sido desarrollado en la división de investigación de IBM en
+Cambridge, pero posteriormente fue renombrado a /Conversational
+Monitor System/, /Sistema de Monitoreo Conversacional/] un sistema
+sencillo, interactivo y monousuario. La combinación CP/CMS
+proporcionaba un sistema operativo multiusuario, con plena protección
+entre procesos, y con compatibilidad con los modelos más modestos de
+la serie 360.
+
+Aún después de la vida útil de la serie 360 original, IBM mantuvo
+compatibilidad con este modelo hacia la serie 370, e incluso hoy, 50
+años más tarde, lo encontramos aún como /z/VM/ en la línea de
+/Sistemas z/.
+
+Vale la pena mencionar que tanto CP como CMS fueron distribuídos desde
+el principio de forma consistente con lo que hoy conocemos como
+/software libre/: IBM los distribuía en fuentes, con permiso de
+modificación y redistribución, y sus diferentes usuarios fueron
+enviando las mejorías que realizaban de vuelta a IBM, de modo que hoy
+en día incorpora el trabajo de 50 años de desarrolladores.
+
+*** El hipervisor
+
+El modelo CP/CMS lleva a una separación bastante limpia entre un
+/multiplexador de hardware/ (CP) y el sistema operativo propiamente
+dicho (CMS). Y si bien la dupla puede ser vista como un sólo sistema
+operativo, conforme se fueron ejecutando en máquinas virtuales
+sistemas operativos más complejos se hizo claro que CP tendría que
+ser /otra cosa/. Partiendo del concepto de que el sistema operativo
+es el /supervisor/ de la actividad de los usuarios, yendo un paso más
+hacia arriba, se fue popularizando el nombre de /hipervisor/ para el
+programa que administra y virtualiza a los supervisores. Algunas
+características primarias que definen qué es un hipervisor son:
+
+- Es únicamente un /micro-sistema operativo/, dado que no cubre
+  muchas de las áreas clásicas ni presenta las interfaces abstractas
+  al usuario final — Sistemas de archivos, mecanismos de comunicación
+  entre procesos, gestión de memoria virtual, evasión de bloqueos,
+  etcétera.
+
+- Se limita a gestionar bloques de memoria física contiguos y fijos,
+  asignación de dispositivos y /poco/ más que eso.
+
+- Normalmente no tiene una interfaz usuario directa, sino que es
+  administrado a través de llamadas privilegiadas desde alguno de los
+  sistemas operativos huésped.
+
+Estas líneas se han ido haciendo borrosas con el tiempo. Hoy en día,
+por ejemplo, muchos hipervisores entienden a los sistemas de archivo,
+permitiendo que los espacios de almacenamiento ofrecidos a sus
+sistemas operativos huésped sean simples archivos para el sistema
+anfitrión (y no particiones o dispositivos enteros). Algunos
+hipervisores, como /KVM/ bajo Linux se presentan integrados como un
+componente más de un sistema operativo estándar.
+
+*** Virtualización asistida por hardware en x86
+
+Hasta alrededor del año 2005, la virtualización no se mencionaba muy
+frecuentemente. Si bien había hardware virtualizable 40 años atrás,
+era hardware bastante especializado — y caro. Ese año, Intel sacó al
+mercado los procesadores con las extensiones necesarias para la
+virtualización, bajo el nombre /Vanderpool Technology/ (o /VT-x/). Al
+año siguiente, AMD hizo lo propio, denominándolas /extensiones
+Pacifica/. Hoy en día, casi todas las computadoras de escritorio de
+rango medio-alto tienen el sopote necesario para llevar a cabo
+virtualización asistida por hardware. Y si bien en un principio el
+tema tardó en tomar tracción, llevó a un replanteamiento completo de
+la metodología de trabajo tanto de administradores de sistemas como
+de programadores.
+
+En contraste con las arquitecturas diseñadas desde un principio para
+la virtualización, los usuarios de computadoras personales (inclusive
+cuando estas son servidores en centros de datos — Siguen estando
+basadadas en la misma arquitectura básica) se enfrentan a una mucho
+mayor variedad de dispositivos para todo tipo de tareas.[fn:: Una
+descripción completa de la complejidad a la que debe enfrentarse un
+hipervisor bajo arquitectura x86 excede con mucho el ámbito del
+presente texto; sugiero a los lectores interesados referirse al
+excelente artículo de [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bugnion et. al. (2012)]] detallando la
+implementación de /VMWare/.] Y si bien la virtualización permite
+aparentar varias computadoras distintas corriendo sobre el mismo
+procesador, esta no incluye a los dispositivos. Al presentarse una
+máquina virtual, el sistema anfitrión esta casi siempre[fn:: Hay
+mecanismos para reservar y dirigir un dispositivo físico existente a
+una máquina virtual específica, pero hacerlo implica que éste
+dispositivo no será /multiplexado/ hacia las demás máquinas virtuales
+que se ejecuten paralelamente.] emulando hardware. Claro está, lo más
+frecuente es que el hipervisor ofrezca a los huéspedes la emulación de
+dispositivos relativamente viejos y simples.[fn:: Por ejemplo, KVM
+bajo Linux emula tarjetas de red tipo NE2000, tarjetas de sonido tipo
+Soundblaster16 y tarjetas de video Cirrus Logic, todos ellos de la
+década de los 1990.] Esto no significa que estén limitados a las
+prestaciones del equipo emulado (por ejemplo, a los 10Mbps para los
+que estaba diseñada una tarjeta de red NE2000), sino que la interfaz
+del núcleo para enviar datos a dicho dispositivo es una sencilla y que
+ha sido empleada tanto tiempo que presenta muy poca inestabilidad.
+
+Y este último punto permite acercarnos a una de las ventajas que
+ofrecen los sistemas operativos virtualizados — La estabilidad. Los
+controladores de dispositivos provistos por fabricante han sido
+responsabilizados una y otra vez, y con justa razón, de la
+inestabilidad de los sistemas operativos de escritorio. En particular,
+son en buena medida culpables de la fama de inestabilidad que obtuvo
+Windows. Los fabricantes de hardware no siempre gozan de suficiente
+conocimiento acerca del sistema operativo como para escribir
+controladores suficientemente seguros y de calidad, y por muchos años,
+los sistemas Windows no implementaban mayor verificación al
+comportamiento de los controladores — que, siendo un sistema
+monolítico, eran código ejecutado con privilegios de núcleo.
+
+Al emplear el sistema operativo huésped únicamente controladores
+ampliamente probados y estabilizados a lo largo de muchos años, la
+estabilidad que ofrece una máquina virtualizada muchas veces supera a
+la que obtendría ejecutándose de forma nativa. Claro, el conjunto de
+máquinas virtuales que se ejecute dentro de un sistema anfitrión
+sigue siendo susceptible a cualquier inestabilidad del mismo sistema
+anfitrión, sin embargo, es mucho menos probable que un programa mal
+diseñado logre congelarse esperando respuesta del hardware (emulado),
+y mucho menos afectar a los demás huéspedes.
+
+** Paravirtualización
+# <<paravirt>>
+
+La virtualización asistida por hardware, por conveniente que resulte,
+sigue presentando algunas desventajas:
+
+- No todos los procesadores cuentan con las extensiones de
+  virtualización. Si bien cada vez es más común encontrarlas, es aún
+  en líneas generales un factor de diferenciación entre las líneas
+  económicas y de lujo.
+- La capa de emulación, si bien es delgada, conlleva un cierto peso.
+- Si bien es posible virtualizar arquitecturas como la x86, hay
+  muchas arquitecturas para las cuales no existen las extensiones
+  hardware necesarias.
+
+La /paravirtualización/, o /virtualización asistida por el sistema
+operativo/, parte de un planteamiento distinto: En vez de /engañar/ al
+sistema operativo para que funcione sobre un sistema que parece real
+pero no lo es, la paravirtualización busca hacerlo /con pleno
+conocimiento y cooperación/ por parte de los sistemas huéspedes.  Esto
+es, la paravirtualización consiste en alojar a sistemas operativos
+huésped que, a sabiendas de que están corriendo en hardware
+virtualizado, /no hacen llamadas directas a hardware/ sino que las
+traducen a llamadas al sistema operativo anfitrión.
+
+Vale la pena reiterar en este punto: Los sistemas operativos huésped
+bajo un entorno paravirtualizado saben que no están corriendo sobre
+hardware real, por lo que en vez de enviar las instrucciones que
+controlen al hardware, envían llamadas al sistema a su
+hipervisor. Hasta cierto punto, podríamos ver al proceso de adecuación
+de un sistema para que permita ser paravirtualizado como equivalente
+a adecuar al sistema operativo para que corra en una arquitectura
+nueva — Muy parecida a la del hardware /real/, sí, pero con
+diferencias fundamentales en aspectos profundos.
+
+Y si bien ya vimos en la sección anterior que la virtualización puede
+ayudar a presentar un sistema idealizado que reduzca la inestabilidad
+en un sistema operativo, al hablar de paravirtualización este
+beneficio naturalmente crece: Los controladores de hardware sencillos
+y bien comprendidos que empleábamos para comunicarnos con
+dispositivos emulados se convierten casi en simples pasarelas de
+llamadas al sistema, brindando además de una sobrecarga mínima, aún
+mayor estabilidad por simplicidad del código.
+
+*** Paravirtualización y software libre
+
+La paravirtualización resulta muy atractiva, presentando muy obvias
+ventajas. Pero a pesar de que es posible emplearla en cualquier
+arquitectura hardware, no siempre es posible emplearla.
+
+Como mencionamos recién, para un sistema operativo, dar soporte a una
+arquitectura de paravirtualización es casi equivalente a traducirlo a
+una arquitectura hardware. Para que los autores de un entorno que
+implemente paravirtualización logren que un sistema operativo nuevo
+pueda ser ejecutado en su arquitectura, deben poder manipular y
+modificar su código fuente: De otra manera, ¿cómo se le podría adecuar
+para que supiera desenvolverse en un entorno no nativo?
+
+El proyecto de gestión de virtualización y paravirtualización /Xen/,
+hoy impulsado por la empresa /XenSource/, nació como un proyecto
+académico de la Universidad de Cambridge, presentando su versión 1.x a
+través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of
+Virtualization]]). Este artículo presenta su experiencia
+paravirtualizando a una versión entonces actual de Linux y de Windows
+XP. Sin embargo, Xen sólo pudo ser empleado por muchos años como
+plataforma de paravirtualización de Linux porque, dado que la
+adaptación de Windows se realizó bajo los términos del /Academic
+Licensing Program/, que permitía a los investigadores acceso y
+modificación al código fuente, pero no su redistribución — La versión
+paravirtualizable de Windows XP existe, pero no puede distribuirse
+fuera de XenSource.
+
+En tanto, el trabajo necesario para lograr la paravirtualización de
+un sistema operativo libre, como Linux, FreeBSD u otros, puede ser
+libremente redistribuído. No sólo eso, sino que el esfuerzo de
+realizar la adaptación pudo compartirse entre desarrolladores de todo
+el mundo, dado que esta entonces novedosa tecnología resultaba de gran
+interes.
+
+*** Paravirtualización de dispositivos
+
+Las ideas derivadas de la paravirtualización pueden emplearse también
+bajo entornos basados en virtualización plena: Si el sistema operativo
+está estructurado de una forma modular (sin que esto necesariamente
+signifique que es un sistema /microkernel/, sino que permita la carga
+dinámica de controladores o /drivers/ para el hardware, como
+prácticamente la totalidad de sistemas disponibles comercialmente hoy
+en día), no hace falta modificar al sistema operativo completo para
+gozar de los beneficios de la paravirtualización en algunas áreas.
+
+De esta manera, si bien podemos ejecutar un sistema operativo /sin
+modificaciones/ que espera ser ejecutado en hardware real, los
+dispositivos que típicamente generan más actividad de entrada y
+salida[fn:: Medios de almacenamiento, interfaz de red y salida de
+video] pueden ser atendidos por drivers paravirtuales. Claro, varios
+aspectos que son parte del núcleo /duro/ del sistema, como la
+administración de memoria o el manejo de interrupciones (incluyendo al
+temporizador) tendrán que seguirse manejando a través de una
+emulación, aunque mucho más delgada.
+
+Según mediciones empíricas, hechas en 2007 por Qumranet (quienes
+liderearon el desarrollo del módulo de virtualización asistido por
+hardware /KVM/ en Linux), las clases de dispositivos =virtio= y =pv=
+resultaron entre 5 y 10 veces más rápidas que la emulación de
+dispositivos reales.
+
+Mediante esta estrategia es posible ejecutar sistemas operativos
+propietarios, como los de la familia Windows, con buena parte de las
+ventajas de la paravirtualización, sobre entornos de virtualización
+asistida por hardware.
+
+** Contenedores, o /virtualización a nivel sistema operativo/
+# <<contenedores>>
+
+Una estrategia completamente distinta para la creación de máquinas
+virtuales es la de /contenedores/. A diferencia de emulación,
+virtualización asistida por hardware y paravirtualización, al emplear
+contenedores /sólo se ejecuta un sistema operativo/, que es el mismo
+para los sistemas anfitrión y huesped. El anfitrión implementará una
+serie de medidas para /aumentar el grado de separación/ que mantiene
+entre procesos, agregando la noción de /contextos/ o /grupos/ que
+describiremos en breve. Dado que el sistema operativo es de suyo el
+único autorizado para tener acceso directo al hardware, no hace falta
+ejecutar un hipervisor.
+
+Podría presentarse un símil: Las tecnologías antes descritas de
+virtualización implementan /hardware virtual/ para cada sistema
+operativo, mientras que los contenedores más bien presentan un
+/sistema operativo virtual/ para el conjunto de procesos que definen
+el comportamiento de cada máquina virtual — Muchos autores presentan a
+la virtualización por contenedores bajo el nombre /virtualización a
+nivel sistema operativo/. Y si bien el efecto a ojos del usuario
+puede ser comparable, este método más que una multiplexación de
+máquinas virtuales sobre hardware real opera a través de
+restricciones adicionales sobre los procesos de usuario.
+
+Al operar a un nivel más alto, un contenedor presenta algunas
+limitantes adicionales (principalmente, se pierde la flexibilidad de
+ejecutar sistemas operativos distintos), pero obtiene también
+importantes ventajas.
+
+El desarrollo histórico de los contenedores puede rastrearse a la
+llamada al sistema =chroot()=, que restringe la visión del sistema de
+archivos de un proceso a sólo el directorio hacia el cual ésta fue
+invocada.[fn:: La llamada =chroot()= fue creada por Bill Joy en 1982
+para ayudarse en el desarrollo del sistema Unix 4.2BSD. Joy buscaba
+probar los cambios que iba haciendo en los componentes en espacio de
+usuario del sistema sin modificar su sistema /vivo/ y en producción,
+esto es, sin tener que reinstalar y reiniciar cada vez, y con esta
+llamada le fue posible instalar los cambios dentro de un directorio
+específico y probarlos como si fueran en la raiz.] Esto es, si dentro
+de un proceso se invoca =chroot('/usr/local')= y posteriormente se le
+pide abrir el archivo =/boot.img=, a pesar de que éste indique una
+ruta absoluta, el archivo que se abrirá será =/usr/local/boot.img=
+
+Ahora bien, =chroot()= no es (ni busca ser) un verdadero aislamiento,
+sólo proporciona un inicio[fn:: Como referencia a por qué no es un
+verdadero aislamiento, puede referirse al artículo /How to break out
+of a =chroot()= jail/ (Simes, 2002)] — Pero conforme más usuarios
+comenzaban a utilizarlo para servicios en producción, se hizo claro
+que resultaría útil ampliar la conveniencia de =chroot()= a un
+verdadero aislamiento.
+
+El primer sistema en incorporar esta funcionalidad fue /FreeBSD/,
+creando el subsistema /Jails/ a partir de su versión 4.0, del
+año 2000. No tardaron mucho en aparecer implementaciones comparables
+en los distintos sistemas Unix. Hay incluso un producto propietario,
+el /Parallels Virtuozzo Containers/, que implementa esta
+funcionalidad para sistemas Windows.
+
+Un punto importante a mencionar cuando hablamos de contenedores es que
+se pierde buena parte de la universalidad mencionada en las secciones
+anteriores. Si bien las diferentes implementaciones comparten
+principios básicos de operación, la manera en que implementan la
+separación e incluso la nomenclatura que emplean difieren
+fuertemente.
+
+El núcleo del sistema crea un /grupo/ para cada /contenedor/ (también
+conocido como /contexto de seguridad/), aislándolos entre sí por lo
+menos en los siguientes áreas:
+
+- Tablas de procesos :: Los procesos en un sistema Unix se presentan
+     como un árbol, en cuya raiz está siempre el proceso 1,
+     =init=. Cada contenedor inicia su existencia ejecutando un =init=
+     propio y enmascarando su identificador de proceso real por el
+     número 1
+- Señales, comunicación entre procesos :: Ningún proceso de un
+     contenedor debe poder interferir con la ejecución de uno en otro
+     contenedor. El núcleo restringe toda comunicación entre procesos,
+     regiones de memoria compartida y envío de señales entre procesos
+     de distintos grupos.
+- Interfaces de red :: Varía según cada sistema operativo e
+     implementación, pero en líneas generales, cada contenedor tendrá
+     una interfaz de red con una /dirección de acceso a medio (MAC)/
+     distinta.[fn:: Es común referirse a las direcciones MAC como
+     direcciones físicas, sin embargo, todas las tarjetas de red
+     permiten configurar su dirección, por lo cual la apelación
+     /física/ resulta engañosa.] Claro está, cada una de ellas
+     recibirá una diferente dirección IP, y el núcleo ruteará e
+     incluso aplicará reglas de firewall entre ellas.
+- Dispositivos hardware :: Normalmente los sistemas huesped no tienen
+     acceso directo a ningún dispositivo en hardware. En algunos
+     casos, el acceso a dispositivos será multiplexado, y en otros, un
+     dispositivo puede especificarse a través de su
+     configuración. Cabe mencionar que, dado que esta multiplexión no
+     requiere /emulación/ sino que únicamente una cuidadosa
+     /planificación/, no resulta tan oneroso como la emulación.
+- Límites en consumo de recursos :: Casi todas las implementaciones
+     permiten asignar cotas máximas para el consumo de recursos
+     compartidos, como espacio de memoria o disco o tiempo de CPU
+     empleados por cada uno de los contenedores.
+- Nombre del equipo :: Aunque parezca trivial, el nombre con el que
+     una computadora /se designa a sí misma/ debe también ser
+     aislado. Cada contenedor debe poder tener un nombre único e
+     independiente.
+
+Una de las principales características que atrae a muchos
+administradores a elegir la virtualización por medio de contenedores
+es un consumo de recursos óptimo: Bajo los demás métodos de
+virtualización (y particularmente al hablar de emulación y de
+virtualización asistida por hardware), una máquina virtual siempre
+ocupará algunos recursos, así esté inactiva. El hipervisor tendrá que
+estar notificando a los temporizadores, enviando los paquetes de red
+recibidos, etcétera. Bajo un esquema de contenedores, una máquina
+virtual que no tiene trabajo se convierte sencillamente en un grupo
+de procesos /dormidos/, probables candidatos a ser /paginados/ a
+disco.
+
+
+* Otros recursos
+
+- [[http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html][An Introduction to the Intel® QuickPath Interconnect]]; Intel, 2009
+  (Document Number: 320412-001US)
+- [[http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf][Intel® Desktop Board D875PBZ Technical Product Specification]]
+  (Intel, 2003)
+- [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bringing Virtualization to the x86 Architecture with the Original
+  VMware Workstation]] (Bugnion et. al., 2012, ACM Transactions on
+  Computer Systems)
+- [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of Virtualization]] Paul Barham, Boris Dragovic
+  et. al. 2003
+- [[http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf][KVM: The Linux Virtual Machine Monitor]]; Avi Kivity, Yaniv Kamay,
+  Dor Laor, Uri Lublin, Anthony Liguori (Qumranet / IBM), 2007
+- [[http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007%24kvm_pv_drv.pdf][KVM PV devices]], Dor Laor (Qumranet), 2007
+- [[http://www.bpfh.net/computing/docs/chroot-break.html][How to break out of a =chroot()= jail]]; Simes, 2002
+- [[http://lwn.net/Articles/256389/][Notes from a container]]; Jonathan Corbet, 2007, Linux Weekly News
+- [[https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt][CGROUPS]]; Paul Menage (Google), 2004-2006, kernel.org

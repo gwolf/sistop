@@ -77,7 +77,7 @@ acumulador/. Por ejemplo, el MOS 6502 (en el cual se basaron las
 principales computadoras de 8 bits) tenía un acumulador de 8 bits (A),
 dos registros índice de 8 bits (X y Y), un registro de estado del
 procesador de 8 bits (P), un apuntador al /stack/ de 8 bits (S), y un
-apuntador al programa de 16-bit (PC). El otro gran procesador de su
+apuntador al programa de 16 bits (PC). El otro gran procesador de su
 era, el Zilog Z80, tenía 14 registros (3 de 8 bits y el resto de 16),
 pero sólo uno era un acumulador de propósito general.
 
@@ -153,7 +153,7 @@ según la velocidad requerida por sus componentes y otras
 características que determinan su topología.
 
 #+attr_html: height=618px
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: width=0.5\textwidth
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
 [[./img/northbridge_southbridge.png]]
 
@@ -199,7 +199,7 @@ dispositivos tienen información lista, tendrán que esperar a que los
 demás dispositivos desocupen el canal.
 
 #+attr_html: height=490px
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: width=\textwidth
 #+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
 [[./img/dot/chipset_857.png]]
 
@@ -1273,6 +1273,8 @@ disco.
 
 * Otros recursos
 
+- [[https://dl.acm.org/citation.cfm?doid=359576.359579][Can programming be liberated from the von Neumann style?: a
+  functional style and its algebra of programs]]; John Backus, 1978
 - [[http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html][An Introduction to the Intel® QuickPath Interconnect]]; Intel, 2009
   (Document Number: 320412-001US)
 - [[http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf][Intel® Desktop Board D875PBZ Technical Product Specification]]

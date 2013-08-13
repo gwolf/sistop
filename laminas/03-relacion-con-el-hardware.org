@@ -4,7 +4,107 @@
 
 * Objetivo
 ** Objetivo de la sesión
-* Jerarquía de almacenamiento
+- Identificar los elementos arquitecturales principales del
+  almacenamiento /primario/ y /secundario/ en un sistema /von Neumann/
+- Conocer el principal mecanismos de comunicación y transferencia de
+  datos entre ellos
+- Familiarizarse con los principales conceptos (y magnitudes) de
+  medición de rendimiento en este campo
+
+* Las fronteras del procesador
+** Característica fundamental de sistemas /von Neumann/
+- Computadora /de programa almacenado/
+  - En la /memoria principal/
+  - /Mismo almacenamiento/ para el programa siendo ejecutado que para
+    sus datos
+- La arquitectura /no considera/ la existencia de almacenamiento /persistente/
+  - Dentro del procesador hay algunas (¡pocas!) localidaes para
+    almacenar datos /muy limitados/, para /trabajar directamente con
+    ellos/ \rarrow /Registros/
+  - La computadora cuenta únicamente con la /memoria de trabajo/
+    \rarrow RAM, /almacenamiento primario/
+  - El almacenamiento a largo plazo debe hacerse empleando
+    controladores / mecanismos alternos, en medios específicos \rarrow
+    /almacenamiento secundario/
+
+** Los registros
+#+BEGIN_CENTER
+¿Qué son los registros?
+#+END_CENTER
+- Memoria super-rápida (hoy en día, sub-nanosegundo), ubicada /dentro/
+  del procesador
+- Manejada /por referencia directa/, no por dirección
+- Además de los datos del proceso guardan su /estado/
+- ¿Qué significa /gestionados por el compilador/?
+
+** Procesadores basados en /acumuladores/
+- Primeros procesadores: Uno o pocos /acumuladores/. Por ejemplo:
+  - MOS 6502:
+    - 1 acumulador (A) de 8 bits
+    - 2 registros índice de 8 bits (X y Y)
+    - 1 registro de estado del procesador (P), un apuntador al stack
+      de 8 bits (S), un apuntador a instrucciones (PC) de 8 bits
+  - Zilog Z80 e Intel 8086:
+    - 14 registros (3 de 8 bits, el resto de 16)
+    - Pero sólo uno era un acumulador de propósito general
+
+** Ejemplo de acumuladores: Intel 8086/8088
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+#+attr_latex: width=\columnwidth
+#+caption: Imagen de Wikipedia
+[[../img/registros_8086.png]]
+#+latex: \end{column}\begin{column}{0.4\textwidth}
+Registros /bandera/ (vector de booleanos): Overflow, Dirección,
+Interrupción, Trampa/depuración, Signo, Cero, Acarreo auxiliar,
+Paridad, Acarreo
+#+latex: \end{column}\end{columns}
+
+** Registros de /propósito general/: Legado de RISC
+- Procesadores RISC: A partir de los 1980
+- Planteamiento base de instrucciones /sencillas y regulares/
+  - Fáciles de codificar en un procesador pequeño (en número de
+    transistores)
+  - La arquitectura RISC más conocida hoy: ARM
+- Típicamente ≥32 registros /largos/ (32, 64bits) de propósito
+  general
+  - Mas algunos de propósito específico
+
+** Tipos de almacenamiento
+#+BEGIN_CENTER
+¿Cómo representar y guardar /adecuadamente/ los datos e instrucciones?
+#+END_CENTER
+- La memoria rápida es muy cara
+  - Pero aún así, mucho más lenta que el procesador: /Cuello de
+    botella de von Neumann/ ([[https://dl.acm.org/citation.cfm?doid=359576.359579][Backus, 1977]])
+- La memoria barata es muy lenta (/hasta 1000 veces/ más lenta que el procesador)
+- El almacenamiento /a largo plazo/ es mucho más barato, pero
+  muchísimo más lento
+  - Los discos llegan a ser /miles a millones/ de veces más lentos que
+    la memoria
+- El avance del desarrollo de hardware /juega en contra/ de reducir
+  la diferencia
+
+** La memoria
+- El procesador puede referirse directamente a los datos ubicados en
+  la /memoria principal/ (/almacenamiento primario/)
+  - Indicando su dirección (varias notaciones/mecanismos posibles)
+  - Algunos procesadores permiten /realizar operaciones/ directamente
+    sobre la memoria
+    - Mayormente los basados en acumulador
+- Memoria /caché/
+  - Acelera operaciones aprovechando la /localidad de referencia/
+  - Transparente a la programación (gestionada por el controlador)
+  - Varios niveles de caché
+
+** Jerarquía de almacenamiento (vista clásica/idealizada)
+#+attr_latex: height=0.6\textheight
+#+caption: Jerarquía de almacenamiento (Silberschatz, Galvin, Gagne; p. 11)
+[[../img/jerarquia.png]]
+** Jerarquía de almacenamiento (vista más real)
+#+attr_latex: height=0.7\textheight
+##+attr_latex: width=\textwidth
+#+caption: La realidad de los niveles es menos rígida... (e incluso esta representación admite varias mejorías)
+[[../img/dot/jerarquia_memoria.png]]
 ** ¿Tiempo de acceso? ¿Tasa de transferencia?
 #+BEGIN_CENTER
 Manejaremos muchas mediciones de velocidad. Debemos siempre tener en cuenta:
@@ -17,28 +117,6 @@ Manejaremos muchas mediciones de velocidad. Debemos siempre tener en cuenta:
 En el /mejor caso/, la transferencia de $x$ bits nos tomará $t_a +
 xt_t$
 #+END_CENTER
-** Tipos de almacenamiento
-#+BEGIN_CENTER
-¿Cómo representar y guardar /adecuadamente/ los datos e instrucciones?
-#+END_CENTER
-- La memoria rápida es muy cara
-- La memoria barata es muy lenta (hasta 1000 veces más lenta que el procesador)
-- El almacenamiento /a largo plazo/ es mucho más barato, pero
-  muchísimo más lento
-  - El almacenamiento primario es /volátil/
-  - Los discos llegan a ser /millones/ de veces más lentos que la
-    memoria
-- El avance del desarrollo de hardware /juega en contra/ de reducir
-  la diferencia
-** Jerarquía de almacenamiento (vista clásica)
-#+attr_latex: height=0.7\textheight
-#+caption: Jerarquía de almacenamiento (Silberschatz, Galvin, Gagne; p. 11)
-[[../img/jerarquia.png]]
-** Jerarquía de almacenamiento (vista más real)
-#+attr_latex: height=0.7\textheight
-##+attr_latex: width=\textwidth
-#+caption: La realidad de los niveles es menos rígida... (e incluso esta representación admite varias mejorías)
-[[../img/dot/jerarquia_memoria.png]]
 ** Jerarquía de almacenamiento
 #+BEGIN_CENTER
 #+latex: {\scriptsize
@@ -58,33 +136,69 @@ xt_t$
 - El procesador /sólo puede manejar directamente/ a la memoria
   principal
   - Se le conoce también como /almacenamiento primario/
-  - *Ojo* ¡No es persistente! Es almacenamiento /durante el tiempo de
-    ejecución de un programa/
 - Discos, cintas, almacenamiento /estado sólido/ son /almacenamiento
   secundario/
   - Todas las computadoras lo manejan a través de /controladores/
-** La memoria y los registros
-#+BEGIN_CENTER
-¿Qué son los registros?
-#+END_CENTER
-- Memoria super-rápida, ubicada /dentro/ del procesador
-- Manejada /por referencia directa/, no por dirección
-- Primeros procesadores: Basados en /acumuladores/
-- Hoy: Típicamente ≥32 registros /largos/ (32, 64bit) de propósito
-  general, mas algunos de propósito específico
-- Además de los datos del proceso guardan su /estado/
-- ¿Qué significa /gestionados por el compilador?
 
-** Ejemplo de registros: Intel 8086/8088
-#+latex: \begin{columns}\begin{column}{0.6\textwidth}
-#+attr_latex: width=\columnwidth
-#+caption: Imagen de Wikipedia
-[[../img/registros_8086.png]]
-#+latex: \end{column}\begin{column}{0.4\textwidth}
-Registros /bandera/ (vector de booleanos): Overflow, Dirección,
-Interrupción, Trampa/depuración, Signo, Cero, Acarreo auxiliar,
-Paridad, Acarreo
-#+latex: \end{column}\end{columns}
+* Conectando hacia afuera
+** Canales y puentes
+- Los componentes /no directamente referenciables/ de un sistema se
+  comunican a través de /canales/ (/buses/)
+  - Líneas de comunicación entre el procesador y el /chipset/
+- Hoy en día, en sistemas x86, el acomodo más frecuente:
+  - Puente norte (Northbridge) :: Conectado directamente al CPU,
+       encargado de los buses de alta velocidad y los dispositivos
+       fundamentales para el inicio del sistema — Memoria, video (AGP)
+  - Puente sur (Southbridge) :: Controla el resto de los dispositivos
+       del sistema; de él se desprenden varios buses (SCSI / SATA /
+       IDE, PCI / PCIe, USB / Firewire, puertos /heredados/)
+
+** Canales y puentes
+#+attr_latex: height=\textheight, angle=90
+#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
+[[../img/northbridge_southbridge.png]]
+
+** ¿Por qué tantos canales?
+- Frecuencia acorde a distintas categorías de dispositivos
+  - Criterio económico: Más barato usar señalización más lenta
+  - Distintos mecanismos de acceso
+- Permitir transferencias paralelas, agregarlas conforme subimos la
+  jerarquía
+  - Jerarquizar la comunicación
+- Pero... Cuando el sistema requiere transferir datos de o hacia
+  dispositivos pasando por el mismo bus, frecuentemente ocurre
+  *contención*
+  - Algunos canales, como el USB, permiten /hasta 127/ dispositivos
+    conectados /serialmente/
+
+** Ejemplo: Chipset Intel 875 (2003)
+#+attr_latex: width=1.1\textwidth
+#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en el chipset Intel 875 (Pentium 4, 2003)
+[[../img/dot/chipset_857.png]]
+
+** Otros arerglos
+- El ejemplo presentado es para un sistema de escritorio típico
+  - Y bastante viejo ya
+- En entornos de alto rendimiento, puede haber múltiples canales entre
+  los componentes
+  - Para reducir el impacto de la contención
+  - Particularmente en los componentes con mayor demanda de ancho de banda
+- En entornos móviles / de bajo costo, se hacen /concesiones/
+  permitiendo mayor contención
+  - P.ej. estructurar la comunicación a todos los periféricos
+    alrededor del bus USB
+  - Frecuente en equipos ARM
+
+* Interrupciones y excepciones
+
+** El procesador y los /eventos/ externos
+- El procesador no tiene cómo reaccionar /internamente/ a eventos que
+  ocurran en el sistema
+- La ejecución es lineal: Avanza por la lista de instrucciones del
+  programa
+- Lo que permite el manejo de toda la E/S, interactividad,
+  multiprogramación es el mecanismo de /interrupciones/ y
+  /excepciones/.
 
 ** Interrupciones y excepciones
 
@@ -100,6 +214,7 @@ Paridad, Acarreo
   - División sobre cero
   - Instrucción ilegal
   - Acceso a memoria no direccionada
+  - También conocidas como /trampas/ (/traps/)
 
 ** Manejo de interrupciones y excepciones
 - Todo /evento/ es recibido por el sistema operativo (no por los
@@ -112,52 +227,17 @@ Paridad, Acarreo
     posible!)
   - Una vez procesada, volver a invocar al /planificador/
 
-** Llamadas al sistema
-- De cierto modo análogas/complementarias a las interrupciones
-- Mecanismo para que un proceso /solicite un servicio/ al sistema
-  operativo
-- Cada sistema operativo /expone/ un diferente juego de llamadas al
-  sistema a través de su API
-- Es en buena medida lo que determina la /compatibilidad de código/
-  entre sistemas operativos
-  - Contraposición: Compatibilidad binaria
-  - APIs implementados por diversos sistemas: POSIX, Win32
-- Interrupciones /enmascarables/ y /no enmascarables/
-** Flujo de control en una llamada al sistema
-#+attr_latex: width=\textwidth
-#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Silberschatz, Galvin, Gagne; p.22)
-[[../img/dot/llamada_al_sistema.png]]
-** Tipos de llamadas al sistema (1)
-#+BEGIN_CENTER
-Lista incompleta, meramente ejemplificando
-#+END_CENTER
-- Control de procesos :: Crear o finalizar un proceso, obtener
-     atributos del proceso, esperar cierto tiempo, asignar o liberar
-     memoria, etc.
-
-- Manipulación de archivos :: Crear, borrar o renombrar un archivo;
-     abrir o cerrar un archivo existente; modificar sus /metadatos/;
-     leer o escribir de un /descriptor de archivo/ abierto, etc.
-
-- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
-     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
-     llamadas son análogas a las de manipulación de archivos, y varios
-     sistemas operativos las ofrecen como una sola.
-** Tipos de llamadas al sistema (2)
-#+BEGIN_CENTER
-Lista incompleta, meramente ejemplificando
-#+END_CENTER
-- Mantenimiento de la información :: Obtener o modificar la hora del
-     sistema; obtener detalles acerca de procesos o archivos, etc.
-
-- Comunicaciones :: Establecer una comunicación con determinado
-                    proceso (local o remoto), aceptar una solicitud de
-                    comunicación de otro proceso, intercambiar
-                    información sobre un canal establecido
-
-- Protección :: Consultar o modificar la información relativa al
-                acceso de objetos en el disco, otros procesos, o la
-                misma sesión de usuario
+** ¿Cuándo una interrupción es /no enmascarable/?
+- Depende de la arquitectura y los objetivos del sistema
+- Algunos ejemplos:
+  - Error de paridad en la memoria (IBM PC)
+  - Llamadas a hardware incompatible (primeros /clones/ de IBM;
+    llamada atrapada y procesada por el manejador de interrupciones en
+    el BIOS)
+  - Diversas combinaciones de teclas para invocar a un reinicio (o
+    lanzar un depurador)
+  - Consolas de 8 bits (Nintendo NES): Bloquear modificaciones al
+    buffer de pantalla durante el refresco vertical
 
 ** Acceso directo a memoria (DMA)
 #+BEGIN_CENTER
@@ -198,49 +278,111 @@ procesador/?
   - Caché de nivel superior (en el procesador) no coherente, cachés
     inferiores coherentes
 
-* Multiprocesamiento y cómputo distribuído
-** Multiprocesamiento
-- Un entorno multiprocesador supone cambios en muchas estructuras y
-  algoritmos básicos
-  - Concurrencia /real/
-- Desde 1970s, empleado para entornos especializados — Alto
-  rendimiento
-- Diferentes tipos de multiprocesamiento
-  - SMP
-  - ASMP
-  - NUMA
+** Llamadas al sistema
+- De cierto modo análogas/complementarias a las interrupciones
+- Mecanismo para que un proceso /solicite un servicio/ al sistema
+  operativo
+- Cada sistema operativo /expone/ un diferente juego de llamadas al
+  sistema a través de su API
+- Es en buena medida lo que determina la /compatibilidad de código/
+  entre sistemas operativos
+  - Contraposición: Compatibilidad binaria
+  - APIs implementados por diversos sistemas: POSIX, Win32
 
-** Ley de Moore
-#+attr_latex: height=0.7\textheight
-[[../img/gnuplot/ley_de_moore.png]]
+** Flujo de control en una llamada al sistema
+#+attr_latex: width=\textwidth
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Silberschatz, Galvin, Gagne; p.22)
+[[../img/dot/llamada_al_sistema.png]]
+** Tipos de llamadas al sistema (1)
+#+BEGIN_CENTER
+Lista incompleta, meramente ejemplificando
+#+END_CENTER
+- Control de procesos :: Crear o finalizar un proceso, obtener
+     atributos del proceso, esperar cierto tiempo, asignar o liberar
+     memoria, etc.
 
-** Multiprocesamiento al escritorio
-- Desde ~2005, común incluso en el escritorio
-- Ley de Moore: El /número de transistores/ en un circuito integrado se duplica cada dos años
-- La carrera de los GHz; eficiencia térmica -> Múltiples núcleos
-- Resultado: Ya no podemos /ignorar/ la complejidad del multiprocesamiento
-  - ¿En qué nos afecta?
+- Manipulación de archivos :: Crear, borrar o renombrar un archivo;
+     abrir o cerrar un archivo existente; modificar sus /metadatos/;
+     leer o escribir de un /descriptor de archivo/ abierto, etc.
 
-** Cómputo distribuído
-- Procesos realizados en paralelo /entre computadoras independientes/
-- Más formalmente, /entre procesadores que no comparten memoria/
-- Modelos de cooperación: Sobre red local, sobre red global
-- Modelos de cómputo distribuido
-  - Clusters
-  - Grids
-  - Cómputo en /la nube/
-    - /Web Services/
-    - SaaS
-    - IaaS
-    - PaaS
+- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
+     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
+     llamadas son análogas a las de manipulación de archivos, y varios
+     sistemas operativos las ofrecen como una sola.
+** Tipos de llamadas al sistema (2)
+#+BEGIN_CENTER
+Lista incompleta, meramente ejemplificando
+#+END_CENTER
+- Mantenimiento de la información :: Obtener o modificar la hora del
+     sistema; obtener detalles acerca de procesos o archivos, etc.
 
-** Sistemas de propósito especial
-- Sistemas de /tiempo real/
-  - Operaciones con tiempo de ejecución /prometido duro/
-  - ¿Por qué no usar un sistema operativo estándar?
-  - ¿Qué tanto podemos acercarlo?
-- Particularidades de los sistemas reducidos (p.ej. portátiles)
-  - Maximización de batería
-  - Almacenamiento secundario
+- Comunicaciones :: Establecer una comunicación con determinado
+                    proceso (local o remoto), aceptar una solicitud de
+                    comunicación de otro proceso, intercambiar
+                    información sobre un canal establecido
+
+- Protección :: Consultar o modificar la información relativa al
+                acceso de objetos en el disco, otros procesos, o la
+                misma sesión de usuario
+
+** Depuración por /trazas/
+- La mayor parte de los sistemas operativos ofrecen programas que
+  ayudan a /depurar la ejecución/ de otros programas
+- Pueden /envolver/ al API del sistema, y permitir seguir la /traza/
+  (/trace/) de la ejecución de un proceso
+- Por ejemplo:
+  - =strace= en Linux
+  - =truss= en Unixes históricos
+  - =ktrace=, =kdump= en *BSD
+  - =dtrace= en Solaris $\ge 10$ (2005)
+- Permite entender /buena parte/ de lo que realiza un proceso —
+  Prácticamente, toda su interacción con el sistema
+  - A veces, demasiada información
+
+** Ejemplo: =$ strace pwd=
+#+begin_src c
+execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
+brk(0)                                  = 0x8414000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773d000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+             (...)
+getcwd("/home/gwolf/vcs/sistemas_operativos", 4096) = 36
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773c000
+write(1, "/home/gwolf/vcs/sistemas_operati"..., 36/home/gwolf/vcs/sistemas_operativos
+) = 36
+close(1)                                = 0
+munmap(0xb773c000, 4096)                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
+#+end_src
+
 * Conceptos nuevos
 ** En esta presentación vimos...
+- Jerarquía de almacenamiento
+  - Registros
+    - Acumulador
+    - Propósito general (RISC)
+  - Memoria principal o almacenamiento primario
+    - /Cuello de botella de von Neumann/
+    - Caché
+- Tiempo de acceso, tasa de transferencia
+- Comunicación con dispositivos a través de /canales/
+  - Arquitectura ejemplo: x86 con /Northbridge/ y /Southbridge/
+  - Contención
+
+** En esta presentación vimos...
+- Interrupciones y excepciones
+  - Mecanismo para interrumpir/desviar la ejecución lineal del
+    procesador
+  - Interrupción: Externo al flujo de ejecución; Excepción: originada
+    por el flujo del proceso
+  - Presentación de los /manejadores de interrupciones/
+  - Acceso directo a memoria
+    - Coherencia de caché
+- Llamadas al sistema
+  - API del sistema operativo; compatibilidad de código (¡no binaria!)
+  - Categorías de llamada al sistema
+  - Depuración por trazas

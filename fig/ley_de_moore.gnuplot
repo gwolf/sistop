@@ -1,5 +1,5 @@
 reset
-set term png fontscale 1.5 size 1024,1024
+set term png fontscale 2 size 1024,1024
 data='fig/ley_de_moore.gnuplot.data'
 set key bottom right
 set grid
@@ -28,4 +28,4 @@ plot data using 3:2 with points linetype rgb "#770000" title "8 bits", \
      data using 7:2 with points linetype rgb "#007777" title "ARM", \
      data using 8:2 with points linetype rgb "#777777" title "PowerPC", \
      data using 9:2 with points linetype rgb "#770077" title "Otros", \
-     moore(x) with lines linetype rgb "#ff6666" notitle
+     moore(x) with lines linetype rgb "#ff6666" linewidth 2 notitle

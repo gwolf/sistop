@@ -1,17 +1,24 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Relación con el hardware: Estructuras y funciones básicas
-#+DATE: 2013-08-13
+#+DATE: 2013-08-13 — 2013-08-15
 
 * Objetivo
-** Objetivo de la sesión
+** Objetivo de la presentación (1)
 - Identificar los elementos arquitecturales principales del
   almacenamiento /primario/ y /secundario/ en un sistema /von Neumann/
 - Conocer el principal mecanismos de comunicación y transferencia de
   datos entre ellos
 - Familiarizarse con los principales conceptos (y magnitudes) de
   medición de rendimiento en este campo
-
-* Las fronteras del procesador
+** Objetivo de la presentación (2)
+- Conocer los mecanismos principales por medio de los que se comunican
+  el procesador y los dispositivos del sistema
+- Conocer los términos y mecanismos principales por medio de los
+  cuales un sistema ofrece multiprogramación
+  - Comprender la diferencia entre los principales modelos de multiprocesamiento
+- Comprender la necesidad de adoptar un modelo de programación que
+  considere al verdadero multiprocesamiento
+* Fronteras del CPU
 ** Característica fundamental de sistemas /von Neumann/
 - Computadora /de programa almacenado/
   - En la /memoria principal/
@@ -359,6 +366,188 @@ close(2)                                = 0
 exit_group(0)                           = ?
 #+end_src
 
+* Multiprocesamiento
+** Multiprocesamiento y multiprogramación
+#+BEGIN_CENTER
+Conceptos cercanamente relacionados, empleados coloquialmente de forma casi
+intercambiable, pero muy distintos:
+#+END_CENTER
+- Multiprogramación :: /Ilusión/ de estar ejecutando varios procesos
+     al mismo tiempo, por medio de la /alternación rápidamente/ entre
+     ellos
+     - En un principio, no tan rápidamente; hoy en día, cientos a
+       miles de veces por segundo
+- Multiprocesamiento :: Entorno donde hay más de un procesador central
+     (CPU).
+     - Por muchos años, reservado a usos muy especializados
+     - Hoy en día, la norma.
+
+** Multiprogramación, multiprocesamiento, híbrido...
+#+attr_latex: height=0.5\textheight
+#+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
+[[../img/ditaa/multiproceso_y_multiprogramacion.png]]
+
+** Formalizando un poco
+- /Sólamente/ un sistema multiprocesador tiene la capacidad /real/ de
+  atender /simultáneamente/ a diversos procesos
+- Hoy en día es muy raro aplicar /de forma exclusiva/ a cualquiera de
+  estas modalidades
+  - Multiprogramado puro: Sigue siendo común en equipos
+    no-multiprocesados
+  - ...Pero cada vez son menos
+
+** Acostumbrémonos, porque...
+#+BEGIN_CENTER
+El tema que más recurrentemente abordaremos en el curso es /la
+complejidad/ que proviene tanto de la multiprogramación como de la
+multitarea
+
+Particularmente la abordaremos en las dos siguientes unidades:
+/Administración de procesos/ y /Planificación de procesos/.
+#+END_CENTER
+
+** La irrupción del multiprocesamiento
+- Existe desde los 1960
+- Entornos de alto rendimiento, /muy especializados/
+  - Requieren una programación hecha /con cuidado especial/
+- Hace apenas 10-15 años, muchos sistemas operativos no detectaban
+  siquiera más de un procesador
+  - Incluso de rango servidor
+  - Era muy raro encontrarlos en hardware de uso frecuente
+- Pero hacia el 2005... Nos alcanzó Gordon E. Moore
+
+** ¿Gordon E. Moore?
+- Ingeniero electrónico, fundador de /Fairchild Semiconductor/
+- Publicó en 1965 /[[http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf][Cramming more components onto integrated circuits]]/
+  (/Apretujando más componentes en circuitos integrados/)
+- Observando el desarrollo desde 1959, predice que cada año se
+  duplicará la cantidad de transistores en los circuitos integrados,
+  al menos por los próximos 10 años
+
+** La Ley de Moore, 1965
+#+attr_latex: height=0.7\textheight
+#+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
+[[../img/moore_orig.png]]
+
+** La Ley de Moore, hoy
+#+attr_latex: height=0.7\textheight
+#+caption: Y a cinco decadas, la Ley de Moore se sigue cumpliendo...
+[[../img/gnuplot/ley_de_moore.png]]
+
+** ¿Moore y el multiprocesamiento?
+#+BEGIN_CENTER
+¿Qué tiene que ver la Ley de Moore y el multiprocesamiento?
+#+END_CENTER
+- Hasta $\approx 2005$, la velocidad de los CPUs crecía constantemente
+  - En el ámbito comercial, excediendo los 3 GHz
+  - Llevando a problemas serios de calentamiento
+- El diferencial de velocidad con el acceso a memoria crece cada vez
+  más
+- Hace falta un cambio de estrategia...
+
+** Chips multiprocesador
+- Los principales fabricantes de CPUs comenzaron a diseñar chips
+  conteniendo más de un /núcleo/ — Esto es, más de un CPU independiente
+  - (Y algunas facilidades adicionales — Por ejemplo, mucho mayor
+    caché /dentro del mismo/ chip)
+- El reloj de los procesadores no sólo no ha crecido, sino que en
+  general /se ha reducido/ a cerca de 1GHz
+  - Obviamente, el rendimiento y la densificación siguen avanzando
+- Pero ahora la ganancia de velocidad ya no llega en automático con el
+  nuevo hardware
+  - El sistema operativo tiene que saber /aprovechar/ al
+    multiprocesamiento
+
+** ¿Cómo multiprocesamos?
+#+BEGIN_CENTER
+Hoy en día, cuando hablamos de multiprocesamiento, /casi/ siempre
+hablamos de multiprocesamiento simétrico
+\vfill
+
+...Pero no es el único tipo de multiprocesamiento que hay
+#+END_CENTER
+
+** Multiprocesamiento simétrico (SMP)
+- Todos los procesadores /son iguales/
+- Pueden realizar las mismas operaciones en el mismo tiempo
+- Un proceso podría /migrarse/ de un procesador a otro de forma
+  transparente
+  - Únicamente manteniendo información básica
+- Tienen /acceso a la misma memoria/
+  - Aunque cada uno puede tener su propio caché) \rarrow
+    *¡Necesidad de coherencia!*
+
+** Multiprocesamiento asimétrico
+#+BEGIN_CENTER
+Puede haber varios puntos de asimetría:
+#+END_CENTER
+- Distinta /arquitectrura/ \arrow Típicamente algunos se dedicarán a una
+  tarea específica
+- Coprocesadores, o procesadores coadyuvantes
+  - Caso de las tarjetas gráficas (GPUs)
+  - Podrían verse /casi/ como una red alta velocidad de computadoras
+    /independientes/
+- Memoria y responsabilidades muy distintas a las del sistema central
+
+** Acceso no-uniforme a memoria (NUMA)
+#+BEGIN_CENTER
+(/Non-Uniform Memory Access/)
+#+END_CENTER
+- Procesadores de la misma arquitectura/tipo
+  - Podrían formar parte de un sistema SMP
+- Pero con /afinidad/ a bancos específicos de memoria
+  - Memoria /cercana/ o /lejana/
+  - Al /planificar/ los procesos, se destinan los procesadores cercanos
+  - Hay un /canal compartido/ de memoria
+- Típicamente computadoras grandes con /nodos/ o /blades/
+- Pueden ubicarse como en un punto medio entre SMP y el /cómputo
+  distribuído/
+  - Cómputo distribuído fuertemente acoplado
+
+** Más allá: Cómputo distribuído
+- Distribuir un proceso de cómputo para ser realizado /entre
+  computadoras independientes
+  - Más formalmente: Entre procesadores /que no comparten memoria/
+    (almacenamiento primario)
+- Dos modalidades principales (mas un /adosado/):
+  - Cúmulos (/clusters/)
+  - Mallas (/grids/)
+  - Cómputo /en la nube/
+
+** Cúmulos (clusters)
+- Computadoras conectadas por una red local de alta velocidad
+- Cada una corre su propia instancia de sistema operativo y programas
+- Principales orientaciones:
+  - Alto rendimiento :: Cómputo matemático, cálculos...
+  - Alta disponibilidad :: Prestación de servicios críticos
+  - Balanceo de cargas :: Atención a solicitudes complejas, que pueden
+       saturar a servidores individuales
+- Típicamente son equipos homogéneos y dedicados
+- Muy comunes en universidades; bajo costo, altas prestaciones
+
+** Mallas (grids)
+- Computadoras distribuidas geográficamente
+- Conectadas sobre Internet (o redes de área amplia)
+- Pueden ser heterogéneas (en capacidades y en arquitectura)
+- Presentan /elasticidad/ para permitir conexiones/desconexiones de
+  nodos en el tiempo de vida de un cálculo
+#+BEGIN_CENTER
+¿Quién quiere presentar el ejemplo de alguna malla?
+#+END_CENTER
+
+** Cómputo en la nube
+- Abordaremos el tema de nuevo tras hablar de la /virtualización/
+- Caso específico y /de moda/
+- Partición de recursos (/cliente-servidor/)
+- Orientado a la /tercerización/ de servicios específicos
+- La /implementación/ de un servicio deja de ser relevante \rarrow
+  Procesos /opacos/
+- Conceptos relacionados:
+  - /Servicios Web/
+  - Plataforma como servicio (/PaaS/)
+  - Software como servicio (/SaaS/)
+  - Infraestructura como servicio (/IaaS/)
+
 * Conceptos nuevos
 ** En esta presentación vimos...
 - Jerarquía de almacenamiento
@@ -386,3 +575,15 @@ exit_group(0)                           = ?
   - API del sistema operativo; compatibilidad de código (¡no binaria!)
   - Categorías de llamada al sistema
   - Depuración por trazas
+
+** En esta presentación vimos...
+- Multiprogramación y multiprocesamiento
+  - ¿Por qué nos es inescapable? \rarrow Ley de Moore
+- Tipos de multiprocesamiento
+  - Simétrico
+  - Asimétrico
+  - NUMA
+- Cómputo distribuído
+  - Cúmulos (/clusters/)
+  - Mallas (/grids/)
+  - /La nube/

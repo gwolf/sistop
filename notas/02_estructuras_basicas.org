@@ -477,12 +477,12 @@ más que eso, al grado de que rara vez empleamos el término
 /multiprogramación/, mucho más acorde a los equipos que empleamos día
 a día.], es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que abordaremos en esta sección, y la
-/multiprogramación/, de la cual hablamos a partir de la sección de
-[[#multiprogramados][sistemas multiprogramados]]. Un sistema multiprogramado nos da la
-/ilusión/ de que está ejecutando varios procesos al mismo tiempo, pero
-en realidad está alternando entre los diversos procesos que compiten
-por su atención. Un sistema multiprocesador tiene la capacidad de
-estar atendiendo /simultáneamente/ a diversos procesos.
+/multiprogramación/, de la cual hablamos en la sección de [[#multiprogramados][sistemas
+multiprogramados]] de la [[01_introduccion.org][introducción]]. Un sistema multiprogramado nos da
+la /ilusión/ de que está ejecutando varios procesos al mismo tiempo,
+pero en realidad está alternando entre los diversos procesos que
+compiten por su atención. Un sistema multiprocesador tiene la
+capacidad de estar atendiendo /simultáneamente/ a diversos procesos.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=210
@@ -517,7 +517,12 @@ sistemas operativos ni siquiera detectaban la existencia de
 procesadores adicionales, y en presencia de éstos, ejecutaban en uno
 sólo.
 
-Esto cambió hacia el 2005. Tras más de 30 años de cumplirse, el modelo
+#+attr_latex: width=0.5\textwidth
+#+attr_html: height=415
+#+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
+[[./img/moore_orig.png]]
+
+Esto cambió hacia el 2005. Tras más de 40 años de cumplirse, el modelo
 conocido como la /Ley de Moore/, enunciando que cada dos años la
 densidad de transistores por circuito integrado se duplicaría,
 llevaba a velocidades de CPU que, en el ámbito comercial, excedían los
@@ -529,7 +534,7 @@ prácticos, /paquetes/ con 2 o más procesadores dentro.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="512"
-#+caption: La /Ley de Moore/: Conteo de transistores por procesador de 1971 al 2012
+#+caption: La /Ley de Moore/ se sostiene al día de hoy: Conteo de transistores por procesador de 1971 al 2012
 [[./img/gnuplot/ley_de_moore.png]]
 
 Con este cambio, el /reloj/ de los procesadores se ha mantenido casi
@@ -1275,6 +1280,8 @@ disco.
 
 - [[https://dl.acm.org/citation.cfm?doid=359576.359579][Can programming be liberated from the von Neumann style?: a
   functional style and its algebra of programs]]; John Backus, 1978
+- [[http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf][Cramming more components onto integrated circuits]]; Gordon E. Moore,
+  1965
 - [[http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html][An Introduction to the Intel® QuickPath Interconnect]]; Intel, 2009
   (Document Number: 320412-001US)
 - [[http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf][Intel® Desktop Board D875PBZ Technical Product Specification]]

@@ -14,6 +14,9 @@ idx_semestre = $(dir_semestre)/index.org
 idx_laminas = $(dir_laminas)/index.org
 exam_resueltos = examenes/resueltos
 
+temas_in = tareas/temas.org
+temas_out = tareas/temas.html
+
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
@@ -23,6 +26,8 @@ html: fig
 	ln -s ../pdf html/pdf || true
 	ln -s ../biblio html/biblio || true
 	ln -s ../laminas html/laminas || true
+	emacs --batch --visit=$(temas_in) --load ~/.emacs --eval '(setq org-confirm-babel-evaluate nil)' --funcall=org-mode --funcall=org-export-as-html
+	mv $(temas_out) html/
 
 pdf: fig
 	mkdir -p pdf/ltxpng

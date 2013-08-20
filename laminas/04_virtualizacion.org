@@ -1,0 +1,551 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Virtualización
+#+DATE: 2013-08-20 — 2013-08-22
+
+* Introducción
+** ¿Qué significa /virtualizar/?
+- Proveer algo que no está allí, aunque parece estarlo
+- Ofrecer y mantener una ilusión
+  - Un truco de magia
+
+#+BEGIN_CENTER
+La /virtualización/ es, en términos generales, ofrecer recursos que no
+existen en realidad — Y mantener la ilusión, tan bien como sea
+posible.
+#+END_CENTER
+
+** Ámbitos de virtualización
+- Es un término /de moda/, que nos encontraremos cubriendo muy
+  distintas tecnologías
+- Lleva existiendo –de diferentes maneras– muchas décadas
+- Cubriremos algunas estrategias y tecnologías de virtualización
+  comunes hoy en día
+  - Con diferentes usos y propósitos
+  - Muchos de los cuales utilizamos día a día sin pensar en ello
+
+** ¿Diferentes tecnologías?
+- Muchas cosas pueden ser entendidas por /virtualización/
+- Hay muchos diferentes casos de uso, y cada uno requiere una
+  solución diferente
+- Incluso para un mismo caso de uso, hay más de una manera de llegar
+  al mismo resultado
+  - Hay espacio para que la /selección natural/ haga su trabajo
+- Las diferentes tecnologías no tienen líneas divisorias tan claras
+  - Un proyecto pueden caer en varias clasificaciones
+  - O ser originalmente de un tipo, e ir migrando /naturalmente/
+    hacia otro
+
+* Emulación
+** ¿Qué es /emular/?
+- La técnica de virtualización disponible hace más tiempo en
+  /computadoras personales/
+- El /procesador anfitrión/ traduce cada una de las instrucciones,
+  simulando /en tiempo de ejecución/ hardware inexistente
+- Fue muy popular hacia la segunda mitad de los 1980 y a principios de
+  los 1990, durante la explosión de las arquitecturas
+- Es /altamente/ ineficiente — Resulta muy caro en tiempo de cómputo
+
+** Emulación de una arquitectura existente
+- Se puede hacer a diferentes profundidades
+  - Desde emular el sistema completo (juego de instrucciones, chipset,
+    buses, etc.)
+  - Hasta emular únicamente /parte/ del chipset (muy común en
+    arquitecturas m680x0)
+- La arquitectura /Amiga/ de Commodore es la primera de uso personal
+  en ofrecer varios programas emuladores
+  - Macintosh y Atari ST (misma plataforma m680x0) a velocidad nativa
+  - Plataforma PC, pero /muy, muy/ lenta (incluso XT 8088)
+
+** Utilidad actual de la emulación
+- A difrencia de lo que ocurría hace 20 años, hoy en día este tipo de
+  emulación es muy socorrido en el ``mundo real''
+- Los sistemas /embebidos/ son cada vez más comunes
+  - Computadoras pequeñas, limitadas en recursos (memoria,
+    almacenamiento, velocidad)
+  - Diseñadas para correr con el menor consumo energético posible
+  - Aún a costa de un menor rendimiento
+- Celuluares, cámaras, ruteadores, scanners, controladores de equipo
+  industrial...
+  - Parte muy importante del mercado
+- Emular m680x0 o ARM en un procesador estándar de escritorio resulta
+  en velocidad comparable al hardware nativo
+
+** Emulando arquitecturas inexistentes
+- También podemos emular una arquitectura que /nunca ha sido
+  implementada/
+- La idea viene también de los 1970
+  - En pos de la portabilidad, UCSD definió un /p-system/, a ser
+    ejecutado en una /p-machine/
+  - Esta computadora nunca existiría en realidad, pero varias
+    arquitecturas existentes ofrecerían /emuladores de p-machines/
+- La arquitectura de la /p-machine/ está definida en torno al lenguaje
+  Pascal
+- Todo programa hecho para correr en una /p-machine/ correría en
+  cualquier arquitectura que lo implementara
+- Los /p-systems/ gozaron de relativa popularidad hasta mediados de
+  los 1980, con implementaciones en arquitecturas 6502, Z80 y 80x86
+
+** Arquitecturas planteadas meramente en teoría
+- Hay arquitecturas que fueron concebidas exclusivamente para
+  propósitos académicos
+- Donald Knuth diseñó la arquitectura /MIX/ en los 1960 como
+  /arquitectura ideal/ para los ejemplos de su célebre libro /The Art
+  of Computer Programming/ (y su sucesora /MMIX/ en 1999 para la nueva
+  edición)
+- Es una arquitectura apta para la enseñanza, pero inviable para un
+  sistema real
+  - MIX plantea un sistema híbrido binario-decimal, de 6 bits en modo
+    binario o 2 dígitos en modo decimal
+  - MMIX es una arquitectura RISC con 256 registros de 64 bits
+- Existen MIXWARE y MMIXWARE, emuladores (incompletos) de MIX y de
+  MMIX
+
+** Arquitecturas emuladas, de uso diario — E inexistentes
+- En la década de los 1990, Sun Microsystems retomó las ideas de los
+  /p-systems/, y diseñó la arquitectura /Java/
+- Java está pensado para ser una arquitectura idealizada
+  - Nativamente orientada a objetos
+  - Buscando dar una completa /portabilidad/ al código
+  - Slogan: /Write Once, Run Anywhere/
+- Microsoft retomó varios años más tarde esta misma idea, creando la
+  arquitectura /.NET/
+  - Su principal contribución es plantear a la máquina virtual como
+    independiente del lenguaje de programación
+- Desde el 2000, las comunidades (principalmente) de /Perl/ y /Python/
+  han implementado /Parrot/
+  - Máquina virtual apta para lenguajes de script
+
+** ¿Por qué utilizar/emular estas arquitecturas?
+- Las abstracciones presentadas por estas máquinas virtuales resultan
+  demasiado complejas para ser implementadas directamente en hardware
+- Son, sin embargo, muy útiles al programador, que sabrá sacarles buen
+  jugo
+- Sun diseñó la arquitectura /MAJC/ (1999) para ejecutar directamente
+  código Java
+  - Los chips resultaban demasiado complejos y caros
+  - Fracaso comercial
+- MAJC implementaba una arquitectura VLIW y optimización basada en
+  múltiples hilos de ejecución
+  - Ideas retomadas para generaciones actuales de CPUs
+
+** /Transmeta/: El procesador emulador
+- En el 2000, /Transmeta/ anunció su procesador /Crusoe/, orientado al
+  mercado de bajo consumo energético
+- Su arquitectura está diseñada para ejecutar código /diseñado para
+  otras arquitecturas/
+  - Traducido a través del microcódigo: /Code Morphing Software/
+    (/Software de transformación de código/)
+- La única arquitectura implementada en CMS es la Intel x86
+  - Pero las dos generaciones de procesadores Transmeta (Crusoe y
+    Efficeon) son completamente distintas
+  - Gracias a CMS, esta difrencia es transparente al usuario
+- Tecnología muy interesante, y aplicada ya fuera de Transmeta
+  - A pesar de esto, Transmeta colapsó como empresa.
+
+** La emulación, mejorada
+- Las técnicas utilizadas para la emulación han mejorado tremendamente
+  en los úlitmos diez años
+- Los emuladores hacen hoy traducción predictiva y compilación del
+  código a ejectuar a formatos nativos (traducción dinámica)
+- También guardan copias convertidas/compiladas del código a emular
+  - /Compilador JIT/ — /Just in Time/; /Compilador Justo a Tiempo/
+- En líneas generales, la vieja fama de la lentitud de las máquinas
+  virtuales ya no se justifica
+- Las máquinas virtuales pueden llamar a código nativo para puntos
+  críticos donde haga falta optimización
+- ...Y las usamos transparentemente, todos los días
+
+** Qemu: Un caso muy especial (1)
+- =Bochs= nació como un emulador libre de x86; existe desde 1994,
+  orientado a las estaciones de trabajo Unix
+- Bochs implementó un BIOS básico de PC, y la emulación de los
+  principales dispositivos (discos, consola, VGA, puertos...)
+- =Plex86= (originalmente =FreeMWare=, 1999, en clara alusión a
+  =VMWare=) ofrece una fuerte aceleración a Bochs
+  - A través de la /traducción dinámica/
+  - Permitiendo que en arquitectura x86 el código nativo
+    /no-peligroso/ corra directamente en el CPU sin pasar por
+    emulación
+  - Aislando/emulando las partes /peligrosas/ — Lo que represente
+    acceso directo a hardware
+
+** Qemu: Un caso muy especial (2)
+- En 2003, =Qemu= retoma este trabajo y agrega el módulo de kernel
+  =kqemu=, atrapando estas llamadas con mucho mejor rendimiento
+  (igualando al de VMWare)
+  - =kqemu= originalmente era código gratuito, pero no libre
+  - Con una /llamada a la comunidad/ para comprarlo, el autor logró
+    el fondeo necesario para liberarlo
+  - Hoy en día es parte del kernel de Linux
+- Qemu es la base para... Lo que veremos a continuación
+
+* Virtualización por hardware
+** Virtualización asistida por hardware (HVM)
+- Buena parte del /ruido/ que hoy en día recibe la virtualización es a
+  consecuencia de esta modalidad
+- Algunas arquitecturas de cómputo incluyen provisiones para ser
+  /virtualizadas/
+  - Especialmente máquinas diseñadas como /grandes/
+- Primer ejemplo: IBM S/360-67
+  - Sistema operativo CP-67/CMS (1968-1972)
+  - Sistema operativo ligero, monousuario
+  - Pensando en que siempre habría /múltiples instancias/ del sistema
+    operativo en ejecución bajo el /hipervisor/ CP
+- Computadoras inherentemente de /tiempo compartido/, dando a sus
+  usuarios la /ilusión/ de tener una computadora dedicada a ellos
+
+** La motivación detrás de CP67/CMS
+- Motivación de la virtualización:
+  - Maximizar el aprovechamiento de recursos
+  - Proveer administración centralizaa
+- Al virtualizar el sistema /completo/, este sistema ofrece mayor
+  aislamiento, seguridad y confiabilidad que cualquier sistema de
+  /tiempo compartido/
+- Permite además correr cualquier programa diseñado para una máquina
+  S/360, incluso si no estaba diseñado para tiempo compartido
+- IBM reimplementó este sistema como VM/370, al contar con una
+  arquitectura de memoria virtual
+- z/VM, derivado de este, sigue ampliamente en uso hoy en día
+
+** CP/CMS y VM como software libre
+- CP/CMS fue distribuido directamente como código fuente
+- Desde un principio se desarrolló una activa comunidad de usuarios
+  estudiando y modificando el código fuente
+- Por fricciones políticas dentro de IBM, tanto VM com CP/CMS fueron
+  también distribuídos como parte de las /bibliotecas no soportadas/
+  en la colección /Type-III/
+- Hoy en día se pueden bajar estos sistemas y ejectutarlos
+  - Dentro del emulador /Hercules/ de sistemas S/370, S/390 y zSeries
+
+** El /hipervisor/: Más abajo que el núcleo
+- Tradicionalmente las arquitecturas virtualizables corren un
+  micro-sistema operativo encargado de gestionar a /cada uno de los
+  sistemas operativos/ que corre en cada una de las máquinas virtuales
+  - Es un /micro/ SO porque no cubre muchas de las áreas clásicas
+    (sistemas de archivos, comunicación entre procesos, gestión de
+    memoria virtual, ...)
+  - Se limita a gestión básica de memoria física contigua, asignación
+    de dispositivos, y /poco/ mas que eso
+  - Ojo: Hay hipervisores que son sistemas operativos completos (como
+    KVM bajo Linux)
+- Este micro-SO es conocido como el /hipervisor/
+  - Dando a entender que hace más que /supervisar/, el rol tradicional
+    del SO
+
+** Hipervisor oculto
+- Idealmente, el núcleo de cada una de las máquinas virtuales /no sabe
+  siquiera/ que está siendo ejecutado dentro de un hipervisor
+  - La ilusión es completa
+- En algunas arquitecturas puede incluso haber múltiples niveles de
+  hipervisores
+
+** El panorama hasta $\approx$ 2005
+- Las arquitecturas que proveían virtualización por hardware eran muy
+  especializadas
+  - Muy caras, fuera del alcance de los usuarios en general
+  - Fuera del alcance incluso de la mayor parte de los desarrolladores
+- En 2005, Intel lanza la /Vanderpool Technology/ para sus
+  procesadores x86 (extensión /VT-x/)
+- En 2006, AMD lanza los procesadores con /extensiones Pacifica/
+- Hoy en día, casi todas las computadoras de escritorio rango
+  medio-superior vienen con soporte para HVM
+- El tema era tan novedoso que tardó algunos años en desarrollar
+  tracción
+
+** Estabilidad por virtualización
+- Es aceptado universalmente que la mayor parte fuente de
+  inestabilidad en los sistemas operativos son los drivers
+  - Es código típicamente más /sucio/ que el de otras partes del
+    núcleo
+  - Proviene de todo tipo de fuentes, desde desarrolladores
+    independientes hasta las compañías desarrolladoras del hardware
+- Dando control de calidad a los manejadores de los dispositivos
+  emulados/virtualizados, podemos lograr que los sistemas operativos
+  huésped sean /más estables/ de lo que serían sobre el hardware real
+- Típicamente el hipervisor ofrecerá a los huéspededs dispositivos
+  relativamente viejos y simples
+  - Red NE2K, sonido Soundblaster16, video Cirrus...
+
+** Volviendo a =kqemu=: Emulando HVM
+- =kqemu= fue liberado bajo la GPL en 2007
+- Agrega a la arquitectura x86 clásica las funciones básicas de HVM,
+  sin que las implementa por hardware
+  - Con una notable penalización en velocidad
+  - Aunque /muchísimo/ menor a la de la emulación
+- Como la mayor parte del código sigue siendo nativo, qemu+kqemu
+  ofrecen una velocidad general muy aceptable
+
+** ¿Cómo puedo implementar HVM?
+- Proyectos libres:
+  - Xen (modo /asistido por hardware/)
+  - KVM (sobre Linux)
+  - Logical Domains (sobre Solaris)
+- Proyectos híbridos libre/propietario
+  - VirtualBox
+- Productos propietarios
+  - VMWare
+  - VirtualPC
+  - HyperV
+  - Parallels
+- ...Y seguramente muchos más
+
+* Paravirtualización
+** Un enfoque más ligero, más accesible
+- Aún si la virtualización asistida ya está disponible en CPUs
+  disponibles masivamente, es aún una característica /de lujo/
+  - Para los rangos superiores del mercado
+- La /paravirtualización/ consiste en reescribir las porciones de un
+  sistema operativo que interactúan directamente con el hardware,
+  para que soliciten estas operaciones /a sabiendas/ a un hipervisor
+- Es conocida como /virtualización asistida por el sistema operativo/
+  (/OS-assisted virtualization/)
+- Formalmente podría verse como un /port/ del sistema operativo a una
+  nueva arquitectura
+  - /Muy/ parecida a la del sistema anfitrión
+
+** Paravirtualización y software libre
+- Si bien ofrece un mapeo más directo, mejor rendimiento y más
+  estabilidad a los sistemas huésped, requiere modificaciones
+  bastante amplias al sistema operativo
+  - Es prácticamente imposible correr sistemas no-libres
+    paravirtualizados
+- Un sistema operativo tiene que ser /portado/ a las abstracciones
+  que ofrece cada una de las arquitecturas de paravirtualización
+- El artículo con el cual se presentó Xen 1.x habla de un port de
+  Windows XP, basado en el Academic Licensing Program a su
+  paravirtualizador
+  - Pero no es redistribuible, sólo puede ser utilizado internamente
+    en Xensource
+
+** Aprovechamiento de recursos en la paravirtualización
+- Con sistemas paravirtualizados podemos lograr un consumo de recursos
+  aún más eficiente que en un sistema virtualizado ``real''
+- Los dispositivos presentados al OS huésped son mucho más ligeros e
+  /idealizados/
+  - No hace falta emular al hardware real
+- El OS huésped puede pedir al anfitrión recursos adicionales cuando
+  los requiere
+  - Incluso sobre demanda — /balooning/
+  - Incluso recursos que para una computadora normal son inamovibles,
+    p.ej. espacio de memoria
+- Puede haber un monitoreo mucho más completo
+  - El OS anfitrión no tiene que adivinar tantos detalles del
+    funcionamiento del huésped si éste se los confía
+
+** Hardware virtualizado, dispositivos paravirtualizados
+- Este punto es empleado por todo tipo de virtualizadores:
+  Paravirtualización a nivel dispositivo
+- Entre más sencillos sean los dispositivos emulados para la
+  virtualización, menos sobrecarga por traducir llamadas a hardware
+  inexistente
+- Hasta una interfaz tan simple como NE2K tiene hardware innecesario
+  a la hora de virtualizar
+  - Entre más delgada sea la capa de traducción, mejor rendimiento
+    obtenemos
+- En Linux, las clases de dispositivos =virtio= y =pv= llegan a
+  ofrecer rendimiento de 5 a 10 veces mejor que la emulación de
+  dispositivos reales
+
+** ¿Cómo puedo implementar paravirtualización pura?
+- La principal arquitectura para esto es Xen
+- VMWare ofrece un modo de operación basado en la paravirtualización
+
+** Xen y KVM: Los dos competidores libres
+- Las dos principales implementaciones libres de virtualización son
+  Xen y KVM
+- Sus ofrecimientos son en buena medida comparables
+- Hasta $\approx$ 2010 parecía que KVM terminaría conquistando el
+  terreno en que el anfitrión/hipervisor es Linux
+  - Admitido mucho antes al /kernel oficial/
+  - Xen requirió cambios mucho más profundos
+- Hoy en día, ambos ofrecen interfaces bastante completas
+
+** Xen: Un hipervisor mínimo
+- Xen es un hipervisor puro — GRUB llama al núcleo de Xen, y éste
+  lanza a un núcleo Linux
+  - Este núcleo tiene que estar compilado para correr
+    /paravirtualizado/ a la arquitectura virtual de Xen
+  - Esta primer máquina virtual tendrá /control del hipervisor/
+  - En lenguaje de Xen, es =Dom0=
+  - Se comunica con Xen a través del demonio =xend=
+- Todas las máquinas virtuales adicionales que lancemos son =DomU=
+
+** KVM: El Linux de siempre... Mas un módulo raro
+- KVM agrega funciones de hipervisor al núcleo estándar de Linux
+  - A fin de cuentas, un sistema operativo completo tiene todo lo
+    necesario para gestionar recursos entre diferentes procesos en
+    ejecución
+- Hereda / incluye /muy/ buena parte de Qemu
+- Las diferentes máquinas virtuales son sencillamente más procesos
+  dentro del árbol de procesos
+
+** =libvirt=
+- Proyecto iniciado por RedHat que ofrece una biblioteca de
+  abstracción capaz de manipular diferentes arquitecturas de
+  virtualización
+- Soporta Xen, Qemu, KVM, LXC, OpenVZ
+- Nos facilita gestionar grupos de máquinas virtuales bajo las
+  distintas infraestructuras conforme nuestros requisitos lo marquen
+- Simplifica la creación de interfaces de administración y monitoreo
+
+* Contenedores
+
+** ¿Qué es un contenedor?
+- Una manera distinta de virtualizar
+- Más sutil, menos flexible
+- Empleando /un mismo núcleo/ de sistema operativo
+  - Empujando la virtualización /una capa/ hacia arriba
+- Con mayores limitantes, pero importantes ventajas
+
+** Herederos de =chroot=
+- Los sistemas Unix han ofrecido la llamada al sistema =chroot= desde
+  1982
+- Bill Joy la introdujo cuando trabajaba en 4.2BSD para probar la
+  construcción de nuevas versiones del sistema operativo sin
+  modificar el sistema /vivo/
+- =chroot= permite /encerrar/ a un proceso dentro de un directorio
+  - Un proceso al que se le aplica =chroot= no puede ver el sistema de
+    archivos fuera del directorio especificado
+  - ...No sin aplicar algunos trucos
+- =chroot= sólo afecta la /visión de la raiz del sistema de
+  archivos/
+  - No es (ni busca ser) un verdadero aislamiento
+
+** No lo es... ¿Por qué no lo adecuamos?
+- Los /contenedores/ construyen sobre =chroot=, ampliando el
+  aislamiento a otros componentes del sistema
+- El primer sistema en ofrecer esta facilidad fue FreeBSD, con sus
+  /jails/, desde la versión 4.0 (2000)
+- Están también implementados ahora en Linux (/vserver/ desde 2002,
+  hoy /lxc/), Solaris 10 en adelante (/Zones/, 2005) y NetBSD/FreeBSD
+  (/Sysjail/, utilizando =systrace=, 2006)
+- Idea similar en Windows: /Parallels Virtuozzo/
+
+** Principios básicos de los contenedores
+- La nomenclatura básica cambia según la implementación
+  - Cada /servidor virtual/ puede llamarse /contenedor/, /contexto de
+    seguridad/, etc.
+- El kernel oculta y aísla la información de cada contexto de los
+  demás:
+  - Tablas de procesos
+  - Señales, IPC
+  - Conexiones, sockets e interfaces de red
+  - Reglas de firewall
+  - Dispositivos
+  - Límites en consumo de recursos (RAM, CPU)
+- Formalmente, los contenedores no implementan /virtualización/, sino
+  /restricción/
+  - Pero brindan al usuario la /ilusión/ de una /máquina virtual/
+    inexistente
+
+** Vareidad, pero con un límite
+- A través de los contenedores, la virtualización es /casi/ completa
+- Se ven un poco las /costuras/, pero para propósitos prácticos, cada
+  /contenedor/ es un sistema independiente
+  - Excepto por el núcleo
+- Podemos tener cualquier distribución corriendo dentro de nuestros
+  contenedores al mismo tiempo
+- Única restricción: Todos corren con el mismo núcleo (misma versión,
+  mismos módulos, etc.)
+- Sysjail (OpenBSD) permite huéspedes *BSD y Linux a través de
+  /emulación de llamadas al sistema/ (la cubrimos en la siguiente
+  sección)
+  - Pero el núcleo /real/ sigue siendo OpenBSD
+
+** Consumo de recursos óptimo
+- Un contexto sin actividad tiene un consumo de recursos mínimo
+- Los procesos que no tienen actividad no consumen CPU
+- Los procesos en memoria inactivos van siendo paginados a disco
+- Queda como excepción /Sysjail/ (OpenBSD), una implementación de
+  contenedores en espacio de usuario a través de =systrace=, que /sí/
+  es notablemente más lenta que el sistema en hardware nativo
+
+* Traducción de APIs
+** Traduciendo de una /interfaz/ que no tengo
+- Otro tipo de virtualización, frecuentemente confundida con la
+  emulación
+- Consiste en implementar una capa que permita traducir una
+  arquitectura de /software/, no de hardware
+- Permite correr software diseñado para diferentes sistemas
+  operativos simultáneamente
+  - Bajo el mismo OS real
+  - En la misma computadora
+- El grado de integración dependerá de la similitud entre el sistema
+  real y el... ¿huesped? ¿emulado?
+
+** Entre Unixes
+- Los diferents Unixes libres implementan capas de traducción para
+  poder ofrecer compatibilidad binaria a programas compilados para
+  Unixes propietarios
+- En Linux, \approx 1994-1999, se mantuvo el [[http://www.linuxjournal.com/article/2809][subsistema iBCS2 (/Intel
+  Binary Compatibility Specification 2/)]], ofreciendo compatibildad
+  binaria con:
+  - 386BSD, FreeBSD, NetBSD, BSDI/386
+  - SVR3, SVR4 SCO
+  - Sistema V: Wyse V/386; Xenix V/386 y Xenix V/286
+- iBCS2 fue retirado de Linux hacia 1999, cuando se volvió innecesario
+  - Al ser Linux fuertemente más popular que los sistemas mencionados
+- En los diferentes BSDs hay subsistemas de compatibilidad,
+  principalmente orientados a Linux
+
+** Nivel de compatibilidad Unix-Unix
+- Dado que en estos casos la capa de compatibilidad es muy ligera, la
+  integración de los binarios es prácticamente perfecta
+  - Los sistemas son /semánticamente equivalentes/
+  - Los diferentes Unixes ofrecen la misma estructura lógica
+  - Incluso el mismo acomodo y nomenclatura de archivos
+- Principalmente orientados a correr software no libre
+  - Si se tiene el fuente, basta recompilar el software para correrlo
+    nativamente y sin capas de emulación
+  - Puede requerirse /cierto/ esfuerzo para recompilar, pero
+    generalmente no es /tanto/
+
+** Sistemas de diferente naturaleza
+- Las traducciones de API más atractivas (pero también más difíciles)
+  son las que ofrecen la integración de aplicaciones hechas para
+  sistemas operativos muy distintos
+  - [[http://www.winehq.org][/Wine/ (Wine Is Not an Emulator)]], para correr aplicaciones de
+    Windows en Linux
+  - [[http://cygwin.com/][Cygwin]] y [[http://blogs.msdn.com/b/sfu/][Microsoft Interix / Services for Unix]], para correr
+    aplicaciones Unix en Windows
+- La integración /no es perfecta/
+  - Se ven claramente las /costuras/ en las muy diferentes metáforas
+    ofrecidas por ambos sistemas
+  - Típicamente el administrador puede controlar/configurar los
+    puntos de /armonización/
+- La compatibilidad no es completa, y es común encontrar aplicaciones
+  que no funcionan o se rompen
+
+* Conclusión
+** Algunos casos comunes de uso
+- Mejor aprovechamiento / consolidación de recursos
+- Migraciones
+- Seguridad
+- Redundancia / alta disponibilidad
+- Despliegue de escritorios virtuales
+- Simplificación de mantenimiento
+- Desarrollo (especialmente depuración) para sistemas embebidos
+
+** Diferentes necesidades, diferentes soluciones
+- Hay una gran riqueza en la oferta de herramientas de virtualización
+- Cada herramienta y estrategia tiene características muy distintas
+- Hasta hace poco estaba completamente fuera del radar
+  - Nos ofrece soluciones muy interesantes a una amplia categoría de
+    problemas
+- Las ofertas de cómputo /en la nube/ cruzan necesariamente por
+  virtualización
+  - Particularmente por hardware, paravirtualización y contenedores
+- Al ser un área en desarrollo explosivo, hay mucho espacio donde
+  podemos participar y desarrollar
+
+** ¿Y la nube?
+- La /infraestructura como un servicio/, una de las modalidades del
+  /cómputo en la nube/ implica necesariamente virtualización
+- Varios programas de administración de /nubes privadas/ gestionan y
+  monitorean también sistemas virtualizados
+- Una /nube/ puede verse como un conjunto de servidores configurados
+  para brindar recursos reales a máquinas virtuales
+  - Disco, memoria, tiempo de procesamiento, etc.
+- La administración de servicios /en la nube/, así como sus ventajas y
+  desventajas, salen del ámbito del curso
+  - Pero sin duda será de interés de varios de ustedes

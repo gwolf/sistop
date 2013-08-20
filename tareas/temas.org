@@ -23,12 +23,120 @@ Intentaremos que los temas vayan siendo presentados junto con la clase
 en cuestión, para no romper el hilo temático del grupo.
 
 * Introducción a los sistemas operativos
+
+
 * Relación con el hardware: Estructuras y funciones básicas
+
 - /Rootkits: Escondiéndose del administrador/
 
   Complementando a la división de espacio usuario y espacio kernel,
+  podemos preguntarnos acerca de cómo se puede /burlar/ los
+  mecanismos  seguridad.
+
+  Si bien a estas alturas del curso aún no hemos profundizado en
+  muchos de estos temas (e incluso este tema podríamos presentarlo
+  durante unidades posteriores), podemos comenzar a hablar de las
+  amenazas: Una vez que un atacante logró /romper/ a un programa al
+  que tenía acceso, engañando al sistema operativo para que le dé
+  acceso privilegiado, buscará para esconder sus rastros del
+  administrador y, además, asegurarse de tener un mecanismo fácil
+  para entrar posteriormente.
+
+  ¿Cómo lo hace? ¿Cómo se puede detectar?
+
 - /Sistemas basados en grid/
+
+  El modelo de cómputo distribuído basado en una /malla/ o /grid/ es
+  muy flexible, y lo han adoptado proyectos de todo tipo. Pueden
+  presentar a algunos de estos proyectos: ¿Qué es lo que se
+  distribuye? ¿Cómo se /paquetiza/ la información? ¿Cómo se
+  re-agrega? ¿Qué tanto costo computacional adicional significa el
+  separar en estos paquetes a la información?
+
+  Se puede emplear un modelo /grid/ con participantes conocidos, con
+  una membresía predeterminada, pero muchos proyectos lo abren a
+  participación pública. ¿Hay consideraciones de seguridad a tomar en
+  cuenta?
+
 * Administración de procesos
-* Administración de memoria
+
+- /Sistemas de arranque modernos en sistemas tipo Unix/
+
+  Un tema no directamente relacionado con el temario, pero que puede
+  ligarse con varios conceptos mencionados en esta unidad, es la
+  gestión del arranque del sistema: Una vez que el núcleo carga y
+  hace un recorrido básico del hardware creándose un mapa de cómo es
+  el sistema en que está corriendo, tiene que llevar el equipo a un
+  estado funcional para sus usuarios. ¿Cómo ocurre esto?
+
+  Tradicionalmente, los sistemas Unix se dividían entre dos
+  filosofías de arranque (los sistemas /SysV/ y los sistemas
+  /BSD/). Pero la realidad del cómputo ha cambiado con el
+  tiempo. Si bien hay varias otras propuestas, en el mundo Linux hay
+  dos apuestas primarias: /upstart/, por parte de Ubuntu, y
+  /systemd/, por parte de las distribuciones derivadas de RedHat.
+
+  ¿Cuáles son los planteamientos básicos de los arranques tipo /SysV/
+  y tipo /BSD/? ¿A qué tipo de cambios en /la realidad/ me refiero?
+  ¿Por qué los esquemas tradicionales /se están quedando cortos/? ¿En
+  qué se parecen y en qué se diferencian /systemd/ y /upstart/? ¿Qué
+  ventajas y desventajas conllevan?
+
 * Planificación de procesos
+
+- /Planificación por lotería/
+
+  En su libro /Sistemas operativos: diseño e implementación/, Andrew
+  Tannenbaum sugiere otro esquema de planificación: El de la
+  /lotería/.
+
+  En este esquema, cada proceso tiene un cierto número de /boletos/, y
+  sl siguiente /quantum/ es asignado a través de la selección
+  aleatoria de uno de los boletos disponibles. Un proceso de mayor
+  prioridad tendrá más boletos, uno de menor prioridad tendrá menos.
+
+  - ¿Cómo se compararía este método con los otros revisados en clase?
+  - ¿Para qué tipo de carga es más apto? ¿Y menos apto?
+  - ¿Qué tan susceptible resulta a producir inanición?
+  - ¿Qué tan /justa/ sería su ejecución?
+  - ¿Cómo lo emplearías si tuvieras procesos con necesidades de
+    tiempo real?
+  - ¿Se te ocurre algún punto adicional no mencionado en el
+    planteamiento para que resulte mejor?
+
+* Administración de memoria
+
+
+
 * Sistemas de archivos
+
+- /Detalles de los sistemas de archivos en Flash/
+
+  En clase exponemos los principales puntos de los medios de /estado
+  sólido/ o /no rotativos/, apuntando apenas hacia cómo podrían estos
+  aprovecharse mejor.
+
+  ¿Qué sistemas de archivos están mejor /afinados/ para operar con
+  medios Flash? ¿Cuáles son los principales obstáculos para que gocen
+  de una mayor adopción?
+
+- /Desduplicación/
+
+  Una de las características que ofrecen varios sistemas operativos de
+  última generación es la /desduplicación/: La detección de sectores
+  idénticos pertenecientes a más de un archivo, para evitar repetirlos
+  varias veces en el disco (es un fenómeno que ocurre mucho más de lo
+  que esperaríamos). Esta detección se realiza típicamente por medio
+  de /hashes criptográficos/.
+
+  ¿Cómo opera un poco más a detalle este mecanismo? ¿Qué tan confiable
+  es? (vamos, ¿se puede utilizar ya en sistemas en producción?) ¿Qué
+  pasa con el espacio libre reportado al sistema? ¿No se cae en
+  riesgos de /sobrecomprometimiento/ (/overcommit/)? ¿Qué es la
+  /desduplicación en línea/ y la /desduplicación fuera de línea/
+  (/online deduplication/, /offline deduplication/)? ¿Cómo opera el
+  /hash criptográfico/? ¿Hay veces que resulte insuficiente? ¿Qué
+  alternativas hay?
+
+  Como referencia informal al respecto, sugiero leer el
+  [[http://lists.debconf.org/lurker/message/20130813.100610.f38cd67f.en.html][hilo de discusión]]

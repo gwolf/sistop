@@ -45,6 +45,22 @@ posible.
   los 1990, durante la explosión de las arquitecturas
 - Es /altamente/ ineficiente — Resulta muy caro en tiempo de cómputo
 
+** ¿Emular o simular?
+- Un /emulador/ busca /imitar/ el /comportamiento completo/ del
+  sistema destino
+  - Emular: /Imitar las acciones de otro, procurando igualarlo o
+    superarlo/ (WordReference.com)
+  - Reproduce /todos los procesos internos/
+  - Implementa /los mismos/ mecanismos
+- Un /simulador/ simula o finge las /áreas de interés/ del sistema destino
+  - Puede emplear datos para generar respuestas predefinidas, obviando
+    (brincándose) procesos
+- Ejemplo:
+  - Un /simulador de vuelo/ no nos lleva a ningún lugar, aunque
+    presente una cabina como la de un avión real
+  - Un /emulador/ busca ejecutar software arbitrario /sin que éste
+    detecte la diferencia/
+
 ** Emulación de una arquitectura existente
 - Se puede hacer a diferentes profundidades
   - Desde emular el sistema completo (juego de instrucciones, chipset,
@@ -114,6 +130,11 @@ posible.
 - Desde el 2000, las comunidades (principalmente) de /Perl/ y /Python/
   han implementado /Parrot/
   - Máquina virtual apta para lenguajes de script
+
+** Esquema de la arquitectura /.NET/
+#+attr_latex: height=0.7\textheight
+#+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen: Wikipedia)
+[[../img/maquina_virtual_dotnet.png]]
 
 ** ¿Por qué utilizar/emular estas arquitecturas?
 - Las abstracciones presentadas por estas máquinas virtuales resultan

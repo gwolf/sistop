@@ -799,7 +799,7 @@ Java (esto es, desarrollar máquinas virtuales que se salieran del
 estándar de la JVM), Microsoft desarrolló la arquitectura /.NET/; su
 principal aporte en este campo es la separación definitiva entre
 lenguaje de desarrollo y código intermedio producido: La máquina
-virtual de /.NET/ está centrado en el /CLI/ (/Common Language
+virtual de /.NET/ está centrada en el /CLI/ (/Common Language
 Infrastructure/, Infraestructura de Lenguajes Comunes), compuesta a su
 vez por el /CIL/ (/Common Intermediate Language/, Lenguaje Intermedio
 Común, que es la especificación del /bytecode/ o código intermedio) y
@@ -888,6 +888,39 @@ pero gracias al CMS, esto resulta imperceptible al usuario.
 A pesar de estas ideas interesantes y novedosas, Transmeta no pudo
 mantener el dinamismo necesario para despegar, y cesó sus operaciones
 en 2009.
+
+*** ¿Emulación o simulación?
+
+Una pregunta frecuente que se presenta al hablar de este tema es
+acerca de la diferencia entre la /emulación/ y la /simulación/. Todos
+los casos presentados anteriormente se tratan de /emulación/.
+
+Emular significa /imitar las acciones de otro, procurando igualarlas e
+incluso excederlas/ (Diccionario de la Real Academia Española, 23ª
+edición). Esto significa que un emulador reproduce todos los procesos
+internos que realizaría el sistema huésped, y busca cubrir todos los
+comportamientos respectivos implementando los mismos mecanismos.
+
+/Simular/, por otra parte y según este mismo diccionario, significa
+/Representar algo, fingiendo o imitando lo que no es/. Un sistema
+simulador simula o finge las áreas de determinado sistema que
+interesan al usuario; puede emplear datos pre-cargados para generar
+ciertas respuestas, obviando los procesos que los generarían.
+
+A diferencia de los ejemplos presentados a lo largo de esta sección,
+que llevan a ejecutar software arbitrario para la plataforma destino
+buscando idealmente que éstos no detecten siquiera una diferencia en
+comportamiento, un simulador puede presentar mucho mayor detalle en
+determinadas áreas, pero no realiza las funciones substantivas del
+sistema simulado. Por ejemplo, es muy común (incluso para el
+entrenamiento de pilotos reales) el uso de simuladores de vuelo; estos
+programas pueden representar una cabina equivalente a la de un avión
+real, con todos sus monitores y controles, pero nadie esperaría que lo
+trasladen de un lugar a otro. Muchos de los lectores habrán empleado
+software de simulación de circuitos electrónicos, que permiten el
+diseño y pruebas simples de circuitos, pero no esperarán que simular
+en la computadora un núcleo de ferrita rodeado por una bobina resulte
+en un receptor de radio.
 
 ** Virtualización asistida por hardware
 

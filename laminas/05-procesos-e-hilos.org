@@ -1,8 +1,20 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Administración de procesos: Procesos e hilos
-#+DATE: 2013-02-08 — 2013-02-11
+#+DATE: 2013-08-27
 
 * Concepto y estados de un proceso
+
+** Objetivo de esta sección
+#+BEGIN_CENTER
+En esta sección abordaremos los conceptos de:
+#+END_CENTER
+- Procesos
+- Hilos
+- Concurrencia
+  - Exclusión mutua, bloqueos mutuos e inanición
+- Sincronización
+  - Mutexes, semáforos, monitores
+
 ** ¿Cuándo es proceso? ¿Cuando es programa?
 - Programa :: Una lista de instrucciones a seguir, una /entidad
               pasiva/
@@ -32,17 +44,6 @@ Nosotros emplearemos siempre el término /proceso/.
   procesos igual o menor al número de CPUs que tenga el sistema.
 - Esa ilusión tiene grandes costos... Especialmente pensando con
   suficiente velocidad
-
-** Objetivo de esta sección
-#+BEGIN_CENTER
-En esta sección abordaremos los conceptos de:
-#+END_CENTER
-- Procesos
-- Hilos
-- Concurrencia
-  - Exclusión mutua, bloqueos mutuos e inanición
-- Sincronización
-  - Mutexes, semáforos, monitores
 
 * El proceso
 

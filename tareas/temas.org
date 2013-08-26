@@ -104,9 +104,48 @@ en cuestión, para no romper el hilo temático del grupo.
   - ¿Se te ocurre algún punto adicional no mencionado en el
     planteamiento para que resulte mejor?
 
+- /Núcleo prevenible, tiempo real, y optimización fina/
+
+  Los sistemas operativos modernos buscan /exprimir/ hasta el último
+  pedacito de rendimiento. Para estudiar cómo lo hacen, podemos
+  asomarnos a las discusiones (y a la implementación) de Linux. Los
+  últimos diez años han sido de fuerte profesionalización y
+  optimización.
+
+  Para el tema de planificación de procesos, un punto muy importante
+  fue la introducción del /kernel prevenible/ (o /interrumpible/),
+  en 2004.
+
+  ¿Qué significa que el núcleo mismo del sistema operativo puede ser
+  interrumpido? ¿Quién lo puede interrumpir? ¿Qué consecuencias tuvo
+  esto, en complejidad de código y en velocidad?
+
+  En agosto del 2013, /Linux Weekly News/ publicó un texto llamado
+  [[https://lwn.net/Articles/563185/][Optimizing preemption]], de Jonathan Corbet. Les sugiero revisarlo y
+  tomarlo como punto de origen para el desarrollo del trabajo. Si bien
+  este tema toca principalmente temas de planificación de procesos, si
+  eligen este tema les sugiero adelantarse un poco leyendo la sección
+  de /El espacio en memoria de un proceso/ (y posiblemente, para una
+  mayor comprensión, /Consideraciones de seguridad/) del tema de la
+  siguiente unidad, /Administración de memoria/.
+
 * Administración de memoria
 
+- /Esquemas de asignación de memoria en una realidad NUMA/
 
+  La realidad que presentamos en la primer unidad del curso respecto
+  al multiprocesamiento simétrico como fuertemente dominante en
+  relación a los sistemas NUMA se mantiene cierta... Pero va
+  cambiando rápidamente, y los sistemas NUMA son cada vez más comunes.
+
+  Claro está, la popularización de los sistemas NUMA tiene un alto
+  impacto en cómo se manejan los esquemas de administración de
+  memoria.
+
+  En el número de septiembre del 2013 de la revista /Communications of
+  the ACM/ aparece un artículo corto, conciso y bastante interesante,
+  de Cristoph Lameter: [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory
+  access]]. Sugiero emplearlo como punto de partida.
 
 * Sistemas de archivos
 
@@ -138,5 +177,6 @@ en cuestión, para no romper el hilo temático del grupo.
   /hash criptográfico/? ¿Hay veces que resulte insuficiente? ¿Qué
   alternativas hay?
 
-  Como referencia informal al respecto, sugiero leer el
-  [[http://lists.debconf.org/lurker/message/20130813.100610.f38cd67f.en.html][hilo de discusión]]
+  Como referencia informal al respecto, sugiero leer el [[http://lists.debconf.org/lurker/message/20130813.100610.f38cd67f.en.html][hilo de
+  discusión]] al respecto en la lista de DebConf (el congreso de
+  Debian).

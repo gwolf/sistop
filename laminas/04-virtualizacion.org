@@ -55,11 +55,15 @@ posible.
 - Un /simulador/ simula o finge las /áreas de interés/ del sistema destino
   - Puede emplear datos para generar respuestas predefinidas, obviando
     (brincándose) procesos
-- Ejemplo:
-  - Un /simulador de vuelo/ no nos lleva a ningún lugar, aunque
-    presente una cabina como la de un avión real
-  - Un /emulador/ busca ejecutar software arbitrario /sin que éste
-    detecte la diferencia/
+
+** ¿Emular o simular? Un ejemplo
+#+BEGIN_CENTER
+Un /simulador de vuelo/ no nos lleva a ningún lugar, aunque presente
+una cabina como la de un avión real
+\vfill
+Un /emulador/ busca ejecutar software arbitrario /sin que éste
+detecte la diferencia/
+#+END_CENTER
 
 ** Emulación de una arquitectura existente
 - Se puede hacer a diferentes profundidades
@@ -83,8 +87,8 @@ posible.
 - Celuluares, cámaras, ruteadores, scanners, controladores de equipo
   industrial...
   - Parte muy importante del mercado
-- Emular m680x0 o ARM en un procesador estándar de escritorio resulta
-  en velocidad comparable al hardware nativo
+- Emular m680x0 o ARM en un buen equipo de escritorio resulta en
+  velocidad comparable al hardware nativo
 
 ** Emulando arquitecturas inexistentes
 - También podemos emular una arquitectura que /nunca ha sido
@@ -96,25 +100,12 @@ posible.
     arquitecturas existentes ofrecerían /emuladores de p-machines/
 - La arquitectura de la /p-machine/ está definida en torno al lenguaje
   Pascal
+
+** Emulando arquitecturas inexistentes
 - Todo programa hecho para correr en una /p-machine/ correría en
   cualquier arquitectura que lo implementara
 - Los /p-systems/ gozaron de relativa popularidad hasta mediados de
   los 1980, con implementaciones en arquitecturas 6502, Z80 y 80x86
-
-** Arquitecturas planteadas meramente en teoría
-- Hay arquitecturas que fueron concebidas exclusivamente para
-  propósitos académicos
-- Donald Knuth diseñó la arquitectura /MIX/ en los 1960 como
-  /arquitectura ideal/ para los ejemplos de su célebre libro /The Art
-  of Computer Programming/ (y su sucesora /MMIX/ en 1999 para la nueva
-  edición)
-- Es una arquitectura apta para la enseñanza, pero inviable para un
-  sistema real
-  - MIX plantea un sistema híbrido binario-decimal, de 6 bits en modo
-    binario o 2 dígitos en modo decimal
-  - MMIX es una arquitectura RISC con 256 registros de 64 bits
-- Existen MIXWARE y MMIXWARE, simuladores de los procesadores MIX y
-  MMIX
 
 ** Arquitecturas emuladas, de uso diario — E inexistentes
 - En la década de los 1990, Sun Microsystems retomó las ideas de los
@@ -156,6 +147,7 @@ posible.
   otras arquitecturas/
   - Traducido a través del microcódigo: /Code Morphing Software/
     (/Software de transformación de código/)
+** /Transmeta/: El procesador emulador
 - La única arquitectura implementada en CMS es la Intel x86
   - Pero las dos generaciones de procesadores Transmeta (Crusoe y
     Efficeon) son completamente distintas
@@ -170,6 +162,8 @@ posible.
   código a ejectuar a formatos nativos (traducción dinámica)
 - También guardan copias convertidas/compiladas del código a emular
   - /Compilador JIT/ — /Just in Time/; /Compilador Justo a Tiempo/
+
+** La emulación, mejorada
 - En líneas generales, la vieja fama de la lentitud de las máquinas
   virtuales ya no se justifica
 - Las máquinas virtuales pueden llamar a código nativo para puntos
@@ -259,9 +253,16 @@ posible.
 - Dando control de calidad a los manejadores de los dispositivos
   emulados/virtualizados, podemos lograr que los sistemas operativos
   huésped sean /más estables/ de lo que serían sobre el hardware real
-- Típicamente el hipervisor ofrecerá a los huéspededs dispositivos
+
+** Estabilidad por virtualización
+- Típicamente el hipervisor ofrecerá a los huéspedes dispositivos
   relativamente viejos y simples
-  - Red NE2K, sonido Soundblaster16, video Cirrus...
+  - Red NE2K
+  - sonido Soundblaster16
+  - video Cirrus
+  - ...
+- Las prestaciones máximas del hardware /no están limitadas/ por las
+  características del hardware emulado — Sólo su interfaz al sistema
 
 ** HVM, pero sin hardware
 - La primer versión públicamente descargable de VMWare fue liberada en
@@ -317,12 +318,14 @@ posible.
   - Pero no es redistribuible, sólo puede ser utilizado internamente
     en Xensource
 
-** Aprovechamiento de recursos en la paravirtualización
+** Aprovechamiento de recursos (1)
 - Con sistemas paravirtualizados podemos lograr un consumo de recursos
   aún más eficiente que en un sistema virtualizado ``real''
 - Los dispositivos presentados al OS huésped son mucho más ligeros e
   /idealizados/
   - No hace falta emular al hardware real
+
+** Aprovechamiento de recursos (2)
 - El OS huésped puede pedir al anfitrión recursos adicionales cuando
   los requiere
   - Incluso sobre demanda — /balooning/
@@ -332,7 +335,7 @@ posible.
   - El OS anfitrión no tiene que adivinar tantos detalles del
     funcionamiento del huésped si éste se los confía
 
-** Hardware virtualizado, dispositivos paravirtualizados
+** CPU virtual, dispositivos paravirtuales
 - Este punto es empleado por todo tipo de virtualizadores:
   Paravirtualización a nivel dispositivo
 - Entre más sencillos sean los dispositivos emulados para la
@@ -446,8 +449,7 @@ un ojo!
   demás:
   - Tablas de procesos
   - Señales, IPC
-  - Conexiones, sockets e interfaces de red
-  - Reglas de firewall
+  - Conexiones, sockets e interfaces de red, reglas de firewall
   - Dispositivos
   - Límites en consumo de recursos (RAM, CPU)
 - Formalmente, los contenedores no implementan /virtualización/, sino
@@ -455,7 +457,7 @@ un ojo!
   - Pero brindan al usuario la /ilusión/ de una /máquina virtual/
     inexistente
 
-** Vareidad, pero con un límite
+** Variedad, pero con un límite
 - A través de los contenedores, la virtualización es /casi/ completa
 - Se ven un poco las /costuras/, pero para propósitos prácticos, cada
   /contenedor/ es un sistema independiente
@@ -464,10 +466,6 @@ un ojo!
   contenedores al mismo tiempo
 - Única restricción: Todos corren con el mismo núcleo (misma versión,
   mismos módulos, etc.)
-- Sysjail (OpenBSD) permite huéspedes *BSD y Linux a través de
-  /emulación de llamadas al sistema/ (la cubrimos en la siguiente
-  sección)
-  - Pero el núcleo /real/ sigue siendo OpenBSD
 
 ** Consumo de recursos óptimo
 - Un contexto sin actividad tiene un consumo de recursos mínimo
@@ -524,6 +522,8 @@ un ojo!
   - Concepto de /hipervisor/
   - Entrada de HVM al común de los equipos x86
   - Estabilidad por virtualización
+
+** En esta presentación vimos...
 - Paravirtualización
   - Enfoque más ligero, aunque requiere reescribir porciones de los
     sistemas operativos huésped

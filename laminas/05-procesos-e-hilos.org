@@ -4,16 +4,26 @@
 
 * Concepto y estados de un proceso
 
-** Objetivo de esta sección
+** Objetivo de esta sección (1)
 #+BEGIN_CENTER
-En esta sección abordaremos los conceptos de:
+En esta sección nos concentraremos en aprender los siguientes
+conceptos:
 #+END_CENTER
-- Procesos
-- Hilos
-- Concurrencia
-  - Exclusión mutua, bloqueos mutuos e inanición
-- Sincronización
-  - Mutexes, semáforos, monitores
+- Programas, procesos, tareas, hilos
+  - ¿Qué son? ¿En qué se parecen? ¿Cuál es su diferencia?
+  - ¿En qué estados pueden estar? ¿Cómo cambian de uno a otro?
+  - ¿Qué implica un /cambio de contexto/?
+  - ¿Cómo estructuramos a nuestro programa para emplear varios
+    hilos o procesos?
+  - ¿Cómo comprende y maneja el sistema operativo a los diferentes
+    tipos de hilos?
+
+** Objetivo de esta sección (2)
+- Qué significa la /concurrencia/. Algunos conceptos:
+  - Exclusión mutua
+  - Bloqueos mutuos
+  - Inanición
+- Planteamiento de cuatro problemas clásicos de sincronización
 
 ** ¿Cuándo es proceso? ¿Cuando es programa?
 - Programa :: Una lista de instrucciones a seguir, una /entidad
@@ -227,7 +237,7 @@ semaphores]]» de Allen Downey (2008).
 \vfill
 Disponible desde el sitio del curso:
 \vfill
-[[http://sistop.gwolf.org/biblio/Little_Book_of_Semaphores_-_Allen_Downey.pdf]]
+http://sistop.gwolf.org/biblio/Little_Book_of_Semaphores_-_Allen_Downey.pdf
 #+end_center
 
 ** ¿Qué es concurrencia?
@@ -253,12 +263,11 @@ ejecutando en una computadora dedicada, pero...
   punto en su ejecución
   - …Que tengamos ya los resultados parciales de un cómputo paralelo
   - …O que no más de /m/ o menos de /n/ procesos estén en determinado punto
-  - …O notificar a otro proceso de nuestro avance
-  - …O…
+  - …O notificar a otro proceso de nuestro avance, o…
 
 ** La sincronización como comunicación entre procesos (IPC)
 - En esta sección veremos ejemplos de /primitivas de sincronización/
-- Son todas ellas /comunicación entre procesos/ (IPC)
+- Todas ellas son modalidades de /comunicación entre procesos/ (IPC)
 - Nos centraremos principalmente en los /semáforos/
 
 ** Problemas clásicos para ir pensando
@@ -266,9 +275,12 @@ ejecutando en una computadora dedicada, pero...
 - Problema lectores-escritores
 - La cena de los filósofos
 - Los fumadores compulsivos
+
 #+begin_center
-…Y hay ~20 problemas más explicados en /The little book of
-semaphores/. ¡Revísenlo!
+…Y hay \approx 20 problemas más explicados en /The little book of
+semaphores/.
+\vfill
+¡Revísenlo!
 #+end_center
 
 ** Problema productor-consumidor

@@ -170,14 +170,17 @@ requeridas por cada sistema
 [[../img/altair.jpg]]
 
 ** La era de los 8 bits ($\approx 1977 - 1985$)
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
 - /Microprocesadores/ de 8 bits y miniaturización
   - Salida a video (tipo TV)
   - Entrada por teclado
   - Entrada opcional por cinta, primeros diskettes
 - Programación en BASIC (intérprete en ROM)
-#+attr_latex: width=0.4\textwidth
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: width=\textwidth
 #+caption: Commodore Pet 2001 (1977)
 [[../img/commodore_pet.jpg]]
+#+latex: \end{column}\end{columns}
 
 ** La era de los 8 bits ($\approx 1977 - 1985$)
 - Comienzan a manejarse /dispositivos/: Unidades de cinta, unidades de
@@ -201,21 +204,23 @@ requeridas por cada sistema
 
 ** Entorno gráfico (WIMP) (1984)
 #+latex: \begin{columns}\begin{column}{0.3\textwidth}
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=\textwidth
 #+caption: Apple Macintosh (1984)
 [[../img/mac128.png]]
-#+caption: Commodore Amiga 1000 (1985)
-#+attr_latex: width=0.6\textwidth
-[[../img/A1000.jpg]]
 #+latex: \end{column}\begin{column}{0.6\textwidth}
 - Ventanas, iconos, menúes, apuntador (/Windows, Icons, Menus,
   Pointer/)
 - 1984: Apple Macintosh, primer sistema WIMP con éxito comercial
 - Multiprocesos, /no multitarea/
-- Los programadores /tienen que pensar en concurrencia/
-- Multitarea preventiva real: 1985 (Amiga, Atari ST)
-  - Sin hardware de protección
 #+latex: \end{column}\end{columns}
+
+** Multitarea preventiva (1985)
+#+caption: Commodore Amiga 1000 (1985)
+#+attr_latex: width=0.4\textwidth
+[[../img/A1000.jpg]]
+- Multitarea preventiva real: 1985 (Amiga, Atari ST)
+  - Sin hardware de protección de memoria
+- Los programadores /tienen que considerar la concurrencia/
 
 ** La profesionalización del escritorio
 - Fines de los 1980 — Intel 80486, Motorola 68040, PowerPC: Hardware
@@ -356,7 +361,7 @@ núcleo?
   - Spool
   - Multiprogramación
   - Tiempo compartido
-  - Microcomputadoras (evolución principalmente $approx 1975 - 1990$)
+  - Microcomputadoras (evolución principalmente \approx 1975 — 1990)
 ** En esta presentación vimos...
 - Tipos de multitarea
   - /Cooperativa/ o /no apropiativa/

@@ -19,11 +19,17 @@
 - Comprender la necesidad de adoptar un modelo de programación que
   considere al verdadero multiprocesamiento
 * Fronteras del CPU
-** Característica fundamental de sistemas /von Neumann/
+** ¿Qué es un /sistema von Neumann/?
 - Computadora /de programa almacenado/
   - En la /memoria principal/
   - /Mismo almacenamiento/ para el programa siendo ejecutado que para
     sus datos
+- Todas las computadoras que empleamos hoy en día son, para fines
+  prácticos, sistemas von Neumann[fn:: Aunque podrían caracterizarse
+  como /Harvard modificadas/ partiendo desde un formalismo
+  excesivo...]
+
+** Implicaciones de /von Neumann/
 - La arquitectura /no considera/ la existencia de almacenamiento /persistente/
   - Dentro del procesador hay algunas (¡pocas!) localidaes para
     almacenar datos /muy limitados/, para /trabajar directamente con
@@ -56,11 +62,11 @@
     - Pero sólo uno era un acumulador de propósito general
 
 ** Ejemplo de acumuladores: Intel 8086/8088
-#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: width=\columnwidth
 #+caption: Imagen de Wikipedia
 [[../img/registros_8086.png]]
-#+latex: \end{column}\begin{column}{0.4\textwidth}
+#+latex: \end{column}\begin{column}{0.5\textwidth}
 Registros /bandera/ (vector de booleanos): Overflow, Dirección,
 Interrupción, Trampa/depuración, Signo, Cero, Acarreo auxiliar,
 Paridad, Acarreo
@@ -88,8 +94,7 @@ Paridad, Acarreo
   muchísimo más lento
   - Los discos llegan a ser /miles a millones/ de veces más lentos que
     la memoria
-- El avance del desarrollo de hardware /juega en contra/ de reducir
-  la diferencia
+- El avance en hardware /juega en contra/ de reducir la diferencia
 
 ** La memoria
 - El procesador puede referirse directamente a los datos ubicados en
@@ -152,7 +157,7 @@ xt_t$
 - Los componentes /no directamente referenciables/ de un sistema se
   comunican a través de /canales/ (/buses/)
   - Líneas de comunicación entre el procesador y el /chipset/
-- Hoy en día, en sistemas x86, el acomodo más frecuente:
+- Acomodo /muy frecuente/ en sistemas x86 actuales:
   - Puente norte (Northbridge) :: Conectado directamente al CPU,
        encargado de los buses de alta velocidad y los dispositivos
        fundamentales para el inicio del sistema — Memoria, video (AGP)
@@ -183,7 +188,7 @@ xt_t$
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en el chipset Intel 875 (Pentium 4, 2003)
 [[../img/dot/chipset_857.png]]
 
-** Otros arerglos
+** Otros arreglos
 - El ejemplo presentado es para un sistema de escritorio típico
   - Y bastante viejo ya
 - En entornos de alto rendimiento, puede haber múltiples canales entre
@@ -312,17 +317,21 @@ Lista incompleta, meramente ejemplificando
      abrir o cerrar un archivo existente; modificar sus /metadatos/;
      leer o escribir de un /descriptor de archivo/ abierto, etc.
 
-- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
-     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
-     llamadas son análogas a las de manipulación de archivos, y varios
-     sistemas operativos las ofrecen como una sola.
 ** Tipos de llamadas al sistema (2)
 #+BEGIN_CENTER
 Lista incompleta, meramente ejemplificando
 #+END_CENTER
+- Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
+     leer, escribir o reposicionarlo, y otras varias. Muchas de estas
+     llamadas son análogas a las de manipulación de archivos, y varios
+     sistemas operativos las ofrecen como una sola.
 - Mantenimiento de la información :: Obtener o modificar la hora del
      sistema; obtener detalles acerca de procesos o archivos, etc.
 
+** Tipos de llamadas al sistema (3)
+#+BEGIN_CENTER
+Lista incompleta, meramente ejemplificando
+#+END_CENTER
 - Comunicaciones :: Establecer una comunicación con determinado
                     proceso (local o remoto), aceptar una solicitud de
                     comunicación de otro proceso, intercambiar
@@ -352,8 +361,6 @@ execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
 brk(0)                                  = 0x8414000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
 mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb773d000
-access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
-open("/etc/ld.so.cache", O_RDONLY)      = 3
              (...)
 getcwd("/home/gwolf/vcs/sistemas_operativos", 4096) = 36
 fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
@@ -369,7 +376,7 @@ exit_group(0)                           = ?
 * Multiprocesamiento
 ** Multiprocesamiento y multiprogramación
 #+BEGIN_CENTER
-Conceptos cercanamente relacionados, empleados coloquialmente de forma casi
+Conceptos relacionados, empleados coloquialmente de forma
 intercambiable, pero muy distintos:
 #+END_CENTER
 - Multiprogramación :: /Ilusión/ de estar ejecutando varios procesos
@@ -430,9 +437,14 @@ Particularmente la abordaremos en las dos siguientes unidades:
 [[../img/moore_orig.png]]
 
 ** La Ley de Moore, hoy
-#+attr_latex: height=0.7\textheight
-#+caption: Y a cinco decadas, la Ley de Moore se sigue cumpliendo...
+#+latex: \begin{columns}\begin{column}{0.7\textwidth}
+#+attr_latex: height=0.9\textheight
 [[../img/gnuplot/ley_de_moore.png]]
+#+latex: \end{column}\begin{column}{0.3\textwidth}
+#+BEGIN_CENTER
+Y a cinco decadas, la Ley de Moore se sigue cumpliendo...
+#+END_CENTER
+#+latex: \end{column}\end{columns}
 
 ** ¿Moore y el multiprocesamiento?
 #+BEGIN_CENTER

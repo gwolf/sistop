@@ -491,11 +491,6 @@ debemos indicárselo de forma explícita, sincronizando nuestros hilos
 (o procesos). Es necesario asegurarnos que la sección crítica no
 permitirá la entrada de dos hilos de forma casi-simultánea.
 
-#+attr_html: height="261"
-#+attr_latex: width=0.7\textwidth
-#+caption: Sincronización al intentar ejecutar concurrentemente una sección crítica
-[[./img/gnuplot/secc_crit.png]]
-
 Un error muy común es utilizar mecanismos /no atómicos/ para señalizar
 al respecto. Consideremos que estamos haciendo un sistema de venta de
 boletos de autobús en Perl, y queremos hacer la siguiente función
@@ -515,7 +510,8 @@ sub asigna_asiento {
     print "Asiento asignado: $asignado\n";
   } else {
     print "No hay asientos disponibles\n";
-    return 1;
+    $bloq = 0;
+    return 1; # Indicando error / falla
   }
   $bloq = 0;
   return 0;
@@ -571,6 +567,11 @@ La palabra /mutex/ nace de la frecuencia con que se habla de las
 /regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
 mecanismo que nos asegura que cierta región del código será ejecutada
 como si fuera atómica.
+
+#+attr_html: height="261"
+#+attr_latex: width=0.8\textwidth
+#+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
+[[./img/gnuplot/secc_crit.png]]
 
 Hay que tener en cuenta que un mutex /no significa/ que el código no
 se va a interrumpir mientras está dentro de esta región — Eso sería
@@ -874,10 +875,10 @@ cuales tenemos a:
 	     inicializa_estado()
 
 	     mutex.acquire()
-	     count = count + 1
+	     cuenta = cuenta + 1
 	     mutex.release()
 
-	     if count == n:
+	     if cuenta == n:
 	       barrera.release()
 
 	     barrera.acquire()
@@ -991,7 +992,10 @@ un sistema que ejecute a un nivel /inferior/ al de nuestro código —
 Sean las bibliotecas de sistema a través del sistema operativo, o la
 /máquina virtual/ que implemente a nuestro lenguaje, las estructuras
 que establecen los /candados/ que el código de usuario emplea para la
-sincronización están siempre a un nivel inferior.
+sincronización están siempre a un nivel inferior. Es por esto que nos
+referimos a estos mecanismos como /primitivas/ de sincronización:
+Tienen que ser ofrecidas por las capas inferiores como mecanismos
+completos.
 
 Ahora, ¿cómo podemos asegurar la sincronización entre dos procesos
 /que no pueden acudir a un nivel inferior/? Ejemplos de esta situación

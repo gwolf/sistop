@@ -116,8 +116,8 @@ Es el área de código que:
   - ¡Cuidado con los accesos casi-simultáneos!
 
 ** Sección crítica
-#+attr_latex: width=0.7\textwidth
-#+caption: Sincronización al intentar ejecutar concurrentemente una sección crítica
+#+attr_latex: width=0.8\textwidth
+#+caption: Sincronización: La exclusión de una sección crítica común a varios procesos se protege por medio de regiones de exclusión mutua
 [[../img/gnuplot/secc_crit.png]]
 
 ** Bloqueo mutuo
@@ -169,15 +169,11 @@ sub asigna_asiento {
     print "Asiento asignado: $asignado\n";
   } else {
     print "No hay asientos disponibles\n";
-    return 1;
+    $bloq = 0; return 1; # Indicando error / falla
   }
-  $bloq = 0;
-  return 0;
+  $bloq = 0; return 0;
 }
 #+end_src
-#+BEGIN_CENTER
-/Tip/: Sección crítica entre las líneas 6 y 8 (¿o hasta 14?)
-#+END_CENTER
 
 ** ¿Por qué es inseguro el ejemplo anterior?
 #+BEGIN_CENTER
@@ -197,6 +193,29 @@ Líneas 4 y 5:
   - (Al menos) el proceso debe implementar la protección entre hilos
   - (Al menos) el sistema operativo debe implementar la protección
     entre procesos
+
+** Mismo ejemplo, empleando un /mutex/
+#+begin_src perl
+my ($proximo_asiento :shared, $capacidad :shared);
+$capacidad = 40;
+sub asigna_asiento {
+  lock($proximo_asiento);
+  if ($proximo_asiento < $capacidad) {
+    $asignado = $proximo_asiento;
+    $proximo_asiento += 1;
+    print "Asiento asignado: $asignado\n";
+  } else {
+    print "No hay asientos disponibles\n";
+    return 1;
+  }
+  return 0;
+}
+#+end_src
+#+BEGIN_CENTER
+La implementación comunicación entre hilos en Perl implementa un
+/mutex/ a través de la función =lock()=, como /atributo/ sobre una
+variable, con /ámbito léxico/
+#+END_CENTER
 
 * Primitivas de sincronización
 ** Requisitos para las /primitivas/
@@ -682,10 +701,10 @@ for hilo in range(10):
 #+begin_src python
   inicializa_estado()
   mutex.acquire()
-  count = count + 1
+  cuenta = cuenta + 1
   mutex.release()
   
-  if count == n:
+  if cuenta == n:
     barrera.release()
   barrera.acquire()
   barrera.release()

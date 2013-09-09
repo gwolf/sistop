@@ -68,6 +68,28 @@ Podemos hablar de tres tipos principales de planificación:
 		   #+attr_latex: width=0.5\textwidth
 		   [[./img/planificador_corto_plazo.png]]
 
+Relacionando con los [[03_administracion_de_procesos.org#estados_de_un_proceso][estados de un proceso]] que abordamos en la unidad
+de [[03_administracion_de_procesos.org][Administración de procesos]], y volviendo al diagrama entonces
+presentado, podríamos ubicar a estos tres planificadores en las
+siguientes transiciones entre estados:
+
+#+attr_latex: width=0.4\textwidth
+#+caption: Diagrama de transición entre los estados de un proceso
+[[./img/dot/estados_proceso.png]]
+
+1. El planificador a largo plazo se encarga de /admitir/ un nuevo
+   proceso: La transición de /Nuevo/ a /Listo/.
+
+2. El planificador a mediano plazo maneja la /activación/ y /bloqueo/
+   de un proceso relacionado con /eventos/ — Esto es, las transiciones
+   entre /En ejecución/ y /Bloqueado/, y entre /Bloqueado/ y /Listo/.
+
+3. El planificador a corto plazo decide entre los procesos que están
+   listos para ejecutarse y determina a cuál de ellos /activar/, y
+   detiene a aquellos que /exceden su tiempo/ de procesador —
+   Implementa las transiciones entre los estados /Listo/ y /En
+   ejecución/.
+
 En esta sección nos ocuparemos particularmente el planificador /a
 corto plazo/, y en segundo término del planificador /a mediano plazo/.
 
@@ -241,16 +263,18 @@ encuentra en algunas de las cuatro siguientes circunstancias:
    solicitar una operación de E/S, esperar a la sincronización con
    otro proceso, etc.)
 2. Pasa de estar /ejecutando/ a estar /listo/ (por ejemplo, al ocurrir
-   una interrupción
+   la interrupción del temporizador, o de algún evento externo)
 3. Deja de estar /en espera/ a estar /listo/ (por ejemplo, al
    finalizar la operación de E/S que solicitó)
 4. Finaliza su ejecución, y pasa de /ejecutando/ a /terminado/
 
-En el primer y cuarto casos, el sistem operativo siempre tomará el
-control; un sistema que opera bajo /multitarea preventiva/
-implementará también el segundo y tercer casos, mientras que uno que
-opera bajo /multitarea cooperativa/ no necesariamente reconocerá
-dichos estados.
+En el primer y cuarto casos, el sistema operativo siempre tomará el
+control[fn:: En el primer caso, el proceso entrará en el dominio del
+/planificador a mediano plazo/, mientras que en el cuarto saldrá
+definitivamente de la lista de ejecución.]; un sistema que opera bajo
+/multitarea preventiva/ implementará también el segundo y tercer
+casos, mientras que uno que opera bajo /multitarea cooperativa/ no
+necesariamente reconocerá dichos estados.
 
 Ahora, para los algoritmos a continuación, recordemos que en este caso
 estamos hablando únicamente del /despachador/. Un proceso siempre
@@ -266,6 +290,63 @@ Revisemos, pues, los principales algoritmos de planificación.
 
 La presente sección está basada fuertemente en el capítulo 2 de /An
 operating systems vade mecum/ (Raphael Finkel, 1988).
+
+** Objetivos de la planificación
+
+Los algoritmos que presentaremos a continuación son respuestas que
+intentan, de diferentes maneras y desde distintos supuestos base,
+darse a los siguientes objetivos principales (tomemos en cuenta que
+algunos de estos objetivos pueden ser mutuamente contradictorios):
+
+- Ser justo :: Debemos tratar de /igual manera/ a todos los procesos
+               que compartan las mismas características[fn:: Como
+               veremos, un algoritmo de planificación puede
+               /priorizar/ de diferente manera a los procesos según
+               distintos criterios, sin por ello dejar de ser justo,
+               siempre que dé la misma prioridad y respuesta a
+               procesos equivalentes.], y nunca postergar
+               indefinidamente a uno de ellos.
+
+- Maximizar el rendimiento :: Dar servicio a la mayor parte de
+     procesos por unidad de tiempo.
+
+- Ser predecible :: Un mismo trabajo debe tomar aproximadamente la
+                    misma cantidad de tiempo en completarse
+                    independientemente de la carga del sistema.
+
+- Minimizar la sobrecarga :: El tiempo que el algoritmo pierda en
+     /burocracia/ debe mantenerse al mínimo, dado que éste es tiempo
+     de procesamiento útil perdido
+
+- Equilibrar el uso de recursos :: Favorecer a los procesos que
+     empleen recursos subutilizados, penalizar a los que peleen por
+     un recurso sobreutilizado causando contención en el sistema
+
+- Evitar la postergación indefinida :: Aumentar la prioridad de los
+     procesos más /viejos/, para favorecer que alcancen a obtener
+     algún recurso por el cual estén esperando
+
+- Favorecer el /uso esperado/ del sistema :: En un sistema con
+     usuarios interactivos, maximizar la prioridad de los procesos
+     que sirvan a solicitudes iniciadas por éste (aún a cambio de
+     penalizar a los procesos /de sistema)
+
+- Dar preferencia a los procesos que /podrían causar bloqueo/ :: Si
+     un proceso de baja prioridad está empleando un recurso del
+     sistema por el cual más procesos están esperando, favorecer que
+     éste termine de emplearlo más rápido
+
+- Favorecer a los procesos con un /comportamiento deseable/ :: Si un
+     proceso causa muchas demoras (por ejemplo, atraviesa una ráfaga
+     de entrada/salida que le requiere hacer muchas llamadas a
+     sistema o interrupciones), se le puede penaliza porque degrada
+     el rendimiento global del sistema
+
+- Degradarse suavemente :: Si bien el nivel ideal de utilización del
+     procesador es al 100%, es imposible mantenerse siempre a este
+     nivel. Un algoritmo puede buscar responder con la menor
+     penalización a los procesos preexistentes al momento de exceder
+     este umbral.
 
 ** Primero llegado, primero servido (/FCFS/)
 

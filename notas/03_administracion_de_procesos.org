@@ -34,6 +34,7 @@ cómo y en qué órden hacer los cambios de proceso que nos brindan la
 ilusión de simultaneidad en la sección /[[./03_planificacion_de_procesos.org][Planificación de procesos]]/.
 
 ** Estados de un proceso
+# <<estados_de_un_proceso>>
 
 Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
 de ejecución. Estos son:
@@ -934,19 +935,19 @@ cuales tenemos a:
           esté bailando al mismo tiempo, o asegurar que los hilos en
           espera vayan bailando en el órden en que llegaron.
 
-*** Variables condicionales
+*** Variables de condición
 
-Las variables condicionales presentan una extensión sobre el
+Las variables de condición presentan una extensión sobre el
 comportamiento de las mutexes, buscando darles la "inteligencia" de
-responder ante determinados eventos. Una variable condicional siempre
+responder ante determinados eventos. Una variable de condición siempre
 opera /en conjunto con/ un mutex, y en algunas implementaciones es
 necesario indicar cuál será dicho mutex desde la misma inicialización
 del objeto.[fn:: Mientras que otras implementaciones permiten que se
 declaren por separado, pero siempre que se invoca a una variable
-condicional, debe indicársele qué mutex estará empleando.] Mantienen
+de condición, debe indicársele qué mutex estará empleando.] Mantienen
 hasta cierto punto una semántica comparable con la de los semáforos.
 
-Una variable condicional presenta las siguientes operaciones:
+Una variable de condición presenta las siguientes operaciones:
 
 - Espera :: Se le indica una condición y un mutex. El mutex tiene que
             haber sido ya adquirido. Esta operación /libera/ al
@@ -1588,7 +1589,7 @@ emplear monitores.
 
 #+begin_src C
 /* Implementacion para cinco filosofos */
-pthread_cond_t  CV[NTHREADS];    /* Una variable condicional por filosofo */
+pthread_cond_t  CV[NTHREADS];    /* Una variable de condición por filosofo */
 pthread_mutex_t M;               /* Mutex para el monitor */
 int             state[NTHREADS]; /* Estado de cada filosofo */
 

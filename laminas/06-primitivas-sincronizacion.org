@@ -18,7 +18,7 @@
   - ¿Por qué tienen que ser /primitivas/?
   - /Mutex/ (Exclusión mutua)
   - Semáforos
-  - Variables condicionales
+  - Variables de condición
   - Monitores
 - Conocer algunas soluciones en hardware propuestas para estos
   problemas
@@ -279,7 +279,7 @@ int sem_trywait(sem_t *sem);
   - El proceso /debe tener la lógica/ para no proceder a la sección
     crítica
 
-** Variables Condicionales
+** Variables de Condición
 #+BEGIN_CENTER
 Extensión sobre el comportamiento de un mutex permitiéndole una mayor
 "inteligencia". Siempre operan /junto/ con un mutex.
@@ -295,7 +295,7 @@ Extensión sobre el comportamiento de un mutex permitiéndole una mayor
      (regresando error) pasado el tiempo indicado si no recibió
      notificación.
 
-** Variables Condicionales en C (POSIX pthreads)
+** Variables de Condición en C (POSIX pthreads)
 #+BEGIN_SRC C
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
@@ -306,7 +306,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
-** Ejemplo con variables condicionales
+** Ejemplo con variables de condición
 #+BEGIN_SRC C
   int x,y;
   pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;

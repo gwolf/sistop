@@ -1,6 +1,6 @@
 reset
 clear
-set term png size 800,400 fontscale 1.5
+set term pngcairo size 800,400 fontscale 1.5
 
 set multiplot
 unset key

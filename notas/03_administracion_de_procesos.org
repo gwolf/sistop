@@ -1257,17 +1257,18 @@ número de ingredientes necesario.
       torniquete.release()
     
     def lector():
+      global lectores
       torniquete.acquire()
       torniquete.release()
-    
+      
       mutex.acquire()
       lectores = lectores + 1
       if lectores == 1:
         cuarto_vacio.acquire()
       mutex.release()
-    
+      
       lee()
-    
+      
       mutex.acquire()
       lectores = lectores - 1
       if lectores == 0:
@@ -1364,15 +1365,16 @@ número de ingredientes necesario.
 
   #+begin_src python
     def levanta_palillos(id):
-    if id == 0: # Zurdo
-      palillos[id].acquire()
-      print "%d - Tengo el palillo izquierdo" % id
-      palillos[(id+1) % num].acquire()
-    else: # Diestro
-      palillos[(id+1) % num].acquire()
-      print "%d - Tengo el palillo derecho" % id
-      palillos[id].acquire()
-    print "%d - Tengo ambos palillos" % id
+      if id == 0: # Zurdo
+        palillos[id].acquire()
+        print "%d - Tengo el palillo izquierdo" % id
+        palillos[(id+1) % num].acquire()
+      else: # Diestro
+        palillos[(id+1) % num].acquire()
+        print "%d - Tengo el palillo derecho" % id
+        palillos[id].acquire()
+      print "%d - Tengo ambos palillos" % id
+    
   #+end_src
 
   Cabe apuntar que ninguno de estos mecanismos asegura que en la mesa

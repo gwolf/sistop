@@ -58,6 +58,40 @@ en cuestión, para no romper el hilo temático del grupo.
   participación pública. ¿Hay consideraciones de seguridad a tomar en
   cuenta?
 
+- /Ventajas, desventajas y otros planteamientos sobre las TPM
+  (SecureBoot)/
+
+  Tras muchos años (¿décadas?) de encontrar gran resistencia por parte
+  de la industria, al día de hoy buena parte de las computadoras
+  nuevas vienen con el /módulo de plataforma confiable/ (/Trusted
+  Platform Module/) activo. Este polémico módulo implementa
+  verificación de la integridad del sistema operativo, evitando que un
+  ataque (sea un virus o un /agente hostil/) ejecute código que
+  /altere la operación/ del sistema operativo o incluso ejecute antes
+  de éste y lo envuelva (por ejemplo, en un esquema de
+  virtualización).
+
+  TPM, sin embargo, también evita que el dueño de una computadora la
+  use /como él quiera/, teniendo que ejecutar únicamente los sistemas
+  operativos /aprobados/ o /firmados/ por el fabricante.
+
+  Hay mucho que se puede decir acerca de TPM. ¿Cuál es tu
+  planteamiento?
+
+  Sugiero como lectura para preparar este trabajo los varios artículos
+  en el [[http://mjg59.dreamwidth.org/][blog del desarrollador /Matthew Garrett/]], particularmente
+  entre septiembre del 2011 y mayo del 2013. Garrett lidereó la
+  alternativa que al día de hoy más se usa para poder iniciar Linux en
+  un sistema bajo TPM; tiene /decenas/ de artículos desde muy
+  descriptivos y generales hasta técnicos y específicos a puntitos
+  particulares. Hay otro artículo interesante al respecto, de Jonathan
+  Corbet (septiembre 2013): [[https://lwn.net/Articles/566169/][BSD-style securelevel comes to Linux —
+  Again]]. Este artículo es de acceso restringido a subscriptores de
+  LWN, pero si les interesa desarrollar el tema, les doy una
+  copia. Explica con bastante detalle cómo es que se plantea
+  implementar el nivel de protección que busca ofrecer TPM desde un
+  sistema Linux.
+
 * Administración de procesos
 
 - /Algoritmo de Dekker/

@@ -105,7 +105,6 @@ semestre:
 #	echo '- [[./lista.html#sec-6][Finales para actas]]' >> $(idx_semestre)
 	perl -n -i -e 'unless (/^\|/) {print;next} @data = split(/(?:[|+])/,$$_); print join("|", $$data[0], $$data[1], @data[3..$$#data]);' < $(lista_orig) > $(lista_pub)
 	emacs --batch --visit=$(lista_pub) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
-#	mv $(patsubst %.org,%.html,$(dir_semestre))
 	echo '* Exámenes resueltos' >> $(idx_semestre)
 	mkdir -p $(exam_resueltos)/ltxpng
 	for i in `ls $(exam_resueltos)/*.org | sort -n`; do \

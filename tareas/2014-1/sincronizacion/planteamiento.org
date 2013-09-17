@@ -1,5 +1,6 @@
 #+title: Tarea: Sincronización
-#+date: 5-10 de septiembre
+#+date: 5-12 de septiembre
+#+options: toc: nil
 
 Implementa hilos que controlen el siguiente sistema:
 
@@ -35,6 +36,217 @@ suban el mismo archivo, y que /ambos/ indiquen quiénes son los
 autores.
 
 La tarea debe ser enviada a la hora de inicio de la próxima clase
-(martes 10 de septiembre). Recuerda que, si no la enviaste a tiempo,
+(jueves 12 de septiembre). Recuerda que, si no la enviaste a tiempo,
 puedes enviar tu tarea todavía por una semana más, con un máximo del
 80% de calificación.
+
+* Premisas de calificación
+- Intento :: 50% (entregando código que busque resolver el problema,
+             incluso si el planteamiento es incorrecto)
+
+- Cubre el planteamiento :: 10% dependiendo de qué tan completa es la
+     cobertura de las condiciones planteadas
+
+- Identificación de componentes :: 10%
+
+- Lógica correcta :: 10%
+
+- Código funcional :: 10%
+
+- Originalidad y elegancia :: 10%
+
+* Comentarios
+
+** David Álvarez
+
+- *6*
+
+- Cobertura incompleta: Cubre al conductor y al asistente, pero no
+  contempla el tiempo de demora de puerta ni los peatones
+
+- Se organiza en torno a semáforos, pero no hay flujo: No hay hilos,
+  sólo están definidas las funciones.
+  - Para intentar evaluar, modifico a:
+
+    #+begin_src python
+      import threading
+      
+      abran = threading.Semaphore(1)
+      cierren= threading.Semaphore(1)
+      
+      def entrando():
+        while True:
+          entra()
+          cierra_porton()
+      
+      def saliendo():
+        while True:
+          sal()
+          cierra_porton()
+      
+      def entra():
+        abran.acquire()
+        print "Voy a meter el carro"
+        abran.release()
+      
+      def sal():
+        abran.acquiere()
+        print "voy a sacar el carro"
+        abran.release()
+      
+      def cierra_porton():
+        cierren.acquire()
+        cierren.release()
+      
+      threading.Thread(target=entrando, args=[]).start
+      threading.Thread(target=saliendo, args=[]).start
+      
+    #+end_src
+
+- No funcional:
+  - Hay bloques no indentados
+  - La sintaxis de los comentarios es errónea
+  - Incluso con la versión modificada, los semáforos no están bien
+    engranados: =abran= protege al tiempo en lo que se abre/cierra la
+    puerta; no entiendo bien el rol del torniquete =cierren=.
+
+** Abraham Bonilla y Héctor Canseco
+
+- *Necesito explicación*
+
+- Difícil de seguir
+  - Mucho código autogenerado
+  - Variables con nombre que no indica su función
+- Compila exitosamente, pero no pude correrlo
+- Inicia dos hilos, pero no encuentro primitivas de sincronización.
+  - ¿Basado en variables de condición? (wait / notifyAll) ¿Qué lógica
+    manejan?
+  - No encuentro cómo Ayudante y Conductor se comunican los cambios de
+    estado — No hay ninguna variable compartida
+
+** Lisette Castro
+
+- *5*
+- Uso incorrecto de las estructuras presentadas
+- Ejecución sin paralelismo ni sincronización de ningún tipo
+- Dos esperas activas sin necesidad, debería usar =sleep()= (o
+  =usleep()=)
+
+** Antonio Cruz y Estefanía Delgadillo
+
+- *10*
+- Implementación copmleta, funcional
+- Buen manejo de los semáforos (creo que podrían implementarlo con uno
+  menos, no estoy seguro de que requiera a =torniquete=)
+- Tres hilos: Implementa a los peatones que cruzan como un hilo aparte
+  - Las personas pasando pueden llevar a inanición
+
+** José Espinosa y Arturo López
+
+- *7.5*
+- Semántica en Python: Varias llamadas a métodos no se efectúan por no
+  incluir el =()=
+- Indentación inconsistente
+- Llama a =semaforo()=, no a =threading.Semaphore()=
+- No la pude hacer ejecutar correctamente
+- Punto de vista interesante: Los hilos son el conductor y los
+  obstáculos
+  - ¿Y el asistente? =pedir_ayuda(accion)= es llamado como función
+    dede =automovil()=
+  - Mutex innecesaario =ayudando=, sólo se usa en un punto
+- Semáforos principales bien identificados:
+  - =Vía_libre= (mutex para la banqueta)
+  - =entrar_salir= (indicar cambio de estado entre =pedir_ayuda()= y
+    =automovil()= — Una sola función en vez de una para abrir y otra
+    para cerrar
+- Algunos semáforos, creo, supérfluos
+  - =puerta=, =ayudando=, =mutex= sólo se usan desde una ejecución
+    lineal, no sincronizan/comunican
+  - No me queda clara la función de =torniquete=, pero me preocupa la
+    llamada de tantas funciones que se pueden bloquear al usarlo como
+    mutex dentro de =pedir_ayuda=
+
+** Eduardo Flores
+- *7*
+- Las variables =mutex= y =señal= tienen nombres no descriptivos de su
+  función verdadera (p.ej. ambas son usadas para señalizar únicamente)
+- Envía correctamente la señal de haber llegado, pero nunca vuelve a
+  salir — Planteamiento incompleto
+- No contempla a los peatones
+
+** Luis González
+- *7*
+- Interesante: Planteamiento con =fork()= y en C
+- Probable problema de implementación: Al basarse en procesos y no
+  hilos, =i= no es una variable compartida (sólo los semáforos)
+  - Además de compartirse =i=, tendría que protegerse su modificación
+    con un mutex
+- ¿Por qué cierras los semáforos 2 y 3 antes de usarlos, antes del
+  =fork()=?
+- Me parece que el programa inicia directo a un bloqueo mutuo: Dos
+  hijos esperan a =sem_1= y a =sem_3= (semáforos inicializados a 1 y 0
+  respectivamente), y sólo esos dos procesos lo señalizan posteriormente.
+
+** Luis Meléndez
+- *6.5*
+- No considera a los peatones.
+- Al correr como hilos concurrentes a =carro_entra= y =carro_sale=, y
+  a =cochera_abre= y =cochera_cierra=, ¿no es necesario sincronizar
+  entre los pares? ¿No podría llevarse a una situación en que la
+  puerta esté abriendo y cerrando a la vez? ¿Cuál es el resultado?
+- El ciclo =for= está dentro de =cochera_abre= y =cochera_cierra=,
+  pero tu lógica abre la puerta 10 veces seguidas tras la única señal
+  recibida
+- Al inicializar ambos semáforos a 0, garantizas que el programa nunca
+  va iniciar (tienes bloqueo mutuo de entrada)
+
+** Roy Pacheco
+- *10*
+- Buena implementación en Java, empleando métodos síncronos
+  (=synchronized=), y no semáforos
+- Duda: ¿No deberían marcarse también como síncronas =abrirPuerta()= y
+  =cerrarPuerta()=? (modifican =this.porton=)
+- Si =coche= y/o =porton= fueran =boolean= en vez de =int=, podrían
+  hacerse /trucos/ que redujeran la repetición de código, como por
+  ejemplo, reemplazar =meterCoche()= y =sacarCoche()= por:
+  #+begin_src java
+  public synchronized void meter_sacar_coche() {
+    abrirPuerta();
+    while (checarPeatones()==1) {
+      System.out.println("No podemos cambiar el estado del coche: Hay gente");
+    }
+    coche = !coche
+    imprimirEstado();
+    cerrarPuerta();
+    notifyAll();
+  }
+  #+end_src
+  Claro, esto asumiría un único coche (tu implementación asume varios)
+- Distribución de roles curiosa: El hilo =cochera= representa a la
+  cochera /y/ a los asistentes, y los conductores son diferentes para
+  salir (=persona2=) y para volver (=persona1=)
+
+** Viridiana Vázquez
+- *8.5*
+- Deja varios puntos indicados
+  - Falta el desarrollo de las funciones asistentes, =abreOcierra()=,
+    =cruzanCalle()=, =entraOsale()=
+  - Falta el iniciador de los hilos
+  - Pero en líneas generales, muestra el punto medular solicitado: La
+    sincronización
+- Buena implementación, con un /apagador/ permitiendo que los
+  =obstaculos= sean actores independientes (y más de uno)
+  - Sin embargo, dos hilos =personas()= se van a quedar esperando
+    mutuamente, dado que ambos tienen que adquirir =pasolibre=
+  - Podría obtenerse =pasolibre= de forma condicional, sólo si
+    =obstaculos==0=, al igual que se hace al liberarlo
+- ¿Deben las =personas()= poder liberar =señal=? Creo yo que debería
+  ser únicamente para la comunicación entre =carro()= y =controlpuerta()=
+
+** Violeta Castillo
+- *5* → *4*
+  - Calificado sobre 80% (extemporáneo)
+- Un sólo hilo, no hay verdadera sincronización / concurrencia
+- Inicializa con un semáforo =puerta=, pero no lo usa
+- =run()= es una sola función, lineal, que no implementa la lógica
+  necesaria para el problema planteado

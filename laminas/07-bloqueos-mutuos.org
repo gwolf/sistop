@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Administración de procesos: Bloqueos mutuos y políticas
-#+DATE: 2013-09-10 — 2013-09-?
+#+DATE: 2013-09-17 — 2013-09-24
 
 * El SO y los Bloqueos mutuos
 ** Generalizando bloqueos mutuos
@@ -298,7 +298,7 @@ sus consecuencias.
 - El bloqueo mutuo se produce en la /intersección/ de I_2—I_3 e
   I_6—I_7
 - En la situación descrita, el sistema debe mantener a /B/ congelado
-  por lo menos asta que /A/ llegue a I_3
+  por lo menos hasta que /A/ llegue a I_3
 
 ** Analizando esta estrategia
 - Muy dificil de implementar en un sistema de propósito general
@@ -362,7 +362,7 @@ estado resultante de /otorgar/ dicha solicitud, y se otorga siempre
 que:
 #+END_CENTER
 
-- No haya reclamo por más discursos que los disponibles
+- No haya reclamo por más recursos que los disponibles
 
 - Ningún proceso solicite (o tenga asignados) recursos por encima de
   su reclamo

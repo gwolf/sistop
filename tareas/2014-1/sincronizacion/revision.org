@@ -112,7 +112,7 @@ puedes enviar tu tarea todavía por una semana más, con un máximo del
 
 ** Abraham Bonilla y Héctor Canseco
 
-- *Necesito explicación*
+- *8.5*
 
 - Difícil de seguir
   - Mucho código autogenerado
@@ -123,6 +123,16 @@ puedes enviar tu tarea todavía por una semana más, con un máximo del
     manejan?
   - No encuentro cómo Ayudante y Conductor se comunican los cambios de
     estado — No hay ninguna variable compartida
+-----
+- Revisada en clase, les hice ya los comentarios
+- Requiere prácticas más limpias de programación: ¡Líneas como
+  =if(var.getVar()==2&&var.getVar2()==1||var.getVar()==2&&var.getVar2()==0){=
+  son garantía de no-mantenibilidad!
+- Hay elementos que deberían manejarse por sincronización explícita y
+  no lo hacen, llevando a condiciones de carrera (por ejemplo, la
+  señalización respecto a la siguiente acción que lleva a que se
+  bloquee después de imprimir «salio carro»
+
 
 ** Lisette Castro
 
@@ -143,7 +153,7 @@ puedes enviar tu tarea todavía por una semana más, con un máximo del
 
 ** José Espinosa y Arturo López
 
-- *7.5*
+- *7.5* (revisado a *9*)
 - Semántica en Python: Varias llamadas a métodos no se efectúan por no
   incluir el =()=
 - Indentación inconsistente
@@ -165,6 +175,80 @@ puedes enviar tu tarea todavía por una semana más, con un máximo del
   - No me queda clara la función de =torniquete=, pero me preocupa la
     llamada de tantas funciones que se pueden bloquear al usarlo como
     mutex dentro de =pedir_ayuda=
+-----
+...Grrr, llevaba media hora escribiendo en EDUCAFI qué sí, qué no y
+por qué, ilustrando con detalles... Y me caducó la sesión, y se comió
+mi reporte :(
+
+Pero a grandes rasgos, el programa opera casi-bien. Lo primero que me
+llamó la atención es que, en varias ejecuciones, siempre pasaban
+primero los 10 =obstaculo()s= y luego comenzaba a pasar el coche. Para
+obligarlos a interactuar, agregué al código =from random import
+random= y un =sleep(random())= tanto al inicio de =obstaculo()= como en
+=main()= (en vez del =sleep(1)=).
+
+*Casi* siempre me funcionó bien, pero una vez (supongo que porque el
+=random()= en =main()= fue muy bajo) me dio:
+
+#+BEGIN_SRC
+   $ python /tmp/Tarea.py 
+   Soy el auto y quiero entrar/salir 
+   Obstaculo 2 pasando.
+   Obstaculo 2 termine de pasar.
+   Soy el auto y estoy pasando
+   Obstaculo 8 pasando.
+   Obstaculo 8 termine de pasar.
+   Obstaculo 7 pasando.
+   Obstaculo 7 termine de pasar.
+   Obstaculo 10 pasando.
+   Obstaculo 10 termine de pasar.
+   Obstaculo 6 pasando.
+   Obstaculo 6 termine de pasar.
+   Obstaculo 5 pasando.
+   Obstaculo 5 termine de pasar.
+   Obstaculo 1 pasando.
+   Obstaculo 1 termine de pasar.
+   Obstaculo 9 pasando.
+   Obstaculo 9 termine de pasar.
+   Obstaculo 4 pasando.
+   Obstaculo 4 termine de pasar.
+   Obstaculo 3 pasando.
+   Obstaculo 3 termine de pasar.
+   Soy el auto y ya pase
+   Soy el ayudante y abro la puerta
+   Puerta abriendo/cerrando!
+   Soy el ayudante y ya no veo obstaculos.
+   Puerta termina de abrir/cerrar
+   Soy el ayudante y le digo al auto que pase
+   Soy el ayudante y cerrare la puerta
+   Puerta abriendo/cerrando!
+   Soy el ayudante y dejo pasar peatones
+   Puerta termina de abrir/cerrar
+#+END_SRC
+
+Esto es, ¡atropellamos a 8, 7, 10, 6, 5, 1, 9, 4, 3 y además
+destruimos la puerta! ¿Por qué? Porque el auto no espera /de forma
+segura/ a que el =ayudante()= esté listo. Un =sleep()= no puede ser
+usado para sincronización, tendría que haber una señalización
+explícita.
+
+Estuve jugando un poco acerca de convertir el programa de una sola
+pasada en uno que pase continuamente, y me encontré con un manejo
+incorrecto de =entrar_salir= en =ayudante()=: Hay dos =acquire()= y un
+=release()= (y en =main()= hay uno y uno), con lo que se vuelve
+imposible que vuelva a ejecutarse. Envolví a =ayudante()= completo en
+un =while True:=, y le agregué un =entrar_salir.release()= antes del
+=pass=. Tuve un par de comportamientos bastante extraños (que se
+perdieron en el historial), pero a fin de cuentas quedó funcionando
+bonito — y eterno :)
+
+¡Ah! Y otra cosa que encontré: Si =ayudante()= es ejecutado
+eternamente pero =main()= no, éste no espera a ninguna solicitud por
+parte del conductor: Se queda abriendo y cerrando la puerta para
+siempre. Nuevamente, =main()= tendría que notificar a =ayudante()=
+para que comenzara a trabajar.
+
+
 
 ** Eduardo Flores
 - *7*
@@ -250,3 +334,43 @@ puedes enviar tu tarea todavía por una semana más, con un máximo del
 - Inicializa con un semáforo =puerta=, pero no lo usa
 - =run()= es una sola función, lineal, que no implementa la lógica
   necesaria para el problema planteado
+** Erick Osorio, Isaac Martínez Miguel
+- *9* → *7.2*
+  - Calificado sobre 80% por envío extemporáneo
+- Enfoque bastante distinto de todos los demás que vi: Tu modelado
+  responde más bien a dos autos: El que está adentro sale, y el que
+  está afuera entra
+- El asistente lo manejas como una función llamada por el auto en
+  cuestión — No es incorrecto (sólo es diferente), aunque reduce mucho
+  la interacción en cuestión de señalización que esperaba que ustedes
+  modelaran
+- Tu código no mantiene hasta done puedo ver estado: Asumes una
+  cochera infinitamente profunda (pueden entrar cualquier número de
+  coches si suspendiéramos al hilo =coche_sale=) e infinitamente surtida
+  (igual, puede salir cualquier número de coches si bloqueamos a
+  =coche_entra=).
+- Es más: Si modifico =coche_sale()= y =coche_entra()= para que estén
+  en un =while(1)= en vez de llegar a =pthread_exit(0)=, como quedan
+  tan cerca el =pthread_mutex_unlock= del =pthread_mutex_lock=, el
+  mismo hilo vuelve a correr (causando inanición en el otro y
+  presentando un comportamiento infinito como el que te predije:
+  #+BEGIN_SRC
+    Abriendo puerta
+    Puerta abierta
+    Auto saliendo
+    Auto afuera
+    Cerrando puerta
+    Puerta cerrada
+    Abriendo puerta
+    Puerta abierta
+    Auto saliendo
+    Auto afuera
+    Cerrando puerta
+    Puerta cerrada
+    Abriendo puerta
+    Puerta abierta
+    Auto saliendo
+    Auto afuera
+    (...)
+  #+END_SRC
+

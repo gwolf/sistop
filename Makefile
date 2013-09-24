@@ -13,6 +13,9 @@ dir_laminas = laminas
 idx_semestre = $(dir_semestre)/index.org
 idx_laminas = $(dir_laminas)/index.org
 exam_resueltos = examenes/resueltos
+lista_orig = docente/lista.org
+lista_pub = $(dir_semestre)/lista.org
+
 
 temas_in = tareas/temas.org
 temas_out = tareas/temas.html
@@ -100,8 +103,8 @@ semestre:
 	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
 #	echo '- [[./lista.html#sec-5][Globales]]' >> $(idx_semestre)
 #	echo '- [[./lista.html#sec-6][Finales para actas]]' >> $(idx_semestre)
-	emacs --batch --visit=docente/lista.org --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
-	mv docente/lista.html $(dir_semestre)
+	perl -n -i -e 'unless (/^\|/) {print;next} @data = split(/(?:[|+])/,$$_); print join("|", $$data[0], $$data[1], @data[3..$$#data]);' < $(lista_orig) > $(lista_pub)
+	emacs --batch --visit=$(lista_pub) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
 	echo '* Exámenes resueltos' >> $(idx_semestre)
 	mkdir -p $(exam_resueltos)/ltxpng
 	for i in `ls $(exam_resueltos)/*.org | sort -n`; do \

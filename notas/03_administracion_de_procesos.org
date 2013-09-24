@@ -2071,30 +2071,68 @@ el planificador puede marcar qué flujos entre dos (o más) procesos son
 /seguros/ y cuáles son /inseguros/
 
 #+attr_html: height="350"
-#+attr_latex: width=0.8\textwidth
-#+caption: Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical) requieren del acceso exclusivo a un scanner y una impresora. (La Red, p. 200)
-[[./img/tray_proc_evasion_bloqueo.png]]
-
+#+attr_latex: width=0.7\textwidth
+#+caption: Evasión de bloqueos: Los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un scanner y una impresora, exponiéndose a bloqueo mutuo.
+[[./img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
 El análisis de la interacción entre dos procesos se representa como en
-la figura anterior; el avance en cada proceso es marcado con una
-flecha horizontal (/A/) o vertical (/B/); en un sistema
-multiprocesador, podría haber avance mutuo, y lo indicaríamos con una
-flecha diagonal.
+la figura anterior; el avance es marcado en sentido horizontal para el
+proceso $A$, o vertical para el proceso $B$; en un sistema
+multiprocesador, podría haber avance mutuo, y lo indicaríamos en
+diagonal.
+
+En el ejemplo que ilustramos, el proceso $A$ solicitará acceso
+exclusivo al scanner durante $2 \le t_A \le 7$ y a la impresora
+durante $3 \le t_A \le 7.5$, mientras que $B$ solicitará acceso
+exclusivo a la impresora durante $2 \le t_B \le 6$ y al scanner
+durante 4 \le $t_B \le 7$.
 
 Al saber cuándo reclama y libera un recurso cada proceso, podemos
 marcar cuál es el área /segura/ para la ejecución y cuándo estamos
-aproximándonos a un área de riesgo. En el caso mostrado, el bloqueo
-mutuo se produciría si entráramos a I_2—I_3 e I_6—I_7, por lo que –en
-la situación descrita en esta gráfica– el sistema debe mantener a /B/
-congelado por lo menos hasta que /A/ llegue a I_3.
+aproximándonos a un área de riesgo.
+
+En el caso mostrado, si bien el bloqueo mutuo sólo se produciría
+formalmente en cualquier punto[fn:: En realidad, sólo nos sería
+posible /tocar/ el márgen izquierdo o inferior de este bloque: Al caer
+en bloqueo mutuo, avanzar hacia su área interior resultaría
+imposible.] en $3 \le t_A \le 7$, y $4 \le t_B \le 6$ (indicado con el
+recuadro rojo, /Bloqueo mutuo/).
+
+Pero la existencia del recuadro que indica el bloqueo mutuo nos podría
+ser revelada con anterioridad: Si el flujo entra en el área marcada
+como /Bloqueo inminente/, en color naranja (en $3 \le t_A \le 7$ y $2
+\le t_B \le 6$), resulta /ineludible/ caer en el bloqueo
+mutuo. Analicemos por qué.
+
+La región de bloqueo inminente ocurre a partir de que $A$ obtuvo el
+scanner y $B$ obtuvo la impresora. Si en $t_A=2.5$ y $t_B=3$ damos la
+ejecución a $A$ por 0.5 unidades, llegaremos al punto en que solicita
+la impresora ($t_A=3$), y no tendremos más remedio que ejecutar $B$;
+al avanzar $B$ 0.5 unidades requerirá al scanner, y se habrá
+desencadenado el bloqueo mutuo. Caso correspondiente, claro está, si
+desde nuestro punto de inicio ejecutáramos primero $B$ y luego $A$.
+
+Dadas las anteriores condiciones, y conociendo estos patrones de uso,
+el sistema operativo evitará entrar en el área de bloqueo inminente:
+El sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
+T_A \le 6$, y mantendrá a $A$ en espera si $t_A \e 2$ si $2 \le t_B
+\le 6$.
+
+La región marcada como /inalcanzable/ en color amarillo, no representa
+ningún peligro: Sólo indica aquellos estados en que resulta imposible
+entrar. Incluso una vez evadido el bloqueo (por ejemplo, si $B$ fue
+suspendido en $t_B = 1.8$ y $A$ avanza hasta pasar $t_A = 7$, si el
+sistema operativo vuelve a dar la ejecución a $B$, este sólo podrá
+avanzar hasta $t_B=2$, punto en que $B$ solicita la impresora. Para
+que $B$ continúe, es necesario avanzar hasta $t_A > 7.5$ para que $B$
+siga avanzando.
 
 Este mecanismo proveería una mejor respuesta que los vistos en el
 apartado de /prevención de bloqueos/, pero es todavía más dificil de
 aplicar en situaciones reales. Para que pudiéramos implementar un
 sistema con evasión de bloqueos, tendría que ser posible hacer un
 análisis estático previo del código a ejecutar, y tener un listado
-total de recursos estático. Estos mecanismos pueden ser efectivos en
+total de recursos estático. Estos mecanismos podrían ser efectivos en
 sistemas de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 

@@ -29,12 +29,15 @@ Vemos que hay tres tipos muy distintos de planificación.
 - Cual es el siguiente proceso a ser iniciado
 - Principalmente orientado a la operación /en lotes/
   - Principalmente a los sistemas con /spool/
-  - También presente en la multiprogramacin temprana
+  - También presente en la multiprogramación temprana
 - Decide en base a los requisitos /pre-declarados/ de los procesos, y
   a los recursos disponibles al ejecutarse
 - Periodicidad: segundos a horas
 - Hoy en día no se emplean
   - El usuario indica expresamente qué procesos iniciar
+  - /Podría verse/ a los programas como =cron=, =at=, o en Windows al
+    /Planificador de procesos/ como cubriendo este rol
+    - Aunque son procesos /plenamente en espacio de usuario/
 
 ** Planificador a largo plazo
 #+caption: Planificador a largo plazo
@@ -74,9 +77,9 @@ Vemos que hay tres tipos muy distintos de planificación.
 #+attr_latex: height=0.6\textheight
 [[../img/dot/estados_proceso.png]]
 #+latex: \end{column} \begin{column}{0.4\textwidth}
-- Largo plazo :: Admitir
-- Mediano plazo :: Ocurrió evento, Esperar evento
-- Corto plazo :: Activar ejecución, Tiempo terminado
+- *Largo plazo*: Admitir
+- *Mediano plazo*: Ocurrió evento, Esperar evento
+- *Corto plazo*: Activar ejecución, Tiempo terminado
 #+latex: \end{column}\end{columns}
 
 ** El enfoque de esta sección
@@ -134,6 +137,8 @@ tiempos /estándar/ (s, ms, ns), sino que:
   - Es mejor saber que el sistema /siempre/ tardará 0.5s en responder
     a mis necesidades a que unas veces responda de inmediato y otras
     tarde 3s.
+   #+latex: \pause
+    - ¿O no?
 
 ** ¿Qué métricas compararemos?
 #+BEGIN_CENTER
@@ -202,6 +207,25 @@ Nuestro ejemplo /no es realista/
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 1 /tick/
 [[../img/ditaa/planificador.png]]
 
+** Resolviendo nuestro ejemplo
+#+begin_center
+| Proceso         | $t$ | $T$ | $E$ | $P$ | $R$ |
+|-----------------+-----+-----+-----+-----+-----|
+| $A$             |   7 |     |     |     |     |
+| $B$             |   3 |     |     |     |     |
+| $C$             |  12 |     |     |     |     |
+| $D$             |   4 |     |     |     |     |
+| Promedio /útil/ |     |     |     |     |     |
+|-----------------+-----+-----+-----+-----+-----|
+| Núcleo          |   6 |     |     |     |     |
+|-----------------+-----+-----+-----+-----+-----|
+| Promedio total  |     |     |     |     |     |
+
+
+- Tiempo kernel ::
+- Tiempo desocupado ::
+- Utilización del CPU ::
+#+end_center
 ** Resultado de nuestro ejemplo
 #+begin_center
 | Proceso         | $t$ |  $T$ |   $E$ |  $P$ |   $R$ |
@@ -363,6 +387,8 @@ de procesos:
 - Pero requerimos un algoritmo más /justo/ que FCFS
 - Sabemos cuánto tiempo va a requerir cada proceso
   - No por /magia/: Podemos estimar / predecir basados en su historia
+    - Recuerden: Un proceso puede /entrar y salir/ del ámbito del
+      despachador
   - SPN puede mantener la contabilidad de los procesos incluso tras
     entregarlos de vuelta al agendador
 
@@ -574,11 +600,10 @@ Fenómenos observados:
   - Si el control va alternando entre dos procesos, su prioridad se
     mantendrá igual, y serán despachados por ronda simple
 - Si $\frac{b}{a} \ge 1$, el proceso en ejecución terminará antes de
-  que se acepte el nuevo
-  - Tiende a FCFS
+  que se acepte el nuevo \rarrow Tiende a FCFS
 - Si $\frac{b}{a} = 0$ (esto es, si $b = 0$)
-  - Los procesos recién llegados son aceptados inmediatamente
-  - Tiende a ronda
+  - Los procesos recién llegados son aceptados inmediatamente \rarrow
+    Tiende a ronda
 - Si $0 < \frac{b}{a} < 1$, la ronda es /relativamente egoísta/
   - Se da entrada a procesos nuevos
   - Incluso si hay procesos muy largos ejecutando

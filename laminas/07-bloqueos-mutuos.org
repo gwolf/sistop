@@ -687,6 +687,16 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Modelo de computación tendiente al interactivo
   - En servidores: Programas (¡y personas!) dedicados al monitoreo
 
+** ¿Qué es un recurso?
+- Para que estos mecanismos funcionen, tenemos que definir qué es un
+  recurso — A qué esperamos cubrir (y, por tanto, a qué no)
+  - No sólo cintas, impresoras, tarjetas de audio...
+  - ¡También segmentos de memoria, tiempo de procesamiento!
+  - ¿Y las estructuras /lógicas/ creadas por el SO? Archivos,
+    semáforos, monitores, ...
+  - ¿Y elementos que vienen de /fuera de nuestro sistema/? (cómputo
+    distribuído, SOAP/servicios Web, etc.)
+
 ** Cuestión de compromisos
 - Un sistema operativo de propósito general tiene que funcionar para
   muy distintas situaciones
@@ -714,11 +724,37 @@ programa/ caiga en situaciones de bloqueo
   puede detectar mejor situaciones anómalas (y no sólo bloqueos)
 
 ** Posiciones disciplinares: Matemáticos contra ingenieros
+- ¿Dónde cabe mejor la computación? ¿Y dónde cabemos mejor /cada uno
+  de nosotros/?
+- La asignación de recursos puede verse como un problema formal,
+  matemático
+  - Los mecanismos descritos no son perfectos
+  - Pero el problema /no ha demostrado ser intratable/
+  - Un bloqueo es claramente un error
+- Los matemáticos en nuestro /árbol genialógico académico/ nos llaman
+  a no ignorar el problema
+  - A resolverlo sin importar la complejidad computacional
 
-** Consideraciones finales
-- ¿Qué es un recurso?
-  - No sólo cintas, impresoras, tarjetas de audio...
-  - ¡También segmentos de memoria, tiempo de procesamiento!
-  - ¿Y las estructuras /lógicas/ creadas por el SO? Archivos,
-    semáforos, monitores, ...
+** El punto de vista del ingeniero
+- La ingeniería es la ciencia /aplicada al mundo real/
+- Debe, sí, evitar efectos nocivos
+  - Pero también, calcula costos, probabilidades de impacto, umbrales
+    de tolerancia...
+- Un sistema típico /corre riesgo/ de caer en un bloqueo con una
+  probabilidad $p>0$
+  - Impacto: Perder /dos procesos/ en un sistema
+  - Otros factores de fallo: Hardware, otros subsistemas del SO,
+    errores en cada uno de los programas...
+- Prevenir el bloqueo conlleva complejidad en desarrollo o disminución
+  en rendimiento
 
+** Resumiendo a las avestruces
+- No podemos decir /este camino es correcto/ o /este no/
+- Depende de muchos factores
+  - Ámbito del bloqueo
+  - Función del sistema operativo en cuestión
+  - Costo de implementación
+- Hecho: Tenemos avestruces /ahí afuera/, al igual que tenemos
+  sistemas críticos que requieren verificación formal a cada
+  asignación
+- ...Lo que no vale es que /nosotros/ seamos las avestruces.

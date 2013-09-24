@@ -91,19 +91,21 @@ siguientes transiciones entre estados:
    ejecución/.
 
 En esta sección nos ocuparemos particularmente el planificador /a
-corto plazo/, y en segundo término del planificador /a mediano plazo/.
+corto plazo/, y refiriéndonos como mucho a algunas características del
+planificador /a mediano plazo/.
 
 ** Tipos de proceso
 
 Como ya hemos visto, los procesos típicamente alternan entre /ráfagas/
-(periodos, /bursts/) en que realizan principalmente cómputo interno
-(están /limitados por CPU/, /CPU-bound/) y otras en que la atención
-está puesta en transmitir los datos desde o hacia dispositivos
-externos (están /limitados por entrada-salida/, /I/O-bound/). Dado que
-cuando un proceso se suspende para realizar entrada-salida deja de
-estar /listo/ (y pasa a estar /bloqueado/), y desaparece de la
-atención del planificador a corto plazo, en todo momento podemos
-separar los procesos que están en ejecución y listos en:
+(periodos, en inglés /bursts/) en que realizan principalmente cómputo
+interno (están /limitados por CPU/, /CPU-bound/) y otras en que la
+atención está puesta en transmitir los datos desde o hacia
+dispositivos externos (están /limitados por entrada-salida/,
+/I/O-bound/). Dado que cuando un proceso se suspende para realizar
+entrada-salida deja de estar /listo/ (y pasa a estar /bloqueado/), y
+desaparece de la atención del planificador a corto plazo, en todo
+momento podemos separar los procesos que están en ejecución y listos
+en:
 
 - Procesos largos :: Aquellos que /por mucho tiempo/[fn:: ¿Cuánto es
      mucho? Dependerá de las políticas generales que definamos para el
@@ -167,7 +169,7 @@ tiempo $t$ de ejecución:
 - Tiempo en espera ($E = T - t$) :: También referido como /tiempo
      perdido/. Del tiempo de respuesta total, cuánto tiempo $p$ está
      listo y esperando ejecutar. Desde la óptica de $p$, desearíamos
-     que $E \rightarrow 0$
+     que $E_p \rightarrow 0$
 
 - Proporción de penalización ($P = \frac{T}{t}$) :: Fracción del
      tiempo de respuesta durante la cual $p$ estuvo en espera.
@@ -184,8 +186,11 @@ Además de estos tiempos, expresados en relación al tiempo efectivo de
 los diversos procesos del sistema, tenemos también:
 
 - Tiempo núcleo o /kernel/ :: Tiempo que pasa el sistema en espacio de
-     núcleo, incluyendo el empleado en decidir e implementar la
-     política de planificación y los cambios de contexto.
+     núcleo, incluyendo entre otras funciones[fn:: Estas funciones
+     incluyen principalmente la atención a interrupciones, el servicio
+     a llamadas al sistema, y cubrir diversas tareas administrativas.]
+     el empleado en decidir e implementar la política de planificación
+     y los cambios de contexto.
 
 - Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
      listos está vacía y no puede realizarse ningún trabajo.
@@ -208,7 +213,7 @@ Por ejemplo, si llegan a la cola de procesos listos:
 |---------+-------+---------|
 
 Si el tiempo que toma al sistema efectuar un cambio de contexto es de
-2 /ticks/, y la duración de cada /quantum/ es de 5 ticks, en un
+un /tick/, y la duración de cada /quantum/ es de 5 ticks, en un
 ordenamiento [[#Round%20Robin][de ronda]],[fn:: Claro está, veremos este ordenamiento en
 breve.]  tendríamos:
 
@@ -219,21 +224,22 @@ breve.]  tendríamos:
 Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
 cuyo trabajo en este espacio de tiempo finalizó junto con los
 demás,[fn:: Normalmente /no/ consideramos al núcleo al hacer este
-cálculo, dado que en este ámbito todo el trabajoo que hace puede verse
+cálculo, dado que en este ámbito todo el trabajo que hace puede verse
 como /burocracia/ ante los resultados deseados del sistema] tendríamos
 por resultado:
 
-| Proceso         | $t$ |   $T$ |   $E$ |   $P$ |    $R$ |
-|-----------------+-----+-------+-------+-------+--------|
-| $A$             |   7 |    21 |    14 |   3.0 |   0.33 |
-| $B$             |   3 |     8 |     5 |  2.66 |   0.37 |
-| $C$             |  12 |    32 |    14 |  2.66 |   0.37 |
-| $D$             |   4 |    14 |    10 |   3.5 |   0.28 |
-| Promedio /útil/ | 6.5 | 18.75 | 10.75 | 2.958 | 0.3383 |
-|-----------------+-----+-------+-------+-------+--------|
-| Núcleo          |  14 |    40 |    26 |   4.0 |   0.25 |
-|-----------------+-----+-------+-------+-------+--------|
-| Promedio total  |   8 |    23 |  13.8 | 2.875 |  0.347 |
+| Proceso         | $t$ |  $T$ |   $E$ |  $P$ |   $R$ |
+|-----------------+-----+------+-------+------+-------|
+| $A$             |   7 |   18 |    11 | 2.57 | 0.389 |
+| $B$             |   3 |    7 |     4 | 2.33 | 0.429 |
+| $C$             |  12 |   26 |    14 | 2.17 | 0.462 |
+| $D$             |   4 |    9 |     5 | 2.25 | 0.444 |
+| Promedio /útil/ | 6.5 |   15 |  8.50 | 2.31 | 0.433 |
+|-----------------+-----+------+-------+------+-------|
+| Núcleo          |   6 |   32 |    26 | 5.33 | 0.188 |
+|-----------------+-----+------+-------+------+-------|
+| Promedio total  | 6.4 | 18.4 | 12.00 | 2.88 | 0.348 |
+#+TBLFM: @I$6..@IIII$6=($2/$3); EN f-3::@I$5..@IIII$5=($3/$2); EN f-2::@I$4..@IIII$4=($3-$2); EN f-2
 
 Tomemos en cuenta que, para obtener $T$, se parte del momento en que
 el proceso llegó a la cola, no el punto de inicio de nuestra línea de

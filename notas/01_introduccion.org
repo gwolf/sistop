@@ -4,7 +4,6 @@
 * ¿Qué es un sistema operativo?
 
 El /sistema operativo/ es el principal programa que se ejecuta en toda
-# "corre" tiene una acepción puerca en España y no se usa para esto
 computadora de propósito general.
 
 Hay sistemas operativos de todo tipo, desde muy simples hasta
@@ -17,7 +16,6 @@ que se ejecutan en éste, los lenguajes en que están desarrollados y en
 que más fácilmente se puede desarrollar para ellos, e incluso el
 conjunto básico de funciones que las bibliotecas base ofrecen son
 principalmente /clientes/ del sistema operativo — Se ejeuctan sobre él, y
-# Quité la repetición de "básicamente" -con base-, corrección de "corren"
 ofrecen su implementación a sus usuarios (incluídos, claro, los
 desarrolladores). La diferencia en el uso son sólo –y si mucho–
 /consecuencias/ del diseño de un sistema operativo. Más aún, con el
@@ -31,16 +29,13 @@ completamente disímiles.
 La importancia de este curso radica no sólo en comprender los
 mecanismos que emplean los sistemas operativos para cumplir sus tareas
 sino en entender estos mecanismos para evitar los errores más
-#Cambié la conjugación, para hacerlo más impersonal y quité la repetición de "comprendan"
 comunes al programar, que pueden resultar desde un rendimiento
 deficiente hasta pérdida de información.
 
 Como desarrolladores, comprender el funcionamiento básico de los
 sistemas operativos y las principales alternativas que nos ofrecen en
 muchos de sus puntos, o saber diseñar algoritmos y procesos que se ajusten
-# agregué "sus"
 mejor al sistema operativo en que vayamos a ejecutarlo, puede resultar
-# quité "correr"
 en una diferencia cualitativa decisiva en nuestros productos.
 
 Como administradores de sistemas, muchas veces podemos enfrentarnos a
@@ -53,10 +48,10 @@ existentes? ¿Por qué puede resultarnos conveniente mezclarlos en el
 mismo servidor? ¿Cómo evitar la corrupción o pérdida de información?
 Lo que es más, ¿cómo recuperar información de un disco dañado?
 
+# ACUERDOS EN TÉRMINOS:
+# ¿Seguridad en cómputo (México) o seguridad informática (Argentina)?
 En el área de la seguridad en cómputo, la relación resulta obvia:
-# aquí nosotros utilizamos "seguridad informática", suena muy raro "seguridad en cómputo"
 si nos interesa localizar vulnerabilidades que nos permitan elevar
-# mayuscula
 nuestro nivel de privilegios, ¿cómo podríamos hacerlo sin comprender
 cómo se engranan los diversos componentes de un sistema? La cantidad
 de tareas que debe cubrir un sistema operativo es tremenda, y veremos
@@ -64,7 +59,6 @@ ejemplos de sitios donde un atacante puede enfocar sus energías. Del
 mismo modo, para quien busca /defender/ un sistema o una red, resulta
 fundamental comprender cuáles son los vectores de ataque más comunes y
 –nuevamente– la relación entre los componentes involucrados para poder
-# espaciado
 remediar o, mejor, prevenir dichos ataques.
 
 Y claro está, podemos ver al mundo en general, fuera del entorno del
@@ -72,9 +66,7 @@ cómputo, como una serie de modelos interactuantes. Muchos de los
 métodos y algoritmos que aquí veremos pueden emplearse fuera del
 entorno del cómputo, y una vez que comprendamos los problemas de
 concurrencia, de competencia por recursos, o de protección y separación
-# , para mejorar la legibilidad
 que han sido resueltos en el campo de los sistemas operativos, podemos
-# agregué "que"
 extrapolar estas soluciones a otros campos.
 
 El camino que tenemos por delante es largo, y puede resultar –espero
@@ -92,23 +84,19 @@ con el hardware de la computadora. Sus funciones primarias son:
                  para que los programadores puedan enfocarse en
                  resolver las necesidades particulares de sus
                  usuarios. Un ejemplo de tales abstracciones es que
-# mejorando legibilidad
                  la información está organizada en /archivos/ y
                  /directorios/ (en uno o muchos /dispositivos de
                  almacenamiento/).
 
 - Administración de recursos :: Una sistema de cómputo puede tener a su
-# prefiero la palabra "administración" o "gestión" en lugar de manejo
      disposición una gran cantidad de /recursos/ (memoria, espacio de
      almacenamiento, tiempo de procesamiento, etc.), y los diferentes
      /procesos/ que se ejecuten en él /compiten/ por ellos. Al gestionar
-#cambio de "correr"
      toda la asignación de recursos, el sistema operativo puede
      implementar políticas que los asignen de forma efectiva y acorde
      a las necesidades establecidas para dicho sistema.
 
 - Aislamiento :: Cada proceso y cada usuario no tendrá que
-# corrección del plural
                  preocuparse por otros que estén usando el mismo
                  sistema — Idealmente, su /experiencia/ será la misma
                  que si el sistema estuviera exclusivamente dedicado a
@@ -118,7 +106,6 @@ con el hardware de la computadora. Sus funciones primarias son:
 		 Para implementar correctamente las funciones de
 		 aislamiento hace falta que el sistema operativo
 		 cuente con hardware específico.
-# aclaración del concepto
 
 * Evolución de los sistemas operativos
 
@@ -140,33 +127,28 @@ prever y prevenir problemas.
 Los antecedentes a lo que hoy comprendemos como sistema operativo
 podemos encontrarlos en la automatización inicial del procesamiento de
 diferentes programas, surgida en los primeros centros de
-# tipo y repetición de encontrar, legibilidad
-
 cómputo: cuando en los '50 aparecieron los dispositivos
-# mayúscula y forma de expresar décadas
 perforadores/lectores de tarjetas de papel, el tiempo que una
 computadora estaba improductiva esperando a que estuviera lista una
 /tarea/ (como se designaba a una ejecución de cada determinado
 programa) para poder ejecutarla disminuyó fuertemente ya que los programadores
-# legibilidad 
 entregaban sus /tambaches/ o lotes de tarjetas perforadas (en inglés,
-# tambache es muy mejicana, aquí he sentido usar la palabra "sarta", 
-# podría ser tanda también ...
 batches) a los operadores, quienes las alimentaban a los dispositivos
 lectores, que lo cargaban en memoria en un tiempo razonable, iniciaban
 y monitoreaban la ejecución, y producían los resultados.
+# En este párrafo uso un mexicanismo ("tambache") en parte por su
+# similitud fonética con "batch". Para un mexicano, una "sarta"
+# (palabra sugerida por Esteban) sólo puede ser "de tonterías"). ¿Qué
+# sugieren?
 
 En esta primer época en que las computadoras se especializaban en
 tareas de cálculo intensivo y los dispositivos que interactuaban con
-# tipo
 medios externos eran prácticamente desconocidos, el rol del sistema
 /monitor/ o /de control/ era básicamente asistir al operador en la
 carga de los programas y las bibliotecas requeridas, la notificación
 de resultados y la contabilidad de recursos empleados para su cobro.
-# coma sobrante
 
 Los sistemas monitores se fueron sofisticando al implementar
-# plural
 protecciones que evitaran la corrupción de /otros trabajos/ (por
 ejemplo, lanzar erróneamente la instrucción /leer siguiente tarjeta/
 causaría que el siguiente trabajo encolado perdiera sus primeros
@@ -181,47 +163,39 @@ que identifica a los sistemas operativos.
 Cabe añadir que el tiempo de carga y puesta a punto de una tarea
 seguía representando una parte importante del tiempo que la
 computadora dedicaba al procesamiento: un lector de cintas rápido procesaba
-# cambio para evitar ambiguedades
 del órden de cientos de caracteres por minuto, y a pesar de la
 lentitud relativa de las computadoras de los '50 ante los estándares
-# normalización del formato de décadas
 de hoy (las mediríamos por miles de instrucciones por segundo, KHz, en
 vez de miles de millones como lo hacemos hoy, GHz), esperar cinco o
 diez minutos con el sistema completamente detenido por la carga de un
 programa moderadadamente extenso resulta a todas luces un desperdicio.
-# aclaracion
 
 ** Sistemas en lotes con dispositivos de carga (/spool/)
 
 Una mejora natural a este último punto fue la invención del /spool/:
-# corrección de sintaxis
 Un mecanismo de entrada/salida que permitía que una computadora de
 propósito específico, mucho más económica y limitada, leyera las
 tarjetas y las fuera convirtiendo a cinta magnética, un medio mucho
 más rápido, teniéndola lista para que la computadora central la
 cargara cuando terminara con el trabajo anterior. Del mismo modo, la
 computadora central guardarba sus resultados en cinta para que equipos
-# corrección de tiempo (no se si es correcto, pero me resulta más legibile)
 especializados la leyeran e imprimieran para el usuario solicitante.
 
 La palabra /spool/ (/bobina/) se tomó como /acrónimo inverso/ hacia
 /Simultaneous Peripherial Operations On-Line/, /operación simultánea
 de periféricos en línea/.
-# corrección de mayúscula
 
 ** Sistemas multiprogramados
 # <<multiprogramados>>
 
 A lo largo de su ejecución, un programa normalmente pasa por etapas
 con muy distintas características: durante un ciclo fuertemente
-# mayúscula, mejora de la legibilidad
 dedicado al cálculo numérico, el sistema opera /limitado por el CPU/
 (/CPU-bound/), mientras que al leer o escribir resultados a medios
 externos (incluso a través de /spools/) el límite es impuesto por los
 dispositivos, esto es, opera /limitado por entrada-salida/ (/I-O
 bound/). La /programación multitareas/ o los /sistemas
 multiprogramados/ buscaban maximizar el tiempo de uso efectivo
-# más aun estaba sobrando
 del procesador ejecutando varios procesos al mismo tiempo.
 
 El hardware requerido cambió fuertemente. Si bien se esperaba que cada
@@ -231,7 +205,6 @@ proceso no debe sobreescribir el espacio de memoria de otro (ni el
 código ni los datos), mucho menos el espacio del monitor. Esta
 protección la encontramos en la /Unidad de Manejo de Memoria/ (MMU),
 presente en todas las computadoras de uso genérico desde los '90.
-#unificación de la decada
 
 Ciertos dispositivos requieren bloqueo para ofrecer acceso
 exclusivo/único — Cintas e impresoras, por ejemplo, son de acceso
@@ -242,10 +215,8 @@ de bloqueo.
 
 ** Sistemas de tiempo compartido
 
-El modo de interactuar con las computadoras se modificó drásticamente 
-# cambié "cambió fuertemente" que ya se había usado un par de párrafos atrás
+El modo de interactuar con las computadoras se modificó drásticamente
 durante los '60, al extenderse la multitarea para
-# mejora en la redacción
 convertirse en sistemas /interactivos/ y /multiusuarios/, en buena
 medida diferenciados de los anteriores por la aparición de las
 /terminales/ (primero teletipos seriales, posteriormente equipos con
@@ -254,12 +225,9 @@ una pantalla completa como las conocemos hasta hoy).
 En primer término, la tarea de programación y depuración del código se
 simplificó fuertemente al poder el programador hacer directamente
 cambios y someter el programa a la ejecución inmediata. En segundo
-# mejora de legibilidad
 término, la computadora /nunca más estaría simplemente esperando a
 que esté listo un progama/: Mientras un programador editaba o compilaba su programa,
-# mejora de legibilidad
 la computadora seguía calculando lo que otros procesos requirieran.
-# corrección del tiempo de verbo
 
 Un cambio fundamental entre el modelo de /multiprogramación/ y de
 /tiempo compartido/ es el tipo de control sobre la multitarea:
@@ -268,56 +236,42 @@ procesos]]/)
 
 - Multitarea /cooperativa/ o /no apropiativa/ :: (/Cooperative
      multitasking/) La implementaron los sistemas multiprogramados: Cada
-# corrección del tiempo de verbo
      proceso tenía control del CPU hasta que éste hacía una llamada al
      sistema (o indicara su /disposición a cooperar/ por medio de la
      llamada =yield=: /ceder el paso/).
 
      Un cálculo largo no era interrumpido por el sistema operativo,
-# corrección del tiempo de verbo
      en consecuencia un error de programador podía congelar la
      computadora completa.
-# mejora de legibilidad
 
 - Multitarea /preventiva/ o /apropiativa/ :: (/Preemptive
      multitasking/) En los sistemas de tiempo compartido, el reloj del
      sistema interrumpe periódicamente a los diversos procesos,
      transfiriendo /forzosamente/ el control nuevamente al sistema
-# mejora de legibilidad
      operativo.
 
 Además, fueron naciendo de forma natural y paulatina las abstracciones
 que conocemos hoy en día, como los conceptos de /archivos/ y
 /directorios/, y el código necesario para emplearlos iba siendo
-# correcciones del plural 
 enviado a las /bibliotecas de sistema/ y, cada vez más (por
-# mejora de legibilidad
 su centralidad) hacia el núcleo mismo del –ahora sí– sistema
 operativo.
 
 Más alla del cambio del dispositivo de acceso, un cambio importante
 entre los sistemas multiprogramados y de tiempo compartido es que la
-# sintaxis
 velocidad del cambio entre una tarea y otra es mucho más rápido: si
 bien en un sistema multiprogramado un /cambio de contexto/ podía
 producirse sólo cuando la tarea cambiaba de uno a otro modo de
-# tipos
 ejecución y el resultado no se veía fuertemente afectado, en un
-# correccion del tiempo de verbo
 sistema interactivo, para dar la /ilusión/ de uso exclusivo de la
-# mejora de legibilidad
 computadora, el hardware emitía al sistema operativo
-# tiempo de verbo
 /interrupciones/ (señales) que le indicaban múltiples veces /por
-# tiempo de verbo
 segundo/ que cambie el /proceso/ activo (como ahora se le
-# sintáxis
 denomina a una instancia de un programa en ejecución).
-# me parecio muy confuso este parrafo
+# Esteban: me parecio muy confuso este parrafo
 
 Diferentes tipos de proceso pueden tener distinto nivel de importancia
 — Ya sea porque son más relevantes para el funcionamiento de la
-# repetición
 computadora misma (procesos de sistema), porque tienen mayor carga de
 interactividad (por la experiencia del usuario) o por diversas
 categorías de usuarios (sistemas con contabilidad por tipo de
@@ -329,7 +283,6 @@ para cada uno de estos.
 Si bien la discusión hasta este momento asume una computadora central
 con operadores dedicados y múltiples usuarios, en la década de los
 '70 comenzaron a aparecer las /computadoras personales/, sistemas en
-# normalización de la década
 un inicio verdaderamente reducidos en prestaciones y a un nivel de
 precios que los ponían al alcance, primero, de los aficionados
 entusiastas y, posteriormente, de cualquiera.
@@ -345,7 +298,6 @@ Las primeras computadoras personales tampoco eran distribuídas con
 sistemas operativos o lenguajes de programación; la interfaz primaria
 para programarlas era a través de /switches/, y para recibir sus
 resultados, se utilizaban bancos de LEDs. Claro está, esto requería conocimientos
-# completé texto faltante
 especializados, y las computadoras personales eran aún vistas sólo
 como juguetes caros.
 
@@ -356,7 +308,6 @@ comenzaron a venderse computadoras personales con salida de video
 (típicamente a través de una televisión) y entrada a través de un
 teclado. Estas computadoras popularizaron el lenguaje de programación
 BASIC, diseñado para usuarios novatos en los '60, y para permitir a
-# normalización de la década
 los usuarios gestionar sus recursos (unidades de cinta, pantalla
 posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
 software mínimo de sistema — Nuevamente, un proto-sistema operativo.
@@ -375,16 +326,13 @@ comenzaron a diferenciar de los equipos previos al separar el /entorno
 de desarrollo/ en algún lenguaje de programación del /entorno de
 ejecución/. El rol principal del sistema operativo ante el usuario era
 administrar los archivos de las diversas aplicaciones a
-# mejora de legibilidad
 través de una sencilla interfaz de línea de comando, y lanzar las
 aplicaciones propiamente.
 
 La PC de IBM fue la primer arquitectura de computadoras personales en
 desarrollar una amplia familia de /clones/, computadoras compatibles
 diseñadas para trabajar con el mismo sistema operativo, y que
-# cambio de correr
 eventualmente capturaron casi el 100% del
-# cambié prácticamente que se repetía en la sig. oración
 mercado. Prácticamente todas las computadoras de escritorio y
 portátiles en el mercado hoy derivan de la arquitectura de la IBM PC.
 
@@ -409,9 +357,7 @@ Menus, Pointer/; Ventanas, Iconos, Menúes, Apuntador), que permitían
 la interacción con varios programas al mismo tiempo. Esto /no
 necesariamente/ significa que sean sistemas multitarea — Por ejemplo,
 la primer interfaz de MacOS permitía visualizar varias ventanas
-# mejora de legibilidad
 abiertas simultáneamente, pero sólo el proceso activo se
-# mejora de legibilidad
 ejecutaba.
 
 #+attr_html: height="350"
@@ -430,14 +376,12 @@ integral del sistema operativo.
 
 Además, los problemas de protección y separación entre procesos
 concurrentes comenzaron a hacerse evidentes: los programadores tenían
-# mayúscula
 ahora que programar con la conciencia de que compartirían recursos —
 con el limitante (que no tenían en las máquinas /profesionales/) de no
 contar con hardware especializado para esta protección. Los
 procesadores en uso comercial en los '80 no manejaban /anillos/ o
 /niveles de ejecución/ ni /unidad de administración de memoria/ (MMU),
 por lo que un programa fallado o dañino podía corromper la operación
-# quité mal comportado que me sonaba feo
 completa del equipo. Y si bien los entornos que más éxito tuvieron
 (Apple MacOS y Microsoft Windows) no implementaban multitarea real, sí
 hubo desde el principio sistemas como la Commodore Amiga o la Atari ST
@@ -472,9 +416,7 @@ desde su primer edición en 1985, evolucionando hacia un sistema
 operativo completo ejecutando sobre una base de MS-DOS en 1995) se fue
 haciendo prevalente hasta ser la norma. Windows pasó de ser un sistema
 meramente de aplicaciones propias y que operaba únicamente por reemplazo
-# mejora de legibilidad 
 de aplicación activa a ser un sistema de multitarea cooperativa, y
-# mejora de legibilidad (aunque no estoy seguro de respetar lo que se quería decir)
 finalmente un sistema que requería protección en hardware (80386) e
 implementaba multitarea preventiva.
 
@@ -483,7 +425,6 @@ reemplazado por un desarrollo hecho de inicio como un sistema
 operativo completo y ya no como una aplicación dependiente de MS-DOS:
 el núcleo de Nueva Tecnología (Windows NT), que, sin romper
 compatibilidad con los /APIs/ históricos de Windows, ofreció mucho
-# legibilidad
 mayor estabilidad.
 
 Por el lado de Apple, la evolución fue muy en paralelo: ante un
@@ -497,7 +438,6 @@ software libre, por medio de varias implementaciones distintas de
 sistemas tipo Unix — principalmente, Linux y los *BSD (FreeBSD,
 NetBSD, OpenBSD). Estos sistemas implementaron, colaborativamente y a
 escala mundial, software compatibles con las PCs y con el que se ejecutaba en las
-# cambio de correr, legibilidad
 estaciones de trabajo a gran escala, con alta confiabilidad, y
 cerrando por fin la divergencia del árbol del desarrollo de la
 computación en /fierros grandes/ y /fierros chicos/.
@@ -505,7 +445,6 @@ computación en /fierros grandes/ y /fierros chicos/.
 Al día de hoy, la arquitectura derivada de Intel (y la PC) es el claro
 ganador de este proceso de 35 años, habiendo conquistado casi la
 totalidad de los casos de uso. Hoy en día, la arquitectura Intel ejecuta
-# cambie correr 
 desde subportátiles hasta supercomputadoras y centros de datos; el
 sistema operativo específico varía según el uso, yendo
 mayoritariamente hacia Windows, con los diferentes Unixes concentrados
@@ -526,10 +465,8 @@ de explicar diferentes implementaciones).
 
 Al nivel que vamos a estudiarlo, un sistema operativo es más bien un
 gran programa, que ejecuta a otros muchos programas y les provee un
-# legibilidad
 conjunto de interfaces para que puedan aprovechar los recursos de
 cómputo. Hay dos formas primarias de organización /interna/ del
-# legibilidad
 sistema operativo: los sistemas monolíticos y los sistemas
 microkernel. Y si bien no podemos marcar una línea clara a rajatabla
 que indique en qué clasificiación cae cada sistema, no es dificil

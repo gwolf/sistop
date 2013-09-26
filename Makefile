@@ -1,24 +1,17 @@
 #!/usr/bin/make -f
 baseurl = http://sistop.gwolf.org
 
+# Bajo este esquema, sólo Gunnar puede llamar a "make publish" y
+# derivados. Bueno, confío en que quien quiera publicar a otro
+# depósito lo modifique ;-)
 publish_dest = gwolf@gwolf.org:/home/gwolf/sistop.gwolf.org
 
 publish_src_html = ./html/*
 publish_src_pdf = ./pdf/*
 publish_src_pdf = ./biblio/*
 
-dir_semestre = por_semestre/2014-1
 dir_laminas = laminas
-
-idx_semestre = $(dir_semestre)/index.org
 idx_laminas = $(dir_laminas)/index.org
-exam_resueltos = examenes/resueltos
-lista_orig = docente/lista.org
-lista_pub = $(dir_semestre)/lista.org
-
-
-temas_in = tareas/temas.org
-temas_out = tareas/temas.html
 
 libro = notas/sistemas_operativos.org
 
@@ -89,48 +82,16 @@ beamer: fig
 	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
 	rm $(idx_laminas)
 
-semestre:
-	[ -d $(dir_semestre) ] || mkdir -p $(dir_semestre);
-	echo '#+TITLE: SISTEMAS OPERATIVOS — Información para los alumnos del semestre actual' > $(idx_semestre)
-	echo '#+AUTHOR: Gunnar Wolf' >> $(idx_semestre)
-	echo '#+EMAIL: gwolf@sistop.org' >> $(idx_semestre)
-	echo '#+LANGUAGE: es' >> $(idx_semestre)
-	echo '#+OPTIONS: toc:nil' >> $(idx_semestre)
-	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> $(idx_semestre)
-	echo '* Listas' >> $(idx_semestre)
-	echo '- [[./lista.html#sec-1][Asistencia]]' >> $(idx_semestre)
-	echo '- [[./lista.html#sec-2][Tareas y participaciones]]' >> $(idx_semestre)
-	echo '- [[./lista.html#sec-3][Exámenes]]' >> $(idx_semestre)
-#	echo '- [[./lista.html#sec-5][Globales]]' >> $(idx_semestre)
-#	echo '- [[./lista.html#sec-6][Finales para actas]]' >> $(idx_semestre)
-	perl -n -i -e 'unless (/^\|/) {print;next} @data = split(/(?:[|+])/,$$_); print join("|", $$data[0], $$data[1], @data[3..$$#data]);' < $(lista_orig) > $(lista_pub)
-	emacs --batch --visit=$(lista_pub) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
-	echo '* Exámenes resueltos' >> $(idx_semestre)
-	mkdir -p $(exam_resueltos)/ltxpng
-	for i in `ls $(exam_resueltos)/*.org | sort -n`; do \
-	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
-	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
-	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
-	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
-		emacs --batch --visit=$$i --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf ; \
-	    fi ; \
-	    cp $$pdf $(dir_semestre); \
-	    pdf_aqui=`basename $$pdf`; \
-	    echo "- [[./$$pdf_aqui][$$title]] ($$date)" >> $(idx_semestre); \
-	done
-
-	emacs --batch --visit=$(idx_semestre) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
 clean-publish-cache:
 	rm -f ~/.org-timestamps/notas*.cache
 
 clean: clean-publish-cache clean_fig
 	rm -f notas/sistemas_operativos.*
 	rm -f ltxpng/*.png dot notas/*.tex notas/*.html notas/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
-	rm -fr $(dir_semestre) $(idx_semestre) $(exam_resueltos)/*.tex $(exam_resueltos)/*.pdf
 	rm -rf html
 	rm -rf pdf
 
-push: push_html push_pdf push_biblio push_beamer push_semestre
+push: push_html push_pdf push_biblio push_beamer
 
 push_html: html
 	rsync -av --delete ./html/* $(publish_dest)/html
@@ -143,10 +104,6 @@ push_biblio:
 
 push_beamer:
 	rsync -av --delete ./$(dir_laminas)/* $(publish_dest)/$(dir_laminas)
-
-push_semestre: semestre
-	rsync -av --delete ./$(dir_semestre)/* $(publish_dest)/$(dir_semestre)
-
 
 fig: fig_dot fig_ditaa fig_gnuplot
 clean_fig: clean_dot clean_ditaa clean_gnuplot

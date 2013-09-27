@@ -10,31 +10,34 @@
           r4 [shape=point];
           r5 [shape=point];
           r6 [shape=point];
-          caro_os [label="Más caro\n(complejo)\npara el\nsistema operativo",color="white"];
-          barato_usr [label="Más barato\n(sencillo)\npara procesos\nusuario",color="white"];
-          caro_usr [label="Más caro\n(complejo)\npara procesos\nusuario",color="white"];
-          barato_os [label="Más barato\n(sencillo)\npara el\nsistema operativo",color="white"];
-          liberal [label="Liberal",color="white",fontsize=18];
-          conservador [label="Conservador",color="white",fontsize=18];
-          liberal -> r0 -> r1 -> r2 -> r3 -> r4 -> r5 -> r6 -> conservador [arrowhead=none,weight=4];
-          {rank=same; caro_os ->  liberal -> barato_usr [style=invis]}
-          {rank=same; barato_os ->  conservador -> caro_usr [style=invis]}
-          subgraph cluster_bloq_pos {
+	  r7 [shape=point];
+          notas_liberal [label="Más caro (complejo)\npara el sistema operativo\n\nMás barato (sencillo)\npara procesos usuario",color="white"];
+          notas_conserv [label="Más caro (complejo)\npara procesos usuario\n\nMás barato (sencillo)\npara el sistema operativo",color="white"];
+          liberal [label="Liberal",color="white",fontsize=22];
+          conservador [label="Conservador",color="white",fontsize=22];
+	  r0 -> r1 -> r2 -> r3 -> r4 -> r5 -> r6 -> r7 [arrowhead=none,weight=4];
+	  {rank=same; notas_liberal -> liberal [style=invis] }
+          {rank=same; notas_conserv -> conservador [style=invis]}
+	  liberal -> conservador [style=invis, minlen=7];
+	  subgraph cluster_bloq_pos {
                   bgcolor="#eeeeee";
                   fontsize=18;
                   label="Bloqueo posible";
                   {rank=same; siempre r0}
+                  {rank=same; detecc r1}
                   siempre -> r0 [minlen=3];
+		  detecc -> r1 [minlen=3]
                   siempre [color="#eeeeee", label="Siempre otorgar\n(Avestruz)"];
+		  detecc [color="#eeeeee", label="Detección y\nrecuperación"];
           }
           subgraph cluster_evita {
                   bgcolor="#dddddd";
                   fontsize=18;
                   label = "Evasión de bloqueos\n(Con conocimiento previo)";
-                  ret_y_esp [color="#dddddd", label="Retención\ny espera"];
+                  flujos [color="#dddddd", label="Flujos seguro\ne inseguros"];
                   banquero [color="#dddddd", label="Algoritmo\ndel banquero"];
-                  {rank=same; ret_y_esp -> r1 [minlen=3]};
-                  {rank=same; banquero -> r2 [minlen=3]};
+                  {rank=same; flujos -> r2 [minlen=3]};
+                  {rank=same; banquero -> r3 [minlen=3]};
           }
           subgraph cluster_previene {
                   bgcolor="#cccccc";
@@ -43,16 +46,16 @@
                   serializacion [color="#cccccc", label = "Serialización"];
                   one_shot [color="#cccccc", label = "Solicitud\nde una vez"];
                   jerarquica [color="#cccccc", label = "Asignación\njerárquica"];
-                  {rank=same; jerarquica -> r3 [minlen=3]};
-                  {rank=same; one_shot -> r4 [minlen=3]};
-                  {rank=same; serializacion -> r5 [minlen=3]};
+                  {rank=same; jerarquica -> r4 [minlen=3]};
+                  {rank=same; one_shot -> r5 [minlen=3]};
+                  {rank=same; serializacion -> r6 [minlen=3]};
           }
           subgraph cluster_nunca {
                   bgcolor="#bbbbbb";
                   fontsize=18;
                   label="No otorgamiento";
                   nunca [color="#bbbbbb", label = "Nunca otorgar"];
-                  {rank=same; nunca -> r6 [minlen=3]};
+                  {rank=same; nunca -> r7 [minlen=3]};
           }
   }
 #+end_src

@@ -2,6 +2,7 @@ graph G {
 	rankdir=LR;
 	edge [constraint=false];
 	node [shape=box];
+	{rank=same pci -- snd -- usb -- hd2 [style=invis]}
 
 	subgraph cluster_un_lado {
 		edge [constraint=true];

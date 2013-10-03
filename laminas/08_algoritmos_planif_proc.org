@@ -392,6 +392,27 @@ de procesos:
   - SPN puede mantener la contabilidad de los procesos incluso tras
     entregarlos de vuelta al agendador
 
+** SPN con tiempos /declarados/
+#+BEGIN_CENTER
+Hace años, podía esperarse que los usuarios proporcionaran un estimado
+de sus tiempos de ejecución:
+#+END_CENTER
+
+#+begin_quote
+#+latex: {\small
+En un sistema que da alta prioridad a los procesos con estimación de
+tiempo corta, la política normal es terminar aquellos procesos que
+excedan sus límites estimados; de otro modo, los usuarios pronto
+arruinarían el esquema. En este caso, la mayoría de usuarios prefieren
+hacer predicciones conservadoras. Morris (1967) encuentra que los
+usuarios sobre-estimaron sus requisitos de almacenamiento por 50%, y
+dice que ``las estimaciones en tiempo de procesamiento son mucho
+peores''
+
+\hfill –Per Brinch Hansen, 1973
+#+latex: }
+#+end_quote
+
 ** Estimando para SPN: Promedio exponencial
 #+BEGIN_CENTER
 Es común emplear un /promedio exponencial/ para estimar la siguiente
@@ -636,6 +657,32 @@ descriptores primarios
 |               | Ronda egoísta (SRR)     | (PSPN)            |
 |---------------+-------------------------+-------------------|
 
+** ¡Tarea!
+#+BEGIN_CENTER
+Tenemos ya cubiertos los principales esquemas base de planificación.
+
+Queda claro que están enunciados /en líneas generales/, y muchas veces
+operan en forma híbrida o altamente parametrizada.
+
+Elige /dos/ sistemas operativos en uso /relativamente común/ en
+ambientes de producción, y describe cómo es su mecanismo de
+planificación.
+
+*Entrega: Jueves 10 de septiembre via EDUCAFI*
+#+END_CENTER
+
+** Tarea: ¿Qué quiero que desarrollen?
+- A cuál o cuáles de los esquemas presentados se parecen más
+- ¿Hay alguna diferenciación clara derivada del tipo de uso que se le
+  da al sistema?
+  - Por ejemplo, ¿Planifican servidores diferente de estaciones de
+    trabajo? ¿En dispositivos móviles? ¿En hardware /embebido/?
+  - ¿Debería haberla?
+- ¿Ofrece el sistema alguna interfaz al usuario/administrador para
+  cambiar el mecanismo o ajustar sus parámetros?
+  - ¿Qué tan común te parece que es manipularlo entre sus usuarios?
+    ¿Por qué?
+
 * Esquemas híbridos y prioridades externas
 ** Esquemas híbridos
 - Los esquemas de planificación empleados normalmente usan /mezclas/
@@ -720,12 +767,12 @@ descriptores primarios
 
 * Resumiendo y temas relacionados
 ** Sobrecarga administrativa
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: height=0.7\textheight
 #+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
 [[../img/penalizaciones_por_algoritmo_planificador.png]]
 
 ** Tiempo /perdido/ por sobrecarga adm.
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: height=0.7\textheight
 #+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
 [[../img/tiempo_en_espera_por_algoritmo_planificador.png]]
 
@@ -777,7 +824,7 @@ Tres modelos principales de /mapeo/:
 - Muchos a muchos
 
 ** Muchos a uno
-#+attr_latex: width=0.3\textwidth
+#+attr_latex: width=0.25\textwidth
 #+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_uno.png]]
 - /Hilos verdes/ (o /de usuario/)
@@ -788,7 +835,7 @@ Tres modelos principales de /mapeo/:
 - Llamadas bloqueantes \rightarrow Todos esperan
 
 ** Uno a uno
-#+attr_latex: width=0.3\textwidth
+#+attr_latex: width=0.25\textwidth
 #+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_uno_a_uno.png]]
 - Cada hilo es un /proceso ligero/ (/lightweight process/, /LWP/)
@@ -799,7 +846,7 @@ Tres modelos principales de /mapeo/:
 - El SO debe poder manejar LWP
 
 ** Muchos a muchos
-#+attr_latex: width=0.3\textwidth
+#+attr_latex: width=0.25\textwidth
 #+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_muchos.png]]
 - Existen /hilos unidos/ (/bound threads/), que corresponden cada uno

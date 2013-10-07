@@ -24,17 +24,14 @@ una u otra nomenclatura.
 Pero si bien el sistema nos da la /ilusión/ de que muchos procesos se
 están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
 está esperando para continuar su ejecución — en un momento
-# sintaxis y legibilidad
 determinado sólo puede estar ejecutándose un número de procesos igual
-# sintaxis
 o menor al número de CPUs que tenga el sistema.
 
 En esta sección del curso nos ocuparemos de los conceptos relacionados
 con procesos, hilos, concurrencia y sincronización — Abordaremos las
 técnicas y algoritmos que emplea el sistema operativo para determinar
 cómo y en qué órden hacer los cambios de proceso que nos brindan la
-ilusión de simultaneidad en la ejecución /[[./03_planificacion_de_procesos.org][Planificación de procesos]]/.
-# legibilidad
+ilusión de simultaneidad en la sección /[[./03_planificacion_de_procesos.org][Planificación de procesos]]/.
 
 ** Estados de un proceso
 # <<estados_de_un_proceso>>
@@ -83,7 +80,6 @@ de:
 - Información de administración de memoria :: Las tablas de mapeo de
      memoria (páginas o segmentos, dependiendo del sistema operativo),
      incluyendo la pila (/stack/) de llamadas. Abordaremos el tema en
-# tipo
      la unidad /[[./04_administracion_de_memoria.org][Administración de memoria]]/.
 
 - Información de contabilidad :: Información de la utilización de
@@ -131,7 +127,6 @@ denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
 es en sistemas operativos mínimos (p.ej. para dispositivos embebidos)
 capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
 si bien el sistema operativo no maneja multiprocesamiento, a través de
-# tipo
 los hilos de usuario sí podemos crear procesos con multitarea interna.
 
 Los procesos que implementan hilos ganan un poco en el rendimiento
@@ -146,11 +141,10 @@ control dentro de un mismo proceso. Cualquier llamada al sistema
 inmediatamente) interrumpirá la ejecución de todos los hilos, dado que
 el control de ejecución es entregado al sistema operativo.
 
-Otra alternativa es la creación de hilos /informando/ al sistema
-# mejora de legibilidad: no quedaba claro que lo anterior era un paso
+Continuando con el desarrollo histórico de este mecanismo, el
+siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
 threads/). Esto se hace a través de bibliotecas de sistema que los implementan de
-# sintáxis
 forma estándar para los diferentes sistemas operativos
 (p.ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
 arquitecturas. Estas bibliotecas aprovechan la comunicación con el
@@ -191,21 +185,17 @@ un /equipo de trabajo/):
      se crean muchos hilos idénticos, que realizarán las mismas tareas
      sobre diferentes datos. Este modelo es muy frecuentemente
      utilizado para cálculos matemáticos (ej.: criptografía,
-# uhm... me suena que asi queda mejor poner ej., pero no se cual es la forma correcta
      render). Puede combinarse con un estilo jefe/trabajador para irle
      dando al usuario una previsualización del resultado de su
      cálculo, dado que éste se irá ensamblando progresivamente, pedazo
      por pedazo.
 
      Su principal diferencia con el patrón /jefe/trabajador/
-# sintaxis
      consiste en que el trabajo a realizar por cada uno de los hilos
-# sintaxis
      se plantea en un principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
      éstos sean lanzados en paralelo. Estos datos no son resultado de
      /eventos independientes/ (como en el caso anterior), sino 
-# legibilidad
      partes de un sólo cálculo. Por consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
@@ -233,19 +223,11 @@ un /equipo de trabajo/):
      presentados; si bien en los anteriores los diferentes hilos (a
      excepción del hilo /jefe/) eran casi siempre idénticos -aunque
      operando sobre distintos conjuntos de datos-, en este caso son
-# legibilidad 
      completamente distintos.
 
      #+attr_latex: width=0.6\textwidth
      #+caption: Patrón de hilos /Línea de ensamblado/
      [[./img/dot/linea_ensamblado.png]]
-
-
-# #+attr_html: height="308"
-# #+attr_latex: width=0.7\textwidth
-# #+caption: Esquematización de los modelos de hilos: Jefe/trabajador,
-# Línea de ensamblado, Equipo de trabajo ([[http://cs.uns.edu.ar/~jechaiz][Imagen de Javier Echaiz]])
-# [[./img/modelos_de_hilos.png]]
 
 * Concurrencia
 
@@ -272,8 +254,8 @@ de las ciencias de la computación.
 Si bien una de las tareas principales de los sistemas operativos es
 dar a cada proceso la ilusión de que se está ejecutando en una
 computadora dedicada, de modo que el programador no tenga que pensar
-en la competencia por recursos, a veces un programa no requiere 
- esa ilusión  — Parte del desarrollo de un programa puede depender
+en la competencia por recursos, a veces un programa requiere no pasar
+por esa ilusión — Parte del desarrollo de un programa puede depender
 de datos obtenidos en fuentes externas a éste, y la cooperación con
 hilos o procesos externos es fundamental.
 
@@ -483,7 +465,8 @@ lenguaje de tan alto nivel como Ruby, el número de instrucciones
 resultante puede ser mucho mayor.
 
 - Operación atómica :: Operación que tenemos la garantía que se
-     ejecutará como una sóla unidad de ejecución (o fallará completamente, sin resultados o estados parciales). Esto no
+     ejecutará como una sóla unidad de ejecución, o fallará
+     completamente, sin resultados o estados parciales. Esto no
      necesariamente implica que el sistema no retirará el flujo de
      ejecución de su hilo, sino que /el efecto de que se le retire el
      flujo/ no llevará a comportamiento inconsistente.
@@ -543,7 +526,13 @@ evaluar a un =$bloq= aún falso, y –justo antes de modificarlo– el
 control se transfiere a otro hilo entrando al mismo lugar, y vendiendo
 dos veces el mismo asiento.
 
-#quité ese párrafo, pues es como que queda afuera el algoritmo de Peterson
+Para señalizar la entrada a una sección crítica no podemos hacerlo
+desde el flujo susceptible a ser interrumpido[fn:: Veremos en la
+sección \ref{peterson} la /Solución de Peterson/, un mecanismo que
+permite estas interrupciones, aunque resta generalidad a la solución e
+incurre en costos de tiempo de cómputo muy elevados], tenemos que
+hacerlo a través de instrucciones de las que el planificador pueda
+/asegurar/ su atomicidad.
 
 *** Bloqueos mutuos e inanición
 
@@ -585,17 +574,24 @@ como si fuera atómica.
 
 Hay que tener en cuenta que un mutex /no implica/ que el código no
 se va a interrumpir mientras se está dentro de esta región — Eso sería
-muy peligroso, dado que permitiría que el sistema operativo pueda perder 
+muy peligroso, dado que permitiría que el sistema operativo pierda
 el control del planificador, volviendo (para propósitos prácticos) a un
 esquema de multitarea cooperativa. El mutex es un /mecanismo de
 prevención/ que mantiene en espera a cualquier hilo o proceso que
 quiera entrar a la /sección crítica/ hasta que el proceso que la está
-ejecutando en un momento dado salga de ella. Si no hay ningún hilo o proceso en esa sección crítica (o cuando un hilo sale de esa sección crítica), uno sólo de los que esperan podrá ingresar.
+ejecutando en un momento dado salga de ella. Si no hay ningún hilo o
+proceso en esa sección crítica (o cuando un hilo sale de esa sección
+crítica), uno sólo de los que esperan podrá ingresar.
 
-Como vimos en el ejemplo anterior, para que una mutex sea efectivo
+Como vimos en el ejemplo anterior, para que un mutex sea efectivo
 tiene que ser implementado a través de una /primitiva/ a un nivel
-inferior, implicando al planificador.
-# puse inferior, ya que mas abajo tambien se usa un "nivel inferior" para referirse al SO.
+inferior[fn:: ¿Qué significa inferior? Las llamadas de sincronización
+entre hilos deben implementarse por lo menos a nivel del proceso que
+los contiene; aquellas que se realizan entre procesos independientes,
+deben implementarse a nivel del sistema operativo. Debe haber un
+agente /más abajo/ en niveles de abstracción, en control /real/ del
+equipo de cómputo, ofreciendo estas operaciones.], implicando al
+planificador.
 
 El código del ejemplo anterior podría reescribirse de la siguiente
 manera empleando un mutex:
@@ -624,9 +620,7 @@ hace dependientes del lenguaje específico de implementación. En este
 caso, en Perl, al ser =proximo_asiento= una variable compartida tiene
 algunas /propiedades/ adicionales — Como, en este caso, la de poder
 operar como un mutex. La implementación en Perl resulta muy /limpia/,
-dado que nos evita el uso de un lock explícito —
-# esto me sonaba muy raro ... no sé muy bien qué quería decir ...
-# en este punto todavía no definimos variable de condición
+dado que nos evita el uso de un candado explícito —
 Podríamos leer la línea 5 como /exclusión mutua sobre/
 =$proximo_asiento=.
 
@@ -956,8 +950,7 @@ opera /en conjunto con/ un mutex, y en algunas implementaciones es
 necesario indicar cuál será dicho mutex desde la misma inicialización
 del objeto.[fn:: Mientras que otras implementaciones permiten que se
 declaren por separado, pero siempre que se invoca a una variable
-de condición, debe indicársele qué mutex estará empleando.] 
-# quité la oración, me parece que confunde más que lo que ayuda
+de condición, debe indicársele qué mutex estará empleando.]
 
 Una variable de condición presenta las siguientes operaciones:
 
@@ -999,6 +992,7 @@ int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
 *** La solución de Peterson
+# <<peterson>>
 
 Todas las soluciones que hemos discutido hasta el momento requieren de
 un sistema que ejecute a un nivel /inferior/ al de nuestro código —
@@ -1019,7 +1013,7 @@ ofrece las construcciones antes descritas.
 Si podemos compartir estructuras de memoria entre los procesos
 implicados, podemos emplear la /solución de Peterson/. Esta implica
 que los procesos cooperen explícitamente, y que conozcan algunos datos
-que hemos mayormente obviado (como ser, no sólo la cantidad de procesos que
+que hemos mayormente obviado (como son, no sólo la cantidad de procesos que
 emplearán determinada sección crítica, sino una /numeración/ que
 permita distinguir entre ellos). Cabe mencionar, como señala
 Silberschatz (p. 223), que algunos detalles de implementación de las
@@ -1027,7 +1021,7 @@ computadoras actuales pueden impedir que este mecanismo funcione
 adecuadamente.
 
 Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-determinada sección crítica alternan entre su ejecución
+determinada sección crítica, alternando entre su ejecución
 paralelizable y la ejecución de dicha sección, contando con las
 estructuras compartidas:
 
@@ -1067,9 +1061,10 @@ la sección crítica porque =listo[i]= es verdadero.
 
 Esta solución, como ya mencionamos, no es apta para muchas condiciones
 actuales. En particular, no es segura en un entorno de
-multiprocesamiento real (por problemas de coherencia de caché). Hace uso de la espera activa, lo que consume recursos innecesariamente, pero en una
-situación como la descrita en que no hay paso de señales, eso es
-inevitable.
+multiprocesamiento real (por problemas de coherencia de caché). Hace
+uso de la espera activa, lo que consume recursos innecesariamente,
+pero en una situación como la descrita en que no hay paso de señales,
+esto resulta inevitable.
 
 ** Soluciones a los problemas clásicos
 
@@ -1206,7 +1201,8 @@ número de ingredientes necesario.
   libre de bloqueos mutuos, empleando sólo tres estructuras globales:
   un contador que indica cuántos lectores hay en la sección crítica,
   un mutex protegiendo a dicho contador, y otro mutex indicando que no
-  hay lectores ni escritores accediendo al buffer (o cuarto) . Implementamos los mutexes con semáforos.
+  hay lectores ni escritores accediendo al buffer (o
+  cuarto). Implementamos los mutexes con semáforos.
 
   #+begin_src python
   import threading
@@ -1481,7 +1477,7 @@ variables globales, de esta manera:
 Si bien vemos que el código de =fumador()= se simplifica (dado que ya
 no tiene que efectuar ninguna verificación), =intermediario()= tiene
 mayor complejidad. El elemento clave de su lógica es que, si bien el
-=agente()= (el sistema operativo) seguirá enviándo una señal por
+=agente()= (el sistema operativo) seguirá enviando una señal por
 cada ingrediente disponible, los tres intermediarios se sincronizarán
 empleando al arreglo =que_tengo= (protegido por =interm_mutex=), y de
 este modo cada hilo (independientemente del órden en que fue invocado)
@@ -2082,9 +2078,10 @@ recursos más altos, por lo que conduce a una alta inanición.
 
 Para la evasión de bloqueos, el sistema partiría de poseer, además de
 la información descrita en el caso anterior, información acerca de
-/cuándo/ requiere un proceso utilizar cada recurso. De este modo,
-el planificador puede marcar qué flujos -de recursos- entre dos (o más) procesos son
-/seguros/ y cuáles son /inseguros/
+/cuándo/ requiere un proceso utilizar cada recurso. De este modo, el
+planificador puede marcar qué órden de ejecución (esto es, qué
+/flujos/) entre dos o más procesos son /seguros/ y cuáles son
+/inseguros/
 
 #+attr_html: height="350"
 #+attr_latex: width=0.7\textwidth
@@ -2503,8 +2500,8 @@ competidores, por medio de algún protocolo pre-establecido.
 ** Algoritmo del avestruz
 
 Una cuarta línea (que, por increíble que parezca, es la más común,
-empleada en todos los sistemas operativos de propósito general
-) es el llamado /algoritmo del avestruz/: ignorar
+empleada en todos los sistemas operativos de propósito general)
+es el llamado /algoritmo del avestruz/: ignorar
 las situaciones de bloqueo (escondiéndose de ellas como avestruz que
 esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
 suficientemente poco frecuente.
@@ -2590,7 +2587,7 @@ resolverlo sin importar la complejidad computacional.
 Los ingenieros, más aterrizados en el /mundo real/, tienen como parte
 básica de su formación, sí, el evitar defectos nocivos — pero también
 contemplan el cálculo de costos, la probabilidad de impacto, los
-umbrales de tolerancia ... Para un ingeniero, si un sistema típico
+umbrales de tolerancia... Para un ingeniero, si un sistema típico
 /corre riesgo/ de caer en un bloqueo mutuo con una probabilidad $p >
 0$, dejando inservibles a dos procesos en un sistema, pero debe
 también considerar no sólo las fallas en hardware y en los diferentes

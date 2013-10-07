@@ -1580,49 +1580,52 @@ así, le permitirá la ejecución obteniendo el candado, y en caso de sí
 haberlo, el hilo se bloqueará hasta que el candado sea liberado.
 
 El modelo de sincronización basado en monitores no sólo provee la
-exclusión mutua. A través de /variables de condición/ podemos también
-emplear una semántica parecida (aunque no igual) a la de los
+exclusión mutua. A través de /variables de condición/ (VCs) podemos
+también emplear una semántica parecida (aunque no igual) a la de los
 semáforos, con los métodos =var.wait()= y =var.signal()=. En el caso
 de los monitores, =var.wait()= suspende al hilo hasta que otro hilo
 ejecute =var.signal()=; en caso de no haber ningún proceso esperando,
-=var.signal()= no tiene ningún efecto (no cambia el estado de =var=,
-a diferencia de lo que ocurre con los semáforos)
+=var.signal()= no tiene ningún efecto (no cambia el estado de =var=, a
+diferencia de lo que ocurre con los semáforos)
 
 Presento, a modo de ilustración, la resolución del problema de la
 /cena de los filósofos/ en C[fn:: Implementación basada en el [[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo
-de Ted Baker]], que implementa la solución propuesta por
-Tanenbaum]. Esto demuestra, además, que si bien utilizamos semántica
-de orientación a objetos, no sólo los lenguajes clásicamente
-relacionados con la programación orientada a objetos nos permiten
-emplear monitores.
+de Ted Baker]], sobre la solución propuesta por Tanenbaum]. Esto
+demuestra, además, que si bien utilizamos semántica de orientación a
+objetos, no sólo los lenguajes clásicamente relacionados con la
+programación orientada a objetos nos permiten emplear monitores.
 
 #+begin_src C
 /* Implementacion para cinco filosofos */
-pthread_cond_t  CV[NTHREADS];    /* Una variable de condición por filosofo */
-pthread_mutex_t M;               /* Mutex para el monitor */
-int             state[NTHREADS]; /* Estado de cada filosofo */
+#define PENSANDO 1
+#define HAMBRIENTO 2
+#define COMIENDO 3
 
-void init () {
+pthread_cond_t  VC[5]; /* Una VC por filosofo */
+pthread_mutex_t M;     /* Mutex para el monitor */
+int estado[5];         /* Estado de cada filosofo */
+
+void palillos_init () {
     int i;
     pthread_mutex_init(&M, NULL);
     for (i = 0; i < 5; i++) {
-        pthread_cond_init(&CV[i], NULL);
-        state[i] = PENSANDO;
+        pthread_cond_init(&VC[i], NULL);
+        estado[i] = PENSANDO;
     }
 }
 
 void toma_palillos (int i) {
     pthread_mutex_lock(&M)
-    state[i] = HAMBRIENTO;
+    estado[i] = HAMBRIENTO;
     actualiza(i);
-    while (state[i] == HAMBRIENTO)
-        pthread_cond_wait(&CV[i], &M);
+    while (estado[i] == HAMBRIENTO)
+        pthread_cond_wait(&VC[i], &M);
     pthread_mutex_unlock(&M);
 }
 
 void suelta_palillos (int i) {
-    state[i] = PENSANDO;
-    actualiza((i + 4) % 5);
+    estado[i] = PENSANDO;
+    actualiza((i - 1) % 5);
     actualiza((i + 1) % 5);
     pthread_mutex_unlock(&M);
 }
@@ -1631,25 +1634,80 @@ void come(int i) {
     printf("El filosofo %d esta comiendo\n", i);
 }
 
-/* No incluimos 'actualiza' en los encabezados, es una funcion interna */
+void piensa(int i) {
+    printf("El filosofo %d esta pensando\n", i);
+}
+
+/* No incluimos 'actualiza' en los encabezados, */
+/* es una funcion interna/privada */
 int actualiza (int i) {
-    if ((state[(i + 4) % 5] != COMIENDO) &&
-        (state[i] == HAMBRIENTO) &&
-        (state[(i + 1) % 5] != COMIENDO)) {
-        state[i] = COMIENDO;
-        pthread_cond_signal(&CV[i]);
+    if ((estado[(i - 1) % 5] != COMIENDO) &&
+        (estado[i] == HAMBRIENTO) &&
+        (estado[(i + 1) % 5] != COMIENDO)) {
+        estado[i] = COMIENDO;
+        pthread_cond_signal(&VC[i]);
     }
     return 0;
 }
 #+end_src
 
-Esta implementación evita los bloqueos mutuos señalizando el estado
-de cada uno de los filósofos en una variable de estado. Si uno de los
-filósofos no puede tomar ambos palillos cuando llama a =actualiza(i)=
-desde =toma_palillos(i)=, queda señalizado para que =actualiza(i+1)=
-no 
+Esta implementación evita los bloqueos mutuos señalizando el estado de
+cada uno de los filósofos en el arreglo de variables =estado[]=.
 
-# este párrafo anterior está incompleto?
+La lógica base de esta resolución marca en la verificación del estado
+propia y de los vecinos siempre que hay un cambio de estado: Cuando el
+filósofo =i= llama a la función =toma_palillos(i)=, esta se limita a
+adquirir el mutex =M=, marcar su estado como =HAMBRIENTO=, y llamar a
+la función interna =actualiza(i)=. Del mismo modo, cuando el filósofo
+=i= termina de comer y llama a =suelta_palillos(i)=, esta función
+marca su estado como =PENSANDO= — E invoca a =actualiza()= dos veces:
+Una para el vecino izquierdo y una para el vecino derecho.
+
+Es importante recalcar que, dado que esta solución está estructurada
+como un monitor, ni =actualiza()= ni las variables que determinan el
+estado del sistema (=VC=, =M=, =estado=) son expuestas a los hilos
+invocantes.
+
+La función =actualiza(i)= es la que se encarga de verificar (y
+modificar, de ser el caso) el estado no sólo del filósofo invocante,
+sino que de sus vecinos. La lógica de =actualiza()= permite resolver
+este problema abstrayendo (y eliminando) a los molestos palillos: En
+vez de preocuparse por cada palillo individual, =actualiza()= impide
+que dos filósofos vecinos estén =COMIENDO= al mismo tiempo, y dado que
+es invocada tanto cuando un filósofo =toma_palillos()= como cuando
+=suelta_palillos()=, otorga el turno al vecino sin que éste tenga que
+adquirir explícitamente el control.
+
+Estas características nos permiten que la lógica central de cada uno
+de los filósofos se simplifique a sólo:
+
+#+begin_src C
+void *filosofo(void *arg) {
+  int self = *(int *) arg;
+  for (;;) {
+    piensa(self);
+    toma_palillos(self);
+    come(self);
+    suelta_palillos(self);
+  }
+}
+
+int main() {
+  int i;
+  pthread_t th[5];  /* IDs de los hilos filosofos */
+  pthread_attr_t attr = NULL;
+  palillos_init();
+  for (i=0; i<5; i++) {
+    pthread_create(&th[i], attr, filosofo, (int*) &i);
+  }
+}
+#+end_src
+
+Al ser una solución basada en monitor, el código que invoca a
+=filosofo(i)= no tiene que estar al pendiente del mecanismo de
+sincronización empleado, puede ser comprendido más fácilmente por un
+lector casual — y no brinda oportunidad para que un mal programador
+haga mal uso del mecanismo de sincronización.
 
 *** Soluciones en hardware
 

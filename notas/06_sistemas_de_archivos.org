@@ -2,6 +2,7 @@
 #+TITLE: Sistemas de archivos
 
 * Introducción
+#<<FS>>
 
 De los roles que cumple el sistema operativo, probablemente el que más
 consciente tengan en general sus usuarios es el de la gestión del
@@ -72,15 +73,15 @@ acceso a los archivos por medio de la interfaz ofrecida por el sistema
 operativo.[fn:: Veremos más adelante que esto no es /necesariamente/
 cierto, sin embargo, el uso de los dispositivos /en crudo/ es tan bajo
 que podemos ignorarlos para propósitos de esta discusión] Abordaremos
-los detalles de esta interfaz [[#operaciones_con_archivos][en breve]].
+los detalles de esta interfaz en la siguiente sección.
 
 Para el usuario, los archivos son la /unidad lógica mínima/ al hablar
-habla de almacenamiento: Todo el almacenamiento /persistente/ (que
-sobrevive en el tiempo, sea a reinicios del sistema, a pérdida de
-corriente o a otras circunstancias en el transcurso normal de
-ejecución) en el sistema al que tiene acceso, se efectúa dentro de
-archivos; el espacio libre en los diferentes dispositivos no tiene
-mayor existencia fuera de saber que está /potencialmente/ disponible.
+de almacenamiento: Todo el almacenamiento /persistente/ (que sobrevive
+en el tiempo, sea a reinicios del sistema, a pérdida de corriente o a
+otras circunstancias en el transcurso normal de ejecución) en el
+sistema al que tiene acceso, se efectúa dentro de archivos; el espacio
+libre en los diferentes dispositivos no tiene mayor existencia fuera
+de saber que está /potencialmente/ disponible.
 
 Dentro de cada /volúmen/ (cada medio de almacenamiento), los archivos
 disponibles conforman a un /directorio/, y son típicamente
@@ -89,7 +90,7 @@ acerca de las diferentes construcciones semánticas que pueden
 conformar a los directorios.
 
 ** Operaciones con archivos
-#<<operaciones_con_archivos>>
+#<<FS_operaciones_con_archivos>>
 
 Cada sistema operativo definirá la interfaz de archivos acorde con su
 semántica, pero en líneas generales, las operaciones que siempre
@@ -396,7 +397,7 @@ reconozca al tipo de un archivo:
      discusión, la técnica base es la misma.
 
 ** Estructura de los archivos y métodos de acceso
-# <<archivos_estructurados>>
+# <<FS_archivos_estructurados>>
 La razón principal de la existencia del sistema de archivos son /los
 archivos/. Un archivo almacena información de /algún tipo/,
 estructurado o no estructurado.
@@ -446,10 +447,11 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
 - Acceso secuencial :: Mantiene la semántica por medio de la cual
      pudiéramos leer de nuestros archivos fuera la equivalente a
-     unidad de cinta que mencionamos en la sección [[#operaciones_con_archivos][Operaciones con
-     archivos]]: El mecanismo principal para leer o escribir es ir
-     avanzando consecutivamente por los bloques que conforman al
-     archivo hasta llegar a su final.
+     unidad de cinta que mencionamos en la sección
+     \ref{FS_operaciones_con_archivos} (/Operaciones con archivos/):
+     El mecanismo principal para leer o escribir es ir avanzando
+     consecutivamente por los bloques que conforman al archivo hasta
+     llegar a su final.
 
      Típicamente emplearemos este mecanismo de lectura para leer a
      memoria código (programas o bibliotecas) o documentos, sea
@@ -550,7 +552,6 @@ vez de una lectura, la operación que efectuamos fue una de escritura
 memoria (o fue leído hace mucho, y puede haber sido expirado del
 caché), el sistema tendrá que leerlo nuevamente, modificarlo en
 memoria, y volver a guardarlo a disco.
-
 
 * Organización de archivos
 
@@ -736,8 +737,8 @@ dirigidos por medio de dos mecanismos:
 
   2. No pueden hacerse ligas duras a directorios, sólo a archivos[fn::
      Formalmente, puede haberlas, pero sólo el administrador puede
-     crearlas; detallaremos el por qué al hablar de [[#dir_traversal][recorrer los
-     directorios]]]
+     crearlas; detallaremos el por qué al hablar de recorrer los
+     directorios (sección \ref{FS_dir_traversal}).]
 
 - Liga simbólica :: Es un archivo /especial/, que meramente indica a
                     dónde apunta. El encargado de seguir este archivo
@@ -805,7 +806,7 @@ mismo directorio donde están contentidas) como las entradas =..= (al
 apuntar al directorio padre) crean ciclos.
 
 ** Operaciones con directorios
-# <<oper_dirs>>
+# <<FS_oper_dirs>>
 Al igual que los archivos, los directorios tienen una semántica
 básica de acceso. Los directorios resultan también tipos de datos
 abstractos con algunas operaciones definidas — Y como veremos, muchas
@@ -873,7 +874,7 @@ a presentar son:
      funciones de manejo de archivos.
 
 *** Recorriendo los directorios
-# <<#dir_traversal>>
+# <<FS_dir_traversal>>
 
 Es frecuente requerir aplicar una operación a todos los archivos
 dentro de cierto directorio — Por ejemplo, si queremos agrupar a un
@@ -884,7 +885,7 @@ directorio, incluyendo las de sus subdirectorios, se denomina
 
 Si estamos trabajando en un sistema de archivos plano, la operación de
 recorrido completo puede realizarse con un programa tan simple como el
-que presentamos en [[#oper_dirs][la sección anterior]].
+que presentamos en la sección anterior.
 
 Al hablar de un sistema de profundidad fija, e incluso de un
 directorio estructurado en árbol, la lógica se complica levemente,
@@ -1238,7 +1239,7 @@ requisito de operar sobre /archivos completos/ harían impracticable
 compartir un archivo de uso intensivo y aleatorio.
 
 * Plasmando la estructura en el dispositivo
-# <<estructura_en_dispositivo>>
+# <<FS_estructura_en_dispositivo>>
 Hasta ahora, hemos visto a los elementos del sistema de archivos tal
 como son presentados al usuario final, sin entrar en detalles respecto
 a cómo organiza toda esta información el sistema operativo en un
@@ -1258,11 +1259,11 @@ que guardan la información en un tipo particular de memoria.
 
 Los sistemas de archivo están en general desarrollados pensando en
 /discos/, y a lo largo de esta sección, nos referiremos como /el
-disco/ al medio de almacenamiento persistente en el cual esté
-plasmado el sistema de archivos. Hacia el final de la sección
-abordaremos algunos de los aspectos que debemos considerar al hablar
-de sistemas de archivos respaldados en medios distintos a un
-disco.
+disco/ al medio de almacenamiento persistente en el cual esté plasmado
+el sistema de archivos. Más adelante, en la sección
+\ref{FS_medio_fisico}, abordaremos algunos de los aspectos que debemos
+considerar al hablar de sistemas de archivos respaldados en medios
+distintos a un disco.
 
 Mientras tanto, mantengamos una visión aún bastante idealizada y
 abstracta: Asumamos que un /disco/ es visto por el sistema operativo
@@ -1389,8 +1390,8 @@ bytes) es establecido por el hardware. Es muy común que, tanto por
 razones de eficiencia como para alcanzar a direccionar mayor espacio,
 el sistema de archivos /agrupe/ a varios bloques físicos en un bloque
 lógico. Veremos más acerca de qué factores determinan su tamaño de
-bloques cada sistema de archivos en la siguiente sección, al hablar de
-[[#el_directorio][el directorio]].
+bloques cada sistema de archivos en la sección \ref{FS_el_directorio},
+al hablar de el directorio.
 
 Dado que describir al volumen es la más fundamental de las
 operaciones que podamos realizar, muchos sistemas de archivos
@@ -1443,7 +1444,7 @@ abstracción de los sistemas de archivos:
                     se presta para discusión e investigación.
 
 ** El directorio y los i-nodos
-# <<el_directorio>>
+# <<FS_el_directorio>>
 
 El directorio es la estructura que relaciona a los archivos como son
 presentados al usuario –identificados por una ruta y un nombre– con
@@ -1610,15 +1611,16 @@ archivo, éste no se borra del directorio, ni su información se libera
 de la tabla de asignación de archivos, sino que se /marca/ para ser
 ignorado, reemplazando el primer caracter de su nombre por =0xE5=. Ni
 la entrada de directorio, ni la /cadena/ de clusters correspondiente
-en las tablas de asignación,[fn:: Abordaremos este tema en breve, al
-hablar de [[#tablas_fat][las tablas de asignación de archivos]]] son eliminadas — Sólo son marcadas como
-/disponibles/. El espacio de almacenamiento que el archivo eliminado
-ocupa debe, entonces, ser /sumado/ al espacio libre que tiene el
-volumen. Es apenas cuando se crea un nuevo archivo empleando esa misma
-entrada que el sistema operativo marca /realmente/ como desocupados
-los clusters en la tabla de asignación.[fn:: Pero, claro, estos
-clusters podrían mantenerse como ocupados /por el nuevo archivo/,
-ahorrando el trabajo de volver a asignarlos]
+en las tablas de asignación,[fn:: Abordaremos este tema en breve, en
+la sección \ref{FS_tablas_fat}, al hablar de las tablas de asignación
+de archivos] son eliminadas — Sólo son marcadas como /disponibles/. El
+espacio de almacenamiento que el archivo eliminado ocupa debe,
+entonces, ser /sumado/ al espacio libre que tiene el volumen. Es
+apenas cuando se crea un nuevo archivo empleando esa misma entrada que
+el sistema operativo marca /realmente/ como desocupados los clusters
+en la tabla de asignación.[fn:: Pero, claro, estos clusters podrían
+mantenerse como ocupados /por el nuevo archivo/, ahorrando el trabajo
+de volver a asignarlos]
 
 Es por esto que desde los primeros días de las PC existen tantas
 herramientas de recuperación (o /des-borramiento/) de archivos:
@@ -1813,7 +1815,7 @@ los metadatos ocupan 224 bytes, dejando espacio para 100 apuntadores:
   los clusters nos significarían hasta 16516 accesos a disco.
 
 ** Las tablas en FAT
-# <<tablas_fat>>
+# <<FS_tablas_fat>>
 
 Volvamos al caso que estamos tomando como ejemplo, el sistema de
 archivos FAT. En este sistema, cada entrada del directorio apunta al
@@ -1863,7 +1865,8 @@ Cuando revisamos el formato del directorio de FAT omitimos un detalle
 importante: Revisamos sólamente el directorio raiz, y no mencionamos
 cómo es que se implementan los subdirectorios. Los subdirectorios en
 FAT son archivos de un /tipo/ especial — Podemos verlos como una
-suerte de [[#archivos_estructurados][archivos estructurados]], gestionados por el sistema
+suerte de archivos estructurados (ver sección
+\ref{FS_archivos_estructurados}), gestionados por el sistema
 operativo. Lo único que distingue a un directorio de un archivo normal
 es que, en la entrada que lo describe en su directorio padre, el byte
 de /atributos/ (=0x0B=) tiene activado el quinto bit.
@@ -1970,7 +1973,6 @@ de mantenimiento para volver a un rango operacional.
 # En FAT32, se agrega espacio para acelerar algunas tareas del
 # sistema, como el cálculo del espacio disponible.
 
-
 * Fallos y recuperación
 
 El sistema de archivos en el cual estamos estamos basando nuestros
@@ -2021,16 +2023,17 @@ En la década de los 1980 comenzaron a entrar a mercado los
 dominaban ya el mercado. Estos controladores, con buses tan disímiles
 como SCSI, IDE, o los más modernos, SAS y SATA, introdujeron muchos
 cambios que fueron disociando cada vez más al sistema operativo de la
-gestión física directa de los dispositivos; en la sección [[#medio_fisico][El medio
-físico]] abordaremos más a profundidad lo que esto ha significado para
-el desarrollo de sistemas de archivos y algoritmos relacionados. Sin
-embargo, en este tema, los /controladores inteligentes/ resultan
-relevantes porque, si bien antes el sistema operativo podía
-determinar con toda certeza si una operación se había realizado o no,
-hoy en día los controladores dan un /acuse de recibo/ a la
-información en el momento en que la colocan en el caché incorporado
-del dispositivo — En caso de un fallo de corriente, esta información
-puede no haber sido escrita por completo al disco.
+gestión física directa de los dispositivos; en la sección
+\ref{FS_medio_fisico} (/El medio físico/) abordaremos más a profundidad
+lo que esto ha significado para el desarrollo de sistemas de archivos
+y algoritmos relacionados. Sin embargo, en este tema, los
+/controladores inteligentes/ resultan relevantes porque, si bien antes
+el sistema operativo podía determinar con toda certeza si una
+operación se había realizado o no, hoy en día los controladores dan un
+/acuse de recibo/ a la información en el momento en que la colocan en
+el caché incorporado del dispositivo — En caso de un fallo de
+corriente, esta información puede no haber sido escrita por completo
+al disco.
 
 Recordemos que las operaciones con los metadatos que conforman al
 sistema de archivos no son atómicas. Por poner un ejemplo, crear un
@@ -2210,7 +2213,7 @@ alguna corrupción, sea por algún bug en la implementación, fallos en
 el medio físico, o factores similarmente poco frecuentes.
 
 ** Sistemas de archivos estructurados en bitácora (/log-structured file systems/)
-# <<log_structured>>
+# <<FS_log_structured>>
 Si llevamos el concepto del sistema de archivos con bitácora a su
 límite, y designamos a /la totalidad/ del espacio en el volumen como
 la bitácora, hablamos de un sistema de archivos /estructurado en
@@ -2258,13 +2261,14 @@ algunos de los cuales (como el de las /fotografías/) se han ido
 aplicando a sistemas de archivo estándar.
 
 Por otro lado, dado el fuerte crecimiento que están registrando los
-medios de almacenamiento de estado sólido (abordaremos [[#estado_solido][en breve]]
-algunas de sus características), y dado que estos sistemas aprovechan
-mejor varias de sus características, es probable que el interés en
-estos sistemas de archivos resurja.
+medios de almacenamiento de estado sólido (en la sección
+\ref{FS_estado_solido} abordaremos algunas de sus características), y
+dado que estos sistemas aprovechan mejor varias de sus
+características, es probable que el interés en estos sistemas de
+archivos resurja.
 
 * El medio físico
-# <<medio_fisico>>
+# <<FS_medio_fisico>>
 
 Hasta este punto, y siguiendo las prácticas a que la realidad de los
 últimos 40 años nos han acostumbrado, hemos empleado el término
@@ -2595,7 +2599,7 @@ planificación de acceso a disco.
 
 
 ** Almacenamiento en estado sólido
-# <<estado_solido>>
+# <<FS_estado_solido>>
 
 Desde hace cerca de una década va creciendo consistentemente el uso de
 medios de almacenamiento de /estado sólido/ — Esto es, medios sin
@@ -2765,11 +2769,11 @@ todos los medios de estado sólido es la de un /sistema de archivos
 estructurado en bitácora/. Aurora indica que hay varias operaciones
 que no pueden ser traducidas eficientemente a través de esta capa de
 emulación, y que seguramente permitirían un mucho mejor
-aprovechamiento del medio. Como mencionamos en la sección que describe
-los [[#log_structured][sistemas de archivo estructurados en bitácora]], si bien varios de
-estos sistemas de archivos han presentado implementaciones
-completamente utilizables, la falta de interés ha llevado a que muchos
-de estos proyectos sean abandonados.
+aprovechamiento del medio. Como mencionamos en la sección
+\ref{FS_log_structured} (/Sistemas de archivo estructurados en
+bitácora/), si bien varios de estos sistemas de archivos han
+presentado implementaciones completamente utilizables, la falta de
+interés ha llevado a que muchos de estos proyectos sean abandonados.
 
 En su [[http://lwn.net/Articles/528617/][artículo de 2012]], Neil Brown apunta a que Linux tiene una
 interfaz apta para hablar directamente con dispositivos de estado
@@ -2788,14 +2792,15 @@ espacio para investigación y desarrollo para los próximos años.
 
 * Manejo avanzado de volúmenes
 
-En la sección /[[#estructura_en_dispositivo][Plasmando la estructura en el dispositivo]]/ presentamos
-muy escuetamente al concepto de /volumen/. Mencionamos que un volumen
-/típicamente/ coincide con una partición, aunque no siempre es el
-caso — Y no profundizamos más al respecto. En esta sección
-describiremos uno de los mecanismos en que podemos combinar
-diferentes /dispositivos físicos/ en un sólo volumen, y cómo –bajo
-las diferentes modalidades que presentaremos– lleva a ganar en
-confiabilidad, rendimiento y espacio disponible.
+En la sección \ref{FS_estructura_en_dispositivo} (/Plasmando la
+estructura en el dispositivo/) presentamos muy escuetamente al
+concepto de /volumen/. Mencionamos que un volumen /típicamente/
+coincide con una partición, aunque no siempre es el caso — Y no
+profundizamos más al respecto. En esta sección describiremos uno de
+los mecanismos en que podemos combinar diferentes /dispositivos
+físicos/ en un sólo volumen, y cómo –bajo las diferentes modalidades
+que presentaremos– lleva a ganar en confiabilidad, rendimiento y
+espacio disponible.
 
 Abordaremos un esquema llamado /RAID/, /Arreglo Redundante de Discos
 Baratos/ (/Redundant Array of Inexpensive Disks/)[fn:: Ocasionalmente

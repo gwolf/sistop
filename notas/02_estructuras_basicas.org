@@ -2,6 +2,7 @@
 #+TITLE: Relación con el hardware: Estructuras y funciones básicas
 
 * Jerarquía de almacenamiento
+# <<HW>>
 
 Las computadoras que siguen la arquitectura /von Neumann/, esto es,
 prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
@@ -132,9 +133,9 @@ independientes de propósito limitado.
 
 El procesador no puede referirse directamente más información que la
 que forma parte del almacenamiento primario — Esto es, de la memoria
-RAM. Veremos a continuación, en las secciones de [[#interrupciones][interrupciones y
-excepciones]] y de [[#dma][acceso directo a memoria]], cómo es que se efectúan
-dichas referencias.
+RAM. Veremos a continuación, en las secciones \ref{HW_interrupciones}
+(/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
+memoria/), cómo es que se efectúan dichas referencias.
 
 ** Canales y puentes
 
@@ -214,7 +215,7 @@ un máximo de 127 unidades por canal, por lo cual la contención puede
 ser muy alta.
 
 ** Interrupciones y excepciones
-# <<interrupciones>>
+# <<HW_interrupciones>>
 
 La ejecución de los procesos podría seguir siempre linealmente,
 atendiendo a las instrucciones de los programas como fueron escritas,
@@ -272,7 +273,7 @@ multitareas) o indicando una condición de error (por ejemplo, una
 división sobre cero o un error leyendo de disco).
 
 ** Acceso directo a memoria (DMA)
-# <<dma>>
+# <<HW_dma>>
 
 La operación de dispositivos de entrada/salida puede ser altamente
 ineficiente. Cuando un proceso está en una sección /limitada por
@@ -461,9 +462,6 @@ exit_group(0)                           = ?
 #+end_src
 #+latex: }
 
-
-
-
 * Cuando dos cabezas piensan mejor que una
 ** Multiprocesamiento
 
@@ -477,12 +475,13 @@ más que eso, al grado de que rara vez empleamos el término
 /multiprogramación/, mucho más acorde a los equipos que empleamos día
 a día.], es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que abordaremos en esta sección, y la
-/multiprogramación/, de la cual hablamos en la sección de [[#multiprogramados][sistemas
-multiprogramados]] de la [[01_introduccion.org][introducción]]. Un sistema multiprogramado nos da
-la /ilusión/ de que está ejecutando varios procesos al mismo tiempo,
-pero en realidad está alternando entre los diversos procesos que
-compiten por su atención. Un sistema multiprocesador tiene la
-capacidad de estar atendiendo /simultáneamente/ a diversos procesos.
+/multiprogramación/, de la cual hablamos en la sección
+\ref{HW_multiprogramados} (/Sistemas multiprogramados/). Un sistema
+multiprogramado nos da la /ilusión/ de que está ejecutando varios
+procesos al mismo tiempo, pero en realidad está alternando entre los
+diversos procesos que compiten por su atención. Un sistema
+multiprocesador tiene la capacidad de estar atendiendo
+/simultáneamente/ a diversos procesos.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=210
@@ -927,15 +926,15 @@ en un receptor de radio.
 Actualmente se escucha mucho hablar de la virtualización como una
 herramienta para la consolidación de servicios, de gran ayuda para los
 administradores de sistemas. Este uso se refiere principalmente a lo
-que veremos en este apartado, así como en los dos siguientes,
-[[#paravirt][paravirtualización]] y [[#contenedores][contenedores]]. Y si bien este /zumbido/ de la
-virtualización se ha producido mayormente a partir del 2006-2007, no
-se trata de tecnologías o ideas novedosas — Existe desde fines de
-los 1960. Hasta hace algunos años, sin embargo, se mantenía dentro
-del ámbito de los servidores a gran escala, fuera del alcance de la
-mayor parte de los usuarios. Repasemos un poco la génesis de esta
-herramienta, para poder comprender mejor cómo opera y cómo se
-implementa.
+que veremos en este apartado, así como en las secciones
+\ref{HW_paravirt} (/Paravirtualización/) y \ref{HW_contenedores}
+(/Contenedores/). Y si bien este /zumbido/ de la virtualización se ha
+producido mayormente a partir del 2006-2007, no se trata de
+tecnologías o ideas novedosas — Existe desde fines de los 1960. Hasta
+hace algunos años, sin embargo, se mantenía dentro del ámbito de los
+servidores a gran escala, fuera del alcance de la mayor parte de los
+usuarios. Repasemos un poco la génesis de esta herramienta, para poder
+comprender mejor cómo opera y cómo se implementa.
 
 En 1964, IBM creó la primer /familia de computadoras/, la
 serie 360. Presentaron la entonces novedosa idea de que una
@@ -1081,7 +1080,7 @@ diseñado logre congelarse esperando respuesta del hardware (emulado),
 y mucho menos afectar a los demás huéspedes.
 
 ** Paravirtualización
-# <<paravirt>>
+# <<HW_paravirt>>
 
 La virtualización asistida por hardware, por conveniente que resulte,
 sigue presentando algunas desventajas:
@@ -1192,7 +1191,7 @@ ventajas de la paravirtualización, sobre entornos de virtualización
 asistida por hardware.
 
 ** Contenedores, o /virtualización a nivel sistema operativo/
-# <<contenedores>>
+# <<HW_contenedores>>
 
 Una estrategia completamente distinta para la creación de máquinas
 virtuales es la de /contenedores/. A diferencia de emulación,
@@ -1307,7 +1306,6 @@ recibidos, etcétera. Bajo un esquema de contenedores, una máquina
 virtual que no tiene trabajo se convierte sencillamente en un grupo
 de procesos /dormidos/, probables candidatos a ser /paginados/ a
 disco.
-
 
 * Otros recursos
 

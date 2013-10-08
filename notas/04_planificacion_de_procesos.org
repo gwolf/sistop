@@ -2,6 +2,7 @@
 #+TITLE: Planificación de procesos
 
 * Tipos de planificación
+# <<PLAN>>
 
 La /planificación de procesos/ se refiere a cómo determina el sistema
 operativo al órden en que irá cediendo el uso del procesador a los
@@ -214,8 +215,8 @@ Por ejemplo, si llegan a la cola de procesos listos:
 
 Si el tiempo que toma al sistema efectuar un cambio de contexto es de
 un /tick/, y la duración de cada /quantum/ es de 5 ticks, en un
-ordenamiento [[#Round%20Robin][de ronda]],[fn:: Claro está, veremos este ordenamiento en
-breve.]  tendríamos:
+ordenamiento de ronda,[fn:: Claro está, veremos este ordenamiento en
+breve, en la sección \ref{PLAN_RoundRobin}.] tendríamos:
 
 #+attr_latex: width=\textwidth
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
@@ -396,7 +397,7 @@ interactivo, sin embargo, al no requerir de hardware de apoyo (como
 un temporizador) sigue siendo ampliamente empleado.
 
 ** Ronda (/Round Robin/)
-# << Round Robin >>
+# << PLAN_RoundRobin >>
 
 El esquema /ronda/ busca dar una relación de respuesta buena tanto
 para procesos largos como para los cortos. La principal diferencia

@@ -4,6 +4,7 @@
 ## Revisa plática: Rob Pike: "Concurrency is not parallelism"
 
 * Concepto y estados de un proceso
+# <<PROC>>
 
 En un sistema multiprogramado o de tiempo compartido, un /proceso/ es
 la imagen en memoria de un programa, junto con la información
@@ -34,7 +35,7 @@ cómo y en qué órden hacer los cambios de proceso que nos brindan la
 ilusión de simultaneidad en la sección /[[./03_planificacion_de_procesos.org][Planificación de procesos]]/.
 
 ** Estados de un proceso
-# <<estados_de_un_proceso>>
+# <<PROC_estados_de_un_proceso>>
 
 Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
 de ejecución. Estos son:
@@ -269,7 +270,7 @@ se presenta compartición (o competencia) por estructuras entre
 entes independientes.
 
 ** Problemas clásicos de exclusión mutua y sincronización
-# <<problemas_clasicos>>
+# <<PROC_problemas_clasicos>>
 
 Enunciaremos a continuación algunos planteamientos que ilustran
 situaciones que se pueden resolver empleando un concepto llamado semáforo. Por ahora
@@ -528,11 +529,11 @@ dos veces el mismo asiento.
 
 Para señalizar la entrada a una sección crítica no podemos hacerlo
 desde el flujo susceptible a ser interrumpido[fn:: Veremos en la
-sección \ref{peterson} la /Solución de Peterson/, un mecanismo que
-permite estas interrupciones, aunque resta generalidad a la solución e
-incurre en costos de tiempo de cómputo muy elevados], tenemos que
-hacerlo a través de instrucciones de las que el planificador pueda
-/asegurar/ su atomicidad.
+sección \ref{PROC_peterson} la /Solución de Peterson/, un mecanismo
+que permite estas interrupciones, aunque resta generalidad a la
+solución e incurre en costos de tiempo de cómputo muy elevados],
+tenemos que hacerlo a través de instrucciones de las que el
+planificador pueda /asegurar/ su atomicidad.
 
 *** Bloqueos mutuos e inanición
 
@@ -992,7 +993,7 @@ int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
 *** La solución de Peterson
-# <<peterson>>
+# <<PROC_peterson>>
 
 Todas las soluciones que hemos discutido hasta el momento requieren de
 un sistema que ejecute a un nivel /inferior/ al de nuestro código —
@@ -1068,13 +1069,14 @@ esto resulta inevitable.
 
 ** Soluciones a los problemas clásicos
 
-A continuación presentamos /una forma/ de resolver [[#problemas_clasicos][los problemas
-propuestos]] anteriormente. Para todos estos problemas hay más de una
-solución válida. Algunos de estos problemas fueron
-originalmente planteados como justificación del desarrollo de las
-estructuras de control presentadas, y hay amplios cuerpos de
-bibliografía desarrollándolos, tanto tal como fueron planteados como con
-diversas modificaciones a sus premisas de resolución.
+A continuación presentamos /una forma/ de resolver los problemas
+propuestos anteriormente (sección \ref{PROC_problemas_clasicos}). Para
+todos estos problemas hay más de una solución válida. Algunos de estos
+problemas fueron originalmente planteados como justificación del
+desarrollo de las estructuras de control presentadas, y hay amplios
+cuerpos de bibliografía desarrollándolos, tanto tal como fueron
+planteados como con diversas modificaciones a sus premisas de
+resolución.
 
 Cabe mencionar que la resolución de la /cena de los filósofos/ y /los
 fumadores compulsivos/ fue realizada de modo que sea flexible,
@@ -2069,7 +2071,7 @@ procesos — y un programador poco cuidadoso podría de todos modos
 desencadenar la misma situación.
 
 *** Solicitud /de una vez/ (/one-shot/)
-# <<one-shot>>
+# <<PROC_one-shot>>
 
 Otro mecanismo de prevención de bloqueos sería que los recursos se
 otorguen exclusivamente a aquellos procesos que /no poseen ningún
@@ -2102,10 +2104,10 @@ Otro mecanismo de evasión es la asignación /jerárquica/ de
 recursos. Bajo este mecanismo, se asigna una prioridad o /nivel
 jerárquico/ a cada recurso o clase de recursos.[fn:: Incluso varios
 recursos distintos, o varias clases, pueden compartir prioridad,
-aunque esto dificultaría la programación. Podría verse a la [[#one-shot][solicitud
-de una vez]] como un caso extremo de asignación jerárquica con jerarquía
-plana] La condición básica es que, una vez que un proceso obtiene un
-recurso de determinado nivel, sólo puede solicitar recursos
+aunque esto dificultaría la programación. Podría verse a la /solicitud
+de una vez/ como un caso extremo de asignación jerárquica, con una
+jerarquía plana.] La condición básica es que, una vez que un proceso
+obtiene un recurso de determinado nivel, sólo puede solicitar recursos
 adicionales de niveles superiores. En caso de requerir dos
 dispositivos ubicados al mismo nivel, tiene que hacerse de forma
 atómica.
@@ -2372,7 +2374,7 @@ proceso, lo cual puede no ser sabido en el momento de su ejecución.
 
 
 ** Detección y recuperación de bloqueos
-# <<det_y_rec_bloq>>
+# <<PROC_det_y_rec_bloq>>
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
 situación de bloqueo que ya se presentó y de buscar la mejor manera de
@@ -2615,11 +2617,11 @@ notificar al usuario (evitando un bloqueo mutuo circular indefinido).
 Por otro lado, hay una gran cantidad de aplicaciones de monitoreo en
 espacio de usuario. Conociendo el funcionamiento esperable específico
 de determinados programas es posible construir aplicaciones que los
-monitoreen /de una forma inteligente/ y tomen acciones (ya sea
-alertar a los administradores o, como lo revisamos en la sección de
-[[#det_y_rec_bloq][detección y recuperación de bloqueos]], abortar -y posiblemente
-reiniciar- la ejecución de aquellos procesos que no puedan
-recuperarse).
+monitoreen /de una forma inteligente/ y tomen acciones (ya sea alertar
+a los administradores o, como lo revisamos en la sección
+\ref{PROC_det_y_rec_bloq} (/Detección y recuperación de bloqueos/),
+abortar -y posiblemente reiniciar- la ejecución de aquellos procesos
+que no puedan recuperarse).
 
 *** De avestruces, ingenieros y matemáticos
 

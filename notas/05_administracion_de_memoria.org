@@ -2,7 +2,7 @@
 #+TITLE: Administración de memoria
 
 * Funciones y operaciones del administrador de memoria
-
+# <<MEM>>
 El único espacio de almacenamiento que el procesador puede utilizar
 directamente, más allá de los registros (que si bien le son internos y
 sumamente rápidos, pero de capacidad muy escasa) es la memoria
@@ -185,7 +185,7 @@ de los procesadores líderes en el mercado es la cantidad de cache de
 primero y segundo nivel con que cuentan.
 
 ** El espacio en memoria de un proceso
-# <<espacio_en_memoria>>
+# <<MEM_espacio_en_memoria>>
 
 Cuando un sistema operativo inicia un proceso, no se limita a volcar
 el archivo ejecutable a memoria, sino que tiene que proveer la
@@ -395,7 +395,7 @@ La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
 
 *** Intercambio (/swap/) con el almacenamiento secundario
-# <<swap>>
+# <<MEM_swap>>
 
 Siguiendo de cierto modo la lógica requerida por la compactación
 encontramos los sistemas que utilizan /intercambio/ (/swap/) entre la
@@ -427,7 +427,7 @@ secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
 desuso conforme aumenta el tamaño de los procesos.
 
 * Segmentación
-# <<segmentacion>>
+# <<MEM_segmentacion>>
 
 Al desarrollar un programa, el programador no ve a la memoria como un
 sólo arreglo plano, en el que todas las direcciones son iguales (si
@@ -447,7 +447,8 @@ MMU.
 
 Una de las implementaciones más obvias y directas de un espacio de
 memoria segmentado es asignar un segmento distinto a cada una de las
-secciones mencionadas en la sección [[#espacio_en_memoria][espacio en memoria de un proceso]].
+secciones mencionadas en la sección \ref{MEM_espacio_en_memoria},
+/Espacio en memoria de un proceso/.
 
 La segmentación también ayuda a incrementar la /modularidad/ de un
 programa: Es muy común que las bibliotecas /ligadas dinámicamente/
@@ -472,7 +473,7 @@ no podrá introducir código ejecutable tan fácilmente — Tendría que
 cargarlo como un segmento adicional con los permisos correspondientes.
 
 ** Intercambio parcial
-# <<intercambio_parcial>>
+# <<MEM_intercambio_parcial>>
 
 Un uso muy común de la segmentación, particularmnete en los sistemas
 de los 1980s, era el de permitir que sólo /ciertas regiones/ de un
@@ -488,11 +489,11 @@ solicitud del proceso o por iniciativa del sistema operativo.
 
 *** Rendimiento
 
-En la [[#swap][sección donde presentamos el concepto de intercambio]] mencionamos
-que intercambiar un proceso completo resultaba demasaido caro. Cuando
-hablamos de un espacio de memoria segmentado, y muy particularmente
-cuando hablamos de bibliotecas de carga dinámica, la sobrecarga es
-mucho menor:
+En la sección \ref{MEM_swap}, donde presentamos el concepto de
+intercambio, mencionamos que intercambiar un proceso completo
+resultaba demasaido caro. Cuando hablamos de un espacio de memoria
+segmentado, y muy particularmente cuando hablamos de bibliotecas de
+carga dinámica, la sobrecarga es mucho menor:
 
 En primer término, podemos hablar de la cantidad de información que
 intercambiaremos: En un sistema que sólo maneja regiones contiguas de
@@ -581,7 +582,7 @@ proceso al detectarse la violación de tipo de acceso, sería un
 desperdicio injustificado de recursos.
 
 * Paginación
-# <<paginacion>>
+# <<MEM_paginacion>>
 
 La fragmentación externa y, por tanto, la necesidad de compactación
 pueden evitarse por completo empleando la /paginación/. Esta consiste
@@ -742,7 +743,7 @@ correspondiente dirección física hace fala consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
 *** El buffer de traducción adelantada (/TLB/)
-# <<tlb>>
+# <<MEM_tlb>>
 
 La salida obvia a este dilema es el uso de un caché. Sin embargo, más
 que un caché genérico, el MMU utiliza un caché especializado en el
@@ -949,14 +950,14 @@ por ejemplo, al refrirse a copias de bibliotecas de sistema.
 
 * Memoria virtual
 
-Varios de los aspectos mencionados en la [[#paginacion][sección de paginación]] van
-conformando a lo que conocemos como /memoria virtual/: Vimos ya que en
-un sistema que emplea paginación, un proceso no conoce su dirección en
-memoria relativa a otros procesos, sino que trabajan con una
-/idealización/ de la memoria, en la cual ocupan el espacio completo de
-direccionamiento, desde el cero hasta el límite lógico de la
-arquitectura, independientemente del tamaño físico de la memoria
-disponible.
+Varios de los aspectos mencionados en la sección \ref{MEM_paginacion}
+(/Paginación/) van conformando a lo que conocemos como /memoria
+virtual/: Vimos ya que en un sistema que emplea paginación, un proceso
+no conoce su dirección en memoria relativa a otros procesos, sino que
+trabajan con una /idealización/ de la memoria, en la cual ocupan el
+espacio completo de direccionamiento, desde el cero hasta el límite
+lógico de la arquitectura, independientemente del tamaño físico de la
+memoria disponible.
 
 Y si bien el modelo mencionado de paginación nos llevó a que los
 diferentes procesos pueden /compartir/ regiones de memoria y
@@ -977,23 +978,24 @@ automática y transparente/ por el sistema operativo. No hablaríamos
 de memoria virtual, por ejemplo, si un proceso pide explícitamente
 intercambiar determinadas páginas.
 
-Puesto de otra manera: Del mismo modo que la [[#segmentacion][segmentación]] permitió
-hacer mucho más cómodo y útil al [[#swap][intercambio]] a través del [[#intercambio_parcial][intercambio
-parcial]], permitiendo que continuara la ejecución del proceso incluso
-con ciertos segmentos /intercambiados/ (/swappeados/) a disco, la
-memoria virtual lo hace aún más conveniente al aumentar la
-/granularidad/ del intercambio: Ahora ya no sólo se enviarán a disco
-secciones lógicas completas del proceso (segmentos), sino que podrá
-hacerse página por página, aumentando muy fuertemente el rendimiento
-resultante. Veremos que, empleando memoria virtual, de cierto modo la
-memoria física se vuelve sólo una /proyección parcial/ de la memoria
-lógica, potencialmente mucho mayor a ésta.
+Puesto de otra manera: Del mismo modo que la segmentación (sección
+\ref{MEM_segmentacion}) permitió hacer mucho más cómodo y útil al
+intercambio (\ref{MEM_swap}) a través del intercambio parcial
+(\ref{MEM_intercambio_parcial}), permitiendo que continuara la
+ejecución del proceso incluso con ciertos segmentos /intercambiados/
+(/swappeados/) a disco, la memoria virtual lo hace aún más conveniente
+al aumentar la /granularidad/ del intercambio: Ahora ya no sólo se
+enviarán a disco secciones lógicas completas del proceso (segmentos),
+sino que podrá hacerse página por página, aumentando muy fuertemente
+el rendimiento resultante. Veremos que, empleando memoria virtual, de
+cierto modo la memoria física se vuelve sólo una /proyección parcial/
+de la memoria lógica, potencialmente mucho mayor a ésta.
 
 Técnicamente, cuando hablamos de memoria virtual, no nos referirmos ya
 a un /intercambiador/ (/swapper)/, sino que al /paginador/.
 
 ** Paginación sobre demanda
-# <<pag_sobre_demada>>
+# <<MEM_pag_sobre_demada>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
 Tomemos en cuenta que casi siempre tenemos /código durmiente/: Código
@@ -1023,12 +1025,13 @@ paginador /flojo/, las páginas que no sean requeridas nunca serán
 siquiera cargadas a memoria.
 
 La estructura empleada por el MMU para implementar un paginador flojo
-es muy parecida a la descrita al hablar del [[#tlb][buffer de tradución
-adelantada]]: La /tabla de páginas/ incluirá un /bit de validez/,
-indicando para cada página del proceso si está presente o no en
-memoria. Si el proceso intenta emplear una página que esté marcada
-como no válida, esto causa un fallo de página, que lleva a que el
-sistema operativo lo suspenda y traiga a memoria la página solicitada:
+es muy parecida a la descrita al hablar del buffer de tradución
+adelantada (sección \ref{MEM_tlb}): La /tabla de páginas/ incluirá un
+/bit de validez/, indicando para cada página del proceso si está
+presente o no en memoria. Si el proceso intenta emplear una página que
+esté marcada como no válida, esto causa un fallo de página, que lleva
+a que el sistema operativo lo suspenda y traiga a memoria la página
+solicitada:
 
 #+caption: Pasos que atraviesa la respuesta a un fallo de página
 #+attr_latex: width=0.6\textwidth
@@ -1107,7 +1110,7 @@ obligado a esperar por 8ms a que se resuelva un fallo de página,
 durante ese tiempo pueden seguirse ejecutando los demás procesos.
 
 *** Acomodo de las páginas en disco
-# <<acomodo_de_paginas>>
+# <<MEM_acomodo_de_paginas>>
 El cálculo recién presentado, además, asume que el acomodo de las
 páginas en disco es óptimo. Sin embargo, si para llegar a una página
 hay que resolver la dirección que ocupa en un sistema de archivos
@@ -1632,7 +1635,7 @@ esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
 termine con su tarea. Veremos este punto en breve, al hablar del
-[[#conjunto_activo][conjunto activo]]
+conjunto activo (sección \ref{MEM_conjunto_activo}).
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1739,7 +1742,7 @@ proceso con menor prioridad, al que esté causando más cantidad de
 fallos, o al que esté ocupando más memoria.
 
 *** Modelando el /conjunto activo/
-# <<conjunto_activo>>
+# <<MEM_conjunto_activo>>
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que estamos cayendo en una situación de hiperpaginación —
@@ -1806,9 +1809,9 @@ error es una vulnerabilidad esperando a ser descubierta].
 
 *** La /pila de llamadas/ (stack)
 
-Recordando lo mencionado en la sección en que presentamos al [[#espacio_en_memoria][espacio
-en memoria de un proceso]], profundicemos un poco en cómo está
-estructurada la /pila de llamadas/ (/stack/).
+Recordando lo mencionado en la sección \ref{MEM_espacio_en_memoria},
+en que presentamos al espacio en memoria de un proceso, profundicemos
+un poco en cómo está estructurada la /pila de llamadas/ (/stack/).
 
 El /stack/ es el mecanismo que brinda un sentido local a la
 representación del código estructurado. Está dividido en /marcos/ (sin

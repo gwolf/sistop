@@ -55,6 +55,7 @@ de ejecución. Estos son:
                a la espera de ser /limpiadas/ por el sistema operativo
 
 #+attr_latex: width=0.4\textwidth
+#+label: PROC_estados_proceso
 #+caption: Diagrama de transición entre los estados de un proceso
 [[./img/dot/estados_proceso.png]]
 
@@ -180,6 +181,7 @@ un /equipo de trabajo/):
      notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
 
      #+attr_latex: width=0.4\textwidth
+     #+label: PROC_jefe_trabajador
      #+caption: Patrón de hilos jefe/trabajador
      [[./img/dot/jefe_trabajador.png]]
 
@@ -205,6 +207,7 @@ un /equipo de trabajo/):
      ejecución lineal.
 
      #+attr_latex: width=0.5\textwidth
+     #+label: PROC_equipo_trab
      #+caption: Patrón de hilos /Equipo de trabajo/
      [[./img/dot/equipo_trab.png]]
 
@@ -228,6 +231,7 @@ un /equipo de trabajo/):
      completamente distintos.
 
      #+attr_latex: width=0.6\textwidth
+     #+label: PROC_linea_ensamblado
      #+caption: Patrón de hilos /Línea de ensamblado/
      [[./img/dot/linea_ensamblado.png]]
 
@@ -571,6 +575,7 @@ como si fuera atómica.
 
 #+attr_html: height="261"
 #+attr_latex: width=0.8\textwidth
+#+label: PROC_secc_crit
 #+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
 [[./img/gnuplot/secc_crit.png]]
 
@@ -1550,6 +1555,7 @@ asegurar el acceso concurrente a los datos en un sólo lugar.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+label: PROC_monitor
 #+caption: Vista esquemática de un monitor. No es ya un conjunto de procedimientos aislados, sino que una abstracción que permite realizar únicamente las operaciones públicas sobre datos encapsulados. (Silberschatz, p.239)
 [[./img/monitor.png]]
 
@@ -1943,6 +1949,7 @@ secuencia:
    otro proceso (o queda en espera)
 
 #+attr_latex: width=0.5\textwidth
+#+label: PROC_bloqueo_mutuo_simple
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 [[./img/dot/bloqueo_mutuo_simple.png]]
 
@@ -1961,6 +1968,7 @@ que las que controlan más la asignación de recursos,
 /conservadoras/.
 
 #+attr_latex: width=\textwidth
+#+label: PROC_deadlocks_conserv_lib
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[./img/dot/deadlocks_conserv_lib.png]]
 
@@ -2146,13 +2154,12 @@ planificador puede marcar qué órden de ejecución (esto es, qué
 
 #+attr_html: height="350"
 #+attr_latex: width=0.7\textwidth
+#+label: PROC_tray_proc_evasion_bloqueo
 #+caption: Evasión de bloqueos: Los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un plotter y una impresora, exponiéndose a bloqueo mutuo.
-
-# decía scanner, que es mejor como ejemplo, pero en la gráfica dice plotter
 [[./img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
 El análisis de la interacción entre dos procesos se representa como en
-la figura anterior; el avance es marcado en sentido horizontal para el
+la figura \ref{PROC_tray_proc_evasion_bloqueo}; el avance es marcado en sentido horizontal para el
 proceso $A$, o vertical para el proceso $B$; en un sistema
 multiprocesador, podría haber avance mutuo, y lo indicaríamos en
 diagonal.
@@ -2410,10 +2417,11 @@ los procesos involucrados estuvieran en espera mutua.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=373
+#+label: PROC_ciclo_no_bloqueo
 #+caption: Al emplear categorías de recursos, un ciclo /no necesariamente/ indica un bloqueo
 [[./img/ciclo_no_bloqueo.png]]
 
-En la figura presentada, si bien $P_1$ y $P_2$ están esperando que se
+En la figura \ref{PROC_ciclo_no_bloqueo}, si bien $P_1$ y $P_2$ están esperando que se
 liberen recursos de tipo $R_1$ y $R_2$, $P_3$ y $P_4$ siguen operando
 normalmente, y es esperable que lleguen a liberar el recurso por el
 cual están esperando. En el caso ilustrado, dado que el bloqueo se
@@ -2424,6 +2432,7 @@ una situación de espera circular, como la ilustrada a continuación.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=267
+#+label: PROC_bloqueo_con_categorias
 #+caption: Situación en que se presenta espera circular, incluso empleando categorías de recursos
 [[./img/bloqueo_con_categorias.png]]
 
@@ -2447,6 +2456,7 @@ sistema /en un momento dado/):
   constituyen la serie de procesos interbloqueados de la gráfica.
 
 #+attr_latex: width=0.7\textwidth
+#+label: PROC_deteccion_bloqueos
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
 [[./img/dot/deteccion_bloqueos.png]]
 
@@ -2463,6 +2473,7 @@ recursos /4/, /5/ y /7/.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
+#+label: PROC_deteccion_bloqueos_2
 #+caption: Detección de bloqueos: Proceso de reducción en un grafo de procesos y recursos, manejando clases de recursos
 [[./img/deteccion_bloqueos_2.png]]
 

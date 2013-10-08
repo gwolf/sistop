@@ -25,6 +25,7 @@ información es comprendida por los niveles más altos — Por los
 programas en espacio de usuario.
 
 #+attr_latex: height=0.5\textheight
+#+label: FS_capas_acceso_a_discos
 #+caption: Capas de abstracción para implementar los sistemas de archivos
 [[./img/dot/capas_acceso_a_discos.png]]
 
@@ -43,11 +44,11 @@ uniforme. Por último, los archivos son una estructura meramente lógica
 orientado a bloques/ como los diversos tipos de unidades que conocemos
 –aunque esta nomenclatura es a veces incorrecta– como /discos/.
 
-Del diagrama presentado, pues, toca al objeto de nuestro estudio –el
-sistema operativo– recibir del espacio de usuario las llamadas al
-sistema que presentan la interfaz de archivos y directorios, integrar
-el sistema de archivos virtual, y traducir la información resultante a
-un sistema de archivos.
+Del diagrama presentado en la figura \ref{FS_capas_acceso_a_discos},
+toca al objeto de nuestro estudio –el sistema operativo– recibir del
+espacio de usuario las llamadas al sistema que presentan la interfaz
+de archivos y directorios, integrar el sistema de archivos virtual, y
+traducir la información resultante a un sistema de archivos.
 
 Cabe mencionar que varias de las capas aquí presentadas podrían
 perfectamente ser subdivididas, analizadas por separado, e incluso
@@ -463,6 +464,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      para cada una de las búsquedas.
 
 #+attr_latex: width=\textwidth
+#+label: FS_acceso_secuencial
 #+caption: Archivo de acceso secuencial
 [[./img/ditaa/acceso_secuencial.png]]
 
@@ -484,6 +486,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      =registro= (=read(FD, *registro, 75)=).
 
 #+attr_latex: width=\textwidth
+#+label: FS_acceso_aleatorio
 #+caption: Archivo de acceso aleatorio
 [[./img/ditaa/acceso_aleatorio.png]]
 
@@ -527,6 +530,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      probable corrupción de datos.
 
 #+attr_latex: width=\textwidth
+#+label: FS_acceso_relativo_a_indice
 #+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
 [[./img/ditaa/acceso_relativo_a_indice.png]]
 
@@ -651,6 +655,7 @@ directorios derivados es un /UFD/ (/User File Directory/, /Directorio
 de Archivos de Usuario/).
 
 #+attr_latex: width=\textwidth
+#+label: FS_directorio_simple
 #+caption: Directorio simple, limitado a un sólo nivel de profundidad
 [[./img/dot/directorio_simple.png]]
 
@@ -675,6 +680,7 @@ sistema) estructure su información siguiendo criterios lógicos y
 piense en el espacio de almacenamiento como un espacio a largo plazo.
 
 #+attr_latex: width=\textwidth
+#+label: FS_directorio_arbol
 #+caption: Directorio estucturado en árbol
 [[./img/dot/directorio_arbol.png]]
 
@@ -703,12 +709,13 @@ sólo nodo raiz, y donde cada uno de los nodos tiene un sólo nodo
 padre, la semántica que ofrecen es en realidad un /superconjunto
 estricto/ de esta: La de un grafo dirigido.
 
-En un grafo dirigido, un mismo nodo puede tener varios directorios
+En un grafo dirigido como el presentado en la figura \ref{FS_directorio_DAG}, un mismo nodo puede tener varios directorios
 /padre/, permitiendo por ejemplo que un directorio de trabajo común
 sea parte del directorio personal de dos usuarios. Esto es, /el mismo
 objeto/ está presente en más de un punto del árbol.
 
 #+attr_latex: width=0.5\textwidth
+#+label: FS_directorio_DAG
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
 [[./img/dot/directorio_DAG.png]]
 
@@ -779,16 +786,18 @@ gráfica. Las ligas, podemos concluir, no son más empleadas por
 frecuentes, por lo cual se mantienen como conceptos empleados sólo por
 los /usuarios poderosos/.
 
-Ya con el conocimiento de las ligas, podemos presentar la figura
-anterior más apegada a la realidad: En los sistemas operativos (tanto
-Unix como Windows), todo directorio tiene dos entradas especiales:
-Los directorios =.= y =..=
+Ya con el conocimiento de las ligas, podemos reelaborar la figura
+\ref{FS_directorio_DAG} apegándonos más a la realidad: En los sistemas
+operativos (tanto Unix como Windows), todo directorio tiene dos
+entradas especiales: Los directorios =.= y =..=
 
 #+attr_latex: width=0.5\textwidth
+#+label: FS_directorio_DAG_completo
 #+caption: Directorio como un /grafo dirigido/, mostrando los /enlaces ocultos/ =.= y =..=
 [[./img/dot/directorio_DAG_completo.png]]
 
-En todos los directorios, =.= es una liga dura al mismo directorio, y
+Como podemos ver en la figura \ref{FS_directorio_DAG_completo_, en
+todos los directorios, =.= es una liga dura al mismo directorio, y
 =..= es una liga al directorio padre. Claro está, como sólo puede
 haber una liga =..=, un directorio que está enlazado desde dos lugares
 distintos del sistema de archivos sólo apunta hacia uno de ellos con
@@ -977,6 +986,7 @@ fuertemente algunos aspectos semánticos, por lo cual resultan poco
 comunes.]
 
 #+attr_latex: width=\textwidth
+#+label: FS_puntos_de_montaje
 #+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
 [[./img/dot/puntos_de_montaje.png]]
 
@@ -1008,6 +1018,7 @@ estar en otra ubicación, pero muchas aplicaciones dependen ya de este
 comportamiento y configuración específicos.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_montaje_windows
 #+caption: Vista de un sistema de archivos Windows
 [[./img/dot/montaje_windows.png]]
 
@@ -1493,6 +1504,7 @@ tantas generaciones como FAT, algunos de estos campos han cambiado
 substancialmente sus significados:
 
 #+attr_latex: width=\textwidth
+#+label: FS_entrada_directorio_fat
 #+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
 [[./img/ditaa/entrada_directorio_fat.png]]
 
@@ -1519,6 +1531,7 @@ directorio raiz ya no está ubicado en un espacio reservado, sino que
 como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
+#+label: FS_directorio_vfat
 #+caption: Entradas representando archivo con nombre largo bajo VFAT (Peter Clark)
 #+attr_html: width="652" height="331"
 #+attr_latex: width=\textwidth
@@ -1652,6 +1665,7 @@ directorio de FAT — La extensión del archivo y la dirección de su
 primer cluster.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_fs_asignacion_contigua
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
 [[./img/ditaa/fs_asignacion_contigua.png]]
 
@@ -1710,6 +1724,7 @@ de asignación es un mapa de los clusters, representando a cada uno por
 el espacio necesario para guardar un apuntador.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_fs_asignacion_ligada
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
 [[./img/ditaa/fs_asignacion_ligada.png]]
 
@@ -1756,6 +1771,7 @@ sobrecarga relativa disminuye, pero se mantiene siempre superior a la
 de la asignación indexada.
 
 #+attr_latex: width=0.9\textwidth
+#+label: FS_fs_asignacion_indexada
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
 [[./img/ditaa/fs_asignacion_indexada.png]]
 
@@ -1777,6 +1793,7 @@ implementación más común de este esquema es que, dependiendo del
 tamaño del archivo, se empleen apuntadores con los niveles de
 indirección que /vayan haciendo falta/.
 
+#+label: FS_fs_apuntadores_indirectos
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada cluster (con sólo tres cluster por lista)
 #+attr_latex: width=0.8\textwidth
 [[./img/dot/fs_apuntadores_indirectos.png]]
@@ -1857,6 +1874,7 @@ en el disco. Claro está, la tabla puede apuntar a varios clusters
 adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
+#+label: FS_tabla_fat
 #+caption: Ejemplo de entradas en la tabla de asignación de archivos ([[http://www.beginningtoseethelight.org/fat16/index.htm][Peter Clark]])
 #+attr_latex: width=\textwidth
 [[../img/tabla_fat.png]]
@@ -2011,6 +2029,7 @@ principales (que no las únicas) inconsistencias son:
      del usuario, inutilizado.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_inconsistencias_fat
 #+caption: Inconsistencias en un sistema de archivos tipo FAT
 [[./img/dot/inconsistencias_fat.png]]
 
@@ -2200,6 +2219,7 @@ esta manera, incluso si el archivo ya había sido registrado, puede
 volverse a registrar sin peligro.
 
 #+attr_latex: width=\textwidth
+#+label: FS_fs_journaling
 #+caption: Sistema de archivos con bitácora
 [[./img/dot/fs_journaling.png]]
 
@@ -2363,6 +2383,7 @@ alguna estructura en una región contigua.
 
 #+attr_html: height="451" width="625"
 #+attr_latex: width=0.8\textwidth
+#+label: FS_disco_duro
 #+caption: Coordenadas de un disco duro, presentando cada uno de sus sectores en C-H-S (Silberschatz, p.458)
 [[./img/disco_duro.png]]
 
@@ -2404,6 +2425,7 @@ comparar a los algoritmos en cuestión.
 
 
 #+attr_latex: width=0.9\textwidth
+#+label: FS_mov_cabeza_por_algoritmo
 #+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 53. Para SCAN, LOOK y C-SCAN, asumimos que iniciamos con la cabeza en dirección decreciente.
 [[./img/gnuplot/mov_cabeza_por_algoritmo.png]]
 
@@ -2562,6 +2584,7 @@ disco. Podemos ver el impacto de esto directamente en dos factores:
 
      #+attr_html: width="402" height="402"
      #+attr_latex: width=0.4\textwidth
+     #+label: FS_zone_bit_recording
      #+caption: Disco formateado bajo /densidad de bits por zona/, con más sectores por pista en las pistas exteriores. (Imagen: Wikipedia)
      [[./img/zone_bit_recording.png]]
 
@@ -2840,6 +2863,7 @@ movimiento de una sola cabeza, sino que habrá una cabeza independiente
 por cada uno de los discos que tengamos en el volumen.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_raid_0
 #+caption: Cinco discos organizados en RAID 0
 [[./img/dot/raid_0.png]]
 
@@ -2853,6 +2877,7 @@ transferencias mayores al tamaño de una franja provengan de más de un
 disco independiente.
 
 #+attr_latex: width=0.6\textwidth
+#+label: FS_franjas_raid_0
 #+caption: División de datos en /franjas/
 [[./img/ditaa/franjas_raid_0.png]]
 
@@ -2882,6 +2907,7 @@ las solicitudes de lectura para que se vayan repartiendo entre ambas
 unidades. La velocidad de escritura se ve levemente reducida, dado
 que hay que esperar a que ambos discos escriban la información.
 
+#+label: FS_raid_1
 #+caption: Dos discos organizados en RAID 1
 #+attr_latex: width=0.3\textwidth
 [[./img/dot/raid_1.png]]
@@ -2912,6 +2938,7 @@ hacerlo, la falla en un segundo disco resultará en la pérdida de toda
 la información).
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_franjas_raid_5
 #+caption: División de datos en /franjas/, con paridad, para RAID 5
 [[./img/ditaa/franjas_raid_5.png]]
 
@@ -2940,6 +2967,7 @@ que tienen que estar recalculando y /rellenando/ la información que
 provendría del disco dañado.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_raid_5
 #+caption: Cinco discos organizados en RAID 5
 [[./img/dot/raid_5.png]]
 
@@ -2969,6 +2997,7 @@ sea RAID por software, o a que el controlador sea de mayor costo por
 implementar mayor complejidad, en caso de ser hardware dedicado.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_raid_6
 #+caption: Cinco discos organizados en RAID 6
 [[./img/dot/raid_6.png]]
 
@@ -2992,6 +3021,7 @@ frecuentes que otras. Con mucho, la más popular es la de los niveles
 demasiado espacio.
 
 #+attr_latex: width=0.7\textwidth
+#+label: FS_raid_10
 #+caption: Seis discos organizados en RAID 1+0
 [[./img/dot/raid_10.png]]
 
@@ -3016,6 +3046,7 @@ que ocurre en caso de falla, resulta claro que el nivel de
 redundancia resulta mucho menor.
 
 #+attr_latex: width=0.65\textwidth
+#+label: FS_raid_01
 #+caption: Seis discos organizados en RAID 0+1
 [[./img/dot/raid_01.png]]
 

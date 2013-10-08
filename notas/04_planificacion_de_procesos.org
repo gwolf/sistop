@@ -30,6 +30,7 @@ Podemos hablar de tres tipos principales de planificación:
                    típicamente el usuario quien indica expresamente
                    qué procesos iniciar.
 
+		   #+label: PLAN_planificador_largo_plazo
 		   #+caption: Planificador a largo plazo
 		   #+attr_html: height="281"
 		   #+attr_latex: width=0.3\textwidth
@@ -47,6 +48,7 @@ Podemos hablar de tres tipos principales de planificación:
      En algunos textos, al /planificador a mediano plazo/ se le llama
      /agendador/ (/scheduler/).
 
+     #+label: PLAN_planificador_mediano_plazo
      #+caption: Planificador a mediano plazo, o /agendador/
      #+attr_html: height="412"
      #+attr_latex: width=0.7\textwidth
@@ -64,6 +66,7 @@ Podemos hablar de tres tipos principales de planificación:
 		   En algunos textos, al /planificador a corto plazo/
                    se le llama /despachador/ (/dispatcher/).
 
+		   #+label: PLAN_planificador_corto_plazo
 		   #+caption: Planificador a corto plazo, o /despachador/
 		   #+attr_html: height="252"
 		   #+attr_latex: width=0.5\textwidth
@@ -71,10 +74,12 @@ Podemos hablar de tres tipos principales de planificación:
 
 Relacionando con los [[03_administracion_de_procesos.org#estados_de_un_proceso][estados de un proceso]] que abordamos en el
 capítulo \ref{PROC} (/Administración de procesos/), y volviendo al
-diagrama entonces presentado, podríamos ubicar a estos tres
+diagrama entonces presentado (reproducido aquí por comodidad como
+figura \ref{PLAN_estados_proceso}), podríamos ubicar a estos tres
 planificadores en las siguientes transiciones entre estados:
 
 #+attr_latex: width=0.4\textwidth
+#+label: PLAN_estados_proceso
 #+caption: Diagrama de transición entre los estados de un proceso
 [[./img/dot/estados_proceso.png]]
 
@@ -219,6 +224,7 @@ ordenamiento de ronda,[fn:: Claro está, veremos este ordenamiento en
 breve, en la sección \ref{PLAN_RoundRobin}.] tendríamos:
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planificador
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
 [[./img/ditaa/planificador.png]]
 
@@ -377,6 +383,7 @@ Consideremos los siguientes procesos: (Finkel 1988, p.35)
 | Promedio |           |   4 |        |     | 6.2 | 2.2 | 1.74 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_fcfs
 #+caption: Primero llegado, primero servido (FCFS)
 [[./img/ditaa/planif_fcfs.png]]
 
@@ -425,6 +432,7 @@ los cambios de contexto), obtendríamos los siguientes resultados:
 | Promedio |           |   4 |        |     | 7.6 | 3.6 | 1.98 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_rr1
 #+caption: Ronda (/Round Robin/)
 [[./img/ditaa/planif_rr1.png]]
 
@@ -461,6 +469,7 @@ un /quantum/ de 4 /ticks/, tendremos:
 | Promedio |           |   4 |        |     | 7.2 | 3.2 | 1.88 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_rr4
 #+caption: Ronda (/Round Robin/), con $q=4$
 [[./img/ditaa/planif_rr4.png]]
 
@@ -511,6 +520,7 @@ ejecución).
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: width="510" height="280"
+#+label: PLAN_promedio_exponencial
 #+caption: Promedio exponencial (predicción de próxima solicitud de tiempo) de un proceso. (Silberschatz, p.183)
 [[./img/promedio_exponencial.png]]
 
@@ -530,6 +540,7 @@ siguiente resultado:
 | Promedio |           |   4 |        |     | 5.6 | 1.6 | 1.32 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_spn
 #+caption: El proceso más corto a continuación (SPN)
 [[./img/ditaa/planif_spn.png]]
 
@@ -614,6 +625,7 @@ Veamos el comportamiento en nuestro ejemplo:
 | Promedio |           |   4 |        |     | 6.6 | 2.6 | 1.79 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_srr
 #+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
 [[./img/ditaa/planif_srr.png]]
 
@@ -666,6 +678,7 @@ ejecuta:
 | Promedio |           |   4 |        |     |   9 |   5 | 2.16 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_fb_bas
 #+caption: Retroalimentación multinivel (FB) básica
 [[./img/ditaa/planif_fb_bas.png]]
 
@@ -714,6 +727,7 @@ retroalimentación multinivel con un incremento exponencial al
 | Promedio |           |   4 |        |     | 7   | 3   | 1.8 |
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_planif_fb_exp
 #+caption: Retroalimentación multinivel (FB) con $q$ exponencial
 [[./img/ditaa/planif_fb_exp.png]]
 
@@ -876,16 +890,20 @@ puro/ — Normalmente se encuentra combinación de ellos, con diferentes
 parámetros según el nivel en el cual se está ejecutando.
 
 Raphael Finkel realizó estudios bajo diversas cargas de trabajo, e
-incluye en su texto las siguientes figuras comparando algunos
-aspectos importantes de los diferentes despachadores:
+incluye en su texto de 1988 las siguientes figuras que aquí
+reproducimos (\ref{PLAN_penalizaciones_por_algoritmo_planificador} y
+\ref{PLAN_tiempo_en_espera_por_algoritmo_planificador}) comparando
+algunos aspectos importantes de los diferentes despachadores:
 
 #+attr_html: height="483"
 #+attr_latex: width=0.7\textwidth
+#+label: PLAN_penalizaciones_por_algoritmo_planificador
 #+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
 [[./img/penalizaciones_por_algoritmo_planificador.png]]
 
 #+attr_html: height="490"
 #+attr_latex: width=0.7\textwidth
+#+label: PLAN_tiempo_en_espera_por_algoritmo_planificador
 #+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
 [[./img/tiempo_en_espera_por_algoritmo_planificador.png]]
 
@@ -944,6 +962,7 @@ principales de mapeo:
                   tiene la ejecución, éste se encarga de repartir el
                   tiempo entre sus hilos.
 
+		  #+label: PLAN_hilos_muchos_a_uno
 		  #+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 		  #+attr_html: height="160"
 		  #+attr_latex: width=0.3\textwidth
@@ -967,6 +986,7 @@ principales de mapeo:
                compartiendo su memoria, descriptores de archivos y
                demás estructuras.
 
+	       #+label: PLAN_hilos_uno_a_uno
 	       #+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 	       #+attr_html: height="161"
 	       #+attr_latex: width=0.3\textwidth
@@ -984,6 +1004,7 @@ principales de mapeo:
      de /hilos no unidos/ (/unbound threads/), de los cuales /uno o
      más/ estarán mapeados a cada LWP.
 
+     #+label: PLAN_hilos_muchos_a_muchos
      #+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
      #+attr_html: height="161"
      #+attr_latex: width=0.3\textwidth
@@ -1188,6 +1209,7 @@ estructura conocida como /pipeline/ (tubería):
 - Almacenamiento (Writeback, WB)
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_pipeline
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
 [[./img/ditaa/pipeline.png]]
 
@@ -1215,6 +1237,7 @@ utilización del procesador, siguiendo patrones como el ilustrado en
 el esquema.
 
 #+attr_latex: width=\textwidth
+#+label: PLAN_hyperthread
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
 [[./img/ditaa/hyperthread.png]]
 

@@ -120,6 +120,7 @@ procedería terminando la ejecución del proceso, reclamando todos los
 recursos que tuviera asignados y notificando a su usuario.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_mem_base_a_limite
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 [[./img/ditaa/mem_base_a_limite.png]]
 
@@ -169,6 +170,7 @@ referencia/:
 - Localidad secuencial :: Un recurso, y muy particularmente la
      memoria, tiende a ser requerido de forma secuencial.
 
+#+label: MEM_localidad_de_referencia
 #+caption: Patrones de acceso a memoria, demostrando la localidad espacial / temporal (Silberschatz, p.350)
 #+attr_html: width:"330"
 #+attr_latex: width=0.7\textwidth
@@ -220,6 +222,7 @@ relativa a su ejecución.
      hacia abajo/.
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_proceso_en_memoria
 #+caption: Regiones de la memoria para un proceso
 [[./img/ditaa/proceso_en_memoria.png]]
 
@@ -277,6 +280,7 @@ etiqueta relativa al módulo actual, /inicio/ + 5986 bytes, y es
 resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_tipo_resol_direcc
 #+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
 [[./img/dot/tipo_resol_direcc.png]]
 
@@ -388,6 +392,7 @@ ejecución para que ocupen espacios contiguos, permitiendo unificar
 varios bloques libres en uno solo.
 
 #+attr_latex: width=0.6\textwidth
+#+label: MEM_compactacion_memoria
 #+caption: Compactación de la memoria de procesos en ejecución
 [[./img/ditaa/compactacion_memoria.png]]
 
@@ -441,6 +446,7 @@ al descrito en el apartado anterior (registro base y
 desplazamiento). Claro está, esto debe también hacerse con apoyo del
 MMU.
 
+#+label: MEM_segmentacion_de_memoria
 #+caption: Ejemplo de segmentación
 #+attr_latex: width=0.7\textwidth
 [[./img/dot/segmentacion_de_memoria.png]]
@@ -615,6 +621,7 @@ separar la dirección en memoria entre los primeros $m$ bits
 desplazamiento).
 
 #+attr_latex: width=0.7\textwidth
+#+label: MEM_direccion_a_pag_y_despl
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 [[./img/ditaa/direccion_a_pag_y_despl.png]]
 
@@ -625,6 +632,7 @@ proceso) en la /dirección física/ (la ubicación en que /realmente/ se
 encuentra en la memoria del sistema).
 
 #+attr_latex: width=\textwidth
+#+label: MEM_hardware_de_paginacion
 #+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
 [[./img/dot/hardware_de_paginacion.png]]
 
@@ -637,6 +645,7 @@ dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_ejemplo_de_paginacion
 #+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
 [[./img/ditaa/ejemplo_de_paginacion.png]]
 
@@ -801,6 +810,7 @@ de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
 
+#+label: MEM_paginacion_jerarquica
 #+caption: Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
 #+attr_latex: width=0.8\textwidth
 [[./img/dot/paginacion_jerarquica.png]]
@@ -870,6 +880,7 @@ manejo de cifrado (=openssl=), compresión (=zlib=), imágenes
 (=libpng=, =libjpeg=), etc.].
 
 #+attr_latex: width=\textwidth
+#+label: MEM_memoria_compartida
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
 [[./img/ditaa/memoria_compartida.png]]
 
@@ -930,6 +941,7 @@ procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_cow_recien_hecho
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
 [[./img/ditaa/cow_recien_hecho.png]]
 
@@ -941,6 +953,7 @@ copia a un nuevo marco, y deja de ser una página compartida. El resto
 de las páginas seguirá siendo compartido.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_cow_pagina_modificada
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
 [[./img/ditaa/cow_pagina_modificada.png]]
 
@@ -969,6 +982,7 @@ a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
 disco duro), a través de un esquema de /intercambio/ (/swap/).
 
+#+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
 #+attr_latex: width=0.7\textwidth
 [[./img/dot/esquema_gral_mem_virtual.png]]
@@ -1033,6 +1047,7 @@ esté marcada como no válida, esto causa un fallo de página, que lleva
 a que el sistema operativo lo suspenda y traiga a memoria la página
 solicitada:
 
+#+label: MEM_respuesta_a_fallo_de_pagina
 #+caption: Pasos que atraviesa la respuesta a un fallo de página
 #+attr_latex: width=0.6\textwidth
 [[./img/dot/respuesta_a_fallo_de_pagina.png]]
@@ -1230,6 +1245,7 @@ aumenta la cantidad de fallos.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height=320
+#+label: MEM_anomalia_belady
 #+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
 [[./img/gnuplot/anomalia_belady.png]]
 
@@ -1261,6 +1277,7 @@ páginas de memoria (7, 0, 1) causarán fallos de página. La siguiente
 sin requerir una nueva transferencia.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_fifo
 #+caption: Algoritmo FIFO de reemplazo de páginas
 [[./img/ditaa/reemplazo_pag_fifo.png]]
 
@@ -1297,6 +1314,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo.
 
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_opt
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
 [[./img/ditaa/reemplazo_pag_opt.png]]
 
@@ -1324,6 +1342,7 @@ Cuando necesita elegir una página víctima, LRU elige la página que no
 ha sido empleada hace más tiempo
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_lru
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
 [[./img/ditaa/reemplazo_pag_lru.png]]
 
@@ -1723,6 +1742,7 @@ veces contradictorias. El procesador tiene que comenzar a ejecutar
 parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
+#+label: MEM_hiperpaginacion
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
@@ -1752,6 +1772,7 @@ conjunto de páginas a otro, o dicho de otro modo, que cambió el
 conjunto activo, el proceso accese de golpe una serie de páginas que
 no había tocado en cierto tiempo.
 
+#+label: MEM_conjunto_activo
 #+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
@@ -1891,6 +1912,7 @@ func:
 #+end_src
 
 #+attr_latex: width=0.85\textwidth
+#+label: MEM_stackframe
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 [[./img/ditaa/stackframe.png]]
 
@@ -1975,6 +1997,7 @@ intentar procesarlo, sino después de terminar de hacerlo: Al llegar
 nuestro código al =return 0=.
 
 #+attr_latex: width=0.8\textwidth
+#+label: MEM_overflow_500
 #+caption: Estado de la memoria después del =strcpy()=
 [[./img/ditaa/overflow_500.png]]
 
@@ -2050,6 +2073,7 @@ proporicione. Para esto, el ataque más frecuente es brincar /hacia
 adentro del stack/.
 
 #+attr_latex: width=0.7\textwidth
+#+label: MEM_overflow_jump
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[./img/ditaa/overflow_jump.png]]
 
@@ -2136,6 +2160,7 @@ basura, y el sistema podrá detener la ejecución del proceso
 comprometido antes de que brinde privilegios elevados al atacante.
 
 #+attr_latex: width=0.8\textwidth
+#+label: MEM_overflow_canary
 #+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
 [[./img/ditaa/overflow_canary.png]]
 

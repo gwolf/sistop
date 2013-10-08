@@ -34,6 +34,7 @@ Aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
 #+attr_latex: height=0.5\textheight
+#+label: HW_jerarquia_memoria
 #+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
 [[./img/dot/jerarquia_memoria.png]]
 
@@ -90,6 +91,7 @@ general.
 
 #+attr_html: width=444px
 #+attr_latex: width=0.6\textwidth
+#+label: HW_registros_8086
 #+caption: Ejemplo de registros: Intel 8086/8088 (Imagen de la Wikipedia: /Intel 8086 y 8088/)
 [[./img/registros_8086.png]]
 
@@ -155,6 +157,7 @@ características que determinan su topología.
 
 #+attr_html: height=618px
 #+attr_latex: width=0.5\textwidth
+#+label: HW_northbridge_southbridge
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
 [[./img/northbridge_southbridge.png]]
 
@@ -201,10 +204,11 @@ demás dispositivos desocupen el canal.
 
 #+attr_html: height=490px
 #+attr_latex: width=\textwidth
+#+label: chipset_857
 #+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
 [[./img/dot/chipset_857.png]]
 
-En la figura podemos ver el diseño general del chipset Intel 875,
+En la figura \ref{HW_chipset_857} podemos ver el diseño general del chipset Intel 875,
 introducido en el 2003, incluyendo el ancho de banda de cada uno de
 los canales del sistema. Hay que recordar que hay canales como el USB
 que permiten la conexión de múltiples dispositivos, los cuales
@@ -372,10 +376,12 @@ ligeramente distinto de otros.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="350"
+#+label: HW_llamando_syscall
 #+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
 [[./img/llamando_syscall.png]]
 
 #+attr_latex: width=\textwidth
+#+label: HW_llamada_al_sistema
 #+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
 [[./img/dot/llamada_al_sistema.png]]
 
@@ -485,10 +491,11 @@ multiprocesador tiene la capacidad de estar atendiendo
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=210
+#+label: HW_multiproceso_y_multiprogramacion
 #+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
 [[./img/ditaa/multiproceso_y_multiprogramacion.png]]
 
-En la figura presentada, el primer diagrama ilustra una ejecución
+En la figura \ref{HW_multiproceso_y_multiprogramacion}, el primer diagrama ilustra una ejecución
 estrictamente secuencial: Cada uno de los procesos que demandan
 atención del sistema es ejecutado hasta que termina; el segundo
 muestra cómo se comportaría un sistema multiprogramado, alternando
@@ -519,6 +526,7 @@ sólo.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=415
+#+label: HW_moore_orig
 #+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
 [[./img/moore_orig.png]]
 
@@ -534,6 +542,7 @@ prácticos, /paquetes/ con 2 o más procesadores dentro.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="512"
+#+label: HW_ley_de_moore
 #+caption: La /Ley de Moore/ se sostiene al día de hoy: Conteo de transistores por procesador de 1971 al 2012
 [[./img/gnuplot/ley_de_moore.png]]
 
@@ -809,6 +818,7 @@ hardware nativa).
 
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="600"
+#+label: HW_maquina_virtual_dotnet
 #+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
 [[./img/maquina_virtual_dotnet.png]]
 

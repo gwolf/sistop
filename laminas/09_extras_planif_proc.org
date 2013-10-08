@@ -121,7 +121,7 @@ proceso? Hay dos enfoques (categorización de hilos POSIX, =pthread=):
 #+BEGIN_CENTER
 El /ámbito de contención/ se refiere a cuál será la estructura dentro
 de la cual coexisten los hilos, y dentro de la cual cada hilo
-/contenderá/ por el procesador.
+/contenderá/ (competirá) por el procesador.
 #+END_CENTER
 
 ** Ámbitos de contención
@@ -152,8 +152,8 @@ modelos \rightarrow Tanto Linux como Windows manejan sólo
   de los hilos por separado (=pthread_setschedprio=)
 - Incluso solicitar el empleo de un algoritmo de planificación en
   específico (=sched_setscheduler=)
-- Recordemos que =pthreads= permite, en muchos casos, responder al
-  proceso /«Disculpa, no puedo hacer eso»/
+- ...Pero recordemos que =pthreads= permite, en muchos casos,
+  responder al proceso /«Disculpa, no puedo hacer eso»/
 
 
 * El despachador y el multiprocesamiento
@@ -177,6 +177,7 @@ modelos \rightarrow Tanto Linux como Windows manejan sólo
 - Esquema /comparable/ con el /HyperThreading/ de procesadores actuales
   - Aunque /HyperThreading/ busca aprovechar las diferentes fases del
     /pipeline/, que no existía en 1964
+- Hoy en día... Mera curiosidad histórica.
 
 ** Multiprocesamiento
 #+BEGIN_CENTER
@@ -357,6 +358,8 @@ descritos?
   notificará que no puede garantizárselo
   - Mensaje de error \rightarrow El proceso puede intentar continuar
     de todos modos /sin prioridad especial/
+  - O puede notificar al usuario, antes de haber gastado tiempo, que
+    no podrá realizar la operación exitosamente en tiempo.
 
 ** Tiempo real duro y suave
 - Tiempo real duro :: El sistema puede /dar garantía/ de que el
@@ -391,6 +394,10 @@ Puede implementarse con una modificación al esquema de
   se ejecuta repetidamente
   - Aunque puede indicar que ya terminó con su trabajo sensible a
       tiempo
+  - El SO podría entonces /reclasificar/ al proceso con una prioridad
+    normal
+
+** Retroalimentación multinivel y tiempo real suave
 - La prioridad de los demás procesos /nunca llegan a subir/ al nivel
   de tiempo real por un proceso automático
   - Aunque sí puede hacerse por una llamada explícita

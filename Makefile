@@ -33,14 +33,14 @@ pdf: fig
 
 libro_pdf:
 	[ ! -f $(libro) ] || rm -f $(libro)
-	echo '#+setupfile: ../setup_notas.org' > $(libro)
+	echo '#+options: toc:4 H:4' > $(libro)
+	echo '#+setupfile: ../setup_notas.org' >> $(libro)
 	echo '#+latex_class: book' >> $(libro)
 	echo '#+latex_header: \usepackage[T1]{fontenc}' >> $(libro)
 	echo '#+latex_header: \usepackage{mathpazo}' >> $(libro)
 	echo '#+latex_header: \linespread{1.05}' >> $(libro)
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
-	echo '#+options: toc:4' >> $(libro)
 	echo '#+title: Sistemas Operativos' >> $(libro)
 	echo '' >> $(libro)
 	for CAPITULO in notas/01_introduccion.org \
@@ -54,7 +54,8 @@ libro_pdf:
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
 	done
-	echo "#+latex: \listoftables" >> $(libro)
+	# No hay muchas tablas, este listado no tiene tanto sentido
+	# echo "#+latex: \listoftables" >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
 	# Si org-mode se queja de no tener definido "book" en
 	# org-export-latex-classes, referirse a

@@ -50,7 +50,7 @@ libro_pdf:
 			notas/05_administracion_de_memoria.org \
 			notas/06_sistemas_de_archivos.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
-		TITULO=`grep -i ^#+title: $$FILE | sed s/^.*://`; \
+		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
 	done

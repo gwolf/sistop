@@ -127,7 +127,7 @@ completamente y de forma transparente en espacio de usuario (sin
 involucrar al sistema operativo). Estos hilos se llaman /hilos de
 usuario/ (/user threads/), y muchos lenguajes de programación los
 denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
-es en sistemas operativos mínimos (p.ej. para dispositivos embebidos)
+es en sistemas operativos mínimos (p. ej. para dispositivos embebidos)
 capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
 si bien el sistema operativo no maneja multiprocesamiento, a través de
 los hilos de usuario sí podemos crear procesos con multitarea interna.
@@ -149,9 +149,9 @@ siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
 threads/). Esto se hace a través de bibliotecas de sistema que los implementan de
 forma estándar para los diferentes sistemas operativos
-(p.ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
+(p. ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
 arquitecturas. Estas bibliotecas aprovechan la comunicación con el
-sistema operativo tanto para solicitudes de recursos (p.ej. un proceso
+sistema operativo tanto para solicitudes de recursos (p. ej. un proceso
 basado en hilos puede beneficiarse de una ejecución verdaderamente
 paralela en sistemas multiprocesador) como para una gestión de
 recursos más comparable con una situación de multiproceso estándar.
@@ -188,7 +188,7 @@ un /equipo de trabajo/):
 - Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
      sobre diferentes datos. Este modelo es muy frecuentemente
-     utilizado para cálculos matemáticos (ej.: criptografía,
+     utilizado para cálculos matemáticos (p. ej.: criptografía,
      render). Puede combinarse con un estilo jefe/trabajador para irle
      dando al usuario una previsualización del resultado de su
      cálculo, dado que éste se irá ensamblando progresivamente, pedazo
@@ -1031,6 +1031,7 @@ Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
 determinada sección crítica, alternando entre su ejecución
 paralelizable y la ejecución de dicha sección, contando con las
 estructuras compartidas:
+# queda algo mal redactado en este parrafo anterior
 
 #+begin_src C
 int turno;
@@ -1664,13 +1665,13 @@ Esta implementación evita los bloqueos mutuos señalizando el estado de
 cada uno de los filósofos en el arreglo de variables =estado[]=.
 
 La lógica base de esta resolución marca en la verificación del estado
-propia y de los vecinos siempre que hay un cambio de estado: Cuando el
+propia y de los vecinos siempre que hay un cambio de estado: cuando el
 filósofo =i= llama a la función =toma_palillos(i)=, esta se limita a
 adquirir el mutex =M=, marcar su estado como =HAMBRIENTO=, y llamar a
 la función interna =actualiza(i)=. Del mismo modo, cuando el filósofo
 =i= termina de comer y llama a =suelta_palillos(i)=, esta función
-marca su estado como =PENSANDO= — E invoca a =actualiza()= dos veces:
-Una para el vecino izquierdo y una para el vecino derecho.
+marca su estado como =PENSANDO= e invoca a =actualiza()= dos veces:
+una para el vecino izquierdo y una para el vecino derecho.
 
 Es importante recalcar que, dado que esta solución está estructurada
 como un monitor, ni =actualiza()= ni las variables que determinan el
@@ -1680,7 +1681,7 @@ invocantes.
 La función =actualiza(i)= es la que se encarga de verificar (y
 modificar, de ser el caso) el estado no sólo del filósofo invocante,
 sino que de sus vecinos. La lógica de =actualiza()= permite resolver
-este problema abstrayendo (y eliminando) a los molestos palillos: En
+este problema abstrayendo (y eliminando) a los molestos palillos: en
 vez de preocuparse por cada palillo individual, =actualiza()= impide
 que dos filósofos vecinos estén =COMIENDO= al mismo tiempo, y dado que
 es invocada tanto cuando un filósofo =toma_palillos()= como cuando
@@ -1715,7 +1716,7 @@ int main() {
 Al ser una solución basada en monitor, el código que invoca a
 =filosofo(i)= no tiene que estar al pendiente del mecanismo de
 sincronización empleado, puede ser comprendido más fácilmente por un
-lector casual — y no brinda oportunidad para que un mal programador
+lector casual y no brinda oportunidad para que un mal programador
 haga mal uso del mecanismo de sincronización.
 
 *** Soluciones en hardware
@@ -1815,7 +1816,7 @@ problemática. Algunas maneras de lograrlo pueden ser:
      desperdiciando tiempo de procesador cada vez que un proceso está
      esperando al candado. Seguiría siendo necesaria la existencia de
      algoritmos para evitar situaciones de inanición. Esta instrucción
-     existe en algunos procesadores (ej. todos los sucesores del Intel i386) y es empleada hoy en día, pero su uso está limitado a las
+     existe en algunos procesadores (p. ej. todos los sucesores del Intel i386) y es empleada hoy en día, pero su uso está limitado a las
      estructuras que no pueden ser interrumpidas por ninguna razón,
      como las rutinas gestoras de interrupciones en el núcleo, y sólo
      se emplea para esperas que se sabe que serán muy cortas.
@@ -2401,7 +2402,7 @@ como grafos dirigidos, representamos:
 
   - Puede representarse como un círculo grande a una /clase/ o
     /categoría/ de recursos, y como círculos pequeños dentro de éste a
-    una /serie de recursos idénticos/ (p.ej. las diversas unidades de
+    una /serie de recursos idénticos/ (p. ej. las diversas unidades de
     cinta)
 
 - Las flechas que van de un recurso a un proceso indican que el

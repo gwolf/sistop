@@ -1020,18 +1020,17 @@ ofrece las construcciones antes descritas.
 Si podemos compartir estructuras de memoria entre los procesos
 implicados, podemos emplear la /solución de Peterson/. Esta implica
 que los procesos cooperen explícitamente, y que conozcan algunos datos
-que hemos mayormente obviado (como son, no sólo la cantidad de procesos que
-emplearán determinada sección crítica, sino una /numeración/ que
+que hemos mayormente obviado (como son no sólo la cantidad de procesos
+que emplearán determinada sección crítica, sino una /numeración/ que
 permita distinguir entre ellos). Cabe mencionar, como señala
 Silberschatz (p. 223), que algunos detalles de implementación de las
 computadoras actuales pueden impedir que este mecanismo funcione
 adecuadamente.
 
 Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-determinada sección crítica, alternando entre su ejecución
-paralelizable y la ejecución de dicha sección, contando con las
-estructuras compartidas:
-# queda algo mal redactado en este parrafo anterior
+entrar a determinada sección crítica, siempre que estos alternen entre
+el tiempo en que ejecutan código que puede proceder en paralelo, basta
+contar con las dos siguientes variables compartidas entre ellos:
 
 #+begin_src C
 int turno;
@@ -1716,7 +1715,7 @@ int main() {
 Al ser una solución basada en monitor, el código que invoca a
 =filosofo(i)= no tiene que estar al pendiente del mecanismo de
 sincronización empleado, puede ser comprendido más fácilmente por un
-lector casual y no brinda oportunidad para que un mal programador
+lector casual, y no brinda oportunidad para que un mal programador
 haga mal uso del mecanismo de sincronización.
 
 *** Soluciones en hardware

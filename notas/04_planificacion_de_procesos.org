@@ -1401,3 +1401,21 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
   referida, y en [[/biblio/Windows_Internals_sample_chapters.pdf][el sitio del curso]].
 - [[https://lwn.net/Articles/563185/][Optimizing preemption]], Jonathan Corbet, /Linux Weekly News/, agosto
   del 2013
+#
+# REVISAR:
+#
+# Menciona César que uno de los puntos que determina la prioridad de
+# los procesos es la razón por la cual se hacen llamadas al sistema:
+# Un proceso interactivo en espera lanzó llamadas al sistema
+# relacionadas con audio, video, red, teclado, etc. Un proceso no
+# interactivo fue suspendido por exceder su quantum, pero puede haber
+# otorgado la ejecución por sincronización/bloqueo/etc.
+#
+# Agregar a las notas:
+# - Planificador justo
+#   - Todos tienen la misma prioridad
+#   - Hay colas por categoría de proceso (p.ej. interactivo, video,
+#     CPU-intensivo, I/O)
+#   - Busca mantener un equilibrio entre cuántos quantums le dio a
+#     cada una de las colas
+# - Lotería

@@ -649,21 +649,43 @@ por tanto, su prioridad es muy alta).
 
 (/Multilevel Feedback/)
 
-Este mecanismo maneja no una, sino que varias colas de procesos
-listos, con diferentes niveles de prioridad $C_0$ a $C_n$. El
-despachador elige para su ejecución al proceso que esté al frente de
-la cola de mayor prioridad que tenga algún proceso esperando $C_i$, y
-tras un número predeterminado de ejecuciones, lo /degrada/ a la cola
-de prioridad inmediata inferior $C_{i+1}$.
+El mecanismo descrito en la sección anterior, la /ronda egoísta/,
+introdujo el concepto de tener no una sino que varias colas de
+procesos, que recibirán diferente tratamiento. Este mecanismo es muy
+poderoso, y se emplea en prácticamente todos los planificadores en uso
+hoy en día. Veamos brevemente, antes de abordar al esquema de
+retroalimentación multinivel, cómo opera un sistema con múltiples
+colas de prioridad.
 
-El mecanismos de retroalimentación multinivel favorece a los procesos
+#+attr_latex: width=0.6\textwidth
+#+label: PLAN_planif_multicolas
+#+caption: Representación de un sistema con cinco colas de prioridad y siete procesos listos
+[[./img/dot/planif_multicolas.png]]
+
+La figura \ref{PLAN_planif_multicolas} nos ilustra cómo se presentaría
+una situación bajo esta lógica: El sistema hipotético tiene cinco
+colas de prioridad, y siete procesos listos para ser puestos en
+ejecución. Puede haber colas vacías, como en este caso la 3. Dado que
+la cola de mayor prioridad es la 0, el planificador elegirá únicamente
+entre los procesos que están /formados/ en ella: $F$ o $C$. Sólo
+cuando estos procesos terminen (o sean enviados a alguna otra cola),
+el planificador continuará con aquellos que estén en las siguientes
+colas.
+
+La /retroalimentación multinivel/ basa su operación en más de una cola
+— Pero en este caso, todas ellas tendrán el mismo tratamiento
+/general/, distinguiéndose sólo por su nivel de /prioridad/, $C_0$ a
+$C_n$. El despachador elegirá para su ejecución al proceso que esté al
+frente de la cola de mayor prioridad que tenga algún proceso esperando
+$C_i$, y tras un número predeterminado de ejecuciones, lo /degrada/ a
+la cola de prioridad inmediata inferior $C_{i+1}$.
+
+El mecanismo de retroalimentación multinivel favorece a los procesos
 cortos, dado que terminarán sus tareas sin haber sido marcados como
 de prioridades inferiores.
 
 La ejecución del mismo juego de datos que hemos manejado bajo este
-esquema nos da. Mostramos sobre cada una de las líneas de proceso la
-prioridad de la cola en que se encuentra antes del /quantum/ en que se
-ejecuta:
+esquema nos da los siguientes resultados:
 
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
@@ -676,6 +698,11 @@ ejecuta:
 | E        |        12 |   5 |     12 |  20 |   8 |   3 |  1.6 |
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     |   9 |   5 | 2.04 |
+
+Dado que ahora tenemos que representar la cola en la que está cada uno
+de los procesos, en la figura \ref{PLAN_planif_fb_bas} presentamos
+sobre cada una de las líneas de proceso la prioridad de la cola en que
+se encuentra antes del /quantum/ en que se ejecuta:
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_fb_bas
@@ -751,7 +778,48 @@ servicio, puede /promoverse/ de nuevo a la cola $C_{P-1$} para que no
 sufra inanición.
 
 Hoy en día, muchos de los principales sistemas operativos operan bajo
-diferentes versiones de retroalimentación multinivel.
+diferentes versiones de retroalimentación multinivel, y típicamente
+con hasta decenas de colas.
+
+** Lotería
+
+Los mecanismos hasta aquí descritos vienen con largas décadas de
+desarrollo. Uno de los últimos algoritmos que ha sido ampliamente
+difundido en unirse a esta lista es el de /planificación por lotería/,
+publicado por [[http://www.waldspurger.org/carl/papers/lottery-osdi94.pdf][Carl Waldspurger y William Weihl (1994)]].
+
+Bajo el esquema de la /lotería/, cada proceso tiene un número
+determinado de boletos, y cada boleto le representa una oportunidad de
+jugar a la lotería. Cada vez que el planificador tiene que elegir el
+siguiente proceso a poner en ejecución, elige un número al azar[fn::
+Si bien operar un generador de números aleatorios en estricto sentido
+sería demasiado caro para un proceso que se ejecuta decenas o cientos
+de veces por segundo, para /jugar/ a la lotería es suficiente emplear
+un generador débil pseudoaleatorio. El artículo en que este mecanismo
+fue presentado presenta la implementación del algoritmo Park-Miller,
+$S' = (A \times S) mod (2^{31} - 1)$ con $A = 16807$, implementado en
+12 instrucciones de procesador RISC.], y otorga el siguiente quantum
+al proceso que tenga el boleto ganador. El boleto ganador /no es
+retirado/, esto es, la probabilidad de que determinado proceso sea
+puesto en ejecución no varía entre invocaciones sucesivas del
+planificador.
+
+Las prioridades pueden representarse en este esquema de forma muy
+sencilla: Un proceso al que se le quiere dar mayor prioridad
+simplemente tendrá más boletos; si el proceso $A$ tiene 20 boletos y
+el proceso $B$ tiene 60, será tres veces más probable que el siguiente
+turno toque a $B$ que a $A$.
+
+El esquema de planificación por lotería contempla que los procesos
+puedan cooperar entre sí: Si $B$ estuviera esperando un resultado de
+$A$, podría transferirle sus boletos para aumentar la probabilidad de
+que sea puesto en ejecución.
+
+A pesar de su simplicidad, el esquema de planificación por lotería
+resulta justo tanto a procesos cortos como a largos, y presenta una
+degradación muy suave incluso en entornos de saturación. Claro, al
+derivar de un proceso aleatorio, resulta imposible presentar una
+comparación de este mecanismo con los que abordamos previamente.
 
 ** Esquemas híbridos
 
@@ -763,19 +831,20 @@ es, si un proceso es tratado de distinta forma dependiendo de su
 historial de ejecución.
 
 #+caption: Caracterización de los mecanismos de planificación a corto plazo
-|---------------+-------------------------+-------------------|
-|               | *No considera*          | *Considera*       |
-|               | *intrínseca*            | *intrínseca*      |
-|---------------+-------------------------+-------------------|
-| *Cooperativa* | Primero llegado         | Proceso más       |
-|               | primero servido         | corto (SPN),      |
-|               | (FCFS)                  | Proceso más       |
-|               |                         | penalizado (HPRN) |
-|---------------+-------------------------+-------------------|
-| *Preventiva*  | Ronda (RR),             | Proceso más       |
-|               | Retroalimentación (FB), | corto preventivo  |
-|               | Ronda egoísta (SRR)     | (PSPN)            |
-|---------------+-------------------------+-------------------|
+|---------------+-----------------+-------------------------|
+|               | *No considera*  | *Considera*             |
+|               | *intrínseca*    | *intrínseca*            |
+|---------------+-----------------+-------------------------|
+| *Cooperativa* | Primero llegado | Proceso más             |
+|               | primero servido | corto (SPN),            |
+|               | (FCFS)          | Proceso más             |
+|               |                 | penalizado (HPRN)       |
+|---------------+-----------------+-------------------------|
+| *Preventiva*  | Ronda (RR)      | Proceso más corto       |
+|               |                 | preventivo (PSPN),      |
+|               |                 | Retroalimentación (FB), |
+|               |                 | Ronda egoísta (SRR)     |
+|---------------+-----------------+-------------------------|
 
 Ahora bien, estas características primarias pueden ser empleadas en
 conjunto, empleando diferentes algoritmos a diferentes niveles, o
@@ -889,23 +958,41 @@ muy poco común encontrar a ninguno de estos mecanismos en un /estado
 puro/ — Normalmente se encuentra combinación de ellos, con diferentes
 parámetros según el nivel en el cual se está ejecutando.
 
-Raphael Finkel realizó estudios bajo diversas cargas de trabajo, e
-incluye en su texto de 1988 las siguientes figuras que aquí
-reproducimos (\ref{PLAN_penalizaciones_por_algoritmo_planificador} y
-\ref{PLAN_tiempo_en_espera_por_algoritmo_planificador}) comparando
-algunos aspectos importantes de los diferentes despachadores:
+*** Rendimiento ante diferentes cargas de procesos
+
+Recordemos que, si bien presentamos una comparación de los diferentes
+algoritmos ante una determinada carga de procesos, no podemos asumir
+que su comportamiento será igual ante diferentes distribuciones: Un
+patrón de trabajo donde predominen los procesos cortos y haya unos
+pocos procesos largos probablemente se verá mucho más penalizado por
+un esquema SRR (y mucho más favorecido por un SPN o PSPN) que uno en
+el cual predominen los procesos largos.
 
 #+attr_html: height="483"
 #+attr_latex: width=0.7\textwidth
 #+label: PLAN_penalizaciones_por_algoritmo_planificador
-#+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
+#+caption: Proporción de penalización registrada por cada proceso contra el porcentaje del tiempo que éste requiere (Finkel, p.33)
 [[./img/penalizaciones_por_algoritmo_planificador.png]]
 
 #+attr_html: height="490"
 #+attr_latex: width=0.7\textwidth
 #+label: PLAN_tiempo_en_espera_por_algoritmo_planificador
-#+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
+#+caption: Tiempo /perdido/ contra porcentaje de tiempo requerido por proceso (Finkel, p.34)
 [[./img/tiempo_en_espera_por_algoritmo_planificador.png]]
+
+Raphael Finkel realizó estudios bajo diversas cargas de trabajo,
+buscando comparar de forma /significativa/ estos distintos
+mecanismos. Finkel simuló el comportamiento que estos algoritmos
+tendrían ante 50,000 procesos generados de forma aleatoria, siguiendo
+una distribución exponencial tanto en sus tiempos de llegada como
+duraciones en ejecución, y manteniendo como parámetro de equilibrio un
+nivel de saturación $\rho = 0.8 (\alpha = 0.8, \beta = 1.0)$,
+obteniendo como resultado las figuras que aquí reproducimos
+(\ref{PLAN_penalizaciones_por_algoritmo_planificador} y
+\ref{PLAN_tiempo_en_espera_por_algoritmo_planificador}) comparando
+algunos aspectos importantes de los diferentes despachadores.
+
+*** Duración mínima del /quantum/
 
 Observamos que la penalización por cambios de contexto en esquemas
 preventivos como la /ronda/ puede evitarse empleando /quantums/
@@ -931,11 +1018,12 @@ unidades funcionales. Podemos ver una evolución de esta idea retomada
 hacia mediados de la década del 2000 en los procesadores que manejan
 hilos de ejecución.[fn:: Aunque la arquitecura de la CDC6600 era
 /plenamente superescalar/, a diferencia de los procesadores
-/Hyperthreading/ en que para que dos instrucciones se ejecuten
-simultáneamente deben ser de naturalezas distintas, no requiriendo
-ambas de la misma /unidad funcional/ del CPU. El procesador de la
-CDC6600 no manejaba /pipelines/, sino que cada ejecución empleaba al
-CPU completo].
+/Hyperthreading/, que abordaremos brevemente en la sección
+\ref{PLAN_proc_hyperthread}, en que para que dos instrucciones se
+ejecuten simultáneamente deben ser de naturalezas distintas, no
+requiriendo ambas de la misma /unidad funcional/ del CPU. El
+procesador de la CDC6600 no manejaba /pipelines/, sino que cada
+ejecución empleaba al CPU completo].
 
 Esta arquitectura permitía tener multitarea real sin tener que
 realizar cambios de contexto, sin embargo, al tener un /nivel de
@@ -1184,6 +1272,7 @@ mucho más difícil mantener la afinidad a cierto procesador y restaría
 flexibilidad al sistema completo.
 
 ** Procesadores con soporte a /hilos hardware/ (/hyperthreading/)
+# <<PLAN_proc_hyperthread>>
 
 El término de /hilos/ como abstracción general de algo que corre con
 mayor frecuencia y dentro de un mismo proceso puede llevarnos a una
@@ -1288,20 +1377,27 @@ trabajará con restricciones de tiempo real.
 
 ** Tiempo real duro y suave
 
-Si un dispositivo genera periódicamente hasta determinada cantidad de
-información y la va colocando en un área determinada de memoria
-compartida, el proceso encargado de manejar dicha información
-declarará al sistema operativo cuánto tiempo de ejecución le
-tomará. Si el sistema operativo puede /garantizar/ que en ese tiempo
-le otorgará al proceso en cuestión, el proceso se ejecuta, y si no,
-recibe un error por medio del cual podrá alertar al usuario. Los
-sistemas en que el tiempo máximo es garantizable son conocidos como
-de /tiempo real duro/.
+Supongamos que un dispositivo genera periódicamente determinada
+cantidad de información y la va colocando en un área determinada de
+memoria compartida (en un /buffer/). Al inicializarse, su controlador
+declarará al sistema operativo cuánto tiempo de ejecución le tomará
+recoger y procesar dicha información, liberando el /buffer/ para el
+siguiente ciclo de escritura del dispositivo, y la frecuencia con que
+dicha operación tiene que ocurrir.
 
-La necesidad de atención en tiempo real puede manejarse periódica (por
-ejemplo, /requiero del procesador por 30ms cada segundo/), o por
-ocurrencia única (/necesito que este proceso, que me tomará 600ms,
-termine de ejecutarse en menos de 2s/).
+En un sistema capaz de operar con garantías de tiempo real, si el
+sistema operativo puede /garantizar/ que en ese intervalo le otorgará
+al proceso en cuestión suficiente tiempo para procesar esta
+información, el proceso se ejecuta; en caso contrario, recibe un error
+por medio del cual podrá alertar al usuario.
+
+Los sistemas en que el tiempo máximo es garantizable son conocidos
+como de /tiempo real duro/.
+
+La necesidad de atención en tiempo real puede manejarse /periódica/
+(por ejemplo, /requiero del procesador por 30ms cada segundo/), o
+/aperiódica/, por ocurrencia única (/necesito que este proceso, que me
+tomará 600ms, termine de ejecutarse en menos de 2s/).
 
 Realizar una reserva de recursos requiere que el planificador sepa con
 certeza cuánto tiempo toma realizar las tareas de sistema que
@@ -1313,14 +1409,14 @@ mantener las garantías de tiempo ofrecidas, por lo cual, en un
 sistema operativo de uso general /no es posible/ implementar tiempo
 real duro en dichos sistemas.
 
-Para solventar necesidades de este tipo en sistemas de uso general, el
+Para solventar necesidades como las expresadas en sistemas de uso general, el
 /tiempo real suave/ sigue requiriendo que los procesos críticos
 reciban un trato prioritario por encima de los processos comunes;
 agendar a un proceso con esta prioridad puede llevar a la inanición de
 procesos de menor prioridad y un comportamiento que bajo ciertas
-métricas resultaría /injusto/. Puede implementarse a través de un
-esquema similar al de la /retroalimentación multinivel/, con las
-siguientes particularidades:
+métricas resultaría /injusto/. Un esquema de tiempo real suave puede
+implementarse a través de un esquema similar al de la
+/retroalimentación multinivel/, con las siguientes particularidades:
 
 - La cola de tiempo real recibe prioridad sobre todas las demás colas
 - La prioridad de un proceso de tiempo real /no se degrada/ conforme

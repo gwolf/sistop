@@ -776,6 +776,11 @@ la probabilidad de que las regiones más empleadas de la memoria
 durante un área específica de ejecución del programa sean cubiertas
 por relativamente pocas entradas del TLB son muy altas.
 
+#+attr_latex: width=\textwidth
+#+label: MEM_paginacion_con_tlb
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
+[[./img/dot/paginacion_con_tlb.png]]
+
 Como sea, dado que el TLB es limitado, es necesario explicitar un
 mecanismo que indique dónde guardar las nuevas entradas una vez que el
 TLB está lleno y se produce un fallo de página. Uno de los esquemas

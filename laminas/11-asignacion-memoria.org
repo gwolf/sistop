@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Administración de memoria: Asignación de memoria
-#+DATE: 2013-10-22 — 2013-10-??
+#+DATE: 2013-10-22 — 2013-10-24
 * Memoria contigua
 
 ** Compartiendo la memoria desde...
@@ -270,7 +270,7 @@ Señales que indican necesidad de compactar
     la imagen en disco es idéntica a la imagen en memoria, el archivo
     es un volcado directo del segmento
 
-** Ejemplificando (Finkel, p.79)
+** Ejemplificando
 #+BEGIN_CENTER
 Si un proceso tiene la siguiente tabla de procesos, veamos la
 respuesta del MMU a diversas solicitudes
@@ -278,11 +278,11 @@ respuesta del MMU a diversas solicitudes
 #+END_CENTER
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-| 0        | 13426  | 26     | RWX      | sí       |
-| 1        | 2309   | 00     | R        | sí       |
-| 2        | 1000   | 23     | WX       | sí       |
-| 3        | -      | 95     | W        | no       |
-| 4        | 10000  | 100    | RWX      | sí       |
+|        0 |  15210 |    150 | RWX      | sí       |
+|        1 |   1401 |    100 | R        | sí       |
+|        2 |    965 |     96 | RX       | sí       |
+|        3 |      - |    184 | W        | no       |
+|        4 |  10000 |    320 | RWX      | sí       |
 
 #+BEGIN_CENTER
 #+latex: {\scriptsize
@@ -305,19 +305,19 @@ presente=no).
 - /Ojo/: Puede presentarse más de un evento a la vez. ¿Cómo debemos
   reaccionar ante ello?
 
-** Ejemplificando (Finkel, p.79)
+** Ejemplificando
 | Dirección | Tipo de | Dirección                               |
 |   virtual | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|       0-0 | R       | 13426                                   |
-|      2-17 | W       | 1017                                    |
-|      2-17 | R       | Atrapada: Violación de seguridad        |
-|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-72 | W       | Atrapada: Segmento faltante             |
-|      3-94 | R       | Atrapada: Segmento faltante;            |
+|     0-100 | R       | 15310                                   |
+|      2-82 | X       | 1533                                    |
+|      2-82 | W       | Atrapada: Violación de seguridad        |
+|     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-15 | W       | Atrapada: Segmento faltante             |
+|     3-130 | R       | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|      4-99 | X       | 10099                                   |
-|      7-25 | X       | Atrapada: Segmento invalido             |
+|     4-130 | X       | 10130                                   |
+|      5-15 | X       | Atrapada: Segmento invalido             |
 
 ** Limitaciones de la segmentación
 - Número y semántica de segmentos disponible en la arquitectura
@@ -391,7 +391,7 @@ presente=no).
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 [[../img/ditaa/direccion_a_pag_y_despl.png]]
 
-** [#B] La tabla de páginas (/page table/)
+** La tabla de páginas (/page table/)
 - Guarda la relación entre cada /página/ y el /marco/ correspondiente
 - El MMU no puede ya operar basado en unos cuantos registros
   - En un esquema limitado como el recién presentado, tenemos hasta
@@ -406,7 +406,7 @@ presente=no).
 
 ** Ejemplo (minúsculo) de tabla de páginas
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: width=\textwidth
 #+caption: Ejemplo de paginación (Silberschatz, p.292)
 [[../img/ditaa/ejemplo_de_paginacion.png]]
 #+latex: \end{column}\begin{column}{0.5\textwidth}
@@ -631,17 +631,29 @@ $H: U\rightarrow M$
   - Aunque requiera recalcular (/rehash/) la tabla, es una operación
     poco frecuente
 
-** Memoria compartida
+** Memoria compartida (1)
 - La memoria paginada hace simple definir áreas de memoria compartida
 - Uso muy frecuente: Comunicación entre procesos (IPC)
   - Pueden compartirse estructuras complejas sin costo de copia
-- Uso más frecuente aún: Compartir /código/
-  - No tiene sentido que el SO /repita/ en memoria imágenes de
-    bibliotecas /relocalizables/ y /reentrantes/
-  - El mismo conjunto de marcos puede incluirse en las tablas de
-    distintos procesos, aumentando la capacidad percibida de memoria
+- Acceso a los datos dentro de estas estructuras por parte de los
+  procesos: Requiere protección por mecanismos de /sincronización/
+  - Ojo: Diferencias entre memoria compartida entre procesos y memoria
+    compartida entre hilos
 
-** Memoria compartida
+** Memoria compartida (2)
+#+begin_center
+Uso más frecuente aún: Compartir /código/
+#+end_center
+- No tiene sentido que el SO /repita/ en memoria imágenes de
+  bibliotecas /relocalizables/ y /reentrantes/
+- El mismo conjunto de marcos puede incluirse en las tablas de
+  distintos procesos, aumentando la capacidad percibida de memoria
+- Esto es lo que conocemos como /bibliotecas compartidas/
+  - No sólo se comparten en disco — También en memoria
+  - Explican (parte de) un uso efectivo de memoria muy superior al
+    100%
+
+** Memoria compartida (3)
 #+attr_latex: width=\textwidth
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
 [[../img/ditaa/memoria_compartida.png]]

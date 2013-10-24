@@ -536,17 +536,16 @@ intercambio por segmentos.
 
 ** Ejemplificando
 
-A modo de ejemplo (Finkel, p.79), y conjuntando los conceptos
-presentados en esta sección, si un proceso tuviera la siguiente tabla
-de segmentos:
+A modo de ejemplo, y conjuntando los conceptos presentados en esta
+sección, si un proceso tuviera la siguiente tabla de segmentos:
 
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-| 0        | 13426  | 26     | RWX      | sí       |
-| 1        | 2309   | 00     | R        | sí       |
-| 2        | 1000   | 23     | WX       | sí       |
-| 3        | -      | 95     | W        | no       |
-| 4        | 10000  | 100    | RWX      | sí       |
+|        0 |  15210 |    150 | RWX      | sí       |
+|        1 |   1401 |    100 | R        | sí       |
+|        2 |    965 |     96 | RX       | sí       |
+|        3 |      - |    184 | W        | no       |
+|        4 |  10000 |    320 | RWX      | sí       |
 
 En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
 /X/ a ejecución.
@@ -561,15 +560,15 @@ tipos de acceso:
 | Dirección | Tipo de | Dirección                               |
 |   virtual | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|       0-0 | R       | 13426                                   |
-|      2-17 | W       | 1017                                    |
-|      2-17 | R       | Atrapada: Violación de seguridad        |
-|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-72 | W       | Atrapada: Segmento faltante             |
-|      3-94 | R       | Atrapada: Segmento faltante;            |
+|     0-100 | R       | 15310                                   |
+|      2-82 | X       | 1533                                    |
+|      2-82 | W       | Atrapada: Violación de seguridad        |
+|     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-15 | W       | Atrapada: Segmento faltante             |
+|     3-130 | R       | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|      4-99 | X       | 10099                                   |
-|      7-25 | X       | Atrapada: Segmento invalido             |
+|     4-130 | X       | 10130                                   |
+|      5-15 | X       | Atrapada: Segmento invalido             |
 
 Cuando se atrapa una situación de excepción, el sistema operativo debe
 intervenir. Por ejemplo, la solicitud de un segmento inválido, de un

@@ -69,16 +69,17 @@ beamer: fig
 	echo '#+LANGUAGE: es' >> $(idx_laminas)
 	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> $(idx_laminas)
 	echo '* Láminas disponibles' >> $(idx_laminas)
-	echo '| *Fecha* | Título |' >> $(idx_laminas)
+	echo '| *Fecha* | Título | Último cambio' >> $(idx_laminas)
 	echo '|--|--|' >> $(idx_laminas)
 	for i in `ls laminas/*.org | grep -v index.org | sort -n`; do \
+	    lastmod=`stat --format=%y $$i | perl -p -e 's/(\d\d:\d\d):.+/$$1/'` \
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
 		emacs --batch --visit=$$i --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
-	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> $(idx_laminas); \
+	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] | $$lastmod" >> $(idx_laminas); \
 	done
 	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
 	rm $(idx_laminas)

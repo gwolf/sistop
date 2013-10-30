@@ -127,11 +127,7 @@ func:
   biblioteca estándar
 - Arreglos de caracteres (8bit), terminados por un =\0= (=NUL=)
 - Presenta /familias/ de funciones relacionadas para su manejo,
-  principalmente:
-  - =strcat=
-  - =strcpy=
-  - =printf=
-  - =gets=
+  principalmente =strcat=, =strcpy=, =printf=, =gets=
 - Muchas de estas no toman en cuenta /verificación de límites/
 - Otras, no /necesariamente/ incluyen al =\0=
 
@@ -189,7 +185,7 @@ Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
 ** ¿Qué significa nuestro =Segmentation fault=?
 - El =Segmentation fault= se debe a que la /dirección de retorno/ es
   la 0x41414141
-  - No es un segmento válido y ejecutable
+  - No es una dirección válida y ejecutable
 - El código está /demostrado vulnerable/
   - ...Pero no lo hemos podido explotar aún
 
@@ -228,7 +224,7 @@ if (valid_user(usr, pass)) {
 - Si en vez de 'AAAAAAAA...' le damos al sistema código ejecutable
   válido, más que brincarnos una validación, podemos hacer que el
   programa ejecute código arbitrario
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.6\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[../img/ditaa/overflow_jump.png]]
 - El flujo de ejecución del proceso está comprometido

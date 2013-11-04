@@ -1095,9 +1095,7 @@ un proceso se presente un fallo de página ($0 \le p \le 1$),
 conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que toma
 atender a un fallo de página ($t_f$):
 
-#+begin_center
-$t_e = (1-p)t_a + pt_f$
-#+end_center
+$$t_e = (1-p)t_a + pt_f$$
 
 Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
@@ -1106,11 +1104,10 @@ de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
-#+begin_center
-$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$
 
-$t_e = 199.8ns + 8000ns = 8199.8ns$
-#+end_center
+$$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$$
+
+$$t_e = 199.8ns + 8000ns = 8199.8ns$$
 
 Esto es, en promedio, tendemos un tiempo efectivo de acceso a memoria
 /40 veces/ mayor a que si no empleáramos este mecanismo. Con estos

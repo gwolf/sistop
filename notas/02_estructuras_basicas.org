@@ -648,6 +648,166 @@ principalmente:
   El tema del cómputo en la nube va muy de la mano del que abordaremos
   a continuación: La virtualización.
 
+** Amdahl y Gustafson: ¿Qué podemos esperar del paralelismo?
+
+Al programar una aplicación de forma que aproveche al paralelismo
+(esto es, diseñarla para que realice en distintos procesadores o nodos
+sus /porciones paralelizables/) ¿cuál es el incremento al rendimiento
+que podemos esperar?
+
+En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Validity of the Single
+Processor Approach to Achieving Large Scale Computing Capabilities]],
+Amdahl, 1967] en que indica los límites máximos en que resultará la
+programación multiprocesada ante determinado programa: Partiendo de la
+observación de que aproximadamente 40% del tiempo de ejecución de un
+programa se dedicaba a administración y mantenimiento de los datos,
+esto es, a tareas secuenciales.
+
+Si únicamente el 60% del tiempo de procesamiento es susceptible, pues,
+de ser paralelizado, el rendimiento general del sistema no se
+incrementará en una proporción directa con el número de procesadores,
+sino que debe sumársele la porción estrictamente secuencial. Puesto en
+términos más formales: La ganancia en la velocidad de ejecución de un
+programa al ejecutarse en un entorno paralelo estará limitado por el
+tiempo requerido por su fracción secuencial. Esto significa que, si
+$T(1)$ representa al tiempo de ejecución del programa con un sólo
+procesador y $T(P)$ al tiempo de ejecución con $P$ procesadores, y si
+$t_s$ es el tiempo requerido para ejecutar la porción secuencial del
+programa, y $t_p(P)$ el tiempo que requiere la ejecución de la porción
+paralelizable, repartida entre $P$ procesadores, podemos hablar de una
+ganancia $g$ en términos de:
+
+$$g = \frac{T(1)}{T(P)} = \frac{t_s + t_p(1)}{t_s + \frac{t_p(1)}{P}}$$
+
+#+begin_latex
+\begin{figure}
+\centering
+\subfigure[Procesadores: 1, $t=500$ \label{HW_amdahl_1}]{\hskip 2em \includegraphics[height=0.33\textheight]{img/dot/amdahl_1.png} \hskip 2em}
+\hfill
+\subfigure[Procesadores: 2, $t=400$, ganancia: 1.25x \label{HW_amdahl_2}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_2.png} \hskip 1em}
+\hfill
+\subfigure[Procesadores: 4, $t=350$, ganancia: 1.4x \label{HW_amdahl_4}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_4.png}}
+\caption {Ley de Amdahl: Ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.}
+\label{HW_amdahl}
+\end{figure}
+#+end_latex
+
+#+begin_html
+<table class="figure" style="margin-right:auto; margin-left:auto;" >
+  <tr>
+    <td style="padding: 1em">
+      <span id="amdahl_1">
+        <p><img src="./img/dot/amdahl_1.png" alt="./img/dot/amdahl_1.png" /></p>
+        <p>Procesadores: 1, <em>t=500</em></p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="amdahl_2">
+        <p><img src="./img/dot/amdahl_2.png" alt="./img/dot/amdahl_2.png" /></p>
+        <p>Procesadores: 2, <em>t=400</em>, ganancia: 1.25x</p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="amdahl_4">
+        <p><img src="./img/dot/amdahl_4.png" alt="./img/dot/amdahl_4.png" /></p>
+        <p>Procesadores: 4, <em>t=350</em>, ganancia: 1.4x</p>
+      </span>
+    </td>
+  </tr>
+  <caption style="caption-side: bottom">Ley de Amdahl: Ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.</caption>
+</table>
+#+end_html
+
+Esta observación, conocida como la /Ley de Amdahl/, llevó a que por
+varias décadas el cómputo paralelo fuera relegado al cómputo de
+propósito específico, para necesidades muy focalizadas en soluciones
+altamente paralelizables, como el cómputo científico.
+
+En términos del ejemplo presentado en la figura \ref{HW_amdahl}, vemos
+un programa que, ejecutado secuencialmente, resulta en $T=500$. Este
+programa está dividido en tres secciones secuenciales, de $t=100$ cada
+una, y dos secciones paralelizables, totalizando $t=100$ cada una,
+como lo podemos ver al representar una ejecución estrictamente
+secuencial (\ref{HW_amdahl_1}).
+
+Al agregar un procesador adicional (\ref{HW_amdahl_2}), obtenemos una
+ganancia de 1.25x — La ejecución se completa en $T=400$ (con
+$g=1.25$). Las secciones paralelizables sólo toman un tiempo /externo/
+de 50 cada una, dado que la carga fue repartida entre dos unidades de
+ejecución. Al ejecutar con cuatro procesadores (\ref{HW_amdahl_4}), si
+bien seguimos encontrando mejoría, esta apenas nos lleva a $T=350$,
+con $g=1.4$.
+
+Si el código fuera infinitamente paralelizable, y ejecutáramos este
+programa en una computadora con un número infinito de procesadores,
+este programa no podría ejecutarse en menos de $T=300$, lo cual nos
+presentaría una ganancia de apenas $g=1.66$. Esto es, al agregar
+procesadores adicionales, rápidamente llegaríamos a un crecimiento
+asintótico — El comportamiento descrito por la Ley de Amdahl es
+frecuentemente visto como una demostración de que el desarrollo de
+sistemas masivamente paralelos presenta /rendimientos decrecientes/.
+
+#+attr_latex: width=0.6\textwidth
+#+attr_html: height="480"
+#+label: HW_amdahl_porcentajes
+#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl
+[[./img/gnuplot/amdahl.png]]
+
+Si bien el ejemplo que presentamos resulta poco optimizado, con sólo
+un 40% de código paralelizable, podemos ver en la gráfica
+\ref{HW_amdahl_porcentajes} que el panorama no cambia tan fuertemente
+con cargas típicas. Un programa relativamente bien optimizado, con 80%
+de ejecución paralela, presenta un crecimiento atractivo en la región
+de hasta 20 procesadores, y se estaciona apenas arriba de una ganancia
+de 4.5 a partir de los 40.[fn:: De un máximo de 5 al que puede
+alcanzar con un número infinito de procesadores] Incluso el hipotético
+95% llega a un tope en su crecimiento, imposibilitado de alcanzar una
+ganancia superior a 20.
+
+Dado que el factor económico resulta muy importante para construir
+computadoras masivamente paralelas[fn:: Dado que los componentes más
+caros son necesariamente los procesadores, y que vemos claramente que
+el poder adicional que nos da cada procesador es cada vez menor, la
+Ley de Amdahl resultó, como ya mencionamos, en varias décadas de mucho
+mayor atención a la miniaturización y aumento de reloj, y no al
+multiprocesamiento.
+
+Fue hasta 1988 que John Gustafson publicó una observación a esta
+ley[fn:: [[http://www.johngustafson.net/pubs/pub13/amdahl.htm][Reevaluating Amdahl's Law]], John L. Gustafson, Communications
+of the ACM, vol. 31, mayo de 1988] que, si bien no la invalida,
+permite verla bajo una luz completamente diferente y mucho más
+optimista. Gustafson publicó esta observación tras haber obtenido
+ganancias superiores a 1020 en una supercomputadora con 1024
+procesadores — Un incremento casi perfectamente lineal al número de
+procesadores. Sí, respondiendo a una carga altamente optimizada, pero
+no por eso menos digno de análisis.
+
+El argumento de Gustafson es que al aumentar el número de
+procesadores, típicamente veremos una modificación /al problema
+mismo/. Citando de su artículo (traducción propia),
+
+#+begin_quote
+(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
+independiente del número de procesadores, /lo cual virtualmente nunca
+ocurre de este modo/. Uno no toma un problema de tamaño fijo para
+correrlo en varios números de procesadores como no sea para hacer un
+ejercicio académico; en la práctica, /el tamaño del problema crece con
+el número de procesadores/. Al obtener procesadores más poderosos, el
+problema generalmente se expande para aprovechar las facilidades
+disponibles. Los usuarios tienen control sobre cosas como la
+resolución de la malla, el número de pasos, la complejidad de los
+operadores y otros parámetros que usualmente se ajustan para permitir
+que el programa corra en el tiempo deseado. Por tanto, podría ser más
+realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
+constante.
+#+end_quote
+
+Lo que escribe Gustafson se traduce a que es posible obtener la
+eficiencia deseada de cualquier cantidad de procesadores /aumentando
+suficientemente el tamaño del problema/. Al enfrentarse explícitamente
+con el /bloqueo mental/ contra el paralelismo masivo que nació de esta
+lectura errónea de lo comentado por Amdahl. Su artículo, sencillo y de
+apenas más de una cuartilla de extensión, cambió la percepción acerca
+de la utilidad misma del paralelismo masivo.
+
 * Virtualización
 
 La /virtualización/ no es un concepto nuevo, sin embargo, tras largos

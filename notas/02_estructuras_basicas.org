@@ -1,7 +1,24 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Relación con el hardware: Estructuras y funciones básicas
 
-* Jerarquía de almacenamiento
+Todos los sitemas de cómputo están compuestos por al menos una unidad de proceso junto
+  con dispositivos que permiten ingresar datos  (teclado, mouse, micrófono, etc) y otros que permiten obtener resultados 
+(pantalla, impresora, parlantes, etc). Como vimos antes, una de las funciones del sistema operativo es la de abstraer el hardware
+subyacente de la computadora y presentar al usuario una versión unificada y simplificada de los dispositivos.
+En este Capítulo veremos la relación que mantiene el sistema operativo con el hardware, las funciones que cumplen y algunas abstracciones
+comunes utilizadas en sistemas operativos modernos.
+
+* Unidad de Proceso
+
+La /unidad de proceso/ (CPU) es la parte fundamental de todo sistema de cómputo. Es la encargada de ejecutar 
+tanto los programas del usuario como el sistema operativo en sí mismo. 
+La funciones del sistema operativo respecto al CPU son: 
+
+- Inicialización :: Luego de ser cargado el sistema operativo debe realizar varias tareas de inicialización como habilitar las interrupciones de hardware y software (excepciones y traps), configurar el sistema de memoria virtual (paginación, segmentación), etc.
+- Atender las Interrupciones y Excepciones :: Como veremos más adelante, la CPU puede encontrar una situación que no puede resolver por sí misma (una instrucción o dirección inválida, una división por cero, etc) ante lo cual le pasa el control al sistema operativo para que este trate o resuelva esta situación.
+- Multiplexación :: En un sistema multiproceso, el sistema operativo es el encargado de administrar la CPU dando la ilusión a los programas que están ejecutando de forma exclusiva. 
+
+** Jerarquías de Almacenamiento 
 
 Las computadoras que siguen la arquitectura /von Neumann/, esto es,
 prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
@@ -63,7 +80,7 @@ indicando la dirección desde un programa). El caché no existe para
 efectos prácticos: El procesador no hace referencia directa a él, sino
 que es manejado por los controladores de acceso a memoria.
 
-** Registros
+*** Registros
 
 La memoria más rápida de la computadora son los /registros/, ubicados
 dentro de cada /uno de los/ núcleos de cada uno de los CPUs. La
@@ -107,7 +124,7 @@ mantener esto en mente cuando posteriormente hablemos de todas las
 situaciones en que el flujo de ejecución debe ser tomado de un proceso
 y entregado a otro.
 
-** Almacenamiento secundario
+*** Almacenamiento secundario
 
 En lo tocante al /almacenamiento secundario/, en disco u otros medios:
 El almacenamiento en memoria primaria es /volátil/, esto es, se pierde
@@ -135,83 +152,6 @@ que forma parte del almacenamiento primario — Esto es, de la memoria
 RAM. Veremos a continuación, en las secciones de [[#interrupciones][interrupciones y
 excepciones]] y de [[#dma][acceso directo a memoria]], cómo es que se efectúan
 dichas referencias.
-
-** Canales y puentes
-
-Los diferentes componentes de un sistema de cómputo se comunican a
-través de los diferentes /canales/ (generalmente se hace referencia a
-ellos por su nombre en inglés, en inglés, /buses/). Al nivel más
-básico, los canales son líneas de comunicación entre el procesador
-y los demás componentes del chipset[fn:: Los chips que forman parte de
-un equipo, casi siempre provistos por el mismo fabricante que el
-procesador mismo], a los cuales a su vez se conectan los diferentes
-dispositivos del sistema — Desde aquellos que requieren mayor
-velocidad, como la misma memoria, hasta los puertos más sencillos.
-
-Un chipset provee distintos buses, con un agrupamiento lógico
-según la velocidad requerida por sus componentes y otras
-características que determinan su topología.
-
-#+attr_html: height=618px
-#+attr_latex: width=0.5\textwidth
-#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
-[[./img/northbridge_southbridge.png]]
-
-Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
-ha sido característica de las computadoras x86 de los últimos 20 años,
-aunque la tendencia apunta a que se abandone paulatinamente para dar
-paso a procesadores que integren en un sólo paquete todos estos
-componentes. Sin embargo, el acomodo funcional electrónico, al menos
-hasta el momento, sigue basado en estos puntos.] de estos buses es a
-través de una separación en dos chips: El /puente norte/
-(/Northbridge/), conectado directamente al CPU, encargado de gestionar
-los buses de más alta velocidad y que, además, son fundamentales para
-el más básico inicio de la operación del sistema: La memoria y el
-reloj. La comunicación con algunas tarjetas de video se incorpora al
-puente norte a través del canal dedicado /AGP/ (/Advanced Graphics
-Port/, /Puerto Gráfico Avanzado/).
-
-Al puente norte se conecta el /puente sur/ (/Southbridge/), que
-controla el resto de los dispositivos del sistema — Normalmente
-veremos aquí a las interfaces de almacenamiento (SCSI, SATA, IDE), de
-expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
-puertos /heredados/ seriales y paralelos).
-
-*** Contención
-
-Una de las principales razones de la existencia de tantos /canales/
-(buses) distintos en un mismo sistema es a la frecuencia acorde a los
-dispositivos para los cuales está diseñado: La cantidad de datos que
-tiene que viajar entre el procesador y la memoria a lo largo de la
-operación del sistema es muy superior que la que tiene que
-transferirse desde los discos, y a su vez, esta es mucho mayor que la
-que enviarse a la impresora, o la que se recibe del teclado. Claro
-está, los demás dispositivos podrían incrementar su frecuencia para
-participar en un canal más rápido, aunque su costo se incrementaría,
-dado que harían falta componentes capaces de sostener un reloj varios
-órdenes de magnitud más rápido.
-
-Pero incluso obviando la diferencia económica: Cuando el sistema
-requiere transferir datos de o hacia varios dispositivos de la misma
-categoría, es frecuente que ocurra /contención/: Puede saturarse el
-ancho de banda máximo que alcanza uno de los canales y, aún si los
-dispositivos tienen información lista, tendrán que esperar a que los
-demás dispositivos desocupen el canal.
-
-#+attr_html: height=490px
-#+attr_latex: width=\textwidth
-#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
-[[./img/dot/chipset_857.png]]
-
-En la figura podemos ver el diseño general del chipset Intel 875,
-introducido en el 2003, incluyendo el ancho de banda de cada uno de
-los canales del sistema. Hay que recordar que hay canales como el USB
-que permiten la conexión de múltiples dispositivos, los cuales
-deberán compartir el ancho de banda total permitido por el canal: En
-la figura presentamos dos discos duros sobre el canal SATA y dos
-unidades ópticas en el ATA paralelo; el canal USB permite el uso de
-un máximo de 127 unidades por canal, por lo cual la contención puede
-ser muy alta.
 
 ** Interrupciones y excepciones
 # <<interrupciones>>
@@ -1307,6 +1247,84 @@ recibidos, etcétera. Bajo un esquema de contenedores, una máquina
 virtual que no tiene trabajo se convierte sencillamente en un grupo
 de procesos /dormidos/, probables candidatos a ser /paginados/ a
 disco.
+
+** Canales y puentes
+
+Los diferentes componentes de un sistema de cómputo se comunican a
+través de los diferentes /canales/ (generalmente se hace referencia a
+ellos por su nombre en inglés, en inglés, /buses/). Al nivel más
+básico, los canales son líneas de comunicación entre el procesador
+y los demás componentes del chipset[fn:: Los chips que forman parte de
+un equipo, casi siempre provistos por el mismo fabricante que el
+procesador mismo], a los cuales a su vez se conectan los diferentes
+dispositivos del sistema — Desde aquellos que requieren mayor
+velocidad, como la misma memoria, hasta los puertos más sencillos.
+
+Un chipset provee distintos buses, con un agrupamiento lógico
+según la velocidad requerida por sus componentes y otras
+características que determinan su topología.
+
+#+attr_html: height=618px
+#+attr_latex: width=0.5\textwidth
+#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
+[[./img/northbridge_southbridge.png]]
+
+Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
+ha sido característica de las computadoras x86 de los últimos 20 años,
+aunque la tendencia apunta a que se abandone paulatinamente para dar
+paso a procesadores que integren en un sólo paquete todos estos
+componentes. Sin embargo, el acomodo funcional electrónico, al menos
+hasta el momento, sigue basado en estos puntos.] de estos buses es a
+través de una separación en dos chips: El /puente norte/
+(/Northbridge/), conectado directamente al CPU, encargado de gestionar
+los buses de más alta velocidad y que, además, son fundamentales para
+el más básico inicio de la operación del sistema: La memoria y el
+reloj. La comunicación con algunas tarjetas de video se incorpora al
+puente norte a través del canal dedicado /AGP/ (/Advanced Graphics
+Port/, /Puerto Gráfico Avanzado/).
+
+Al puente norte se conecta el /puente sur/ (/Southbridge/), que
+controla el resto de los dispositivos del sistema — Normalmente
+veremos aquí a las interfaces de almacenamiento (SCSI, SATA, IDE), de
+expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
+puertos /heredados/ seriales y paralelos).
+
+*** Contención
+
+Una de las principales razones de la existencia de tantos /canales/
+(buses) distintos en un mismo sistema es a la frecuencia acorde a los
+dispositivos para los cuales está diseñado: La cantidad de datos que
+tiene que viajar entre el procesador y la memoria a lo largo de la
+operación del sistema es muy superior que la que tiene que
+transferirse desde los discos, y a su vez, esta es mucho mayor que la
+que enviarse a la impresora, o la que se recibe del teclado. Claro
+está, los demás dispositivos podrían incrementar su frecuencia para
+participar en un canal más rápido, aunque su costo se incrementaría,
+dado que harían falta componentes capaces de sostener un reloj varios
+órdenes de magnitud más rápido.
+
+Pero incluso obviando la diferencia económica: Cuando el sistema
+requiere transferir datos de o hacia varios dispositivos de la misma
+categoría, es frecuente que ocurra /contención/: Puede saturarse el
+ancho de banda máximo que alcanza uno de los canales y, aún si los
+dispositivos tienen información lista, tendrán que esperar a que los
+demás dispositivos desocupen el canal.
+
+#+attr_html: height=490px
+#+attr_latex: width=\textwidth
+#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
+[[./img/dot/chipset_857.png]]
+
+En la figura podemos ver el diseño general del chipset Intel 875,
+introducido en el 2003, incluyendo el ancho de banda de cada uno de
+los canales del sistema. Hay que recordar que hay canales como el USB
+que permiten la conexión de múltiples dispositivos, los cuales
+deberán compartir el ancho de banda total permitido por el canal: En
+la figura presentamos dos discos duros sobre el canal SATA y dos
+unidades ópticas en el ATA paralelo; el canal USB permite el uso de
+un máximo de 127 unidades por canal, por lo cual la contención puede
+ser muy alta.
+
 
 
 * Otros recursos

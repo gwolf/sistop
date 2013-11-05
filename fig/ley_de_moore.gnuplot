@@ -8,7 +8,7 @@ set xlabel "Fecha de entrada al mercado"
 set xrange [1970:2015]
 
 set logscale y
-set yrange [1000:6000000000]
+set yrange [1000:6000000000.0]
 set ytics rotate by 70
 set ytics ("1,000" 1000, \
     "10,000" 10000, \

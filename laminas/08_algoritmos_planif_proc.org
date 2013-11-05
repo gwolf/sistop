@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Planificación de procesos: Algoritmos de planificación
-#+DATE: 2013-09-24 — 2013-10-?
+#+DATE: 2013-09-24 — 2013-10-03
 
 * Introducción
 
@@ -392,6 +392,27 @@ de procesos:
   - SPN puede mantener la contabilidad de los procesos incluso tras
     entregarlos de vuelta al agendador
 
+** SPN con tiempos /declarados/
+#+BEGIN_CENTER
+Hace años, podía esperarse que los usuarios proporcionaran un estimado
+de sus tiempos de ejecución:
+#+END_CENTER
+
+#+begin_quote
+#+latex: {\small
+En un sistema que da alta prioridad a los procesos con estimación de
+tiempo corta, la política normal es terminar aquellos procesos que
+excedan sus límites estimados; de otro modo, los usuarios pronto
+arruinarían el esquema. En este caso, la mayoría de usuarios prefieren
+hacer predicciones conservadoras. Morris (1967) encuentra que los
+usuarios sobre-estimaron sus requisitos de almacenamiento por 50%, y
+dice que ``las estimaciones en tiempo de procesamiento son mucho
+peores''
+
+\hfill –Per Brinch Hansen, 1973
+#+latex: }
+#+end_quote
+
 ** Estimando para SPN: Promedio exponencial
 #+BEGIN_CENTER
 Es común emplear un /promedio exponencial/ para estimar la siguiente
@@ -498,13 +519,13 @@ activo /y lo vuelve a programar/
 | Proceso  | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |        |     |     |     |      |
 |----------+--------+-----+-----+-----+------|
-| A        |      0 |   7 |   7 |   3 |  2.3 |
+| A        |      0 |   7 |   7 |   4 |  1.7 |
 | B        |      1 |  18 |  17 |  12 |  3.4 |
 | C        |      3 |   6 |   3 |   1 |  1.5 |
 | D        |      9 |  19 |  10 |   5 |  2.0 |
 | E        |     12 |  20 |   8 |   3 |  1.6 |
 |----------+--------+-----+-----+-----+------|
-| Promedio |        |     |   9 |   5 | 2.16 |
+| Promedio |        |     |   9 |   5 | 2.04 |
 
 ** Retroalimentación multinivel (FB)
 - ¡Pero todos los números apuntan a que es una peor estrategia que
@@ -622,19 +643,47 @@ descriptores primarios
 
 ** Clasificando a los distintos esquemas
 #+caption: Caracterización de los mecanismos de planificación a corto plazo
-|---------------+-------------------------+-------------------|
-|               | *No considera*          | *Considera*       |
-|               | *intrínseca*            | *intrínseca*      |
-|---------------+-------------------------+-------------------|
-| *Cooperativa* | Primero llegado         | Proceso más       |
-|               | primero servido         | corto (SPN),      |
-|               | (FCFS)                  | Proceso más       |
-|               |                         | penalizado (HPRN) |
-|---------------+-------------------------+-------------------|
-| *Preventiva*  | Ronda (RR),             | Proceso más       |
-|               | Retroalimentación (FB), | corto preventivo  |
-|               | Ronda egoísta (SRR)     | (PSPN)            |
-|---------------+-------------------------+-------------------|
+|---------------+-----------------+-------------------------|
+|               | *No considera*  | *Considera*             |
+|               | *intrínseca*    | *intrínseca*            |
+|---------------+-----------------+-------------------------|
+| *Cooperativa* | Primero llegado | Proceso más             |
+|               | primero servido | corto (SPN),            |
+|               | (FCFS)          | Proceso más             |
+|               |                 | penalizado (HPRN)       |
+|---------------+-----------------+-------------------------|
+| *Preventiva*  | Ronda (RR)      | Proceso más corto       |
+|               |                 | preventivo (PSPN),      |
+|               |                 | Retroalimentación (FB), |
+|               |                 | Ronda egoísta (SRR)     |
+|---------------+-----------------+-------------------------|
+
+** ¡Tarea!
+#+BEGIN_CENTER
+Tenemos ya cubiertos los principales esquemas base de planificación.
+
+Queda claro que están enunciados /en líneas generales/, y muchas veces
+operan en forma híbrida o altamente parametrizada.
+
+Elige /dos/ sistemas operativos en uso /relativamente común/ en
+ambientes de producción, y describe cómo es su mecanismo de
+planificación.
+
+*Entrega: Jueves 10 de octubre via EDUCAFI*
+#+END_CENTER
+
+** Tarea: ¿Qué quiero que desarrollen?
+- A cuál o cuáles de los esquemas presentados se parecen más
+- ¿Hay alguna diferenciación clara derivada del tipo de uso que se le
+  da al sistema?
+  - Por ejemplo, ¿Planifican servidores diferente de estaciones de
+    trabajo? ¿En dispositivos móviles? ¿En hardware /embebido/?
+  - ¿Debería haberla?
+- ¿Ofrece el sistema alguna interfaz al usuario/administrador para
+  cambiar el mecanismo o ajustar sus parámetros?
+  - ¿Qué tan común te parece que es manipularlo entre sus usuarios?
+    ¿Por qué?
+
 
 * Esquemas híbridos y prioridades externas
 ** Esquemas híbridos
@@ -717,399 +766,4 @@ descriptores primarios
   procesos listos
   - Entre más procesos pendientes, mayor el peso que /modifique/ a la
     prioridad
-
-* Resumiendo y temas relacionados
-** Sobrecarga administrativa
-#+attr_latex: width=0.7\textwidth
-#+caption: Sobrecarga administrativa de los planificadores de corto plazo (Finkel, p.33)
-[[../img/penalizaciones_por_algoritmo_planificador.png]]
-
-** Tiempo /perdido/ por sobrecarga adm.
-#+attr_latex: width=0.7\textwidth
-#+caption: Tiempo /perdido/ por sobrecarga administrativa por planificador de corto plazo (Finkel, p.34)
-[[../img/tiempo_en_espera_por_algoritmo_planificador.png]]
-
-** Duración mínima del /quantum/
-- Vimos que la penalización en la ronda puede evitarse con /quantums/
-  mayores
-  - Pero puede degenerar en multiprocesamiento cooperativo
-- ¿Qué tan /corto/ debe ser un /quantum/?
-
-** Duración mínima del /quantum/
-- Duración de cambio de contexto /hoy en día/: $\approx 0.01ms$
-  (Silberschatz p.187)
-  - Con un /quantum/ corto, 10ms, es $\frac{1}{1000}$ la duración del tiempo
-    /efectivo/ de procesamiento
-  - Con un /quantum/ largo, 200ms, $\frac{1}{20000}$
-- No es realmente significativo — ¡Ni debe serlo!
-  - Perder 1% del tiempo de cómputo en /burocracia/ sería en general
-    visto como excesivo
-  - /Ojo/: ¡El tiempo núcleo /no sólo/ es el tiempo del cambio de proceso!
-
-** Compartir el procesador
-- Estrategia empleada por Control Data (CDC6600, 1964, diseñada por
-  Seymour Cray): Multitarea gestionada en hardware
-- Un sólo procesador, pero con 10 juegos de registros
-  - /Procesador superescalar/
-- A cada paso de reloj, avanzaba el /juego de registros/
-  - /Quantum/ efectivo igual a la velocidad del reloj
-  - Apariencia de 10 procesadores más lentos, cada uno de
-    $\frac{1}{10}$ la velocidad del /real/
-  - Multitarea sin cambios de contexto
-
-** Compartir el procesador
-- ¿Desventajas?
-  - Nivel de concurrencia fijo
-  - Difícil de adecuar a picos de ocupación
-  - Costo muy elevado
-- Esquema /comparable/ con el /HyperThreading/ de procesadores actuales
-  - Aunque /HyperThreading/ busca aprovechar las diferentes fases del
-    /pipeline/, que no existía en 1964
-
-** Relación entre hilos y procesos
-#+BEGIN_CENTER
-¿Cómo /entiende/ el despachador a los hilos?
-
-Tres modelos principales de /mapeo/:
-#+END_CENTER
-- Muchos a uno
-- Uno a uno
-- Muchos a muchos
-
-** Muchos a uno
-#+attr_latex: width=0.3\textwidth
-#+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
-[[../img/hilos_muchos_a_uno.png]]
-- /Hilos verdes/ (o /de usuario/)
-- El SO ve un sólo proceso
-  - El tiempo se reparte dentro del proceso por mecanismos internos
-- Código más portable
-- No se aprovecha /realmente/ el paralelismo
-- Llamadas bloqueantes \rightarrow Todos esperan
-
-** Uno a uno
-#+attr_latex: width=0.3\textwidth
-#+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
-[[../img/hilos_uno_a_uno.png]]
-- Cada hilo es un /proceso ligero/ (/lightweight process/, /LWP/)
-  - Un LWP /es/ mucho más ligero de levantar que un proceso
-  - Comparte memoria, descriptores, estructuras
-- Aprovecha tanto el paralelismo como lo permita el hardware
-  - Cada hilo puede correr en un procesador distinto, si los hay
-- El SO debe poder manejar LWP
-
-** Muchos a muchos
-#+attr_latex: width=0.3\textwidth
-#+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
-[[../img/hilos_muchos_a_muchos.png]]
-- Existen /hilos unidos/ (/bound threads/), que corresponden cada uno
-  a un LWP
-- También /hilos no unidos/ (/unbound threads/), donde /uno o más/
-  corresponden a cada LWP
-- Brindan la flexibilidad de ambos modelos
-  - Si el SO no maneja LWP, pueden caer en el modelo /uno a muchos/
-    como modo degradado
-
-** El /ámbito de contención/
-#+BEGIN_CENTER
-¿Recibe cada uno de los hilos /la misma atención/ que recibiría un
-proceso? Hay dos enfoques (categorización de hilos POSIX, =pthread=):
-#+END_CENTER
-
-- /Ámbito de contención de sistema/ (System Contention Scope, SCS)
-- /Ámbito de contencion de proceso/ (Process Contention Scope, PCS)
-
-#+BEGIN_CENTER
-El /ámbito de contención/ se refiere a cuál será la estructura dentro
-de la cual coexisten los hilos, y dentro de la cual cada hilo
-/contenderá/ por el procesador.
-#+END_CENTER
-
-** Ámbitos de contención
-#+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+BEGIN_CENTER
-=PTHREAD_SCOPE_SYSTEM=
-#+END_CENTER
-- Todos los hilos son atendidos en el tiempo que sería asignado a /un
-  sólo proceso/
-- Modelo /muchos a uno/, así como los /hilos no unidos/ multiplexados
-  en /muchos a muchos/
-#+latex: \end{column}\begin{column}{0.5\textwidth}
-#+BEGIN_CENTER
-=PTHREAD_SCOPE_PROCESS=
-#+END_CENTER
-- Cada hilo es visto por el planificador como un proceso independiente
-- Modelo /uno a uno/ y los /hilos unidos/ en /muchos a muchos/
-#+LaTeX: \end{column}\end{columns}
-#+BEGIN_CENTER
-...Pero una implementación =pthreads= puede ofrecer sólo uno de los
-modelos \rightarrow Tanto Linux como Windows manejan sólo
-=PTHREAD_SCOPE_SYSTEM= (SCS).
-#+END_CENTER
-** Otras características en =pthreads=
-- =pthreads= incluyen varios de los otros aspectos mencionados en
-  esta unidad
-- El programador puede solicitar al núcleo la prioridad de cada uno
-  de los hilos por separado (=pthread_setschedprio=)
-- Incluso solicitar el empleo de un algoritmo de planificación en
-  específico (=sched_setscheduler=)
-- Recordemos que =pthreads= permite, en muchos casos, responder al
-  proceso /«Disculpa, no puedo hacer eso»/
-
-** Multiprocesamiento
-#+BEGIN_CENTER
-¿Qué factores relativos a la planificación tenemos que considerar
-cuando hablamos de un /entorno multiprocesado/?
-#+END_CENTER
-
-** Multiprocesamiento: Afinidad
-- Cuando un proceso se ejecutó por cierto tiempo, dejó porciones de
-  su espacio de memoria en el caché del procesador
-  - Tanto segmentos de instrucciones como de datos
-- Cada procesador tiene /usualmente/ un caché independiente
-  - Puede haber un caché común a todo el sistema (L3); puede haber uno
-    por chip multicore (L2), y puede haber uno específico para cada
-    núcleo (L1)
-- Despachar a un proceso en un procesador distinto del que ya lo
-  ejecutó es un gasto inútil
-  - Invalidar el caché que empleó
-  - Re-poblar el nuevo
-
-** Multiprocesamiento: Afinidad
-- Afinidad suave :: Un proceso que /preferentemente/ será ejecutado
-                    en un determinado procesador
-
-		    Ciertos patrones de carga pueden llevar a que el
-                    despachador decida /migrarlo/ a otro procesador
-
-- Afinidad dura :: Se /garantiza/ que un proceso será ejecutado
-                   siempre en un procesador (o conjunto de
-                   procesadores)
-
-Ejemplo: En un entorno NUMA, buscamos que los procesos tengan
-/afinidad dura/ (y que el algoritmo de asignación de memoria
-considere dicha relación)
-
-** Multiprocesamiento: Balanceo de cargas
-- La situación ideal es que todos los procesadores despachen trabajos
-  al 100% de su capacidad
-  - Pero es un requisito demasiado rígido / irreal
-  - (casi) siempre habrá un procesador con tiempo libre
-  - (casi) siempre habrá procesadores con procesos encolados y en
-    espera
-  - ...O ambas situaciones
-- Para mantener la divergencia lo menor posible, se emplea el
-  /balanceo de cargas/
-
-** Multiprocesamiento: Balanceo de cargas
-- El balanceo de cargas /actúa en sentido contrario/ de la afinidad
-  al procesador
-  - Algoritmos que analizan el estado de las colas y transfieran
-    procesos entre ellas para homogeneizarlas
-- Puede reubicar procesos con afinidad suave
-  - Debe preferir reubicar procesos /sin afinidad declarada/
-  - /No debe/ reubicar procesos con afinidad dura
-
-** Estrategias de balanceo de cargas: /Por empuje/
-#+BEGIN_CENTER
-Balanceo de cargas por empuje (/push migration/)
-#+END_CENTER
-- El núcleo revisa periódicamente el estado de los procesadores
-- Si el desbalance sobrepasa cierto umbral, /empuja/ a algunos
-  procesos de una cola a otra.
-- Linux ejecuta esto cada 200ms.
-
-** Estrategias de balanceo de cargas: /Por jalón/
-#+BEGIN_CENTER
-Balanceo de cargas: Por jalón (/pull migration/)
-#+END_CENTER
-- Cuando un procesador queda sin tareas pendientes, ejecuta el
-  proceso especial /desocupado/ (/idle/)
-- /Desocupado/ no significa /no hacer nada/: Puede ejecutar tareas
-  del núcleo
-- Puede /averiguar/ si hay procesos en espera con otro procesador,
-  y /jalarlos/ al actual.
-
-#+BEGIN_CENTER
-Los mecanismos no son mutuamente exclusivos, es común que un SO emplee
-ambos.
-
-Todo balanceo de cargas conllevará una penalización en términos de
-afinidad al CPU.
-#+END_CENTER
-
-** Multiprocesamiento: ¿Una cola o varias?
-#+BEGIN_CENTER
-En un entorno multiprocesador, ¿cómo encaramos los algoritmos antes
-descritos?
-#+END_CENTER
-- Una cola global
-  - Parecería una decisión más simple
-  - Se ejecuta /un sólo despachador/ \rightarrow Ahorro de tiempo
-  - No habría que preocuparse por balanceo de cargas — Sería natural
-- Una cola por procesador
-  - Necesaria si queremos soportar manejo de afinidad al CPU
-  - Todos los sistemas en uso amplo implementan una cola por procesador
-
-** Hilos hardware (/hyperthreading/)
-- /Hilos/ es una palabra que sufre abuso en nuestro campo.
-- /Hilos hardware/ (/hyperthreading/): No tienen relación con los
-  hilos que abordamos
-  - Pero sí con el multiprocesamiento
-- La Ley de Moore no sólo ha llevado a un paralelismo /expreso/ (multinúcleo)
-  - El /pipeline/ de los procesadores hace que cada /unidad
-    funcional/ del CPU pueda estar atendiendo a una instrucción
-    distinta
-
-** Hilos hardware (/hyperthreading/): Pipelines
-- Un procesador simple/clásico (ejemplo: MIPS) puede dividir la
-  ejecución de una instrucción en 5 etapas:
-  - IF :: Recuperación de la instrucción (/Instruction Fetch/)
-  - ID :: Decodificación de la instrucción (/Instruction Decode/)
-  - EX :: Ejecución (/Execution/)
-  - MEM :: Acceso a datos
-  - WB :: Almacenamiento (Writeback)
-- Un procesador moderno presenta mucho más etapas (Pentium 4: 20
-  etapas)
-
-** Hilos hardware (/hyperthreading/): Pipelines
-#+attr_latex: width=\textwidth
-#+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
-[[../img/ditaa/pipeline.png]]
-
-** Hilos hardware (/hyperthreading/): Pipelines
-- Es común que se presenten patrones de uso que requieren servicio de
-  diferentes componentes del procesador
-  - A veces con diferentes duraciones
-  - Lleva a la inserción de demasiadas /burbujas/ \rightarrow Pérdida
-    de tiempo
-- Para remediarlo, un sólo procesador (un solo núcleo) se presenta
-  como compuesto de dos o más /hilos hardware/
-  - Conocidos en el mercado como /hyper-threads/
-  - Puede aumentar el paralelismo — ¡aunque es muy improbable que sea
-    en 2x!
-
-** Hilos hardware (/hyperthreading/): Pipelines
-#+attr_latex: width=\textwidth
-#+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
-[[../img/ditaa/hyperthread.png]]
-
-** Hilos hardware (/hyperthreading/): Pipelines
-- Puede profundizarse mucho más en la planificación de hilos hardware
-  - Corresponde más bien al estudio de construcción de compiladores
-  - Y de arquitecturas de sistemas
-  - Consideraciones de seguridad entre hilos
-- Presenta gran similitud (aunque /no es lo mismo/) con la
-  /compartición de procesador/
-- No ahondaremos en el tema en este curso
-  - Se presenta para aclarar el concepto
-** Tiempo real
-- Nos hemos enfocado a repartir el tiempo disponible entre varios
-  procesos
-- No hemos tocado a los procesos que requieren /garantías de tiempo/
-  - Para poder realizar su trabajo, tienen que recibir determinado
-    tiempo de procesador /antes de un tiempo límite/
-- Estos procesos son conocidos como /de tiempo real/
-
-** ¿Cuándo nos enfrentamos con el tiempo real?
-- Controladores de dispositivos
-  - Entregan un determinado /bloque/ de información cada tanto tiempo
-  - Si ese bloque no es procesado completo, se sobreescribe por el siguiente
-- Reproductores o recodificadores de audio y video
-  - Si un /cuadro/ se pierde, el resultado puede escucharse
-  - Sea como una demora (reproducción) o como un corte (recodificación)
-- Procesadores de criptografía
-  - Si un bloque se pierde, el documento completo /de ese punto en
-    adelante/ puede quedar corrupto
-
-** Reserva de recursos
-- Para poder manejarse como de tiempo real, un proceso debe declarar
-  de inicio cuánto tiempo requerirá
-  - Puede ser una sola vez: /Necesito 600ms en los próximos 2s/
-  - Puede ser periódico: /Cada segundo necesito 30ms/
-- El sistema operativo le asignará el tiempo solicitado, o le
-  notificará que no puede garantizárselo
-  - Mensaje de error \rightarrow El proceso puede intentar continuar
-    de todos modos /sin prioridad especial/
-
-** Tiempo real duro y suave
-- Tiempo real duro :: El sistema puede /dar garantía/ de que el
-     proceso tendrá el tiempo que reservó
-- Tiempo real suave :: El sistema /intentará/ dar la prioridad
-     requerida al proceso, pero puede haber pequeñas demoras
-
-** Restricciones del tiempo real duro
-- El planificador debe saber /con certeza/ cuánto tiempo toman todas
-  las tareas de sistema que ejecutará en el periodo
-- Algunos dispositivos introducen demoras con demasiada varianza
-  - Almacenamiento en disco
-  - Memoria virtual
-- Imposibilitan que un sistema que los maneje implemente tiempo real
-  duro
-
-** Tiempo real suave: Prioridad del planificador
-- Los procesos de tiempo real simplemente reciben una prioridad mucho
-  más alta ante el planificador
-- Los procesos de tiempo real /pueden llevar a la inanición/ de otros
-  procesos
-  - Es esperable y aceptable — ¡No debemos correr /tantos/ procesos de
-    tiempo real! (rompería expectativas)
-
-** Retroalimentación multinivel y tiempo real suave
-#+BEGIN_CENTER
-Puede implementarse con una modificación al esquema de
-/retroalimentación multinivel/
-#+END_CENTER
-- La cola de tiempo real recibe prioridad sobre todas las demás colas
-- La prioridad de un proceso de tiempo real /no se degrada/ conforme
-  se ejecuta repetidamente
-  - Aunque puede indicar que ya terminó con su trabajo sensible a
-      tiempo
-- La prioridad de los demás procesos /nunca llegan a subir/ al nivel
-  de tiempo real por un proceso automático
-  - Aunque sí puede hacerse por una llamada explícita
-- La latencia de despacho debe ser mínima
-#+BEGIN_CENTER
-Casi todos los sistemas operativos hoy en día presentan facilidades
-básicas de tiempo real suave.
-#+END_CENTER
-
-** Sistema operativo interrumpible (/prevenible/)
-- Hay llamadas al sistema que toman demasiado tiempo
-- Para poder ofrecer tiempo real suave con buenas expectativas, hay
-  que poder interrumpir al propio núcleo
-- Primer enfoque: /Puntos de interrupción/
-  - Marcar explícitamente puntos en que todas las estructuras están
-    en un estado estable
-- No muy eficiente: Hay pocos puntos aptos para declarar puntos de
-  interrupción
-  - Muy rígido, dificil estructurar para poner puntos adicionales
-
-** Núcleo completamente interrumpible
-- Otro enfoque: Proteger a /todas/ las modificaciones a estructuras
-  internas del núcleo con mecanismos de sincronización
-- Enfoque mucho más flexible
-- Hace que el sistema operativo /completo/ sea más lento (aunque más
-  seguro)
-  - Más operaciones a hacer por cada solicitud
-- Permiten que funciones del SO puedan correr como hilos concurrentes
-  en los distintos procesadores
-
-** Inversión de prioridades
-- Un proceso $A$ de baja prioridad hace una llamada al sistema
-  - Es interrumpido a la mitad de la llamada
-- Un proceso $B$ de prioridad /tiempo real/ hace una segunda llamada
-  al sistema
-  - Requiriendo de la misma estructura que la que tiene bloqueada $A$
-- $B$ quedará esperando hasta que $A$ vuelva a ser agendado
-#+BEGIN_CENTER
-Esto es, $B$ fue, para propósitos prácticos, /degradado/ a la
-prioridad de $A$
-#+END_CENTER
-
-** Inversión de prioridades: Herencia de prioridades
-- Mecanismo introducido por Solaris 2
-- Si $A$ bloquea a $B$ y $P_A < P_B$
-- $P_A := P_B$ hasta que $B$ libere el recurso
-- Pasado el bloqueo, $P_A$ vuelve a su estado nativo
 

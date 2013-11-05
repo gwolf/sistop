@@ -2,7 +2,7 @@
 #+TITLE: Administración de memoria
 
 * Funciones y operaciones del administrador de memoria
-
+# <<MEM>>
 El único espacio de almacenamiento que el procesador puede utilizar
 directamente, más allá de los registros (que si bien le son internos y
 sumamente rápidos, pero de capacidad muy escasa) es la memoria
@@ -120,6 +120,7 @@ procedería terminando la ejecución del proceso, reclamando todos los
 recursos que tuviera asignados y notificando a su usuario.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_mem_base_a_limite
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 [[./img/ditaa/mem_base_a_limite.png]]
 
@@ -169,6 +170,7 @@ referencia/:
 - Localidad secuencial :: Un recurso, y muy particularmente la
      memoria, tiende a ser requerido de forma secuencial.
 
+#+label: MEM_localidad_de_referencia
 #+caption: Patrones de acceso a memoria, demostrando la localidad espacial / temporal (Silberschatz, p.350)
 #+attr_html: width:"330"
 #+attr_latex: width=0.7\textwidth
@@ -185,7 +187,7 @@ de los procesadores líderes en el mercado es la cantidad de cache de
 primero y segundo nivel con que cuentan.
 
 ** El espacio en memoria de un proceso
-# <<espacio_en_memoria>>
+# <<MEM_espacio_en_memoria>>
 
 Cuando un sistema operativo inicia un proceso, no se limita a volcar
 el archivo ejecutable a memoria, sino que tiene que proveer la
@@ -220,6 +222,7 @@ relativa a su ejecución.
      hacia abajo/.
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_proceso_en_memoria
 #+caption: Regiones de la memoria para un proceso
 [[./img/ditaa/proceso_en_memoria.png]]
 
@@ -277,6 +280,7 @@ etiqueta relativa al módulo actual, /inicio/ + 5986 bytes, y es
 resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_tipo_resol_direcc
 #+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
 [[./img/dot/tipo_resol_direcc.png]]
 
@@ -388,6 +392,7 @@ ejecución para que ocupen espacios contiguos, permitiendo unificar
 varios bloques libres en uno solo.
 
 #+attr_latex: width=0.6\textwidth
+#+label: MEM_compactacion_memoria
 #+caption: Compactación de la memoria de procesos en ejecución
 [[./img/ditaa/compactacion_memoria.png]]
 
@@ -395,7 +400,7 @@ La compactación tiene un costo alto — Involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
 
 *** Intercambio (/swap/) con el almacenamiento secundario
-# <<swap>>
+# <<MEM_swap>>
 
 Siguiendo de cierto modo la lógica requerida por la compactación
 encontramos los sistemas que utilizan /intercambio/ (/swap/) entre la
@@ -427,7 +432,7 @@ secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
 desuso conforme aumenta el tamaño de los procesos.
 
 * Segmentación
-# <<segmentacion>>
+# <<MEM_segmentacion>>
 
 Al desarrollar un programa, el programador no ve a la memoria como un
 sólo arreglo plano, en el que todas las direcciones son iguales (si
@@ -441,13 +446,15 @@ al descrito en el apartado anterior (registro base y
 desplazamiento). Claro está, esto debe también hacerse con apoyo del
 MMU.
 
+#+label: MEM_segmentacion_de_memoria
 #+caption: Ejemplo de segmentación
 #+attr_latex: width=0.7\textwidth
 [[./img/dot/segmentacion_de_memoria.png]]
 
 Una de las implementaciones más obvias y directas de un espacio de
 memoria segmentado es asignar un segmento distinto a cada una de las
-secciones mencionadas en la sección [[#espacio_en_memoria][espacio en memoria de un proceso]].
+secciones mencionadas en la sección \ref{MEM_espacio_en_memoria},
+/Espacio en memoria de un proceso/.
 
 La segmentación también ayuda a incrementar la /modularidad/ de un
 programa: Es muy común que las bibliotecas /ligadas dinámicamente/
@@ -472,7 +479,7 @@ no podrá introducir código ejecutable tan fácilmente — Tendría que
 cargarlo como un segmento adicional con los permisos correspondientes.
 
 ** Intercambio parcial
-# <<intercambio_parcial>>
+# <<MEM_intercambio_parcial>>
 
 Un uso muy común de la segmentación, particularmnete en los sistemas
 de los 1980s, era el de permitir que sólo /ciertas regiones/ de un
@@ -488,11 +495,11 @@ solicitud del proceso o por iniciativa del sistema operativo.
 
 *** Rendimiento
 
-En la [[#swap][sección donde presentamos el concepto de intercambio]] mencionamos
-que intercambiar un proceso completo resultaba demasaido caro. Cuando
-hablamos de un espacio de memoria segmentado, y muy particularmente
-cuando hablamos de bibliotecas de carga dinámica, la sobrecarga es
-mucho menor:
+En la sección \ref{MEM_swap}, donde presentamos el concepto de
+intercambio, mencionamos que intercambiar un proceso completo
+resultaba demasaido caro. Cuando hablamos de un espacio de memoria
+segmentado, y muy particularmente cuando hablamos de bibliotecas de
+carga dinámica, la sobrecarga es mucho menor:
 
 En primer término, podemos hablar de la cantidad de información que
 intercambiaremos: En un sistema que sólo maneja regiones contiguas de
@@ -529,17 +536,16 @@ intercambio por segmentos.
 
 ** Ejemplificando
 
-A modo de ejemplo (Finkel, p.79), y conjuntando los conceptos
-presentados en esta sección, si un proceso tuviera la siguiente tabla
-de segmentos:
+A modo de ejemplo, y conjuntando los conceptos presentados en esta
+sección, si un proceso tuviera la siguiente tabla de segmentos:
 
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-| 0        | 13426  | 26     | RWX      | sí       |
-| 1        | 2309   | 00     | R        | sí       |
-| 2        | 1000   | 23     | WX       | sí       |
-| 3        | -      | 95     | W        | no       |
-| 4        | 10000  | 100    | RWX      | sí       |
+|        0 |  15210 |    150 | RWX      | sí       |
+|        1 |   1401 |    100 | R        | sí       |
+|        2 |    965 |     96 | RX       | sí       |
+|        3 |      - |    184 | W        | no       |
+|        4 |  10000 |    320 | RWX      | sí       |
 
 En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
 /X/ a ejecución.
@@ -554,15 +560,15 @@ tipos de acceso:
 | Dirección | Tipo de | Dirección                               |
 |   virtual | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|       0-0 | R       | 13426                                   |
-|      2-17 | W       | 1017                                    |
-|      2-17 | R       | Atrapada: Violación de seguridad        |
-|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-72 | W       | Atrapada: Segmento faltante             |
-|      3-94 | R       | Atrapada: Segmento faltante;            |
+|     0-100 | R       | 15310                                   |
+|      2-82 | X       | 1533                                    |
+|      2-82 | W       | Atrapada: Violación de seguridad        |
+|     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-15 | W       | Atrapada: Segmento faltante             |
+|     3-130 | R       | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|      4-99 | X       | 10099                                   |
-|      7-25 | X       | Atrapada: Segmento invalido             |
+|     4-130 | X       | 10130                                   |
+|      5-15 | X       | Atrapada: Segmento invalido             |
 
 Cuando se atrapa una situación de excepción, el sistema operativo debe
 intervenir. Por ejemplo, la solicitud de un segmento inválido, de un
@@ -581,7 +587,7 @@ proceso al detectarse la violación de tipo de acceso, sería un
 desperdicio injustificado de recursos.
 
 * Paginación
-# <<paginacion>>
+# <<MEM_paginacion>>
 
 La fragmentación externa y, por tanto, la necesidad de compactación
 pueden evitarse por completo empleando la /paginación/. Esta consiste
@@ -614,6 +620,7 @@ separar la dirección en memoria entre los primeros $m$ bits
 desplazamiento).
 
 #+attr_latex: width=0.7\textwidth
+#+label: MEM_direccion_a_pag_y_despl
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 [[./img/ditaa/direccion_a_pag_y_despl.png]]
 
@@ -624,6 +631,7 @@ proceso) en la /dirección física/ (la ubicación en que /realmente/ se
 encuentra en la memoria del sistema).
 
 #+attr_latex: width=\textwidth
+#+label: MEM_hardware_de_paginacion
 #+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
 [[./img/dot/hardware_de_paginacion.png]]
 
@@ -636,6 +644,7 @@ dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
 #+attr_latex: width=0.5\textwidth
+#+label: MEM_ejemplo_de_paginacion
 #+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
 [[./img/ditaa/ejemplo_de_paginacion.png]]
 
@@ -742,7 +751,7 @@ correspondiente dirección física hace fala consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
 *** El buffer de traducción adelantada (/TLB/)
-# <<tlb>>
+# <<MEM_tlb>>
 
 La salida obvia a este dilema es el uso de un caché. Sin embargo, más
 que un caché genérico, el MMU utiliza un caché especializado en el
@@ -765,6 +774,11 @@ las propiedades de /localidad de referencia/ que vimos anteriormente,
 la probabilidad de que las regiones más empleadas de la memoria
 durante un área específica de ejecución del programa sean cubiertas
 por relativamente pocas entradas del TLB son muy altas.
+
+#+attr_latex: width=\textwidth
+#+label: MEM_paginacion_con_tlb
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
+[[./img/dot/paginacion_con_tlb.png]]
 
 Como sea, dado que el TLB es limitado, es necesario explicitar un
 mecanismo que indique dónde guardar las nuevas entradas una vez que el
@@ -800,6 +814,7 @@ de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
 
+#+label: MEM_paginacion_jerarquica
 #+caption: Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
 #+attr_latex: width=0.8\textwidth
 [[./img/dot/paginacion_jerarquica.png]]
@@ -869,6 +884,7 @@ manejo de cifrado (=openssl=), compresión (=zlib=), imágenes
 (=libpng=, =libjpeg=), etc.].
 
 #+attr_latex: width=\textwidth
+#+label: MEM_memoria_compartida
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
 [[./img/ditaa/memoria_compartida.png]]
 
@@ -929,6 +945,7 @@ procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_cow_recien_hecho
 #+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
 [[./img/ditaa/cow_recien_hecho.png]]
 
@@ -940,6 +957,7 @@ copia a un nuevo marco, y deja de ser una página compartida. El resto
 de las páginas seguirá siendo compartido.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_cow_pagina_modificada
 #+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
 [[./img/ditaa/cow_pagina_modificada.png]]
 
@@ -949,14 +967,14 @@ por ejemplo, al refrirse a copias de bibliotecas de sistema.
 
 * Memoria virtual
 
-Varios de los aspectos mencionados en la [[#paginacion][sección de paginación]] van
-conformando a lo que conocemos como /memoria virtual/: Vimos ya que en
-un sistema que emplea paginación, un proceso no conoce su dirección en
-memoria relativa a otros procesos, sino que trabajan con una
-/idealización/ de la memoria, en la cual ocupan el espacio completo de
-direccionamiento, desde el cero hasta el límite lógico de la
-arquitectura, independientemente del tamaño físico de la memoria
-disponible.
+Varios de los aspectos mencionados en la sección \ref{MEM_paginacion}
+(/Paginación/) van conformando a lo que conocemos como /memoria
+virtual/: Vimos ya que en un sistema que emplea paginación, un proceso
+no conoce su dirección en memoria relativa a otros procesos, sino que
+trabajan con una /idealización/ de la memoria, en la cual ocupan el
+espacio completo de direccionamiento, desde el cero hasta el límite
+lógico de la arquitectura, independientemente del tamaño físico de la
+memoria disponible.
 
 Y si bien el modelo mencionado de paginación nos llevó a que los
 diferentes procesos pueden /compartir/ regiones de memoria y
@@ -968,6 +986,7 @@ a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
 disco duro), a través de un esquema de /intercambio/ (/swap/).
 
+#+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
 #+attr_latex: width=0.7\textwidth
 [[./img/dot/esquema_gral_mem_virtual.png]]
@@ -977,23 +996,24 @@ automática y transparente/ por el sistema operativo. No hablaríamos
 de memoria virtual, por ejemplo, si un proceso pide explícitamente
 intercambiar determinadas páginas.
 
-Puesto de otra manera: Del mismo modo que la [[#segmentacion][segmentación]] permitió
-hacer mucho más cómodo y útil al [[#swap][intercambio]] a través del [[#intercambio_parcial][intercambio
-parcial]], permitiendo que continuara la ejecución del proceso incluso
-con ciertos segmentos /intercambiados/ (/swappeados/) a disco, la
-memoria virtual lo hace aún más conveniente al aumentar la
-/granularidad/ del intercambio: Ahora ya no sólo se enviarán a disco
-secciones lógicas completas del proceso (segmentos), sino que podrá
-hacerse página por página, aumentando muy fuertemente el rendimiento
-resultante. Veremos que, empleando memoria virtual, de cierto modo la
-memoria física se vuelve sólo una /proyección parcial/ de la memoria
-lógica, potencialmente mucho mayor a ésta.
+Puesto de otra manera: Del mismo modo que la segmentación (sección
+\ref{MEM_segmentacion}) permitió hacer mucho más cómodo y útil al
+intercambio (\ref{MEM_swap}) a través del intercambio parcial
+(\ref{MEM_intercambio_parcial}), permitiendo que continuara la
+ejecución del proceso incluso con ciertos segmentos /intercambiados/
+(/swappeados/) a disco, la memoria virtual lo hace aún más conveniente
+al aumentar la /granularidad/ del intercambio: Ahora ya no sólo se
+enviarán a disco secciones lógicas completas del proceso (segmentos),
+sino que podrá hacerse página por página, aumentando muy fuertemente
+el rendimiento resultante. Veremos que, empleando memoria virtual, de
+cierto modo la memoria física se vuelve sólo una /proyección parcial/
+de la memoria lógica, potencialmente mucho mayor a ésta.
 
 Técnicamente, cuando hablamos de memoria virtual, no nos referirmos ya
 a un /intercambiador/ (/swapper)/, sino que al /paginador/.
 
 ** Paginación sobre demanda
-# <<pag_sobre_demada>>
+# <<MEM_pag_sobre_demada>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
 Tomemos en cuenta que casi siempre tenemos /código durmiente/: Código
@@ -1023,13 +1043,15 @@ paginador /flojo/, las páginas que no sean requeridas nunca serán
 siquiera cargadas a memoria.
 
 La estructura empleada por el MMU para implementar un paginador flojo
-es muy parecida a la descrita al hablar del [[#tlb][buffer de tradución
-adelantada]]: La /tabla de páginas/ incluirá un /bit de validez/,
-indicando para cada página del proceso si está presente o no en
-memoria. Si el proceso intenta emplear una página que esté marcada
-como no válida, esto causa un fallo de página, que lleva a que el
-sistema operativo lo suspenda y traiga a memoria la página solicitada:
+es muy parecida a la descrita al hablar del buffer de tradución
+adelantada (sección \ref{MEM_tlb}): La /tabla de páginas/ incluirá un
+/bit de validez/, indicando para cada página del proceso si está
+presente o no en memoria. Si el proceso intenta emplear una página que
+esté marcada como no válida, esto causa un fallo de página, que lleva
+a que el sistema operativo lo suspenda y traiga a memoria la página
+solicitada:
 
+#+label: MEM_respuesta_a_fallo_de_pagina
 #+caption: Pasos que atraviesa la respuesta a un fallo de página
 #+attr_latex: width=0.6\textwidth
 [[./img/dot/respuesta_a_fallo_de_pagina.png]]
@@ -1073,9 +1095,7 @@ un proceso se presente un fallo de página ($0 \le p \le 1$),
 conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que toma
 atender a un fallo de página ($t_f$):
 
-#+begin_center
-$t_e = (1-p)t_a + pt_f$
-#+end_center
+$$t_e = (1-p)t_a + pt_f$$
 
 Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
@@ -1084,11 +1104,10 @@ de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
-#+begin_center
-$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$
 
-$t_e = 199.8ns + 8000ns = 8199.8ns$
-#+end_center
+$$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$$
+
+$$t_e = 199.8ns + 8000ns = 8199.8ns$$
 
 Esto es, en promedio, tendemos un tiempo efectivo de acceso a memoria
 /40 veces/ mayor a que si no empleáramos este mecanismo. Con estos
@@ -1107,7 +1126,7 @@ obligado a esperar por 8ms a que se resuelva un fallo de página,
 durante ese tiempo pueden seguirse ejecutando los demás procesos.
 
 *** Acomodo de las páginas en disco
-# <<acomodo_de_paginas>>
+# <<MEM_acomodo_de_paginas>>
 El cálculo recién presentado, además, asume que el acomodo de las
 páginas en disco es óptimo. Sin embargo, si para llegar a una página
 hay que resolver la dirección que ocupa en un sistema de archivos
@@ -1227,6 +1246,7 @@ aumenta la cantidad de fallos.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height=320
+#+label: MEM_anomalia_belady
 #+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
 [[./img/gnuplot/anomalia_belady.png]]
 
@@ -1258,6 +1278,7 @@ páginas de memoria (7, 0, 1) causarán fallos de página. La siguiente
 sin requerir una nueva transferencia.
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_fifo
 #+caption: Algoritmo FIFO de reemplazo de páginas
 [[./img/ditaa/reemplazo_pag_fifo.png]]
 
@@ -1294,6 +1315,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo.
 
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_opt
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
 [[./img/ditaa/reemplazo_pag_opt.png]]
 
@@ -1321,6 +1343,7 @@ Cuando necesita elegir una página víctima, LRU elige la página que no
 ha sido empleada hace más tiempo
 
 #+attr_latex: width=\textwidth
+#+label: MEM_reemplazo_pag_lru
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
 [[./img/ditaa/reemplazo_pag_lru.png]]
 
@@ -1632,7 +1655,7 @@ esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
 termine con su tarea. Veremos este punto en breve, al hablar del
-[[#conjunto_activo][conjunto activo]]
+conjunto activo (sección \ref{MEM_conjunto_activo}).
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1720,6 +1743,7 @@ veces contradictorias. El procesador tiene que comenzar a ejecutar
 parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
+#+label: MEM_hiperpaginacion
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
@@ -1739,7 +1763,7 @@ proceso con menor prioridad, al que esté causando más cantidad de
 fallos, o al que esté ocupando más memoria.
 
 *** Modelando el /conjunto activo/
-# <<conjunto_activo>>
+# <<MEM_conjunto_activo>>
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que estamos cayendo en una situación de hiperpaginación —
@@ -1749,6 +1773,7 @@ conjunto de páginas a otro, o dicho de otro modo, que cambió el
 conjunto activo, el proceso accese de golpe una serie de páginas que
 no había tocado en cierto tiempo.
 
+#+label: MEM_conjunto_activo
 #+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
@@ -1806,9 +1831,9 @@ error es una vulnerabilidad esperando a ser descubierta].
 
 *** La /pila de llamadas/ (stack)
 
-Recordando lo mencionado en la sección en que presentamos al [[#espacio_en_memoria][espacio
-en memoria de un proceso]], profundicemos un poco en cómo está
-estructurada la /pila de llamadas/ (/stack/).
+Recordando lo mencionado en la sección \ref{MEM_espacio_en_memoria},
+en que presentamos al espacio en memoria de un proceso, profundicemos
+un poco en cómo está estructurada la /pila de llamadas/ (/stack/).
 
 El /stack/ es el mecanismo que brinda un sentido local a la
 representación del código estructurado. Está dividido en /marcos/ (sin
@@ -1888,6 +1913,7 @@ func:
 #+end_src
 
 #+attr_latex: width=0.85\textwidth
+#+label: MEM_stackframe
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 [[./img/ditaa/stackframe.png]]
 
@@ -1972,6 +1998,7 @@ intentar procesarlo, sino después de terminar de hacerlo: Al llegar
 nuestro código al =return 0=.
 
 #+attr_latex: width=0.8\textwidth
+#+label: MEM_overflow_500
 #+caption: Estado de la memoria después del =strcpy()=
 [[./img/ditaa/overflow_500.png]]
 
@@ -2047,6 +2074,7 @@ proporicione. Para esto, el ataque más frecuente es brincar /hacia
 adentro del stack/.
 
 #+attr_latex: width=0.7\textwidth
+#+label: MEM_overflow_jump
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[./img/ditaa/overflow_jump.png]]
 
@@ -2133,6 +2161,7 @@ basura, y el sistema podrá detener la ejecución del proceso
 comprometido antes de que brinde privilegios elevados al atacante.
 
 #+attr_latex: width=0.8\textwidth
+#+label: MEM_overflow_canary
 #+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
 [[./img/ditaa/overflow_canary.png]]
 

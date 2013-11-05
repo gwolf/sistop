@@ -19,6 +19,7 @@ La funciones del sistema operativo respecto al CPU son:
 - Multiplexación :: En un sistema multiproceso, el sistema operativo es el encargado de administrar la CPU dando la ilusión a los programas que están ejecutando de forma exclusiva. 
 
 ** Jerarquías de Almacenamiento 
+# <<HW>>
 
 Las computadoras que siguen la arquitectura /von Neumann/, esto es,
 prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
@@ -50,6 +51,7 @@ Aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
 #+attr_latex: height=0.5\textheight
+#+label: HW_jerarquia_memoria
 #+caption: Jerarquía de memoria entre diversos medios de almacenamiento.
 [[./img/dot/jerarquia_memoria.png]]
 
@@ -106,6 +108,7 @@ general.
 
 #+attr_html: width=444px
 #+attr_latex: width=0.6\textwidth
+#+label: HW_registros_8086
 #+caption: Ejemplo de registros: Intel 8086/8088 (Imagen de la Wikipedia: /Intel 8086 y 8088/)
 [[./img/registros_8086.png]]
 
@@ -149,12 +152,13 @@ independientes de propósito limitado.
 
 El procesador no puede referirse directamente más información que la
 que forma parte del almacenamiento primario — Esto es, de la memoria
-RAM. Veremos a continuación, en las secciones de [[#interrupciones][interrupciones y
-excepciones]] y de [[#dma][acceso directo a memoria]], cómo es que se efectúan
-dichas referencias.
+RAM. Veremos a continuación, en las secciones \ref{HW_interrupciones}
+(/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
+memoria/), cómo es que se efectúan dichas referencias.
+
 
 ** Interrupciones y excepciones
-# <<interrupciones>>
+# <<HW_interrupciones>>
 
 La ejecución de los procesos podría seguir siempre linealmente,
 atendiendo a las instrucciones de los programas como fueron escritas,
@@ -212,7 +216,7 @@ multitareas) o indicando una condición de error (por ejemplo, una
 división sobre cero o un error leyendo de disco).
 
 ** Acceso directo a memoria (DMA)
-# <<dma>>
+# <<HW_dma>>
 
 La operación de dispositivos de entrada/salida puede ser altamente
 ineficiente. Cuando un proceso está en una sección /limitada por
@@ -311,10 +315,12 @@ ligeramente distinto de otros.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="350"
+#+label: HW_llamando_syscall
 #+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
 [[./img/llamando_syscall.png]]
 
 #+attr_latex: width=\textwidth
+#+label: HW_llamada_al_sistema
 #+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
 [[./img/dot/llamada_al_sistema.png]]
 
@@ -401,8 +407,84 @@ exit_group(0)                           = ?
 #+end_src
 #+latex: }
 
+** Canales y puentes
 
+Los diferentes componentes de un sistema de cómputo se comunican a
+través de los diferentes /canales/ (generalmente se hace referencia a
+ellos por su nombre en inglés, en inglés, /buses/). Al nivel más
+básico, los canales son líneas de comunicación entre el procesador
+y los demás componentes del chipset[fn:: Los chips que forman parte de
+un equipo, casi siempre provistos por el mismo fabricante que el
+procesador mismo], a los cuales a su vez se conectan los diferentes
+dispositivos del sistema — Desde aquellos que requieren mayor
+velocidad, como la misma memoria, hasta los puertos más sencillos.
 
+Un chipset provee distintos buses, con un agrupamiento lógico
+según la velocidad requerida por sus componentes y otras
+características que determinan su topología.
+
+#+attr_html: height=618px
+#+attr_latex: width=0.5\textwidth
+#+label: HW_northbridge_southbridge
+#+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
+[[./img/northbridge_southbridge.png]]
+
+Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
+ha sido característica de las computadoras x86 de los últimos 20 años,
+aunque la tendencia apunta a que se abandone paulatinamente para dar
+paso a procesadores que integren en un sólo paquete todos estos
+componentes. Sin embargo, el acomodo funcional electrónico, al menos
+hasta el momento, sigue basado en estos puntos.] de estos buses es a
+través de una separación en dos chips: El /puente norte/
+(/Northbridge/), conectado directamente al CPU, encargado de gestionar
+los buses de más alta velocidad y que, además, son fundamentales para
+el más básico inicio de la operación del sistema: La memoria y el
+reloj. La comunicación con algunas tarjetas de video se incorpora al
+puente norte a través del canal dedicado /AGP/ (/Advanced Graphics
+Port/, /Puerto Gráfico Avanzado/).
+
+Al puente norte se conecta el /puente sur/ (/Southbridge/), que
+controla el resto de los dispositivos del sistema — Normalmente
+veremos aquí a las interfaces de almacenamiento (SCSI, SATA, IDE), de
+expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
+puertos /heredados/ seriales y paralelos).
+
+*** Contención
+
+Una de las principales razones de la existencia de tantos /canales/
+(buses) distintos en un mismo sistema es a la frecuencia acorde a los
+dispositivos para los cuales está diseñado: La cantidad de datos que
+tiene que viajar entre el procesador y la memoria a lo largo de la
+operación del sistema es muy superior que la que tiene que
+transferirse desde los discos, y a su vez, esta es mucho mayor que la
+que enviarse a la impresora, o la que se recibe del teclado. Claro
+está, los demás dispositivos podrían incrementar su frecuencia para
+participar en un canal más rápido, aunque su costo se incrementaría,
+dado que harían falta componentes capaces de sostener un reloj varios
+órdenes de magnitud más rápido.
+
+Pero incluso obviando la diferencia económica: Cuando el sistema
+requiere transferir datos de o hacia varios dispositivos de la misma
+categoría, es frecuente que ocurra /contención/: Puede saturarse el
+ancho de banda máximo que alcanza uno de los canales y, aún si los
+dispositivos tienen información lista, tendrán que esperar a que los
+demás dispositivos desocupen el canal.
+
+#+attr_html: height=490px
+#+attr_latex: width=\textwidth
+#+label: HW_chipset_857
+#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
+[[./img/dot/chipset_857.png]]
+
+En la figura \ref{HW_chipset_857} podemos ver el diseño general del chipset Intel 875,
+introducido en el 2003, incluyendo el ancho de banda de cada uno de
+los canales del sistema. Hay que recordar que hay canales como el USB
+que permiten la conexión de múltiples dispositivos, los cuales
+deberán compartir el ancho de banda total permitido por el canal: En
+la figura presentamos dos discos duros sobre el canal SATA y dos
+unidades ópticas en el ATA paralelo; el canal USB permite el uso de
+un máximo de 127 unidades por canal, por lo cual la contención puede
+ser muy alta.
 
 * Cuando dos cabezas piensan mejor que una
 ** Multiprocesamiento
@@ -417,19 +499,21 @@ más que eso, al grado de que rara vez empleamos el término
 /multiprogramación/, mucho más acorde a los equipos que empleamos día
 a día.], es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que abordaremos en esta sección, y la
-/multiprogramación/, de la cual hablamos en la sección de [[#multiprogramados][sistemas
-multiprogramados]] de la [[01_introduccion.org][introducción]]. Un sistema multiprogramado nos da
-la /ilusión/ de que está ejecutando varios procesos al mismo tiempo,
-pero en realidad está alternando entre los diversos procesos que
-compiten por su atención. Un sistema multiprocesador tiene la
-capacidad de estar atendiendo /simultáneamente/ a diversos procesos.
+/multiprogramación/, de la cual hablamos en la sección
+\ref{INTRO_multiprogramados} (/Sistemas multiprogramados/). Un sistema
+multiprogramado nos da la /ilusión/ de que está ejecutando varios
+procesos al mismo tiempo, pero en realidad está alternando entre los
+diversos procesos que compiten por su atención. Un sistema
+multiprocesador tiene la capacidad de estar atendiendo
+/simultáneamente/ a diversos procesos.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=210
+#+label: HW_multiproceso_y_multiprogramacion
 #+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
 [[./img/ditaa/multiproceso_y_multiprogramacion.png]]
 
-En la figura presentada, el primer diagrama ilustra una ejecución
+En la figura \ref{HW_multiproceso_y_multiprogramacion}, el primer diagrama ilustra una ejecución
 estrictamente secuencial: Cada uno de los procesos que demandan
 atención del sistema es ejecutado hasta que termina; el segundo
 muestra cómo se comportaría un sistema multiprogramado, alternando
@@ -444,9 +528,10 @@ comunmente encontraremos en equipos de uso general hoy en día.
 
 Probablemente el tema que abordaremos más recurrentemente del curso
 será precisamente la complejidad que proviene de la multiprogramación;
-la abordaremos particularmente en las unidades [[./02_administracion_de_procesos.org][Administración de
-procesos]] y [[./03_planificación_de_procesos.org][Planificación de procesos]]. Valga la nota en este momento
-únicamente para aclarar la diferencia entre los dos conceptos.
+la abordaremos particularmente en los capítulos \ref{PROC}
+(/Administración de procesos/) y \ref{PLAN} (/Planificación de
+procesos/). Valga la nota en este momento únicamente para aclarar la
+diferencia entre los dos conceptos.
 
 El multiprocesamiento se emplea ampliamente desde los 1960 en los
 entornos de cómputo de alto rendimiento, pero por muchos años se vio
@@ -459,6 +544,7 @@ sólo.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=415
+#+label: HW_moore_orig
 #+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
 [[./img/moore_orig.png]]
 
@@ -474,6 +560,7 @@ prácticos, /paquetes/ con 2 o más procesadores dentro.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="512"
+#+label: HW_ley_de_moore
 #+caption: La /Ley de Moore/ se sostiene al día de hoy: Conteo de transistores por procesador de 1971 al 2012
 [[./img/gnuplot/ley_de_moore.png]]
 
@@ -578,6 +665,166 @@ principalmente:
 
   El tema del cómputo en la nube va muy de la mano del que abordaremos
   a continuación: La virtualización.
+
+** Amdahl y Gustafson: ¿qué esperar del paralelismo?
+
+Al programar una aplicación de forma que aproveche al paralelismo
+(esto es, diseñarla para que realice en distintos procesadores o nodos
+sus /porciones paralelizables/) ¿cuál es el incremento al rendimiento
+que podemos esperar?
+
+En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Validity of the Single
+Processor Approach to Achieving Large Scale Computing Capabilities]],
+Amdahl, 1967] en que indica los límites máximos en que resultará la
+programación multiprocesada ante determinado programa: Partiendo de la
+observación de que aproximadamente 40% del tiempo de ejecución de un
+programa se dedicaba a administración y mantenimiento de los datos,
+esto es, a tareas secuenciales.
+
+Si únicamente el 60% del tiempo de procesamiento es susceptible, pues,
+de ser paralelizado, el rendimiento general del sistema no se
+incrementará en una proporción directa con el número de procesadores,
+sino que debe sumársele la porción estrictamente secuencial. Puesto en
+términos más formales: La ganancia en la velocidad de ejecución de un
+programa al ejecutarse en un entorno paralelo estará limitado por el
+tiempo requerido por su fracción secuencial. Esto significa que, si
+$T(1)$ representa al tiempo de ejecución del programa con un sólo
+procesador y $T(P)$ al tiempo de ejecución con $P$ procesadores, y si
+$t_s$ es el tiempo requerido para ejecutar la porción secuencial del
+programa, y $t_p(P)$ el tiempo que requiere la ejecución de la porción
+paralelizable, repartida entre $P$ procesadores, podemos hablar de una
+ganancia $g$ en términos de:
+
+$$g = \frac{T(1)}{T(P)} = \frac{t_s + t_p(1)}{t_s + \frac{t_p(1)}{P}}$$
+
+#+begin_latex
+\begin{figure}
+\centering
+\subfigure[Procesadores: 1, $t=500$ \label{HW_amdahl_1}]{\hskip 2em \includegraphics[height=0.33\textheight]{img/dot/amdahl_1.png} \hskip 2em}
+\hfill
+\subfigure[Procesadores: 2, $t=400$, ganancia: 1.25x \label{HW_amdahl_2}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_2.png} \hskip 1em}
+\hfill
+\subfigure[Procesadores: 4, $t=350$, ganancia: 1.4x \label{HW_amdahl_4}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_4.png}}
+\caption {Ley de Amdahl: Ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.}
+\label{HW_amdahl}
+\end{figure}
+#+end_latex
+
+#+begin_html
+<table class="figure" style="margin-right:auto; margin-left:auto;" >
+  <tr>
+    <td style="padding: 1em">
+      <span id="amdahl_1">
+        <p><img src="./img/dot/amdahl_1.png" alt="./img/dot/amdahl_1.png" /></p>
+        <p>Procesadores: 1, <em>t=500</em></p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="amdahl_2">
+        <p><img src="./img/dot/amdahl_2.png" alt="./img/dot/amdahl_2.png" /></p>
+        <p>Procesadores: 2, <em>t=400</em>, ganancia: 1.25x</p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="amdahl_4">
+        <p><img src="./img/dot/amdahl_4.png" alt="./img/dot/amdahl_4.png" /></p>
+        <p>Procesadores: 4, <em>t=350</em>, ganancia: 1.4x</p>
+      </span>
+    </td>
+  </tr>
+  <caption style="caption-side: bottom">Ley de Amdahl: Ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.</caption>
+</table>
+#+end_html
+
+Esta observación, conocida como la /Ley de Amdahl/, llevó a que por
+varias décadas el cómputo paralelo fuera relegado al cómputo de
+propósito específico, para necesidades muy focalizadas en soluciones
+altamente paralelizables, como el cómputo científico.
+
+En términos del ejemplo presentado en la figura \ref{HW_amdahl}, vemos
+un programa que, ejecutado secuencialmente, resulta en $T=500$. Este
+programa está dividido en tres secciones secuenciales, de $t=100$ cada
+una, y dos secciones paralelizables, totalizando $t=100$ cada una,
+como lo podemos ver al representar una ejecución estrictamente
+secuencial (\ref{HW_amdahl_1}).
+
+Al agregar un procesador adicional (\ref{HW_amdahl_2}), obtenemos una
+ganancia de 1.25x — La ejecución se completa en $T=400$ (con
+$g=1.25$). Las secciones paralelizables sólo toman un tiempo /externo/
+de 50 cada una, dado que la carga fue repartida entre dos unidades de
+ejecución. Al ejecutar con cuatro procesadores (\ref{HW_amdahl_4}), si
+bien seguimos encontrando mejoría, esta apenas nos lleva a $T=350$,
+con $g=1.4$.
+
+Si el código fuera infinitamente paralelizable, y ejecutáramos este
+programa en una computadora con un número infinito de procesadores,
+este programa no podría ejecutarse en menos de $T=300$, lo cual nos
+presentaría una ganancia de apenas $g=1.66$. Esto es, al agregar
+procesadores adicionales, rápidamente llegaríamos a un crecimiento
+asintótico — El comportamiento descrito por la Ley de Amdahl es
+frecuentemente visto como una demostración de que el desarrollo de
+sistemas masivamente paralelos presenta /rendimientos decrecientes/.
+
+#+attr_latex: width=0.6\textwidth
+#+attr_html: height="480"
+#+label: HW_amdahl_porcentajes
+#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl
+[[./img/gnuplot/amdahl.png]]
+
+Si bien el ejemplo que presentamos resulta poco optimizado, con sólo
+un 40% de código paralelizable, podemos ver en la gráfica
+\ref{HW_amdahl_porcentajes} que el panorama no cambia tan fuertemente
+con cargas típicas. Un programa relativamente bien optimizado, con 80%
+de ejecución paralela, presenta un crecimiento atractivo en la región
+de hasta 20 procesadores, y se estaciona apenas arriba de una ganancia
+de 4.5 a partir de los 40.[fn:: De un máximo de 5 al que puede
+alcanzar con un número infinito de procesadores] Incluso el hipotético
+95% llega a un tope en su crecimiento, imposibilitado de alcanzar una
+ganancia superior a 20.
+
+Dado que el factor económico resulta muy importante para construir
+computadoras masivamente paralelas,[fn:: Dado que los componentes más
+caros son necesariamente los procesadores] y que vemos claramente que
+el poder adicional que nos da cada procesador es cada vez menor, la
+Ley de Amdahl resultó (como ya mencionamos) en varias décadas de mucho
+mayor atención a la miniaturización y aumento de reloj, y no al
+multiprocesamiento.
+
+Fue hasta 1988 que John Gustafson publicó una observación a esta
+ley[fn:: [[http://www.johngustafson.net/pubs/pub13/amdahl.htm][Reevaluating Amdahl's Law]], John L. Gustafson, Communications
+of the ACM, vol. 31, mayo de 1988] que, si bien no la invalida,
+permite verla bajo una luz completamente diferente y mucho más
+optimista. Gustafson publicó este artículo corto tras haber obtenido
+ganancias superiores a 1020 en una supercomputadora con 1024
+procesadores — Un incremento casi perfectamente lineal al número de
+procesadores. Sí, respondiendo a una carga altamente optimizada, pero
+no por eso menos digna de análisis.
+
+El argumento de Gustafson es que al aumentar el número de
+procesadores, típicamente veremos una modificación /al problema
+mismo/. Citando de su artículo (traducción propia),
+
+#+begin_quote
+(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
+independiente del número de procesadores, /lo cual virtualmente nunca
+ocurre de este modo/. Uno no toma un problema de tamaño fijo para
+correrlo en varios números de procesadores como no sea para hacer un
+ejercicio académico; en la práctica, /el tamaño del problema crece con
+el número de procesadores/. Al obtener procesadores más poderosos, el
+problema generalmente se expande para aprovechar las facilidades
+disponibles. Los usuarios tienen control sobre cosas como la
+resolución de la malla, el número de pasos, la complejidad de los
+operadores y otros parámetros que usualmente se ajustan para permitir
+que el programa corra en el tiempo deseado. Por tanto, podría ser más
+realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
+constante.
+#+end_quote
+
+Lo que escribe Gustafson se traduce a que es posible obtener la
+eficiencia deseada de cualquier cantidad de procesadores /aumentando
+suficientemente el tamaño del problema/. Al enfrentarse explícitamente
+con el /bloqueo mental/ contra el paralelismo masivo que nació de esta
+lectura errónea de lo comentado por Amdahl. Su artículo, sencillo y de
+apenas más de una cuartilla de extensión, cambió la percepción acerca
+de la utilidad misma del paralelismo masivo.
 
 * Virtualización
 
@@ -749,6 +996,7 @@ hardware nativa).
 
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="600"
+#+label: HW_maquina_virtual_dotnet
 #+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
 [[./img/maquina_virtual_dotnet.png]]
 
@@ -867,15 +1115,15 @@ en un receptor de radio.
 Actualmente se escucha mucho hablar de la virtualización como una
 herramienta para la consolidación de servicios, de gran ayuda para los
 administradores de sistemas. Este uso se refiere principalmente a lo
-que veremos en este apartado, así como en los dos siguientes,
-[[#paravirt][paravirtualización]] y [[#contenedores][contenedores]]. Y si bien este /zumbido/ de la
-virtualización se ha producido mayormente a partir del 2006-2007, no
-se trata de tecnologías o ideas novedosas — Existe desde fines de
-los 1960. Hasta hace algunos años, sin embargo, se mantenía dentro
-del ámbito de los servidores a gran escala, fuera del alcance de la
-mayor parte de los usuarios. Repasemos un poco la génesis de esta
-herramienta, para poder comprender mejor cómo opera y cómo se
-implementa.
+que veremos en este apartado, así como en las secciones
+\ref{HW_paravirt} (/Paravirtualización/) y \ref{HW_contenedores}
+(/Contenedores/). Y si bien este /zumbido/ de la virtualización se ha
+producido mayormente a partir del 2006-2007, no se trata de
+tecnologías o ideas novedosas — Existe desde fines de los 1960. Hasta
+hace algunos años, sin embargo, se mantenía dentro del ámbito de los
+servidores a gran escala, fuera del alcance de la mayor parte de los
+usuarios. Repasemos un poco la génesis de esta herramienta, para poder
+comprender mejor cómo opera y cómo se implementa.
 
 En 1964, IBM creó la primer /familia de computadoras/, la
 serie 360. Presentaron la entonces novedosa idea de que una
@@ -1021,7 +1269,7 @@ diseñado logre congelarse esperando respuesta del hardware (emulado),
 y mucho menos afectar a los demás huéspedes.
 
 ** Paravirtualización
-# <<paravirt>>
+# <<HW_paravirt>>
 
 La virtualización asistida por hardware, por conveniente que resulte,
 sigue presentando algunas desventajas:
@@ -1132,7 +1380,7 @@ ventajas de la paravirtualización, sobre entornos de virtualización
 asistida por hardware.
 
 ** Contenedores, o /virtualización a nivel sistema operativo/
-# <<contenedores>>
+# <<HW_contenedores>>
 
 Una estrategia completamente distinta para la creación de máquinas
 virtuales es la de /contenedores/. A diferencia de emulación,
@@ -1248,6 +1496,7 @@ virtual que no tiene trabajo se convierte sencillamente en un grupo
 de procesos /dormidos/, probables candidatos a ser /paginados/ a
 disco.
 
+<<<<<<< HEAD
 ** Canales y puentes
 
 Los diferentes componentes de un sistema de cómputo se comunican a
@@ -1344,7 +1593,6 @@ ser muy alta.
   2006-2009
 - [[http://communities.vmware.com/servlet/JiveServlet/download/1147092-17964/PS%5FTA68%5F288534%5F166-1%5FFIN%5Fv5.pdf][Performance Aspects of x86 Virtualization]], Ole Agesen, VMWare 2007
 - [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of Virtualization]], Paul Barham, Boris Dragovic
-  et. al. 2003
 - [[http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf][KVM: The Linux Virtual Machine Monitor]]; Avi Kivity, Yaniv Kamay,
   Dor Laor, Uri Lublin, Anthony Liguori (Qumranet / IBM), 2007
 - [[http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007%24kvm_pv_drv.pdf][KVM PV devices]], Dor Laor (Qumranet), 2007

@@ -1,0 +1,16 @@
+digraph G {
+	rankdir = RL;
+	node [shape=box];
+	vacio [shape=point];
+	cola [shape=record, label="{Colas\nde\nprioridad|{<4>4|<3>3|<2>2|<1>1|<0>0}}"];
+	etiq_alto [color=white, label="Mayor prioridad"];
+	etiq_bajo [color=white, label="Menor prioridad"];
+	{rank=same etiq_alto cola etiq_bajo}
+	etiq_alto -> cola:4 [style=invis];
+	cola:0 -> etiq_bajo [style=invis];
+	C -> F -> cola:0;
+	D -> G -> E -> cola:1;
+	A -> cola:2;
+	vacio ->cola:3;
+	B -> cola:4;
+}

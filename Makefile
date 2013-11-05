@@ -33,14 +33,14 @@ pdf: fig
 
 libro_pdf:
 	[ ! -f $(libro) ] || rm -f $(libro)
-	echo '#+setupfile: ../setup_notas.org' > $(libro)
+	echo '#+options: toc:4 H:4' > $(libro)
+	echo '#+setupfile: ../setup_notas.org' >> $(libro)
 	echo '#+latex_class: book' >> $(libro)
 	echo '#+latex_header: \usepackage[T1]{fontenc}' >> $(libro)
 	echo '#+latex_header: \usepackage{mathpazo}' >> $(libro)
 	echo '#+latex_header: \linespread{1.05}' >> $(libro)
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
-	echo '#+options: toc:4' >> $(libro)
 	echo '#+title: Sistemas Operativos' >> $(libro)
 	echo '' >> $(libro)
 	for CAPITULO in notas/01_introduccion.org \
@@ -50,11 +50,12 @@ libro_pdf:
 			notas/05_administracion_de_memoria.org \
 			notas/06_sistemas_de_archivos.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
-		TITULO=`grep -i ^#+title: $$FILE | sed s/^.*://`; \
+		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
 	done
-	echo "#+latex: \listoftables" >> $(libro)
+	# No hay muchas tablas, este listado no tiene tanto sentido
+	# echo "#+latex: \listoftables" >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
 	# Si org-mode se queja de no tener definido "book" en
 	# org-export-latex-classes, referirse a
@@ -68,16 +69,17 @@ beamer: fig
 	echo '#+LANGUAGE: es' >> $(idx_laminas)
 	echo '#+STYLE: <link rel="stylesheet" type="text/css" href="/css/sistop.css" />' >> $(idx_laminas)
 	echo '* Láminas disponibles' >> $(idx_laminas)
-	echo '| *Fecha* | Título |' >> $(idx_laminas)
+	echo '| *Fecha* | Título | Último cambio' >> $(idx_laminas)
 	echo '|--|--|' >> $(idx_laminas)
 	for i in `ls laminas/*.org | grep -v index.org | sort -n`; do \
+	    lastmod=`stat --format=%y $$i | perl -p -e 's/(\d\d:\d\d):.+/$$1/'` \
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    date=`grep -i '#+date:' $$i | sed 's/#+date://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
 		emacs --batch --visit=$$i --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf ; \
 	    fi ; \
-	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] |" >> $(idx_laminas); \
+	    echo "| $$date | [[$(baseurl)/$$pdf][$$title]] | $$lastmod" >> $(idx_laminas); \
 	done
 	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
 	rm $(idx_laminas)

@@ -2,10 +2,14 @@
 digraph G {
 	layout = dot;
 	node [shape = box];
-	rankdir = TB;
-	
-	Registros ;
-	Cache ;
+  subgraph cluster_0 {
+	  rankdir = TB;
+    label = "Procesador";
+    style=filled;
+    color=lightgrey;
+  Registros ;
+ 	Cache ;
+  }
 	Principal [label = "Memoria principal"];
 	Electr [label = "Disco electrónico"];
 	Magnet [label = "Disco magnético"];
@@ -27,5 +31,15 @@ digraph G {
         Optico -> Cinta [dir = both];
 	Electr -> Cinta [dir = both, minlen=2];
 	Magnet -> Cinta [dir = both, minlen=2];
+
+  Caro [style=invis]; 
+  Barato[style=invis]; 
+  Rapido [style=invis]; 
+  Lento [style=invis]; 
+  Chico [style=invis]; 
+  Grande [style=invis]; 
+  Caro -> Barato [ label ="+ Costo", dir=back, minlen=6];
+  Rapido -> Lento [ label ="+ Velocidad", dir=back, minlen=6];
+  Chico -> Grande [ label ="+ Capacidad", minlen=6];
 }
 #+end_src

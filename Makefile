@@ -48,7 +48,8 @@ libro_pdf:
 			notas/03_administracion_de_procesos.org \
 			notas/04_planificacion_de_procesos.org \
 			notas/05_administracion_de_memoria.org \
-			notas/06_sistemas_de_archivos.org ; do \
+			notas/06_sistemas_de_archivos.org  \
+			notas/10_topicos_avanzados.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \

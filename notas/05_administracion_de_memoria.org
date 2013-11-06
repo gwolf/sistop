@@ -536,17 +536,16 @@ intercambio por segmentos.
 
 ** Ejemplificando
 
-A modo de ejemplo (Finkel, p.79), y conjuntando los conceptos
-presentados en esta sección, si un proceso tuviera la siguiente tabla
-de segmentos:
+A modo de ejemplo, y conjuntando los conceptos presentados en esta
+sección, si un proceso tuviera la siguiente tabla de segmentos:
 
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-| 0        | 13426  | 26     | RWX      | sí       |
-| 1        | 2309   | 00     | R        | sí       |
-| 2        | 1000   | 23     | WX       | sí       |
-| 3        | -      | 95     | W        | no       |
-| 4        | 10000  | 100    | RWX      | sí       |
+|        0 |  15210 |    150 | RWX      | sí       |
+|        1 |   1401 |    100 | R        | sí       |
+|        2 |    965 |     96 | RX       | sí       |
+|        3 |      - |    184 | W        | no       |
+|        4 |  10000 |    320 | RWX      | sí       |
 
 En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
 /X/ a ejecución.
@@ -561,15 +560,15 @@ tipos de acceso:
 | Dirección | Tipo de | Dirección                               |
 |   virtual | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|       0-0 | R       | 13426                                   |
-|      2-17 | W       | 1017                                    |
-|      2-17 | R       | Atrapada: Violación de seguridad        |
-|      2-32 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-72 | W       | Atrapada: Segmento faltante             |
-|      3-94 | R       | Atrapada: Segmento faltante;            |
+|     0-100 | R       | 15310                                   |
+|      2-82 | X       | 1533                                    |
+|      2-82 | W       | Atrapada: Violación de seguridad        |
+|     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
+|      3-15 | W       | Atrapada: Segmento faltante             |
+|     3-130 | R       | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|      4-99 | X       | 10099                                   |
-|      7-25 | X       | Atrapada: Segmento invalido             |
+|     4-130 | X       | 10130                                   |
+|      5-15 | X       | Atrapada: Segmento invalido             |
 
 Cuando se atrapa una situación de excepción, el sistema operativo debe
 intervenir. Por ejemplo, la solicitud de un segmento inválido, de un
@@ -775,6 +774,11 @@ las propiedades de /localidad de referencia/ que vimos anteriormente,
 la probabilidad de que las regiones más empleadas de la memoria
 durante un área específica de ejecución del programa sean cubiertas
 por relativamente pocas entradas del TLB son muy altas.
+
+#+attr_latex: width=\textwidth
+#+label: MEM_paginacion_con_tlb
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
+[[./img/dot/paginacion_con_tlb.png]]
 
 Como sea, dado que el TLB es limitado, es necesario explicitar un
 mecanismo que indique dónde guardar las nuevas entradas una vez que el
@@ -1091,9 +1095,7 @@ un proceso se presente un fallo de página ($0 \le p \le 1$),
 conociendo el tiempo de acceso a memoria ($t_a$) y el tiempo que toma
 atender a un fallo de página ($t_f$):
 
-#+begin_center
-$t_e = (1-p)t_a + pt_f$
-#+end_center
+$$t_e = (1-p)t_a + pt_f$$
 
 Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
@@ -1102,11 +1104,10 @@ de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
-#+begin_center
-$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$
 
-$t_e = 199.8ns + 8000ns = 8199.8ns$
-#+end_center
+$$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$$
+
+$$t_e = 199.8ns + 8000ns = 8199.8ns$$
 
 Esto es, en promedio, tendemos un tiempo efectivo de acceso a memoria
 /40 veces/ mayor a que si no empleáramos este mecanismo. Con estos

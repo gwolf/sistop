@@ -1020,18 +1020,17 @@ ofrece las construcciones antes descritas.
 Si podemos compartir estructuras de memoria entre los procesos
 implicados, podemos emplear la /solución de Peterson/. Esta implica
 que los procesos cooperen explícitamente, y que conozcan algunos datos
-que hemos mayormente obviado (como son, no sólo la cantidad de procesos que
-emplearán determinada sección crítica, sino una /numeración/ que
+que hemos mayormente obviado (como son no sólo la cantidad de procesos
+que emplearán determinada sección crítica, sino una /numeración/ que
 permita distinguir entre ellos). Cabe mencionar, como señala
 Silberschatz (p. 223), que algunos detalles de implementación de las
 computadoras actuales pueden impedir que este mecanismo funcione
 adecuadamente.
 
 Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-determinada sección crítica, alternando entre su ejecución
-paralelizable y la ejecución de dicha sección, contando con las
-estructuras compartidas:
-# queda algo mal redactado en este parrafo anterior
+entrar a determinada sección crítica, siempre que estos alternen entre
+el tiempo en que ejecutan código que puede proceder en paralelo, basta
+contar con las dos siguientes variables compartidas entre ellos:
 
 #+begin_src C
 int turno;
@@ -1049,9 +1048,9 @@ do {
     listo[i] = TRUE;
     turno = j;
     while (listo[j] and turno == j) ;
-    /* Ejecutando en sección crítica */
+    /* Ejecutando en seccion critica */
     listo[i] = FALSE;
-    /* Ejecutando en sección no crítica */
+    /* Ejecutando en seccion no critica */
 } while TRUE;
 #+end_src
 
@@ -1348,7 +1347,7 @@ número de ingredientes necesario.
       print "%d - Sigamos pensando..." % id
     
     def come(id):
-      print "%d - ¡A comer!" % id
+      print "%d - A comer!" % id
       # (...)
   #+end_src
 
@@ -1716,7 +1715,7 @@ int main() {
 Al ser una solución basada en monitor, el código que invoca a
 =filosofo(i)= no tiene que estar al pendiente del mecanismo de
 sincronización empleado, puede ser comprendido más fácilmente por un
-lector casual y no brinda oportunidad para que un mal programador
+lector casual, y no brinda oportunidad para que un mal programador
 haga mal uso del mecanismo de sincronización.
 
 *** Soluciones en hardware
@@ -1789,23 +1788,25 @@ problemática. Algunas maneras de lograrlo pueden ser:
      realizar determinada tarea podría ser tan simple como:
 
      #+begin_src asm
-       enter_region:        ; Etiqueta de entrada a la verificación
-        
-         tsl reg, flag      ; Test and Set Lock; 'flag' es la variable
-                            ; compartida, es cargada al registro 'reg'
-                            ; y, atómicamente, convertida en 1.
-         cmp reg, #0        ; ¿Era la bandera igual a 0 al entrar?
-         jnz enter_region   ; En caso de que no fuera 0 al ejecutar el tsl,
-                            ; vuelve a ejecutar desde enter_region
-         ret                ; Termina la rutina. Esto significa que 'flag'
-                            ; era cero al entrar. Si llegamos hasta aquí,
-                            ; tsl fue exitoso y flag queda marcado como
-                            ; no-cero. Tenemos acceso exclusivo al recurso
-                            ; protegido por flag.
-        
+       enter_region:      ; Etiqueta de entrada a la verificacion
+         tsl reg, flag    ; Test and Set Lock; 'flag' es la
+                          ; variable compartida, es cargada al
+                          ; registro 'reg' y, atomicamente,
+                          ; convertida en 1.
+         cmp reg, #0      ; Era la bandera igual a 0 al entrar?
+         jnz enter_region ; En caso de que no fuera 0 al ejecutar
+                          ; el tsl, vuelve a ejecutar desde
+                          ; enter_region
+         ret              ; Termina la rutina. Esto significa que
+                          ; 'flag' era cero al entrar. Si llegamos
+                          ; hasta aqui, tsl fue exitoso y flag
+                          ; queda marcado como no-cero. Tenemos
+                          ; acceso exclusivo al recurso protegido
+                          ; por flag.
+
        leave_region:
-         move flag, #0      ; Guarda 0 en flag, liberando el recurso
-         ret                ; Regresa al invocante.
+         move flag, #0    ; Guarda 0 en flag, liberando el recurso
+         ret              ; Regresa al invocante.
      #+end_src
 
      Esto requeriría contar con soporte en hardware en el procesador
@@ -2199,8 +2200,8 @@ desde nuestro punto de inicio ejecutáramos primero $B$ y luego $A$.
 Dadas las anteriores condiciones, y conociendo estos patrones de uso,
 el sistema operativo evitará entrar en el área de bloqueo inminente:
 El sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
-T_A \le 6$, y mantendrá a $A$ en espera si $t_A \e 2$ si $2 \le t_B
-\le 6$.
+T_A \le 6$, y mantendrá a $A$ en espera si $t_A \le 2$ mientras $2 \le
+t_B \le 6$.
 
 La región marcada como /inalcanzable/ en color amarillo, no representa
 ningún peligro: Sólo indica aquellos estados en que resulta imposible

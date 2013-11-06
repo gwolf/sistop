@@ -1,0 +1,30 @@
+digraph G {
+	rankdir=LR;
+	cpu [label="Procesador", shape=box];
+	pre_split [shape=point];
+	split [shape=record, label="<pag>Página|<despl>Desplazamiento"];
+	pgtbl [shape=record, label="<TP>Tabla\nde\npáginas|{|||<f4>||}"];
+	pre_tlb [shape=point]
+	tlb [shape=record, label="TLB|{{Página|<p1>|<p2>|<p3>|<p4>|<p5>}|{Marco|<m1>|<m2>|<m3>|<m4>|<m5>}}"];
+	join [shape=record, label="<marco>Marco|<despl>Desplazamiento"];
+	post_join [shape=point];
+	mem [label="Memoria\nRAM", shape=box];
+
+	{rank=same tlb pgtbl}
+	cpu -> pre_split [label="Dirección\nlógica", dir=none];
+	pre_split -> split:pag;
+	pre_split -> split:despl;
+	split:despl -> join:despl;
+	split:pag -> pgtbl:TP [label="Página\nausente\nen TLB"];
+	pgtbl:f4 -> join:marco;
+	split:pag -> pre_tlb [dir=none];
+	pre_tlb -> tlb:p1 [style=dashed];
+	pre_tlb -> tlb:p2;
+	pre_tlb -> tlb:p3 [style=dashed];
+	pre_tlb -> tlb:p4 [style=dashed];
+	pre_tlb -> tlb:p5 [style=dashed];
+	tlb:m2 -> join:marco [label="Página\npresente\nen TLB"];
+	join:marco -> post_join [dir=none];
+	join:despl -> post_join [dir=none];
+	post_join -> mem [label="Dirección\nfísica"];
+}

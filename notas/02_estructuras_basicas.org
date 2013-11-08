@@ -1,26 +1,45 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Relación con el hardware - Estructuras y funciones básicas
 
-Todos los sitemas de cómputo están compuestos por al menos una unidad de proceso junto
-  con dispositivos que permiten ingresar datos  (teclado, mouse, micrófono, etc) y otros que permiten obtener resultados 
-(pantalla, impresora, parlantes, etc). Como vimos antes, una de las funciones del sistema operativo es la de abstraer el hardware
-subyacente de la computadora y presentar al usuario una versión unificada y simplificada de los dispositivos.
-En este Capítulo veremos la relación que mantiene el sistema operativo con el hardware, las funciones que cumplen y algunas abstracciones
+* Introducción 
+Todos los sitemas de cómputo están compuestos por al menos una unidad de proceso
+junto con dispositivos que permiten ingresar datos  (teclado, mouse, micrófono, 
+etc) y otros que permiten obtener resultados (pantalla, impresora, parlantes, 
+etc). Como vimos antes, una de las funciones del sistema operativo es la de 
+abstraer el hardware de la computadora y presentar al usuario una 
+versión unificada y simplificada de los dispositivos.  
+En este Capítulo veremos la relación que mantiene el sistema operativo 
+con el hardware, las funciones que cumplen y algunas abstracciones
 comunes utilizadas en sistemas operativos modernos.
 
-* Unidad de Proceso
+* Unidad de Procesamiento
 
-La /unidad de proceso/ (CPU) es la parte fundamental de todo sistema de cómputo. Es la encargada de ejecutar 
-tanto los programas del usuario como el sistema operativo en sí mismo. 
-La funciones del sistema operativo respecto al CPU son: 
+La /unidad de procesamiento/ es la parte fundamental de todo sistema de cómputo.
+Es la encargada de ejecutar tanto los programas del usuario como el sistema 
+operativo en sí mismo.  La funciones del sistema operativo respecto a la
+unidad de procesamiento son: 
 
-- Inicialización :: Luego de ser cargado el sistema operativo debe realizar varias tareas de inicialización como habilitar las interrupciones de hardware y software (excepciones y traps), configurar el sistema de memoria virtual (paginación, segmentación), etc.
-- Atender las Interrupciones y Excepciones :: Como veremos más adelante, la CPU puede encontrar una situación que no puede resolver por sí misma (una instrucción o dirección inválida, una división por cero, etc) ante lo cual le pasa el control al sistema operativo para que este trate o resuelva esta situación.
-- Multiplexación :: En un sistema multiproceso, el sistema operativo es el encargado de administrar la CPU dando la ilusión a los programas que están ejecutando de forma exclusiva. 
+- Inicialización :: Luego de ser cargado el sistema operativo debe realizar 
+                    varias tareas de inicialización como habilitar 
+                    las interrupciones de hardware y software 
+                    (excepciones y traps), configurar el sistema de 
+                    memoria virtual (paginación, segmentación), etc.
+- Atender las Interrupciones y Excepciones :: Como veremos más adelante, 
+                     la unidad de procesamiento 
+                     puede encontrar una situación que no puede resolver
+                     por sí misma (una instrucción o dirección inválida, 
+                     una división por cero, etc) ante lo cual le pasa el
+                     control al sistema operativo para que este trate o
+                     resuelva esta situación.
+- Multiplexación :: En un sistema multiproceso, el sistema operativo es el 
+                    encargado de administrar la unidad de procesamiento 
+                    dando la ilusión a los procesos que están ejecutando 
+                    de forma exclusiva. 
 
 
 ** Jerarquía de almacenamiento
 # <<HW>>
+
 
 Las computadoras que siguen la arquitectura /von Neumann/, esto es,
 prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
@@ -82,6 +101,10 @@ procesador puede referirse a ella directamente, de forma transparente,
 indicando la dirección desde un programa). El caché no existe para
 efectos prácticos: El procesador no hace referencia directa a él, sino
 que es manejado por los controladores de acceso a memoria.
+
+Como veremos, el sistema operativo es el encargado de mantener todas estas 
+jerarquías de memoria consistentes y de realizar las transferencias entre unas 
+y otras.
 
 *** Registros
 
@@ -173,7 +196,7 @@ Cuando ocurre algún evento que requiera la atención del sistema
 operativo, el hardware encargado de procesarlo escribe directamente a
 una ubicación predeterminada de memoria la naturaleza de la solicitud
 (el /vector de interrupción/) y, levantando una solicitud de
-interrupción, /roba/ el procesamiento del proceso que estaba siendo
+interrupción, /detiene/ el proceso que estaba siendo
 ejecutado. El sistema operativo entonces ejecuta su /rutina de manejo
 de interrupciones/ (típicamente comienza grabando el estado de los
 registros del CPU y otra información relativa al estado del proceso
@@ -216,14 +239,58 @@ obligar a todo programa a entregar el control en un sistema
 multitareas) o indicando una condición de error (por ejemplo, una
 división sobre cero o un error leyendo de disco).
 
+Las funciones del sistema operativo respecto a las interrupciones son:
+- Administrar el hardware
+   manejador de interrupciones :: esto incluye el enmascarado y desenmascarado 
+                                  de las interrupciones, configurar y asignar
+                                  interrupciones a cada dispositivo, 
+                                  notificar al manejador cuando la interrupción
+                                  ya ha sido atendida, etc.
+- Abstraer las interrupciones ::  el sistema operativo oculta a los programas de
+                                  usuario la existencia de interrupciones de
+                                  hardware ya que estas sondependientes de la
+                                  arquitectura del procesador. En cambio el
+                                  sistema operativo lo comunica de una forma
+                                  unificada a través de distintos mecanismos,
+                                  por ejemplo mensajes o señales o detiendo el
+                                  proceso que espera la acción relacionada con
+                                  esa interrupción y continuando su ejecución
+                                  cuando esta ocurre.
+- Punto de entrada al sistema operativo :: como veremos más adelante en la 
+                                Sección \ref{SYSCALLS} muchas procesadores y
+                                sistemas operativos utilizan las interrupciones
+                                como medio por la cual un proceso de usuario
+                                realiza una llamada al sistema.
+                                Por ejemplo en Linux para arquitecturas x86
+                                el programa de usuario genera la interrupción
+                                0x80 para iniciar una llamada al sistema.
+                                En arquitecturas más recientes como x86_64,
+                                MIPS y ARM esto ha sido reemplazado por una
+                                instrucción especial "syscall".
+- Atender excepciones y fallas :: como dijimos antes durante la ejecución de un
+                                  programa pueden ocurrir fallas como por
+                                  ejemplo dividir por cero. Desde el punto de 
+                                  vista del CPU esto es similar a una
+                                  interrupción de hardware y debe ser tratada
+                                  por el sistema operativo. Dependiendo de la
+                                  causa de la exepción el sistema operativo
+                                  tomará acción para resolver en lo posible
+                                  esta situación. En muchos casos las
+                                  excepciones se reflejan en una señal
+                                  enviada al proceso y este último es el
+                                  encargado de tratar la excepción.
+                                  En otros casos la falla o excepción son
+                                  irrecuperables (una instrucción inválida o
+                                  un error de bus) ante la cual el sistema  
+                                  operativo terminará el proceso que la generó. 
 
-* Memoria
+
 * Dispositivos de Entrada-Salida
 
 ** Terminales
 ** Discos
-** Relojes y Chipsets 
-*** Canales y puentes
+** Relojes 
+** Canales y puentes
 
 Los diferentes componentes de un sistema de cómputo se comunican a
 través de los diferentes /canales/ (generalmente se hace referencia a
@@ -361,7 +428,7 @@ software.
 
 
 * Interfaz del Sistema Operativo -- Llamadas al sistema
-
+# <<SYSCALLS>>
 De forma de cierto modo análoga a las interrupciones, podemos hablar
 de las llamadas al sistema. El sistema operativo protege a un proceso
 de otro, y previene que un proceso ejecutándose en espacio no
@@ -847,17 +914,8 @@ de la utilidad misma del paralelismo masivo.
   (Document Number: 320412-001US)
 - [[http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf][Intel® Desktop Board D875PBZ Technical Product Specification]]
   (Intel, 2003)
-- [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bringing Virtualization to the x86 Architecture with the Original
-  VMware Workstation]] (Bugnion et. al., 2012, ACM Transactions on
-  Computer Systems)
 - [[http://www.vmware.com/pdf/Perf%5FESX%5FIntel-EPT-eval.pdf][Performance Evaluation of Intel EPT Hardware Assist]], VMWare Inc.,
   2006-2009
-- [[http://communities.vmware.com/servlet/JiveServlet/download/1147092-17964/PS%5FTA68%5F288534%5F166-1%5FFIN%5Fv5.pdf][Performance Aspects of x86 Virtualization]], Ole Agesen, VMWare 2007
-- [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of Virtualization]], Paul Barham, Boris Dragovic
-  et. al. 2003
-- [[http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf][KVM: The Linux Virtual Machine Monitor]]; Avi Kivity, Yaniv Kamay,
-  Dor Laor, Uri Lublin, Anthony Liguori (Qumranet / IBM), 2007
-- [[http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007%24kvm_pv_drv.pdf][KVM PV devices]], Dor Laor (Qumranet), 2007
 - [[http://www.bpfh.net/computing/docs/chroot-break.html][How to break out of a =chroot()= jail]]; Simes, 2002
 - [[http://lwn.net/Articles/256389/][Notes from a container]]; Jonathan Corbet, 2007, Linux Weekly News
 - [[https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt][CGROUPS]]; Paul Menage (Google), 2004-2006, kernel.org

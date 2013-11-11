@@ -17,7 +17,7 @@ actuación que tendrá el sistema.
 En contraposición con /proceso/, hablaríamos de /tareas/ en un sistema
 por lotes. Una tarea requiere mucha menos información, típicamente
 bastaría con guardar información relacionada con la /contabilidad/ de
-los recursos empleados. Una tarea no es interrupmida en el transcurso
+los recursos empleados. Una tarea no es interrumpida en el transcurso
 de su ejecución. Ahora bien, esta distinción no es completamente
 objetiva — Y encontraremos muchos textos que emplean indistintamente
 una u otra nomenclatura.
@@ -25,8 +25,8 @@ una u otra nomenclatura.
 Pero si bien el sistema nos da la /ilusión/ de que muchos procesos se
 están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
 está esperando para continuar su ejecución — en un momento
-determinado sólo puede estar ejecutándose un número de procesos igual
-o menor al número de CPUs que tenga el sistema.
+determinado sólo puede estar ejecutando sus instrucciones un número 
+de procesos igual o menor al número de procesadores que tenga el sistema.
 
 En esta sección del curso nos ocuparemos de los conceptos relacionados
 con procesos, hilos, concurrencia y sincronización — Abordaremos las
@@ -42,14 +42,23 @@ Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
 de ejecución. Estos son:
 
 - Nuevo :: Se solicitó al sistema operativo la creación de un proceso,
-           y sus recursos y estructuras están siendo creadas
+           y sus recursos y estructuras están siendo creadas.
 
-- Listo :: Está listo para ser asignado para su ejecución en un procesador
+- Listo :: Está listo para iniciar o continuar su ejecución pero no
+           tiene un procesador disponible.
 
-- En ejecución :: El proceso está siendo ejecutado en este momento
+- En ejecución :: El proceso está siendo ejecutado en este
+                  momento. Sus instrucciones están siendo procesadas
+                  en algún procesador.
 
 - Bloqueado :: En espera de algún evento para poder continuar
-               ejecutándose
+               su ejecución (aun si hubiera un procesador disponible,
+               no podría avanzar). 
+
+- Zombie :: El proceso ha finalizado su ejecución pero todavía no
+            puede ser descartado por el sistema operativo pues la
+            información relativa a la finalización debe ser comunicada
+            al padre.
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
@@ -59,38 +68,38 @@ de ejecución. Estos son:
 #+caption: Diagrama de transición entre los estados de un proceso
 [[./img/dot/estados_proceso.png]]
 
-** El bloque de control de proceso (PCB)
+** Información asociada a un proceso
 
 La información que debe manipular el sistema operativo relativa a cada
-uno de los procesos en ejecución (sea cual sea su estado) se compone
-de:
+uno de los procesos actuales se suele almacenar en una estructura llamada
+/bloque de control de proceso/ (/PCB/ - /Process Control Block/):
 
-- Estado del proceso :: El estado actual del proceso
+- Estado del proceso :: El estado actual del proceso.
 
 - Contador de programa :: Cuál es la siguiente instrucción a ser
      ejecutada por el proceso.
 
 - Registros del CPU :: La información específica del estado del CPU
-     mientras el proceso está en ejecución debe ser respaldada y
-     restaurada cuando se registra un cambio de estado
+     mientras el proceso está en ejecución (debe ser respaldada y
+     restaurada cuando se registra un cambio de estado).
 
 - Información de planificación (scheduling) :: La prioridad del
      proceso, la /cola/ en que está agendado, y demás información que
-     puede ayudar al sistema operativo a agendar al proceso;
+     puede ayudar al sistema operativo a planificar los procesos;
      profundizaremos en el tema en el capítulo \ref{PLAN}
      (/Planificación de procesos/).
 
-- Información de administración de memoria :: Las tablas de mapeo de
+- Información de administración de memoria :: La información de mapeo de
      memoria (páginas o segmentos, dependiendo del sistema operativo),
      incluyendo la pila (/stack/) de llamadas. Abordaremos el tema en
      el capítulo \ref{MEM} (/Administración de memoria/).
 
 - Información de contabilidad :: Información de la utilización de
      recursos que ha tenido este proceso — Puede incluir el tiempo
-     total empleado (/de usuario/, cuando el CPU va avanzando sobre
-     las instrucciones del programa propiamente, /de sistema/ cuando
-     el sistema operativo está atendiendo las solicitudes realizadas
-     por él), uso acumulado de memoria y dispositivos, etc.
+     total empleado y otros (/de usuario/, cuando el procesador va
+     avanzando sobre las instrucciones del programa propiamente, /de
+     sistema/ cuando el sistema operativo está atendiendo las
+     solicitudes del proceso), uso acumulado de memoria y dispositivos, etc.
 
 - Estado de E/S :: Listado de dispositivos y archivos asignados que el
                    proceso tiene /abiertos/ en un momento dado.
@@ -101,56 +110,61 @@ Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
 que el /planificador/ elige qué proceso pasar de /Listo/ a /En ejecución/
 debe considerar buena parte de dicha información, la simple
-transferencia de todo esto entre la memoria y el CPU podría llevar a
-un desperdicio /burocrático/ de recursos. Una respuesta a esta
-problemática fue la de los /hilos de ejecución/, a veces conocidos
-como /procesos ligeros/ (Lightweight processes, LWP).
+transferencia de todo esto entre la memoria y el procesador podría llevar a
+un desperdicio importante de recursos. Una respuesta a esta
+problemática fue la de utilizar los /hilos de ejecución/, a veces conocidos
+como /procesos ligeros/ (/LWP/, /Lightweight processes/).
 
-Cuando consideramos procesos basados en un modelo de hilos, podríamos
+Cuando se consideran procesos basados en un modelo de hilos, se puede
 proyectar en sentido inverso que todo proceso es como un sólo hilo de
 ejecución. Un sistema operativo que no ofreciera soporte expreso a los
-hilos lo agendaría exactamente del mismo modo.
+hilos los planificaría exactamente del mismo modo.
 
 Pero visto desde la perspectiva del proceso hay una gran diferencia:
-Si bien el sistema operativo se encarga de que cada proceso tenga una
+si bien el sistema operativo se encarga de que cada proceso tenga una
 visión de virtual exclusividad sobre la computadora, todos los hilos
 de un proceso comparten un sólo espacio de direccionamiento en memoria
-y lista de descriptores de archivos y dispositivos abiertos. Cada uno
+y los archivos y dispositivos abiertos. Cada uno
 de los hilos se ejecuta de forma (aparentemente) secuencial y maneja
-su propio contador de programa (y algunas estructuras adicionales,
+su propio contador de programa y pila (y algunas estructuras adicionales,
 aunque mucho más ligeras que el PCB).
 
 ** Los hilos y el sistema operativo
 
-Formalmente, una programación basada en hilos puede hacerse
+La programación basada en hilos puede hacerse
 completamente y de forma transparente en espacio de usuario (sin
 involucrar al sistema operativo). Estos hilos se llaman /hilos de
 usuario/ (/user threads/), y muchos lenguajes de programación los
 denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
 es en sistemas operativos mínimos (p. ej. para dispositivos embebidos)
-capaces de ejecutar una máquina virtual de alguno de estos lenguajes:
+capaces de ejecutar una máquina virtual de alguno de esos lenguajes:
 si bien el sistema operativo no maneja multiprocesamiento, a través de
-los hilos de usuario sí podemos crear procesos con multitarea interna.
+los hilos de usuario se crean procesos con multitarea interna.
 
 Los procesos que implementan hilos ganan un poco en el rendimiento
-gracias a no tener que reemplazar al PCB activo, pero además de esto,
-ganan mucho más por la ventaja de compartir espacio de memoria sin
-tener que establecerlo explícitamente a través de /mecanismos de
-comunicación entre procesos/ (/IPC/ — /Inter Process
-Communications/). Dependiendo de la plataforma, a veces los hilos de
-usuario inclusive utilizan multitarea cooperativa para pasar el
-control dentro de un mismo proceso. Cualquier llamada al sistema
-/bloqueante/ (como obtener datos de un archivo para utilizarlos
-inmediatamente) interrumpirá la ejecución de todos los hilos, dado que
-el control de ejecución es entregado al sistema operativo.
+gracias a no tener que reemplazar al PCB activo cuando intercalan la 
+ejecución de sus diferentes hilos; pero además de esto, ganan mucho
+más por la ventaja de compartir espacio de memoria sin tener que
+establecerlo explícitamente a través de /mecanismos de comunicación
+entre procesos/ (/IPC/ — /Inter Process Communications/). Dependiendo
+de la plataforma, a veces los hilos de usuario inclusive utilizan
+multitarea cooperativa para pasar el control dentro de un mismo
+proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
+de un archivo para utilizarlos inmediatamente) interrumpirá la
+ejecución de TODOS los hilos de ese proceso, dado que
+#como se pone negrita? (poner TODOS)
+el control de ejecución es entregado al sistema operativo quien en
+este caso no conoce nada sobre los hilos.
+
+#poner un ejemplo más explícito
 
 Continuando con el desarrollo histórico de este mecanismo, el
 siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
-threads/). Esto se hace a través de bibliotecas de sistema que los implementan de
-forma estándar para los diferentes sistemas operativos
-(p. ej. =pthreads= para POSIX o =Win32_Thread= para Windows) o
-arquitecturas. Estas bibliotecas aprovechan la comunicación con el
+threads/). Esto se hace a través de bibliotecas de sistema que los
+implementan de forma estándar para los diferentes sistemas operativos
+o arquitecturas  (p. ej. =pthreads= para POSIX o =Win32_Thread= para
+Windows). Estas bibliotecas aprovechan la comunicación con el
 sistema operativo tanto para solicitudes de recursos (p. ej. un proceso
 basado en hilos puede beneficiarse de una ejecución verdaderamente
 paralela en sistemas multiprocesador) como para una gestión de
@@ -165,19 +179,19 @@ tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
 un /equipo de trabajo/):
 
 - Jefe / trabajador :: Un hilo tiene una tarea distinta de todos los
-     demás: El hilo /jefe/ genera o recopila tareas que requieren ser
-     cubiertas, las separa y se las entrega a los hilos
-     /trabajadores/.
+# master/slave en inglés?
+     demás: el hilo /jefe/ genera o recopila tareas para realizar, las
+     separa y se las entrega a los hilos /trabajadores/.
 
      Este modelo es el más común para procesos que implementan
      servidores (es el modelo clásico del servidor Web /Apache/) y
      para aplicaciones gráficas (GUIs), en que hay una porción del
      programa (el hilo /jefe/) esperando a que ocurran eventos
      externos. El jefe realiza poco trabajo, se limita a /invocar/ a
-     los trabajadores a hacer el trabajo /de verdad/; como mucho,
+     los trabajadores para que hagan el trabajo /de verdad/; como mucho,
      puede llevar contabilidad de los trabajos realizados.
 
-     Típicamente, los hilos realizan su operación, posiblemente
+     Típicamente, los hilos trabajadores realizan su operación, posiblemente
      notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
 
      #+attr_latex: width=0.4\textwidth
@@ -185,7 +199,9 @@ un /equipo de trabajo/):
      #+caption: Patrón de hilos jefe/trabajador
      [[./img/dot/jefe_trabajador.png]]
 
-- Equipo de trabajo :: Al iniciar la porción multihilos del proceso,
+#ejemplo
+
+- Equipo de trabajo :: al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
      sobre diferentes datos. Este modelo es muy frecuentemente
      utilizado para cálculos matemáticos (p. ej.: criptografía,
@@ -196,14 +212,15 @@ un /equipo de trabajo/):
 
      Su principal diferencia con el patrón /jefe/trabajador/
      consiste en que el trabajo a realizar por cada uno de los hilos
-     se plantea en un principio, esto es, el paso de /división de
+     se plantea desde principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
-     éstos sean lanzados en paralelo. Estos datos no son resultado de
+     éstos sean lanzados en PARALELO. Estos datos no son resultado de
+# poner paralelo en minuscula y negrita
      /eventos independientes/ (como en el caso anterior), sino 
      partes de un sólo cálculo. Por consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
-     hilos no /terminan/, sino que /son esperados/ y continúa la
+     hilos no /terminan/, sino que /son sincronizados/ y luego continúan la
      ejecución lineal.
 
      #+attr_latex: width=0.5\textwidth
@@ -211,13 +228,16 @@ un /equipo de trabajo/):
      #+caption: Patrón de hilos /Equipo de trabajo/
      [[./img/dot/equipo_trab.png]]
 
-- Línea de ensamblado :: Si una tarea larga puede dividirse en pasos
+#ejemplo
+
+- Línea de ensamblado :: si una tarea larga puede dividirse en pasos
      sobre bloques de la información total a procesar, cada hilo puede
-     enfocarse a hacer sólo una tarea y pasarle los datos a otro hilo
+     enfocarse a hacer sólo un paso y pasarle los datos a otro hilo
      conforme vaya terminando. Una de las principales ventajas de este
      modelo es que nos ayuda a mantener rutinas simples de comprender,
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
+# verificar que el termino E/S esté definido en algún lado
 
      Un punto importante a tener en cuenta en una línea de ensamblado
      es que, si bien los hilos trabajan de forma secuencial, pueden
@@ -228,7 +248,7 @@ un /equipo de trabajo/):
      presentados; si bien en los anteriores los diferentes hilos (a
      excepción del hilo /jefe/) eran casi siempre idénticos -aunque
      operando sobre distintos conjuntos de datos-, en este caso son
-     completamente distintos.
+     todos completamente distintos.
 
      #+attr_latex: width=0.6\textwidth
      #+label: PROC_linea_ensamblado
@@ -237,25 +257,15 @@ un /equipo de trabajo/):
 
 * Concurrencia
 
-#+begin_center
-#+attr_html: max-width: 80%;
-Para el estudio de este tema, recomiendo fuertemente referirse al
-libro «[[/biblio/Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey (2008).
-
-Pueden descargar (legalmente) el libro desde el sitio Web del curso o
-desde [[http://www.greenteapress.com/semaphores/index.html][Green Tea Press]].
-#+end_center
-
-Formalmente y desde las ciencias de la computación, /concurrencia/ no
-necesariamente se refiere a dos o más eventos que ocurran a la vez,
-sino que a dos o más eventos cuyo órden es /no determinista/, esto es,
+Desde un punto de vista formal, la /Concurrencia/
+no se refiere a dos o más eventos que ocurren a la vez
+sino a dos o más eventos cuyo órden es /no determinista/, esto es,
 eventos acerca de los cuales /no podemos predecir el órden relativo en
-que ocurrirán/. Esto puede ocurrir porque hablamos de dos hilos
-ejecutándose en conjunto, dos procesos independientes en el mismo
-equipo, o incluso procesos independientes en computadoras separadas
-geográficamente; el estudio de situaciones derivadas de la
-concurrencia es uno de los campos de estudio clásico (y más abstracto)
-de las ciencias de la computación.
+que ocurrirán/. Si bien dos procesos (o también dos hilos) completamente
+independientes entre sí ejecutándose simultáneamente son dos procesos
+concurrentes, la concurrencia se ocupa principalmente de procesos cuya
+ejecución está vinculada de alguna manera (p. ej.: dos procesos que
+comparten cierta información o que dependen uno del otro).
 
 Si bien una de las tareas principales de los sistemas operativos es
 dar a cada proceso la ilusión de que se está ejecutando en una
@@ -1032,6 +1042,7 @@ entrar a determinada sección crítica, siempre que estos alternen entre
 el tiempo en que ejecutan código que puede proceder en paralelo, basta
 contar con las dos siguientes variables compartidas entre ellos:
 
+# el parrafo anterior es ilegiblee
 #+begin_src C
 int turno;
 boolean listo[2];
@@ -2203,6 +2214,7 @@ El sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
 T_A \le 6$, y mantendrá a $A$ en espera si $t_A \le 2$ mientras $2 \le
 t_B \le 6$.
 
+#revisar el parrafo anterior
 La región marcada como /inalcanzable/ en color amarillo, no representa
 ningún peligro: Sólo indica aquellos estados en que resulta imposible
 entrar. Incluso una vez evadido el bloqueo (por ejemplo, si $B$ fue

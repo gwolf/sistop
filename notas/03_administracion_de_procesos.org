@@ -71,7 +71,7 @@ de ejecución. Estos son:
 ** Información asociada a un proceso
 
 La información que debe manipular el sistema operativo relativa a cada
-uno de los procesos actuales se suele almacenar en una estructura llamada
+uno de los procesos actuales se almacena en una estructura llamada
 /bloque de control de proceso/ (/PCB/ - /Process Control Block/):
 
 - Estado del proceso :: El estado actual del proceso.
@@ -151,9 +151,8 @@ de la plataforma, a veces los hilos de usuario inclusive utilizan
 multitarea cooperativa para pasar el control dentro de un mismo
 proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
 de un archivo para utilizarlos inmediatamente) interrumpirá la
-ejecución de TODOS los hilos de ese proceso, dado que
-#como se pone negrita? (poner TODOS)
-el control de ejecución es entregado al sistema operativo quien en
+ejecución de /todos/ los hilos de ese proceso, dado que
+el control de ejecución es entregado al sistema operativo, quien en
 este caso no conoce nada sobre los hilos.
 
 #poner un ejemplo más explícito
@@ -214,9 +213,8 @@ un /equipo de trabajo/):
      consiste en que el trabajo a realizar por cada uno de los hilos
      se plantea desde principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
-     éstos sean lanzados en PARALELO. Estos datos no son resultado de
-# poner paralelo en minuscula y negrita
-     /eventos independientes/ (como en el caso anterior), sino 
+     éstos sean lanzados en /paralelo/. Estos datos no son resultado de
+     /eventos independientes/ (como en el caso anterior), sino
      partes de un sólo cálculo. Por consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
@@ -257,13 +255,13 @@ un /equipo de trabajo/):
 
 * Concurrencia
 
-Desde un punto de vista formal, la /Concurrencia/
+Desde un punto de vista formal, la /concurrencia/
 no se refiere a dos o más eventos que ocurren a la vez
 sino a dos o más eventos cuyo órden es /no determinista/, esto es,
 eventos acerca de los cuales /no podemos predecir el órden relativo en
-que ocurrirán/. Si bien dos procesos (o también dos hilos) completamente
+que ocurrirán/. Si bien dos procesos (o hilos) completamente
 independientes entre sí ejecutándose simultáneamente son dos procesos
-concurrentes, la concurrencia se ocupa principalmente de procesos cuya
+concurrentes, este apartado se ocupa principalmente de procesos cuya
 ejecución está vinculada de alguna manera (p. ej.: dos procesos que
 comparten cierta información o que dependen uno del otro).
 

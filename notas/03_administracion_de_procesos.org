@@ -1038,11 +1038,10 @@ computadoras actuales pueden impedir que este mecanismo funcione
 adecuadamente.
 
 Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-entrar a determinada sección crítica, siempre que estos alternen entre
-el tiempo en que ejecutan código que puede proceder en paralelo, basta
-contar con las dos siguientes variables compartidas entre ellos:
+entrar a determinada sección crítica, es posible emplear únicamente
+las siguientes dos variables para implementar de forma segura una
+exclusión mutua entre ellos:
 
-# el parrafo anterior es ilegiblee
 #+begin_src C
 int turno;
 boolean listo[2];
@@ -1066,6 +1065,11 @@ do {
 #+end_src
 
 El código para /j/ sería el complementario.
+
+La principal restricción de esta solución es que parte del supuesto de
+que ambos procesos se irán alternando para entrar a la sección
+crítica; si el ritmo al cual /i/ y /j/ buscan entrar a la sección
+crítica difiere, uno de ellos perderá mucho tiempo esperando al otro.
 
 La solución de Peterson se basa en que, si ambos procesos intentan
 entrar a la sección crítica justo al mismo tiempo, ambos modificarán

@@ -55,10 +55,11 @@ de ejecución. Estos son:
                su ejecución (aun si hubiera un procesador disponible,
                no podría avanzar). 
 
-- Zombie :: El proceso ha finalizado su ejecución pero todavía no
-            puede ser descartado por el sistema operativo pues la
-            información relativa a la finalización debe ser comunicada
-            al padre.
+- Zombie :: El proceso ha finalizado su ejecución, pero el sistema
+            operativo debe realizar ciertas operaciones de limpieza
+            para poder eliminarlo de la lista.[fn:: Estas operaciones
+            pueden incluir notificar al proceso padre, cerrar las
+            conexiones de red que tenía activas, etc.]
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
@@ -102,18 +103,23 @@ uno de los procesos actuales se almacena en una estructura llamada
      solicitudes del proceso), uso acumulado de memoria y dispositivos, etc.
 
 - Estado de E/S :: Listado de dispositivos y archivos asignados que el
-                   proceso tiene /abiertos/ en un momento dado.
+                   proceso tiene /abiertos/ para entrada y salida
+                   (E/S) en un momento dado.
 
 * Procesos e hilos
 
 Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
-que el /planificador/ elige qué proceso pasar de /Listo/ a /En ejecución/
-debe considerar buena parte de dicha información, la simple
-transferencia de todo esto entre la memoria y el procesador podría llevar a
-un desperdicio importante de recursos. Una respuesta a esta
-problemática fue la de utilizar los /hilos de ejecución/, a veces conocidos
-como /procesos ligeros/ (/LWP/, /Lightweight processes/).
+que el /planificador/ elige qué proceso pasar de /Listo/ a /En
+ejecución/ debe considerar buena parte de dicha información, la simple
+transferencia de todo esto entre la memoria y el procesador podría
+llevar a un desperdicio /burocrático/[fn:: Entendiendo /burocrático/
+como el tiempo que se pierde en asuntos administrativos. Recordemos
+que el tiempo que consume el sistema operativo en administración es
+tiempo perdido para el uso real, productivo del equipo.] de
+recursos. Una respuesta a esta problemática fue la de utilizar los
+/hilos de ejecución/, a veces conocidos como /procesos ligeros/
+(/LWP/, /Lightweight processes/).
 
 Cuando se consideran procesos basados en un modelo de hilos, se puede
 proyectar en sentido inverso que todo proceso es como un sólo hilo de
@@ -235,7 +241,6 @@ un /equipo de trabajo/):
      modelo es que nos ayuda a mantener rutinas simples de comprender,
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
-# verificar que el termino E/S esté definido en algún lado
 
      Un punto importante a tener en cuenta en una línea de ensamblado
      es que, si bien los hilos trabajan de forma secuencial, pueden

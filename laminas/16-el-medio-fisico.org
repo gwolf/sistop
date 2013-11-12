@@ -1,0 +1,299 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Sistemas de archivos: El medio físico
+#+DATE: 2013-05-13
+
+* Detalles del medio magnético
+
+** Empleando discos duros: /Notación C-H-S/
+- A lo largo de los últimos 40 años, el principal medio de
+  almacenamiento ha sido el /disco duro/
+- Para hacer referencia a un sector específico de datos, la notación
+  tradicional empleada es la C-H-S (/Cilindro - Cabeza - Sector/)
+- Permite referir a cualquier punto del disco dentro de un espacio
+  tridimensional
+
+** Mapeo de un disco duro a /C-H-S/
+#+caption: Coordenadas de un disco duro, presentando cada uno de sus sectores en C-H-S (Silberschatz, p.458)
+#+attr_latex: height=0.7\textheight
+[[../img/disco_duro.png]]
+
+** Algoritmos de planificación de acceso a disco
+- Si el disco es la parte más lenta de un sistema de cómputo, vale la
+  pena dedicar tiempo a encontrar el mejor ordenamiento posible para
+  lecturas y escrituras
+- Veremos algunos de los algoritmos históricos
+  - Como referencia
+  - Para comparar sus puntos de partida
+- Pero no profundizaremos mucho al respecto — Estos esquemas /ya no se emplean/
+  - Fuera del desarrollo de controladores embebidos
+  - Veremos también las razones para su abandono
+- Trabajaremos partiendo del cilindro 53, con la cadena de referencia
+  /98, 183, 37, 122, 14, 124, 65, 67/
+
+** Acceso a disco en FIFO
+- Como en los otros subsistemas que hemos visto, el primer algoritmo
+  es atender a las solicitudes /en órden de llegada/
+- Algoritmo /justo/, aunque poco eficiente
+- Movimiento total de cabezas para la cadena de referencia: 640
+  cilindros
+  - Con movimientos tan aparentemente absurdos como 122 \rarrow 14
+    \rarrow 124
+
+** Tiempo más corto a continuación (SSTF)
+- /Shortest Seek Time First/ — Corresponde conceptualmente a /Shortest
+  Job First/ (de /planificación de procesos/)
+- Reduce el desplazamiento total a partir de FIFO de 640 a sólo 236 cilindros
+- Puede llevar a la inanición
+  - Al favorecer a las solicitudes cercanas, las lejanas pueden quedar
+    a la espera indefinidamente
+
+** Acceso a disco en elevador (SCAN)
+- Evita la inanición, buscando minimizar el movimiento de las cabezas
+- Opera como elevador: La cabeza recorre el disco de extremo a extremo
+  - Atiende a todas las solicitudes que haya pendientes /en el camino/
+- Los recorridos pueden ser mayores a SSTF
+- Pero garantíza que no habrá inanición
+  - En este recorrido en particular, también 236 cilindros (iniciando
+    en 53 y /hacia abajo/)
+- Modificación menor que mejora el rendimiento: LOOK
+  - Verificar si hay algún otro sector pendiente en la dirección
+    actual; si no, dar la vuelta anticipadamente
+  - Reduciría el recorrido a 208 cilindros
+
+** Comparación de los algoritmos
+#+attr_latex: width=0.9\textwidth
+#+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 53. Para SCAN, LOOK y C-SCAN, asumimos que iniciamos con la cabeza en dirección decreciente.
+[[../img/gnuplot/mov_cabeza_por_algoritmo.png]]
+
+** ¿Por qué ya no se emplean estos algoritmos?
+- Requieren más información de la disponible
+  - Están orientados a reducir el traslado /de la cabeza/
+  - Ignoran la /demora rotacional/
+  - La demora rotacional va entre $1 \over 10$ y $1 over 3$ del
+    tiempo de traslado de cabezas
+- Distintas prioridades para distintas solicitudes
+  - Si el sistema operativo prefiere priorizar expresamente, estos
+    algoritmos no ofrecen la /expresividad/ necesaria
+  - Por ejemplo, acceso a memoria virtual sobre acceso a archivos
+- Abstracciones a niveles más bajos (p.ej. LBA, que veremos a
+  continuación)
+- Dispositivos /virtuales/
+
+** La transición a /LBA/
+- C-H-S impone muchas restricciones al acomodo de la información
+  - No permite mapearse naturalmente a dispositivos que no sean discos
+    rotativos
+  - Hacia principios de los 1990, el /BIOS/ imponía límites
+    innecesarios al almacenamiento (p.ej. número máximo de cilindros)
+- Los controladores de disco comenzaron a exponer al sistema una
+  dirección /lineal/: /Direccionamiento Lógico de Bloques/ (/Logical
+  Block Addressing/, /LBA/)
+  - Ya no /tridimensional/
+- $LBA = ((C \times HPC) + H) \times SPT + S - 1$
+  - $HPC$ = cabezas por cilindro
+  - $SPT$ = sectores por pista
+
+** LBA y la reubicación
+- Sistema operativo y aplicaciones ya sólo hacen referencia por esta
+  ubicación, no conocen las ubicaciones físicas
+- LBA permite al controlador de disco utilizar más eficientemente el
+  espacio
+  - Número de sectores por track variable
+- Responder /preventivamente/ a fallos en el medio físico
+  - Reubicar sectores /difíciles de leer/ antes de que presenten
+    pérdida de datos
+  - Diferentes algoritmos de reubicación \rarrow Mantener tanto como
+    se pueda el mapeo de los bloques contiguos a ojos del sistema
+
+* Estado sólido
+
+** Medios de /estado sólido/
+- Desde hace cerca de una década va creciendo consistentemente el uso
+  de medios de almacenamiento de /estado sólido/
+  - Medios /sin partes móviles/
+- Las unidades de estado sólido tienen características muy distintas
+  a las de los /discos/
+  - Pero mayormente seguimos empleando los mismos sistemas de archivos
+- Las métricas de confiabilidad y rendimiento tienen que ser replanteadas
+- Un claro espacio de investigación e implementación actual
+
+** Emulación de disco: ¿Un acierto o un error?
+- Casi todos los discos de estado sólido se presentan al sistema
+  operativo como un disco /estándar/
+- Ventajas:
+  - Permite que sean empleados sin cambios al sistema operativo
+  - No hay que pensar en controladores específicos
+- Desventaja
+  - No se aprovechan sus características únicas
+  - Se tienen que adecuar a las restricciones (artificiales) de
+    sistemas pensados para medios rotativos
+
+** Estado sólido basado en RAM
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en RAM: DDRdrive X1 ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_ddr_drivex1.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Primeros discos de estado sólido
+- Memoria RAM estándar, con una batería de respaldo
+- Extremadamente rápido (velocidad igual a la de acceso a memoria)
+- Muy caro
+- Riesgo de pérdida de datos si se acaba la batería
+#+latex: \end{column} \end{columns}
+
+** Estado sólido basado en Flash con interfaz SATA
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en Flash con interfaz SATA ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_sata.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Se comporta como un disco duro estándar
+- Usos principales:
+  - Industria aeroespacial, militar (desde $\sim 1995$)
+    - Por su muy alta resistencia a la vibración
+  - Servidores, alto rendimiento
+    - Ciertas tecnologías presentan velocidad muy superior a la de
+      medios rotativos
+  - Presente en /netbooks/, dispositivos móviles (integrado a la
+    tarjeta madre)
+#+latex: \end{column} \end{columns}
+
+
+** Estado sólido Flash para /transporte temporal/
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+caption: Unidad de estado sólido basado en Flash con interfaz USB ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
+#+attr_latex: width=\textwidth
+[[../img/estado_solido_usb.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Mecanismo de transporte de archivos personales
+- Muy bajo costo
+  - Muchos modelos con calidad deficiente
+- Muy distintos modelos de conector
+  - SD, USB, MMC, etc.
+  - Mismo tipo de dispositivo
+- Muy alta varianza en capacidad, rendimiento y durabilidad según la
+  generación tecnológica
+#+latex: \end{column} \end{columns}
+
+** Diferencias del medio
+- Tiempo constante de acceso al medio
+  - Desaparece la demora rotacional y de movimiento de brazo
+- Tamaño de sector: Típicamente 4KB (ya no 512 bytes, estándar desde
+  los 1950s)
+  - Debería traducirse a una alineación de estructuras — No siempre
+    es el caso
+- Diferencia de velocidad
+  - Lectura más rápida, escritura más lenta
+  - Ciclos de borrado previos a la escritura
+- Desgaste del medio: $\approx$ miles a cientos de miles de escrituras
+  - Nivelamiento de uso (/wear leveling/)
+  - Efectuado en el controlador (transparente al sistema operativo)
+
+** Espacio para mejoramiento / investigación
+- Esta es un área frustrantemente ignorada
+  - Con los diferentes perfiles que requieren los distintos usos de
+    los medios Flash
+- Cada vez más empleada
+- Un buen ámbito para desarrollar proyectos de investigación
+
+* Manejo avanzado de volúmenes
+
+** ¿Diferencia entre /volumen/ y /partición/?
+- En un equipo estándar de escritorio, estos dos términos son
+  intercambiables
+- Pero es cada vez más frecuente hablar de /arreglos/ de discos
+  - Alejándonos –por otro camino– del concepto de disco magnético
+    rotativo estándar
+- Principales ejes:
+  - Confiabilidad
+  - Rendimiento
+  - Espacio por volumen
+
+** RAID
+- /Arreglo Redundante de Discos Baratos/ (/Redundant Array of
+  Inexpensive Disks/)
+  - Ocasionalmente lo encontraremos como de discos /Independientes/
+    (/Independent/)
+- /Diferentes/ técnicas de combinar un conjunto de discos,
+  presentándose como uno sólo a /capas superiores/
+- Originalmente (1990s) implementado sólo en el controlador (en
+  hardware)
+  - Hoy lo implementan casi todos los sistemas operativos como opción
+  - Diferencia no-nula (pero despreciable) en rendimiento
+- Hay muchas alternativas basadas en las /ideas/ de RAID
+  - Integrando más niveles del almacenamiento
+  - JFS+LSM (AIX), LVM (Linux), ZFS (Solaris, *BSD), ...
+
+** Niveles de RAID
+#+BEGIN_CENTER
+RAID define diferentes niveles de operación; varios de ellos no son
+ya empleados hoy en día. Los principales en uso son:
+#+END_CENTER
+- 0 :: Concatenación
+- 1 :: Espejeo
+- 5 :: Paridad dividida por bloques (/block-interleaved parity/)
+- 6 :: Paridad por redundancia P+Q
+
+** RAID 0: División en /franjas/
+- Espacio total: Suma de los espacios de todas sus unidades
+- Mejoría en velocidad (más cabezas independientes)
+- Sin mejoría en confiabilidad
+#+attr_latex: width=\textwidth
+#+caption: Cinco discos organizados en RAID 0
+[[../img/dot/raid_0.png]]
+
+** RAID 1: Espejo
+- Espacio total: Uno sólo de los volúmenes
+- Mejoría en velocidad (el primero que entregue los datos)
+- Confiabilidad: Soporta la pérdida de un disco
+#+caption: Dos discos organizados en RAID 1
+#+attr_latex: width=0.6\textwidth
+[[../img/dot/raid_1.png]]
+
+** RAID 5: Paridad dividida por bloques
+- Espacio total: Suma de los espacios de todas sus unidades /menos
+  una/
+- Reducción en velocidad (todas las unidades deben leer el sector y
+  recalcular el resultado)
+- El disco de paridad es otro /a cada bloque/
+- Soporta la pérdida de un disco (cualquiera de ellos)
+#+attr_latex: width=0.9\textwidth
+#+caption: Cinco discos organizados en RAID 5
+[[../img/dot/raid_5.png]]
+
+** RAID 6: Paridad por redundancia P+Q
+- Espacio total: Suma de los espacios de todas sus unidades /menos
+  dos/
+- Reducción en velocidad (todas las unidades deben leer el sector y
+  recalcular el resultado)
+- El disco de paridad es otro /a cada bloque/
+- Soporta la pérdida de dos discos (cualquiera de ellos)
+#+attr_latex: width=0.6\textwidth
+#+caption: Cinco discos organizados en RAID 6
+[[../img/dot/raid_6.png]]
+
+** Combinando niveles: RAID 1+0 (o RAID 10)
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+- Pueden combinarse dos niveles para obtener los beneficios de ambos
+- Concatenación de unidades espejeadas
+- Soporta el fallo de hasta el 50% de los discos
+  - Siempre y cuando un disco por grupo se mantenga operando
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: width=\textwidth
+#+caption: Seis discos organizados en RAID 1+0
+[[../img/dot/raid_10.png]]
+#+latex: \end{column}\end{columns}
+
+** Combinación inconveniente de RAID: 0+1
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+- El órden de los factores /altera/ el producto
+- Espejo de unidades concatenadas
+- Soporta también el fallo de hasta el 50% de los discos
+  - Pero /únicamente/ si ocurren en el mismo volumen RAID1
+- Obtenemos el mismo resultado /aparente/ que RAID 1+0, pero perdemos
+  confiabilidad
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: width=\textwidth
+#+caption: Seis discos organizados en RAID 0+1
+[[../img/dot/raid_01.png]]
+#+latex: \end{column}\end{columns}

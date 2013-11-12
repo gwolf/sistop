@@ -1,18 +1,40 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Sistemas de archivos: Estructura en el dispositivo
-#+DATE: 2013-05-03 — 2013-05-13
+#+DATE: 2013-11-12 — 2013-05-??
 
 * Definiciones base
 
+** Sistemas de archivos
+- Gestión del espacio de almacenamiento
+- Probablemente el rol con más visibilidad de los que cubren los
+  sistemas operativos
+  - Comprendido casi universalmente por los usuarios
+
+** Abstracción primaria
+- El modelo primario, con el cual todos estaremos familiarizados, es
+  el del /directorio jerárquico/
+- Unidad de almacenamiento visible al usuario: /Archivo/
+  - No podemos grabar información como no sea en un archivo
+  - Se ubica por un /nombre/ (o por una /ruta/) en el /directorio/
+- Una de las abstracciones más longevas en la historia de la
+  computación
+
+** Nos /muerde/ el tiempo...
+- Desafortunadamente, /mea culpa, mea culpa, mea máxima culpa/... No
+  nos alcanzó el tiempo para desmenuzar en clase lo que esta
+  abstracción significa
+  - Su evolución
+  - Sus interfaces
+- Los invito fuertemente a revisar el material que debíamos haber
+  cubierto
+  - [[http://sistop.gwolf.org/html/06_sistemas_de_archivos.html][Secciones 1, 2 y 3 del capítulo 7, Sistemas de Archivos]]
+  - [[http://sistop.gwolf.org/laminas/14-archivos-y-directorios.pdf][Presentación #14, Archivos y directorios]]
+
 ** Bajando de nivel
-- En esta unidad, hemos visto a los elementos del sistema de archivos
-  como son presentados al usuario final
-- Sin entrar en detalles respecto a la organización de la información
-  en un /dispositivo persistente/
-- Las estructuras que hemos mencionado han quedado explíticamente
-  pendientes de definición
-- Comenzamos ahora a ver las principales estructuras y mecanismos
-  para /implementar/ un sistema de archivos
+- Entraremos directamente en detalles respecto a la organización de la
+  información en un /dispositivo persistente/
+- Principales estructuras y mecanismos para /implementar/ un sistema
+  de archivos /en un medio físico/
 
 ** Discos y otras hierbas
 - Cuando hablamos de almacenamiento, nos resulta natural hablar de /discos/
@@ -30,8 +52,7 @@
 - El hablar de almacenamiento en estado sólido supone algunas
   consideraciones adicionales que no podemos perder de vista
 - Por ahora, sigamos pensando en almacenamiento en /discos/
-- Hacia el final de la unidad veremos algunas de estas
-  características diferenciadoras
+- Pronto veremos algunas de estas características diferenciadoras
   - Y el impacto que pueden tener en los sistemas de archivos
 
 ** ¿Cómo se ve un disco?
@@ -76,7 +97,7 @@ cuantos términos
 
 ** Metadatos
 - Toda la información que haya /acerca de/ un archivo
-  - que /no sea/ el archivo mismo
+  - Que /no sean/ los datos pertenecientes al archivo mismo
 - En un sistema de archivos estándar:
   - Nombre
   - Tipo
@@ -102,10 +123,13 @@ cuantos términos
 - Es una de varias estrategias para presentar esta información (no la
   única)
 - Representa el estado de un bloque entero por cada bit
-  - Bastante compacto — con bloques de 4096 bits, 100GB pueden
-    representarse en 23MB ($100 \times 10^9 \over 4096$)
+  - Bastante compacto — con bloques de 4096 bytes, 100GB pueden
+    representarse en 3MB ($\frac{100 \times 10^9}{4096 \times 8}$)
   - Razonable para mantener en memoria para un sistema de escritorio
     actual
+  - Y ha ido creciendo a una razón aceptable desde los /viejos
+    tiempos/ (p. ej., 10KB para 40GB en sectores de 512 bytes, común
+    hacia fines de los 1980s)
 
 
 ** Ejemplificaremos con FAT
@@ -145,8 +169,8 @@ cuantos términos
   archivos
 - Es tan importante (y tan poco frecuentemente modificado) que se
   debe proteger de toda posible corrupción
-- Muchos sistemas de archivos contemplan mantener /copias adicionales/
-  del superbloque dispersas a lo largo del sistema de archivos
+- Muchos sistemas de archivos mantienen /copias adicionales/ del
+  superbloque dispersas a lo largo del sistema de archivos
 
 ** FAT: El superbloque
 - No guarda /tanta/ información en un sistema así de simple
@@ -209,7 +233,7 @@ cuantos términos
   - Y probablemente directorios adicionales
 - Está siempre en una /ubicación bien conocida/ en el disco,
   típicamente al inicio
-  - Por su volumen de uso, en los 1980, los diseñadores de AmigaOS
+  - Por su frecuencia de uso, en los 1980, los diseñadores de AmigaOS
     decidieron ponerlo /al centro/
   - Sector 40 (de 80 que tenían los floppies)
   - ¿Resultado? Reducción a la mitad de la demora por movimiento de cabezas
@@ -259,7 +283,7 @@ cuantos términos
 - Está ubicado entre las FAT y el inicio de los datos
   - Esto es, en los 14 bloques desde el 20 hasta el 33
 - En un floppy, le caben hasta $512 \times 14 = 7168$ bytes
-  - A 32 bytes por entrada de FAT, $7168 \over 32 = 224$ entradas
+  - A 32 bytes por entrada de FAT, $\frac{7168}{32} = 224$ entradas
     como máximo
 - No está mal /para un floppy/...
   - ¿Y considerando VFAT? El espacio disponible se reduce fuertemente
@@ -426,13 +450,15 @@ cuantos términos
   - En un cluster vacío caben 128 apuntadores ($4096 \over 32$)
 - Reservamos los /últimos 3 apuntadores/ para los /bloques indirectos/
 
-** Ejemplo de indirección multinivel
+** Ejemplo de indirección multinivel (1)
 - Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede
   ser representado directamente en el i-nodo
   - Un sólo acceso a disco para obtener los clusters
 - Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
   representarse con el bloque de indirección sencilla
   - Dos accesos a disco
+
+** Ejemplo de indirección multinivel (2)
 - Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
   \times 128) ) \times 4KB = 66436KB$
   - Hasta 131 accesos a disco
@@ -460,7 +486,7 @@ cuantos términos
   posibles:
   - Libre :: =0x000=, =0x0000= o =0x00000000=
 	     - El /cluster/ está libre
-	     - Puede ser empleado por el sistema de archivos.
+	     - Puede ser empleado por el sistema
   - Siguiente :: Valores hasta =0xFF6=, =0xFFF6= o =0xFFFFFFF6=
                 - Ubicación del /siguiente cluster/ del archivo
   - Dañado ::  =0xFF7=, =0xFFF7= o =0xFFFFFFF7=
@@ -518,13 +544,15 @@ cuantos términos
   - De /tipo especial/: El byte de /atributos/ (=0x0B=) vale 16
   - Es almacenado en disco /exactamente/ como un archivo
 
-** FAT: Los directorios y la fragmentación
+** FAT: Los directorios y la fragmentación (1)
 - Si un subdirectorio es un archivo especial, está sujeto a la fragmentación
 - Cuando se asigna espacio para un subdirectorio, se asigna un sólo
   cluster
   - 2048 bytes hasta 32768 bytes (64 a 1024 entradas)
   - La ubicación del archivo apunta a donde éste está alojado; la FAT
     guarda =0xFFFF=
+
+** FAT: Los directorios y la fragmentación (2)
 - Cuando se llena este cluster, se agrega otro al final del directorio
   - En la entrada en la FAT se apunta al nuevo sector; la del nuevo
     sector guarda =0xFFFF=
@@ -549,7 +577,7 @@ cuantos términos
 - ¿Por qué ocurren estos problemas?
 
 ** FAT: Principales inconsistencias
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: width=0.7\textwidth
 #+caption: Principales inconsistencias que pueden presentarse en los sistemas de archivos tipo FAT
 [[../img/dot/inconsistencias_fat.png]]
 
@@ -594,10 +622,10 @@ cuantos términos
   - En Unix, =fsck.vfat=, =fsck.ext2=, etc.
 - Hacen un /barrido/ del sistema de archivos, buscando evidencias de
   inconsistencia
-  - Siguiendo todas las cadenas de clusters de archivos o tablas de
+  - Siguen todas las cadenas de clusters de archivos o tablas de
     i-nodos y verificando que no haya /archivos cruzados/
     (compartiendo erróneamente bloques)
-  - Verificando que todos los directorios sean alcanzables y legales
+  - Verifican que todos los directorios sean alcanzables
   - Recalculando espacio vacío, bitmap de libres, etc.
 - Son siempre procesos /intensivos/ y complejos
   - Y deben ejecutarse con el sistema de archivos /fuera de línea/ (o

@@ -1,6 +1,6 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Sistemas de archivos: Archivos y directorios
-#+DATE: 2013-04-22 — 2013-04-29
+#+DATE: (No presentada en clase)
 
 * Semántica de archivos
 
@@ -124,10 +124,13 @@ tendremos las siguientes operaciones disponibles:
   - Por proceso :: Los archivos empleados por cada uno de los procesos
     - La referencia a cada archivo se hace por /descriptor de
       archivo/
-- Semántica de al haber múltiples procesos abriendo un archivo:
-  Depende del sistema operativo
-- Estas tablas no deben caer en /redundancia/: Cada una tiene
-  información distinta y específica
+
+** Tablas de archivos abiertos
+- /Semántica/ (¿cuál es el comportamiento?) de al haber múltiples
+  procesos abriendo un archivo:
+  - Depende del sistema operativo
+- Estas tablas no deben caer en /redundancia/
+  - Cada una tiene información distinta y específica
 
 ** Tabla global de archivos abiertos (1)
 - Conteo de usuarios del archivo :: El sistema debe saber cuántos
@@ -187,15 +190,21 @@ tendremos las siguientes operaciones disponibles:
   - Indica que el archivo va a ser modificado
 
 ** Candados /mandatorio/ vs. /consultivo/
-- Mandatorio u obligatorio :: (/mandatory locking/)
-  - Una vez que un proceso adquiere este candado, el sistema operativo
-    impone las restricciones a todos los demás procesos
-  - Independientemente de si estos conocen o no de la posibilidad de
-    que este bloqueo se presente
-- Asesor o consultivo :: (/advisory locking/)
-  - Es manejado exclusivamente entre los procesos involucrados
-  - Un proceso que no sepa del bloqueo /consultivo/ puede brincárselo
-  - Pero es mucho más /ligero/ al sistema operativo
+#+BEGIN_CENTER
+Mandatorio u obligatorio (/mandatory locking/)
+#+END_CENTER
+- Una vez que un proceso adquiere este candado, el sistema operativo
+  impone las restricciones a todos los demás procesos
+- Independientemente de si estos conocen o no de la posibilidad de
+  que este bloqueo se presente
+
+** Candados /mandatorio/ vs. /consultivo/
+#+BEGIN_CENTER
+Asesor o consultivo (/advisory locking/)
+#+END_CENTER
+- Es manejado exclusivamente entre los procesos involucrados
+- Un proceso que no sepa del bloqueo /consultivo/ puede brincárselo
+- Pero es mucho más /ligero/ al sistema operativo
 
 ** ¿Recuerdan las /primitivas de sincronización/?
 - Los archivos son /recursos/ gestionados por el sistema operativo,
@@ -452,6 +461,8 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 - Escritura a un punto no en /caché/:
   - Una lectura (para obtener el /contexto/, el resto del bloque)
   - Una escritura (del bloque entero modificado)
+
+** Las transferencias en bloques y el rendimiento
 - Conviene diseñar estructuras de datos /alineadas al tamaño del bloque/
   - Un registro de 400 bytes /casi siempre/ (>75%) requerirá la
     transferencia de dos bloques
@@ -518,20 +529,20 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   - Permite referirse a un objeto o conjunto de objetos empleando
     /filtros/ sobre una cubeta
 
-** Pero no me dejen contarlo todo yo...
-#+BEGIN_CENTER
-#+latex:{\Huge ¡Tarea para el lunes 29-abr!} \pause
-#+END_CENTER
-- ¿Qué sistemas de archivos /en desarrollo/ o /en uso actual/futuro/
-  pueden encontrar que /no estén basados/ en la estructura de
-  directorio?
-- Mencionamos /Amazon S3/. Otro, /WinFS/ (Microsoft). ¿Algún otro que
-  encuentren?
-- Desarrollen:
-  - ¿Cuándo nació?
-  - ¿Respondiendo a qué necesidad?
-  - ¿Cómo se compara su /semántica/ con sistemas /tradicionales/?
-  - ¿Cómo fue su adopción? (O si no llegó a mercado, ¿por qué?)
+# ** Pero no me dejen contarlo todo yo...
+# #+BEGIN_CENTER
+# #+latex:{\Huge ¡Tarea para el lunes 29-abr!} \pause
+# #+END_CENTER
+# - ¿Qué sistemas de archivos /en desarrollo/ o /en uso actual/futuro/
+#   pueden encontrar que /no estén basados/ en la estructura de
+#   directorio?
+# - Mencionamos /Amazon S3/. Otro, /WinFS/ (Microsoft). ¿Algún otro que
+#   encuentren?
+# - Desarrollen:
+#   - ¿Cuándo nació?
+#   - ¿Respondiendo a qué necesidad?
+#   - ¿Cómo se compara su /semántica/ con sistemas /tradicionales/?
+#   - ¿Cómo fue su adopción? (O si no llegó a mercado, ¿por qué?)
 
 ** Directorios de /profundidad fija/
 - Primeras implementaciones: Separación funcional únicamente
@@ -845,6 +856,8 @@ Las ligas duras presentan dos restricciones principales:
   operar sobre TCP/IP
   - 100% sobre TCP/IP desde el 2000
   - También conocido como CIFS (/Common Internet File System/)
+
+** Server Message Block (SMB)
 - Se ajusta más cercanamente a la semántica de MS-DOS/Windows
   - /Tiende/ a emplearse montando el directorio compartido como una
     unidad en /Mi PC/:

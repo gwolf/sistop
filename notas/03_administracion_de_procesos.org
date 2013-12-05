@@ -55,11 +55,10 @@ de ejecución. Estos son:
                su ejecución (aun si hubiera un procesador disponible,
                no podría avanzar). 
 
-- Zombie :: El proceso ha finalizado su ejecución, pero el sistema
-            operativo debe realizar ciertas operaciones de limpieza
-            para poder eliminarlo de la lista.[fn:: Estas operaciones
-            pueden incluir notificar al proceso padre, cerrar las
-            conexiones de red que tenía activas, etc.]
+- Zombie :: El proceso ha finalizado su ejecución pero todavía no
+            puede ser descartado por el sistema operativo pues la
+            información relativa a la finalización debe ser comunicada
+            al padre.
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
@@ -72,7 +71,7 @@ de ejecución. Estos son:
 ** Información asociada a un proceso
 
 La información que debe manipular el sistema operativo relativa a cada
-uno de los procesos actuales se almacena en una estructura llamada
+uno de los procesos actuales se suele almacenar en una estructura llamada
 /bloque de control de proceso/ (/PCB/ - /Process Control Block/):
 
 - Estado del proceso :: El estado actual del proceso.
@@ -103,23 +102,18 @@ uno de los procesos actuales se almacena en una estructura llamada
      solicitudes del proceso), uso acumulado de memoria y dispositivos, etc.
 
 - Estado de E/S :: Listado de dispositivos y archivos asignados que el
-                   proceso tiene /abiertos/ para entrada y salida
-                   (E/S) en un momento dado.
+                   proceso tiene /abiertos/ en un momento dado.
 
 * Procesos e hilos
 
 Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
-que el /planificador/ elige qué proceso pasar de /Listo/ a /En
-ejecución/ debe considerar buena parte de dicha información, la simple
-transferencia de todo esto entre la memoria y el procesador podría
-llevar a un desperdicio /burocrático/[fn:: Entendiendo /burocrático/
-como el tiempo que se pierde en asuntos administrativos. Recordemos
-que el tiempo que consume el sistema operativo en administración es
-tiempo perdido para el uso real, productivo del equipo.] de
-recursos. Una respuesta a esta problemática fue la de utilizar los
-/hilos de ejecución/, a veces conocidos como /procesos ligeros/
-(/LWP/, /Lightweight processes/).
+que el /planificador/ elige qué proceso pasar de /Listo/ a /En ejecución/
+debe considerar buena parte de dicha información, la simple
+transferencia de todo esto entre la memoria y el procesador podría llevar a
+un desperdicio importante de recursos. Una respuesta a esta
+problemática fue la de utilizar los /hilos de ejecución/, a veces conocidos
+como /procesos ligeros/ (/LWP/, /Lightweight processes/).
 
 Cuando se consideran procesos basados en un modelo de hilos, se puede
 proyectar en sentido inverso que todo proceso es como un sólo hilo de
@@ -157,8 +151,9 @@ de la plataforma, a veces los hilos de usuario inclusive utilizan
 multitarea cooperativa para pasar el control dentro de un mismo
 proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
 de un archivo para utilizarlos inmediatamente) interrumpirá la
-ejecución de /todos/ los hilos de ese proceso, dado que
-el control de ejecución es entregado al sistema operativo, quien en
+ejecución de TODOS los hilos de ese proceso, dado que
+#como se pone negrita? (poner TODOS)
+el control de ejecución es entregado al sistema operativo quien en
 este caso no conoce nada sobre los hilos.
 
 #poner un ejemplo más explícito
@@ -219,8 +214,9 @@ un /equipo de trabajo/):
      consiste en que el trabajo a realizar por cada uno de los hilos
      se plantea desde principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
-     éstos sean lanzados en /paralelo/. Estos datos no son resultado de
-     /eventos independientes/ (como en el caso anterior), sino
+     éstos sean lanzados en PARALELO. Estos datos no son resultado de
+# poner paralelo en minuscula y negrita
+     /eventos independientes/ (como en el caso anterior), sino 
      partes de un sólo cálculo. Por consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
@@ -241,6 +237,7 @@ un /equipo de trabajo/):
      modelo es que nos ayuda a mantener rutinas simples de comprender,
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
+# verificar que el termino E/S esté definido en algún lado
 
      Un punto importante a tener en cuenta en una línea de ensamblado
      es que, si bien los hilos trabajan de forma secuencial, pueden
@@ -260,35 +257,44 @@ un /equipo de trabajo/):
 
 * Concurrencia
 
-Desde un punto de vista formal, la /concurrencia/
+Desde un punto de vista formal, la /Concurrencia/
 no se refiere a dos o más eventos que ocurren a la vez
 sino a dos o más eventos cuyo órden es /no determinista/, esto es,
 eventos acerca de los cuales /no podemos predecir el órden relativo en
-que ocurrirán/. Si bien dos procesos (o hilos) completamente
+que ocurrirán/. Si bien dos procesos (o también dos hilos) completamente
 independientes entre sí ejecutándose simultáneamente son dos procesos
-concurrentes, este apartado se ocupa principalmente de procesos cuya
+concurrentes, la concurrencia se ocupa principalmente de procesos cuya
 ejecución está vinculada de alguna manera (p. ej.: dos procesos que
 comparten cierta información o que dependen uno del otro).
 
-Si bien una de las tareas principales de los sistemas operativos es
-dar a cada proceso la ilusión de que se está ejecutando en una
-computadora dedicada, de modo que el programador no tenga que pensar
-en la competencia por recursos, a veces un programa requiere no pasar
-por esa ilusión — Parte del desarrollo de un programa puede depender
-de datos obtenidos en fuentes externas a éste, y la cooperación con
-hilos o procesos externos es fundamental.
+Aunque una de las tareas principales de los sistemas operativos es dar
+a cada proceso la ilusión de que se está ejecutando en una computadora
+dedicada, de modo que el programador no tenga que pensar en la
+competencia por recursos, a veces un programa requiere interactuar con
+otros: parte del procesamiento puede depender de datos
+obtenidos en fuentes externas, y la cooperación con hilos o
+procesos externos es fundamental.
 
-Para algunos de los problemas presentados a continuación, presentaremos soluciones 
-usando la semántica de la interacción entre hilos del mismo proceso,
-sincronización entre procesos independientes, asignación de recursos
-por parte del núcleo a procesos simultáneos, o incluso entre usuarios
-de diferentes equipos de una red — En todos estos casos, los conceptos
-presentados pueden generalizarse a los demás, y son situaciones en que
-se presenta compartición (o competencia) por estructuras entre
-entes independientes.
+Veremos que pueden aparecer muchos problemas cuando se estudia la
+interacción entre hilos del mismo proceso, la sincronización entre
+distintos procesos, la asignación de recursos por parte del núcleo a
+procesos simultáneos, o incluso cuando interactuan usuarios de
+diferentes computadoras de una red — Presentarmos distintos conceptos
+relacionados con la concurrencia utilizando uno de esos escenarios,
+pero muchos de esos conceptos en realidad son independientes del
+escenario: más bien nos ocupa la relación entre procesos que deben
+compartir recursos o deben sincronizar sus tareas.
 
 ** Problemas clásicos de exclusión mutua y sincronización
 # <<PROC_problemas_clasicos>>
+
+Para presentar los problemas relacionados con la concurrencia suelen
+utilizarse ejemplos muy simplificados basados en cuestiones de la vida
+real. Cada ejemplo presenta uno o más conceptos. Se recomienda
+comprender bien el ejemplo, el problema y la solución y realizar
+alguna ejercitación antes de pasar al siguiente ejemplo. También
+podría ser útil imaginar en qué circunstancia un sistema operativo se
+encontraría en una situación similar.
 
 Enunciaremos a continuación algunos planteamientos que ilustran
 situaciones que se pueden resolver empleando un concepto llamado semáforo. Por ahora
@@ -297,6 +303,190 @@ estructuras de sincronización, veremos cómo pueden resolverse.
 
 Conviene ir pensando en qué estrategias podrían seguir para resolver
 los problemas.
+
+*** Problema del jardín ornamental
+
+- Problema del jardín ornamental :: Un gran jardín ornamental se abre
+     al público para que todos puedan apreciar sus fantásticas rosas,
+     arbustos y plantas acuáticas. Por supuesto, se cobra una módica
+     suma de dinera a la entrada para lo cual se colocan dos
+     torniquetes, uno en cada una de sus entradas. Se desea conocer
+     cuánta gente ha ingresado al jardín así que se instala una
+     computadora conectada a ambos torniquetes: cada torniquete envía
+     una señal cuando una persona ingresa al jardín. Realizaremos un
+     modelo simplificado de la situación, así que no nos ocuparemos de
+     los detalles del hardware utilizado. Aquí es importante notar que
+     los dos torniquetes son objetos que existen y se comportan en
+     paralelo: los eventos que generan no tienen un orden
+     predecible. Es decir, que cuando escribamos el software no
+     sabremos en qué momento llegará cada visitante ni qué torniquete
+     utilizará.
+
+Simularemos un experimento en el que 20 visitantes ingresarán por cada
+torniquete. Al final de la simulación deberá haber 40 visitantes
+contados. Una implementación tentativa de la solución podría ser la
+siguiente:
+
+#incluir esquema del jardín ornamental
+#+begin_src C
+proceso torniquete1() {
+	int i;
+	for(i=0;i<20;i++) {
+		cuenta++;
+	}
+}
+
+proceso torniquete2() {
+	int i;
+	for(i=0;i<20;i++) {
+		cuenta++;
+	}
+}
+
+main() {
+	//lanzar ambos procesos
+	cuenta=0;
+	printf("Cuenta: %d\n", cuenta);
+}
+#+end_src C
+
+#footnote:
+Nota: se utiliza una versión ficticia del lenguaje C para el ejemplo, evitando entrar en los detalles de sintáxis de un lenguaje concurrente.
+
+Como se ve el problema es muy sencillo. Sin embargo, al intentar ejecutar repetidas veces ese programa muy de vez en cuando el resultado no tiene el valor 40. Sin embargo, si se modifica el programa para utilizar un sólo torniquete, Cuenta siempre tiene el valor correcto (20).
+
+¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
+programación convierten cada instrucción en una serie más o menos
+larga de operaciones de máquina (instrucciones assembler). De modo,
+que una instrucción aparentemente simple como:
+
+#+begin_src C
+cuenta++
+#+end_src 
+
+habitualmente implica varias operaciones de más bajo nivel:
+
+/LEER/: Leer cuenta desde la memoria (p. ej. mov $cuenta, %rax). 
+
+/INC/: Incrementar el registro (p. ej. add $1, %rax)
+
+/GUARDAR/: Guardar el resultado nuevamente en memoria (p. ej. mov %rax, $cuenta)
+
+En un sistema operativo multitarea cuando un proceso agota su porción
+de tiempo de procesador (quantum) o detiene su ejecución por otra
+razón, los valores almacenados en registros se preservan (junto con la
+información sobre el proceso) para poder restaurarlo cuando la
+ejecución continúe (de esta forma se provee la ilusión de paralelismo
+en sistemas de un sólo núcleo). Así, en el problema del Jardín
+Ornamental cada torniquete tiene su propia copia de los valores en los
+registros. Sin embargo, se supone que el resto de la memoria es
+compartida (en particular, se utiliza ese hecho para llevar la cuenta
+de personas que ingresan).
+
+Si se considera lo que ocurre cuando dos procesos (p. ej. torniquete1
+y torniquete2) ejecutan la instrucción Count++ en un equipo con un
+sólo procesador puede darse la siguiente secuencia de eventos. Se
+considera que Cuenta está inicialmente en 0.
+
+Cuenta=0 
+
+torniquete1: LEER (resultado: rax de p1=0, Cuenta=0)
+
+torniquete1: INC (resultado: rax de p1=1, Cuenta=0) 
+
+torniquete1: GUARDAR (resultado: rax de p1=1, Cuenta=1) 
+
+El sistema operativo decide cambiar de tarea, suspende torniquete1 y
+continua con torniquete2
+
+torniquete2: LEER (resultado: rax de p2=1, Cuenta=1) 
+
+torniquete2: INC (resultado: rax de p2=2, Cuenta=1)
+
+torniquete2: GUARDAR (resultado: rax de p2=2, Cuenta=2)
+
+Se puede ver que ambos procesos realizaron sus instrucciones para incrementar el contador en 1 y el resultado final fue que la cuenta se incrementó en dos unidades.
+
+Pero, también puede darse la siguiente secuencia de eventos durante la ejecución de esas dos instrucciones:
+
+Cuenta=0
+
+torniquete1: LEER 		(resultado: rax de p1=0, Cuenta=0) 
+
+torniquete1: INC 		(resultado: rax de p1=1, Cuenta=0)
+
+El sistema operativo decide cambiar de tarea, suspende torniquete1 y
+continua con torniquete2
+
+torniquete2: LEER 		(resultado: rax de p2=1, Cuenta=1)
+
+torniquete2: INC 		(resultado: rax de p2=2, Cuenta=1)
+
+torniquete2: GUARDAR 		(resultado: rax de p2=2, Cuenta=2)
+
+El sistema operativo decide cambiar de tarea, suspende torniquete2 y continua con torniquete1
+
+torniquete1: GUARDAR 		(resultado: rax de p1=1, Cuenta=1)
+
+
+Nuevamente ambos procesos ejecutaron sus instrucciones para
+incrementar en 1 el contador. Sin embargo, ¡en este caso la Cuenta
+tiene el valor 1!
+
+- Esto parece muy específico... :: Si bien este análisis parece muy
+específico es fácil ver que la misma circustancia podría darse en un
+sistema de reserva de vuelos (p. ej.: puede que dos operadores vean un
+asiento vacío en su copia local de los asientos y ambos marquen el
+mismo asiento como ocupado) o con dos procesos que decidan cambiar
+simultáneamente un archivo. Aquí las operaciones ya no son
+necesariamente operaciones internas de la máquina.
+
+- ¿Pero no es muy poco probable que ...? :: 
+Por otro lado, uno podría pensar (con cierta cuota de razón) que la
+secuencia de eventos propuesta es muy poco probable: usualmente un
+sistema operativo ejecuta miles de instrucciones antes de cambiar de
+un proceso a otro. De hecho, en la práctica este problema es muy
+frecuentemente ignorado y los programas funcionan muy bien la mayoría
+de las veces. Esto permite ver una característica importante de los
+programas concurrentes: es muy usual que un programa funcione
+perfectamente la mayor parte del tiempo, pero de vez en cuando puede
+fallar. Subsecuentes ejecuciones con los mismos argumentos producen
+nuevamente el resultado correcto. Esto hace que los problemas de
+concurrencia sean muy difíciles de detectar y más aun de corregir. Es
+importante (y mucho más efectivo) realizar un buen diseño inicial de
+un programa concurrente en lugar de intentar arreglarlo cuando se
+detecta alguna falla. También es interesante notar que dependiendo del
+sistema, puede ser que alguna de las instrucciones sea muy lenta, en
+el caso de un sistema de reserva de asientos de aviones, las
+operaciones pueden durar un tiempo importante (p. ej.: desde que el
+operador muestra los asientos disponibles hasta que el cliente elige
+el asiento) haciendo mucho más probable que ocurra una secuencia no
+deseada.
+
+- ¿Vale la pena preocuparse? :: A modo de ilustración de la gravedad del
+problema, estos son algunos valores para el resultado final de la
+variable Cuenta cuando se ejecuta el programa anterior en Pascal-FC:
+25 29 31 20 21 26 27 18 31 35. Notesé que incluso uno de los valores
+es menor que /20/ (que es lo mínimo que cuenta cada torniquete). Es un
+ejercicio interesante pensar qué secuencia de eventos podría producir
+tal valor y cuál es el mínimo valor posible.
+
+#poner referencia a Pascal-FC
+
+- Pero yo tengo muchos núcleos:: Otra cuestión que puede parecer
+artificiosa es que en el ejemplo hay un sólo procesador o núcleo. Sin
+embargo, tener más de un procesador no sólo no soluciona el problema
+sino que lo empeora: ahora las operaciones de lectura o escritura
+pueden ejecutarse directamente en paralelo y aparecen nuevos problemas
+de coherencia de caché. En la siguiente discusión muchas veces se
+presupone que hay un sólo procesador, sin que eso invalide la
+discusión para equipos multiprocesadores.
+
+Antes de presentar posibles soluciones, veremos algunos conceptos
+importantes.
+
+**** Exclusión mutua, regiones críticas.
+
 
 - Problema productor-consumidor :: En un entorno multihilos es común
      que haya una división de tareas tipo /línea de ensamblado/, que
@@ -1033,17 +1223,18 @@ ofrece las construcciones antes descritas.
 Si podemos compartir estructuras de memoria entre los procesos
 implicados, podemos emplear la /solución de Peterson/. Esta implica
 que los procesos cooperen explícitamente, y que conozcan algunos datos
-que hemos mayormente obviado (como son no sólo la cantidad de procesos
-que emplearán determinada sección crítica, sino una /numeración/ que
+que hemos mayormente obviado (como son, no sólo la cantidad de procesos que
+emplearán determinada sección crítica, sino una /numeración/ que
 permita distinguir entre ellos). Cabe mencionar, como señala
 Silberschatz (p. 223), que algunos detalles de implementación de las
 computadoras actuales pueden impedir que este mecanismo funcione
 adecuadamente.
 
 Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-entrar a determinada sección crítica, es posible emplear únicamente
-las siguientes dos variables para implementar de forma segura una
-exclusión mutua entre ellos:
+determinada sección crítica, alternando entre su ejecución
+paralelizable y la ejecución de dicha sección, contando con las
+estructuras compartidas:
+# queda algo mal redactado en este parrafo anterior
 
 #+begin_src C
 int turno;
@@ -1061,18 +1252,13 @@ do {
     listo[i] = TRUE;
     turno = j;
     while (listo[j] and turno == j) ;
-    /* Ejecutando en seccion critica */
+    /* Ejecutando en sección crítica */
     listo[i] = FALSE;
-    /* Ejecutando en seccion no critica */
+    /* Ejecutando en sección no crítica */
 } while TRUE;
 #+end_src
 
 El código para /j/ sería el complementario.
-
-La principal restricción de esta solución es que parte del supuesto de
-que ambos procesos se irán alternando para entrar a la sección
-crítica; si el ritmo al cual /i/ y /j/ buscan entrar a la sección
-crítica difiere, uno de ellos perderá mucho tiempo esperando al otro.
 
 La solución de Peterson se basa en que, si ambos procesos intentan
 entrar a la sección crítica justo al mismo tiempo, ambos modificarán
@@ -1365,7 +1551,7 @@ número de ingredientes necesario.
       print "%d - Sigamos pensando..." % id
     
     def come(id):
-      print "%d - A comer!" % id
+      print "%d - ¡A comer!" % id
       # (...)
   #+end_src
 
@@ -1733,7 +1919,7 @@ int main() {
 Al ser una solución basada en monitor, el código que invoca a
 =filosofo(i)= no tiene que estar al pendiente del mecanismo de
 sincronización empleado, puede ser comprendido más fácilmente por un
-lector casual, y no brinda oportunidad para que un mal programador
+lector casual y no brinda oportunidad para que un mal programador
 haga mal uso del mecanismo de sincronización.
 
 *** Soluciones en hardware
@@ -1806,25 +1992,23 @@ problemática. Algunas maneras de lograrlo pueden ser:
      realizar determinada tarea podría ser tan simple como:
 
      #+begin_src asm
-       enter_region:      ; Etiqueta de entrada a la verificacion
-         tsl reg, flag    ; Test and Set Lock; 'flag' es la
-                          ; variable compartida, es cargada al
-                          ; registro 'reg' y, atomicamente,
-                          ; convertida en 1.
-         cmp reg, #0      ; Era la bandera igual a 0 al entrar?
-         jnz enter_region ; En caso de que no fuera 0 al ejecutar
-                          ; el tsl, vuelve a ejecutar desde
-                          ; enter_region
-         ret              ; Termina la rutina. Esto significa que
-                          ; 'flag' era cero al entrar. Si llegamos
-                          ; hasta aqui, tsl fue exitoso y flag
-                          ; queda marcado como no-cero. Tenemos
-                          ; acceso exclusivo al recurso protegido
-                          ; por flag.
-
+       enter_region:        ; Etiqueta de entrada a la verificación
+        
+         tsl reg, flag      ; Test and Set Lock; 'flag' es la variable
+                            ; compartida, es cargada al registro 'reg'
+                            ; y, atómicamente, convertida en 1.
+         cmp reg, #0        ; ¿Era la bandera igual a 0 al entrar?
+         jnz enter_region   ; En caso de que no fuera 0 al ejecutar el tsl,
+                            ; vuelve a ejecutar desde enter_region
+         ret                ; Termina la rutina. Esto significa que 'flag'
+                            ; era cero al entrar. Si llegamos hasta aquí,
+                            ; tsl fue exitoso y flag queda marcado como
+                            ; no-cero. Tenemos acceso exclusivo al recurso
+                            ; protegido por flag.
+        
        leave_region:
-         move flag, #0    ; Guarda 0 en flag, liberando el recurso
-         ret              ; Regresa al invocante.
+         move flag, #0      ; Guarda 0 en flag, liberando el recurso
+         ret                ; Regresa al invocante.
      #+end_src
 
      Esto requeriría contar con soporte en hardware en el procesador
@@ -2218,10 +2402,9 @@ desde nuestro punto de inicio ejecutáramos primero $B$ y luego $A$.
 Dadas las anteriores condiciones, y conociendo estos patrones de uso,
 el sistema operativo evitará entrar en el área de bloqueo inminente:
 El sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
-T_A \le 6$, y mantendrá a $A$ en espera si $t_A \le 2$ mientras $2 \le
-t_B \le 6$.
+T_A \le 6$, y mantendrá a $A$ en espera si $t_A \e 2$ si $2 \le t_B
+\le 6$.
 
-#revisar el parrafo anterior
 La región marcada como /inalcanzable/ en color amarillo, no representa
 ningún peligro: Sólo indica aquellos estados en que resulta imposible
 entrar. Incluso una vez evadido el bloqueo (por ejemplo, si $B$ fue

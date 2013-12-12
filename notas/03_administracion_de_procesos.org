@@ -296,35 +296,25 @@ alguna ejercitación antes de pasar al siguiente ejemplo. También
 podría ser útil imaginar en qué circunstancia un sistema operativo se
 encontraría en una situación similar.
 
-Enunciaremos a continuación algunos planteamientos que ilustran
-situaciones que se pueden resolver empleando un concepto llamado semáforo. Por ahora
-haremos únicamente el planteamiento, y después de presentar las
-estructuras de sincronización, veremos cómo pueden resolverse.
-
-Conviene ir pensando en qué estrategias podrían seguir para resolver
-los problemas.
-
 *** Problema del jardín ornamental
 
-- Problema del jardín ornamental :: Un gran jardín ornamental se abre
-     al público para que todos puedan apreciar sus fantásticas rosas,
-     arbustos y plantas acuáticas. Por supuesto, se cobra una módica
-     suma de dinera a la entrada para lo cual se colocan dos
-     torniquetes, uno en cada una de sus entradas. Se desea conocer
-     cuánta gente ha ingresado al jardín así que se instala una
-     computadora conectada a ambos torniquetes: cada torniquete envía
-     una señal cuando una persona ingresa al jardín. Realizaremos un
-     modelo simplificado de la situación, así que no nos ocuparemos de
-     los detalles del hardware utilizado. Aquí es importante notar que
-     los dos torniquetes son objetos que existen y se comportan en
-     paralelo: los eventos que generan no tienen un orden
-     predecible. Es decir, que cuando escribamos el software no
-     sabremos en qué momento llegará cada visitante ni qué torniquete
-     utilizará.
+Un gran jardín ornamental se abre al público para que todos puedan
+apreciar sus fantásticas rosas, arbustos y plantas acuáticas. Por
+supuesto, se cobra una módica suma de dinera a la entrada para lo cual
+se colocan dos torniquetes, uno en cada una de sus entradas. Se desea
+conocer cuánta gente ha ingresado al jardín así que se instala una
+computadora conectada a ambos torniquetes: cada torniquete envía una
+señal cuando una persona ingresa al jardín. Realizaremos un modelo
+simplificado de la situación, así que no nos ocuparemos de los
+detalles del hardware utilizado. Aquí es importante notar que los dos
+torniquetes son objetos que existen y se comportan en paralelo: los
+eventos que generan no tienen un orden predecible. Es decir, que
+cuando escribamos el software no sabremos en qué momento llegará cada
+visitante ni qué torniquete utilizará.
 
-Simularemos un experimento en el que 20 visitantes ingresarán por cada
+Se simulará un experimento en el que 20 visitantes ingresan por cada
 torniquete. Al final de la simulación deberá haber 40 visitantes
-contados. Una implementación tentativa de la solución podría ser la
+contados. Una implementación tentativa podría ser la
 siguiente:
 
 #incluir esquema del jardín ornamental
@@ -351,9 +341,15 @@ main() {
 #+end_src C
 
 #footnote:
-Nota: se utiliza una versión ficticia del lenguaje C para el ejemplo, evitando entrar en los detalles de sintáxis de un lenguaje concurrente.
+Nota: se utiliza una versión ficticia del lenguaje C para el ejemplo,
+evitando entrar en los detalles de sintáxis de un lenguaje
+concurrente.
 
-Como se ve el problema es muy sencillo. Sin embargo, al intentar ejecutar repetidas veces ese programa muy de vez en cuando el resultado no tiene el valor 40. Sin embargo, si se modifica el programa para utilizar un sólo torniquete, Cuenta siempre tiene el valor correcto (20).
+Como se ve el problema es muy sencillo. Sin embargo, al intentar
+ejecutar repetidas veces ese programa muy de vez en cuando el
+resultado no tiene el valor 40. Si se modifica el
+programa para utilizar un solo torniquete, /Cuenta/ siempre tiene el
+valor correcto (20).
 
 ¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
 programación convierten cada instrucción en una serie más o menos
@@ -366,74 +362,61 @@ cuenta++
 
 habitualmente implica varias operaciones de más bajo nivel:
 
-/LEER/: Leer cuenta desde la memoria (p. ej. mov $cuenta, %rax). 
-
-/INC/: Incrementar el registro (p. ej. add $1, %rax)
-
-/GUARDAR/: Guardar el resultado nuevamente en memoria (p. ej. mov %rax, $cuenta)
+- /LEER/: Leer Cuenta desde la memoria (p. ej. /mov $cuenta, %rax/). 
+- /INC/: Incrementar el registro (p. ej. /add $1, %rax/).
+- /GUARDAR/: Guardar el resultado nuevamente en memoria (p. ej. /mov
+  %rax, $cuenta/).
 
 En un sistema operativo multitarea cuando un proceso agota su porción
 de tiempo de procesador (quantum) o detiene su ejecución por otra
 razón, los valores almacenados en registros se preservan (junto con la
 información sobre el proceso) para poder restaurarlo cuando la
-ejecución continúe (de esta forma se provee la ilusión de paralelismo
-en sistemas de un sólo núcleo). Así, en el problema del Jardín
-Ornamental cada torniquete tiene su propia copia de los valores en los
-registros. Sin embargo, se supone que el resto de la memoria es
+ejecución continúe (de esta forma se provee la ilusión de la
+multitarea en sistemas de un solo núcleo). Así, en el problema del
+Jardín Ornamental cada torniquete tiene su propia copia de los valores
+en los registros. Sin embargo, se supone que el resto de la memoria es
 compartida (en particular, se utiliza ese hecho para llevar la cuenta
 de personas que ingresan).
 
-Si se considera lo que ocurre cuando dos procesos (p. ej. torniquete1
-y torniquete2) ejecutan la instrucción Count++ en un equipo con un
-sólo procesador puede darse la siguiente secuencia de eventos. Se
-considera que Cuenta está inicialmente en 0.
+Si se considera lo que ocurre cuando dos procesos (p. ej. /torniquete1/
+y /torniquete2/) ejecutan la instrucción /Count++/ en un equipo con un
+solo procesador, puede darse la siguiente secuencia de eventos. Se
+considera que /Cuenta/ está inicialmente en 0.
 
-Cuenta=0 
+- /Cuenta=0/
+- /torniquete1/: LEER (resultado: /rax de p1=0, Cuenta=0/)
+- /torniquete1/: INC (resultado: /rax de p1=1, Cuenta=0/) 
+- /torniquete1/: GUARDAR (resultado: /rax de p1=1, Cuenta=1/) 
+- El sistema operativo decide cambiar de tarea, suspende torniquete1 y
+continúa con torniquete2.
+- /torniquete2/: LEER (resultado: /rax de p2=1, Cuenta=1/) 
+- /torniquete2/: INC (resultado: /rax de p2=2, Cuenta=1/)
+- /torniquete2/: GUARDAR (resultado: /rax de p2=2, Cuenta=2/)
 
-torniquete1: LEER (resultado: rax de p1=0, Cuenta=0)
+Se puede ver que ambos procesos realizaron sus instrucciones para
+incrementar el contador en 1 y el resultado final fue que la cuenta se
+incrementó en dos unidades.
 
-torniquete1: INC (resultado: rax de p1=1, Cuenta=0) 
+Pero, también puede darse la siguiente secuencia de eventos durante la
+ejecución de esas dos instrucciones:
 
-torniquete1: GUARDAR (resultado: rax de p1=1, Cuenta=1) 
-
-El sistema operativo decide cambiar de tarea, suspende torniquete1 y
-continua con torniquete2
-
-torniquete2: LEER (resultado: rax de p2=1, Cuenta=1) 
-
-torniquete2: INC (resultado: rax de p2=2, Cuenta=1)
-
-torniquete2: GUARDAR (resultado: rax de p2=2, Cuenta=2)
-
-Se puede ver que ambos procesos realizaron sus instrucciones para incrementar el contador en 1 y el resultado final fue que la cuenta se incrementó en dos unidades.
-
-Pero, también puede darse la siguiente secuencia de eventos durante la ejecución de esas dos instrucciones:
-
-Cuenta=0
-
-torniquete1: LEER 		(resultado: rax de p1=0, Cuenta=0) 
-
-torniquete1: INC 		(resultado: rax de p1=1, Cuenta=0)
-
-El sistema operativo decide cambiar de tarea, suspende torniquete1 y
-continua con torniquete2
-
-torniquete2: LEER 		(resultado: rax de p2=1, Cuenta=1)
-
-torniquete2: INC 		(resultado: rax de p2=2, Cuenta=1)
-
-torniquete2: GUARDAR 		(resultado: rax de p2=2, Cuenta=2)
-
-El sistema operativo decide cambiar de tarea, suspende torniquete2 y continua con torniquete1
-
-torniquete1: GUARDAR 		(resultado: rax de p1=1, Cuenta=1)
-
+- /Cuenta=0/
+- /torniquete1/: LEER 		(resultado: /rax de p1=0, Cuenta=0/) 
+- /torniquete1/: INC 		(resultado: /rax de p1=1, Cuenta=0/)
+- El sistema operativo decide cambiar de tarea, suspende torniquete1 y
+continúa con /torniquete2/.
+- /torniquete2/: LEER 		(resultado: /rax de p2=1, Cuenta=1/)
+- /torniquete2/: INC 		(resultado: /rax de p2=2, Cuenta=1/)
+- /torniquete2/: GUARDAR 		(resultado: /rax de p2=2, Cuenta=2/)
+- El sistema operativo decide cambiar de tarea, suspende /torniquete2/
+  y continua con /torniquete1/.
+- /torniquete1/: GUARDAR 		(resultado: /rax de p1=1, Cuenta=1/)
 
 Nuevamente ambos procesos ejecutaron sus instrucciones para
-incrementar en 1 el contador. Sin embargo, ¡en este caso la Cuenta
+incrementar en 1 el contador. Sin embargo, ¡en este caso la /Cuenta/
 tiene el valor 1!
 
-- Esto parece muy específico... :: Si bien este análisis parece muy
+/Esto parece muy específico/ Si bien este análisis parece muy
 específico es fácil ver que la misma circustancia podría darse en un
 sistema de reserva de vuelos (p. ej.: puede que dos operadores vean un
 asiento vacío en su copia local de los asientos y ambos marquen el
@@ -441,7 +424,7 @@ mismo asiento como ocupado) o con dos procesos que decidan cambiar
 simultáneamente un archivo. Aquí las operaciones ya no son
 necesariamente operaciones internas de la máquina.
 
-- ¿Pero no es muy poco probable que ...? :: 
+/¿Pero no es muy poco probable que ...?/  
 Por otro lado, uno podría pensar (con cierta cuota de razón) que la
 secuencia de eventos propuesta es muy poco probable: usualmente un
 sistema operativo ejecuta miles de instrucciones antes de cambiar de
@@ -463,7 +446,7 @@ operador muestra los asientos disponibles hasta que el cliente elige
 el asiento) haciendo mucho más probable que ocurra una secuencia no
 deseada.
 
-- ¿Vale la pena preocuparse? :: A modo de ilustración de la gravedad del
+/¿Vale la pena preocuparse?/ A modo de ilustración de la gravedad del
 problema, estos son algunos valores para el resultado final de la
 variable Cuenta cuando se ejecuta el programa anterior en Pascal-FC:
 25 29 31 20 21 26 27 18 31 35. Notesé que incluso uno de los valores
@@ -473,19 +456,54 @@ tal valor y cuál es el mínimo valor posible.
 
 #poner referencia a Pascal-FC
 
-- Pero yo tengo muchos núcleos:: Otra cuestión que puede parecer
-artificiosa es que en el ejemplo hay un sólo procesador o núcleo. Sin
+/Pero yo tengo muchos núcleos/ Otra cuestión que puede parecer
+artificiosa es que en el ejemplo hay un solo procesador o núcleo. Sin
 embargo, tener más de un procesador no sólo no soluciona el problema
 sino que lo empeora: ahora las operaciones de lectura o escritura
 pueden ejecutarse directamente en paralelo y aparecen nuevos problemas
 de coherencia de caché. En la siguiente discusión muchas veces se
-presupone que hay un sólo procesador, sin que eso invalide la
+presupone que hay un solo procesador, sin que eso invalide la
 discusión para equipos multiprocesadores.
 
 Antes de presentar posibles soluciones, veremos algunos conceptos
 importantes.
 
-**** Exclusión mutua, regiones críticas.
+**** Conceptos de concurrencia
+
+- Operación atómica :: Operación que requiere la garantía de que se
+     ejecutará como una sóla unidad de ejecución, o fallará
+     completamente, sin resultados o estados parciales observables por
+     otros procesos o el entorno. Esto no necesariamente implica que
+     el sistema no retirará el flujo de ejecución en medio de la
+     operación, sino que /el efecto de que se le retire el flujo/ no
+     llevará a comportamiento inconsistente.
+
+- Condición de carrera :: (Race condition) Categoría de errores de
+     programación que involucra a dos procesos que fallan al comunicarse
+     su estado mutuo, llevando a resultados inconsistentes. Es uno de
+     los problemas más frecuentes y difíciles de depurar, y ocurre
+     típicamente por no considerar la /no atomicidad/ de una operación
+
+- Sección (o región) crítica :: El área de código que requiere ser protegida de
+     accesos simultáneos, donde se realiza la modificiación de datos
+     compartidos.
+
+Dado que el sistema no tiene forma de saber cuales instrucciones (o
+áreas del código) deben funcionar de forma atómica, se debe
+asegurar la atomicidad de forma explícita, mediante la sincronización
+de los procesos. El sistema no debe permitir la ejecución de parte de
+esa área en dos procesos de forma simultánea (sólo puede haber un
+proceso en la sección crítica en un momento dado).
+
+/¿Y qué tiene que ver esto con el problema del Jardín Ornamental?/ En
+el problema hay claramente un dato compartido: la Cuenta, así la
+sección que modifica la cuenta es una /sección crítica/ y la operación
+Cuenta++ debe ser una /operación atómica/. La secuencia de eventos que
+se mostró es una /condición de carrera/: el segundo torniquete presume
+un estado (Cuenta=0) que no es el mismo que conoce el torniquete1
+(Cuenta=1).
+
+*** Soluciones posibles (y no tanto)
 
 
 - Problema productor-consumidor :: En un entorno multihilos es común

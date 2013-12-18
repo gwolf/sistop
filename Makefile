@@ -31,7 +31,7 @@ pdf: fig
 	mkdir -p pdf/ltxpng
 	echo pdf | emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-project
 
-libro_pdf:
+libro_index:
 	[ ! -f $(libro) ] || rm -f $(libro)
 	echo '#+options: toc:4 H:4' > $(libro)
 	echo '#+setupfile: ../setup_notas.org' >> $(libro)
@@ -42,22 +42,39 @@ libro_pdf:
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
 	echo '#+title: Sistemas Operativos' >> $(libro)
+
 	echo '' >> $(libro)
+	echo '#+latex: \\frontmatter' >> $(libro)
+	echo '* Presentación' >> $(libro)
+	echo '#+include: notas/00_presentacion.org :minlevel 1' >> $(libro)
+
+	echo '' >> $(libro)
+	echo '#+latex: \\mainmatter' >> $(libro)
 	for CAPITULO in notas/01_introduccion.org \
 			notas/02_estructuras_basicas.org \
 			notas/03_administracion_de_procesos.org \
 			notas/04_planificacion_de_procesos.org \
 			notas/05_administracion_de_memoria.org \
-			notas/06_sistemas_de_archivos.org  \
-			notas/10_topicos_avanzados.org ; do \
+			notas/06_sistemas_de_archivos.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
 	done
+
+	echo '' >> $(libro)
+	echo '#+latex: \\appendix' >> $(libro)
+	for APDX in notas/10_virtualizacion.org; do \
+		APDX=`echo $$APDX | sed s/notas.//`; \
+		TITULO=`grep -i ^#+title: notas/$$APDX | sed s/^.*://`; \
+		echo "* $$TITULO" >> $(libro) ; \
+		echo "#+include: $$APDX :minlevel 1" >> $(libro); \
+	done
 	# No hay muchas tablas, este listado no tiene tanto sentido
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
+
+libro_pdf: libro_index
 	# Si org-mode se queja de no tener definido "book" en
 	# org-export-latex-classes, referirse a
 	# http://orgmode.org/worg/org-tutorials/org-latex-export.html

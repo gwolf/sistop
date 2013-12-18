@@ -1,7 +1,8 @@
 #+SETUPFILE: ../setup_notas.org
-#+TITLE: Tópicos Avanzados
+#+TITLE: Virtualización
 
-* Virtualización
+* Introducción
+# <<VIRT>>
 
 La /virtualización/ no es un concepto nuevo, sin embargo, tras largos
 años de estar relegado muy a un segundo plano, hoy en día se vuelve
@@ -42,7 +43,7 @@ Para casi todos los casos que presentaremos, emplearemos los términos:
              sistemas operativos o aplicaciones que ejecutará. En
              inglés se le denomina /guest/.
 
-** Emulación
+* Emulación
 
 La técnica de virtualización más sencilla, y que hace más tiempo
 existe en las computadoras personales, es la emulación. Emular
@@ -97,7 +98,7 @@ los equipos de escritorio y los embebidos, es común que la velocidad
 del emulador sea muy similar –incluso superior– a la del hardware
 emulado.
 
-*** Emulando arquitecturas inexistentes
+** Emulando arquitecturas inexistentes
 
 Pero la emulación no se limita a hardware existente, y no sólo se
 emplea por la comodidad de no depender de la velocidad de equipos
@@ -171,7 +172,7 @@ hardware nativa).
 
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="600"
-#+label: HW_maquina_virtual_dotnet
+#+label: VIRT_maquina_virtual_dotnet
 #+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
 [[./img/maquina_virtual_dotnet.png]]
 
@@ -199,7 +200,7 @@ A través de estos puntos principales, el rendimiento de las
 arquitecturas emuladas es ya prácticamente idéntico al del código
 compilado nativamente.
 
-*** De lo abstracto a lo concreto
+** De lo abstracto a lo concreto
 
 Si bien las arquitecturas de máquinas virtuales planteadas en el
 apartado anterior se plantearon directamente para no ser
@@ -252,7 +253,7 @@ A pesar de estas ideas interesantes y novedosas, Transmeta no pudo
 mantener el dinamismo necesario para despegar, y cesó sus operaciones
 en 2009.
 
-*** ¿Emulación o simulación?
+** ¿Emulación o simulación?
 
 Una pregunta frecuente que se presenta al hablar de este tema es
 acerca de la diferencia entre la /emulación/ y la /simulación/. Todos
@@ -285,13 +286,13 @@ diseño y pruebas simples de circuitos, pero no esperarán que simular
 en la computadora un núcleo de ferrita rodeado por una bobina resulte
 en un receptor de radio.
 
-** Virtualización asistida por hardware
+* Virtualización asistida por hardware
 
 Actualmente se escucha mucho hablar de la virtualización como una
 herramienta para la consolidación de servicios, de gran ayuda para los
 administradores de sistemas. Este uso se refiere principalmente a lo
 que veremos en este apartado, así como en las secciones
-\ref{HW_paravirt} (/Paravirtualización/) y \ref{HW_contenedores}
+\ref{VIRT_paravirt} (/Paravirtualización/) y \ref{VIRT_contenedores}
 (/Contenedores/). Y si bien este /zumbido/ de la virtualización se ha
 producido mayormente a partir del 2006-2007, no se trata de
 tecnologías o ideas novedosas — Existe desde fines de los 1960. Hasta
@@ -344,7 +345,7 @@ modificación y redistribución, y sus diferentes usuarios fueron
 enviando las mejorías que realizaban de vuelta a IBM, de modo que hoy
 en día incorpora el trabajo de 50 años de desarrolladores.
 
-*** El hipervisor
+** El hipervisor
 
 El modelo CP/CMS lleva a una separación bastante limpia entre un
 /multiplexador de hardware/ (CP) y el sistema operativo propiamente
@@ -378,7 +379,7 @@ anfitrión (y no particiones o dispositivos enteros). Algunos
 hipervisores, como /KVM/ bajo Linux se presentan integrados como un
 componente más de un sistema operativo estándar.
 
-*** Virtualización asistida por hardware en x86
+** Virtualización asistida por hardware en x86
 
 Hasta alrededor del año 2005, la virtualización no se mencionaba muy
 frecuentemente. Si bien había hardware virtualizable 40 años atrás,
@@ -443,8 +444,8 @@ anfitrión, sin embargo, es mucho menos probable que un programa mal
 diseñado logre congelarse esperando respuesta del hardware (emulado),
 y mucho menos afectar a los demás huéspedes.
 
-** Paravirtualización
-# <<HW_paravirt>>
+* Paravirtualización
+# <<VIRT_paravirt>>
 
 La virtualización asistida por hardware, por conveniente que resulte,
 sigue presentando algunas desventajas:
@@ -487,7 +488,7 @@ dispositivos emulados se convierten casi en simples pasarelas de
 llamadas al sistema, brindando además de una sobrecarga mínima, aún
 mayor estabilidad por simplicidad del código.
 
-*** Paravirtualización y software libre
+** Paravirtualización y software libre
 
 La paravirtualización resulta muy atractiva, presentando muy obvias
 ventajas. Pero a pesar de que es posible emplearla en cualquier
@@ -522,7 +523,7 @@ realizar la adaptación pudo compartirse entre desarrolladores de todo
 el mundo, dado que esta entonces novedosa tecnología resultaba de gran
 interes.
 
-*** Paravirtualización de dispositivos
+** Paravirtualización de dispositivos
 
 Las ideas derivadas de la paravirtualización pueden emplearse también
 bajo entornos basados en virtualización plena: Si el sistema operativo
@@ -554,8 +555,8 @@ propietarios, como los de la familia Windows, con buena parte de las
 ventajas de la paravirtualización, sobre entornos de virtualización
 asistida por hardware.
 
-** Contenedores, o /virtualización a nivel sistema operativo/
-# <<HW_contenedores>>
+* Contenedores, o /virtualización a nivel sistema operativo/
+# <<VIRT_contenedores>>
 
 Una estrategia completamente distinta para la creación de máquinas
 virtuales es la de /contenedores/. A diferencia de emulación,
@@ -673,14 +674,6 @@ disco.
 
 * Otros recursos
 
-- [[https://dl.acm.org/citation.cfm?doid=359576.359579][Can programming be liberated from the von Neumann style?: a
-  functional style and its algebra of programs]]; John Backus, 1978
-- [[http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf][Cramming more components onto integrated circuits]]; Gordon E. Moore,
-  1965
-- [[http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html][An Introduction to the Intel® QuickPath Interconnect]]; Intel, 2009
-  (Document Number: 320412-001US)
-- [[http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf][Intel® Desktop Board D875PBZ Technical Product Specification]]
-  (Intel, 2003)
 - [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bringing Virtualization to the x86 Architecture with the Original
   VMware Workstation]] (Bugnion et. al., 2012, ACM Transactions on
   Computer Systems)

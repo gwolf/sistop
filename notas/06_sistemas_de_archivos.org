@@ -1,6 +1,11 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Sistemas de archivos
 
+# Probablemente este capítulo podría partirse en sus dos componentes
+# principales (¿dónde vi que lo hacían así?): Por un lado, la
+# representación lógica de los archivos, y por otro, la representación
+# de esta información en el disco.
+
 * Introducción
 #<<FS>>
 
@@ -2817,7 +2822,7 @@ nos permite emplear esta tecnologíá transparentemente es
 espacio para mejorar. Este es un tema que seguramente brinda amplio
 espacio para investigación y desarrollo para los próximos años.
 
-* Manejo avanzado de volúmenes
+* RAID: Más allá de los límites físicos
 
 En la sección \ref{FS_estructura_en_dispositivo} (/Plasmando la
 estructura en el dispositivo/) presentamos muy escuetamente al
@@ -2852,12 +2857,12 @@ implementaciones hacia el final de esta sección, varias
 implementaciones derivadas de RAID que han incorporado conceptos de
 capas superiores en algunos sistemas operativos modernos.
 
-RAID no es un sólo esquema, sino que es un /conjunto de esquemas/,
-cada uno de ellos diseñado para mejorar distintos aspectos del
-almacenamiento en discos. Veamos las características de los
+RAID no es un sólo esquema, sino que especifica un /conjunto/ de
+/niveles/, cada uno de ellos diseñado para mejorar distintos aspectos
+del almacenamiento en discos. Veamos las características de los
 principales niveles en uso hoy en día.
 
-** RAID 0: División en /franjas/
+** RAID nivel 0: División en /franjas/
 
 Este esquema nos brinda una mejoría tanto en espacio total, dado que
 presenta a un volumen grande en vez de varios discos probablemente más
@@ -2893,7 +2898,7 @@ contenida en el volumen se pierda.
 Puede construirse un arreglo bajo RAID nivel 0 con un mínimo de dos
 discos.
 
-** RAID 1: Espejo
+** RAID nivel 1: Espejo
 
 Este nivel está principalmente orientado a aumentar la confiabilidad
 de la información: Los datos son grabados de forma /simultánea e
@@ -2926,7 +2931,7 @@ corrección de errores. Estos han caído casi por completo en el desuso
 dado que los otros niveles, y muy en particular el nivel 5, ofrecen
 las mismas características, pero con mayor confiabilidad
 
-** RAID 5: Paridad dividida por bloques
+** RAID nivel 5: Paridad dividida por bloques
 
 El nivel 5 de RAID proporciona un muy buen equilibrio respecto a las
 características que venimos mencionando: nos brinda el espacio total
@@ -2984,7 +2989,7 @@ probabilidad de falla. Si un arreglo que está ya operando en el modo
 interino de recuperación de datos se encuentra con una falla en
 cualquiera de sus discos, tendrá que reportar un fallo irrecuperable.
 
-** RAID 6: Paridad por redundancia P+Q
+** RAID nivel 6: Paridad por redundancia P+Q
 
 Se trata nuevamente de un nivel de RAID muy poco utilizado. Se basa en
 el mismo principio que el de RAID 5 pero, empleando dos distintos
@@ -3060,7 +3065,7 @@ del espejo. Si se perdieran al mismo tiempo el disco 1 (del
 subvolumen 1) y el disco 5 (del subvolumen 2), tendríamos pérdida de
 datos.
 
-** Más allá de RAID
+* Manejo avanzado de volúmenes
 
 Los esquemas RAID vienen, sin embargo, de fines de la década de 1980,
 y en los más de 20 años desde que fueron planteados, si bien han
@@ -3070,9 +3075,103 @@ posteriores dada la limpieza conceptual que presentan, y dado que
 otros esquemas incluso hacen referencia al nivel de RAID que
 /estarían reemplazando/ en su documentación.
 
-Varios sistemas operativos ofrecen hoy el concepto de un /gestor de
-volúmenes lógicos/: Una interfaz que permite, como dos pasos
-independientes, agregar diferentes /volúmenes físicos/ a un 
+Presentaremos brevemente a continuación algunos esquemas avanzados de
+gestión de volúmenes. Dado que no presentan nuevos conceptos sino que
+sólo ilustran cómo se integran los que hemos venido viendo en las
+últimas páginas, los expondremos meramente como ejemplos de
+aplicación, sin entrar más que a un nivel meramente descriptivo de su
+funcionamiento.
+
+** LVM: el Gestor de Volúmenes Lógicos
+
+Una evolución natural de los conceptos de RAID es la que Linux
+presenta bajo el nombre /LVM2/ (segunda generación del /Logical Volume
+Manager/, o /Gestor de Volúmenes Lógicos/). La lógica de operación de
+LVM está basada en los siguientes conceptos:
+
+- Volumen físico :: Cada uno de los discos o unidades disponibles
+- Grupo de volúmenes :: Conjunto de volúmenes físicos que serán
+     administrados como una sola entidad
+- Volumen lógico :: Espacio dentro del grupo de volúmenes que se presenta
+		    como un dispositivo, y que puede alojar sistemas
+                    de archivos.
+
+El esquema es limpio y elegante: LVM es una interfaz que permite, como
+dos pasos independientes, agregar diferentes /volúmenes físicos/ a un
+/grupo de volúmenes/, para posteriormente –y siguiendo las necesidades
+del administrador del sistema, y ya no dependientes del tamaño de las
+unidades físicamente existentes– crear las /unidades lógicas/, donde
+se alojarán los sistemas de archivos propiamente.
+
+Este esquema permite naturalmente una funcionalidad comparable con
+RAID 0: Podemos crear un grupo de volúmenes con todos los discos que
+tengamos a nuestra disposición, y dentro de este crear un volumen
+lógico único. Dependiendo de la configuración, este volumen lógico
+puede crecer abarcando todos los discos en cuestión, o dividirse en
+franjas, logrando un mayor velocidad de acceso y un uso más uniforme.
+
+Permite también la creación de unidades /espejo/, con una operación
+a grandes rasgos equivalente a la de RAID1.
+
+Para los niveles 4, 5 y 6 de RAID, la correspondencia es más directa
+aún: Al crear un volumen, se le puede especificar a LVM al crear un
+volumen lógico que buscamos crear un volumen con ese nivel de RAID —
+Obviamente, siempre que contemos con suficientes volúmenes físicos.
+
+El esquema de LVM no brinda, pues, funcionalidad distinta a la que
+presenta RAID — Pero da al administrador del sistema flexibilidad:
+ampliar o reducir el espacio dedicado a cada uno de los volúmenes,
+incluso en un sistema en producción y con datos.
+
+LVM ofrece varias funcionalidades adicionales, como las /fotografías/
+(/snapshots/) o varios esquemas de reemplazo de disco; no
+profundizaremos más en esta herramienta, pues no es el objetivo del
+presente material.
+
+** ZFS
+
+Si bien LVM realiza una importante tarea de simplificación en la
+administración del sistema, su operación sigue siendo orientada a
+/bloques/: Los volúmenes lógicos deben aún ser formateados bajo el
+sistema de archivos que el administrador del sistema considere acorde
+para la tarea requerida.
+
+ZFS[fn:: El nombre /ZFS/ proviene de /Zettabyte File System/, pues sus
+estructuras son de 128 bits] fue desarrollado por Sun Microsystems
+desde el año 2001, y forma parte del sistema operativo /Solaris/ desde
+el 2005. Y si bien ZFS resulta suficientemente atractivo tan sólo por
+haber sido diseñado para que el usuario nunca se tope con un límite
+impuesto por el sistema operativo, el principal cambio que presenta al
+usuario es una forma completamente distinta de referirse al
+almacenamiento.
+
+En primer término, al igual que LVM presentó una primer integración
+entre conceptos, permitiendo unir de diferentes maneras varios
+dispositivos físicos en un dispositivo lógico, ZFS incluye en la misma
+lógica administrativa al sistema de archivos: En la configuración
+estándar, basta conectar una unidad al sistema para que ésta aparezca
+como espacio adicional disponible para los usuarios. El espacio
+combinado de todas las unidades conforma un /fondo de almacenamiento/
+(/storage pool/).
+
+La lógica de ZFS parte de que operará una /colección/ de sistemas de
+archivos en una organización jerárquica. Pero a diferencia del esquema
+tradicional Unix en que cada sistema de archivos es preparado desde un
+principio para su función, en ZFS se pueden aplicar límites a
+jerarquías completas. Bajo un esquema ZFS, la creación y el montaje de
+un sistema de archivos es una operación sencilla — Al grado que se
+presenta como recomendación que, para cada usuario en el sistema, se
+genere un sistema de archivos nuevo e independiente.
+
+Una de las principales diferencias con los sistemas de archivos
+tradicionales es el manejo del espacio vacío: El espacio disponible
+total del fondo de almacenamiento se reporta como disponible /para
+todos los sistemas de archivos/ que formen parte de éste. Sin embargo,
+se pueden indicar /reservas/ (mantener un mínimo del espacio
+especificado disponible para determinado subconjunto de sistemas de
+archivos dentro de la colección) y /límites/ (evitar que el uso de una
+colección exceda el almacenamiento indicado) para las necesidades de
+las diferentes regiones del sistema.
 
 * Otros recursos
 - Practical File System Design (Dominic Giampaolo, 1999): El autor fue

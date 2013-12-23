@@ -46,7 +46,7 @@ libro_index:
 	echo '' >> $(libro)
 	echo '#+latex: \\frontmatter' >> $(libro)
 	echo '* Presentación' >> $(libro)
-	echo '#+include: notas/00_presentacion.org :minlevel 1' >> $(libro)
+	echo '#+include: 00_presentacion.org :minlevel 1' >> $(libro)
 
 	echo '' >> $(libro)
 	echo '#+latex: \\mainmatter' >> $(libro)
@@ -64,7 +64,8 @@ libro_index:
 
 	echo '' >> $(libro)
 	echo '#+latex: \\appendix' >> $(libro)
-	for APDX in notas/10_virtualizacion.org; do \
+	for APDX in notas/A1_sl_licenciamiento.org \
+		notas/A2_virtualizacion.org; do \
 		APDX=`echo $$APDX | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$APDX | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
@@ -74,7 +75,7 @@ libro_index:
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
 
-libro_pdf: libro_index
+libro_pdf: fig libro_index
 	# Si org-mode se queja de no tener definido "book" en
 	# org-export-latex-classes, referirse a
 	# http://orgmode.org/worg/org-tutorials/org-latex-export.html

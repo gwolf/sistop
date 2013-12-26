@@ -707,6 +707,7 @@ Windows, es común ver una ruta de búsqueda
 =c:\WINDOWS\system32;c:\WINDOWS= ]
 
 *** El directorio como un /grafo dirigido/
+# <<FS_grafo_dirigido>>
 
 Si bien parecería que muchos de los sistemas de archivos que empleamos
 hoy en día pueden modelarse suficientemente con un árbol, donde hay un
@@ -1640,9 +1641,9 @@ espacio de almacenamiento que el archivo eliminado ocupa debe,
 entonces, ser /sumado/ al espacio libre que tiene el volumen. Es
 apenas cuando se crea un nuevo archivo empleando esa misma entrada que
 el sistema operativo marca /realmente/ como desocupados los clusters
-en la tabla de asignación.[fn:: Pero, claro, estos clusters podrían
+en la tabla de asignación[fn:: Pero, claro, estos clusters podrían
 mantenerse como ocupados /por el nuevo archivo/, ahorrando el trabajo
-de volver a asignarlos]
+de volver a asignarlos.].
 
 Es por esto que desde los primeros días de las PC existen tantas
 herramientas de recuperación (o /des-borramiento/) de archivos:
@@ -1654,6 +1655,189 @@ Este es un ejemplo de un /mecanismo flojo/ (en contraposición de los
 /mecanismos ansiosos/, como los vistos en la sección de [[04_administracion_de_memoria.org#pag_sobre_demanda][paginación
 sobre demanda]]). Eliminar un archivo toma un trabajo mínimo, mismo que
 es /diferido/ al momento de reutilización de la entrada de directorio.
+
+** Compresión y /desduplicación/
+# <<FS_compr_dedup>>
+
+Los archivos almacenados en un área dada del disco tienden a presentar
+patrones comunes. Por ejemplo, dentro del directorio de trabajo de
+cada uno de los usuarios hay típicamente archivos creados con los
+mismos programas, compartiendo encabezado, estructura, y
+ocasionalmente incluso parte importante del contenido. Dentro de los
+directorios de binarios del sistema, habrá muchos archivos ejecutables
+compartiendo el mismo /formato binario/.
+
+Conforme las computadoras aumentaron su poder de cómputo, desde fines
+de los 1980 se presentaron varios mecanismos que permitían aprovechar
+las regularidades en los datos almacenados en el disco para comprimir
+el espacio utilizable en un mismo medio. La compresión típicamente se
+hace por medio de mecanismos estimativos derivados del análisis del
+contenido[fn:: Uno de los algoritmos más frecuentemente utilizados y
+fáciles de entender es la /Codificación Huffman/; este y la familia de
+algoritmos /Lempel-Ziv/ sirven de base para prácticamente la totalidad
+de implementaciones.], que tienen por resultado un nivel variable de
+compresión: Con tipos de contenido altamente regulares (como podría
+ser texto, código fuente, o audio e imágenes /en crudo/), un volumen
+puede almacenar frecuentemente mucho más del 200% de su espacio real;
+sin embargo, con contenido poco predecible o con muy baja redundancia
+(como la mayor parte de formatos de imágenes o audio, que incluyen ya
+una fase de compresión, o empleando cualquier esquema de cifrado) la
+compresión no ayuda, y sí reduce el rendimiento global del sistema en
+que es empleada.
+
+*** Compresión de volumen completo
+
+El primer sistema de archivos que se popularizó fue /Stacker/,
+comercializado a partir de 1980 por /Stac Electronics/. Stacker
+operaba bajo MS-DOS, creando un dispositivo de bloques virtual alojado
+en un disco estándar[fn:: Esto significa que, al solicitarle la
+creación de una unidad comprimida de 30MB dentro del volumen =C=
+(disco duro primario), esta aparecería disponible como un volumen
+adicional. El nuevo volúmen requería de la carga de un /controlador/
+especial para ser /montado/ por el sistema operativo.]. Varias
+implementaciones posteriores de esta misma época se basaron en este
+mismo principio.
+
+Ahora, conjuntando la variabilidad derivada del enfoque probabilístico
+al uso del espacio con el ubicarse como una compresión orientada al
+volumen entero, resulta natural encontrar una de las complejidades
+resultantes del uso de estas herramientas: Dado que el sistema
+operativo estructura las operaciones de lectura y escritura por
+bloques de dimensiones regulares (hemos manejado, por ejemplo, el
+tamaño típico de sector de 512 bytes), al poder estos traducirse o más
+o menos bloques reales al pasar por una capa de compresión, es posible
+que el sistema de archivos tenga que reacomodar constantemente la
+información al /crecer/ alguno de los bloques previos.  Conforme mayor
+era el tiempo de uso de una unidad comprimida por Stacker, se notaba
+más degradación en su rendimiento.
+
+Además, dado que bajo este esquema se empleaba el sistema de archivos
+estándar, las tablas de directorio y asignación de espacio resultaban
+también comprimidas. Estas tablas, como hemos ya expuesto (y pronto
+reiteraremos) contienen la información fundamental del sistema de
+archivos; al comprimirlas y reescribirlas constantemente, la
+probabilidad de que resulten dañadas en alguna falla (eléctrica o
+lógica) aumenta. Y sí, si bien los discos comprimidos por /Stacker/ y
+otras herramientas fueron populares principalmente durante la primera
+mitad de los 1990, conforme aumentó la capacidad de los discos duros
+fue declinando su utilización.
+
+*** Compresión archivo por archivo
+
+Dado el éxito del que gozó Stacker en sus primeros años, Microsoft
+anunció como parte de las características de la versión 6.0 de MS-DOS
+(publicada en 1993) que incluiría /DoubleSpace/, una tecnología muy
+similar a la de Stacker. Microsoft mantuvo soporte para DoubleSpace
+por siete años, cubriendo las últimas versiones de MS-DOS y las de
+Windows 95, 98 y Millenium, pero como ya mencionamos, la compresión de
+volumen completo presentaba importantes desventajas.
+
+Para el entonces nuevo sistemas de archivos NTFS, Microsoft decidió
+incluir una característica distinta, más segura y más modular:
+Mantener el sistema de archivos funcionando de forma normal, sin
+compresión, y habilitar la compresión /archivo por archivo/ de forma
+transparente al usuario.
+
+Este esquema permite al administrador del sistema elegir, por archivos
+o carpetas, qué areas del sistema de archivos desea almacenar
+comprimidas; esta característica viene como parte de todos los
+sistemas operativos Windows a partir de la versión XP, liberada en el
+año 2003.
+
+Si bien la compresión transparente a nivel archivo se muestra mucho
+más atractiva que la compresión de volumen completo, no es una panacea
+y es frecuente encontrar en foros en línea la recomendación de
+deshabilitarla. En primer término, comprimir un archivo implica que
+un cambio pequeño puede tener un impacto mucho mayor: Modificar un
+bloque puede implicar que el tamaño final de los datos cambie, lo cual
+se traduciría a la reescritura del archivo desde ese punto en
+adelante; esto podría mitigarse insertando espacios para preservar el
+espacio ya ocupado, peroagrega complejidad al proceso (y abona en
+contra de la compresión).
+
+En archivos estructurados para permitir el acceso aleatorio, como
+podrían ser las tablas de bases de datos, la compresión implicaría que
+los registros no estarán ya estrictamente alineados al tamaño que el
+programa gestor espera, lo cual acarreará necesariamente una
+penalización en el rendimiento y en la confiabilidad.
+
+Por otro lado, los formatos nativos en que se expresan los datos que
+típicamente más espacio ocupan en el almacenamiento de los usuarios
+finales implican ya un alto grado de compresión: Los archivos de
+fotografías, audio o video están codificados empleando diversos
+esquemas de compresión aptos para sus particularidades. Y comprimir un
+archivo que de suyo está ya comprimido no sólo no reporta ningún
+beneficio, sino que resulta en desperdicio de trabajo por el esfuerzo
+invertido en descomprimirlo cada vez que es empleado.
+
+La compresión transparente archivo por archivo tiene innegables
+ventajas, sin embargo, por las desventajas que implica, no puede
+tomarse como el modo de operación por omisión.
+
+*** Desduplicación
+
+Hay una estrategia fundamentalmente distinta para optimizar el uso del
+espacio de almacenamiento, logrando muy altos niveles de /sobreuso/:
+Guardar /sólo una copia/ de cada cosa.
+
+Ha habido sistemas implementando distintos tipos de desduplicación
+desde fines de los 1980, aunque su efectividad era muy limitada y, por
+tanto, su uso se mantuvo como muy marginal hasta recientemente.
+
+El que se retomara la desduplicación se debe en buena medida se debe a
+la /consolidación/ de servidores ante la adopción a gran escala de
+mecanismos de virtualización (ver apéndice \ref{VIRT}, y en particular
+la sección \ref{VIRT_contenedores}). Dado que un mismo servidor puede
+estar alojando a decenas o centenas de /máquinas virtuales/, muchas de
+ellas con el mismo sistema operativo, los mismos archivos se repiten
+muchas veces; si el sistema de archivos puede determinar que
+determinado archivo o bloque está ya almacenado, podría almacenarse
+sólamente una copia.
+
+La principal diferencia entre la desduplicación y las /ligas duras/
+que mencionamos en la sección \ref{FS_grafo_dirigido} es que, en caso
+de que cualquiera de estos archivos (o bloques) sea modificado, el
+sistema de archivos tomará el espacio necesario para representar estos
+cambios y evitará que esto afecte a los demás archivos.
+
+Para identificar qué datos están duplicados, el mecanismo más
+utilizado es calcular el /hash criptográfico/ de los datos[fn:: Por
+ejemplo, empleando el algoritmo SHA-256, el cual brinda una
+probabilidad de colisión de $1 \over 2^{256}$]; este mecanismo permite
+una búsqueda de coincidencias y confiables.
+
+La desduplicación puede realizarse /en línea/ o /fuera de línea/ —
+Esto es, analizar los datos buscando duplicidades al momento que estos
+llegan al sistema, o, dado que es una tarea intensiva en uso de
+procesador, realizarla como una tarea posterior de mantenimiento, en
+un momento de menor ocupación del sistema.
+
+Desduplicar a nivel archivo es mucho más ligero para el sistema que
+hacerlo a nivel bloque, pero hacerlo a nivel bloque lleva típicamente
+a una optimización del uso de espacio mucho mayor.
+
+Al día de hoy, el principal sistema de archivos que implementa
+desduplicación es ZFS[fn:: Presentaremos las características básicas
+de ZFS en la sección \ref{FS_zfs}], desarrollado por Sun Microsystems
+(hoy Oracle). En Linux, esta característica forma parte de BTRFS,
+aunque no ha alcanzado los niveles de estabilidad como para
+recomendarse para su uso en entornos de producción.
+
+En Windows, esta funcionalidad se conoce como /Single Instance
+Storage/ (/Almacenamiento de Instancia Única/). Esta característica
+apareció a nivel de archivo, implementada en espacio de usuario (y con
+operación orientada a archivos), como una de las características del
+servidor de correo /Exchange Server/ entre los años 2000 y 2010. A
+partir de Windows Server 2003, la funcionalidad de desduplicación
+existe a nivel sistema de archivos para NTFS, pero su uso es poco
+frecuente.
+
+El uso de desduplicación, particularmente cuando se efectúa a nivel
+bloques, tiene un alto costo en memoria: Para mantener buenos niveles
+de rendimiento, la tabla que relaciona el hash de datos con el sector
+en el cual está almacenado debe mantenerse en memoria. En el caso de
+la implementación de ZFS en FreeBSD, [[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar
+5GB de memoria por cada TB de almacenamiento]].
 
 * Esquemas de asignación de espacio
 
@@ -1999,7 +2183,6 @@ de mantenimiento para volver a un rango operacional.
 # https://en.wikipedia.org/wiki/File_Allocation_Table#FS_Information_Sector
 # En FAT32, se agrega espacio para acelerar algunas tareas del
 # sistema, como el cálculo del espacio disponible.
-
 
 * Fallos y recuperación
 
@@ -3131,6 +3314,7 @@ profundizaremos más en esta herramienta, pues no es el objetivo del
 presente material.
 
 ** ZFS
+# <<FS_zfs>>
 
 Si bien LVM realiza una importante tarea de simplificación en la
 administración del sistema, su operación sigue siendo orientada a
@@ -3189,10 +3373,18 @@ las diferentes regiones del sistema.
   casi todos los sistemas de archivos con uso amplio, e incluso
   algunas que no se han logrado implementar y que BeFS sí ofrecía.
 
+- [[http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf][A method for the construction of Minimum-Redundancy Codes]] (Davud
+  A. Huffman, 1952)
+
 - [[http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][FAT Root Directory Structure on Floppy Disk and File Information]]
   (Mufti Mohammed, Codeguru, 2007)
 
 - [[http://www.beginningtoseethelight.org/fat16/index.htm][File Allocation Table - 16bit]] (Peter Clark)
+
+- [[http://constantin.glez.de/blog/2010/03/opensolaris-zfs-deduplication-everything-you-need-know][OpenSolaris ZFS Deduplication: Everything You Need to Know]]
+  (Constantin Gonzalez, 2010)
+
+- [[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][The Z File System (ZFS)]] (FreeBSD Handbook)
 
 - [[http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf][A Fast File System for UNIX]] (Marshall Kirk Mckusick, William N. Joy,
   Samuel J. Lefler, Robert S. Fabry, 1984)

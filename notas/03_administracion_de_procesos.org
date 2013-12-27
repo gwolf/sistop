@@ -55,10 +55,11 @@ de ejecución. Estos son:
                su ejecución (aun si hubiera un procesador disponible,
                no podría avanzar). 
 
-- Zombie :: El proceso ha finalizado su ejecución pero todavía no
-            puede ser descartado por el sistema operativo pues la
-            información relativa a la finalización debe ser comunicada
-            al padre.
+- Zombie :: El proceso ha finalizado su ejecución, pero el sistema
+            operativo debe realizar ciertas operaciones de limpieza
+            para poder eliminarlo de la lista.[fn:: Estas operaciones
+            pueden incluir notificar al proceso padre, cerrar las
+            conexiones de red que tenía activas, etc.]
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
@@ -108,12 +109,16 @@ uno de los procesos actuales se suele almacenar en una estructura llamada
 
 Como vimos, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
-que el /planificador/ elige qué proceso pasar de /Listo/ a /En ejecución/
-debe considerar buena parte de dicha información, la simple
-transferencia de todo esto entre la memoria y el procesador podría llevar a
-un desperdicio importante de recursos. Una respuesta a esta
-problemática fue la de utilizar los /hilos de ejecución/, a veces conocidos
-como /procesos ligeros/ (/LWP/, /Lightweight processes/).
+que el /planificador/ elige qué proceso pasar de /Listo/ a /En
+ejecución/ debe considerar buena parte de dicha información, la simple
+transferencia de todo esto entre la memoria y el procesador podría
+llevar a un desperdicio /burocrático/[fn:: Entendiendo /burocrático/
+como el tiempo que se pierde en asuntos administrativos. Recordemos
+que el tiempo que consume el sistema operativo en administración es
+tiempo perdido para el uso real, productivo del equipo.] de
+recursos. Una respuesta a esta problemática fue la de utilizar los
+/hilos de ejecución/, a veces conocidos como /procesos ligeros/
+(/LWP/, /Lightweight processes/).
 
 Cuando se consideran procesos basados en un modelo de hilos, se puede
 proyectar en sentido inverso que todo proceso es como un sólo hilo de
@@ -151,8 +156,7 @@ de la plataforma, a veces los hilos de usuario inclusive utilizan
 multitarea cooperativa para pasar el control dentro de un mismo
 proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
 de un archivo para utilizarlos inmediatamente) interrumpirá la
-ejecución de TODOS los hilos de ese proceso, dado que
-#como se pone negrita? (poner TODOS)
+ejecución de /todos/ los hilos de ese proceso, dado que
 el control de ejecución es entregado al sistema operativo quien en
 este caso no conoce nada sobre los hilos.
 
@@ -214,8 +218,7 @@ un /equipo de trabajo/):
      consiste en que el trabajo a realizar por cada uno de los hilos
      se plantea desde principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
-     éstos sean lanzados en PARALELO. Estos datos no son resultado de
-# poner paralelo en minuscula y negrita
+     éstos sean lanzados en /paralelo/. Estos datos no son resultado de
      /eventos independientes/ (como en el caso anterior), sino 
      partes de un sólo cálculo. Por consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
@@ -257,7 +260,7 @@ un /equipo de trabajo/):
 
 * Concurrencia
 
-Desde un punto de vista formal, la /Concurrencia/
+Desde un punto de vista formal, la /concurrencia/
 no se refiere a dos o más eventos que ocurren a la vez
 sino a dos o más eventos cuyo órden es /no determinista/, esto es,
 eventos acerca de los cuales /no podemos predecir el órden relativo en

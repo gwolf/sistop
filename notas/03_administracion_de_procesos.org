@@ -289,7 +289,7 @@ pero muchos de esos conceptos en realidad son independientes del
 escenario: más bien nos ocupa la relación entre procesos que deben
 compartir recursos o deben sincronizar sus tareas.
 
-** Problemas clásicos de exclusión mutua y sincronización
+** Problemas clásicos de concurrencia
 # <<PROC_problemas_clasicos>>
 
 Para presentar los problemas y conceptos relacionados con la
@@ -299,7 +299,6 @@ conceptos. Se recomienda comprender bien el ejemplo, el problema y la
 solución y realizar alguna ejercitación antes de pasar al siguiente
 ejemplo. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
-
 *** Problema del jardín ornamental
 
 Un gran jardín ornamental se abre al público para que todos puedan
@@ -520,7 +519,7 @@ haya mucha gente que haga cola para entrar. Sin embargo, en un sistema
 análogo de reserva de pasajes aereos no parece tener mucho sentido que
 todos los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado,
 ya deberían ser claras las ventajas de la multitarea y el poseer
-distintos núcleos,
+distintos núcleos.
 
 **** Intento 2: Suspender la multitarea durante la sección crítica
 Una versión más relajada de la alternativa anterior es suspender la
@@ -534,7 +533,7 @@ enable #habilitar nuevamente las interrupciones
 #+end_src C
 
 Durante el lapso en el que las interrupciones están suspendidas no
-puede haber un cambio de contexto pues el scheduler depende de la
+puede haber un cambio de contexto pues el planificador depende de la
 interrupción del reloj (salvo que el proceso realice una
 llamada bloqueante durante la región crítica).
 
@@ -591,18 +590,18 @@ de eventos:
 Notar que el problema aquí es que la bandera también es un recurso
 compartido: lo único que ha cambiado es que ahora la sección crítica
 está en otro lugar. La solución funcionaría si se pudiera
-garantizar que las operaciones
+garantizar que la secuencia de operaciones
 
 - if (bandera) wait;
 - bandera=1
 
-se realicen atómicamente. 
+se realice atómicamente. 
 
 
 **** Intento 4: Manejar la bandera con instrucciones atómicas
 Algunas arquitecturas de computadoras permiten realizar determinadas
 operaciones sencillas (como actualizar una bandera) de forma atómica
-(p. ej.: VAX tiene la instrucción test_and_set y el i386 tiene la
+(p. ej.: VAX tiene la instrucción test\_and\_set y el i386 tiene la
 instrucción INC.
 
 Usando esto, la solución es:
@@ -610,28 +609,30 @@ Usando esto, la solución es:
 #+begin_src C
 int bandera; // 0 => desocupada
 
-while(++bandera!=1) bandera--; //aquí es necesario que esto utilice inc
+while(++bandera!=1) bandera--; //debe generar "INC"
 //Sección crítica
 Cuenta=Cuenta+1;
 
 bandera--;
 #+end_src C
 
-Esto funciona correctamente siempre que la operación ++bandera sea atómica.
-Sin embargo, hay dos problemas a considerar: un proceso puede permanecer 
-mucho tiempo repitiendo el ciclo:
+Esto funciona correctamente siempre que la operación /++bandera/ sea
+atómica.  Sin embargo, hay dos problemas a considerar: un proceso
+puede permanecer mucho tiempo repitiendo el ciclo:
 
 #+begin_src C
 while(++bandera!=1) bandera--;
 #+end_src C
 
-De hecho, si el sistema operativo decide darle alta prioridad a este proceso
-es posible que esté un tiempo infinito en este ciclo, impidiendo que otro
-proceso decremente la bandera. Y aún cuando el sistema operativo decida cambiar
-de proceso en el siguiente tic de reloj, es evidente que se podría aprovechar
-el procesador para hacer algo útil durante ese tiempo y que suspender el 
-proceso de otra manera le da más posibilidad a otros procesos para que cambien
-la bandera.
+De hecho, si el sistema operativo decide darle alta prioridad a este
+proceso es posible que esté un tiempo infinito en este ciclo,
+impidiendo que otro proceso decremente la bandera. Y aún cuando el
+sistema operativo decida cambiar de proceso en el siguiente tic de
+reloj, es evidente que se podría aprovechar el procesador para hacer
+algo útil durante ese tiempo y que suspender el proceso de otra manera
+le da más posibilidad a otros procesos para que cambien la bandera. A
+esto se lo conoce como /espera ociosa/ o /espera ocupada/ (/busy
+waiting/ en inglés) y es una condición que se desea evitar.
 
 El otro problema tiene que ver con el hardware: determinadas
 arquitecturas no permiten instrucciones que lean y actualicen en una
@@ -646,10 +647,10 @@ una bandera es utilizar turnos
 #+begin_src C
 int turno=1; //inicialmente el turno es del proceso 1
 #+end_src C
-Ahora el código del proceso 1 sería algo como: 
+Ahora el código del proceso 1 contendría algo como: 
 
 #+begin_src C
-while(turno!=1) esperar(); //mientras haya otro proceso que quiere entrar
+while(turno!=1) esperar(); //otro proceso?
 //Sección crítica
 Cuenta=Cuenta+1;
 turno=2;
@@ -671,10 +672,10 @@ deberán utilizar alternativamente los torniquetes. Así que si bien
 esto soluciona el problema de la actualización múltiple en realidad es
 una solución muy restrictiva: un proceso que no está en la sección
 crítica puede obligar a que otro proceso espere mucho tiempo para
-ingresar a la sección crítica. De aquí en más buscaremos solucione en
+ingresar a la sección crítica. De aquí en más buscaremos soluciones en
 las que no ocurra esto.
 
-**** Intento 6: Indicar la intención de entrar a la S.C.
+**** Intento 6: Indicar la intención de entrar a la sección crítica.
 
 Para paliar los efectos de la solución anterior se puede intentar
 indicar si el otro proceso también está queriendo entrar en la sección
@@ -711,12 +712,12 @@ colocará su bandera en 1).
 La primera solución a esta problema fue propuesta por Dekker
 en 1957. Sin embargo su explicación es bastante extensa (aunque
 perfectamente entendible) y en cambio presentaremos la solución
-presentada por Peterson unos cuantos años más tarde, en 1970.
+planteada por Peterson unos cuantos años más tarde: en 1970.
 
 La solución está basada en una combinación de los intentos anteriores:
 utilizar banderas para indicar qué proceso puede entrar pero además
 usa un turno para desempatar en caso de que ambos procesos quieran
-entrar. En cierto modo es un algoritmo ambable: si un proceso
+entrar. En cierto modo es un algoritmo amable: si un proceso
 detecta que el otro proceso fue el primero en actualizar el turno,
 entonces lo deja pasar:
 
@@ -742,7 +743,39 @@ if ( b1 && quien==1) esperar();
 Cuenta=Cuenta+1;
 b1=0;
 #+end_src C
- 
+
+**** Notas sobre la solución de Peterson
+- Espera ocupada :: La solución presentada mantiene todavía el
+                    problema de la espera ocupada: un proceso puede
+                    consumir mucho tiempo de procesador sólo para
+                    esperar que otro proceso cambie una bandera y en
+                    un sistema con prioridades la cosa puede ser
+                    bastante dañina. Una forma de mitigar los efectos
+                    es forzar (o sugerir) cambios de contexto en esos
+                    puntos a través de una primitiva del lenguaje o
+                    del sistema operativo (p. ej.: /sleep/ o /yield/)
+                    pero debe resultar claro que de ninguna forma es
+                    una solución general. Por esta razón los sistemas
+                    operativos o lenguajes suelen proveer alguna
+                    abstracción para soportar explícitamente
+                    operaciones atómicas o implementar una solución
+                    más elegante al problema. Veremos algunas de esas
+                    abstracciones más adelante.
+
+- Solución para más procesos :: El algoritmo de Peterson sirve
+     únicamente cuando hay dos procesos que compiten para acceder a
+     una región crítica. ¿Qué se puede hacer si hay más de dos
+     entradas al jardín - o si hay más de dos puntos de venta de
+     pasajes aereos- ? La solución a este problema más general fue
+     propuesta por Dijkstra en 1968 y posteriormente Eisenberg y
+     McGuire (en 1972) y Lamport (en 1974) presentarons distintas
+     soluciones. La más ampliamente utilizada y sencilla de entender
+     es la propuesta por Lamport, también conocida como el algoritmo
+     de la panadería por su semejanza con el sistema de turnos
+     utilizado para atender a los clientes en una panadería.
+
+**** Otros problemas de concurrencia
+
 - Problema productor-consumidor :: En un entorno multihilos es común
      que haya una división de tareas tipo /línea de ensamblado/, que
      se puede generalizar a que un grupo de hilos van /produciendo/

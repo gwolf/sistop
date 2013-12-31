@@ -283,13 +283,13 @@ Veremos que pueden aparecer muchos problemas cuando se estudia la
 interacción entre hilos del mismo proceso, la sincronización entre
 distintos procesos, la asignación de recursos por parte del núcleo a
 procesos simultáneos, o incluso cuando interactuan usuarios de
-diferentes computadoras de una red — Presentarmos distintos conceptos
+diferentes computadoras de una red — Presentaremos distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
 pero muchos de esos conceptos en realidad son independientes del
 escenario: más bien nos ocupa la relación entre procesos que deben
 compartir recursos o deben sincronizar sus tareas.
 
-** Problemas clásicos de concurrencia
+** Problemas de concurrencia: el jardín ornamental
 # <<PROC_problemas_clasicos>>
 
 Para presentar los problemas y conceptos relacionados con la
@@ -299,7 +299,7 @@ conceptos. Se recomienda comprender bien el ejemplo, el problema y la
 solución y realizar alguna ejercitación antes de pasar al siguiente
 ejemplo. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
-*** Problema del jardín ornamental
+*** Descripción del problema
 
 Un gran jardín ornamental se abre al público para que todos puedan
 apreciar sus fantásticas rosas, arbustos y plantas acuáticas. Por
@@ -318,7 +318,9 @@ visitante ni qué torniquete utilizará.
 Se simulará un experimento en el que 20 visitantes ingresan por cada
 torniquete. Al final de la simulación deberá haber 40 visitantes
 contados. Una implementación tentativa podría ser la
-siguiente:
+siguiente[fn:: Se utiliza una versión
+ficticia del lenguaje C para el ejemplo, evitando entrar en los
+detalles de sintáxis de un lenguaje concurrente.]:
 
 #incluir esquema del jardín ornamental
 #+begin_src C
@@ -343,16 +345,11 @@ main() {
 }
 #+end_src C
 
-#footnote:
-Nota: se utiliza una versión ficticia del lenguaje C para el ejemplo,
-evitando entrar en los detalles de sintáxis de un lenguaje
-concurrente.
-
-Como se ve el problema es muy sencillo. Sin embargo, al intentar
-ejecutar repetidas veces ese programa muy de vez en cuando el
-resultado no tiene el valor 40. Si se modifica el
-programa para utilizar un solo torniquete, /Cuenta/ siempre tiene el
-valor correcto (20).
+Como se ve el problema es muy sencillo. Sin embargo, al
+intentar ejecutar repetidas veces ese programa muy de vez en cuando el
+resultado no tiene el valor 40. Si se modifica el programa para
+utilizar un solo torniquete, /Cuenta/ siempre tiene el valor correcto
+(20).
 
 ¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
 programación convierten cada instrucción en una serie más o menos
@@ -452,13 +449,12 @@ deseada.
 
 /¿Vale la pena preocuparse?/ A modo de ilustración de la gravedad del
 problema, estos son algunos valores para el resultado final de la
-variable Cuenta cuando se ejecuta el programa anterior en Pascal-FC:
+variable Cuenta cuando se ejecuta el programa anterior en
+Pascal-FC[fn:: http://www-users.cs.york.ac.uk/burns/pf.html]:
 25 29 31 20 21 26 27 18 31 35. Notesé que incluso uno de los valores
 es menor que /20/ (que es lo mínimo que cuenta cada torniquete). Es un
 ejercicio interesante pensar qué secuencia de eventos podría producir
 tal valor y cuál es el mínimo valor posible.
-
-#poner referencia a Pascal-FC
 
 /Pero yo tengo muchos núcleos/ Otra cuestión que puede parecer
 artificiosa es que en el ejemplo hay un solo procesador o núcleo. Sin
@@ -472,7 +468,7 @@ discusión para equipos multiprocesadores.
 Antes de presentar posibles soluciones, veremos algunos conceptos
 importantes.
 
-**** Conceptos de concurrencia
+*** Algunos conceptos de concurrencia
 
 - Operación atómica :: Operación que requiere la garantía de que se
      ejecutará como una sóla unidad de ejecución, o fallará
@@ -597,7 +593,6 @@ garantizar que la secuencia de operaciones
 
 se realice atómicamente. 
 
-
 **** Intento 4: Manejar la bandera con instrucciones atómicas
 Algunas arquitecturas de computadoras permiten realizar determinadas
 operaciones sencillas (como actualizar una bandera) de forma atómica
@@ -631,7 +626,7 @@ sistema operativo decida cambiar de proceso en el siguiente tic de
 reloj, es evidente que se podría aprovechar el procesador para hacer
 algo útil durante ese tiempo y que suspender el proceso de otra manera
 le da más posibilidad a otros procesos para que cambien la bandera. A
-esto se lo conoce como /espera ociosa/ o /espera ocupada/ (/busy
+esto se lo conoce como /espera activa/ o /espera ocupada/ (/busy
 waiting/ en inglés) y es una condición que se desea evitar.
 
 El otro problema tiene que ver con el hardware: determinadas
@@ -708,7 +703,7 @@ procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
 bandera en 1 y luego se cambia el control al proceso 2 quien también
 colocará su bandera en 1).
 
-**** Una solución: Algoritmo de Peterson
+*** Una solución: Algoritmo de Peterson
 La primera solución a esta problema fue propuesta por Dekker
 en 1957. Sin embargo su explicación es bastante extensa (aunque
 perfectamente entendible) y en cambio presentaremos la solución
@@ -745,8 +740,8 @@ b1=0;
 #+end_src C
 
 **** Notas sobre la solución de Peterson
-- Espera ocupada :: La solución presentada mantiene todavía el
-                    problema de la espera ocupada: un proceso puede
+- Espera activa :: La solución presentada mantiene todavía el
+                    problema de la espera activa: un proceso puede
                     consumir mucho tiempo de procesador sólo para
                     esperar que otro proceso cambie una bandera y en
                     un sistema con prioridades la cosa puede ser
@@ -774,7 +769,7 @@ b1=0;
      de la panadería por su semejanza con el sistema de turnos
      utilizado para atender a los clientes en una panadería.
 
-**** Otros problemas de concurrencia
+*** Otros problemas de concurrencia
 
 - Problema productor-consumidor :: En un entorno multihilos es común
      que haya una división de tareas tipo /línea de ensamblado/, que

@@ -1,4 +1,4 @@
-#+SETUPFILE: ../setup_notas.org
+9#+SETUPFILE: ../setup_notas.org
 #+TITLE: Administración de procesos
 
 ## Revisa plática: Rob Pike: "Concurrency is not parallelism"
@@ -259,6 +259,7 @@ un /equipo de trabajo/):
      [[./img/dot/linea_ensamblado.png]]
 
 * Concurrencia
+** Introducción
 
 Desde un punto de vista formal, la /concurrencia/
 no se refiere a dos o más eventos que ocurren a la vez
@@ -291,13 +292,13 @@ compartir recursos o deben sincronizar sus tareas.
 ** Problemas clásicos de exclusión mutua y sincronización
 # <<PROC_problemas_clasicos>>
 
-Para presentar los problemas relacionados con la concurrencia suelen
-utilizarse ejemplos muy simplificados basados en cuestiones de la vida
-real. Cada ejemplo presenta uno o más conceptos. Se recomienda
-comprender bien el ejemplo, el problema y la solución y realizar
-alguna ejercitación antes de pasar al siguiente ejemplo. También
-podría ser útil imaginar en qué circunstancia un sistema operativo se
-encontraría en una situación similar.
+Para presentar los problemas y conceptos relacionados con la
+concurrencia suelen utilizarse ejemplos muy simplificados basados en
+cuestiones de la vida real. Cada ejemplo presenta uno o más
+conceptos. Se recomienda comprender bien el ejemplo, el problema y la
+solución y realizar alguna ejercitación antes de pasar al siguiente
+ejemplo. También podría ser útil imaginar en qué circunstancia un
+sistema operativo se encontraría en una situación similar.
 
 *** Problema del jardín ornamental
 
@@ -325,14 +326,14 @@ siguiente:
 proceso torniquete1() {
 	int i;
 	for(i=0;i<20;i++) {
-		cuenta++;
+		cuenta=cuenta+1;
 	}
 }
 
 proceso torniquete2() {
 	int i;
 	for(i=0;i<20;i++) {
-		cuenta++;
+		cuenta=cuenta+1;
 	}
 }
 
@@ -360,7 +361,7 @@ larga de operaciones de máquina (instrucciones assembler). De modo,
 que una instrucción aparentemente simple como:
 
 #+begin_src C
-cuenta++
+cuenta=cuenta+1
 #+end_src 
 
 habitualmente implica varias operaciones de más bajo nivel:
@@ -382,7 +383,7 @@ compartida (en particular, se utiliza ese hecho para llevar la cuenta
 de personas que ingresan).
 
 Si se considera lo que ocurre cuando dos procesos (p. ej. /torniquete1/
-y /torniquete2/) ejecutan la instrucción /Count++/ en un equipo con un
+y /torniquete2/) ejecutan la instrucción /Cuenta=Cuenta+1/ en un equipo con un
 solo procesador, puede darse la siguiente secuencia de eventos. Se
 considera que /Cuenta/ está inicialmente en 0.
 
@@ -417,14 +418,15 @@ continúa con /torniquete2/.
 
 Nuevamente ambos procesos ejecutaron sus instrucciones para
 incrementar en 1 el contador. Sin embargo, ¡en este caso la /Cuenta/
-tiene el valor 1!
+tiene el valor 1!. A este problema también se lo conoce como /problema
+de las actualizaciones múltiples/.
 
 /Esto parece muy específico/ Si bien este análisis parece muy
 específico es fácil ver que la misma circustancia podría darse en un
 sistema de reserva de vuelos (p. ej.: puede que dos operadores vean un
 asiento vacío en su copia local de los asientos y ambos marquen el
 mismo asiento como ocupado) o con dos procesos que decidan cambiar
-simultáneamente un archivo. Aquí las operaciones ya no son
+simultáneamente datos en un archivo. Aquí las operaciones ya no son
 necesariamente operaciones internas de la máquina.
 
 /¿Pero no es muy poco probable que ...?/  
@@ -491,24 +493,256 @@ importantes.
      accesos simultáneos, donde se realiza la modificiación de datos
      compartidos.
 
+- Recurso compartido :: Un recurso que puede ser accedido desde más de
+     un proceso. En muchos escenarios esto es un variable en memoria,
+     pero podrían ser archivos, periféricos, etc...
+
 Dado que el sistema no tiene forma de saber cuales instrucciones (o
-áreas del código) deben funcionar de forma atómica, se debe
-asegurar la atomicidad de forma explícita, mediante la sincronización
-de los procesos. El sistema no debe permitir la ejecución de parte de
-esa área en dos procesos de forma simultánea (sólo puede haber un
-proceso en la sección crítica en un momento dado).
+áreas del código) deben funcionar de forma atómica, se debe asegurar
+la atomicidad de forma explícita, mediante la sincronización de los
+procesos. El sistema no debe permitir la ejecución de parte de esa
+área en dos procesos de forma simultánea (sólo puede haber un proceso
+en la sección crítica en un momento dado).
 
 /¿Y qué tiene que ver esto con el problema del Jardín Ornamental?/ En
-el problema hay claramente un dato compartido: la Cuenta, así la
+el problema hay claramente un /recurso compartido/ que es la /Cuenta/, así la
 sección que modifica la cuenta es una /sección crítica/ y la operación
-Cuenta++ debe ser una /operación atómica/. La secuencia de eventos que
+/Cuenta=Cuenta+1/ debe ser una /operación atómica/. La secuencia de eventos que
 se mostró es una /condición de carrera/: el segundo torniquete presume
-un estado (Cuenta=0) que no es el mismo que conoce el torniquete1
-(Cuenta=1).
+un estado (/Cuenta=0/) que no es el mismo que conoce el /torniquete1/
+(/Cuenta=1/).
 
 *** Soluciones posibles (y no tanto)
+**** Intento 1: No utilizar multitarea
+En este sencillo ejemplo una posible solución es utilizar una sola
+entrada (o torniquete). Esto podría ser una solución en tanto que no
+haya mucha gente que haga cola para entrar. Sin embargo, en un sistema
+análogo de reserva de pasajes aereos no parece tener mucho sentido que
+todos los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado,
+ya deberían ser claras las ventajas de la multitarea y el poseer
+distintos núcleos,
+
+**** Intento 2: Suspender la multitarea durante la sección crítica
+Una versión más relajada de la alternativa anterior es suspender la
+multitarea durante la ejecución de la sección crítica. Así, un
+torniquete deberá hacer:
+
+#+begin_src C
+disable #suspender temporariamente las interrupciones
+Cuenta=Cuenta+1
+enable #habilitar nuevamente las interrupciones
+#+end_src C
+
+Durante el lapso en el que las interrupciones están suspendidas no
+puede haber un cambio de contexto pues el scheduler depende de la
+interrupción del reloj (salvo que el proceso realice una
+llamada bloqueante durante la región crítica).
+
+Esta solución puede resultar conveniente para sistemas sencillos, pero
+en un sistema multiusuario se torna inusable por varios motivos:
+
+- Permitir que un programa de usuario deshabilite las interrupciones
+  en un sistema operativo de propósito general involucra un gran
+  problema de seguridad: cualquier usuario podría hacer un programa
+  malicioso que deshabilite las interrupciones y suspenda
+  indefinidamente el resto del sistema.
+
+- No funciona para sistemas distribuídos (como el sistema de reserva
+  de pasajes aereos), ni siquiera para sistemas multinúcleo o
+  multiprocesador, ya que las interrupciones se deshabilitan en un
+  sólo núcleo.
+# poner footnote contando que hay sistemas multinúcleo que permiten
+# deshabilitar las interrupciones en todos los núcleos, pero que son
+# inviables.
+
+- Expone detalles de hardware y podría provocar mal funcionamiento de
+  algún periférico si el procesamiento de la sección crítica es
+  demasiado largo.
+
+**** Intento 3: Utilizar una bandera
+Utilizar una bandera parece ser una solución muy sencilla: mediante
+una variable de bandera se indica si hay un proceso en la región crítica:
+
+#+begin_src C
+int bandera=0; // 0 => región crítica libre, 1 => ocupada
+int Cuenta=0; 
+...
+
+//torniquete1
+...
+if (flag) wait;
+//aqui flag=0
+flag=1; //comienzo de la sección crítica
+Cuenta=Cuenta+1;
+flag=0; //fin de la sección crítica
+#+end_src C
+
+Sin embargo esto no funciona, ahora puede darse la siguiente secuencia
+de eventos:
+- bandera==0;
+- torniquete2: if (bandera) wait;
+- Nuevo cambio de contexto
+- torniquete1: if (bandera) wait;
+- torniquete1: bandera=1;
+- torniquete2: bandera=1; 
+- torniquete2: Cuenta=Cuenta+1;
+- torniquete1: Cuenta=Cuenta+1; //Ups, no se respetó la región crítica
+
+Notar que el problema aquí es que la bandera también es un recurso
+compartido: lo único que ha cambiado es que ahora la sección crítica
+está en otro lugar. La solución funcionaría si se pudiera
+garantizar que las operaciones
+
+- if (bandera) wait;
+- bandera=1
+
+se realicen atómicamente. 
 
 
+**** Intento 4: Manejar la bandera con instrucciones atómicas
+Algunas arquitecturas de computadoras permiten realizar determinadas
+operaciones sencillas (como actualizar una bandera) de forma atómica
+(p. ej.: VAX tiene la instrucción test_and_set y el i386 tiene la
+instrucción INC.
+
+Usando esto, la solución es:
+
+#+begin_src C
+int bandera; // 0 => desocupada
+
+while(++bandera!=1) bandera--; //aquí es necesario que esto utilice inc
+//Sección crítica
+Cuenta=Cuenta+1;
+
+bandera--;
+#+end_src C
+
+Esto funciona correctamente siempre que la operación ++bandera sea atómica.
+Sin embargo, hay dos problemas a considerar: un proceso puede permanecer 
+mucho tiempo repitiendo el ciclo:
+
+#+begin_src C
+while(++bandera!=1) bandera--;
+#+end_src C
+
+De hecho, si el sistema operativo decide darle alta prioridad a este proceso
+es posible que esté un tiempo infinito en este ciclo, impidiendo que otro
+proceso decremente la bandera. Y aún cuando el sistema operativo decida cambiar
+de proceso en el siguiente tic de reloj, es evidente que se podría aprovechar
+el procesador para hacer algo útil durante ese tiempo y que suspender el 
+proceso de otra manera le da más posibilidad a otros procesos para que cambien
+la bandera.
+
+El otro problema tiene que ver con el hardware: determinadas
+arquitecturas no permiten instrucciones que lean y actualicen en una
+única operación una dirección de memoria (se requiere una operación
+para leer y otra para escribir).  En particular, ninguna arquitectura
+RISC lo permite (p. ej.: SPARC, RS 6000, ...).
+
+**** Intento 5: Utilizar turnos
+Una alternativa para evitar el problema de la actualización múltiple a
+una bandera es utilizar turnos
+
+#+begin_src C
+int turno=1; //inicialmente el turno es del proceso 1
+#+end_src C
+Ahora el código del proceso 1 sería algo como: 
+
+#+begin_src C
+while(turno!=1) esperar(); //mientras haya otro proceso que quiere entrar
+//Sección crítica
+Cuenta=Cuenta+1;
+turno=2;
+#+end_src C
+
+Y el del proceso dos:
+
+#+begin_src C
+while(turno!=2) esperar();
+//Sección crítica
+Cuenta=Cuenta+1;
+turno=1;
+#+end_src C
+
+Esto garantiza que no hay dos procesos en sección crítica. Pero nótese
+que hacer esto equivale a tener un solo torniquete: sólo podrá haber
+una persona ingresando a la vez ... o incluso peor, las personas
+deberán utilizar alternativamente los torniquetes. Así que si bien
+esto soluciona el problema de la actualización múltiple en realidad es
+una solución muy restrictiva: un proceso que no está en la sección
+crítica puede obligar a que otro proceso espere mucho tiempo para
+ingresar a la sección crítica. De aquí en más buscaremos solucione en
+las que no ocurra esto.
+
+**** Intento 6: Indicar la intención de entrar a la S.C.
+
+Para paliar los efectos de la solución anterior se puede intentar
+indicar si el otro proceso también está queriendo entrar en la sección
+crítica. El código sería:
+
+#+begin_src C
+int b1, b2;
+...
+//Proceso 1:
+...
+b1=1;
+if (b2) esperar();
+//sección crítica
+Cuenta=Cuenta+1;
+b1=0;
+...
+//Proceso 2:
+...
+b2=1;
+if (b1) esperar();
+//sección crítica
+Cuenta=Cuenta+1;
+b2=0;
+...
+#+end_src C
+
+Nuevamente aquí está garantizado que no puede haber dos procesos en la
+región crítica, pero este enfoque sufre de un problema grave: ambos
+procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
+bandera en 1 y luego se cambia el control al proceso 2 quien también
+colocará su bandera en 1).
+
+**** Una solución: Algoritmo de Peterson
+La primera solución a esta problema fue propuesta por Dekker
+en 1957. Sin embargo su explicación es bastante extensa (aunque
+perfectamente entendible) y en cambio presentaremos la solución
+presentada por Peterson unos cuantos años más tarde, en 1970.
+
+La solución está basada en una combinación de los intentos anteriores:
+utilizar banderas para indicar qué proceso puede entrar pero además
+usa un turno para desempatar en caso de que ambos procesos quieran
+entrar. En cierto modo es un algoritmo ambable: si un proceso
+detecta que el otro proceso fue el primero en actualizar el turno,
+entonces lo deja pasar:
+
+#+begin_src C
+int b2, b2;
+int quien;
+
+//Proceso 1:
+...
+b1=1;
+quien=2;
+if ( b2 && (quien==2)) esperar();
+//Sección crítica
+Cuenta=Cuenta+1;
+b1=0;
+
+//Proceso 2:
+...
+b2=1;
+quien=1;
+if ( b1 && quien==1) esperar();
+//Sección crítica
+Cuenta=Cuenta+1;
+b1=0;
+#+end_src C
+ 
 - Problema productor-consumidor :: En un entorno multihilos es común
      que haya una división de tareas tipo /línea de ensamblado/, que
      se puede generalizar a que un grupo de hilos van /produciendo/

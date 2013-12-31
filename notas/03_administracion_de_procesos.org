@@ -339,8 +339,13 @@ proceso torniquete2() {
 }
 
 main() {
-	//lanzar ambos procesos
 	cuenta=0;
+	//lanzar ambos procesos
+        torniquete1();
+        torniquete2();
+        //esperar a que ambos finalicen
+        esperar(torniquete1);
+        esperar(torniquete2);
 	printf("Cuenta: %d\n", cuenta);
 }
 #+end_src C
@@ -379,19 +384,19 @@ compartida (en particular, se utiliza ese hecho para llevar la cuenta
 de personas que ingresan).
 
 Si se considera lo que ocurre cuando dos procesos (p. ej. /torniquete1/
-y /torniquete2/) ejecutan la instrucción /Cuenta=Cuenta+1/ en un equipo con un
+y /torniquete2/) ejecutan la instrucción =Cuenta=Cuenta+1= en un equipo con un
 solo procesador, puede darse la siguiente secuencia de eventos. Se
-considera que /Cuenta/ está inicialmente en 0.
+considera que =Cuenta= está inicialmente en =0=.
 
-- /Cuenta=0/
-- /torniquete1/: LEER (resultado: /rax de p1=0, Cuenta=0/)
-- /torniquete1/: INC (resultado: /rax de p1=1, Cuenta=0/) 
-- /torniquete1/: GUARDAR (resultado: /rax de p1=1, Cuenta=1/) 
+- =Cuenta=0=
+- /torniquete1/: =LEER= (resultado: /rax de p1=0, Cuenta=0/)
+- /torniquete1/: =INC= (resultado: /rax de p1=1, Cuenta=0/) 
+- /torniquete1/: =GUARDAR= (resultado: /rax de p1=1, Cuenta=1/) 
 - El sistema operativo decide cambiar de tarea, suspende torniquete1 y
 continúa con torniquete2.
-- /torniquete2/: LEER (resultado: /rax de p2=1, Cuenta=1/) 
-- /torniquete2/: INC (resultado: /rax de p2=2, Cuenta=1/)
-- /torniquete2/: GUARDAR (resultado: /rax de p2=2, Cuenta=2/)
+- /torniquete2/: =LEER= (resultado: /rax de p2=1, Cuenta=1/) 
+- /torniquete2/: =INC= (resultado: /rax de p2=2, Cuenta=1/)
+- /torniquete2/: =GUARDAR= (resultado: /rax de p2=2, Cuenta=2/)
 
 Se puede ver que ambos procesos realizaron sus instrucciones para
 incrementar el contador en 1 y el resultado final fue que la cuenta se
@@ -588,8 +593,10 @@ compartido: lo único que ha cambiado es que ahora la sección crítica
 está en otro lugar. La solución funcionaría si se pudiera
 garantizar que la secuencia de operaciones
 
-- if (bandera) wait;
-- bandera=1
+#+begin_src C
+if (bandera) wait;
+bandera=1
+#+end_src C
 
 se realice atómicamente. 
 
@@ -703,7 +710,8 @@ procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
 bandera en 1 y luego se cambia el control al proceso 2 quien también
 colocará su bandera en 1).
 
-*** Una solución: Algoritmo de Peterson
+*** Una solución: el Algoritmo de Peterson
+**** Presentación del algoritmo
 La primera solución a esta problema fue propuesta por Dekker
 en 1957. Sin embargo su explicación es bastante extensa (aunque
 perfectamente entendible) y en cambio presentaremos la solución
@@ -769,19 +777,464 @@ b1=0;
      de la panadería por su semejanza con el sistema de turnos
      utilizado para atender a los clientes en una panadería.
 
-*** Otros problemas de concurrencia
+- Solución para equipos multiprocesadores :: Esta solución (y también la de
+     Lamport y todos los autores mencionadas hasta ahora) falla en equipos
+     multiprocesadores pues aparecen problemas de coherencia de
+     caché. Se necesitan precauciones especiales en equipos con más de
+     un procesador.
+** Más conceptos de concurrencia
+*** /Mutexes/
+Una de las alternativas que suele ofrecer un lenguaje concurrente o
+sistema operativo para evitar la /espera ocupada/ a la que obliga el
+algoritmo de Peterson (o similiares) se llama /mutex/ o también
+/lock/ (candado).
 
-- Problema productor-consumidor :: En un entorno multihilos es común
-     que haya una división de tareas tipo /línea de ensamblado/, que
-     se puede generalizar a que un grupo de hilos van /produciendo/
-     ciertas estructuras, a ser /consumidas/ por otro.
+La palabra /mutex/ nace de la frecuencia con que se habla de las
+/regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
+mecanismo que asegura que cierta región del código será ejecutada
+como si fuera atómica.
 
-     Un ejemplo de este problema puede ser un programa /orientado a
-     eventos/, en que eventos de distinta naturaleza pueden
-     producirse, y causan que se /disparen/ los mecanismos que los
-     puedan atender. Los eventos pueden /apilarse/ en un buffer que
-     será procesado por los hilos encargados conforme se vayan
-     liberando. Esto impone ciertos requisitos, como:
+#+attr_html: height="261"
+#+attr_latex: width=0.8\textwidth
+#+label: PROC_secc_crit
+#+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
+[[./img/gnuplot/secc_crit.png]]
+
+Hay que tener en cuenta que un mutex /no implica/ que el código no se
+va a interrumpir mientras se está dentro de esta región — Eso sería
+muy peligroso, dado que permitiría que el sistema operativo pierda el
+control del planificador, volviendo (para propósitos prácticos) a un
+esquema de multitarea cooperativa. El mutex es un /mecanismo de
+prevención/ que mantiene en espera a cualquier hilo o proceso que
+quiera entrar a la /sección crítica/ hasta que el proceso que la está
+ejecutando salga de ella. Si no hay ningún hilo o proceso en esa
+sección crítica (o cuando un hilo sale de esa sección crítica), uno
+sólo de los que esperan podrá ingresar.
+
+Como vimos en el ejemplo anterior, para que un mutex sea efectivo
+tiene que ser implementado a través de una /primitiva/ a un nivel
+inferior[fn:: ¿Qué significa inferior? Las llamadas de sincronización
+entre hilos deben implementarse por lo menos a nivel del proceso que
+los contiene; aquellas que se realizan entre procesos independientes,
+deben implementarse a nivel del sistema operativo. Debe haber un
+agente /más abajo/ en niveles de abstracción, en control /real/ del
+equipo de cómputo, ofreciendo estas operaciones.], implicando al
+planificador.
+
+El problema de la actualización múltiple que surge en el caso de la
+venta de pasajes aereos podría reescribirse de la siguiente manera
+empleando un mutex:
+
+#+begin_src perl
+my ($proximo_asiento :shared, $capacidad :shared);
+$capacidad = 40;
+
+sub asigna_asiento {
+  lock($proximo_asiento);
+  if ($proximo_asiento < $capacidad) {
+    $asignado = $proximo_asiento;
+    $proximo_asiento += 1;
+    print "Asiento asignado: $asignado\n";
+  } else {
+    print "No hay asientos disponibles\n";
+    return 1;
+  }
+  return 0;
+}
+#+end_src
+
+Se debe tener en cuenta que en este caso se utiliza una implementación
+de hilos, esto hace que la solución sea dependiente del lenguaje
+específico de implementación, en este caso: Perl. Al ser
+=proximo_asiento= una variable compartida tiene algunas /propiedades/
+adicionales, en este caso, la de poder operar como un mutex. La
+implementación en Perl resulta muy /limpia/, dado que evita el uso
+de un candado explícito — Se podría leer la línea 5 como /exclusión
+mutua sobre/ =$proximo_asiento=.
+
+En la implementación de hilos de Perl, la función =lock()= implementa
+un mutex delimitado por el /ámbito léxico/ de su invocación: el área
+de exclusión mutua abarca desde la línea 5 en que es invocada hasta la
+15 en que termina el bloque en que se invocó.
+
+Un área de exclusion mutua debe:
+
+- Ser mínima :: Debe ser /tan corta como sea posible/, para evitar que
+                otros hilos queden bloqueados fuera del área
+                crítica. Si bien en este ejemplo es demasiado simple,
+                si se hiciera cualquier llamada a otra función (o al
+                sistema) estando dentro de un área de exclusión mutua,
+                se detendría la ejecución de todos los demás hilos por
+                mucho más tiempo del necesario.
+
+- Ser completa :: Se debe analizar bien cuál es el área a
+     proteger y no arriesgarse a proteger de menos. En este ejemplo,
+     se podría haber puesto =lock($asignado)= dentro del =if=, dado
+     que sólo dentro de su evaluación positiva se modifica la variable
+     =$proximo_asiento=. Sin embargo, si la ejecución de un hilo se
+     interrumpiera entre las líneas 7 y 8, la condición del =if= se
+     podría evaluar incorrectamente.
+
+Como comparación, una rutina equivalente en Bash (entre procesos
+independientes y usando los archivos =/tmp/proximo_asiento= y
+=/etc/capacidad/= como un mecanismo para compartir datos) sería:
+
+#+begin_src sh
+asigna_asiento() {
+  lockfile /tmp/asigna_asiento.lock
+  PROX=$(cat /tmp/proximo_asiento || echo 0)
+  CAP=$(cat /etc/capacidad || echo 40)
+  if [ $PROX -lt $CAP ]
+    then
+      ASIG=$PROX
+      echo $(($PROX+1)) > /tmp/proximo_asiento
+      echo "Asiento asignado: $ASIG"
+    else
+      echo "No hay asientos disponibles"
+      return 1;
+    fi
+  rm -f /tmp/asigna_asiento.lock
+}
+#+end_src
+
+Un mutex es, pues, una herramienta muy sencilla, y podría verse como
+la pieza básica para la sincronización entre procesos. Lo fundamental
+para emplearlos es identificar las regiones críticas del código, y
+proteger el acceso /con un mecanismo apto de sincronización/, que
+garantice atomicidad.
+
+*** Semáforos
+
+La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
+resolver algunos problemas de sincronización. Edsger Dijkstra, en 1968, propuso
+los /semáforos/.
+
+Un semáforo es una variable de tipo entero que tiene definida la
+siguiente interfaz:
+
+- Inicialización :: Se puede inicializar el semáforo a cualquier valor
+                    entero, pero después de esto, su valor no puede ya
+                    ser leído.
+
+- Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
+                 negativo, el hilo se /bloquea/ y no puede continuar
+                 hasta que /otro hilo/ incremente el semáforo. Según
+                 la implementación, esta operación puede denominarse
+                 =wait=, =down=, =acquire= o incluso =P= (por ser la
+                 inicial de /proberen te verlagen/, /intentar
+                 decrementar/ en holandés, del planteamiento original
+                 en el artículo de Dijkstra).
+
+- Incrementar :: Cuando un hilo incrementa el semáforo, si hay hilos
+                 esperando, uno de ellos es /despertado/. Los nombres
+                 que recibe esta operación son =signal=, =up=,
+                 =release=, =post= o =V= (de /verhogen/,
+                 /incrementar/).
+
+La interfaz de hilos =POSIX= (=pthreads=) presenta esas primitivas
+con la siguiente definición:
+
+#+begin_src C
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_post(sem_t *sem);
+int sem_wait(sem_t *sem);
+int sem_trywait(sem_t *sem);
+#+end_src
+
+La variable =pshared= indica si el semáforo puede ser compartido
+entre procesos o únicamente entre hilos. =sem_trywait= extiende la
+intefaz sugerida por Dijkstra: verifica si el semáforo puede ser
+decrementado y, en caso de que no, en vez de bloquearse, indica al
+proceso que no puede continuar. El proceso debe tener la lógica
+necesaria para no entrar en las secciones críticas (digamos, intentar
+otra estrategia) en ese caso.
+
+=sem_trywait= se sale de la definición clásica de semáforo, por lo
+que no se considera en esta sección.
+
+Un semáforo permite la implementación de varios patrones, entre los
+cuales se mencionarán los siguientes:
+
+- Señalizar :: Un hilo debe informar a otro que cierta condición está
+               ya cumplida — Por ejemplo, un hilo prepara una conexión
+               en red mientras que otro calcula lo que tiene que
+               enviar. No se puede arriesgar a comenzar a enviar
+               antes de que la conexión esté lista. Se inicializa el
+               semáforo a 0, y:
+
+	       #+begin_src python
+	       # Antes de lanzar los hilos
+	       senal = Semaphore(0)
+
+	       def envia_datos():
+	         calcula_datos()
+		 senal.acquire()
+		 envia_por_red()
+
+	       def prepara_conexion():
+	         crea_conexion()
+		 senal.release()
+
+	       #+end_src
+
+	       No importa si =prepara_conexion()= termina primero — En
+	       el momento en que termine, =senal= valdrá 1 y
+	       =envia_datos()= podrá proceder.
+
+- /Rendezvous/ :: Así se denomina en francés (y ha sido adoptado al
+                  inglés) a quedar en una /cita/. Este patrón busca
+                  que dos hilos se esperen mutuamente en cierto punto
+                  para continuar en conjunto — Por ejemplo, en una
+                  aplicación GUI, un hilo prepara la interfaz gráfica
+                  y actualiza sus eventos mientras otro efectúa
+                  cálculos para mostrar. Se desea mostrar al usuario
+                  la simulación desde el principio, así que no debe
+                  empezar a calcular antes de que el GUI esté listo,
+                  pero preparar los datos del cálculo toma tiempo, y
+                  no se quiere esperar doblemente. Para esto, se
+                  implementan dos semáforos señalizándose mutuamente:
+
+		  #+begin_src python
+		  guiListo = Semaphore(0)
+		  calculoListo = Semaphore(0)
+
+		  threading.Thread(target=maneja_gui, args=[]).start()
+		  threading.Thread(target=maneja_calculo, args=[]).start()
+
+		  def maneja_gui():
+		    inicializa_gui()
+		    guiListo.release()
+		    calculoListo.acquire()
+		    recibe_eventos()
+
+		  def maneja_calculo():
+		    inicializa_datos()
+		    calculoListo.release()
+		    guiListo.acquire()
+		    procesa_calculo()
+		  #+end_src
+
+- Mutex :: El uso de un semáforo inicializado a 1 puede implementar
+	   fácilmente un mutex. En Python:
+
+           #+begin_src python
+	   mutex = Semaphore(1)
+	   # ...Inicializar estado y lanzar hilos
+	   mutex.acquire()
+	   #  Aquí se está en la region de exclusión mutua
+	   x = x + 1
+	   mutex.release()
+	   # Continúa la ejecucion paralela
+           #+end_src
+
+- Multiplex :: Permite la entrada de no más de /n/ procesos a la
+               región crítica. Si se lo ve como una generalización de
+               /Mutex/, basta con inicializar al semáforo al número
+               máximo de procesos deseado.
+
+	       Su construcción es idéntica a la de un mutex, pero es
+               inicializado al número de procesos que se quiere
+               permitir que ejecuten de forma simultánea.
+
+- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
+                resulta útil para patrones posteriores. Esta
+                construcción garantiza que un grupo de hilos o
+                procesos /pasa por un punto determinado/ de uno en uno
+                (incluso en un ambiente multiprocesador):
+
+		#+begin_src python
+                torniquete = Semaphore(0)
+                # (...)
+                if alguna_condicion():
+                  torniquete.release()
+                # (...)
+                torniquete.acquire()
+                torniquete.release()
+		#+end_src
+
+                En este caso, se ve primero una /señalización/ que
+                hace que todos los procesos esperen frente al
+                torniquete hasta que alguno marque que
+                =alguna_condicion()= se ha cumplido y libere el
+                paso. Posteriormente, los procesos que esperan
+                pasarán ordenadamente por el torniquete.
+
+		El torniquete por sí sólo no es tan útil, pero su
+                función se hará clara a continuación.
+
+- Apagador :: Cuando se tiene una situación de /exclusión categórica/
+              (basada en categorías y no en procesos individuales —
+              Varios procesos de la misma categoría pueden entrar a la
+              sección crítica, pero procesos de dos categorías
+              distintas deben tenerlo prohibido), un /apagador/
+              permite evitar la inanición de una de las categorías
+              ante un flujo constante de procesos de la otra.
+
+	      El apagador usa, como uno de sus componentes, a un
+	      torniquete. Para ver una implementación ejemplo de un
+	      apagador, referirse a la solución presentado a
+	      continuación para el problema lectores-escritores.
+
+- Barrera :: Una barrera es una generalización de /rendezvous/ que
+             permite la sincronización entre varios hilos (no sólo
+             dos), y no requiere que el rol de cada uno de los hilos
+             sea distinto.
+
+	     Esta construcción busca que ninguno de los hilos
+             continúe ejecutando hasta que todos hayan llegado a un
+             punto dado.
+
+	     Para implementar una barrera, es necesario que ésta
+             guarde algo de información adicional además del semáforo,
+             particularmente, el número de hilos que se han lanzado
+             (para esperarlos a todos). Esta será una variable
+             compartida y, por tanto, requiere de un mutex. La
+             inicialización (que se ejecuta antes de iniciar los
+             hilos) será:
+
+	     #+begin_src python
+	     require random
+	     n = random.randint(1,10) # Numero de hilos
+	     cuenta = 0
+	     mutex = Semaphore(1)
+	     barrera = Semaphore(0)
+	     #+end_src
+
+	     Ahora, suponiendo que todos los hilos tienen que
+             realizar, por separado, la inicialización de su estado,
+             y ninguno de ellos debe comenzar el procesamiento hasta
+             que todos hayan efectuado su inicialización:
+
+	     #+begin_src python
+	     inicializa_estado()
+
+	     mutex.acquire()
+	     cuenta = cuenta + 1
+	     mutex.release()
+
+	     if cuenta == n:
+	       barrera.release()
+
+	     barrera.acquire()
+	     barrera.release()
+
+	     procesamiento()
+	     #+end_src
+
+	     Las barreras son una construcción suficientemente útil
+             como para que sea común encontrarlas "prefabricadas". En
+             los hilos =POSIX= (=pthreads=), por ejemplo, la interfaz
+             básica es:
+
+	     #+begin_src C
+	     int pthread_barrier_init(pthread_barrier_t  *barrier,
+                                      const pthread_barrierattr_t *restrict attr,
+                                      unsigned count);
+             int pthread_barrier_wait(pthread_barrier_t  *barrier);
+	     int pthread_barrier_destroy(pthread_barrier_t *barrier);
+	     #+end_src
+
+- Cola :: Se emplea una cola cuando se tienen dos /clases de/
+          hilos que deben proceder en pares. Este patrón es a veces
+          referido como /baile de salón/: para que una pareja baile,
+          hace falta que haya un /líder/ y un /seguidor/. Cuando
+          llega una persona al salón, verifica si hay uno de la otra
+          clase esperando bailar. En caso de haberlo, bailan, y en
+          caso contrario, espera a que llegue su contraparte.
+
+	  El código para implementar esto es muy simple:
+
+	  #+begin_src python
+	  colaLideres = Semaphore(0)
+	  colaSeguidores = Semaphore(0)
+	  # (...)
+	  def lider():
+	    colaSeguidores.release()
+	    colaLideres.acquire()
+	    baila()
+	  def seguidor():
+	    colaLideres.release()
+	    colaSeguidores.acquire()
+	    baila()
+	  #+end_src
+
+	  El patrón debe resultar ya familiar: es un /rendezvous/. La
+          distinción es meramente semántica: en el /rendezvous/
+          se necesitan dos hilos explícitamente, aquí se habla de
+          dos clases de hilos.
+
+	  Sobre este patrón base se pueden refinar muchos
+          comportamientos. Por ejemplo, asegurar que sólo una pareja
+          esté bailando al mismo tiempo, o asegurar que los hilos en
+          espera vayan bailando en el órden en que llegaron.
+
+*** Variables de condición
+
+Las variables de condición presentan una extensión sobre el
+comportamiento de las mutexes, buscando darles la "inteligencia" de
+responder ante determinados eventos. Una variable de condición siempre
+opera /en conjunto con/ un mutex, y en algunas implementaciones es
+necesario indicar cuál será dicho mutex desde la misma inicialización
+del objeto.[fn:: Mientras que otras implementaciones permiten que se
+declaren por separado, pero siempre que se invoca a una variable
+de condición, debe indicársele qué mutex estará empleando.]
+
+Una variable de condición presenta las siguientes operaciones:
+
+- Espera :: Se le indica una condición y un mutex. El mutex tiene que
+            haber sido ya adquirido. Esta operación /libera/ al mutex,
+            y se bloquea hasta recibir una /notificación/ de otro hilo
+            o proceso. Una vez que la notificación es recibida, y
+            antes de devolver la ejecución al hilo, /re-adquiere/ el
+            mutex.
+
+- Espera medida :: Tiene una semántica igual a la de la espera, pero
+                   recibe un argumento adicional, indicando el tiempo
+                   de expiración. Si pasado el tiempo de expiración
+                   no ha sido notificado, despierta al hilo
+                   regresándole un error (y sin re-adquirir el
+                   mutex).
+
+- Señaliza :: Requiere que el mutex ya haya sido adquirido. Despierta
+              (señaliza) a uno o más hilos (algunas implementaciones
+              permiten indicar como argumento a cuántos hilos) de los
+              que están bloqueados en la espera asociada. /No/ libera
+              el mutex — Esto significa que el flujo de ejecución /se
+              mantiene en el invocante/, quien tiene que salir de su
+              sección crítica (entregar el mutex) antes de que otro de
+              los hilos continúe ejecutando.
+
+- Señaliza a todos :: Indica a /todos los hilos/ que estén esperando a
+     esta condición.
+
+La interfaz de hilos =POSIX= (=pthreads=) presenta la siguiente
+definición:
+
+#+BEGIN_SRC C
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
+int pthread_cond_signal(pthread_cond_t *cond);
+int pthread_cond_broadcast(pthread_cond_t *cond);
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime);
+int pthread_cond_destroy(pthread_cond_t *cond);
+#+END_SRC
+
+
+
+*** Problema productor-consumidor
+**** Planteo
+En un entorno multihilos es común que haya una división de tareas tipo
+/línea de ensamblado/, que se puede generalizar a que un grupo de
+hilos van /produciendo/ ciertas estructuras, a ser /consumidas/ por
+otro.
+
+Un ejemplo de este problema puede ser un programa /orientado a
+eventos/, en que eventos de distinta naturaleza pueden producirse, y
+causan que se /disparen/ los mecanismos que los puedan atender. Los
+eventos pueden /apilarse/ en un buffer que será procesado por los
+hilos encargados conforme se vayan liberando. Esto impone ciertos
+requisitos, como:
 
      - Agregar o retirar un elemento del buffer tiene que ser hecho de
        forma atómica. Si más de un proceso intentara hacerlo al mismo
@@ -790,6 +1243,113 @@ b1=0;
      - Si un consumidor está listo y el buffer está vacío, debe
        bloquearse (¡no realizar espera activa!) hasta que un productor
        genere un elemento.
+
+  Si no se tiene en cuenta la sincronización, el código sería tan
+  simple como el siguiente:
+
+  #+begin_src python
+  import threading
+  buffer = []
+  threading.Thread(target=productor,args=[]).start()
+  threading.Thread(target=consumidor,args=[]).start()
+
+  def productor():
+    while True:
+      event = genera_evento()
+      buffer.append(event)
+
+  def consumidor():
+    while True:
+      event = buffer.pop()
+      procesa(event)
+  #+end_src
+
+  Pero el acceso a =buffer= no está protegido para garantizar la
+  exclusión mutua, y podría quedar en un estado inconsistente si
+  =append()= y =pop()= intentan manipular sus estructuras al mismo
+  tiempo. Además, si bien en este ejemplo se asumió que hay un sólo hilo
+  productor y un sólo hilo consumidor, se puede extender el programa
+  para que haya varios hilos en cualquiera de estos roles.
+
+  =evento= no requiere de protección, dado que es una variable local a
+  cada hilo.
+
+**** Solución
+  Para resolver este problema se usarán dos semáforos: =mutex=, que
+  protege el acceso a la sección crítica, y =elementos=. El valor
+  almacenado en =elementos= indica, cuando es positivo, cuántos
+  eventos tenemos pendientes por procesar, y cuando es negativo,
+  cuántos consumidores están listos y esperando un evento.
+
+  Una solución a este problema puede ser:
+
+  #+begin_src python
+    import threading
+    mutex = threading.Semaphore(1)
+    elementos = threading.Semaphore(0)
+    buffer = []
+    threading.Thread(target=productor, args=[]).start()
+    threading.Thread(target=consumidor, args=[]).start()
+    
+    def productor():
+      while True:
+        event = genera_evento()
+        mutex.acquire()
+        buffer.append(event)
+        mutex.release()
+        elementos.release()
+    
+    def consumidor():
+      while True:
+        elementos.acquire()
+        mutex.acquire()
+        event = buffer.pop()
+        mutex.release()
+        event.process()
+  #+end_src
+
+  Podemos ver que la misma construcción, un semáforo, es utilizada de
+  forma muy distinta por =mutex= y =elementos=. =mutex= implementa una
+  exclusión mutua clásica, delimitando tanto como es posible (a una
+  sóla línea en este caso) al área crítica, y siempre apareando un
+  =acquire()= con un =release()=. =elementos=, en cambio, es empleado
+  como un verdadero semáforo: como una estructura para la
+  sincronización. Sólo los hilos productores incrementan (sueltan) el
+  semáforo, y sólo los consumidores lo decrementan (adquieren). Esto
+  es, ambos semáforos comunican /al planificador/ cuándo es posible
+  despertar a algún consumidor.
+
+  Si se supone que =genera_evento()= es eficiente y no utiliza 
+  espera activa, esta implementación es óptima: deja en manos
+  del planificador toda la espera necesaria, y no desperdicia recursos
+  de cómputo esperando a que el siguiente elemento esté listo.
+
+  Como nota al pie, la semántica del módulo =threading= de Python
+  incluye la declaración de contexto =with=. Todo objeto de
+  =threading= que implemente =acquire()= y =release()= puede ser
+  envuelto en un bloque =with=, aumentando la legibilidad y con
+  exactamente la misma semántica; no se utilizó en este ejemplo para
+  ilustrar el uso tradicional de los semáforos para implementar
+  regiones de exclusión mutua, sin embargo y sólo para concluir con el
+  ejemplo, la función =consumidor()= final podría escribirse así, y
+  ser semánticamente idéntica:
+
+  #+begin_src python
+  def consumidor():
+    while True:
+      elementos.acquire()
+      with mutex:
+        event = buffer.pop()
+      event.process()
+  #+end_src
+
+  A pesar de ser más clara, no se empleará en este texto esta notación
+  por dos razones. La primera es para mantener la conciencia de la
+  semántica de las operaciones =acquire()= y =release()=, y la segunda
+  es mantener la consistencia a través de las distintas
+  implementaciones, ya que encontraremos varios casos en que no es el
+  mismo hilo el que adquiere un semáforo y el que lo libera (esto es,
+  los semáforos no siempre son empleados como mutexes).
 
 - Problema lectores-escritores :: Una estructura de datos puede ser
      accedida simultáneamente por muchos procesos /lectores/, pero si
@@ -855,176 +1415,12 @@ b1=0;
        al problema, por lo que podemos ignorarlo.
 
 
-Nuevamente, recomiendo al libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de
-Allen Downey (2008) para profundizar en este tema. En este libro,
-además de otros muchos ejemplos que ilustran el uso de semáforos no
-sólo para resolver problemas de sincronización, sino como un
-mecanismo simple de comunicación entre procesos, podemos encontrar
-una detallada explicación del por qué de diversas implementaciones
-propuestas para cada uno de ellos.
-
-** Conceptos y primitivas básicas
-
-Para plantear la resolución de los problemas antes mencionados,
-debemos partir del vocabulario básico de las situaciones que crean la
-problemática. En esta sección presentaremos también las estructuras
-básicas para enfrentarlas.
-
-*** Secciones críticas y operaciones atómicas
-
-Varios hilos pueden avanzar en su trabajo de forma concurrente sin
-entorpecerse mutuamente siempre y cuando estén trabajando únicamente
-con /variables locales/, esto es, valores independientes para cada uno
-de los hilos. Sin embargo, cuando dos hilos tienen que
-/sincronizarse/ (asegurar un ordenamiento dado entre flujos
-independientes de ejecución), o cuando tienen que transmitirse
-información, el uso de /variables globales/ y de recursos externos
-requiere tener en mente que el planificador puede interrumpir el flujo de
-un hilo /en cualquier momento/. Esto implica, por ejemplo, que el
-siguiente código en Ruby puede llevarnos a distintos resultados:
-
-#+begin_src ruby
-class EjemploHilos
-  def initialize
-    @x = 0
-  end
-
-  def f1
-    sleep 0.1
-    print '+'
-    @x += 3
-  end
-
-  def f2
-    sleep 0.1
-    print '*'
-    @x *= 2
-  end
-  def run
-    t1 = Thread.new {f1}
-    t2 = Thread.new {f2}
-    sleep 0.1
-    print '%d ' % @x
-  end
-end
-#+end_src
-
-En este ejemplo, inserté un tiempo de espera largo, de una décima de
-segundo (=sleep 0.1=) para obligar al planificador a elegir a alguno de
-los hilos tras un periodo de espera (en caso contraio, las funciones
-son tan simples que, bajo la implementación de Ruby, se ejecutaría
-simplemente en forma secuencial.
-
-La /variable de instancia/ =@x= es compartida entre los dos hilos de
-ejecución, y en este ejemplo tenemos tres hilos /compitiendo/ por
-ella. En algunas ejecuciones, =run= ejecutará primero la
-multiplicación, resultando en =(@x * 2) + 3=, en otras =(@x + 3) * 2=
-(siendo hilos diferentes, no vale la precedencia de los
-operadores). Algunas veces imprimirá el resultado antes de ambas
-operaciones (el =@x= original, en el estado de entrada de los hilos),
-en otros a medio camino, y en otras más después de ambas
-modificaciones. Es más, a veces el valor resultante de =@x= puede
-/aparentar que una de las operaciones no ocurrió, dado que un hilo fue
-interrumpido a media operación:
-
-#+begin_src ruby
-e = EjemploHilos.new;10.times{e.run}
-0 *+3 *+9 *+21 +*48 *+99 +*204 *+411 +*828 *+1659
-
-e = EjemploHilos.new;10.times{e.run}
-+0 *+6 *+*18 42 +*+90 **186 +375 +**756 ++1515 *3036
-#+end_src
-
-Y si bien este pequeño programa fue hecho explícitamente para ilustrar
-este problema, en un programa real con hilos de ejecución complejos,
-el no saber dónde será interrumpido el flujo presenta un problema
-mayor: ¿cómo pueden dos hilos manipular un recurso compartido si no
-hay garantía de que una operación no será interrumpida? Y recordemos
-que las instrucciones que le damos al sistema no tienen por qué
-traducirse a una sóla instrucción ante el sistema — Una instrucción en
-C tan simple como =x++= implica por lo menos:
-
-- Obtener la dirección en memoria de =x=
-- Traer el valor de =x= a un registro del procesador
-- Incrementar ese valor en 2
-- Almacenar el valor del registro en la memoria
-
-Al haber dos accesos a memoria (¡y estamos hablando de un lenguaje de
-mucho más bajo nivel que el del ejemplo!), el CPU puede tener que
-esperar a que el valor le sea transferido, y al planificador puede
-aprovechar para cambiar el hilo en ejecución. Claro está, con un
-lenguaje de tan alto nivel como Ruby, el número de instrucciones
-resultante puede ser mucho mayor.
-
-- Operación atómica :: Operación que tenemos la garantía que se
-     ejecutará como una sóla unidad de ejecución, o fallará
-     completamente, sin resultados o estados parciales. Esto no
-     necesariamente implica que el sistema no retirará el flujo de
-     ejecución de su hilo, sino que /el efecto de que se le retire el
-     flujo/ no llevará a comportamiento inconsistente.
-
-- Condición de carrera :: (Race condition) Categoría de errores de
-     programación que implica a dos procesos fallando al comunicarse
-     su estado mutuo, llevando a resultados inconsistentes. Es uno de
-     los problemas más frecuentes y difíciles de depurar, y ocurre
-     típicamente por no considerar la /no atomicidad/ de una operación
-
-- Sección crítica :: El área de código que requiere ser protegida de
-     accesos simultáneos, donde se realiza la modificiación de datos
-     compartidos.
-
-Dado que el sistema no tiene forma de saber cuáles instrucciones (o
-áreas del código) requerimos que funcionen de forma atómica, nosotros
-debemos indicárselo de forma explícita, mediante la sincronización de nuestros hilos
-(o procesos). Es necesario asegurarnos de que la sección crítica no
-permitirá la ejecución de esa área en dos hilos de forma casi-simultánea.
-
-Un error muy común es utilizar mecanismos /no atómicos/ para señalizar
-al respecto. Consideremos que estamos haciendo un sistema de venta de
-boletos de autobús en Perl, y queremos hacer la siguiente función
-/segura ante la concurrencia/. El programador aquí ya hizo un primer
-intento:
-
-#+begin_src perl
-my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
-$capacidad = 40;
-
-sub asigna_asiento {
-  while ($bloq) { sleep 0.1; }
-  $bloq = 1;
-  if ($proximo_asiento < $capacidad) {
-    $asignado = $proximo_asiento;
-    $proximo_asiento += 1;
-    print "Asiento asignado: $asignado\n";
-  } else {
-    print "No hay asientos disponibles\n";
-    $bloq = 0;
-    return 1; # Indicando error / falla
-  }
-  $bloq = 0;
-  return 0;
-}
-#+end_src
-
-El programador identificó correctamente la /sección crítica/ como las
-líneas comprendidas entre la 7 y la 9 (pero, al ser parte de un bloque
-condicional, /protegió/ hasta la 14). Sin embargo, tenemos aún una
-situación de carrera (aunque mucho más contenida) entre la 5 y la 6:
-Podría un hilo entrar[fn:: Este ejemplo utiliza además el mal ejemplo
-de una /espera activa/ (busy wait), requiriendo del tiempo del
-procesador periódicamente mientras espera a que se satisfaga una
-condición dada. Veremos cómo evitar esto más adelante.] al =while= y
-evaluar a un =$bloq= aún falso, y –justo antes de modificarlo– el
-control se transfiere a otro hilo entrando al mismo lugar, y vendiendo
-dos veces el mismo asiento.
-
-Para señalizar la entrada a una sección crítica no podemos hacerlo
-desde el flujo susceptible a ser interrumpido[fn:: Veremos en la
-sección \ref{PROC_peterson} la /Solución de Peterson/, un mecanismo
-que permite estas interrupciones, aunque resta generalidad a la
-solución e incurre en costos de tiempo de cómputo muy elevados],
-tenemos que hacerlo a través de instrucciones de las que el
-planificador pueda /asegurar/ su atomicidad.
+Se recomienda el libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey
+(2008) para profundizar en este tema. En este libro, encontraremos
+muchos ejemplos que ilustran el uso de semáforos no sólo para resolver
+problemas de sincronización, sino como un mecanismo simple de
+comunicación entre procesos. También se desarrollan distintas
+soluciones para los problemas clásicos (y no tan clásicos).
 
 *** Bloqueos mutuos e inanición
 
@@ -1052,514 +1448,6 @@ que nos enfrentaremos una y otra vez al hablar de asignación exclusiva
 de recursos — Temática recurrente en el campo de los sistemas
 operativos.
 
-*** /Mutexes/
-
-La palabra /mutex/ nace de la frecuencia con que se habla de las
-/regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
-mecanismo que nos asegura que cierta región del código será ejecutada
-como si fuera atómica.
-
-#+attr_html: height="261"
-#+attr_latex: width=0.8\textwidth
-#+label: PROC_secc_crit
-#+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
-[[./img/gnuplot/secc_crit.png]]
-
-Hay que tener en cuenta que un mutex /no implica/ que el código no
-se va a interrumpir mientras se está dentro de esta región — Eso sería
-muy peligroso, dado que permitiría que el sistema operativo pierda
-el control del planificador, volviendo (para propósitos prácticos) a un
-esquema de multitarea cooperativa. El mutex es un /mecanismo de
-prevención/ que mantiene en espera a cualquier hilo o proceso que
-quiera entrar a la /sección crítica/ hasta que el proceso que la está
-ejecutando en un momento dado salga de ella. Si no hay ningún hilo o
-proceso en esa sección crítica (o cuando un hilo sale de esa sección
-crítica), uno sólo de los que esperan podrá ingresar.
-
-Como vimos en el ejemplo anterior, para que un mutex sea efectivo
-tiene que ser implementado a través de una /primitiva/ a un nivel
-inferior[fn:: ¿Qué significa inferior? Las llamadas de sincronización
-entre hilos deben implementarse por lo menos a nivel del proceso que
-los contiene; aquellas que se realizan entre procesos independientes,
-deben implementarse a nivel del sistema operativo. Debe haber un
-agente /más abajo/ en niveles de abstracción, en control /real/ del
-equipo de cómputo, ofreciendo estas operaciones.], implicando al
-planificador.
-
-El código del ejemplo anterior podría reescribirse de la siguiente
-manera empleando un mutex:
-
-#+begin_src perl
-my ($proximo_asiento :shared, $capacidad :shared);
-$capacidad = 40;
-
-sub asigna_asiento {
-  lock($proximo_asiento);
-  if ($proximo_asiento < $capacidad) {
-    $asignado = $proximo_asiento;
-    $proximo_asiento += 1;
-    print "Asiento asignado: $asignado\n";
-  } else {
-    print "No hay asientos disponibles\n";
-    return 1;
-  }
-  return 0;
-}
-#+end_src
-
-Tomemos en cuenta que en este caso estamos hablando de una
-implementación de hilos — Y como lo mencionamos previamente, esto nos
-hace dependientes del lenguaje específico de implementación. En este
-caso, en Perl, al ser =proximo_asiento= una variable compartida tiene
-algunas /propiedades/ adicionales — Como, en este caso, la de poder
-operar como un mutex. La implementación en Perl resulta muy /limpia/,
-dado que nos evita el uso de un candado explícito —
-Podríamos leer la línea 5 como /exclusión mutua sobre/
-=$proximo_asiento=.
-
-En la implementación de hilos de Perl, la función =lock()= implementa
-un mutex delimitado por el /ámbito léxico/ de su invocación: El área
-de exclusión mutua abarca desde la línea 5 en que es invocada hasta la
-15 en que termina el bloque en que se invocó.
-
-Un área de exclusion mutua debe:
-
-- Ser mínima :: Debe ser /tan corta como sea posible/, para evitar que
-                otros hilos queden bloqueados fuera del área
-                crítica. Si bien en este ejemplo es demasiado simple,
-                si hiciéramos cualquier llamada a otra función (o al
-                sistema) estando dentro de un área de exclusión mutua,
-                detendríamos la ejecución de todos los demás hilos por
-                mucho más tiempo del necesario.
-
-- Ser completa :: Debemos analizar bien cuál es el área a
-     proteger y no arriesgarnos a proteger de menos. En este ejemplo,
-     podríamos haber puesto =lock($asignado)= dentro del =if=, dado
-     que sólo dentro de su evaluación positiva modificamos la variable
-     =$proximo_asiento=. Sin embargo, si la ejecución de un hilo se
-     interrumpiera entre las líneas 7 y 8, la condición del =if= se
-     podría evaluar incorrectamente.
-
-Como comparación, una rutina equivalente en Bash (entre procesos
-independientes y usando los archivos =/tmp/proximo_asiento= y
-=/etc/capacidad/= como un mecanismo para compartir datos) sería:
-
-#+begin_src sh
-asigna_asiento() {
-  lockfile /tmp/asigna_asiento.lock
-  PROX=$(cat /tmp/proximo_asiento || echo 0)
-  CAP=$(cat /etc/capacidad || echo 40)
-  if [ $PROX -lt $CAP ]
-    then
-      ASIG=$PROX
-      echo $(($PROX+1)) > /tmp/proximo_asiento
-      echo "Asiento asignado: $ASIG"
-    else
-      echo "No hay asientos disponibles"
-      return 1;
-    fi
-  rm -f /tmp/asigna_asiento.lock
-}
-#+end_src
-
-Un mutex es, pues, una herramienta muy sencilla, y podría verse como
-la pieza básica para la sincronización entre procesos. Lo fundamental
-para emplearlos es identificar las regiones críticas de nuestro
-código, y proteger el acceso /con un mecanismo apto de
-sincronización/, que garantice atomicidad.
-
-*** Semáforos
-
-La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
-resolver algunos problemas de sincronización. Edsger Dijkstra, en 1968, propuso
-los /semáforos/.
-
-Un semáforo es una variable de tipo entero que tiene definida la
-siguiente interfaz:
-
-- Inicialización :: Se puede inicializar el semáforo a cualquier valor
-                    entero, pero después de esto, su valor no puede ya
-                    ser leído.
-
-- Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
-                 negativo, el hilo se /bloquea/ y no puede continuar
-                 hasta que /otro hilo/ incremente el semáforo. Según
-                 la implementación, esta operación puede denominarse
-                 =wait=, =down=, =acquire= o incluso =P= (por ser la
-                 inicial de /proberen te verlagen/, /intentar
-                 decrementar/ en holandés, del planteamiento original
-                 en el artículo de Dijkstra).
-
-- Incrementar :: Cuando un hilo incrementa el semáforo, si hay hilos
-                 esperando, uno de ellos es /despertado/. Los nombres
-                 que recibe esta operación son =signal=, =up=,
-                 =release=, =post= o =V= (de /verhogen/,
-                 /incrementar/).
-
-La interfaz de hilos =POSIX= (=pthreads=) presenta esas primitivas
-con la siguiente definición:
-
-#+begin_src C
-int sem_init(sem_t *sem, int pshared, unsigned int value);
-int sem_post(sem_t *sem);
-int sem_wait(sem_t *sem);
-int sem_trywait(sem_t *sem);
-#+end_src
-
-La variable =pshared= indica si el semáforo puede ser compartido
-entre procesos o únicamente entre hilos. =sem_trywait= extiende la
-intefaz sugerida por Dijkstra: verifica si el semáforo puede ser
-decrementado y, en caso de que no, en vez de bloquearse, indica al
-proceso que no puede continuar. El proceso debe tener la lógica
-necesaria para no entrar en las secciones críticas (digamos, intentar
-otra estrategia) en ese caso.
-
-=sem_trywait= se sale de la definición clásica de semáforo, por lo
-cual no lo consideraremos en esta sección.
-
-Un semáforo permite la implementación de varios patrones, entre los
-cuales tenemos:
-
-- Señalizar :: Un hilo debe informar a otro que cierta condición está
-               ya cumplida — Por ejemplo, un hilo prepara una conexión
-               en red mientras que otro calcula lo que tiene que
-               enviar. No podemos arriesgarnos a comenzar a enviar
-               antes de que la conexión esté lista. Inicializamos el
-               semáforo a 0, y:
-
-	       #+begin_src python
-	       # Antes de lanzar los hilos
-	       senal = Semaphore(0)
-
-	       def envia_datos():
-	         calcula_datos()
-		 senal.acquire()
-		 envia_por_red()
-
-	       def prepara_conexion():
-	         crea_conexion()
-		 senal.release()
-
-	       #+end_src
-
-	       No importa si =prepara_conexion()= termina primero — En
-	       el momento en que termine, =senal= valdrá 1 y
-	       =envia_datos()= podrá proceder.
-
-- /Rendezvous/ :: Así se denomina en francés (y ha sido adoptado al
-                  inglés) a quedar en una /cita/. Este patrón busca
-                  que dos hilos se esperen mutuamente en cierto punto
-                  para continuar en conjunto — Por ejemplo, en una
-                  aplicación GUI, un hilo prepara la interfaz gráfica
-                  y actualiza sus eventos mientras otro efectúa
-                  cálculos para mostrar. Queremos mostrar al usuario
-                  la simulación desde el principio, así que no debe
-                  empezar a calcular antes de que el GUI esté listo,
-                  pero preparar los datos del cálculo toma tiempo, y
-                  no queremos esperar doblemente. Para esto,
-                  implementamos dos semáforos señalizándose
-                  mutuamente:
-
-		  #+begin_src python
-		  guiListo = Semaphore(0)
-		  calculoListo = Semaphore(0)
-
-		  threading.Thread(target=maneja_gui, args=[]).start()
-		  threading.Thread(target=maneja_calculo, args=[]).start()
-
-		  def maneja_gui():
-		    inicializa_gui()
-		    guiListo.release()
-		    calculoListo.acquire()
-		    recibe_eventos()
-
-		  def maneja_calculo():
-		    inicializa_datos()
-		    calculoListo.release()
-		    guiListo.acquire()
-		    procesa_calculo()
-		  #+end_src
-
-- Mutex :: El uso de un semáforo inicializado a 1 puede implementar
-	   fácilmente un mutex. En Python:
-
-           #+begin_src python
-	   mutex = Semaphore(1)
-	   # ...Inicializamos estado y lanzamos hilos
-	   mutex.acquire()
-	   # Estamos en la region de exclusion mutua
-	   x = x + 1
-	   mutex.release()
-	   # Continua la ejecucion paralela
-           #+end_src
-
-- Multiplex :: Permite la entrada de no más de /n/ procesos a la
-               región crítica. Si lo vemos como una generalización de
-               /Mutex/, basta con inicializar al semáforo al número
-               máximo de procesos deseado.
-
-	       Su construcción es idéntica a la de un mutex, pero es
-               inicializado al número de procesos que se quiere
-               permitir que ejecuten de forma simultánea.
-
-- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
-                resulta útil para patrones posteriores. Esta
-                construcción garantiza que un grupo de hilos o
-                procesos /pasa por un punto determinado/ de uno en uno
-                (incluso en un ambiente multiprocesador):
-
-		#+begin_src python
-                torniquete = Semaphore(0)
-                # (...)
-                if alguna_condicion():
-                  torniquete.release()
-                # (...)
-                torniquete.acquire()
-                torniquete.release()
-		#+end_src
-
-                En este caso, vemos primero una /señalización/ que
-                hace que todos los procesos esperen frente al
-                torniquete hasta que alguno marque que
-                =alguna_condicion()= se ha cumplido y libere el
-                paso. Posteriormente, los procesos que esperan
-                pasarán ordenadamente por el torniquete.
-
-		El torniquete por sí sólo no es tan útil, pero su
-                función se hará clara a continuación.
-
-- Apagador :: Cuando tenemos una situación de /exclusión categórica/
-              (basada en categorías y no en procesos individuales —
-              Varios procesos de la misma categoría pueden entrar a la
-              sección crítica, pero procesos de dos categorías
-              distintas deben tenerlo prohibido), un /apagador/ nos
-              permite evitar la inanición de una de las categorías
-              ante un flujo constante de procesos de la otra.
-
-	      El apagador usa, como uno de sus componentes, a un
-	      torniquete. Para ver una implementación ejemplo de un
-	      apagador, refiéranse al ejemplo de solución presentado a
-	      continuación para el problema lectores-escritores.
-
-- Barrera :: Una barrera es una generalización de /rendezvous/ que
-             permite la sincronización entre varios hilos (no sólo
-             dos), y no requiere que el rol de cada uno de los hilos
-             sea distinto.
-
-	     Esta construcción busca que ninguno de los hilos
-             continúe ejecutando hasta que todos hayan llegado a un
-             punto dado.
-
-	     Para implementar una barrera, es necesario que ésta
-             guarde algo de información adicional además del semáforo,
-             particularmente, el número de hilos que se han lanzado
-             (para esperarlos a todos). Esta será una variable
-             compartida y, por tanto, requiere de un mutex. Veamos la
-             inicialización (que se ejecuta antes de iniciar los
-             hilos):
-
-	     #+begin_src python
-	     require random
-	     n = random.randint(1,10) # Numero de hilos
-	     cuenta = 0
-	     mutex = Semaphore(1)
-	     barrera = Semaphore(0)
-	     #+end_src
-
-	     Ahora, Supongamos que todos los hilos tienen que
-             realizar, por separado, la inicialización de su estado,
-             y ninguno de ellos debe comenzar el procesamiento hasta
-             que todos hayan efectuado su inicialización:
-
-	     #+begin_src python
-	     inicializa_estado()
-
-	     mutex.acquire()
-	     cuenta = cuenta + 1
-	     mutex.release()
-
-	     if cuenta == n:
-	       barrera.release()
-
-	     barrera.acquire()
-	     barrera.release()
-
-	     procesamiento()
-	     #+end_src
-
-	     Las barreras son una construcción suficientemente útil
-             como para que sea común encontrarlas "prefabricadas". En
-             los hilos =POSIX= (=pthreads=), por ejemplo, la interfaz
-             básica es:
-
-	     #+begin_src C
-	     int pthread_barrier_init(pthread_barrier_t  *barrier,
-                                      const pthread_barrierattr_t *restrict attr,
-                                      unsigned count);
-             int pthread_barrier_wait(pthread_barrier_t  *barrier);
-	     int pthread_barrier_destroy(pthread_barrier_t *barrier);
-	     #+end_src
-
-- Cola :: Podemos emplear una cola cuando tenemos dos /clases de/
-          hilos que deben proceder en pares. Este patrón es a veces
-          referido como /baile de salón/: Para que una pareja baile,
-          hace falta que haya un /líder/ y un /seguidor/. Cuando
-          llega una persona al salón, verifica si hay uno de la otra
-          clase esperando bailar. En caso de haberlo, bailan, y en
-          caso contrario, espera a que llegue su contraparte.
-
-	  El código para implementar esto es muy simple:
-
-	  #+begin_src python
-	  colaLideres = Semaphore(0)
-	  colaSeguidores = Semaphore(0)
-	  # (...)
-	  def lider():
-	    colaSeguidores.release()
-	    colaLideres.acquire()
-	    baila()
-	  def seguidor():
-	    colaLideres.release()
-	    colaSeguidores.acquire()
-	    baila()
-	  #+end_src
-
-	  El patrón debe resultar ya familiar: es un /rendezvous/. La
-          distinción es meramente semántica: En el /rendezvous/
-          hablábamos de dos hilos explícitamente, aquí hablamos de
-          dos clases de hilos.
-
-	  Sobre este patrón base se pueden refinar muchos
-          comportamientos. Por ejemplo, asegurar que sólo una pareja
-          esté bailando al mismo tiempo, o asegurar que los hilos en
-          espera vayan bailando en el órden en que llegaron.
-
-*** Variables de condición
-
-Las variables de condición presentan una extensión sobre el
-comportamiento de las mutexes, buscando darles la "inteligencia" de
-responder ante determinados eventos. Una variable de condición siempre
-opera /en conjunto con/ un mutex, y en algunas implementaciones es
-necesario indicar cuál será dicho mutex desde la misma inicialización
-del objeto.[fn:: Mientras que otras implementaciones permiten que se
-declaren por separado, pero siempre que se invoca a una variable
-de condición, debe indicársele qué mutex estará empleando.]
-
-Una variable de condición presenta las siguientes operaciones:
-
-- Espera :: Se le indica una condición y un mutex. El mutex tiene que
-            haber sido ya adquirido. Esta operación /libera/ al
-            mutex, y se bloquea hasta recibir una /notificación/ de otro hilo o proceso. Una
-            vez que la notificación es recibida, y antes de devolver
-            la ejecución al hilo, /re-adquiere/ el mutex.
-
-- Espera medida :: Tiene una semántica igual a la de la espera, pero
-                   recibe un argumento adicional, indicando el tiempo
-                   de expiración. Si pasado el tiempo de expiración
-                   no ha sido notificado, despierta al hilo
-                   regresándole un error (y sin re-adquirir el
-                   mutex).
-
-- Señaliza :: Requiere que el mutex ya haya sido adquirido. Despierta (señaliza)
-              a uno o más hilos (algunas implementaciones permiten
-              indicar como argumento a cuántos hilos) de los que están bloqueados en la espera asociada. /No/ libera el
-              mutex — Esto significa que el flujo de ejecución /se
-              mantiene en el invocante/, quien tiene que salir de su
-              sección crítica (entregar el mutex) antes de que otro
-              de los hilos continúe ejecutando.
-
-- Señaliza a todos :: Indica a /todos los hilos/ que estén esperando a
-     esta condición.
-
-La interfaz de hilos =POSIX= (=pthreads=) presenta la siguiente
-definición:
-
-#+BEGIN_SRC C
-pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);
-int pthread_cond_signal(pthread_cond_t *cond);
-int pthread_cond_broadcast(pthread_cond_t *cond);
-int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
-int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime);
-int pthread_cond_destroy(pthread_cond_t *cond);
-#+END_SRC
-
-*** La solución de Peterson
-# <<PROC_peterson>>
-
-Todas las soluciones que hemos discutido hasta el momento requieren de
-un sistema que ejecute a un nivel /inferior/ al de nuestro código —
-Sean las bibliotecas de sistema a través del sistema operativo, o la
-/máquina virtual/ que implemente a nuestro lenguaje, las estructuras
-que establecen los /candados/ que el código de usuario emplea para la
-sincronización están siempre a un nivel inferior. Es por esto que nos
-referimos a estos mecanismos como /primitivas/ de sincronización:
-Tienen que ser ofrecidas por las capas inferiores como mecanismos
-completos.
-
-Ahora, ¿cómo podemos asegurar la sincronización entre dos procesos
-/que no pueden acudir a un nivel inferior/? Ejemplos de esta situación
-pueden incluir cuando estamos implementando al sistema operativo
-mismo, o estamos trabajando sobre un sistema operativo que no nos
-ofrece las construcciones antes descritas.
-
-Si podemos compartir estructuras de memoria entre los procesos
-implicados, podemos emplear la /solución de Peterson/. Esta implica
-que los procesos cooperen explícitamente, y que conozcan algunos datos
-que hemos mayormente obviado (como son, no sólo la cantidad de procesos que
-emplearán determinada sección crítica, sino una /numeración/ que
-permita distinguir entre ellos). Cabe mencionar, como señala
-Silberschatz (p. 223), que algunos detalles de implementación de las
-computadoras actuales pueden impedir que este mecanismo funcione
-adecuadamente.
-
-Peterson observa que, dados dos procesos /i/ y /j/ que compiten por
-determinada sección crítica, alternando entre su ejecución
-paralelizable y la ejecución de dicha sección, contando con las
-estructuras compartidas:
-# queda algo mal redactado en este parrafo anterior
-
-#+begin_src C
-int turno;
-boolean listo[2];
-#+end_src
-
-El arreglo =listo= indica qué procesos están /listos/ para entrar a la
-sección crítica, y =turno= indica a cuál le corresponde continuar.
-
-Para que el proceso /i/ entre a su sección crítica, debe hacer lo
-siguiente:
-
-#+begin_src C
-do {
-    listo[i] = TRUE;
-    turno = j;
-    while (listo[j] and turno == j) ;
-    /* Ejecutando en sección crítica */
-    listo[i] = FALSE;
-    /* Ejecutando en sección no crítica */
-} while TRUE;
-#+end_src
-
-El código para /j/ sería el complementario.
-
-La solución de Peterson se basa en que, si ambos procesos intentan
-entrar a la sección crítica justo al mismo tiempo, ambos modificarán
-=listo= y =turno=, pero uno de estos cambios será sobreescrito de
-inmediato. Al ceder el turno antes de entrar, en caso de que /j/ esté
-listo, éste continuará ejecutando. Si /j/ no está listo, /i/ podrá
-proceder, y al marcar =listo[i]= como falso libera el avance de
-/j/. Es necesario apuntar que /i/ podría ejecutar /incluso si =turno=
-es j/, porque /j/ se quedaría esperando cuando llegue a la entrada de
-la sección crítica porque =listo[i]= es verdadero.
-
-Esta solución, como ya mencionamos, no es apta para muchas condiciones
-actuales. En particular, no es segura en un entorno de
-multiprocesamiento real (por problemas de coherencia de caché). Hace
-uso de la espera activa, lo que consume recursos innecesariamente,
-pero en una situación como la descrita en que no hay paso de señales,
-esto resulta inevitable.
-
 ** Soluciones a los problemas clásicos
 
 A continuación presentamos /una forma/ de resolver los problemas
@@ -1577,111 +1465,6 @@ permitiendo variar ya sea el número de huéspedes a la mesa o el
 número de ingredientes necesario.
 
 *** Problema productor-consumidor
-  Si no tuviéramos en cuenta la sincronización, podríamos presentar
-  código tan simple como el siguiente:
-
-  #+begin_src python
-  import threading
-  buffer = []
-  threading.Thread(target=productor,args=[]).start()
-  threading.Thread(target=consumidor,args=[]).start()
-
-  def productor():
-    while True:
-      event = genera_evento()
-      buffer.append(event)
-
-  def consumidor():
-    while True:
-      event = buffer.pop()
-      procesa(event)
-  #+end_src
-
-  Pero el acceso a =buffer= no está protegido para garantizar la
-  exclusión mutua, y podría quedar en un estado inconsistente si
-  =append()= y =pop()= intentan manipular sus estructuras al mismo
-  tiempo. Además, si bien en este ejemplo asumimos que hay un sólo hilo
-  productor y un sólo hilo consumidor, podríamos extender el programa
-  para que fueran varios en cualquiera de estos roles.
-
-  =evento= no requiere de protección, dado que es una variable local a
-  cada hilo.
-
-  Para resolver este problema, usaremos dos semáforos: =mutex=, que
-  protege el acceso a nuestra sección crítica, y =elementos=. El valor
-  almacenado en =elementos= indica, cuando es positivo, cuántos
-  eventos tenemos pendientes por procesar, y cuando es negativo,
-  cuántos consumidores están listos y esperando un evento.
-
-  Una solución a este problema puede ser:
-
-  #+begin_src python
-    import threading
-    mutex = threading.Semaphore(1)
-    elementos = threading.Semaphore(0)
-    buffer = []
-    threading.Thread(target=productor, args=[]).start()
-    threading.Thread(target=consumidor, args=[]).start()
-    
-    def productor():
-      while True:
-        event = genera_evento()
-        mutex.acquire()
-        buffer.append(event)
-        mutex.release()
-        elementos.release()
-    
-    def consumidor():
-      while True:
-        elementos.acquire()
-        mutex.acquire()
-        event = buffer.pop()
-        mutex.release()
-        event.process()
-  #+end_src
-
-  Podemos ver que la misma construcción, un semáforo, es utilizada de
-  forma muy distinta por =mutex= y =elementos=. =mutex= implementa una
-  exclusión mutua clásica, delimitando tanto como es posible (a una
-  sóla línea en nuestro ejemplo) al área crítica, y siempre apareando
-  un =acquire()= con un =release()=. =elementos=, en cambio, es
-  empleado como un verdadero semáforo del mundo real: como una
-  estructura para la sincronización. Sólo los hilos productores
-  incrementan (sueltan) el semáforo, y sólo los consumidores lo
-  decrementan (adquieren). Esto es, ambos semáforos comunican /al planificador/
-  cuándo es posible despertar a algún consumidor.
-
-  Si asumimos que =genera_evento()= es eficiente y no utiliza 
-  espera activa, esta implementación es óptima: deja en manos
-  del planificador toda la espera necesaria, y no desperdicia recursos
-  de cómputo esperando a que el siguiente elemento esté listo.
-
-  Como nota al pie, la semántica del módulo =threading= de Python
-  incluye la declaración de contexto =with=. Todo objeto de
-  =threading= que implemente =acquire()= y =release()= puede ser
-  envuelto en un bloque =with=, aumentando la legibilidad y con
-  exactamente la misma semántica; no lo hicimos en este ejemplo para
-  ilustrar el uso tradicional de los semáforos para implementar
-  regiones de exclusión mutua, sin embargo y sólo para concluir con el
-  ejemplo, la función =consumidor()= final podría escribirse así, y
-  ser semánticamente idéntica:
-
-  #+begin_src python
-  def consumidor():
-    while True:
-      elementos.acquire()
-      with mutex:
-        event = buffer.pop()
-      event.process()
-  #+end_src
-
-  A pesar de ser más clara, no emplearemos esta notación por dos
-  razones. La primera es para mantener la conciencia de semántica de
-  las operaciones =acquire()= y =release()=, y la segunda es mantener
-  la consistencia a través de las distintas implementaciones, ya que
-  encontraremos varios casos en que no es el mismo hilo el que
-  adquiere un semáforo y el que lo libera (esto es, los semáforos no
-  siempre son empleados como mutexes).
 
 *** Problema lectores-escritores
 

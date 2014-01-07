@@ -289,16 +289,25 @@ pero muchos de esos conceptos en realidad son independientes del
 escenario: más bien nos ocupa la relación entre procesos que deben
 compartir recursos o deben sincronizar sus tareas.
 
-** Problemas de concurrencia: el jardín ornamental
-# <<PROC_problemas_clasicos>>
-
+** Problemas clásicos de concurrencia
 Para presentar los problemas y conceptos relacionados con la
 concurrencia suelen utilizarse ejemplos muy simplificados basados en
 cuestiones de la vida real. Cada ejemplo presenta uno o más
 conceptos. Se recomienda comprender bien el ejemplo, el problema y la
 solución y realizar alguna ejercitación antes de pasar al siguiente
-ejemplo. También podría ser útil imaginar en qué circunstancia un
+caso. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
+
+Para cada problema se mostrará /una forma/ de resolverlo los problemas
+propuestos anteriormenete, pero para todos estos problemas hay más de
+una solución válida. Algunos de estos problemas fueron originalmente
+planteados como justificación del desarrollo de las estructuras de
+control presentadas o de nuevos paradigmas de concurrencia y muchos
+son aun objeto de debate e investigación.
+
+** Problema: el jardín ornamental
+# <<PROC_problemas_clasicos>>
+
 *** Descripción del problema
 
 Un gran jardín ornamental se abre al público para que todos puedan
@@ -544,16 +553,14 @@ en un sistema multiusuario se torna inusable por varios motivos:
 - Permitir que un programa de usuario deshabilite las interrupciones
   en un sistema operativo de propósito general involucra un gran
   problema de seguridad: cualquier usuario podría hacer un programa
-  malicioso que deshabilite las interrupciones y suspenda
-  indefinidamente el resto del sistema.
+  malicioso (o sencillamente erroneo) que deshabilite las
+  interrupciones y suspenda indefinidamente el resto del sistema.
 
 - No funciona para sistemas distribuídos (como el sistema de reserva
   de pasajes aereos), ni siquiera para sistemas multinúcleo o
   multiprocesador, ya que las interrupciones se deshabilitan en un
-  sólo núcleo.
-# poner footnote contando que hay sistemas multinúcleo que permiten
-# deshabilitar las interrupciones en todos los núcleos, pero que son
-# inviables.
+  sólo núcleo (si bien también es posible detener a los demás
+  procesadores, representa un costo demasiado alto).
 
 - Expone detalles de hardware y podría provocar mal funcionamiento de
   algún periférico si el procesamiento de la sección crítica es
@@ -748,22 +755,29 @@ b1=0;
 #+end_src C
 
 **** Notas sobre la solución de Peterson
-- Espera activa :: La solución presentada mantiene todavía el
-                    problema de la espera activa: un proceso puede
-                    consumir mucho tiempo de procesador sólo para
-                    esperar que otro proceso cambie una bandera y en
-                    un sistema con prioridades la cosa puede ser
-                    bastante dañina. Una forma de mitigar los efectos
-                    es forzar (o sugerir) cambios de contexto en esos
-                    puntos a través de una primitiva del lenguaje o
-                    del sistema operativo (p. ej.: /sleep/ o /yield/)
-                    pero debe resultar claro que de ninguna forma es
-                    una solución general. Por esta razón los sistemas
-                    operativos o lenguajes suelen proveer alguna
-                    abstracción para soportar explícitamente
-                    operaciones atómicas o implementar una solución
-                    más elegante al problema. Veremos algunas de esas
-                    abstracciones más adelante.
+- Espera activa :: La solución presentada mantiene todavía el problema
+                   de la espera activa (también llamados spinlocks) :
+                   un proceso puede consumir mucho tiempo de
+                   procesador sólo para esperar que otro proceso
+                   cambie una bandera y en un sistema con prioridades
+                   la cosa puede ser bastante dañina. Una forma de
+                   mitigar los efectos es forzar (o sugerir) cambios
+                   de contexto en esos puntos a través de una
+                   primitiva del lenguaje o del sistema operativo
+                   (p. ej.: /sleep/ o /yield/) pero debe resultar
+                   claro que de ninguna forma es una solución
+                   general. Por esta razón los sistemas operativos o
+                   lenguajes suelen proveer alguna abstracción para
+                   soportar explícitamente operaciones atómicas o
+                   implementar una solución más elegante al
+                   problema. Veremos algunas de esas abstracciones más
+                   adelante.
+
+Para mayores detalles acerca de las razones, ventajas y desventajas
+                   del uso de spinlocks en sistemas operativos reales,
+                   referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html#%281%29][Spin Locks & Other Forms of
+                   Mutual Exclusion]] (Theodore P. Baker 2010)
+
 
 - Solución para más procesos :: El algoritmo de Peterson sirve
      únicamente cuando hay dos procesos que compiten para acceder a
@@ -1221,7 +1235,6 @@ int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
 
-
 *** Problema productor-consumidor
 **** Planteo
 En un entorno multihilos es común que haya una división de tareas tipo
@@ -1238,7 +1251,7 @@ requisitos, como:
 
      - Agregar o retirar un elemento del buffer tiene que ser hecho de
        forma atómica. Si más de un proceso intentara hacerlo al mismo
-       tiempo, correríamos riesgo de que se corrompan los datos.
+       tiempo, se correría el riesgo de que se corrompan los datos.
 
      - Si un consumidor está listo y el buffer está vacío, debe
        bloquearse (¡no realizar espera activa!) hasta que un productor
@@ -1278,8 +1291,8 @@ requisitos, como:
   Para resolver este problema se usarán dos semáforos: =mutex=, que
   protege el acceso a la sección crítica, y =elementos=. El valor
   almacenado en =elementos= indica, cuando es positivo, cuántos
-  eventos tenemos pendientes por procesar, y cuando es negativo,
-  cuántos consumidores están listos y esperando un evento.
+  eventos pendientes hay por procesar, y cuando es negativo, cuántos
+  consumidores están listos y esperando un evento.
 
   Una solución a este problema puede ser:
 
@@ -1308,7 +1321,7 @@ requisitos, como:
         event.process()
   #+end_src
 
-  Podemos ver que la misma construcción, un semáforo, es utilizada de
+  Se puede ver que la misma construcción, un semáforo, es utilizada de
   forma muy distinta por =mutex= y =elementos=. =mutex= implementa una
   exclusión mutua clásica, delimitando tanto como es posible (a una
   sóla línea en este caso) al área crítica, y siempre apareando un
@@ -1353,7 +1366,7 @@ requisitos, como:
 
 - Problema lectores-escritores :: Una estructura de datos puede ser
      accedida simultáneamente por muchos procesos /lectores/, pero si
-     algún proceso está escribiendo, debemos evitar que cualquier otro
+     algún proceso está escribiendo, se debe evitar que cualquier otro
      lea (dado que podría encontrarse con los datos en un estado
      inconsistente). Los requisitos de sincronización son
 
@@ -1361,7 +1374,7 @@ requisitos, como:
        tiempo.
      - Los escritores deben tener acceso exclusivo a la sección
        crítica.
-     - Como refinamiento al planteamiento: debemos evitar que un
+     - Como refinamiento al planteamiento: se debe evitar que un
        influjo constante de procesos lectores dejen a un escritor en
        situación de /inanición/.
 
@@ -1404,7 +1417,7 @@ requisitos, como:
      hay situaciones que no se pueden resolver con el uso de
      semáforos. Las condiciones planteadas son
 
-     - No podemos modificar el código del agente. Si el agente es un
+     - No se puede  modificar el código del agente. Si el agente es un
        sistema operativo, ¡tiene sentido la restricción de no tenerle
        que notificar acerca de los flujos a cada uno de los programas
        que ejecuta!
@@ -1424,10 +1437,9 @@ soluciones para los problemas clásicos (y no tan clásicos).
 
 *** Bloqueos mutuos e inanición
 
-Cuando nos enfrentamos a la concurrencia, además de asegurar la
-atomicidad de ciertas operaciones, debemos evitar dos problemas que
-son consecuencia natural de la existencia de la asignación de recursos
-de forma exclusiva:
+Cuando hay concurrencia, además de asegurar la atomicidad de ciertas
+operaciones, se debe evitar dos problemas que son consecuencia natural
+de la existencia de la asignación de recursos de forma exclusiva:
 
 - Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
                    que ocurre cuando dos o más procesos poseen
@@ -1448,25 +1460,8 @@ que nos enfrentaremos una y otra vez al hablar de asignación exclusiva
 de recursos — Temática recurrente en el campo de los sistemas
 operativos.
 
-** Soluciones a los problemas clásicos
-
-A continuación presentamos /una forma/ de resolver los problemas
-propuestos anteriormente (sección \ref{PROC_problemas_clasicos}). Para
-todos estos problemas hay más de una solución válida. Algunos de estos
-problemas fueron originalmente planteados como justificación del
-desarrollo de las estructuras de control presentadas, y hay amplios
-cuerpos de bibliografía desarrollándolos, tanto tal como fueron
-planteados como con diversas modificaciones a sus premisas de
-resolución.
-
-Cabe mencionar que la resolución de la /cena de los filósofos/ y /los
-fumadores compulsivos/ fue realizada de modo que sea flexible,
-permitiendo variar ya sea el número de huéspedes a la mesa o el
-número de ingredientes necesario.
-
-*** Problema productor-consumidor
-
-*** Problema lectores-escritores
+** Problema lectores-escritores
+**** Planteo
 
   Este problema puede ser generalizado como una /exclusión mutua
   categórica/: se debe separar el uso de un recurso según la categoría
@@ -1475,12 +1470,13 @@ número de ingredientes necesario.
   que tienen distintas reglas — Para los escritores /sí/ hace falta
   una exclusión mutua completa.
 
+**** Primera aproximación
   Un primer acercamiento a este problema nos permite una resolución
   libre de bloqueos mutuos, empleando sólo tres estructuras globales:
   un contador que indica cuántos lectores hay en la sección crítica,
   un mutex protegiendo a dicho contador, y otro mutex indicando que no
   hay lectores ni escritores accediendo al buffer (o
-  cuarto). Implementamos los mutexes con semáforos.
+  cuarto). Implementamos los mutexes con semáforos. 
 
   #+begin_src python
   import threading
@@ -1524,6 +1520,8 @@ número de ingredientes necesario.
   lectores puede llevar a la inanición de un escritor, que está
   pacientemente parado esperando a que alguien apague la luz.
 
+**** Solución
+
   Para evitar esta condición de inanición, podemos agregar un
   /torniquete/ evitando que lectores adicionales se /cuelen/ antes del
   escritor. Reescribamos pues:
@@ -1563,30 +1561,32 @@ número de ingredientes necesario.
   #+end_src
 
   En la implementación de los escritores, esto puede parecer inútil:
-  Únicamente agregamos un mutex redundante alrededor de lo que ya
-  teníamos. Sin embargo, al obligar a que el lector pase por un
+  Únicamente se agregó un mutex redundante alrededor de lo que ya
+  se tenía. Sin embargo, al obligar a que el lector pase por un
   torniquete antes de actualizar =lectores=, lo cual obligaría a que
-  se mantenga encendida la luz, obligamos a que espere a que el
-  escritor suelte este mutex exterior. Vemos nuevamente cómo la misma
+  se mantenga encendida la luz, se obliga a que espere a que el
+  escritor suelte este mutex exterior. Nuevamente se puede ver cómo la misma
   estructura es tratada de dos diferentes maneras: para el lector es
   un torniquete, y para el escritor es un mutex.
 
-*** La cena de los filósofos
-
+** La cena de los filósofos
+**** Planteo
   En este caso, el peligro no es, como en el ejemplo anterior, que una
   estructura de datos sea sobreescrita por ser accedida por dos hilos
   al mismo tiempo, sino que se presenten situaciones en el curso normal de
-  la operación que lleven a un bloqueo mutuo indefinido.
+  la operación que lleven a un bloqueo mutuo.
 
-  A diferencia del caso antes descripto, ahora emplearemos a los
+  A diferencia del caso antes descripto, ahora se utilizarán los
   semáforos no como una herramienta para indicar al planificador
   cuándo despertar a uno de los hilos, sino como una herramienta de
   comunicación entre los propios hilos.
 
-  Podemos representar a los palillos como un arreglo de semáforos,
+**** Primer acercamiento
+
+  Se puede representar a los palillos como un arreglo de semáforos,
   asegurando la exclusión mutua (esto es, sólo un filósofo puede
-  sostener un palillo al mismo tiempo), pero eso no nos salva de un
-  bloqueo mutuo. Por ejemplo, si nuestra solución fuera:
+  sostener un palillo al mismo tiempo), pero eso no evita el bloqueo
+  mutuo. Por ejemplo, si la  solución fuera:
 
   #+begin_src python
     import threading
@@ -1621,11 +1621,13 @@ número de ingredientes necesario.
       # (...)
   #+end_src
 
-  Podría pasar que todos los filósofos quieran comer al mismo
-  tiempo, y el planificador dejara suspendidos a todos con el palillo
-  derecho en la mano.
+  Podría pasar que todos los filósofos quieran comer al mismo tiempo,
+  y el planificador dejara suspendidos a todos con el palillo derecho
+  en la mano.
 
-  Ahora, ¿qué pasa si hacemos que algunos filósofos sean /zurdos/?
+**** Solución
+
+  Ahora, ¿qué pasa si se hace que algunos filósofos sean /zurdos/?
   Esto es, que levanten primero el palillo izquierdo y luego el
   derecho:
 
@@ -1643,10 +1645,10 @@ número de ingredientes necesario.
       print "%d - Tengo ambos palillos" % id
   #+end_src
 
-  Al asegurarnos que dos filósofos contiguos no intenten levantar el
-  mismo palillo, tenemos la certeza de que no caeremos en bloqueos
+  Al asegurar que dos filósofos contiguos no intenten levantar el
+  mismo palillo, se tiene la certeza de que no se producirán bloqueos
   mutuos. De hecho, incluso si sólo uno de los filósofos es zurdo,
-  podemos demostrar que no habrá bloqueos:
+  se puede demostrar que no habrá bloqueos:
 
   #+begin_src python
     def levanta_palillos(id):
@@ -1665,9 +1667,10 @@ número de ingredientes necesario.
   Cabe apuntar que ninguno de estos mecanismos asegura que en la mesa
   no haya /inanición/, sólo que no haya bloqueos mutuos.
 
-*** Los fumadores compulsivos
+** Los fumadores compulsivos
+**** Primer acercamiento
 
-Al haber tres distintos ingredientes, tiene sentido que empleemos tres
+Al haber tres distintos ingredientes, tiene sentido que se empleen tres
 distintos semáforos, para señalizar a los fumadores respecto a cada
 uno de los ingredientes. Un primer acercamiento podría ser:
 
@@ -1708,18 +1711,20 @@ uno de los ingredientes. Un primer acercamiento podría ser:
   #+END_SRC
 
 El problema en este caso es que, al tener que cubrir un número de
-ingredientes mayor a uno, utilizar sólo un semáforo ya no nos
-funciona: si =agente()= decide proveer papel y cerillos, nada
-garantiza que no sea el =fumador['cerillo']= el que reciba la primer
-señal o que =fumador['tabaco']= reciba la segunda — Para que este
-programa avance hace falta, más que otra cosa, la buena suerte de que
-las señales sean recibidas por el proceso indicado.
+ingredientes mayor a uno, utilizar sólo un semáforo ya no funciona: si
+=agente()= decide proveer papel y cerillos, nada garantiza que no sea
+el =fumador['cerillo']= el que reciba la primer señal o que
+=fumador['tabaco']= reciba la segunda — Para que este programa avance
+hace falta, más que otra cosa, la buena suerte de que las señales sean
+recibidas por el proceso indicado.
+
+**** Solución
 
 Una manera de evitar esta situación es la utilización de
 /intermediarios/ encargados de notificar al hilo adecuado. Partiendo
 de que, respetando la primer restricción impuesta por Patil, no
-podemos modificar el código del agente, implementamos a los
-intermediarios y reimplementamos a los fumadores, y agregamos algunas
+se puede modificar el código del agente, se implementan los
+intermediarios, se reimplementan los fumadores y se agregan algunas
 variables globales, de esta manera:
 
   #+BEGIN_SRC python
@@ -1752,7 +1757,7 @@ variables globales, de esta manera:
         interm_mutex.release()
   #+END_SRC
 
-Si bien vemos que el código de =fumador()= se simplifica (dado que ya
+Si bien se ve que el código de =fumador()= se simplifica (dado que ya
 no tiene que efectuar ninguna verificación), =intermediario()= tiene
 mayor complejidad. El elemento clave de su lógica es que, si bien el
 =agente()= (el sistema operativo) seguirá enviando una señal por
@@ -1767,25 +1772,25 @@ para recibir una nueva notificación.
 
 Más allá de los mecanismos basados en mutexes y semáforos, existen
 otros mecanismos que emplean diferentes niveles de /encapsulamiento/
-para proteger las abstracciones. Si bien no entraremos muy en detalle, 
-los presentamos a continuación.
+para proteger las abstracciones. A continuación se presentan muy
+brevemente algunos de ellos.
 
 *** Monitores
 
 El principal problema con los mecanismos anteriormente descritos es
-que no sólo hace falta encontrar un mecanismo que permita evitar
-el acceso simultáneo a la sección crítica sin caer en bloqueos mutuos
-o inanición, sino que hay que /implementarlo correctamente/,
-empleando una semántica que requiere de bastante entrenamiento para
-entender correctamente.
+que no sólo hace falta encontrar un mecanismo que permita evitar el
+acceso simultáneo a la sección crítica sin caer en bloqueos mutuos o
+inanición, sino que hay que /implementarlo correctamente/, empleando
+una semántica que requiere de bastante entrenamiento para entender
+correctamente.
 
 Además, al hablar de procesos que compiten por recursos de una forma
-/hostil/, nuestra implementación basada en semáforos puede resultar
-insuficiente. Ilustremos, por ejemplo, por qué en el modelo original
-de Djikstra (así como en los ejemplos que presentamos anteriormente)
-sólo existen las operaciones de incrementar y decrementar, y no se
-permite verificar el estado (como lo ofrece =sem_trywait()= en
-=pthreads=):
+/hostil/, la implementación basada en semáforos puede resultar
+insuficiente. A mode de ejemplo, se mostrará por qué en el modelo
+original de Djikstra (así como en los ejemplos que presentamos
+anteriormente) sólo existen las operaciones de incrementar y
+decrementar, y no se permite verificar el estado (como lo ofrece
+=sem_trywait()= en =pthreads=):
 
 #+begin_src C
 while (sem_trywait(semaforo) != 0) {}
@@ -1840,7 +1845,7 @@ la /reutilización de código/.
 Como ejemplo, el lenguaje de programación /Java/ implementa
 sincronización vía monitores entre hilos como una propiedad de la
 declaración de método, y lo implementa directamente en la JVM. Si
-declaramos un método de la siguiente manera (Silberschatz):
+se declara un método de la siguiente manera (Silberschatz):
 
 #+begin_src java
 public class SimpleClass {
@@ -1852,14 +1857,14 @@ public class SimpleClass {
 }
 #+end_src
 
-E inicializamos a un =SimpleClass sc = new SimpleClass()=, cuando
-llamemos a =sc.safeMethod()=, la máquina virtual verificará si ningún
+Y se inicializa a un =SimpleClass sc = new SimpleClass()=, cuando
+se llame a =sc.safeMethod()=, la máquina virtual verificará si ningún
 otro proceso está ejecutando =safeMethod()=; en caso de que no sea
 así, le permitirá la ejecución obteniendo el candado, y en caso de sí
 haberlo, el hilo se bloqueará hasta que el candado sea liberado.
 
 El modelo de sincronización basado en monitores no sólo provee la
-exclusión mutua. A través de /variables de condición/ (VCs) podemos
+exclusión mutua. A través de /variables de condición/ (VCs) se puede
 también emplear una semántica parecida (aunque no igual) a la de los
 semáforos, con los métodos =var.wait()= y =var.signal()=. En el caso
 de los monitores, =var.wait()= suspende al hilo hasta que otro hilo
@@ -1867,12 +1872,12 @@ ejecute =var.signal()=; en caso de no haber ningún proceso esperando,
 =var.signal()= no tiene ningún efecto (no cambia el estado de =var=, a
 diferencia de lo que ocurre con los semáforos)
 
-Presento, a modo de ilustración, la resolución del problema de la
-/cena de los filósofos/ en C[fn:: Implementación basada en el [[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo
-de Ted Baker]], sobre la solución propuesta por Tanenbaum]. Esto
-demuestra, además, que si bien utilizamos semántica de orientación a
+Aquí se presenta, a modo de ilustración, la resolución del problema de
+la /cena de los filósofos/ en C[fn:: Implementación basada en el
+[[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo de Ted Baker]], sobre la solución propuesta por Tanenbaum]. Esto
+demuestra, además, que si bien se utiliza semántica de orientación a
 objetos, no sólo los lenguajes clásicamente relacionados con la
-programación orientada a objetos nos permiten emplear monitores.
+programación orientada a objetos permiten emplear monitores.
 
 #+begin_src C
 /* Implementacion para cinco filosofos */
@@ -1957,7 +1962,7 @@ es invocada tanto cuando un filósofo =toma_palillos()= como cuando
 =suelta_palillos()=, otorga el turno al vecino sin que éste tenga que
 adquirir explícitamente el control.
 
-Estas características nos permiten que la lógica central de cada uno
+Estas características permite que la lógica central de cada uno
 de los filósofos se simplifique a sólo:
 
 #+begin_src C
@@ -1988,133 +1993,11 @@ sincronización empleado, puede ser comprendido más fácilmente por un
 lector casual y no brinda oportunidad para que un mal programador
 haga mal uso del mecanismo de sincronización.
 
-*** Soluciones en hardware
-
-Si bien hay diversos mecanismos como los que hemos visto, otra
-alternativa para lograr resolver los problemas de sincronización
-sería contar con asistencia del hardware para solucionar esta
-problemática. Algunas maneras de lograrlo pueden ser:
-
-- Inhabilitación de interrupciones ::
-     ¿Qué pasaría si un proceso al entrar a una región crítica pudiera
-     indicarle al sistema operativo que va a realizar una tarea
-     sensible, y éste se encargara de que el procesos pudiera terminar
-     su sección crítica lo antes posible? Esto podría lograrse
-     deshabilitando las interrupciones a nivel hardware.
-
-     Esta idea fue manejada con cierta popularidad hace años, pero al
-     día de hoy ha quedado prácticamente enterrada.
-
-     Deshabilitar las interrupciones, sin embargo, sería como /matar
-     moscas a cañonazos/: por un lado, esto revertiría los beneficios
-     de un sistema operativo capaz de /multiproceso preventivo/. Al
-     no haber interrupciones, el sistema operativo no recibiría
-     ninguna notificación por parte del temporizador, y el proceso
-     ejecutante podría seguir ejecutando indefinidamente. Es más, un
-     simple ciclo que no terminara en dicho proceso podría detener por
-     completo la ejecución del equipo.
-
-     Además de esto, la realidad se encargó de marcar esta solución
-     como inviable: en un sistema multiprocesador (como hoy en día lo
-     son casi todas las computadoras de propósito general), el
-     inhabilitar las interrupciones permitiría a otros procesos
-     seguir ejecutando en los otros procesadores del sistema. La
-     inhabilitación de interrupciones afecta a uno sólo de los
-     procesadores — Y si bien también es posible, detener a los
-     demás procesadores representa un costo demasiado alto, mucho más
-     que el de los algoritmos antes descritos.
-
-- Instrucciones atómicas ::
-     En el desarrollo de esta sección hemos asumido que es imposible
-     hacer una verificación y modificar una ubicación de memoria de
-     forma atómica. Sin embargo, siendo la sincronización uno de los
-     problemas más frecuentes de los programadores, ¿por qué sigue
-     siendo así?
-
-     Si asumiéramos la existencia de una instrucción /a nivel CPU/ que
-     verificara el contenido de una localidad en memoria que actuara
-     como la representación de nuestro mutex y, dependiendo de su
-     estado, la modificara, nuestros programas podrían ser mucho más
-     simples. El efecto de esta instrucción podría ilustrarse de la
-     siguiente manera:
-
-     #+BEGIN_SRC C
-     boolean test_and_set(int i) {
-         if (i == 0) {
-             i = 1;
-             return true;
-         } else {
-             return false;
-         }
-     }
-     void free_lock(int i) {
-         if (i == 1) {
-             i = 0;
-         }
-     }
-     #+END_SRC
-
-     Entonces, el código para obtener un bloqueo exclusivo para
-     realizar determinada tarea podría ser tan simple como:
-
-     #+begin_src asm
-       enter_region:        ; Etiqueta de entrada a la verificación
-        
-         tsl reg, flag      ; Test and Set Lock; 'flag' es la variable
-                            ; compartida, es cargada al registro 'reg'
-                            ; y, atómicamente, convertida en 1.
-         cmp reg, #0        ; ¿Era la bandera igual a 0 al entrar?
-         jnz enter_region   ; En caso de que no fuera 0 al ejecutar el tsl,
-                            ; vuelve a ejecutar desde enter_region
-         ret                ; Termina la rutina. Esto significa que 'flag'
-                            ; era cero al entrar. Si llegamos hasta aquí,
-                            ; tsl fue exitoso y flag queda marcado como
-                            ; no-cero. Tenemos acceso exclusivo al recurso
-                            ; protegido por flag.
-        
-       leave_region:
-         move flag, #0      ; Guarda 0 en flag, liberando el recurso
-         ret                ; Regresa al invocante.
-     #+end_src
-
-     Esto requeriría contar con soporte en hardware en el procesador
-     y en el controlador de memoria, pero la simplicidad obtenida
-     justificaría el costo marginal adicional en hardware.
-
-     Un problema con esta solución es que fomenta la /espera activa/,
-     desperdiciando tiempo de procesador cada vez que un proceso está
-     esperando al candado. Seguiría siendo necesaria la existencia de
-     algoritmos para evitar situaciones de inanición. Esta instrucción
-     existe en algunos procesadores (p. ej. todos los sucesores del Intel i386) y es empleada hoy en día, pero su uso está limitado a las
-     estructuras que no pueden ser interrumpidas por ninguna razón,
-     como las rutinas gestoras de interrupciones en el núcleo, y sólo
-     se emplea para esperas que se sabe que serán muy cortas.
-
-     Hay arquitecturas de cómputo que implementan instrucciones como
-     la aquí propuesta. Sin embargo, el costo asociado (no sólo por la
-     electrónica requerida, sino que por la demora que esta
-     instrucción requiere del procesador — Un mínimo absoluto de dos
-     accesos a memoria, lo cual de propio rompe los principios de
-     diseño de las arquitecturas RISC, y protección adicional para
-     arquitecturas multiprocesador) han evitado que se popularice
-     más.
-
-     Un factor adicional que dificulta la implementación a mayor
-     escala de esta instrucción es que, siendo una instrucción en
-     hardware con doble acceso a memoria, implica la complejidad
-     adicional de asegurar la coherencia del caché cada vez que es
-     invocada.
-
-     Para mayores detalles acerca de las razones, ventajas y
-     desventajas del uso de spinlocks en sistemas operativos reales,
-     sugiero referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html#%281%29][Spin Locks & Other Forms of Mutual Exclusion]]
-     (Theodore P. Baker 2010)
-
-- Memoria transaccional ::
-     Un área activa de investigación hoy en día es la de la memoria
-     transaccional. La lógica es ofrecer primitivas que protejan a /un
-     conjunto de accesos a memoria/ del mismo modo que ocurre con las
-     bases de datos, en que tras abrir una transacción, podemos
+*** Memoria transaccional
+     Un área activa de investigación hoy en día es la de la /memoria
+     transaccional/. La lógica es ofrecer primitivas que protejan a
+     /un conjunto de accesos a memoria/ del mismo modo que ocurre con
+     las bases de datos, en que tras abrir una transacción, podemos
      realizar una gran cantidad (no ilimitada) de tareas, y al
      terminar con la tarea, /confirmarlas/ (/commit/) o /rechazarlas/
      (/rollback/) atómicamente — Y, claro, el sistema operativo

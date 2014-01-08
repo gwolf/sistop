@@ -2069,7 +2069,7 @@ Red, p. 185):
    cadena (condición de /espera circular/).
 
 Las primeras tres condiciones son /necesarias pero no suficientes/
-para que se produzca un bloqueo; su presencia puede llamar indicar una
+para que se produzca un bloqueo; su presencia puede indicar una
 situación de riesgo. Sólo cuando se presentan las cuatro se puede
 hablar de un bloqueo mutuo efectivo.
 
@@ -2384,11 +2384,13 @@ este algoritmo proviene de que busca que el sistema opere cuidando de
 tener siempre la liquidez (nunca entrar a /estados inseguros/) para
 satisfacer los préstamos (recursos) solicitados por sus clientes
 (quienes a su vez tienen una línea de crédito pre-autorizada por el
-banco). Este algoritmo permite que el conjunto de recursos solicitado
-por los procesos en ejecución en el sistema sea mayor a los recursos
-físicamente disponibles sin poner en riesgo la operación correcta del
-sistema.
-# Ojo: la ultima oracion no está clara
+banco).
+
+Este algoritmo permite que el conjunto de recursos solicitado por los
+procesos en ejecución en el sistema sea mayor a los recursos
+físicamente disponibles, pero a través de un monitoreo y control en su
+asignación, logra este nivel de /sobre-compromiso/ sin poner en riesgo
+la operación correcta del sistema.
 
 Este algoritmo debe ejecutarse cada vez que un proceso solicita
 recursos; el sistema evita caer en situaciones conducentes a un
@@ -2466,9 +2468,8 @@ estado /es seguro/ cuando hay una secuencia de procesos (denominada
    anteriores terminan y liberan sus recursos.
 
 En el peor de los casos, esta secuencia segura llevaría a bloquear
-todas las solicitudes excepto las del proceso único en el órden
-presentado.
-# no me queda claro a que se refiere con proceso único
+todas las solicitudes excepto las del único proceso que puede avanzar
+sin peligro en el órden presentado.
 
 Se presnta un ejemplo simplificando, asumiendo sólo una clase de
 procesos, e iniciando con 2 instancias libres:
@@ -2501,8 +2502,10 @@ instancias no asignadas.
 
 Es necesario apuntar que no hay /garantía/ de que continuar a partir
 de este estado lleve a un bloqueo mutuo, dado que /B/ o /C/ pueden no
-incrementar ya su utilización hasta cubrir su reclamo.
-# no me queda claro "ya su utilizacion"
+incrementar ya su utilización hasta cubrir su reclamo, esto es, puede
+que lleguen a finalizar sin requerir más recursos, ya sea porque ya
+los emplearon y liberaron, o porque el /uso efectivo/ de recursos
+requeridos sencillamente resulte menor al del reclamo inicial.
 
 El algoritmo del banquero, en el peor caso, puede tomar $O(n!)$,
 aunque típicamente ejecuta en $O(n^2)$. Una implementación de este

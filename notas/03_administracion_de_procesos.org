@@ -2068,38 +2068,38 @@ Red, p. 185):
    cadena (condición de /espera circular/).
 
 Las primeras tres condiciones son /necesarias pero no suficientes/
-para que se produzca un bloqueo; su presencia puede llamar nuestra
-atención hacia una situación de riesgo. Sólo cuando se presentan las
-cuatro podemos hablar de un bloqueo mutuo efectivo.
+para que se produzca un bloqueo; su presencia puede llamar indicar una
+situación de riesgo. Sólo cuando se presentan las cuatro se puede
+hablar de un bloqueo mutuo efectivo.
 
 Otro ejemplo clásico es un sistema con dos unidades de cinta
 (dispositivos de acceso secuencial y no compartible), en que los
-procesos /A/ y /B/ requieren de ambas unidades. Supongamos siguiente
+procesos /A/ y /B/ requieren de ambas unidades. Dada la siguiente
 secuencia:
 
-1. /A/ solicita una unidad de cinta y se bloquea
+1. /A/ solicita una unidad de cinta y se bloquea.
 
-2. /B/ solicita una unidad de cinta y se bloquea
+2. /B/ solicita una unidad de cinta y se bloquea.
 
 3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
-   en ejecución
+   en ejecución.
 
-4. /A/ continúa procesando; termina su periodo de ejecución
+4. /A/ continúa procesando; termina su periodo de ejecución.
 
 5. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a poner
-   en ejecución
+   en ejecución.
 
-6. /B/ solicita otra unidad de cinta y se bloquea
+6. /B/ solicita otra unidad de cinta y se bloquea.
 
 7. El sistema operativo no tiene otra unidad de cinta por
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
-   /A/
+   /A/.
 
 8. /A/ solicita otra unidad de cinta y se bloquea
 
 9. El sistema operativo no tiene otra unidad de cinta por
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
-   otro proceso (o queda en espera)
+   otro proceso (o queda en espera).
 
 #+attr_latex: width=0.5\textwidth
 #+label: PROC_bloqueo_mutuo_simple
@@ -2107,7 +2107,7 @@ secuencia:
 [[./img/dot/bloqueo_mutuo_simple.png]]
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
-modo de que /A/ o /B/ continúen su ejecución. Veremos, pues, algunas
+modo de que /A/ o /B/ continúen su ejecución. Se verán algunas
 estrategias para enfrentar a los bloqueos mutuos.
 
 En el apartado de /Exclusión mutua/, los hilos presentados estaban
@@ -2128,18 +2128,18 @@ que las que controlan más la asignación de recursos,
 Las líneas principales que describen a las estrategias para enfrentar
 situaciones de bloqueo (La Red, p. 188) son:
 
-- Prevención :: Se centra en modelar el comportamiento del sistema
+- Prevención :: se centra en modelar el comportamiento del sistema
 		para que /elimine toda posibilidad/ de que se produzca
 		un bloqueo. Resulta en una utilización subóptima de
 		recursos.
 
-- Evasión :: Busca imponer condiciones menos estrictas que en la
+- Evasión :: busca imponer condiciones menos estrictas que en la
 	     prevención, para intentar lograr una mejor utilización de
 	     los recursos. Si bien no puede evitar /todas las
 	     posibilidades/ de un bloqueo, cuando éste se produce
 	     busca /evitar/ sus consecuencias.
 
-- Detección y recuperación :: El sistema /permite/ que ocurran los
+- Detección y recuperación :: el sistema /permite/ que ocurran los
      bloqueos, pero busca /determinar si ha ocurrido/ y tomar medidas
      para eliminarlo.
 
@@ -2148,7 +2148,7 @@ situaciones de bloqueo (La Red, p. 188) son:
 
 ** Prevención de bloqueos
 
-Presentaremos a continuación algunos algoritmos que implementan la
+Se presentan a continuación algunos algoritmos que implementan la
 prevención de bloqueos.
 
 *** Serialización
@@ -2156,7 +2156,7 @@ prevención de bloqueos.
 Una manera de evitar bloqueos /por completo/ sería el que un sistema
 operativo jamás asignara recursos a más de un proceso a la vez — Los
 procesos podrían seguir efectuando cálculos o empleando recursos /no
-rivales/ (que no requieran acceso exclusivo — Por ejemplo, empleo de
+rivales/ (que no requieran acceso exclusivo — por ejemplo, empleo de
 archivos en el disco, sin que exista un acceso directo del proceso al
 disco), pero sólo uno podría obtener recursos de forma exclusiva al
 mismo tiempo. Este mecanismo sería la /serialización/, y la situación
@@ -2218,13 +2218,13 @@ termine, podrían continuar ejecutando /B/, /C/ y /D/.
 
 El bloqueo resulta ahora imposible por diseño, pero el usuario que
 inició /B/ tiene una percepción de injusticia dado el tiempo que tuvo
-que esperar para que su solicitud fuera atendida — De hecho, si /A/ es
+que esperar para que su solicitud fuera atendida — de hecho, si /A/ es
 un proceso de larga duración (incluso si requiere la unidad de cinta
 sólo por un breve periodo), esto lleva a que /B/ sufra una /inanición/
 innecesariamente prolongada.
 
 Además, la implementación de este mecanismo preventivo requiere que el
-programador sepa por anticipado qué recursos requerirá — Y esto en la
+programador sepa por anticipado qué recursos requerirá — y esto en la
 realidad muchas veces es imposible. Si bien podría diseñarse una
 estrategia de lanzar procesos /representantes/ (o /proxy/) solicitando
 recursos específicos cuando éstos hicieran falta, esto sólo
@@ -2244,7 +2244,7 @@ En su planteamiento inicial, este mecanismo requería que un proceso
 declarara /una sola vez/ qué recursos requeriría, pero posteriormente
 la estrategia se modificó, permitiendo que un proceso solicite
 recursos nuevamente, pero únicamente a condición de que previo a
-hacerlo /renuncien a los recursos/ que retengan en ese momento —
+hacerlo /renuncien a los recursos/ que tenían en ese momento —
 Claro, pueden volver a incluirlos en la operación de solicitud.
 
 Al haber una /renuncia explícita/, se imposibilita de forma tajante
@@ -2281,10 +2281,10 @@ cinta el proceso $P_2$ /al mismo tiempo/, al ser atómicas las
 solicitudes, éstas le serán otorgadas a sólo un de los dos procesos,
 por lo cual no se presentará bloqueo.
 
-Además, el crear una jerarquía de recursos nos permitiría ubicar los
-recursos más escasos o /peleados/ a la cima de la jerarquía,
+Además, el crear una jerarquía de recursos permitiría ubicar los
+recursos más escasos o /peleados/ en la cima de la jerarquía,
 reduciendo las situaciones de contención en que varios procesos
-compiten por dichos recursos — Sólo llegarían a solicitarlos aquellos
+compiten por dichos recursos — sólo llegarían a solicitarlos aquellos
 procesos que ya tienen /asegurado/ el acceso a los demás recursos que
 vayan a emplear.
 
@@ -2312,50 +2312,50 @@ planificador puede marcar qué órden de ejecución (esto es, qué
 [[./img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
 El análisis de la interacción entre dos procesos se representa como en
-la figura \ref{PROC_tray_proc_evasion_bloqueo}; el avance es marcado en sentido horizontal para el
-proceso $A$, o vertical para el proceso $B$; en un sistema
-multiprocesador, podría haber avance mutuo, y lo indicaríamos en
-diagonal.
+la figura \ref{PROC_tray_proc_evasion_bloqueo}; el avance es marcado
+en sentido horizontal para el proceso $A$, o vertical para el proceso
+$B$; en un sistema multiprocesador, podría haber avance mutuo, y lo
+indicaríamos en diagonal.
 
-En el ejemplo que ilustramos, el proceso $A$ solicitará acceso
+En el ejemplo presentado, el proceso $A$ solicita acceso
 exclusivo al scanner durante $2 \le t_A \le 7$ y a la impresora
-durante $3 \le t_A \le 7.5$, mientras que $B$ solicitará acceso
+durante $3 \le t_A \le 7.5$, mientras que $B$ solicita acceso
 exclusivo a la impresora durante $2 \le t_B \le 6$ y al scanner
 durante 4 \le $t_B \le 7$.
 
-Al saber cuándo reclama y libera un recurso cada proceso, podemos
-marcar cuál es el área /segura/ para la ejecución y cuándo estamos
-aproximándonos a un área de riesgo.
+Al saber cuándo reclama y libera un recurso cada proceso, se puede
+marcar cuál es el área /segura/ para la ejecución y cuándo se
+está aproximando a un área de riesgo.
 
 En el caso mostrado, si bien el bloqueo mutuo sólo se produciría
-formalmente en cualquier punto[fn:: En realidad, sólo nos sería
-posible /tocar/ el márgen izquierdo o inferior de este bloque: Al caer
+formalmente en cualquier punto[fn:: En realidad, sólo sería
+posible /tocar/ el márgen izquierdo o inferior de este bloque: al caer
 en bloqueo mutuo, avanzar hacia su área interior resultaría
 imposible.] en $3 \le t_A \le 7$, y $4 \le t_B \le 6$ (indicado con el
 recuadro rojo, /Bloqueo mutuo/).
 
-Pero la existencia del recuadro que indica el bloqueo mutuo nos podría
-ser revelada con anterioridad: Si el flujo entra en el área marcada
-como /Bloqueo inminente/, en color naranja (en $3 \le t_A \le 7$ y $2
-\le t_B \le 6$), resulta /ineludible/ caer en el bloqueo
-mutuo. Analicemos por qué.
+Pero la existencia del recuadro que indica el bloqueo mutuo podría ser
+revelada con anterioridad: si el flujo entra en el área marcada como
+/Bloqueo inminente/, en color naranja (en $3 \le t_A \le 7$ y $2 \le
+t_B \le 6$), resulta /ineludible/ caer en el bloqueo mutuo. 
 
 La región de bloqueo inminente ocurre a partir de que $A$ obtuvo el
-scanner y $B$ obtuvo la impresora. Si en $t_A=2.5$ y $t_B=3$ damos la
-ejecución a $A$ por 0.5 unidades, llegaremos al punto en que solicita
-la impresora ($t_A=3$), y no tendremos más remedio que ejecutar $B$;
-al avanzar $B$ 0.5 unidades requerirá al scanner, y se habrá
-desencadenado el bloqueo mutuo. Caso correspondiente, claro está, si
-desde nuestro punto de inicio ejecutáramos primero $B$ y luego $A$.
+scanner y $B$ obtuvo la impresora. Si en $t_A=2.5$ y $t_B=3$ se cede
+la ejecución a $A$ por 0.5 unidades, se llegará al punto en que
+solicita la impresora ($t_A=3$), y no habrá más remedio que ejecutar
+$B$; al avanzar $B$ 0.5 unidades requerirá al scanner, y se habrá
+desencadenado el bloqueo mutuo. Un caso análogo ocurre, claro
+está, si desde el punto de inicio se ejecutara primero $B$ y luego
+$A$.
 
 Dadas las anteriores condiciones, y conociendo estos patrones de uso,
 el sistema operativo evitará entrar en el área de bloqueo inminente:
-El sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
+tl sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
 T_A \le 6$, y mantendrá a $A$ en espera si $t_A \e 2$ si $2 \le t_B
 \le 6$.
 
 La región marcada como /inalcanzable/ en color amarillo, no representa
-ningún peligro: Sólo indica aquellos estados en que resulta imposible
+ningún peligro: sólo indica aquellos estados en que resulta imposible
 entrar. Incluso una vez evadido el bloqueo (por ejemplo, si $B$ fue
 suspendido en $t_B = 1.8$ y $A$ avanza hasta pasar $t_A = 7$, si el
 sistema operativo vuelve a dar la ejecución a $B$, este sólo podrá
@@ -2365,11 +2365,11 @@ siga avanzando.
 
 Este mecanismo proveería una mejor respuesta que los vistos en el
 apartado de /prevención de bloqueos/, pero es todavía más dificil de
-aplicar en situaciones reales. Para que pudiéramos implementar un
-sistema con evasión de bloqueos, tendría que ser posible hacer un
-análisis estático previo del código a ejecutar, y tener un listado
-total de recursos estático. Estos mecanismos podrían ser efectivos en
-sistemas de uso especializado, pero no en sistemas operativos (o
+aplicar en situaciones reales. Para poder implementar un sistema con
+evasión de bloqueos, tendría que ser posible hacer un análisis
+estático previo del código a ejecutar, y tener un listado total de
+recursos estático. Estos mecanismos podrían ser efectivos en sistemas
+de uso especializado, pero no en sistemas operativos (o
 planificadores) genéricos.
 
 *** Algoritmo del banquero
@@ -2387,14 +2387,15 @@ banco). Este algoritmo permite que el conjunto de recursos solicitado
 por los procesos en ejecución en el sistema sea mayor a los recursos
 físicamente disponibles sin poner en riesgo la operación correcta del
 sistema.
+# Ojo: la ultima oracion no está clara
 
 Este algoritmo debe ejecutarse cada vez que un proceso solicita
 recursos; el sistema evita caer en situaciones conducentes a un
 bloqueo mutuo ya sea denegando o posponiendo la solicitud. El
 requisito particular es que, al iniciar, cada proceso debe /anunciar
-su reclamo máximo/ (llamémosle =claim()=) al sistema el número máximo
+su reclamo máximo/ (llamémosle =claim()=) al sistema: el número máximo
 de recursos de cada tipo que va a emplear a lo largo de su ejecución —
-Esto sería implementado como una llamada al sistema. Una vez que un
+esto sería implementado como una llamada al sistema. Una vez que un
 proceso presentó su reclamo máximo de recursos, cualquier llamada
 subsecuente a =claim()= falla. Claro está, si el proceso anuncia una
 necesidad mayor al número existente de recursos de algún tipo, también
@@ -2402,12 +2403,12 @@ falla dado que el sistema no será capaz de cumplirlo.
 
 Para el algoritmo del banquero:
 
-- Estado :: Matrices de recursos disponibles, reclamos máximos y
-            asignación de recursos a los procesos en un momento dado
-- Estado seguro :: Un estado en el cual todos los procesos pueden
+- Estado :: matrices de recursos disponibles, reclamos máximos y
+            asignación de recursos a los procesos en un momento dado.
+- Estado seguro :: un estado en el cual todos los procesos pueden
                    ejecutar hasta el final sin encontrar un bloqueo
                    mutuo.
-- Estado inseguro :: Todo estado que no garantice que todos los
+- Estado inseguro :: todo estado que no garantice que todos los
      procesos puedan ejecutar hasta el final sin encontrar un bloqueo
      mutuo.
 
@@ -2417,35 +2418,35 @@ cada una de las categorías.
 
 El estado está compuesto, por clase de recursos y por proceso, por:
 
-- Reclamado :: Número de instancias de este recurso que han sido
-               reclamadas
-- Asignado :: Número de instancias de este recurso actualmente
-              asignadas a procesos en ejecución
-- Solicitado :: Número de instancias de este recurso actualmente
+- Reclamado :: número de instancias de este recurso que han sido
+               reclamadas.
+- Asignado :: número de instancias de este recurso actualmente
+              asignadas a procesos en ejecución.
+- Solicitado :: número de instancias de este recurso actualmente
                 pendientes de asignar (solicitudes hechas y no
-                cumplidas)
+                cumplidas).
 
 Además de esto, el sistema mantiene globalmente, por clase de
 recursos:
 
-- Disponibles :: Número total de instancias de este recurso
-                 disponibles al sistema
+- Disponibles :: número total de instancias de este recurso
+                 disponibles al sistema.
 
-- Libres :: Número de instancias de este recurso que no están
-            actualmente asignadas a ningún proceso
+- Libres :: número de instancias de este recurso que no están
+            actualmente asignadas a ningún proceso.
 
 Cada vez que un proceso solicita recursos, se calcula cuál sería el
 estado resultante de /otorgar/ dicha solicitud, y se otorga siempre
 que:
 
-- No haya reclamo por más recursos que los disponibles
+- No haya reclamo por más recursos que los disponibles.
 
 - Ningún proceso solicite (o tenga asignados) recursos por encima de
-  su reclamo
+  su reclamo.
 
 - La suma de los recursos /asignados/ por cada categoría no sea mayor
   a la cantidad de recursos /disponibles/ en el sistema para dicha
-  categoría
+  categoría.
 
 Formalmente, y volviendo a la definición de un estado seguro: un
 estado /es seguro/ cuando hay una secuencia de procesos (denominada
@@ -2463,11 +2464,12 @@ estado /es seguro/ cuando hay una secuencia de procesos (denominada
 3. El /i/-ésimo proceso puede terminar si todos los procesos
    anteriores terminan y liberan sus recursos.
 
-En el peor de los casos, esta secuencia segura nos llevaría a bloquear
+En el peor de los casos, esta secuencia segura llevaría a bloquear
 todas las solicitudes excepto las del proceso único en el órden
 presentado.
+# no me queda claro a que se refiere con proceso único
 
-Simplificando para ejemplificar, asumiendo sólo una clase de
+Se presnta un ejemplo simplificando, asumiendo sólo una clase de
 procesos, e iniciando con 2 instancias libres:
 
 | Proceso | Asignado | Reclamando |
@@ -2479,8 +2481,8 @@ procesos, e iniciando con 2 instancias libres:
 /A/ puede terminar porque sólo requiere de 2 instancias adicionales
 para llegar a las 6 que indica en su reclamo. Una vez que termine,
 liberará sus 6 instancias. Se le asignan entonces las 5 que solicita a
-/C/, para llegar a 7. Al terminar éste, tendremos 8 disponibles, y
-asignándole 7 a /B/ garantizamos poder terminar. La secuencia (/A/,
+/C/, para llegar a 7. Al terminar éste, habrá 8 disponibles, y
+asignándole 7 a /B/ se garantiza poder terminar. La secuencia (/A/,
 /C/, /B/) es una secuencia segura.
 
 Sin embargo, el siguiente estado es inseguro (asumiendo también dos
@@ -2492,13 +2494,14 @@ instancias libres):
 | /B/     | 4        | 11        |
 | /C/     | 2        | 9         |
 
-/A/ puede terminar, pero no podemos asegurar que /B/ o /C/ puedan
-hacerlo, porque incluso una vez terminando /A/, tendríamos sólo 6
+/A/ puede terminar, pero no se puede asegurar que /B/ o /C/ puedan
+hacerlo, porque incluso una vez terminando /A/, se tendrían sólo 6
 instancias no asignadas.
 
 Es necesario apuntar que no hay /garantía/ de que continuar a partir
 de este estado lleve a un bloqueo mutuo, dado que /B/ o /C/ pueden no
 incrementar ya su utilización hasta cubrir su reclamo.
+# no me queda claro "ya su utilizacion"
 
 El algoritmo del banquero, en el peor caso, puede tomar $O(n!)$,
 aunque típicamente ejecuta en $O(n^2)$. Una implementación de este
@@ -2518,21 +2521,20 @@ puts "La secuencia segura encontrada es: %s" % s
 #+end_src
 
 Hay refinamientos sobre este algoritmo que logran resultados
-similares, reduciendo su costo de ejecución (recordemos que es un
-procedimiento que puede ser llamado con muy alta frecuencia), como el
-desarrollado por Habermann (ref: Finkel, p.136).
+similares, reduciendo su costo de ejecución (se debe recordar que es
+un procedimiento que puede ser llamado con muy alta frecuencia), como
+el desarrollado por Habermann (ref: Finkel, p.136).
 
 El algoritmo del banquero es un algoritmo conservador, dado que evita
 entrar en un estado inseguro a pesar de que dicho estado no lleve con
 certeza a un bloqueo mutuo. Sin embargo, su política es la más liberal
-que nos permite estar seguros de que no caeremos en bloqueos mutuos
-sin conocer el /órden y tiempo/ en que cada uno de los procesos
-requeriría los recursos que solicita.
+que permite asegurar que no se caerá en bloqueos mutuos, sin conocer el
+/órden y tiempo/ en que cada uno de los procesos requeriría los
+recursos.
 
 Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
 es que requieren saber por anticipado los reclamos máximos de cada
-proceso, lo cual puede no ser sabido en el momento de su ejecución.
-
+proceso, lo cual puede no ser conocido en el momento de su ejecución.
 
 ** Detección y recuperación de bloqueos
 # <<PROC_det_y_rec_bloq>>
@@ -2545,12 +2547,12 @@ detectarlas una vez que ya ocurrieron y limitar su impacto.
 
 Manteniendo una lista de recursos asignados y solicitados, el sistema
 operativo puede saber cuando un conjunto de procesos están esperándose
-mutuamente en una solicitud por recursos — Al analizar estas tablas
-como grafos dirigidos, representamos:
+mutuamente en una solicitud por recursos — al analizar estas tablas
+como grafos dirigidos, se representará:
 
-- Los procesos, con cuadrados
+- Los procesos, con cuadrados.
 
-- Los recursos, con círculos
+- Los recursos, con círculos.
 
   - Puede representarse como un círculo grande a una /clase/ o
     /categoría/ de recursos, y como círculos pequeños dentro de éste a
@@ -2563,10 +2565,10 @@ como grafos dirigidos, representamos:
 - Las flechas que van de un proceso a un recurso indican que el
   proceso /solicita/ el recurso
 
-Cabe mencionar en este momento que, cuando consideramos categorías de
+Cabe mencionar en este momento que, cuando se consideran categorías de
 recursos, el tener la representación visual de un ciclo no implica
-que haya ocurrido un bloqueo — Este sólo se presentaría cuando todos
-los procesos involucrados estuvieran en espera mutua.
+que haya ocurrido un bloqueo — este sólo se presenta cuando todos
+los procesos involucrados están en espera mutua.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=373
@@ -2574,14 +2576,15 @@ los procesos involucrados estuvieran en espera mutua.
 #+caption: Al emplear categorías de recursos, un ciclo /no necesariamente/ indica un bloqueo
 [[./img/ciclo_no_bloqueo.png]]
 
-En la figura \ref{PROC_ciclo_no_bloqueo}, si bien $P_1$ y $P_2$ están esperando que se
-liberen recursos de tipo $R_1$ y $R_2$, $P_3$ y $P_4$ siguen operando
-normalmente, y es esperable que lleguen a liberar el recurso por el
-cual están esperando. En el caso ilustrado, dado que el bloqueo se
-presenta únicamente al ser imposible que un proceso /libere/ recursos
-que /ya le fueron asignados/, tendría que presentarse un caso donde
-todos los recursos de una misma categoría estuvieran involucrados en
-una situación de espera circular, como la ilustrada a continuación.
+En la figura \ref{PROC_ciclo_no_bloqueo}, si bien $P_1$ y $P_2$ están
+esperando que se liberen recursos de tipo $R_1$ y $R_2$, $P_3$ y $P_4$
+siguen operando normalmente, y es esperable que lleguen a liberar el
+recurso por el cual están esperando. En el caso ilustrado, dado que el
+bloqueo se presenta únicamente al ser imposible que un proceso
+/libere/ recursos que /ya le fueron asignados/, tendría que
+presentarse un caso donde todos los recursos de una misma categoría
+estuvieran involucrados en una situación de espera circular, como la
+ilustrada a continuación.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=267
@@ -2589,21 +2592,21 @@ una situación de espera circular, como la ilustrada a continuación.
 #+caption: Situación en que se presenta espera circular, incluso empleando categorías de recursos
 [[./img/bloqueo_con_categorias.png]]
 
-Si tenemos una representación completa de los procesos y recursos en
+Si se tiene una representación completa de los procesos y recursos en
 el sistema, la estrategia es /reducir/ la gráfica retirando los
 elementos que no brinden información imprescindible, siguiendo la
-siguiente lógica (recordemos que representan una fotografía del
+siguiente lógica (recordar que representan una fotografía del
 sistema /en un momento dado/):
 
-- Retiramos los procesos que no están solicitando ni tienen asignado
+- Se retiran los procesos que no están solicitando ni tienen asignado
   ningún recurso.
 
 - Para todos los procesos restantes: si todos los recursos que están
   solicitando /pueden ser concedidos/ (esto es, no están actualmente
-  asignados a otro), reducimos eliminando del grafo al proceso y a
+  asignados a otro), se reduce eliminando del grafo al proceso y a
   todas las flechas relacionadas con éste.
 
-- Si después de esta reducción eliminamos a todos los procesos del
+- Si después de esta reducción se eliminan todos los procesos del
   grafo, entonces no hay interbloqueos y podemos continuar. En caso de
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
@@ -2613,15 +2616,15 @@ sistema /en un momento dado/):
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
 [[./img/dot/deteccion_bloqueos.png]]
 
-De la gráfica /Detección de ciclos denotando bloqueos/, podríamos proceder:
+En la gráfica /Detección de ciclos denotando bloqueos/, se procede así:
 
-- Reducimos por /B/, dado que actualmente no está esperando a ningún
-  recurso
+- Se reduce por /B/, dado que actualmente no está esperando a ningún
+  recurso.
 
-- Reducimos por /A/ y /F/, dado que los recursos por los cuales están
-  esperando quedarían libres en ausencia de /B/
+- Se reduce por /A/ y /F/, dado que los recursos por los cuales están
+  esperando quedan libres en ausencia de /B/.
 
-Y quedamos con un interbloqueo entre /C/, /D/ y /E/, en torno a los
+Y queda un interbloqueo entre /C/, /D/ y /E/, en torno a los
 recursos /4/, /5/ y /7/.
 
 #+attr_html: height="350"

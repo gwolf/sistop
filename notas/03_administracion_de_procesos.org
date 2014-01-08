@@ -1,4 +1,4 @@
-9#+SETUPFILE: ../setup_notas.org
+#+SETUPFILE: ../setup_notas.org
 #+TITLE: Administración de procesos
 
 ## Revisa plática: Rob Pike: "Concurrency is not parallelism"
@@ -312,7 +312,7 @@ son aun objeto de debate e investigación.
 
 Un gran jardín ornamental se abre al público para que todos puedan
 apreciar sus fantásticas rosas, arbustos y plantas acuáticas. Por
-supuesto, se cobra una módica suma de dinera a la entrada para lo cual
+supuesto, se cobra una módica suma de dinero a la entrada para lo cual
 se colocan dos torniquetes, uno en cada una de sus entradas. Se desea
 conocer cuánta gente ha ingresado al jardín así que se instala una
 computadora conectada a ambos torniquetes: cada torniquete envía una
@@ -327,32 +327,32 @@ visitante ni qué torniquete utilizará.
 Se simulará un experimento en el que 20 visitantes ingresan por cada
 torniquete. Al final de la simulación deberá haber 40 visitantes
 contados. Una implementación tentativa podría ser la
-siguiente[fn:: Se utiliza una versión
+siguiente:[fn:: Se utiliza una versión
 ficticia del lenguaje C para el ejemplo, evitando entrar en los
-detalles de sintáxis de un lenguaje concurrente.]:
+detalles de sintáxis de un lenguaje concurrente.]
 
 #incluir esquema del jardín ornamental
 #+begin_src C
 proceso torniquete1() {
 	int i;
 	for(i=0;i<20;i++) {
-		cuenta=cuenta+1;
+		cuenta = cuenta + 1;
 	}
 }
 
 proceso torniquete2() {
 	int i;
 	for(i=0;i<20;i++) {
-		cuenta=cuenta+1;
+		cuenta = cuenta + 1;
 	}
 }
 
 main() {
-	cuenta=0;
-	//lanzar ambos procesos
+	cuenta = 0;
+	/* Lanzar ambos procesos */
         torniquete1();
         torniquete2();
-        //esperar a que ambos finalicen
+        /* Esperar a que ambos finalicen */
         esperar(torniquete1);
         esperar(torniquete2);
 	printf("Cuenta: %d\n", cuenta);
@@ -362,24 +362,19 @@ main() {
 Como se ve el problema es muy sencillo. Sin embargo, al
 intentar ejecutar repetidas veces ese programa muy de vez en cuando el
 resultado no tiene el valor 40. Si se modifica el programa para
-utilizar un solo torniquete, /Cuenta/ siempre tiene el valor correcto
+utilizar un solo torniquete, =cuenta= siempre tiene el valor correcto
 (20).
 
 ¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
 programación convierten cada instrucción en una serie más o menos
 larga de operaciones de máquina (instrucciones assembler). De modo,
-que una instrucción aparentemente simple como:
-
-#+begin_src C
-cuenta=cuenta+1
-#+end_src 
-
+que una instrucción aparentemente simple como =cuenta = cuenta + 1=
 habitualmente implica varias operaciones de más bajo nivel:
 
-- /LEER/: Leer Cuenta desde la memoria (p. ej. /mov $cuenta, %rax/). 
-- /INC/: Incrementar el registro (p. ej. /add $1, %rax/).
-- /GUARDAR/: Guardar el resultado nuevamente en memoria (p. ej. /mov
-  %rax, $cuenta/).
+- =LEER= :: Leer =cuenta= desde la memoria (p. ej. =mov $cuenta, %rax=). 
+- =INC= :: Incrementar el registro (p. ej. =add $1, %rax=).
+- =GUARDAR= :: Guardar el resultado nuevamente en memoria (p. ej. =mov
+	       %rax, $cuenta=).
 
 En un sistema operativo multitarea cuando un proceso agota su porción
 de tiempo de procesador (quantum) o detiene su ejecución por otra
@@ -392,20 +387,20 @@ en los registros. Sin embargo, se supone que el resto de la memoria es
 compartida (en particular, se utiliza ese hecho para llevar la cuenta
 de personas que ingresan).
 
-Si se considera lo que ocurre cuando dos procesos (p. ej. /torniquete1/
-y /torniquete2/) ejecutan la instrucción =Cuenta=Cuenta+1= en un equipo con un
+Si se considera lo que ocurre cuando dos procesos (p. ej. =torniquete1=
+y =torniquete2=) ejecutan la instrucción =cuenta = cuenta + 1= en un equipo con un
 solo procesador, puede darse la siguiente secuencia de eventos. Se
-considera que =Cuenta= está inicialmente en =0=.
+considera que =cuenta= está inicialmente en =0=.
 
-- =Cuenta=0=
-- /torniquete1/: =LEER= (resultado: /rax de p1=0, Cuenta=0/)
-- /torniquete1/: =INC= (resultado: /rax de p1=1, Cuenta=0/) 
-- /torniquete1/: =GUARDAR= (resultado: /rax de p1=1, Cuenta=1/) 
-- El sistema operativo decide cambiar de tarea, suspende torniquete1 y
-continúa con torniquete2.
-- /torniquete2/: =LEER= (resultado: /rax de p2=1, Cuenta=1/) 
-- /torniquete2/: =INC= (resultado: /rax de p2=2, Cuenta=1/)
-- /torniquete2/: =GUARDAR= (resultado: /rax de p2=2, Cuenta=2/)
+1. =cuenta = 0=
+2. =torniquete1=: =LEER= (resultado: =rax= de $p_1$ = 0, =cuenta = 0=)
+3. =torniquete1=: =INC= (resultado: =rax= de $p_1$ = 1, =cuenta = 0=) 
+4. =torniquete1=: =GUARDAR= (resultado: =rax= de $p_1$ = 1, =cuenta = 1=) 
+5. El sistema operativo decide cambiar de tarea, suspende =torniquete1= y
+   continúa con =torniquete2=.
+6. =torniquete2=: =LEER= (resultado: =rax= de $p_2$ = 1, =cuenta = 1=) 
+7. =torniquete2=: =INC= (resultado: =rax= de $p_2$ = 2, =cuenta = 1=)
+8. =torniquete2=: =GUARDAR= (resultado: =rax= de $p_2$ = 2, =cuenta = 2=)
 
 Se puede ver que ambos procesos realizaron sus instrucciones para
 incrementar el contador en 1 y el resultado final fue que la cuenta se
@@ -414,20 +409,20 @@ incrementó en dos unidades.
 Pero, también puede darse la siguiente secuencia de eventos durante la
 ejecución de esas dos instrucciones:
 
-- /Cuenta=0/
-- /torniquete1/: LEER 		(resultado: /rax de p1=0, Cuenta=0/) 
-- /torniquete1/: INC 		(resultado: /rax de p1=1, Cuenta=0/)
-- El sistema operativo decide cambiar de tarea, suspende torniquete1 y
-continúa con /torniquete2/.
-- /torniquete2/: LEER 		(resultado: /rax de p2=1, Cuenta=1/)
-- /torniquete2/: INC 		(resultado: /rax de p2=2, Cuenta=1/)
-- /torniquete2/: GUARDAR 		(resultado: /rax de p2=2, Cuenta=2/)
-- El sistema operativo decide cambiar de tarea, suspende /torniquete2/
-  y continua con /torniquete1/.
-- /torniquete1/: GUARDAR 		(resultado: /rax de p1=1, Cuenta=1/)
+1. =cuenta = 0=
+2. =torniquete1=: =LEER= 		(resultado: =rax= de $p_1$ = 0, =cuenta = 0=) 
+3. =torniquete1=: =INC= 		(resultado: =rax= de $p_1$ = 1, =cuenta = 0=)
+4. El sistema operativo decide cambiar de tarea, suspende =torniquete1= y
+   continúa con =torniquete2=.
+5. =torniquete2=: =LEER= 		(resultado: =rax= de $p_2$ = 1, =cuenta = 1=)
+6. =torniquete2=: =INC= 		(resultado: =rax= de $p_2$ = 2, =cuenta = 1=)
+7. =torniquete2=: =GUARDAR= 		(resultado: =rax= de $p_2$ = 2, =cuenta = 2=)
+8. El sistema operativo decide cambiar de tarea, suspende =torniquete2=
+   y continua con =torniquete1=.
+9. =torniquete1=: =GUARDAR= 		(resultado: =rax= de $p_1$ = 1, =cuenta = 1=)
 
 Nuevamente ambos procesos ejecutaron sus instrucciones para
-incrementar en 1 el contador. Sin embargo, ¡en este caso la /Cuenta/
+incrementar en 1 el contador. Sin embargo, ¡en este caso =cuenta=
 tiene el valor 1!. A este problema también se lo conoce como /problema
 de las actualizaciones múltiples/.
 
@@ -461,16 +456,20 @@ operador muestra los asientos disponibles hasta que el cliente elige
 el asiento) haciendo mucho más probable que ocurra una secuencia no
 deseada.
 
-/¿Vale la pena preocuparse?/ A modo de ilustración de la gravedad del
+**** ¿Vale la pena preocuparse?
+
+A modo de ilustración de la gravedad del
 problema, estos son algunos valores para el resultado final de la
-variable Cuenta cuando se ejecuta el programa anterior en
+variable =cuenta= cuando se ejecuta el programa anterior en
 Pascal-FC[fn:: http://www-users.cs.york.ac.uk/burns/pf.html]:
 25 29 31 20 21 26 27 18 31 35. Notesé que incluso uno de los valores
 es menor que /20/ (que es lo mínimo que cuenta cada torniquete). Es un
 ejercicio interesante pensar qué secuencia de eventos podría producir
 tal valor y cuál es el mínimo valor posible.
 
-/Pero yo tengo muchos núcleos/ Otra cuestión que puede parecer
+**** Pero yo tengo muchos núcleos
+
+Otra cuestión que puede parecer
 artificiosa es que en el ejemplo hay un solo procesador o núcleo. Sin
 embargo, tener más de un procesador no sólo no soluciona el problema
 sino que lo empeora: ahora las operaciones de lectura o escritura
@@ -513,13 +512,14 @@ procesos. El sistema no debe permitir la ejecución de parte de esa
 área en dos procesos de forma simultánea (sólo puede haber un proceso
 en la sección crítica en un momento dado).
 
-/¿Y qué tiene que ver esto con el problema del Jardín Ornamental?/ En
-el problema hay claramente un /recurso compartido/ que es la /Cuenta/, así la
+**** ¿Y qué tiene que ver esto con el problema del Jardín Ornamental?
+
+En el problema hay claramente un /recurso compartido/ que es la =cuenta=, así la
 sección que modifica la cuenta es una /sección crítica/ y la operación
-/Cuenta=Cuenta+1/ debe ser una /operación atómica/. La secuencia de eventos que
+=cuenta = cuenta + 1= debe ser una /operación atómica/. La secuencia de eventos que
 se mostró es una /condición de carrera/: el segundo torniquete presume
-un estado (/Cuenta=0/) que no es el mismo que conoce el /torniquete1/
-(/Cuenta=1/).
+un estado (=cuenta = 0=) que no es el mismo que conoce el =torniquete1=
+(=cuenta = 1=).
 
 *** Soluciones posibles (y no tanto)
 **** Intento 1: No utilizar multitarea
@@ -537,9 +537,9 @@ multitarea durante la ejecución de la sección crítica. Así, un
 torniquete deberá hacer:
 
 #+begin_src C
-disable #suspender temporariamente las interrupciones
-Cuenta=Cuenta+1
-enable #habilitar nuevamente las interrupciones
+disable # Suspender temporariamente las interrupciones
+cuenta = cuenta + 1
+enable # Habilitar nuevamente las interrupciones
 #+end_src C
 
 Durante el lapso en el que las interrupciones están suspendidas no
@@ -571,29 +571,30 @@ Utilizar una bandera parece ser una solución muy sencilla: mediante
 una variable de bandera se indica si hay un proceso en la región crítica:
 
 #+begin_src C
-int bandera=0; // 0 => región crítica libre, 1 => ocupada
-int Cuenta=0; 
+int bandera = 0; /* 0 => región crítica libre, 1 => ocupada */
+int cuenta = 0; 
 ...
 
-//torniquete1
+/* Torniquete1 */
 ...
 if (flag) wait;
-//aqui flag=0
-flag=1; //comienzo de la sección crítica
-Cuenta=Cuenta+1;
-flag=0; //fin de la sección crítica
+/* Aqui flag=0 */
+flag = 1; /* Comienzo de la sección crítica */
+cuenta = cuenta + 1;
+flag = 0; /* Fin de la sección crítica */
 #+end_src C
 
 Sin embargo esto no funciona, ahora puede darse la siguiente secuencia
 de eventos:
-- bandera==0;
-- torniquete2: if (bandera) wait;
-- Nuevo cambio de contexto
-- torniquete1: if (bandera) wait;
-- torniquete1: bandera=1;
-- torniquete2: bandera=1; 
-- torniquete2: Cuenta=Cuenta+1;
-- torniquete1: Cuenta=Cuenta+1; //Ups, no se respetó la región crítica
+
+1. =bandera==0;=
+2. =torniquete2=: =if (bandera) wait;=
+3. Nuevo cambio de contexto
+4. =torniquete1=: =if (bandera) wait;=
+5. =torniquete1=: =bandera = 1;=
+6. =torniquete2=: =bandera = 1;=
+7. =torniquete2=: =cuenta = cuenta + 1;=
+8. =torniquete1=: =cuenta = cuenta + 1; /* Ups, no se respetó la región crítica */=
 
 Notar que el problema aquí es que la bandera también es un recurso
 compartido: lo único que ha cambiado es que ahora la sección crítica
@@ -602,7 +603,7 @@ garantizar que la secuencia de operaciones
 
 #+begin_src C
 if (bandera) wait;
-bandera=1
+bandera = 1
 #+end_src C
 
 se realice atómicamente. 
@@ -610,17 +611,17 @@ se realice atómicamente.
 **** Intento 4: Manejar la bandera con instrucciones atómicas
 Algunas arquitecturas de computadoras permiten realizar determinadas
 operaciones sencillas (como actualizar una bandera) de forma atómica
-(p. ej.: VAX tiene la instrucción test\_and\_set y el i386 tiene la
-instrucción INC.
+(p. ej.: VAX tiene la instrucción =test_and_set= y el i386 tiene la
+instrucción =INC=.
 
 Usando esto, la solución es:
 
 #+begin_src C
-int bandera; // 0 => desocupada
+int bandera; /* 0 => desocupada */
 
-while(++bandera!=1) bandera--; //debe generar "INC"
-//Sección crítica
-Cuenta=Cuenta+1;
+while(++bandera != 1) bandera--; /* Debe generar "INC" */
+/* Sección crítica */
+cuenta = cuenta + 1;
 
 bandera--;
 #+end_src C
@@ -654,29 +655,29 @@ Una alternativa para evitar el problema de la actualización múltiple a
 una bandera es utilizar turnos
 
 #+begin_src C
-int turno=1; //inicialmente el turno es del proceso 1
+int turno = 1; /* Inicialmente el turno es del proceso 1 */
 #+end_src C
 Ahora el código del proceso 1 contendría algo como: 
 
 #+begin_src C
-while(turno!=1) esperar(); //otro proceso?
-//Sección crítica
-Cuenta=Cuenta+1;
-turno=2;
+while(turno != 1) esperar(); /* Otro proceso? */
+/* Sección crítica */
+cuenta = cuenta + 1;
+turno = 2;
 #+end_src C
 
 Y el del proceso dos:
 
 #+begin_src C
-while(turno!=2) esperar();
-//Sección crítica
-Cuenta=Cuenta+1;
-turno=1;
+while(turno != 2) esperar();
+/* Sección crítica */
+cuenta = cuenta + 1;
+turno = 1;
 #+end_src C
 
 Esto garantiza que no hay dos procesos en sección crítica. Pero nótese
 que hacer esto equivale a tener un solo torniquete: sólo podrá haber
-una persona ingresando a la vez ... o incluso peor, las personas
+una persona ingresando a la vez... o incluso peor, las personas
 deberán utilizar alternativamente los torniquetes. Así que si bien
 esto soluciona el problema de la actualización múltiple en realidad es
 una solución muy restrictiva: un proceso que no está en la sección
@@ -684,7 +685,7 @@ crítica puede obligar a que otro proceso espere mucho tiempo para
 ingresar a la sección crítica. De aquí en más buscaremos soluciones en
 las que no ocurra esto.
 
-**** Intento 6: Indicar la intención de entrar a la sección crítica.
+**** Intento 6: Indicar la intención de entrar a la sección crítica
 
 Para paliar los efectos de la solución anterior se puede intentar
 indicar si el otro proceso también está queriendo entrar en la sección
@@ -693,21 +694,21 @@ crítica. El código sería:
 #+begin_src C
 int b1, b2;
 ...
-//Proceso 1:
+/* Proceso 1: */
 ...
-b1=1;
+b1 = 1;
 if (b2) esperar();
-//sección crítica
-Cuenta=Cuenta+1;
-b1=0;
+/* Sección crítica */
+cuenta = cuenta + 1;
+b1 = 0;
 ...
-//Proceso 2:
+/* Proceso 2: */
 ...
-b2=1;
+b2 = 1;
 if (b1) esperar();
-//sección crítica
-Cuenta=Cuenta+1;
-b2=0;
+/* Sección crítica */
+cuenta = cuenta + 1;
+b2 = 0;
 ...
 #+end_src C
 
@@ -735,22 +736,22 @@ entonces lo deja pasar:
 int b2, b2;
 int quien;
 
-//Proceso 1:
+/* Proceso 1: */
 ...
 b1=1;
 quien=2;
 if ( b2 && (quien==2)) esperar();
-//Sección crítica
-Cuenta=Cuenta+1;
+/* Sección crítica */
+cuenta = cuenta + 1;
 b1=0;
 
-//Proceso 2:
+/* Proceso 2: */
 ...
 b2=1;
 quien=1;
 if ( b1 && quien==1) esperar();
-//Sección crítica
-Cuenta=Cuenta+1;
+/* Sección crítica */
+cuenta = cuenta + 1;
 b1=0;
 #+end_src C
 

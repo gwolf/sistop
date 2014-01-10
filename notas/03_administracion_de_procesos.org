@@ -1235,9 +1235,8 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
-
-*** Problema productor-consumidor
-**** Planteo
+** Problema productor-consumidor
+*** Planteo
 En un entorno multihilos es común que haya una división de tareas tipo
 /línea de ensamblado/, que se puede generalizar a que un grupo de
 hilos van /produciendo/ ciertas estructuras, a ser /consumidas/ por
@@ -1288,7 +1287,7 @@ requisitos, como:
   =evento= no requiere de protección, dado que es una variable local a
   cada hilo.
 
-**** Solución
+*** Solución
   Para resolver este problema se usarán dos semáforos: =mutex=, que
   protege el acceso a la sección crítica, y =elementos=. El valor
   almacenado en =elementos= indica, cuando es positivo, cuántos
@@ -1365,78 +1364,7 @@ requisitos, como:
   mismo hilo el que adquiere un semáforo y el que lo libera (esto es,
   los semáforos no siempre son empleados como mutexes).
 
-- Problema lectores-escritores :: Una estructura de datos puede ser
-     accedida simultáneamente por muchos procesos /lectores/, pero si
-     algún proceso está escribiendo, se debe evitar que cualquier otro
-     lea (dado que podría encontrarse con los datos en un estado
-     inconsistente). Los requisitos de sincronización son
-
-     - Cualquier cantidad de lectores puede estar leyendo al mismo
-       tiempo.
-     - Los escritores deben tener acceso exclusivo a la sección
-       crítica.
-     - Como refinamiento al planteamiento: se debe evitar que un
-       influjo constante de procesos lectores dejen a un escritor en
-       situación de /inanición/.
-
-- La cena de los filósofos :: Cinco filósofos se dan cita para comer
-     arroz en una mesa redonda. En la mesa, cada uno de ellos se
-     sienta frente a un plato. A su derecha, tiene un palito chino, y
-     a su izquierda tiene otro.
-
-     Los filósofos sólo saben =pensar()= y =comer()=. Cada uno de
-     ellos va a =pensar()= un tiempo arbitrario, hasta que le da
-     hambre. El hambre es mala consejera, por lo que intenta
-     =comer()=. Los requisitos son:
-
-     - Sólo un filósofo puede sostener determinado palito a la vez.
-
-     - Debe ser imposible que un filósofo muera de inanición estando a
-       la espera de un palito.
-
-     - Debe ser imposible que se presente un bloqueo mutuo.
-
-     - Debe ser posible que más de un filósofo pueda comer al mismo
-       tiempo.
-
-- Los fumadores compulsivos :: Hay tres fumadores empedernidos y un
-     /agente/ que, de tiempo en tiempo, consigue ciertos insumos. Los
-     ingredientes necesarios para fumar son tabaco, papel y
-     cerillos. Cada uno de los fumadores tiene una cantidad infinita
-     de alguno de los ingredientes, pero no les gusta
-     compartir. Afortunadamente, del mismo modo que no comparten, no
-     son acaparadores[fn:: Esto es, no buscan obtener y conservar los
-     recursos /preventivamente/, sino que los toman sólo cuando
-     satisfacen /por completo/ sus necesidades.].
-
-     De tiempo en tiempo, el agente consigue una dosis de dos de los
-     ingredientes — Por ejemplo, si deja en la mesa un papel y tabaco,
-     el que trae los cerillos educadamente tomará los ingredientes, se
-     hará un cigarro, y lo fumará.
-
-     Suhas Patil (1971) planteó este problema buscando demostrar que
-     hay situaciones que no se pueden resolver con el uso de
-     semáforos. Las condiciones planteadas son
-
-     - No se puede  modificar el código del agente. Si el agente es un
-       sistema operativo, ¡tiene sentido la restricción de no tenerle
-       que notificar acerca de los flujos a cada uno de los programas
-       que ejecuta!
-
-     - El planteamiento original de Patil menciona que no debe
-       emplearse arreglos de semáforos o usar condicionales en el
-       flujo. Esta segunda restricción haría efectivamente irresoluble
-       al problema, por lo que podemos ignorarlo.
-
-
-Se recomienda el libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey
-(2008) para profundizar en este tema. En este libro, encontraremos
-muchos ejemplos que ilustran el uso de semáforos no sólo para resolver
-problemas de sincronización, sino como un mecanismo simple de
-comunicación entre procesos. También se desarrollan distintas
-soluciones para los problemas clásicos (y no tan clásicos).
-
-*** Bloqueos mutuos e inanición
+** Bloqueos mutuos e inanición
 
 Cuando hay concurrencia, además de asegurar la atomicidad de ciertas
 operaciones, se debe evitar dos problemas que son consecuencia natural
@@ -1462,7 +1390,22 @@ de recursos — Temática recurrente en el campo de los sistemas
 operativos.
 
 ** Problema lectores-escritores
-**** Planteo
+*** Planteo
+     Una estructura de datos puede ser accedida simultáneamente por
+     muchos procesos /lectores/, pero si algún proceso está
+     escribiendo, se debe evitar que cualquier otro lea (dado que
+     podría encontrarse con los datos en un estado inconsistente). Los
+     requisitos de sincronización son
+
+     - Cualquier cantidad de lectores puede estar leyendo al mismo
+       tiempo.
+     - Los escritores deben tener acceso exclusivo a la sección
+       crítica.
+     - Como refinamiento al planteamiento: se debe evitar que un
+       influjo constante de procesos lectores dejen a un escritor en
+       situación de /inanición/.
+
+*** Discusión
 
   Este problema puede ser generalizado como una /exclusión mutua
   categórica/: se debe separar el uso de un recurso según la categoría
@@ -1471,7 +1414,7 @@ operativos.
   que tienen distintas reglas — Para los escritores /sí/ hace falta
   una exclusión mutua completa.
 
-**** Primera aproximación
+*** Primera aproximación
   Un primer acercamiento a este problema nos permite una resolución
   libre de bloqueos mutuos, empleando sólo tres estructuras globales:
   un contador que indica cuántos lectores hay en la sección crítica,
@@ -1521,7 +1464,7 @@ operativos.
   lectores puede llevar a la inanición de un escritor, que está
   pacientemente parado esperando a que alguien apague la luz.
 
-**** Solución
+*** Solución
 
   Para evitar esta condición de inanición, podemos agregar un
   /torniquete/ evitando que lectores adicionales se /cuelen/ antes del
@@ -1571,7 +1514,28 @@ operativos.
   un torniquete, y para el escritor es un mutex.
 
 ** La cena de los filósofos
-**** Planteo
+*** Planteo
+     Cinco filósofos se dan cita para comer arroz en una mesa
+     redonda. En la mesa, cada uno de ellos se sienta frente a un
+     plato. A su derecha, tiene un palito chino, y a su izquierda
+     tiene otro.
+
+     Los filósofos sólo saben =pensar()= y =comer()=. Cada uno de
+     ellos va a =pensar()= un tiempo arbitrario, hasta que le da
+     hambre. El hambre es mala consejera, por lo que intenta
+     =comer()=. Los requisitos son:
+
+     - Sólo un filósofo puede sostener determinado palito a la vez.
+
+     - Debe ser imposible que un filósofo muera de inanición estando a
+       la espera de un palito.
+
+     - Debe ser imposible que se presente un bloqueo mutuo.
+
+     - Debe ser posible que más de un filósofo pueda comer al mismo
+       tiempo.
+
+*** Discusión
   En este caso, el peligro no es, como en el ejemplo anterior, que una
   estructura de datos sea sobreescrita por ser accedida por dos hilos
   al mismo tiempo, sino que se presenten situaciones en el curso normal de
@@ -1582,7 +1546,7 @@ operativos.
   cuándo despertar a uno de los hilos, sino como una herramienta de
   comunicación entre los propios hilos.
 
-**** Primer acercamiento
+*** Primer acercamiento
 
   Se puede representar a los palillos como un arreglo de semáforos,
   asegurando la exclusión mutua (esto es, sólo un filósofo puede
@@ -1626,7 +1590,7 @@ operativos.
   y el planificador dejara suspendidos a todos con el palillo derecho
   en la mano.
 
-**** Solución
+*** Solución
 
   Ahora, ¿qué pasa si se hace que algunos filósofos sean /zurdos/?
   Esto es, que levanten primero el palillo izquierdo y luego el
@@ -1669,7 +1633,45 @@ operativos.
   no haya /inanición/, sólo que no haya bloqueos mutuos.
 
 ** Los fumadores compulsivos
-**** Primer acercamiento
+*** Planteo
+Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
+     tiempo, consigue ciertos insumos. Los ingredientes necesarios
+     para fumar son tabaco, papel y cerillos. Cada uno de los
+     fumadores tiene una cantidad infinita de alguno de los
+     ingredientes, pero no les gusta compartir. Afortunadamente, del
+     mismo modo que no comparten, no son acaparadores[fn:: Esto es, no
+     buscan obtener y conservar los recursos /preventivamente/, sino
+     que los toman sólo cuando satisfacen /por completo/ sus
+     necesidades.].
+
+     De tiempo en tiempo, el agente consigue una dosis de dos de los
+     ingredientes — Por ejemplo, si deja en la mesa un papel y tabaco,
+     el que trae los cerillos educadamente tomará los ingredientes, se
+     hará un cigarro, y lo fumará.
+
+     Suhas Patil (1971) planteó este problema buscando demostrar que
+     hay situaciones que no se pueden resolver con el uso de
+     semáforos. Las condiciones planteadas son
+
+     - No se puede  modificar el código del agente. Si el agente es un
+       sistema operativo, ¡tiene sentido la restricción de no tenerle
+       que notificar acerca de los flujos a cada uno de los programas
+       que ejecuta!
+
+     - El planteamiento original de Patil menciona que no debe
+       emplearse arreglos de semáforos o usar condicionales en el
+       flujo. Esta segunda restricción haría efectivamente irresoluble
+       al problema, por lo que podemos ignorarlo.
+
+
+Se recomienda el libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey
+(2008) para profundizar en este tema. En este libro, encontraremos
+muchos ejemplos que ilustran el uso de semáforos no sólo para resolver
+problemas de sincronización, sino como un mecanismo simple de
+comunicación entre procesos. También se desarrollan distintas
+soluciones para los problemas clásicos (y no tan clásicos).
+
+*** Primer acercamiento
 
 Al haber tres distintos ingredientes, tiene sentido que se empleen tres
 distintos semáforos, para señalizar a los fumadores respecto a cada
@@ -1719,7 +1721,7 @@ el =fumador['cerillo']= el que reciba la primer señal o que
 hace falta, más que otra cosa, la buena suerte de que las señales sean
 recibidas por el proceso indicado.
 
-**** Solución
+*** Solución
 
 Una manera de evitar esta situación es la utilización de
 /intermediarios/ encargados de notificar al hilo adecuado. Partiendo

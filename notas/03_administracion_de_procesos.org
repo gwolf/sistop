@@ -14,26 +14,25 @@ Un programa es una /entidad pasiva/, una lista de instrucciones; un
 proceso es una /entidad activa/, que –empleando al programa– define la
 actuación que tendrá el sistema.
 
-En contraposición con /proceso/, hablaríamos de /tareas/ en un sistema
-por lotes. Una tarea requiere mucha menos información, típicamente
-bastaría con guardar información relacionada con la /contabilidad/ de
+En contraposición con /proceso/, en un sistema por lotes se habla de
+/tareas/. Una tarea requiere mucha menos estructura, típicamente
+bastar con guardar la información relacionada con la /contabilidad/ de
 los recursos empleados. Una tarea no es interrumpida en el transcurso
 de su ejecución. Ahora bien, esta distinción no es completamente
-objetiva — Y encontraremos muchos textos que emplean indistintamente
-una u otra nomenclatura.
+objetiva — y se pueden encontrar muchos textos que emplean
+indistintamente una u otra nomenclatura.
 
-Pero si bien el sistema nos da la /ilusión/ de que muchos procesos se
+Si bien el sistema brinda la /ilusión/ de que muchos procesos se
 están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
 está esperando para continuar su ejecución — en un momento
 determinado sólo puede estar ejecutando sus instrucciones un número 
 de procesos igual o menor al número de procesadores que tenga el sistema.
 
-En esta sección del curso nos ocuparemos de los conceptos relacionados
-con procesos, hilos, concurrencia y sincronización — Abordaremos las
-técnicas y algoritmos que emplea el sistema operativo para determinar
-cómo y en qué órden hacer los cambios de proceso que nos brindan la
-ilusión de simultaneidad en el capítulo \ref{PLAN} (/Planificación de
-procesos/).
+En esta parte se desarrollan los conceptos relacionados con procesos,
+hilos, concurrencia y sincronización — se abordarán en el capítulo
+\ref{PLAN} (/Planificación de procesos/) las técnicas y algoritmos que
+emplea el sistema operativo para determinar cómo y en qué orden hacer
+los cambios de proceso que nos brindan la ilusión de simultaneidad.
 
 ** Estados de un proceso
 # <<PROC_estados_de_un_proceso>>
@@ -86,14 +85,14 @@ uno de los procesos actuales se suele almacenar en una estructura llamada
 
 - Información de planificación (scheduling) :: La prioridad del
      proceso, la /cola/ en que está agendado, y demás información que
-     puede ayudar al sistema operativo a planificar los procesos;
-     profundizaremos en el tema en el capítulo \ref{PLAN}
-     (/Planificación de procesos/).
+     puede ayudar al sistema operativo a planificar los procesos; se
+     profundizará el tema en el capítulo \ref{PLAN} (/Planificación de
+     procesos/).
 
-- Información de administración de memoria :: La información de mapeo de
-     memoria (páginas o segmentos, dependiendo del sistema operativo),
-     incluyendo la pila (/stack/) de llamadas. Abordaremos el tema en
-     el capítulo \ref{MEM} (/Administración de memoria/).
+- Información de administración de memoria :: La información de mapeo
+     de memoria (páginas o segmentos, dependiendo del sistema
+     operativo), incluyendo la pila (/stack/) de llamadas. Se abordar
+     el tema en el capítulo \ref{MEM} (/Administración de memoria/).
 
 - Información de contabilidad :: Información de la utilización de
      recursos que ha tenido este proceso — Puede incluir el tiempo
@@ -107,13 +106,13 @@ uno de los procesos actuales se suele almacenar en una estructura llamada
 
 * Procesos e hilos
 
-Como vimos, la cantidad de información que el sistema operativo debe
+Como se vio, la cantidad de información que el sistema operativo debe
 manejar acerca de cada proceso es bastante significativa. Si cada vez
 que el /planificador/ elige qué proceso pasar de /Listo/ a /En
 ejecución/ debe considerar buena parte de dicha información, la simple
 transferencia de todo esto entre la memoria y el procesador podría
 llevar a un desperdicio /burocrático/[fn:: Entendiendo /burocrático/
-como el tiempo que se pierde en asuntos administrativos. Recordemos
+como el tiempo que se pierde en asuntos administrativos. Recordar
 que el tiempo que consume el sistema operativo en administración es
 tiempo perdido para el uso real, productivo del equipo.] de
 recursos. Una respuesta a esta problemática fue la de utilizar los
@@ -177,8 +176,8 @@ recursos más comparable con una situación de multiproceso estándar.
 ** Patrones de trabajo con hilos
 
 Hay tres patrones en los que caen generalmente los modelos de hilos;
-podemos emplear a más de uno de estos patrones en diferentes áreas de
-nuestra aplicación, e incluso podemos /anidarlos/ (esto es, podríamos
+se puede emplear más de uno de estos patrones en diferentes áreas de
+nuestra aplicación, e incluso se pueden /anidarl/ (esto es, se podría
 tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
 un /equipo de trabajo/):
 
@@ -261,15 +260,15 @@ un /equipo de trabajo/):
 * Concurrencia
 ** Introducción
 
-Desde un punto de vista formal, la /concurrencia/
-no se refiere a dos o más eventos que ocurren a la vez
-sino a dos o más eventos cuyo órden es /no determinista/, esto es,
-eventos acerca de los cuales /no podemos predecir el órden relativo en
-que ocurrirán/. Si bien dos procesos (o también dos hilos) completamente
-independientes entre sí ejecutándose simultáneamente son dos procesos
-concurrentes, la concurrencia se ocupa principalmente de procesos cuya
-ejecución está vinculada de alguna manera (p. ej.: dos procesos que
-comparten cierta información o que dependen uno del otro).
+Desde un punto de vista formal, la /concurrencia/ no se refiere a dos
+o más eventos que ocurren a la vez sino a dos o más eventos cuyo órden
+es /no determinista/, esto es, eventos acerca de los cuales /no se
+puede predecir el órden relativo en que ocurrirán/. Si bien dos
+procesos (o también dos hilos) completamente independientes entre sí
+ejecutándose simultáneamente son dos procesos concurrentes, la
+concurrencia se ocupa principalmente de procesos cuya ejecución está
+vinculada de alguna manera (p. ej.: dos procesos que comparten cierta
+información o que dependen uno del otro).
 
 Aunque una de las tareas principales de los sistemas operativos es dar
 a cada proceso la ilusión de que se está ejecutando en una computadora
@@ -279,11 +278,11 @@ otros: parte del procesamiento puede depender de datos
 obtenidos en fuentes externas, y la cooperación con hilos o
 procesos externos es fundamental.
 
-Veremos que pueden aparecer muchos problemas cuando se estudia la
+Se verá que pueden aparecer muchos problemas cuando se estudia la
 interacción entre hilos del mismo proceso, la sincronización entre
 distintos procesos, la asignación de recursos por parte del núcleo a
 procesos simultáneos, o incluso cuando interactuan usuarios de
-diferentes computadoras de una red — Presentaremos distintos conceptos
+diferentes computadoras de una red — se presentarán distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
 pero muchos de esos conceptos en realidad son independientes del
 escenario: más bien nos ocupa la relación entre procesos que deben
@@ -316,12 +315,12 @@ supuesto, se cobra una módica suma de dinero a la entrada para lo cual
 se colocan dos torniquetes, uno en cada una de sus entradas. Se desea
 conocer cuánta gente ha ingresado al jardín así que se instala una
 computadora conectada a ambos torniquetes: cada torniquete envía una
-señal cuando una persona ingresa al jardín. Realizaremos un modelo
-simplificado de la situación, así que no nos ocuparemos de los
+señal cuando una persona ingresa al jardín. Se realiza un modelo
+simplificado de la situación, así que no se estudiarán los
 detalles del hardware utilizado. Aquí es importante notar que los dos
 torniquetes son objetos que existen y se comportan en paralelo: los
 eventos que generan no tienen un orden predecible. Es decir, que
-cuando escribamos el software no sabremos en qué momento llegará cada
+cuando se escriba el software no se sabe en qué momento llegará cada
 visitante ni qué torniquete utilizará.
 
 Se simulará un experimento en el que 20 visitantes ingresan por cada
@@ -478,7 +477,7 @@ de coherencia de caché. En la siguiente discusión muchas veces se
 presupone que hay un solo procesador, sin que eso invalide la
 discusión para equipos multiprocesadores.
 
-Antes de presentar posibles soluciones, veremos algunos conceptos
+Antes de presentar posibles soluciones, se verán algunos conceptos
 importantes.
 
 *** Algunos conceptos de concurrencia
@@ -682,7 +681,7 @@ deberán utilizar alternativamente los torniquetes. Así que si bien
 esto soluciona el problema de la actualización múltiple en realidad es
 una solución muy restrictiva: un proceso que no está en la sección
 crítica puede obligar a que otro proceso espere mucho tiempo para
-ingresar a la sección crítica. De aquí en más buscaremos soluciones en
+ingresar a la sección crítica. De aquí en más se buscarán soluciones en
 las que no ocurra esto.
 
 **** Intento 6: Indicar la intención de entrar a la sección crítica
@@ -722,7 +721,7 @@ colocará su bandera en 1).
 **** Presentación del algoritmo
 La primera solución a esta problema fue propuesta por Dekker
 en 1957. Sin embargo su explicación es bastante extensa (aunque
-perfectamente entendible) y en cambio presentaremos la solución
+perfectamente entendible) y en cambio se presentará la solución
 planteada por Peterson unos cuantos años más tarde: en 1970.
 
 La solución está basada en una combinación de los intentos anteriores:
@@ -771,8 +770,8 @@ b1=0;
                    lenguajes suelen proveer alguna abstracción para
                    soportar explícitamente operaciones atómicas o
                    implementar una solución más elegante al
-                   problema. Veremos algunas de esas abstracciones más
-                   adelante.
+                   problema. Se verán algunas de esas abstracciones
+                   más adelante.
 
 Para mayores detalles acerca de las razones, ventajas y desventajas
                    del uso de spinlocks en sistemas operativos reales,
@@ -826,7 +825,7 @@ ejecutando salga de ella. Si no hay ningún hilo o proceso en esa
 sección crítica (o cuando un hilo sale de esa sección crítica), uno
 sólo de los que esperan podrá ingresar.
 
-Como vimos en el ejemplo anterior, para que un mutex sea efectivo
+Como se vio en el ejemplo anterior, para que un mutex sea efectivo
 tiene que ser implementado a través de una /primitiva/ a un nivel
 inferior[fn:: ¿Qué significa inferior? Las llamadas de sincronización
 entre hilos deben implementarse por lo menos a nivel del proceso que
@@ -961,7 +960,7 @@ entre procesos o únicamente entre hilos. =sem_trywait= extiende la
 intefaz sugerida por Dijkstra: verifica si el semáforo puede ser
 decrementado y, en caso de que no, en vez de bloquearse, indica al
 proceso que no puede continuar. El proceso debe tener la lógica
-necesaria para no entrar en las secciones críticas (digamos, intentar
+necesaria para no entrar en las secciones críticas (p. ej., intentar
 otra estrategia) en ese caso.
 
 =sem_trywait= se sale de la definición clásica de semáforo, por lo
@@ -1002,7 +1001,7 @@ cuales se mencionarán los siguientes:
                   para continuar en conjunto — Por ejemplo, en una
                   aplicación GUI, un hilo prepara la interfaz gráfica
                   y actualiza sus eventos mientras otro efectúa
-                  cálculos para mostrar. Se desea mostrar al usuario
+                  cálculos para mostrar. Se desea presentar al usuario
                   la simulación desde el principio, así que no debe
                   empezar a calcular antes de que el GUI esté listo,
                   pero preparar los datos del cálculo toma tiempo, y
@@ -1360,7 +1359,7 @@ requisitos, como:
   por dos razones. La primera es para mantener la conciencia de la
   semántica de las operaciones =acquire()= y =release()=, y la segunda
   es mantener la consistencia a través de las distintas
-  implementaciones, ya que encontraremos varios casos en que no es el
+  implementaciones, ya que se encontrarán varios casos en que no es el
   mismo hilo el que adquiere un semáforo y el que lo libera (esto es,
   los semáforos no siempre son empleados como mutexes).
 
@@ -1378,16 +1377,15 @@ de la existencia de la asignación de recursos de forma exclusiva:
                    ninguno de los procesos involucrados podrán
                    avanzar.
 
-- Inanición :: (en inglés /resource starvation/): Situación en que un
+- Inanición :: (en inglés /resource starvation/) Situación en que un
 	       proceso no puede avanzar en su ejecución dado que necesita
 	       recursos que están (alternativamente) asignados a
 	       otros procesos.
 
-El que presentemos estos conceptos aquí no significa que están
-exclusivamente relacionados con esta sección: son conceptos con los
-que nos enfrentaremos una y otra vez al hablar de asignación exclusiva
-de recursos — Temática recurrente en el campo de los sistemas
-operativos.
+El que se presenten estos conceptos aquí no significa que están
+exclusivamente relacionados con esta parte: son conceptos que
+se enfrentan una y otra vez al hablar de asignación exclusiva de
+recursos — temática recurrente en el campo de los sistemas operativos.
 
 ** Problema lectores-escritores
 *** Planteo
@@ -1415,12 +1413,12 @@ operativos.
   una exclusión mutua completa.
 
 *** Primera aproximación
-  Un primer acercamiento a este problema nos permite una resolución
+  Un primer acercamiento a este problema permite una resolución
   libre de bloqueos mutuos, empleando sólo tres estructuras globales:
   un contador que indica cuántos lectores hay en la sección crítica,
   un mutex protegiendo a dicho contador, y otro mutex indicando que no
   hay lectores ni escritores accediendo al buffer (o
-  cuarto). Implementamos los mutexes con semáforos. 
+  cuarto). Se implementan los mutexes con semáforos. 
 
   #+begin_src python
   import threading
@@ -1466,9 +1464,9 @@ operativos.
 
 *** Solución
 
-  Para evitar esta condición de inanición, podemos agregar un
+  Para evitar esta condición de inanición, se puede agregar un
   /torniquete/ evitando que lectores adicionales se /cuelen/ antes del
-  escritor. Reescribamos pues:
+  escritor. Reescribiendo:
 
   #+begin_src python
     import threading
@@ -1661,11 +1659,11 @@ Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
      - El planteamiento original de Patil menciona que no debe
        emplearse arreglos de semáforos o usar condicionales en el
        flujo. Esta segunda restricción haría efectivamente irresoluble
-       al problema, por lo que podemos ignorarlo.
+       al problema, por lo que se ignorará.
 
 
 Se recomienda el libro «[[Little_Book_of_Semaphores_-_Allen_Downey.pdf][The little book of semaphores]]» de Allen Downey
-(2008) para profundizar en este tema. En este libro, encontraremos
+(2008) para profundizar en este tema. En este libro, se encuentran
 muchos ejemplos que ilustran el uso de semáforos no sólo para resolver
 problemas de sincronización, sino como un mecanismo simple de
 comunicación entre procesos. También se desarrollan distintas
@@ -1774,7 +1772,7 @@ para recibir una nueva notificación.
 ** Otros mecanismos
 
 Más allá de los mecanismos basados en mutexes y semáforos, existen
-otros mecanismos que emplean diferentes niveles de /encapsulamiento/
+otros que emplean diferentes niveles de /encapsulamiento/
 para proteger las abstracciones. A continuación se presentan muy
 brevemente algunos de ellos.
 
@@ -1790,7 +1788,7 @@ correctamente.
 Además, al hablar de procesos que compiten por recursos de una forma
 /hostil/, la implementación basada en semáforos puede resultar
 insuficiente. A mode de ejemplo, se mostrará por qué en el modelo
-original de Djikstra (así como en los ejemplos que presentamos
+original de Djikstra (así como en los ejemplos presentados
 anteriormente) sólo existen las operaciones de incrementar y
 decrementar, y no se permite verificar el estado (como lo ofrece
 =sem_trywait()= en =pthreads=):
@@ -1812,7 +1810,7 @@ la probabilidad de que usar la sección crítica le cause problemas sea
 muy baja. Es frecuente ver ejemplos como el siguiente:
 
 #+begin_src C
-/* Cruzamos los dedos... A fin de cuentas, ejecutaremos con baja frecuencia! */
+/* Cruzamos los dedos... a fin de cuentas, ejecutaremos con baja frecuencia! */
 seccion_critica();
 #+end_src
 
@@ -1839,7 +1837,7 @@ asegurar el acceso concurrente a los datos en un sólo lugar.
 
 
 Un monitor puede implementarse utilizando cualquiera de los
-mecanismos de sincronización que presentamos anteriormente — La
+mecanismos de sincronización presentados anteriormente — la
 diferencia radica en que esto se hace /en un solo lugar/. Los
 programas que quieran emplear el recurso protegido lo hacen
 incluyendo el código del monitor como módulo / biblioteca, lo cual fomenta
@@ -1925,7 +1923,7 @@ void piensa(int i) {
     printf("El filosofo %d esta pensando\n", i);
 }
 
-/* No incluimos 'actualiza' en los encabezados, */
+/* No incluir 'actualiza' en los encabezados, */
 /* es una funcion interna/privada */
 int actualiza (int i) {
     if ((estado[(i - 1) % 5] != COMIENDO) &&
@@ -2000,16 +1998,16 @@ haga mal uso del mecanismo de sincronización.
      Un área activa de investigación hoy en día es la de la /memoria
      transaccional/. La lógica es ofrecer primitivas que protejan a
      /un conjunto de accesos a memoria/ del mismo modo que ocurre con
-     las bases de datos, en que tras abrir una transacción, podemos
+     las bases de datos, en las que tras abrir una transacción, se puede
      realizar una gran cantidad (no ilimitada) de tareas, y al
      terminar con la tarea, /confirmarlas/ (/commit/) o /rechazarlas/
-     (/rollback/) atómicamente — Y, claro, el sistema operativo
+     (/rollback/) atómicamente — y, claro, el sistema operativo
      indicará éxito o fracaso de forma atómica al conjunto entero.
 
-     Esto facilitaría mucho más aún la sincronización: En vez de
-     hablar de /secciones críticas/, podremos reintentar la
-     transacción y sólo preocuparnos de revisar si fue exitosa o no —
-     Por ejemplo:
+     Esto facilitaría mucho más aún la sincronización: en vez de
+     hablar de /secciones críticas/, se podría reintentar la
+     transacción y sólo preocuparse de revisar si fue exitosa o no —
+     por ejemplo:
 
      #+BEGIN_SRC C
      do {
@@ -2022,7 +2020,7 @@ haga mal uso del mecanismo de sincronización.
 
      Si en el transcurso de la transacción algún otro proceso
      modifica alguna de las variables, la transacción se abortará,
-     pero podemos volver a ejecutarla.
+     pero se puede volver a ejecutar.
 
      Claro está, el ejemplo presentado desperdicia recursos de
      proceso (lleva a cabo los cálculos al tiempo que va modificando
@@ -2318,7 +2316,7 @@ El análisis de la interacción entre dos procesos se representa como en
 la figura \ref{PROC_tray_proc_evasion_bloqueo}; el avance es marcado
 en sentido horizontal para el proceso $A$, o vertical para el proceso
 $B$; en un sistema multiprocesador, podría haber avance mutuo, y lo
-indicaríamos en diagonal.
+se indicaría en diagonal.
 
 En el ejemplo presentado, el proceso $A$ solicita acceso
 exclusivo al scanner durante $2 \le t_A \le 7$ y a la impresora
@@ -2398,7 +2396,7 @@ Este algoritmo debe ejecutarse cada vez que un proceso solicita
 recursos; el sistema evita caer en situaciones conducentes a un
 bloqueo mutuo ya sea denegando o posponiendo la solicitud. El
 requisito particular es que, al iniciar, cada proceso debe /anunciar
-su reclamo máximo/ (llamémosle =claim()=) al sistema: el número máximo
+su reclamo máximo/ (llamese =claim()=) al sistema: el número máximo
 de recursos de cada tipo que va a emplear a lo largo de su ejecución —
 esto sería implementado como una llamada al sistema. Una vez que un
 proceso presentó su reclamo máximo de recursos, cualquier llamada
@@ -2613,7 +2611,7 @@ sistema /en un momento dado/):
   todas las flechas relacionadas con éste.
 
 - Si después de esta reducción se eliminan todos los procesos del
-  grafo, entonces no hay interbloqueos y podemos continuar. En caso de
+  grafo, entonces no hay interbloqueos y se puede continuar. En caso de
   permanecer procesos en el grafo, los procesos “irreducibles”
   constituyen la serie de procesos interbloqueados de la gráfica.
 
@@ -2641,7 +2639,7 @@ recursos /4/, /5/ y /7/.
 
 
 Nótese que /reducir/ un proceso del grafo no implica que éste haya
-/entregado/ sus recursos, sino únicamente que, hasta donde tenemos
+/entregado/ sus recursos, sino únicamente que, hasta donde se tiene
 conocimiento, /tiene posibilidad de hacerlo/. Los procesos que estan
 esperando por recursos retenidos por un proceso pueden sufrir
 inanición aún por un tiempo indeterminado.
@@ -2761,10 +2759,10 @@ presentada al usuario sería inaceptable.
 Por último, cabe mencionar algo que a lo largo de todo este apartado
 mencionamos únicamente de forma casual, evadiendo definiciones claras:
 ¿qué es un recurso? La realidad es que no está muy bien
-definido. Podríamos, como mencionan nuestros ejemplos, hablar de los
-clásicos recursos de acceso rival y secuencial: Impresoras, cintas,
-terminales seriales, etc. Sin embargo, también podemos ver como
-recursos a otras entidades administradas por el sistema operativo — El
+definido. Se podría, como mencionan los ejemplos, hablar de los
+clásicos recursos de acceso rival y secuencial: impresoras, cintas,
+terminales seriales, etc. Sin embargo, también se pueden ver como
+recursos a otras entidades administradas por el sistema operativo — el
 espacio disponible de memoria, el tiempo de procesamiento, o incluso
 estructuras lógicas /creadas y gestionadas/ por el sistema operativo,
 como archivos, semáforos o monitores. Y para esos casos, prácticamente
@@ -2792,7 +2790,7 @@ Por otro lado, hay una gran cantidad de aplicaciones de monitoreo en
 espacio de usuario. Conociendo el funcionamiento esperable específico
 de determinados programas es posible construir aplicaciones que los
 monitoreen /de una forma inteligente/ y tomen acciones (ya sea alertar
-a los administradores o, como lo revisamos en la sección
+a los administradores o, como se lo revisa en la sección
 \ref{PROC_det_y_rec_bloq} (/Detección y recuperación de bloqueos/),
 abortar -y posiblemente reiniciar- la ejecución de aquellos procesos
 que no puedan recuperarse).

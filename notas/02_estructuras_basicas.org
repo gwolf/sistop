@@ -638,6 +638,66 @@ exit_group(0)                           = ?
 #+latex: }
 
 * Abstracciones comunes 
+Como mencionamos antes una de las funciones del sistema operativo es
+la de abstraer el hardware de la computador. Cuál es esa abstracción
+que ve efectivamente el usuario varía de un sistema operativo a otro.
+veremos en esta sección algunas abstracciones utilizadas en varios
+sistemas dejando las respectivas a sistemas de archivos para el 
+capítulo \ref{FS}.
+
+** Sistemas tipo Windows
+Los sistemas del tipo Windows presentan una abstracción diversa
+para cada uno de los componentes de la computadora. 
+Por ejemplo los volúmenes de almacentamiento secundario (discos rígidos, 
+discos compactos, memorias flash, etc) son relacionados 
+con una letra cada uno, así (en general) /C:/ es el volumen o partición
+del disco principal, /A:/ y /B:/ se utilizan para discos extraibles. 
+Una desventaja de esta abstracción es que no queda claro cuáles unidades
+pertenecen al mismo disco físico y cuáles no.
+A los puertos de entrada/salida más utilizados también se les asignan
+nombres alfanuméricos, por ejemplo el primer puerto paralelo se denomina
+/LPT1/ y el segundo puerto serie /COM2/. 
+
+** Sistemas tipo Unix
+Unix introdujo el concepto de que /todo es un archivo/: En el sistema
+Unix original, todos los dispositivos podían ser controlados a través
+de un /archivo especial/ que, en vez de almacenar información, apunta
+a estructuras en el sistema que controlan a cada dispositivo. Este
+concepto sobrevive en los sistemas derivados de Unix al día de hoy,
+aunque varias clases de dispositivo rompen esta lógica. El sistema
+operativo /Plan9/ de Bell Labs hace mantiene y amplía este concepto e
+introduce los /espacios de nombres mutables/, que presenta con
+interfaz de archivo archivos prácticamente cualquier objeto empleado
+por el sistema.
+
+Las principales estructuras relacionadas que encontraremos en un
+sistema tipo Unix son:
+
+- Dispositivos de caracteres :: Dispositivos con los cuales la
+     información es leída o escrita un caracter a la vez y se
+     presentan como /streams/ (flujos) de información, ya sea
+     entrante, saliente o mixta. Algunos pueden permitir operaciones
+     adicionales (por ejemplo, rebobinado), pero la manipulación de la
+     información se efectúa de forma secuencial.
+
+     Ejemplos: Impresora, unidad de cinta, modem
+- Dispositivos de bloques :: Dispositivos que presentan una interfaz
+     de /acceso aleatorio/ y entregan o reciben la información en
+     /bloques/ de tamaño predeterminado.
+
+     El ejemplo más claro de este tipo de dispositivos es una unidad
+     de disco o una de sus particiones.
+
+- Archivos especiales :: Los sistemas Unix actuales incluyen también
+  un gran número de archivos especiales por los cual el usuario puede
+  monitorear el estado del sistema (memoria libre, número de procesos,
+  consumo de procesador, etc) e incluso puede modificar la configuración
+  del sistema operativo a través de un archivo, por ejemplo 
+  escribir un valor de "100" al archivo /proc/sys/vm/swappiness hará
+  que el sistema envíe a espacio de intercambio la mayor cantidad de
+  programas.
+
+
 * Cuando dos cabezas piensan mejor que una
 ** Multiprocesamiento
 

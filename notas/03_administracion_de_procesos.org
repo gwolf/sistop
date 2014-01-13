@@ -16,7 +16,7 @@ actuación que tendrá el sistema.
 
 En contraposición con /proceso/, en un sistema por lotes se habla de
 /tareas/. Una tarea requiere mucha menos estructura, típicamente
-bastar con guardar la información relacionada con la /contabilidad/ de
+basta con guardar la información relacionada con la /contabilidad/ de
 los recursos empleados. Una tarea no es interrumpida en el transcurso
 de su ejecución. Ahora bien, esta distinción no es completamente
 objetiva — y se pueden encontrar muchos textos que emplean
@@ -25,10 +25,10 @@ indistintamente una u otra nomenclatura.
 Si bien el sistema brinda la /ilusión/ de que muchos procesos se
 están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
 está esperando para continuar su ejecución — en un momento
-determinado sólo puede estar ejecutando sus instrucciones un número 
+determinado sólo puede estar ejecutando sus instrucciones un número
 de procesos igual o menor al número de procesadores que tenga el sistema.
 
-En esta parte se desarrollan los conceptos relacionados con procesos,
+En este capítulo se desarrollan los conceptos relacionados con procesos,
 hilos, concurrencia y sincronización — se abordarán en el capítulo
 \ref{PLAN} (/Planificación de procesos/) las técnicas y algoritmos que
 emplea el sistema operativo para determinar cómo y en qué orden hacer
@@ -91,7 +91,7 @@ uno de los procesos actuales se suele almacenar en una estructura llamada
 
 - Información de administración de memoria :: La información de mapeo
      de memoria (páginas o segmentos, dependiendo del sistema
-     operativo), incluyendo la pila (/stack/) de llamadas. Se abordar
+     operativo), incluyendo la pila (/stack/) de llamadas. Se abordará
      el tema en el capítulo \ref{MEM} (/Administración de memoria/).
 
 - Información de contabilidad :: Información de la utilización de
@@ -177,7 +177,7 @@ recursos más comparable con una situación de multiproceso estándar.
 
 Hay tres patrones en los que caen generalmente los modelos de hilos;
 se puede emplear más de uno de estos patrones en diferentes áreas de
-nuestra aplicación, e incluso se pueden /anidarl/ (esto es, se podría
+nuestra aplicación, e incluso se pueden /anidar/ (esto es, se podría
 tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
 un /equipo de trabajo/):
 
@@ -1235,7 +1235,7 @@ int pthread_cond_destroy(pthread_cond_t *cond);
 #+END_SRC
 
 ** Problema productor-consumidor
-*** Planteo
+*** Planteamiento
 En un entorno multihilos es común que haya una división de tareas tipo
 /línea de ensamblado/, que se puede generalizar a que un grupo de
 hilos van /produciendo/ ciertas estructuras, a ser /consumidas/ por
@@ -1383,12 +1383,12 @@ de la existencia de la asignación de recursos de forma exclusiva:
 	       otros procesos.
 
 El que se presenten estos conceptos aquí no significa que están
-exclusivamente relacionados con esta parte: son conceptos que
+/exclusivamente/ relacionados con este tema: son conceptos que
 se enfrentan una y otra vez al hablar de asignación exclusiva de
 recursos — temática recurrente en el campo de los sistemas operativos.
 
 ** Problema lectores-escritores
-*** Planteo
+*** Planteamiento
      Una estructura de datos puede ser accedida simultáneamente por
      muchos procesos /lectores/, pero si algún proceso está
      escribiendo, se debe evitar que cualquier otro lea (dado que
@@ -1399,7 +1399,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
        tiempo.
      - Los escritores deben tener acceso exclusivo a la sección
        crítica.
-     - Como refinamiento al planteamiento: se debe evitar que un
+     - En pos de un comportamiento más justo: se debe evitar que un
        influjo constante de procesos lectores dejen a un escritor en
        situación de /inanición/.
 
@@ -1512,7 +1512,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   un torniquete, y para el escritor es un mutex.
 
 ** La cena de los filósofos
-*** Planteo
+*** Planteamiento
      Cinco filósofos se dan cita para comer arroz en una mesa
      redonda. En la mesa, cada uno de ellos se sienta frente a un
      plato. A su derecha, tiene un palito chino, y a su izquierda
@@ -1631,7 +1631,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   no haya /inanición/, sólo que no haya bloqueos mutuos.
 
 ** Los fumadores compulsivos
-*** Planteo
+*** Planteamiento
 Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
      tiempo, consigue ciertos insumos. Los ingredientes necesarios
      para fumar son tabaco, papel y cerillos. Cada uno de los

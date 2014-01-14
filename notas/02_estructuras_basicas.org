@@ -231,14 +231,14 @@ Las funciones del sistema operativo respecto a las interrupciones son:
                                   esa interrupción y continuando su ejecución
                                   cuando esta ocurre.
 - Punto de entrada al sistema operativo :: Como veremos más adelante en la 
-                                Sección \ref{HW_SYSCALLS}, muchos procesadores y
+                                sección \ref{HW_SYSCALLS}, muchos procesadores y
                                 sistemas operativos utilizan las interrupciones
                                 como medio por el cual un proceso de usuario
                                 realiza una llamada al sistema.
                                 Por ejemplo, en Linux para arquitecturas x86
                                 el programa de usuario genera la interrupción
                                 0x80 para iniciar una llamada al sistema.
-                                En arquitecturas más recientes como x86\_64,
+                                En arquitecturas más recientes como x86_64,
                                 MIPS y ARM esto ha sido reemplazado por una
                                 instrucción especial =syscall=.
 - Atender excepciones y fallas :: Como dijimos antes, durante la ejecución de un
@@ -341,7 +341,7 @@ como la de archivos y directorios al usuario. Esto lo veremos en el capítulo
 \ref{FS}.
 
 * Relojes y temporizadores
-Todas las computadoras vienen acompañadas de uno o más relojes y 
+Todas las computadoras incluyen uno o más relojes y 
 temporizadores que son utilizados para funciones varias como 
 mantener la hora del sistema actualizada, implementar alarmas tanto para los
 programas de usuario como para el sistema operativo, ejecutar
@@ -687,13 +687,13 @@ sistema tipo Unix son:
      de disco o una de sus particiones.
 
 - Archivos especiales :: Los sistemas Unix actuales incluyen también
-  un gran número de archivos especiales por los cual el usuario puede
+  un gran número de archivos especiales, por medio de los cuales el usuario puede
   monitorear el estado del sistema (memoria libre, número de procesos,
-  consumo de procesador, etc) e incluso puede modificar la configuración
-  del sistema operativo a través de un archivo, por ejemplo 
-  escribir un valor de "100" al archivo "/proc/sys/vm/swappiness" hará
-  que el sistema envíe a espacio de intercambio la mayor cantidad de
-  programas.
+  consumo de procesador, etc.), e incluso modificar la configuración
+  del sistema operativo a través de un archivo; por ejemplo, en un sistema Linux,
+  escribir el valor "100" al archivo "/proc/sys/vm/swappiness" hará
+  que el sistema envíe a espacio de intercambio una mayor cantidad de
+  programas de lo que normalmente haría.
 
 
 * Cuando dos cabezas piensan mejor que una

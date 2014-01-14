@@ -141,9 +141,8 @@ El compilador [fn:: A veces asistido por instrucciones explíticas por
 parte del programador, pero muchas veces como resultado del análisis
 del código] busca realizar tantas operaciones que deban ocurrir
 reiteradamente, donde la rapidez es fundamental, con sus operadores
-cargados en los registros. Pero, lo que es más importante para nuestro
-curso: El estado del CPU en un momento dado está determinado por el
-contenido de los registros. El contenido de la memoria, obviamente,
+cargados en los registros. El estado del CPU en un momento dado está determinado
+por el contenido de los registros. El contenido de la memoria, obviamente,
 debe estar sincronizado con lo que ocurre dentro de éste — Pero el
 estado actual del CPU, lo que está haciendo, las indicaciones respecto
 a las operaciones recién realizadas que se deben entregar al programa
@@ -239,7 +238,7 @@ Las funciones del sistema operativo respecto a las interrupciones son:
                                 Por ejemplo, en Linux para arquitecturas x86
                                 el programa de usuario genera la interrupción
                                 0x80 para iniciar una llamada al sistema.
-                                En arquitecturas más recientes como x86_64,
+                                En arquitecturas más recientes como x86\_64,
                                 MIPS y ARM esto ha sido reemplazado por una
                                 instrucción especial =syscall=.
 - Atender excepciones y fallas :: Como dijimos antes, durante la ejecución de un
@@ -274,10 +273,10 @@ imposibilidad de "editar" el papel ya impreso, este tipo de terminales
 fue cediendo terreno ante la aparación sobre principios de los 1970 
 de las terminales de texto con pantalla de video y teclado.
 
-Conceptualmente una terminal de texto es dispositivo mediante el cual
-la computadora envía y recibe un flujo de caracteres del usuario.
-Las operaciones más complejas, como edición, borrado y movimiento
-en general son tratadas con secuencias de escape, esto es, una serie
+Conceptualmente una terminal de texto es un dispositivo mediante el cual
+la computadora envía y recibe un flujo de caracteres desde y hacia el usuario.
+Las operaciones más complejas, como edición, borrado y movimientos
+en general son tratadas con /secuencias de escape/, esto es, una serie
 de caracteres simples que tomados en conjunto representan una acción
 a realizar en la terminal. 
 
@@ -323,9 +322,9 @@ como computadoras independientes de propósito limitado.
 
 El procesador no puede referirse directamente más información que la
 que forma parte del almacenamiento primario — Esto es, de la memoria
-RAM. Veremos a continuación, en las secciones \ref{HW_interrupciones}
+RAM. En las secciones \ref{HW_interrupciones}
 (/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
-memoria/), cómo es que se efectúan dichas referencias.
+memoria/), vemos cómo es que se efectúan dichas referencias.
 
 Los dispositivos de almacenamiento (discos, memorias flash, cintas) 
 pueden ser vistos como una región donde la computadora puede 
@@ -342,7 +341,7 @@ como la de archivos y directorios al usuario. Esto lo veremos en el capítulo
 \ref{FS}.
 
 * Relojes y temporizadores
-Todas las computadoras viene acompañadas de uno o varios relojes y 
+Todas las computadoras vienen acompañadas de uno o más relojes y 
 temporizadores que son utilizados para funciones varias como 
 mantener la hora del sistema actualizada, implementar alarmas tanto para los
 programas de usuario como para el sistema operativo, ejecutar
@@ -502,7 +501,7 @@ software.
 
 * Interfaz del Sistema Operativo -- Llamadas al sistema
 # <<HW_SYSCALLS>>
-De forma de cierto modo análoga a las interrupciones, podemos hablar
+De forma análoga a las interrupciones, podemos hablar
 de las llamadas al sistema. El sistema operativo protege a un proceso
 de otro, y previene que un proceso ejecutándose en espacio no
 privilegiado tenga acceso directo a los dispositivos. Cuando un
@@ -571,9 +570,8 @@ la familia .NET, exponen un API con mucha mayor distancia respecto al
 sistema operativo; la máquina virtual se presenta como un
 pseudo-sistema operativo intermedio que se ejecuta dentro del real, y
 esta distinción se hace especialmente notoria cuando buscamos conocer
-los detalles del sistea operativo. Sugiero para este curso emplear
-plataformas que presenten de la forma más transparente al sistema
-subyacente.
+los detalles del sistea operativo. 
+
 
 *** Depuración por /trazas/ (trace)
 
@@ -641,7 +639,7 @@ exit_group(0)                           = ?
 Como mencionamos antes una de las funciones del sistema operativo es
 la de abstraer el hardware de la computador. Cuál es esa abstracción
 que ve efectivamente el usuario varía de un sistema operativo a otro.
-veremos en esta sección algunas abstracciones utilizadas en varios
+Veremos en esta sección algunas abstracciones utilizadas en varios
 sistemas dejando las respectivas a sistemas de archivos para el 
 capítulo \ref{FS}.
 
@@ -665,9 +663,9 @@ de un /archivo especial/ que, en vez de almacenar información, apunta
 a estructuras en el sistema que controlan a cada dispositivo. Este
 concepto sobrevive en los sistemas derivados de Unix al día de hoy,
 aunque varias clases de dispositivo rompen esta lógica. El sistema
-operativo /Plan9/ de Bell Labs hace mantiene y amplía este concepto e
+operativo /Plan9/ de Bell Labs mantiene y amplía este concepto e
 introduce los /espacios de nombres mutables/, que presenta con
-interfaz de archivo archivos prácticamente cualquier objeto empleado
+interfaz de archivo prácticamente cualquier objeto empleado
 por el sistema.
 
 Las principales estructuras relacionadas que encontraremos en un
@@ -693,7 +691,7 @@ sistema tipo Unix son:
   monitorear el estado del sistema (memoria libre, número de procesos,
   consumo de procesador, etc) e incluso puede modificar la configuración
   del sistema operativo a través de un archivo, por ejemplo 
-  escribir un valor de "100" al archivo /proc/sys/vm/swappiness hará
+  escribir un valor de "100" al archivo "/proc/sys/vm/swappiness" hará
   que el sistema envíe a espacio de intercambio la mayor cantidad de
   programas.
 

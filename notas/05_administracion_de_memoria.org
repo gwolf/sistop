@@ -23,7 +23,7 @@ compilación de nuestros programas (en particular, la fase de
 /ligado/). Hoy en día, además, casi todos los sistemas operativos
 emplean implementaciones que requieren de hardware especializado — La
 /Unidad de Manejo de Memoria/ (MMU). Hablaremos de cómo se manejaban
-los sistemas multitarea antes de la universalización de los MMU, y qué
+los sistemas multitarea antes de la universalización de las MMU, y qué
 rol juegan hoy en día.
 
 En esta primer sección, veremos algunos conceptos base que iremos
@@ -472,7 +472,7 @@ programa para una arquitectura que soporte segmentación, el compilador
 ubicará a cada una de las secciones presentadas en la sección
 \ref{MEM_espacio_en_memoria} en un segmento diferente.
 
-activar los mecanismos que evitan la escritura accidental de las 
+Esto permite activar los mecanismos que evitan la escritura accidental de las 
 secciones de memoria del proceso que no se deberían modificar 
 (aquellas que contienen  código), y permitir la escritura de aquellas 
 que sí (en las cuales se  encuentran las variables globales, 
@@ -509,7 +509,7 @@ dinámicamente/ estén representadas en segmentos independientes.
 
 Un código compilado para procesadores que implementen segmentación
 siempre generará referencias a la memoria en un espacio /segmentado/. Este 
-tipo de referencias se denominan /direcciones lógicas/ y consisten en un
+tipo de referencias se denominan /direcciones lógicas/ y están formadas por un
 /selector/ de segmento y un /desplazamiento/ dentro del segmento. 
 Para interpretar esta dirección, la MMU debe tomar el selector, y usando 
 alguna estructura de datos, 
@@ -526,9 +526,9 @@ ocurrirá una excepción del tipo /violación de segmento/
 
 ** Permisos
 
-Una de las principales ventajas del uso de segmentación es que nos
-permite pedir a la MMU que cada uno de los segmentos tenga un distinto
-/juego de permisos/ para el proceso en cuestíón: El sistema operativo
+Una de las principales ventajas del uso de segmentación consiste en
+permitir que cada uno de los segmentos tenga un distinto
+/juego de permisos/ para el proceso en cuestiónn: El sistema operativo
 puede indicar, por ejemplo, que el /segmento de texto/ (el código del
 programa) sea de lectura y ejecución, mientras que las secciones de
 datos, libres y pila (donde se almacena y trabaja la información misma
@@ -2135,8 +2135,8 @@ las variables de ambiente. Puede que el programa aborte y tu shell
 resulte inutilizado a causa de las variables sobreescritas.
 #+END_QUOTE
 
-Hay dos técnicas principales: /Brincar/ a un punto determinado del
-programa, y /brincar/ hacia dentro del stack. Veamos la primera:
+Hay dos técnicas principales: /Saltar/ a un punto determinado del
+programa, y /saltar/ hacia dentro del stack. Veamos la primera:
 
 Si el atacante está intentando burlar una validación simple de
 usuarios, como la siguiente:
@@ -2152,18 +2152,18 @@ if (valid_user(usr, pass)) {
 
 Y detecta que =valid_user()= es susceptible a un desbordamiento, le
 bastaría con incrementar en 4 la dirección de retorno. La conversión
-de este =if= a ensamblador es, primero, brincar hacia la etiqueta
+de este =if= a ensamblador es, primero, saltar hacia la etiqueta
 =valid_user=, y (empleando al valor que ésta regrese en =%EBX=) ir a
-la siguiente instrucción, o brincar a la etiqueta =FAIL=. Esto puede
+la siguiente instrucción, o saltar a la etiqueta =FAIL=. Esto puede
 hacerse con la instrucción =BNE $0, %EBX, FAIL= (/Branch if Not
-Equal/, /Brinca si no es igual/, que recibe como argumentos dos
+Equal/, /Saltar si no es igual/, que recibe como argumentos dos
 valores a ser comparados, en este caso el registro =%EBX= y el número
 0, y la etiqueta destino, =FAIL=). Cambiar la
 dirección destino significa burlar la verificación.
 
 Ahora, por otro lado, el atacante podría querer que el sistema haga
 algo más complejo — Que ejecute código arbitrario que él
-proporicione. Para esto, el ataque más frecuente es brincar /hacia
+proporicione. Para esto, el ataque más frecuente es saltar /hacia
 adentro del stack/.
 
 #+attr_latex: width=0.8\textwidth
@@ -2216,9 +2216,9 @@ Nunca ejecutar) o /bit XD/ (/eXecute Disable/, Deshabilitar
 ejecución), como una característica particular de las extensiones PAE.
 
 Empleando este mecanismo, la MMU puede evitar la ejecución de código
-en el área de stack, lo cual anula la posibilidad de /brincar al
+en el área de stack, lo cual anula la posibilidad de /saltar al
 stack/. Esta protección desafortunadamente no es muy efectiva: Una vez
-que tiene acceso a un buffer vulnerable, el atacante puede /brincar a
+que tiene acceso a un buffer vulnerable, el atacante puede /saltar a
 libc/, esto es, por ejemplo, proporcionar como parámetro el nombre de
 un programa a ejecutar, e indicar como retorno la dirección de la
 función =system= o =execve= de la =libc=.
@@ -2231,7 +2231,7 @@ atacante, aunque no representan una dificultad mucho mayor.
 Otra técnica es que, en tiempo de carga y a cada ejecución, el proceso
 reciba diferentes direcciones base para sus diferentes áreas. Esto
 hace más difícil para el atacante poder indicar a qué dirección
-destino brincar.
+destino se debe saltar.
 
 Un atacante puede emplear varias técnicas para ayudarse a /adivinar/
 detalles acerca del acomodo en memoria de un proceso, y, con un
@@ -2360,7 +2360,7 @@ no fuera del alcance de los atacantes.
 - [[http://kingcope.wordpress.com/2013/01/24/attacking-the-windows-78-address-space-randomization/][Attacking the Windows 7/8 Address Space Randomization]] explica cómo
   puede burlarse la protección ALSR (aleatorización de direcciones) en
   Windows 7 y 8, logrando una dirección predecible de memoria hacia la
-  cual brincar. Puede interesarles también leer la [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][discusión en
+  cual saltar. Puede interesarles también leer la [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][discusión en
   Slashdot]] una vez que esto fue hecho público.
 
 - [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory access]] (Cristoph Lameter,

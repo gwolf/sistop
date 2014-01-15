@@ -55,7 +55,8 @@ libro_index:
 			notas/03_administracion_de_procesos.org \
 			notas/04_planificacion_de_procesos.org \
 			notas/05_administracion_de_memoria.org \
-			notas/06_sistemas_de_archivos.org ; do \
+			notas/06_organiacion_de_archivos.org \
+			notas/07_sistemas_de_archivos.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
@@ -65,7 +66,8 @@ libro_index:
 	echo '' >> $(libro)
 	echo '#+latex: \\appendix' >> $(libro)
 	for APDX in notas/A1_sl_licenciamiento.org \
-		notas/A2_virtualizacion.org; do \
+		notas/A2_virtualizacion.org \
+	        notas/A3_medio_fisico.org; do \
 		APDX=`echo $$APDX | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$APDX | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \

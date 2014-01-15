@@ -312,7 +312,7 @@ de permanencia.
 
 De las muchas tecnologías de almacenamiento, la que ha dominado
 fuertemente durante los últimos 40 años ha sido la de los discos
-magnéticos[fn:: Veremos en la sección \ref{FS_estado_solido} detalles
+magnéticos[fn:: Veremos en la sección \ref{FS_FIS_estado_solido} detalles
 acerca de las tecnologías de almacenamiento /en estado sólido/, que
 pueden poner fin a esta larga dominación.]. El acceso a disco (miles
 de veces más lento que el acceso a memoria) no es realizado
@@ -338,7 +338,7 @@ El manejo de estos bloques (adminstración de bloques libres,
 lectura y escritura) es una tarea fundamental del sistema operativo.
 El sistema operativo también es el encargado de presentar abstracciones 
 como la de archivos y directorios al usuario. Esto lo veremos en el capítulo
-\ref{FS}.
+\ref{DIR}.
 
 * Relojes y temporizadores
 Todas las computadoras incluyen uno o más relojes y 
@@ -635,7 +635,9 @@ exit_group(0)                           = ?
 #+end_src
 #+latex: }
 
-* Abstracciones comunes 
+* Abstracciones comunes
+# <<HW_abstracciones>>
+
 Como mencionamos antes una de las funciones del sistema operativo es
 la de abstraer el hardware de la computador. Cuál es esa abstracción
 que ve efectivamente el usuario varía de un sistema operativo a otro.
@@ -679,6 +681,7 @@ sistema tipo Unix son:
      información se efectúa de forma secuencial.
 
      Ejemplos: Impresora, unidad de cinta, modem
+
 - Dispositivos de bloques :: Dispositivos que presentan una interfaz
      de /acceso aleatorio/ y entregan o reciben la información en
      /bloques/ de tamaño predeterminado.

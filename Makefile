@@ -55,7 +55,7 @@ libro_index:
 			notas/03_administracion_de_procesos.org \
 			notas/04_planificacion_de_procesos.org \
 			notas/05_administracion_de_memoria.org \
-			notas/06_organiacion_de_archivos.org \
+			notas/06_organizacion_de_archivos.org \
 			notas/07_sistemas_de_archivos.org ; do \
 		FILE=`echo $$CAPITULO | sed s/notas.//`; \
 		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \

@@ -82,6 +82,8 @@ libro_pdf: fig libro_index
 	# org-export-latex-classes, referirse a
 	# http://orgmode.org/worg/org-tutorials/org-latex-export.html
 	emacs --batch --visit=$(libro) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf
+	sed 's/usepackage{hyperref}/usepackage[unicode=true]{hyperref}/g' -i notas/sistemas_operativos.tex
+	cd notas && cp sistemas_operativos.tex final.tex && pdflatex final.tex
 
 beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)

@@ -3,9 +3,9 @@ digraph G {
 	rankdir=LR;
 	cpu [shape=box, label="Procesador"];
 	split [shape=point];
-	tr1 [shape=record, label="<p>Página|<d>Desplazamiento"];
-	tr2 [shape=record, label="<m>Marco|<d>Desplazamiento"];
-	tabla [shape=record, label="Tabla de páginas|{p1|m8}|{p2|m3}|{p3|m4}|{<p>p4|<m>m1}|{p5|m2}|..."];
+	tr1 [shape=record, label="<p>Página|<d>Despl"];
+	tr2 [shape=record, label="<m>Marco|<d>Despl"];
+	tabla [shape=record, label="Tabla de\npáginas|{p1|m8}|{p2|m3}|{p3|m4}|{<p>p4|<m>m1}|{p5|m2}|..."];
 	join [shape=point];
 	fis [shape=record, label="Memoria|8xx|7xx|6xx|5xx|4xx|3xx|2xx|<1>1xx|0xx"];
 
@@ -20,7 +20,7 @@ digraph G {
 		join;
 	}
 
-	cpu -> split [label="Dirección lógica\n045c", dir=none];
+	cpu -> split [label="Dirección\nlógica:\n045c", dir=none];
 	split -> tr1:p [label="04"];
 	split -> tr1:d [label="5c"];
 	tr1:d -> tr2:d [label="5c"];
@@ -28,6 +28,6 @@ digraph G {
 	tabla:m -> tr2:m;
 	tr2:m -> join [dir=none, label="01"];
 	tr2:d -> join [dir=none, label="5c"];
-	join -> fis:1 [label="Dirección física\n015c"];
+	join -> fis:1 [label="Dirección\nfísica:\n015c"];
 }
 #+end_src

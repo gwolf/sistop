@@ -2,11 +2,11 @@ digraph G {
 	rankdir=LR;
 	cpu [label="Procesador", shape=box];
 	pre_split [shape=point];
-	split [shape=record, label="<pag>Página|<despl>Desplazamiento"];
-	pgtbl [shape=record, label="<TP>Tabla\nde\npáginas|{|||<f4>||}"];
+	split [shape=record, label="<pag>Página|<despl>Despl"];
+	pgtbl [shape=record, label="<TP>Tabla de\npáginas|{|||<f4>||}"];
 	pre_tlb [shape=point]
 	tlb [shape=record, label="TLB|{{Página|<p1>|<p2>|<p3>|<p4>|<p5>}|{Marco|<m1>|<m2>|<m3>|<m4>|<m5>}}"];
-	join [shape=record, label="<marco>Marco|<despl>Desplazamiento"];
+	join [shape=record, label="<marco>Marco|<despl>Despl"];
 	post_join [shape=point];
 	mem [label="Memoria\nRAM", shape=box];
 

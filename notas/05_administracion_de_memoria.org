@@ -54,14 +54,15 @@ direccionamiento de 20 bits (hasta 1024KB), pero al ser una
 arquitectura /real/ de 16 bits requería del empleo de /segmentación/
 para alcanzar toda su memoria.
 
-Con la llegada de la era de las /computadoras personales/, Intel y
-otros fabricantes introdujeron a mediados de los años 1980 los procesadores
-con registros de 32 bits. Por ejemplo, la arquitectura IA-32 tiene su 
-inicio oficial con el procesador 80386 ( o simplemente 396). 
+Con la llegada de la era de las /computadoras personales/, diversos
+fabricantes introdujeron a mediados de los años 1980 los procesadores
+con arquitectura de 32 bits. Por ejemplo, la arquitectura IA-32 de Intel tiene su 
+inicio oficial con el procesador 80386 (o simplemente 386). 
 Este procesador podía referenciar desde el punto de vista teórico 
 hasta 4 GB de RAM. No obstante, debido a las limitaciones tecnológicas 
 (y tal vez estratégicas) para producir memorias con esta capacidad, se 
-producían memorias de capacidad mucho menor.
+tomó más de veinte años que las memorias ampliamente disponibles
+alcanzaran dicha capacidad.
 
 Hoy en día, los procesadores dominantes son de 32 o 64 bits. Un
 procesador de 32 bits puede direccionar hasta 4,294,967,296 bytes
@@ -123,8 +124,7 @@ instrucción por parte de dicho proceso que solicitara una dirección
 menor a 504214 o mayor a 569749 (556K), la MMU lanzaría una excepción
 o /trampa/ interrumpiendo el procesamiento, e indicando al sistema
 operativo que ocurrió una /violación de segmento/ (/segmentation
-fault/)[fn:: ¿Por qué /de segmento/? Ver la sección /segmentación/,
-más adelante en esta misma unidad]. El sistema operativo entonces
+fault/)[fn:: ¿Por qué /de segmento/? Ver la sección \ref{MEM_segmentacion}]. El sistema operativo entonces
 procedería a terminar la ejecución del proceso, reclamando todos los
 recursos que tuviera asignados y notificando a su usuario.
 
@@ -214,8 +214,9 @@ relativa a su ejecución.
 
 - Espacio de /libres/ ::  Espacio de memoria que se emplea
      para la asignación dinámica de memoria /durante la ejecución/ del
-     proceso (/Heap/). Este espacio se ubica por encima de la sección de datos,
-     y /crece hacia arriba/.
+     proceso. Este espacio se ubica por encima de la sección de datos,
+     y /crece hacia arriba/. Este espacio es conocido en inglés como
+     el /Heap/.
 
      Cuando el programa es escrito en lenguajes que requieren /manejo
      manual de la memoria/ (como C), esta área es la que se maneja a
@@ -224,11 +225,13 @@ relativa a su ejecución.
      los /recolectores de basura/ (volveremos a estos conceptos más
      adelante).
 
-- Pila de llamadas :: (/Stack/) Estructuras representando a la serie
+- Pila de llamadas :: Estructuras representando a la serie
      de funciones que han sido llamadas dentro del proceso, con sus
      parámetros, direcciones de /retorno/, variables locales, etc. La
      pila ocupa la parte /más alta/ del espacio en memoria, y /crece
      hacia abajo/.
+
+     En inglés, la pila de llamadas es denominada /Stack/.
 
 #+attr_latex: width=0.5\textwidth
 #+label: MEM_proceso_en_memoria
@@ -245,9 +248,11 @@ para los propósitos de esta sección, hablaremos de las referencias
 internas únicamente]; el compilador, al convertir el programa a
 lenguaje máquina, las substituye por la dirección en memoria donde se
 encuentra la variable o la función [fn:: de hecho, una vez que el programa
-se pasa a lenguaje de máquina, no existe diferencia real entre una variable
-o una rutina. La diferencia se establece por el uso que se dé a la
-referencia de memoria].
+se pasa a lenguaje de máquina, no existe diferencia real entre la
+dirección que ocupa una variable
+o código ejecutable. La diferencia se establece por el uso que se dé a la
+referencia de memoria. En la sección \ref{MEM_buffer_overflow} se
+abordará un ejemplo de cómo esto puede tener importantes consecuencias.].
 
 Ahora bien, en los sistemas actuales, los procesos requieren coexistir
 con otros, para lo cual las direcciones indicadas en el /texto/ del
@@ -340,7 +345,7 @@ con la familia de funciones =malloc= y =free=.
 La /fragmentación/ comienza a aparecer cuando más procesos terminan su
 ejecución, y el sistema operativo libera la memoria asignada a cada
 uno de ellos. A medida que los procesos finalizan, aparecen regiones
-de memoria disponible, rodeados de regiones de memoria usada por los
+de memoria disponible, /interrumpidas/ por regiones de memoria usada por los
 procesos que aún se encuentran activos. 
 
 Si la computadora no tiene hardware específico que permita que los
@@ -422,13 +427,16 @@ encontramos los sistemas que utilizan /intercambio/ (/swap/) entre la
 memoria primaria y secundaria. En estos sistemas, el sistema operativo
 puede /comprometer/ más espacio de memoria del que tiene físicamente
 disponible. Cuando hay más procesos de los que caben en memoria, el
-sistema suspende a uno de ellos - Usualmente un proceso "bloqueado" 
+sistema suspende a uno de ellos (usualmente un proceso "bloqueado")
 y almacena una copia de su imagen en memoria en almacenamiento secundario.
 
 Hay algunas restricciones a observar previo a suspender un proceso.
 Por ejemplo, se debe considerar si el proceso tiene pendiente alguna 
 operación de entrada/salida, en la cual el resultado se deberá copiar 
-en su espacio de memoria. Una estrategia ante esta situación podría ser 
+en su espacio de memoria. Si el proceso resultara suspendido
+(retirándolo de la memoria principal), el sistema operativo no tendría
+dónde continuar almacenando estos datos conforme llegaran.
+Una estrategia ante esta situación podría ser 
 que todas las operaciones se realicen únicamente a /buffers/ (regiones de
 memoria de almacenamiento temporal) en el espacio del sistema operativo,
 y éste las transfiera el contenido del buffer al espacio de memoria del  
@@ -455,25 +463,31 @@ desuso conforme aumenta el tamaño de los procesos.
 Al desarrollar un programa en un lenguaje de alto nivel, el programador
 usualmente no se preocupa por la ubicación en la memoria física de los
 diferentes elementos que conforman el programa. Esto se debe a que
-en estos lenguajes, se realizan referencias a los /nombres/ 
-de las variables o las funciones. No obstante, cuando se compila el
-programa para una arquitectura específica de procesador, éste puede 
-implementar mecanismos para evitar la escritura accidental de las 
+en estos lenguajes las variables y funciones son referenciadas por sus
+/nombres/, no por su ubicación[fn:: Al programar en lenguaje C, un
+programador puede trabajar a este mismo nivel de abstracción, puede
+referirse directamente a las ubicaciones en memoria de sus datos
+empleando /aritmética de apuntadores/. ]. No obstante, cuando se compila el
+programa para una arquitectura que soporte segmentación, el compilador
+ubicará a cada una de las secciones presentadas en la sección
+\ref{MEM_espacio_en_memoria} en un segmento diferente.
+
+activar los mecanismos que evitan la escritura accidental de las 
 secciones de memoria del proceso que no se deberían modificar 
 (aquellas que contienen  código), y permitir la escritura de aquellas 
 que sí (en las cuales se  encuentran las variables globales, 
-la pila /stack/ y el espacio de asignación dinámica /heap/).
+la pila o /stack/ y el espacio de asignación dinámica o /heap/).
 
 Así, los elementos que conforman un programa se organizan en /secciones/:
  una sección contiene el espacio para las  variables globales, 
-otra sección contiene el código en lenguaje de máquina, otra sección 
+otra sección contiene el código compilado, otra sección 
 contiene la /tabla de símbolos/, etc.
 
 Luego, cuando el sistema operativo crea un proceso a partir del programa,
 debe organizar el contenido del archivo ejecutable en memoria. Para ello
 carga en memoria algunas secciones del archivo ejecutable (como mínimo
 la sección para las variables globales y la sección de código) y puede
-configurar otras secciones como la pila o el montículo. 
+configurar otras secciones como la pila o la sección de libres. 
 Para garantizar la protección de cada una de estas secciones en la
 memoria del proceso, el sistema puede definir que cada /sección/ del 
 programa se encuentra en un /segmento/ diferente, con diferentes 
@@ -482,26 +496,25 @@ tipos de acceso.
 
 #+label: MEM_segmentacion_de_memoria
 #+caption: Ejemplo de segmentación
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=\textwidth
 [[./img/dot/segmentacion_de_memoria.png]]
 
-La segmentación es un concepto que se aplica directamente a la arquitectura
-del procesador. Permite separar las regiones de la memoria /lineal/ en
- /segmentos/, cada uno de los cuales puede tener diferentes tipos
-(lectura, escritura, ejecución), y diferentes niveles (modo usuario, modo
-administrador) de acceso. La segmentación también ayuda a incrementar la 
-/modularidad/ de un programa: Es muy común que las bibliotecas 
-/ligadas dinámicamente/ estén representadas en segmentos independientes.
+La segmentación es un concepto que se aplica directamente a la
+arquitectura del procesador. Permite separar las regiones de la
+memoria /lineal/ en /segmentos/, cada uno de los cuales puede tener
+diferentes permisos de acceso, como veremos en la siguiente
+sección. La segmentación también ayuda a incrementar la /modularidad/
+de un programa: Es muy común que las bibliotecas /ligadas
+dinámicamente/ estén representadas en segmentos independientes.
 
 Un código compilado para procesadores que implementen segmentación
 siempre generará referencias a la memoria en un espacio /segmentado/. Este 
 tipo de referencias se denominan /direcciones lógicas/ y consisten en un
- /selector/ de segmento y un /desplazamiento/ dentro del segmento. 
+/selector/ de segmento y un /desplazamiento/ dentro del segmento. 
 Para interpretar esta dirección, la MMU debe tomar el selector, y usando 
-alguna estructura de datos - Como la Tabla Global de Descriptores GDT o la 
-Tabla Local de Descriotores LDT en arquitecturas compatibles Intel), 
+alguna estructura de datos, 
 obtiene la dirección base, el tamaño del segmento y sus atributos
- de protección. Luego, aplicando el mecanismo explicado en secciones
+de protección. Luego, aplicando el mecanismo explicado en secciones
 anteriores, toma la dirección base del segmento y le suma el desplazamiento
 para obtener una /dirección lineal/. 
 
@@ -514,20 +527,36 @@ ocurrirá una excepción del tipo /violación de segmento/
 ** Permisos
 
 Una de las principales ventajas del uso de segmentación es que nos
-permite pedir al MMU que cada uno de los segmentos tenga un distinto
+permite pedir a la MMU que cada uno de los segmentos tenga un distinto
 /juego de permisos/ para el proceso en cuestíón: El sistema operativo
 puede indicar, por ejemplo, que el /segmento de texto/ (el código del
-programa) sea de lectura y ejecución, mientras que la seción de datos
-es de lectura y escritura. De este modo podemos evitar que un error en
+programa) sea de lectura y ejecución, mientras que las secciones de
+datos, libres y pila (donde se almacena y trabaja la información misma
+del programa) serán de lectura y escritura, pero la ejecución estará
+prohibida[fn:: Si bien este es el manejo clásico, no es una regla
+inquebrantable: El código /automodificable/ conlleva importantes
+riesgos de seguridad, pero bajo ciertos supuestos, el sistema debe
+permitir su ejecución. Además, muchos lenguajes de programación
+permiten la /metaprogramación/, que requiere la ejecución de código
+construído al vuelo.].
+
+De este modo podemos evitar que un error en
 la programación resulte en que datos proporcionados por el usuario o
 por el entorno modifiquen el código que está siendo ejecutado.[fn::
 Sin embargo, incluso bajo este esquema, dado que la /pila de llamadas/
 (/stack/) debe mantenerse como escribible, es común encontrar ataques
-que permiten modificar la /dirección de retorno/ de una subrutina.] Es
-más, Incluso, dado que el acceso de /ejecución/ está limitado a sólo
-los segmentos cargados del disco por el sistema operativo, el atacante
+que permiten modificar la /dirección de retorno/ de una subrutina,
+como será descrito en la sección \ref{MEM_buffer_overflow}.] Es
+más, dado que el acceso de /ejecución/ está limitado a sólo
+los segmentos cargados del disco por el sistema operativo, un atacante
 no podrá introducir código ejecutable tan fácilmente — Tendría que
 cargarlo como un segmento adicional con los permisos correspondientes.
+
+La segmentación también permite distinguir /niveles/ de acceso a la
+memoria: Para que un proceso pueda efectuar /llamadas al sistema/,
+debe tener acceso a determinadas estructuras compartidas del
+núcleo. Claro está, al ser memoria privilegiada, su acceso requiere
+que el procesador esté ejecutando en /modo supervisor/.
 
 ** Intercambio parcial
 # <<MEM_intercambio_parcial>>
@@ -656,12 +685,15 @@ La memoria física se divide en una serie de /marcos/ (/frames/), todos
 ellos del mismo tamaño, y el espacio cada proceso se divide en una
 serie de páginas (/pages/), del mismo tamaño que los marcos. La MMU se
 se encarga del mapeo entre páginas y marcos a través de /tablas de
-páginas/. 
+páginas/.
 
-Cuando se activa la paginación, la MMU transforma las direcciones lógicas
-a direcciones lineales (por medio de tablas de segmentos), y luego las
-direcciones lineales se transforman a direcciones físicas usando una
-tabla de páginas.
+Cuando se trabaja bajo una arquitectura que maneja paginación, las
+direcciones que maneja el CPU ya no son presentadas de forma absoluta,
+sino que como la combinación de un identificador de página y un
+desplazamiento, de forma similar a lo presentado al hablar de
+resolución de instrucciones en tiempo de ejecución; la principal
+diferencia con lo entonces abordado es que cada proceso tendrá ya no
+un único espacio en memoria, sino una multitud de páginas.
 
 El tamaño de los marcos (y, por tanto, las páginas) debe ser una
 /potencia de 2/, de modo que la MMU pueda discernir fácilmente la
@@ -679,8 +711,9 @@ desplazamiento).
 
 Para poder realizar este mapeo, la MMU requiere de una /tabla de
 páginas/ (/page table/), que /resuelve/ la relación entre páginas y
-marcos, convirtiendo la /dirección lineal/  en la /dirección física/ 
-(la ubicación en que /realmente/ se encuentra en la memoria del sistema).
+marcos, convirtiendo la /dirección lógica/ (aquella que conoce el
+proceso) en la /dirección física/ (la ubicación en que /realmente/ se
+encuentra en la memoria del sistema).
 
 #+attr_latex: width=\textwidth
 #+label: MEM_hardware_de_paginacion
@@ -692,10 +725,10 @@ presentado en el libro de Silberschatz, Galvin y Gagné. Este nos
 presenta un esquema minúsculo: Un /espacio de direccionamiento/ de 32
 bytes (5 bits), organizado en 8 páginas de 4 bytes cada una (esto es,
 la página es representada con los 3 bits /más significativos/ de la
-dirección lineal, y el desplazamiento con los 2 bits /menos
+dirección, y el desplazamiento con los 2 bits /menos
 significativos/).
 
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=0.75\textwidth
 #+label: MEM_ejemplo_de_paginacion
 #+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
 [[./img/ditaa/ejemplo_de_paginacion.png]]
@@ -868,7 +901,7 @@ de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 
 #+label: MEM_paginacion_jerarquica
 #+caption: Paginación en dos niveles: Una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: width=\textwidth
 [[./img/dot/paginacion_jerarquica.png]]
 
 Este esquema funciona adecuadamente para equipos con direccionamiento
@@ -1006,12 +1039,14 @@ Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
 son las mismas /mientras sean sólo leídas/. Sin embargo, si uno de los
 procesos modifica a cualquier dato en una de estas páginas, ésta se
 copia a un nuevo marco, y deja de ser una página compartida. El resto
-de las páginas seguirá siendo compartido. Esto se puede logra marcando
-/todas/ las páginas compartidas como "sólo lectura", con lo cual cuando
-uno de los dos procesos intente modificar la información de alguna página 
-se generará un fallo. El sistema operativo copiará entonces sólo la 
-página en la cual se encuentra la dirección de memoria que causó el fallo,
-y esta vez marcará la página como "lectura y escrtura".
+de las páginas seguirá siendo compartido. Esto se puede lograr
+marcando /todas/ las páginas compartidas como /sólo lectura/, con lo
+cual cuando uno de los dos procesos intente modificar la información
+de alguna página se generará un fallo. El sistema operativo, al notar
+que esto ocurre sobre un espacio CoW, en vez de responder al fallo
+terminando al proceso, copiará sólo la página en la cual se encuentra
+la dirección de memoria que causó el fallo, y esta vez marcará la
+página como /lectura y escritura/.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_cow_pagina_modificada
@@ -1045,7 +1080,7 @@ disco duro), a través de un esquema de /intercambio/ (/swap/).
 
 #+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.6\textwidth
 [[./img/dot/esquema_gral_mem_virtual.png]]
 
 Es importante apuntar que la memoria virtual es gestionada /de forma
@@ -1860,6 +1895,7 @@ textos:
   disponible en Web)
 
 ** Desbordamientos de buffer (/buffer overflows/)
+# <<MEM_buffer_overflow>>
 
 Una de las funciones principales de los sistemas operativos que hemos
 recalcado a lo largo del libro es la de implementar protección entre
@@ -1969,7 +2005,7 @@ func:
         subl $20,%esp
 #+end_src
 
-#+attr_latex: width=0.85\textwidth
+#+attr_latex: width=0.8\textwidth
 #+label: MEM_stackframe
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 [[./img/ditaa/stackframe.png]]
@@ -2130,7 +2166,7 @@ algo más complejo — Que ejecute código arbitrario que él
 proporicione. Para esto, el ataque más frecuente es brincar /hacia
 adentro del stack/.
 
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_jump
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[./img/ditaa/overflow_jump.png]]
@@ -2208,7 +2244,7 @@ transfiera a un punto útil.
 
 Se llama /canario/ a un valor aleatorio de protección[fn:: Este uso
 proviene de la costumbre antigua de los mineros de tener un canario en
-una jaula en la mina. Como el canario es muy sensible ante la falta de
+una jaula en las minas. Como el canario es muy sensible ante la falta de
 oxígeno, si el canario moría servía como indicador a los mineros de
 que debían abandonar la mina de inmediato, antes de correr la misma
 suerte.], insertado entre los buffers y la dirección de retorno, que
@@ -2217,7 +2253,7 @@ desbordamiento de buffer, el valor del /canario/ será reemplazado por
 basura, y el sistema podrá detener la ejecución del proceso
 comprometido antes de que brinde privilegios elevados al atacante.
 
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: width=0.9\textwidth
 #+label: MEM_overflow_canary
 #+caption: Marco de stack con un /canario/ aleatorio protector de 12 bytes (=qR'z2a&5f50s=): Si este es sobreescrito por un buffer desbordado, se detendrá la ejecución del programa.
 [[./img/ditaa/overflow_canary.png]]

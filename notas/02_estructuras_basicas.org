@@ -743,7 +743,7 @@ se la desarrollará particularmente en los capítulos \ref{PROC}
 procesos/). Valga la nota en este momento únicamente para aclarar la
 diferencia entre los dos conceptos.
 
-El multiprocesamiento se emplea ampliamente desde los 1960 en los
+El multiprocesamiento se emplea ampliamente desde los sesenta en los
 entornos de cómputo de alto rendimiento, pero por muchos años se vio
 como el área de especialización de muy pocos — las computadoras con
 más de un procesador eran prohibitivamente caras, y para muchos
@@ -791,7 +791,7 @@ de caché/ abordados en la sección anterior).
 Existe también el /multiprocesamiento asimétrico/; dependiendo de la
 implementación, la asimetría puede residir en diferentes puntos. Puede
 ir desde que los procesadores tengan una /arquitectura/ distinta
-(típicamente dedicada a una tarea específica), en caso en el cual
+(típicamente dedicada a una tarea específica), en cuyo caso 
 pueden verse como /coprocesadores/ o /procesadores coadyuvantes/, casi
 computadoras independientes contribuyendo sus resultados a un mismo
 cómputo. Hoy en día, este sería el caso de las tarjetas gráficas 3D,
@@ -824,16 +824,17 @@ siempre basados en la transmisión de datos sobre una /red/. Estos son
 principalmente:
 
 - /Cúmulos/ (clusters) :: Computadoras conectadas por una red local
-     (de alta velocidad), corriendo cada una su propia instancia de
+     (de alta velocidad), ejecutando cada una su propia instancia de
      sistema operativo. Pueden estar orientadas al /alto rendimiento/,
-     /alta disponibilidad/ o al /balanceo de cargas/. Típicamente son
-     equipos homogéneos, y dedicados a la tarea en cuestión.
+     /alta disponibilidad/ o al /balanceo de cargas/ (o a una 
+     combinación de estas). Típicamente son equipos homogéneos, y 
+     dedicados a la tarea en cuestión.
 
 - /Mallas/ (Grids) :: Computadoras distribuídas geográficamente y
      conectadas a través de una red de comunicaciones. Las
      computadoras participantes pueden ser heterogéneas (en
      capacidades y hasta en arquitectura); la comunicación tiene que
-     adecuarse a enlaces de mucho menor velocidad que en el caso de un
+     adecuarse a enlaces de mucha menor velocidad que en el caso de un
      cluster, e incluso presentar la elasticidad para permitir las
      conexiones y desconexiones de nodos en el transcurso del
      cómputo.
@@ -852,17 +853,17 @@ principalmente:
 
   - Servicios Web :: Mecanismo de descripción de funcionalidad, así
                      como de solicitud y recepción de resultados,
-                     basado en el estándar HTTP y contenido XML
+                     basado en el estándar HTTP y contenido XML.
 
   - Software como servicio :: El proveedor ofrece una /aplicación
        completa y cerrada/ sobre la red, /exponiendo/ únicamente su
-       interfaz (API) de consultas
+       interfaz (API) de consultas.
 
   - Plataforma como servicio :: El proveedor ofrece la /abstracción/
        de un entorno específico de desarrollo de modo que un equipo de
        programadores pueda /desplegar/ una aplicación desarrollada
        sobre dicha plataforma tecnológica. Puede ser visto como un
-       conjunto de piezas de infraestructura sobre de un servidor
+       conjunto de piezas de infraestructura sobre un servidor
        administrado centralmente.
 
   - Infraestructura como servicio :: El proveedor ofrece computadoras
@@ -886,7 +887,7 @@ que se puede esperar?
 En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Validity of the Single
 Processor Approach to Achieving Large Scale Computing Capabilities]],
 Amdahl, 1967] en que indica los límites máximos en que resultará la
-programación multiprocesada ante determinado programa: partiendo de la
+programación multiprocesada ante determinado programa: parte de la
 observación de que aproximadamente 40% del tiempo de ejecución de un
 programa se dedicaba a administración y mantenimiento de los datos,
 esto es, a tareas secuenciales.
@@ -1023,7 +1024,7 @@ problema generalmente se expande para aprovechar las facilidades
 disponibles. Los usuarios tienen control sobre cosas como la
 resolución de la malla, el número de pasos, la complejidad de los
 operadores y otros parámetros que usualmente se ajustan para permitir
-que el programa corra en el tiempo deseado. Por tanto, podría ser más
+que el programa se ejecute en el tiempo deseado. Por tanto, podría ser más
 realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
 constante.
 #+end_quote
@@ -1032,8 +1033,8 @@ Lo que escribe Gustafson se traduce a que es posible obtener la
 eficiencia deseada de cualquier cantidad de procesadores /aumentando
 suficientemente el tamaño del problema/. Al enfrentarse explícitamente
 con el /bloqueo mental/ contra el paralelismo masivo que nació de esta
-lectura errónea de lo comentado por Amdahl. Su artículo, sencillo y de
-apenas más de una cuartilla de extensión, cambió la percepción acerca
+lectura errónea de lo comentado por Amdahl, su artículo sencillo y de
+apenas más de una cuartilla de extensión cambió la percepción acerca
 de la utilidad misma del paralelismo masivo.
 
 * Otros recursos

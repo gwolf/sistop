@@ -95,7 +95,7 @@ programador.
 | *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
 
 Ahora bien, si bien la relación entre estos medios de almacenamiento
-nos resulta natural a nosotros, para una computadora tienen una
+puede parecer natural, para una computadora tiene una
 realidad completamente distinta: los registros son parte integral del
 procesador, y la memoria está a sólo un paso de distancia (el
 procesador puede referirse a ella directamente, de forma transparente,
@@ -179,7 +179,7 @@ Las interrupciones pueden organizarse por /prioridades/, de modo que
 una interrupción de menor jerarquía no interrumpa a una más
 importante — dado que las interrupciones muchas veces indican que hay
 datos disponibles en algún buffer, el no atenderlas a tiempo podría
-llevarnos a perder datos.
+llevar a la pérdida de datos.
 
 Hay un número limitado de interrupciones definidas para cada
 arquitectura, mucho más limitado que el número de dispositivos que
@@ -578,8 +578,8 @@ proceso. Algunos ejemplos de estas herramientas son =strace= en Linux,
 herramienta mucho más profunda y programable para esta tarea llamada
 =dtrace=, y ha sido /portada/ a otros Unixes (*BSD, MacOS).
 
-La salida de una traza nos brinda amplio detalle acerca de la
-actividad realizada por un proceso, y nos permite comprender a grandes
+La salida de una traza brinda amplio detalle acerca de la
+actividad realizada por un proceso, y permite comprender a grandes
 rasgos su interacción con el sistema. El nivel de información que da
 es, sin embargo, a veces demasiado — eso se puede ver si se considera
 la siguiente traza, ante uno de los comandos más sencillos: =pwd=
@@ -711,7 +711,7 @@ a día.], es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que se abordará en esta sección, y la
 /multiprogramación/, de la cual se hablará en la sección
 \ref{INTRO_multiprogramados} (/Sistemas multiprogramados/). Un sistema
-multiprogramado nos da la /ilusión/ de que está ejecutando varios
+multiprogramado da la /ilusión/ de que está ejecutando varios
 procesos al mismo tiempo, pero en realidad está alternando entre los
 diversos procesos que compiten por su atención. Un sistema
 multiprocesador tiene la capacidad de estar atendiendo
@@ -962,12 +962,12 @@ ganancia de 1.25x — la ejecución se completa en $T=400$ (con
 $g=1.25$). Las secciones paralelizables sólo toman un tiempo /externo/
 de 50 cada una, dado que la carga fue repartida entre dos unidades de
 ejecución. Al ejecutar con cuatro procesadores (\ref{HW_amdahl_4}), si
-bien se sigue notando mejoría, esta apenas nos lleva a $T=350$,
+bien se sigue notando mejoría, esta apenas lleva a $T=350$,
 con $g=1.4$.
 
 Si el código fuera infinitamente paralelizable, y se ejecutase este
 programa en una computadora con un número infinito de procesadores,
-este programa no podría ejecutarse en menos de $T=300$, lo cual nos
+este programa no podría ejecutarse en menos de $T=300$, lo cual 
 presentaría una ganancia de apenas $g=1.66$. Esto es, al agregar
 procesadores adicionales, rápidamente se llegaría a un crecimiento
 asintótico — el comportamiento descrito por la Ley de Amdahl es
@@ -994,7 +994,7 @@ ganancia superior a 20.
 Dado que el factor económico resulta muy importante para construir
 computadoras masivamente paralelas,[fn:: Dado que los componentes más
 caros son necesariamente los procesadores] y que se ve claramente que
-el poder adicional que nos da cada procesador es cada vez menor, la
+el poder adicional que da cada procesador es cada vez menor, la
 Ley de Amdahl resultó (como ya se mencionó) en varias décadas de mucho
 mayor atención a la miniaturización y aumento de reloj, y no al
 multiprocesamiento.

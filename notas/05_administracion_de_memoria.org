@@ -2266,7 +2266,63 @@ y otro es, ya que se tiene acceso a la memoria del proceso,
 sofisticados que los vistos en esta sección, pero definitivamente ya
 no fuera del alcance de los atacantes.
 
-** Bibliotecas de ligado estático y ligado dinámico
+** Ligado estático y dinámico de bibliotecas
+
+Las /bibliotecas de código/ - O simplemente /bibliotecas/  implementan el
+código de una serie de funcionalidades generales, que
+pueden ser usadas en diferentes programas y contextos. Un ejemplo clásico sería la
+biblioteca estándar de C, la cual ofrece funciones básicas
+de entrada / salida, manejo de cadenas, entre otras.
+
+A medida que el software crece en complejidad, los programadores hacen uso
+del concepto de /reutilización de código/ para aprovechar la implementación de
+alguna funcionalidad, que se encuentre disponible como biblioteca. 
+De esta forma, evitan "reinventar la rueda", y se concentran en
+las funcionalidades específicas del software que están construyendo.
+
+El concepto de /ligado/ se refiere al proceso mediante el cual, se toma el 
+/codigo objeto/ de un programa junto con el código de las bibliotecas que éste usa
+para crear un archivo ejecutable. De forma general existen dos tipos de ligado, que
+se explican a continuación.
+
+El ligado estático consiste en tomar el código de una biblioteca e integrarlo al
+código del programa para generar el archivo ejecutable. Esto implica que
+/cada programa/ tiene su propia copia del código de la biblioteca, lo cual puede
+causar un desperdicio de memoria y disco si existen muchos programas que usan 
+la misma versión.
+
+Por su parte, en el ligado dinámico el código de las bibliotecas no se copia dentro
+de la imagen ejecutable del programa, pero requiere estableer algún mecanismo
+para informar que el programa necesita un código externo. Esto se puede implementar 
+de diferentes formas. Por ejemplo,se puede incluir un fragmento de código 
+dentro del programa que usa la biblioteca denominado /stub/,el cual en tiempo de 
+ejecución solicita que se  cargue la biblioteca requerida. Otra estrategia que 
+se puede utilizar consiste en  incluir algunas indicaciones que le permiten 
+al sistema operativo, en el momento  de crear el proceso, ubicar las 
+bibliotecas que este requiere para su ejecución. En cualquier caso, el ligado 
+dinámico busca que las bibliotecas sólo sean cargadas cuando sean requeridas.
+
+El ligado dinámico puede traer consigo una serie de problemas, entre los cuales
+se destacan el manejo de versiones de las bibliotecas y potenciales vulnerabilidades. 
+El primer problema se puede observar en ambientes Windows como el /infierno de las DLL/. Este
+/infierno/ se puede causar de muchas formas. Por ejemplo, si al al instalar un nuevo programa,
+se instala también una versión incompatible de una biblioteca que es usada por otros programas.
+Esto causa que los demás programas no se puedan ejecutar. De otro lado, si no se 
+tienen los controles suficientes, al desinstalar un programas se puede borrar accidentalmente
+una biblioteca compartida, lo cual también causaría que otros programas dejen de funcionar.
+
+El /infiero de las DLL/ puede ser prevenido mediante estrategias como el versionamiento de las
+biblioteca de ligado dinámico, y mediante el uso de scripts de instalación que verifican si existe
+en el sistema una versión compatible de la biblioteca. En caso contrario, se instalará la biblioteca
+requerida.
+
+La vulnerabilidad en el ligado dinámico se presenta debido a que el programa usa un
+código proporcionado por terceros, y /confía/ que la biblioteca funciona tal como se espera sin
+incluir código malicioso. Por tal razón, desde el punto de vista teórico bastaría que un atacante 
+instale su propia versión de una biblioteca para que pueda tener el control de los programas
+que la usan e incluso del mismo sistema operativo [fn:: Esto se puede lograr, por ejemplo, 
+alterando la configuración del entorno en la cual el sistema busca las bibliotecas.].
+
 ** Recuperación de datos del intercambio
 
 * Consideraciones de rendimiento

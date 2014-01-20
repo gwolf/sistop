@@ -59,7 +59,7 @@ fabricantes introdujeron a mediados de los años 1980 los procesadores
 con arquitectura de 32 bits. Por ejemplo, la arquitectura IA-32 de Intel tiene su 
 inicio oficial con el procesador 80386 (o simplemente 386). 
 Este procesador podía referenciar desde el punto de vista teórico 
-hasta $2^{32}$ bytes de RAM. No obstante, debido a las 
+hasta $2^{32}$ bytes (4GB) de RAM. No obstante, debido a las 
 limitaciones tecnológicas (y tal vez estratégicas) para producir 
 memorias con esta capacidad, se tomó más de veinte años que las 
 memorias ampliamente disponibles alcanzaran dicha capacidad.
@@ -120,9 +120,7 @@ acceso a memoria/ para verificar que esté en el rango permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
 64K (65535 bytes) a partir de la dirección 504214 (492K), el /registro
-base/ contendría 504214, y el /registro límite/ 65535[fn:: De hecho esto sucedía
-en los procesadores x86 con registros de 16 bits, que pueden almacenar un
-valor máximo de 65535 ($2^{16} - 1$. Si hubiera una
+base/ contendría 504214, y el /registro límite/ 65535. Si hubiera una
 instrucción por parte de dicho proceso que solicitara una dirección
 menor a 504214 o mayor a 569749 (556K), la MMU lanzaría una excepción
 o /trampa/ interrumpiendo el procesamiento, e indicando al sistema
@@ -426,7 +424,7 @@ totalidad de la memoria (probablemente más de una vez por bloque).
 # <<MEM_swap>>
 
 Siguiendo de cierto modo la lógica requerida por la compactación
-se encuentran los sistemas que utilizan /intercambio/ (/swapping/) entre la
+se encuentran los sistemas que utilizan /intercambio/ (/swap/) entre la
 memoria primaria y secundaria. En estos sistemas, el sistema operativo
 puede /comprometer/ más espacio de memoria del que tiene físicamente
 disponible. Cuando hay más procesos de los que caben en memoria, el
@@ -691,8 +689,8 @@ páginas/.
 
 Cuando se trabaja bajo una arquitectura que maneja paginación, las
 direcciones que maneja el CPU ya no son presentadas de forma absoluta.
-Los bits de cada dirección se separa en un identificador de página y un
-desplazamiento, de forma similar a lo presentado al hablar de
+Los bits de cada dirección se separan en un /identificador de página/ y un
+/desplazamiento/, de forma similar a lo presentado al hablar de
 resolución de instrucciones en tiempo de ejecución. La principal
 diferencia con lo entonces abordado es que cada proceso tendrá ya no
 un único espacio en memoria, sino una multitud de páginas.
@@ -1078,7 +1076,7 @@ todos los procesos activos en el sistema superara el total de espacio
 físico. Es ahí donde entra en juego la /memoria virtual/: Para ofrecer
 a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
-disco duro), a través de un esquema de /intercambio/ (/swapping/).
+disco duro), a través de un esquema de /intercambio/ (/swap/).
 
 #+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
@@ -1791,7 +1789,7 @@ porciones importantes de su memoria fueron paginadas a disco.
 
 ** Hiperpaginación
 
-Es un fenómeno que se puede presentar por varias razones: Cuando (bajo 
+Es un fenómeno que se puede presentar por varias razones: cuando (bajo 
 un esquema de reemplazo local) un proceso tiene asignadas
  pocas páginas para llevar a cabo su trabajo, y genera fallos
 de página con tal frecuencia que le imposibilita realizar trabajo
@@ -2011,7 +2009,8 @@ func:
 *** C y las funciones de manejo de cadenas
 
 El lenguaje de programación C fue creado con el propósito de ser tan
-simple como sea posible, manteniéndose , para que pudiera ser empleado 
+simple como sea posible, manteniéndose tan cerca del hardware como se
+pudiera, para que pudiera ser empleado 
 como un lenguaje de programación para un sistema operativo portable. 
 Y si bien en 1970 era visto como un lenguaje bastante de alto nivel, 
 hoy en día es lo más bajo nivel en que programa la mayor parte de los desarrolladores
@@ -2191,7 +2190,7 @@ límites. La desventaja de esto es que hace falta cambiar al /factor
 humano/, lo cual resulta prácticamente imposible de lograr con
 suficiente profundidad[fn:: El ejemplo más claro de este problema es la función
 /gets/, la cual sigue siendo enseñada y usada en los cursos básicos de
-programación en C]. Muchos desarrolladores esgrimen argumentos en
+programación en C.]. Muchos desarrolladores esgrimen argumentos en
 contra de estas prácticas, como la pérdida de rendimiento que estas
 funciones requieren, y muchos otros sencillamente nunca se dieron por
 enterados de la necesidad de programar correctamente.

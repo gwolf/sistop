@@ -297,7 +297,7 @@ usuario.
 
 El almacenamiento en memoria primaria es /volátil/, esto es, se pierde
 al interrumpirse el suministro eléctrico. Esto no era muy importante
-en la época definitoria de los conceptos que se están presentando,
+en la época definitoria de los conceptos que se presentan en esta sección,
 dado que el tiempo total de vida de un conjunto de datos en
 almacenamiento bajo el control del procesador iba únicamente desde la
 entrada y hasta el fin de la ejecución del trabajo del usuario. Pero
@@ -493,7 +493,7 @@ software.
 
 
 
-* Interfaz del Sistema Operativo -- lamadas al sistema
+* Interfaz del Sistema Operativo: llamadas al sistema
 # <<HW_SYSCALLS>>
 De forma análoga a las interrupciones, se puede hablar
 de las llamadas al sistema. El sistema operativo protege a un proceso
@@ -576,7 +576,10 @@ proceso. Algunos ejemplos de estas herramientas son =strace= en Linux,
 =truss= en la mayor parte de los Unixes históricos o =ktrace= y
 =kdump= en los *BSD. A partir de Solaris 10 (2005), Sun incluye una
 herramienta mucho más profunda y programable para esta tarea llamada
-=dtrace=, y ha sido /portada/ a otros Unixes (*BSD, MacOS).
+=dtrace=, que al paso del tiempo ha sido /portada/[fn:: Se denomina
+/portar/ el hacer las adecuaciones necesarias para que una herramienta
+diseñada para determinado entorno pueda emplearse en otros distintos.]
+a otros Unixes (*BSD, MacOS).
 
 La salida de una traza brinda amplio detalle acerca de la
 actividad realizada por un proceso, y permite comprender a grandes

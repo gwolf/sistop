@@ -46,12 +46,14 @@ digraph G {
 
 	subgraph cluster_priv {
 		label = "Núcleo (modo privilegiado)";
+		fontcolor = "white";
 		bgcolor = "red";
 		{netdrv ipc video} -> {fs proc mem irq};
 	}
 
 	subgraph cluster_hw {
 		bgcolor = "#555555";
+		fontcolor = "white";
 		label = "Hardware";
 		hd ram vga cpu net;
 	}

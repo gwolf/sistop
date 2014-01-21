@@ -2,7 +2,7 @@
   digraph G {
           color=white;
           layout = dot;
-          rankdir = LR;
+          //rankdir = LR;
           r0 [shape=point];
           r1 [shape=point];
           r2 [shape=point];
@@ -11,50 +11,52 @@
           r5 [shape=point];
           r6 [shape=point];
 	  r7 [shape=point];
-          notas_liberal [label="Más caro (complejo)\npara el sistema operativo\n\nMás barato (sencillo)\npara procesos usuario",color="white"];
-          notas_conserv [label="Más caro (complejo)\npara procesos usuario\n\nMás barato (sencillo)\npara el sistema operativo",color="white"];
+          notas_liberal [label="Más caro (complejo)\npara el sistema operativo\n\nMás barato (sencillo)\npara procesos usuario",color="white", fontsize=18];
+          notas_conserv [label="Más caro (complejo)\npara procesos usuario\n\nMás barato (sencillo)\npara el sistema operativo",color="white", fontsize=18];
           liberal [label="Liberal",color="white",fontsize=22];
           conservador [label="Conservador",color="white",fontsize=22];
 	  r0 -> r1 -> r2 -> r3 -> r4 -> r5 -> r6 -> r7 [arrowhead=none,weight=4];
-	  {rank=same; notas_liberal -> liberal [style=invis] }
-          {rank=same; notas_conserv -> conservador [style=invis]}
-	  liberal -> conservador [style=invis, minlen=7];
+
+	  liberal -> notas_liberal [style=invis, minlen=2];
+	  notas_liberal -> notas_conserv [style=invis, minlen=3];
+	  notas_conserv -> conservador [style=invis, minlen=2];
+
 	  subgraph cluster_bloq_pos {
                   bgcolor="#eeeeee";
-                  fontsize=18;
+                  fontsize=20;
                   label="Bloqueo posible";
                   {rank=same; siempre r0}
                   {rank=same; detecc r1}
                   siempre -> r0 [minlen=3];
 		  detecc -> r1 [minlen=3]
-                  siempre [color="#eeeeee", label="Siempre otorgar\n(Avestruz)"];
-		  detecc [color="#eeeeee", label="Detección y\nrecuperación"];
+                  siempre [color="#eeeeee", label="Siempre otorgar (Avestruz)", fontsize=18];
+		  detecc [color="#eeeeee", label="Detección y recuperación", fontsize=18];
           }
           subgraph cluster_evita {
                   bgcolor="#dddddd";
-                  fontsize=18;
+                  fontsize=20;
                   label = "Evasión de bloqueos\n(Con conocimiento previo)";
-                  flujos [color="#dddddd", label="Flujos seguro\ne inseguros"];
-                  banquero [color="#dddddd", label="Algoritmo\ndel banquero"];
+                  flujos [color="#dddddd", label=" Flujos seguros e inseguros", fontsize=18];
+                  banquero [color="#dddddd", label="Algoritmo del banquero", fontsize=18];
                   {rank=same; flujos -> r2 [minlen=3]};
                   {rank=same; banquero -> r3 [minlen=3]};
           }
           subgraph cluster_previene {
                   bgcolor="#cccccc";
-                  fontsize=18;
+                  fontsize=20;
                   label="Prevención de bloqueos\n(Sin conocimiento previo)";
-                  serializacion [color="#cccccc", label = "Serialización"];
-                  one_shot [color="#cccccc", label = "Solicitud\nde una vez"];
-                  jerarquica [color="#cccccc", label = "Asignación\njerárquica"];
+                  serializacion [color="#cccccc", label = "Serialización", fontsize=18];
+                  one_shot [color="#cccccc", label = "          Solicitud de una vez", fontsize=18];
+                  jerarquica [color="#cccccc", label = "Asignación jerárquica", fontsize=18];
                   {rank=same; jerarquica -> r4 [minlen=3]};
                   {rank=same; one_shot -> r5 [minlen=3]};
                   {rank=same; serializacion -> r6 [minlen=3]};
           }
           subgraph cluster_nunca {
                   bgcolor="#bbbbbb";
-                  fontsize=18;
+                  fontsize=20;
                   label="No otorgamiento";
-                  nunca [color="#bbbbbb", label = "Nunca otorgar"];
+                  nunca [color="#bbbbbb", label = "                   Nunca otorgar", fontsize=18];
                   {rank=same; nunca -> r7 [minlen=3]};
           }
   }

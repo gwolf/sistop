@@ -398,7 +398,7 @@ se ven aquí las interfaces de almacenamiento (SCSI, SATA, IDE), de
 expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
 puertos /heredados/ seriales y paralelos).
 
-**** Contención
+** Contención
 
 Una de las principales razones de la existencia de tantos /canales/
 (buses) distintos en un mismo sistema es a la frecuencia acorde a los
@@ -444,7 +444,7 @@ ineficiente. Cuando un proceso está en una sección /limitada por
 entrada-salida/ (esto es, donde la actividad principal es la
 transferencia de información entre la memoria principal y cualquier
 otra área del sistema), si el procesador tiene que encargarse de la
-transferencia de toda la información[fn:: uste modo de operación es
+transferencia de toda la información[fn:: Este modo de operación es
 también conocido como /entrada/salida programada/.], se crearía un
 cuello de botella por la cantidad y frecuencia de interrupciones. Hoy
 en día, para evitar que el sistema se demore cada vez que hay una
@@ -535,12 +535,6 @@ forma cercana (pero no exacta). Del mismo modo que cada sistema
 operativo ofrece un conjunto de llamadas al sistema distinto, cada
 implementación de un lenguaje de programación puede ofrecer un API
 ligeramente distinto de otros.
-
-#+attr_latex: width=0.7\textwidth
-#+attr_html: height="350"
-#+label: HW_llamando_syscall
-#+caption: Un API expone una interfaz en un lenguaje de alto nivel hacia una llamada al sistema. (Imagen: /Operating System Concepts Essentials/; Silberschatz, Galvin, Gagne; p.56)
-[[./img/llamando_syscall.png]]
 
 #+attr_latex: width=\textwidth
 #+label: HW_llamada_al_sistema

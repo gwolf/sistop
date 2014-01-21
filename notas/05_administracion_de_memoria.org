@@ -1325,14 +1325,22 @@ dado que a cada solicitud se debería reemplazar el único marco
 disponible. El rendimiento evaluado sería en los casos de que se cuenta
 con dos o tres marcos.
 
+#+attr_latex: width=0.6\textwidth
+#+attr_html: height=320
+#+label: MEM_expectativa_fallas_marcos
+#+caption: Relación ideal entre el número de marcos y fallos de página
+[[../img/gnuplot/expectativa_fallas_contra_marcos.png]]
+
 Un fenómeno interesante que se presenta con algunos algoritmos es la
 /anomalía de Belady/: Si bien la lógica indica que a mayor número de
 marcos disponibles se tendrá una menor cantidad de fallos de página,
+como lo ilustra la figura \ref{MEM_expectativa_fallas_marcos},
 con algunas de cadenas de referencia y bajo ciertos algoritmos puede
 haber una /regresión/, en la cual la cantidad de fallos aumenta aún
-con una mayor cantidad de marcos.
+con una mayor cantidad de marcos, como se puede ver en la figura
+\ref{MEM_anomalia_belady}.
 
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.6\textwidth
 #+attr_html: height=320
 #+label: MEM_anomalia_belady
 #+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos

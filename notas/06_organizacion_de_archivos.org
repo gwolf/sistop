@@ -6,7 +6,8 @@
 
 De los roles que cumple el sistema operativo, probablemente el que más
 consciente tengan en general sus usuarios es el de la gestión del
-espacio de almacenamiento, esto es, el sistema de archivos. Al día de
+espacio de almacenamiento, esto es, la organización de la información
+en un /sistema de archivos/. Al día de
 hoy, todos los usuarios de equipo de cómputo dan por sentado y
 comprenden a grandes rasgos la organización del espacio de
 almacenamiento en un /directorio jerárquico/, con unidades de
@@ -39,10 +40,11 @@ organización, estos no están tan ampliamente difundidos. Y cuando un
 sistema opera con más de un dispositivo físico, encontraremos
 principalmente dos mecanismos para integrar a dichos dispositivos en
 un /sistema de archivos virtual/, brindnado al usuario una interfaz
-uniforme. Por último, los archivos son una estructura meramente lógica
-— Deben ser convertidos para ser representados en un /dispositivo
+uniforme. Por último, los archivos son una estructura meramente lógica;
+deben ser convertidos para ser representados en un /dispositivo
 orientado a bloques/ como los diversos tipos de unidades que conocemos
-–aunque esta nomenclatura es a veces incorrecta– como /discos/.
+–aunque esta nomenclatura es a veces incorrecta– como /discos/. Este
+último paso será abordado en el capítulo \ref{FS}.
 
 Del diagrama presentado en la figura \ref{DIR_capas_acceso_a_discos},
 toca al objeto de nuestro estudio –el sistema operativo– recibir del
@@ -63,14 +65,15 @@ división y comunicación entre capas puede ubicarse en el artículo de
 * Concepto de archivo
 
 En primer término, un archivo es un /tipo de datos abstracto/ — Esto
-es, en programación moderna podríamos verlo como una estructura que
-exclusivamente permite que la manipulemos por medio de una interfaz
+es,  podría verse como una estructura que
+exclusivamente permite la manipulación por medio de una interfaz
 /orientada a objetos/: Los procesos en el sistema sólo pueden tener
 acceso a los archivos por medio de la interfaz ofrecida por el sistema
-operativo.[fn:: Veremos más adelante que esto no es /necesariamente/
-cierto, sin embargo, el uso de los dispositivos /en crudo/ es tan bajo
-que podemos ignorarlos para propósitos de esta discusión] Abordaremos
-los detalles de esta interfaz en la siguiente sección.
+operativo.[fn:: Como se verá en la sección \ref{FS_volumenes_crudos}, esto no es /necesariamente/
+así, sin embargo, el uso de los dispositivos /en crudo/ es tan bajo
+que podemos ignorarlos para propósitos de esta discusión] La siguiente
+sección describe las principales operaciones provistas por esta
+interfaz.
 
 Para el usuario, los archivos son la /unidad lógica mínima/ al hablar
 de almacenamiento: Todo el almacenamiento /persistente/ (que sobrevive
@@ -102,19 +105,28 @@ estarán disponibles con un archivo son:
 - Abrir :: Solicita al sistema operativo verificar si tenemos el
            acceso para el /modo de acceso/ al archivo que indiquemos y
            si el medio lo soporta (por ejemplo, a pesar de contar con
-           los permisos, no podemos abrir para escritura un archivo en
-           un disco de sólo lectura), y asigna un /descriptor de
-           archivos/ que identifica la relación entre el proceso y el
-           archivo en cuestión. Abrir un archivo es necesario para
-           todas las siguientes operaciones.
+           todos los permisos necesarios, el sistema operativo no debe
+           permitir abrir para escritura un archivo en un CD-ROM u
+           otro medio de sólo lectura).
+
+	   Al abrir un archivo, el sistema operativo asigna un
+           /descriptor de archivos/ que identifica la relación entre
+           el proceso y el archivo en cuestión; estos serán definidos
+           propiamente en la sección \ref{DIR_tablas_de_archivos}.
+
+	   Todas las operaciones descritas a continuación operan sobre
+           el descriptor de archivos, no con su nombre o ruta.
 
 - Cerrar :: Indica al sistema que /el proceso en cuestión/ terminó de
             trabajar con el archivo; el sistema entonces debe vaciar
             los buffers a disco y eliminar la entrada que representa a
             esta combinación archivo-proceso de las tablas activas,
-            invalidando al /descriptor de archivo/. Si un proceso
-            cierra un archivo y quiere volver a emplearlo, tendrá que
-            abrirlo explícitamente.
+            invalidando al /descriptor de archivo/.
+
+	    Dado que todas las operaciones se realizan a través del
+            descriptor de archivo, si un proceso cierra un archivo y
+            requiere seguir utilizándolo, tendrá que abrirlo de nuevo
+            para obtener un nuevo descriptor.
 
 - Leer :: Cuando indicamos al sistema que queremos leer de un archivo
           hacia determinado buffer, éste copia el siguiente /pedazo/
@@ -135,12 +147,12 @@ estarán disponibles con un archivo son:
                   siguiendo a un /apuntador/, que indica cuál fue la
                   última posición del archivo a la que accesó el
                   proceso actual. Al reposicionar el apuntador,
-                  podemos /brincar/ a otro punto del archivo.
+                  podemos /saltar/ a otro punto del archivo.
 
 Hay varias otras operaciones comunes que pueden implementarse con
 llamadas compuestas a estas operaciones (por ejemplo, /copiar/ un
 archivo puede implementarse como /crear/ un archivo nuevo en modo de
-escritura, abrir en modo de lectura al fuente, e ir /leyendo/ de éste
+escritura, abrir en modo de lectura al archivo fuente, e ir /leyendo/ de éste
 y /escribiendo/ al nuevo hasta llegar al fin de archivo).
 
 Las operaciones que presentamos recién no son /todas/ las operaciones
@@ -154,18 +166,20 @@ permitiéndonos avanzar o retroceder la cabeza lectora/escritora dentro
 de ella.
 
 ** Tablas de archivos abiertos
+# <<DIR_tablas_de_archivos>>
 
 Tanto el sistema operativo como cada uno de los procesos mantienen
 normalmente /tablas de archivos abiertos/. Estas mantienen información
 acerca de todos los archivos actualmente abiertos, presentándolos
 hacia el proceso por medio de un /descriptor de archivo/; una vez que
 un archivo fue abierto, las operaciones que se realizan dentro de éste
-no son empleando su nombre, sino que su descriptor de archivos.
+no son empleando su nombre, sino que su descriptor de archivo.
 
 En un sistema operativo multitareas, más de un proceso podría abrir el
 mismo archivo a la vez; lo que cada uno de ellos pueda hacer, y cómo
 esto impacte a lo que vean los demás procesos, depende de la semántica
-que implemente el sistema.
+que implemente el sistema; un ejemplo de las diferentes semánticas
+posibles es el descrito en la sección \ref{DIR_bloq_arch}.
 
 Ahora, ¿por qué mencionamos que estas tablas son mantenidas tanto por
 el sistema operativo como por cada uno de los procesos? ¿No nos lleva
@@ -180,16 +194,16 @@ distinta. El sistema operativo necesita:
      determinar cuándo es momento de declarar la solicitud como
      /efectuada/. Si algún proceso tiene abierto a un archivo, y
      particularmente si tiene cambios pendientes de guardar, el
-     sistema no debe permitir que el archivo /desaparezca/ de su
+     sistema debe hacer lo posible por evitar que el archivo /desaparezca/ de su
      visión.
 - Modos de acceso :: Aunque un usuario tenga permisos de acceso a
      determinado recurso, el sistema puede determinar negarlo si
      llevaría a una inconsistencia. Por ejemplo, si dos procesos abren
-     un mismo archivo para escritura, es probable que los cambios que
-     realice uno sobreescriban a los que haga el otro.
+     un mismo archivo en modo de escritura, es probable que los
+     cambios que realice uno sobreescriban a los que haga el otro.
 - Ubicación en disco :: Para evitar que cada proceso tenga que
-     consultar las tablas en disco para encontrar al archivo, o sus
-     fragmentos.
+     consultar las tablas en disco para encontrar al archivo, o cada
+     uno de sus fragmentos.
 - Información de bloqueo :: En caso de que los modos de acceso del
      archivo requieran protección mutua, puede implementarse por
      medio de un bloqueo.
@@ -199,8 +213,18 @@ Por otro lado, el proceso necesita:
 - Descriptor de archivo :: Relación entre el nombre del archivo
      abierto y el identificador numérico que maneja internamente el
      proceso. Un archivo abierto por varios procesos tendrá
-     descriptores de archivo distintos en cada uno de ellos. El
-     descriptor de archivo es un número entero.
+     descriptores de archivo distintos en cada uno de ellos.
+
+     A nivel implementación, el descriptor de archivo otorgado por el
+     sistema a un proceso es simplemente un número entero, que podría
+     entenderse como /el n-ésimo archivo empleado por el
+     proceso/.[fn:: No sólo los archivos reciben descriptores de
+     archivo. Por ejemplo, en todos los principales sistemas
+     operativos, los descriptores 0, 1 y 2 están relacionados a
+     /flujos de datos/: respectivamente, la entrada estándar
+     (=STDIN=), la salida estándar (=STDOUT=) y el error estándar
+     (=STDERR=).]
+
 - Permisos :: Los modos válidos de acceso para un archivo. Esto no
               necesariamente es igual a los permisos que tiene el
               archivo en cuestión en disco, sino que el /subconjunto/
@@ -210,6 +234,7 @@ Por otro lado, el proceso necesita:
               sólo permitirá la lectura.
 
 ** Acceso concurrente: Bloqueo de archivos
+# <<DIR_bloq_arch>
 
 Dado que los archivos pueden emplearse como mecanismo de comunicación
 entre procesos que no guarden relación entre sí, incluso a lo largo
@@ -220,7 +245,7 @@ concurrente a un archivo se corrompan mutuamente.
 
 Algunos sistemas operativos permiten establecer bloqueos sobre
 determinadas regiones de los archivos, aunque la semántica más común
-es operar sobre el archivo como una sola unidad.
+es operar sobre el archivo entero.
 
 En general, la nomenclatura que se sigue para los bloqueos es:
 
@@ -245,39 +270,40 @@ dependiendo de qué tan explícito tiene que ser su manejo:
      a todos los demás procesos, independientemente de si éstos fueron
      programados para considerar la existencia de dicho bloqueo o no.
 - Consultivo o asesor :: (/Advisory locking/) Este tipo de bloqueos
-     es manejado exclusivamente entre los procesos involucrados, y
+     es manejado cooperativamente entre los procesos involucrados, y
      depende del programador de /cada uno/ de los programas en
      cuestión el solicitar y respetar dicho bloqueo.
 
 Haciendo un paralelo con los mecanismos presentados en el capítulo
-\ref{PROC} (/Administración de procesos/), los mecanismos que emplean
+\ref{PROC}, los mecanismos que emplean
 mutexes, semáforos o variables de condición serían /consultivos/, y
 únicamente los que emplean monitores (en que la única manera de llegar
 a la información es a través del mecanismo que la protege) serían
 /mandatorios/.
 
-De esta matriz de $2\times2$ tipos de bloqueo, no todos los sistemas
-operativos implementan las cuatro posibilidaddes. Como regla general,
+No todos los sistemas operativos implementan las cuatro posibilidades
+(compartido mandatorio, o compartido compulsivo, exclusivo mandatorio
+y exclusivo consultivo). Como regla general,
 en los sistemas Windows se maneja un esquema de bloqueo obligatorio, y
 en sistemas Unix es de bloqueo consultivo.[fn:: Esto explica por qué
-en Windows es tan común que el sistema mismo nos rechace hacer
+en Windows es tan común que el sistema mismo rechace hacer
 determinada operación porque /el archivo está abierto por otro
 programa/ (bloqueo mandatorio compartido), mientras que en Unix esta
 responsabilidad recae en cada uno de los programas de aplicación]
 
 Cabe mencionar que el manejo de bloqueos con archivos requiere del
-mismo cuidado que el de bloqueo por recursos que el que vimos en
-/administración de procesos/: Dos procesos intentando adquirir un
+mismo cuidado que el de bloqueo por recursos que el que vubierto en
+la sección \ref{PROC_bloq_mutuos}: Dos procesos intentando adquirir un
 candado exclusivo sobre dos archivos pueden caer en un bloqueo mutuo
-tal como ocurre con cualquier otro recurso externo.
+tal como ocurre con cualquier otro recurso físico.
 
 ** Tipos de archivo
 
 Si los archivos son, como dijimos, la /unidad lógica mínima/ con la
 que se puede guardar información en almacenamiento secundario,
-naturalmente sigue que existen archivos de diferentes tipos — Un
-archivo puede ser un documento de texto, un binario ejecutable, un
-archivo de audio o video, y un larguísimo etcetera, e intentar emplear
+naturalmente sigue que existen archivos de diferentes tipos: Cada
+archivo podría ser un documento de texto, un binario ejecutable, un
+archivo de audio o video, o un larguísimo etcetera, e intentar emplear
 a un archivo como uno de un tipo distinto puede resultar desde una
 frustración al usuario porque el programa no responde como éste
 quiere, hasta en pérdidas económicas.[fn:: Por ejemplo, imprimir un
@@ -294,7 +320,7 @@ reconozca al tipo de un archivo:
 
 - Extensión :: En los sistemas CP/M de los 1970, el nombre de cada
                archivo se dividía en dos porciones, empleando como
-               separador al punto: El nombre del archivo y su
+               elemento separador al punto: El nombre del archivo y su
                extensión. El sistema mantenía una lista de extensiones
                conocidas, para las cuales sabría cómo actuar, y este
                diseño se extendería a las aplicaciones, que sólo
@@ -385,9 +411,10 @@ reconozca al tipo de un archivo:
      traducciones y temas.
 
      En el tema particular que en esta sección nos concierne, la
-     división de recursos incluye un campo /creador/, que indica qué
-     programa fue el que creó al archivo, mismo que será llamado
-     en caso de que el usuario invoque directamente al archivo.
+     división de recursos incluye un campo llamado /creador/, que indica
+     cuál programa fue el que generó al archivo. Si el usuario solicita
+     ejecutar un archivo de datos, el sistema operativo lanzaría al
+     programa /creador/, indicándole que abra al archivo en cuestión.
 
      Las versiones actuales de MacOS ya no emplean esta técnica, sino
      que una llamada /appDirectory/, para propósitos de esta
@@ -402,8 +429,8 @@ estructurado o no estructurado.
 La mayor parte de los sistemas operativos maneja únicamente archivos
 /sin estructura/ — Cada aplicación es responsable de preparar la
 información de forma congruente, y la responsabilidad del sistema
-operativo es únicamente entregarlo como un conjunto de bytes. Ha
-habido sistemas de archivos históricos, como IBM CICS (1968), IBM MVS
+operativo es únicamente entregarlo como un conjunto de
+bytes. Históricamente, hubo sistemas operativos, como IBM CICS (1968), IBM MVS
 (1974) o DEC VMS (1977), que administraban ciertos tipos de datos en
 un formato básico de /base de datos/.
 
@@ -416,13 +443,15 @@ los tipos de datos y alineación de campos del sistema operativo
 impedía su adecuación, y el que la funcionalidad de un archivo tipo
 base de datos dependiera de la versión del sistema operativo creaba
 un /acoplamiento/ demasiado rígido entre el sistema operativo y las
-aplicaciones: Hoy en día es mucho más común ver que los programas que
-requieren gestores de base de datos interactúen con uno, implementado
-independientemente en espacio de usuario, o incluso que /liguen/ con
-un gestor implementado como biblioteca, como es el caso de /SQLite/
-(que es empleado por herramientas de adquisición de datos tan de bajo
-nivel como /systemtap/, y por herramientas tan de escritorio como el
-gestor de fotografías /shotwell/ o el navegador /Firefox/).
+aplicaciones.
+
+Esta práctica ha ido cediendo terreno a dejar esta responsabilidad en
+manos de procesos independientes en espacio de usuario (como sería un
+gestor de bases de datos tradicional), o de bibliotecas que ofrezcan
+la funcionalidad de manejo de archivos estructurados (como en el caso
+de /SQLite/, empleado tanto por herramientas de adquisición de datos
+de bajo nivel como /systemtap/ como por herramientas tan de escritorio
+como el gestor de fotografías /shotwell/ o el navegador /Firefox/).
 
 Podemos ver aún un remanente de los archivos estructurados en los
 sistemas derivados de MS-DOS: En estos sistemas, un archivo puede ser
@@ -443,9 +472,10 @@ información.]
 El acceso a los archivos puede realizarse de diferentes maneras:
 
 - Acceso secuencial :: Mantiene la semántica por medio de la cual
-     pudiéramos leer de nuestros archivos fuera la equivalente a
+     permite leer de nuestros archivos de forma equivalente a
      unidad de cinta que mencionamos en la sección
-     \ref{DIR_operaciones_con_archivos} (/Operaciones con archivos/):
+     \ref{DIR_operaciones_con_archivos}, y como lo ilustra la figura
+     \ref{DIR_acceso_secuencial}:
      El mecanismo principal para leer o escribir es ir avanzando
      consecutivamente por los bloques que conforman al archivo hasta
      llegar a su final.
@@ -465,9 +495,10 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 [[./img/ditaa/acceso_secuencial.png]]
 
 - Acceso aleatorio :: El empleo de gestores como /SQLite/ u otros
-     muchos motores de base de datos más robustos no nos exime de
-     pensar en nuestro archivo como una tabla estructurada. Si la
-     única semántica por medio de la cual pudiéramos leer de nuestros
+     muchos motores de base de datos más robustos no exime al usuario de
+     pensar en el archivo como una tabla estructurada, como lo ilustra
+     la figura \ref{DIR_acceso_aleatorio}. Si la única semántica por
+     medio de la cual el sistema operativo permitiera trabajar con los
      archivos fuera la equivalente a una unidad de cinta, implementar
      el acceso a un punto determinado del archivo podría resultar
      demasiado gravoso.
@@ -475,10 +506,10 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      Afortunadamente, el que el sistema operativo no imponga registros
      de longitud fija no impide que /el programa gestor/ lo haga. Si
      en el archivo al cual apunta el descriptor de archivos =FD=
-     tenemos 2000 registros de 75 bytes cada uno y necesitamos
-     recuperar el registro número 65 hacia el buffer =registro=,
-     /reposicionamos/ el apuntador de lectura al byte $65 \times 75 =
-     4875$ (=seek(FD, 4875)=) y leemos los siguientes 75 bytes en
+     hay 2000 registros de 75 bytes cada uno y el usuario requiere
+     recuperar el registro número 65 hacia el buffer =registro=, puede
+     /reposicionar/ el apuntador de lectura al byte $65 \times 75 =
+     4875$ (=seek(FD, 4875)=) y leer los siguientes 75 bytes en
      =registro= (=read(FD, *registro, 75)=).
 
 #+attr_latex: width=\textwidth
@@ -487,10 +518,11 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 [[./img/ditaa/acceso_aleatorio.png]]
 
 - Acceso relativo a índice :: En los últimos años se han popularizado
-     los gestores de base de datos /no estructurados/ u /orientados a
-     texto/, llamados genéricamente /NoSQL/. Estos gestores pueden
-     guardar registros de tamaño variable en disco, por lo que no
-     podríamos encontrar la ubicación correcta por medio de los
+     los gestores de base de datos /débilmente estructurados/ u /orientados a
+     documentos/, llamados genéricamente /NoSQL/. Estos gestores pueden
+     guardar registros de tamaño variable en disco, por lo que, como
+     lo ilustra la figura \ref{DIR_acceso_relativo_a_indice}, no
+     pueden encontrar la ubicación correcta por medio de los
      mecanismos de acceso aleatorio.
 
      Para implementar este acceso, se divide al conjunto de datos en
@@ -513,17 +545,20 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      una escritura y cambia la longitud de los datos almacenados, se
      va generando fragmentación en el archivo, y para resolverla
      probablemente se hace necesario suspender un tiempo la ejecución
-     de todos los procesos que estén empleando al archivo en cuestión
+     de todos los procesos que lo estén empleando
      (e invalidar, claro, todas las copias en caché de los
-     índices). Ahora bien, mientras se mantenga como mayormente de
+     índices). Ahora bien, para los casos de uso en que el
+     comportamiento predominante sea de
      lectura, este formato tendrá la ventaja de no desperdiciar
      espacio en los campos nulos o de valor irrelevante para algunos
-     de los registros.
+     de los registros, y de permitir la flexibilidad de registrar
+     datos originalmente no contemplados sin tener que modificar la
+     estructura.
 
-     Además de esto, la escritura en ambas partes de la base de datos
-     debe mantenerse con garantías de atomicidad — Si se pierde la
-     sincronía entre índice y datos, nos enfrentamos a una muy
-     probable corrupción de datos.
+     Es importante recalcar que la escritura en ambas partes de la
+     base de datos (índice y datos) debe mantenerse con garantías de
+     atomicidad — Si se pierde la sincronía entre ellas, el resultado
+     será una muy probable corrupción de datos.
 
 #+attr_latex: width=\textwidth
 #+label: DIR_acceso_relativo_a_indice
@@ -582,7 +617,7 @@ empleada en CP/M y derivados, incluyendo MS-DOS y Windows.
 Diversos sistemas han manejado otros caracteres (por ejemplo, el MacOS
 histórico empleaba los dos puntos, =:=), y aunque muchas veces los
 mantenían ocultos del usuario a través de una interfaz gráfica rica,
-los programadores siempre tuvieron que poder especificarlos.
+los programadores siempre tuvieron que manejarlos explícitamente.
 
 A lo largo del presente texto manejaremos la diagonal (=/=) como
 separador de directorios.
@@ -594,8 +629,9 @@ a una representación plana de los archivos que lo conformaban, sin
 ningún concepto de /jerarquía de directorios/ como el que hoy nos es
 natural. Esto se debía, en primer término, a lo limitado del espacio
 de almacenamiento de las primeras computadoras en implementar esta
-metáfora (los usuarios no dejaban sus archivos a largo plazo en el
-disco, sino que los tenían ahí meramente cuando les eran útiles), y en
+metáfora (por lo limitado del espacio de almacenamiento, los usuarios
+no dejaban sus archivos a largo plazo en el
+disco, sino que los tenían ahí meramente mientras los requerían), y en
 segundo término, a que no se había aún desarrollado un concepto de
 separación, permisos y privilegios como el que poco después
 aparecería.
@@ -611,9 +647,9 @@ simple, mínimo. Con unidades de disco capaces de manejar entre 80 y
 quisiera llevar a cabo una división temática de su trabajo, lo
 colocaría en distintos /discos flexibles/. El sistema operativo CP/M
 nunca soportó jerarquías de directorios, como tampoco lo hizo la
-primer versión de MS-DOS[fn:: el soporte de jerarquías de directorios
+primer versión de MS-DOS.[fn:: El soporte de jerarquías de directorios
 fue introducido apenas en la versión 2, junto con el soporte a discos
-duros de 10MB, con la IBM XT].
+duros de 10MB, acompañando al lanzamiento de la IBM PC modelo XT.]
 
 El sistema de archivos original de la Apple Macintosh, MFS, estaba
 construido sobre un modelo plano, pero presentando la /ilusión/ de
@@ -717,7 +753,9 @@ objeto/ está presente en más de un punto del árbol.
 [[./img/dot/directorio_DAG.png]]
 
 Un sistema de archivos puede permitir la organización como un /grafo
-dirigido/, aunque es común que la interfaz que presenta al usuario se
+dirigido/, aunque es común que la interfaz que presenta al
+usuario[fn:: Esta simplificación es simplemente una abstracción, y
+contiene una pequeña mentira, que será desmentida en breve.] se
 restrinja a un /grafo dirigido acíclico/: Las ligas múltiples son
 permitidas, siempre y cuando no generen un ciclo.
 
@@ -726,23 +764,24 @@ dirigidos por medio de dos mecanismos:
 
 - Liga dura :: La entrada de un archivo en un directorio Unix es la
                relación entre la ruta del archivo y el /número de
-               i-nodo/ en el sistema de archivos[fn:: Abordaremos a
-               detalle el significado y la estructura de un i-nodo en
-               el capítulo \ref{FS}.]. Si tenemos un archivo
-               existente y creamos una /liga dura/ a él, ésta es
+               i-nodo/ en el sistema de archivos.[fn:: El significado
+               y la estructura de un i-nodo se abordan en
+               el capítulo \ref{FS}.] Si a partir de un archivo
+               existente se crea una /liga dura/ a él, ésta es
                sencillamente otra entrada en el directorio apuntando
                al mismo /i-nodo/. Ambas entradas, pues, son el mismo
                archivo — No hay uno /maestro/ y uno /dependiente/.
 
 	       En un sistema Unix, este mecanismo tiene sólo dos
                restricciones:
-  1. Sólo se pueden hacer ligas duras dentro del mismo sistema de
-     archivos
 
-  2. No pueden hacerse ligas duras a directorios, sólo a archivos[fn::
-     Formalmente, puede haberlas, pero sólo el administrador puede
-     crearlas; detallaremos el por qué al hablar de recorrer los
-     directorios (sección \ref{DIR_dir_traversal}).]
+  1. Sólo se pueden hacer ligas duras dentro del mismo volumen.
+
+  2. No pueden hacerse ligas duras a directorios, sólo a
+     archivos.[fn:: Formalmente, puede haberlas, pero sólo el
+     administrador puede crearlas; en la sección
+     \ref{DIR_dir_traversal} se cubre la razón de esta restricción al
+     hablar de recorrer los directorios.]
 
 - Liga simbólica :: Es un archivo /especial/, que meramente indica a
                     dónde apunta. El encargado de seguir este archivo
@@ -752,20 +791,20 @@ dirigidos por medio de dos mecanismos:
                     seguir la liga.
 
 		    Una liga simbólica puede /apuntar/ a directorios,
-                    incluso creando ciclos, o a archivos de otros
-                    sistemas de archivos.
+                    incluso creando ciclos, o a archivos en otros
+		    volúmenes.
 
-		    Cuando creamos una liga simbólica, la liga y el
+		    Cuando se crea una liga simbólica, la liga y el
                     archivo son dos entidades distintas. Si bien
                     cualquier proceso que abra al archivo destino
                     estará trabajando con la misma entidad, en caso de
                     que éste sea renombrado o eliminado, la liga
-                    quedará /rota/, apuntando a una ubicación
-                    inexistente.
+                    quedará /rota/ (esto es, apuntará a una ubicación
+                    inexistente).
 
 Si bien estos dos tipos de liga existen también en los sistemas
 Windows[fn:: Únicamente en aquellos que emplean el sistema de archivos
-/NTFS/, no en los que están instalados sobre alguna de las variantes
+/NTFS/, no en los que utilizan alguna de las variantes
 de /FAT/ ], en dichos sistemas sigue siendo más común emplear los
 /accesos directos/. Se denomina así a un archivo (identificado por su
 extensión, =.lnk=), principalmente creado para poder /apuntar/ a los
@@ -778,38 +817,41 @@ también en Windows, su uso es muy poco frecuente. El API de Win32
 ofrece las funciones necesarias, pero éstas no están reflejadas desde
 la interfaz usuario del sistema — Y son sistemas donde el usuario
 promedio no emplea una interfaz programador, sino que una interfaz
-gráfica. Las ligas, podemos concluir, no son más empleadas por
+gráfica. Las ligas, pues, no son más empleadas por
 /cuestión cultural/: En sus comunidades de usuarios, nunca fueron
 frecuentes, por lo cual se mantienen como conceptos empleados sólo por
 los /usuarios poderosos/.
 
-Ya con el conocimiento de las ligas, podemos reelaborar la figura
-\ref{DIR_directorio_DAG} apegándonos más a la realidad: En los sistemas
-operativos (tanto Unix como Windows), todo directorio tiene dos
-entradas especiales: Los directorios =.= y =..=
+Ya con el conocimiento de las ligas, y reelaborando la figura
+\ref{DIR_directorio_DAG} con mayor apego a la realidad: En los
+sistemas operativos (tanto Unix como Windows), todo directorio tiene
+dos entradas especiales: Los directorios =.= y =..=, que aparecen tan
+pronto como el directorio es creado, y resultan fundamentales para
+mantener la /navegabilidad/ del árbol.
 
 #+attr_latex: width=0.5\textwidth
 #+label: DIR_directorio_DAG_completo
-#+caption: Directorio como un /grafo dirigido/, mostrando los /enlaces ocultos/ =.= y =..=
+#+caption: Directorio como un /grafo dirigido/, mostrando los /enlaces ocultos/ al directorio actual =.= y al directorio /padre/ =..=
 [[./img/dot/directorio_DAG_completo.png]]
 
-Como podemos ver en la figura \ref{DIR_directorio_DAG_completo}, en
+Como se puede ver en la figura \ref{DIR_directorio_DAG_completo}, en
 todos los directorios, =.= es una liga dura al mismo directorio, y
-=..= es una liga al directorio padre. Claro está, como sólo puede
-haber una liga =..=, un directorio que está enlazado desde dos lugares
-distintos del sistema de archivos sólo apunta hacia uno de ellos con
+=..= es una liga al directorio /padre/ (de nivel jerárquico
+inmediatamente superior). Claro está, como sólo puede
+haber una liga =..=, un directorio enlazado desde dos lugares
+distintos sólo apunta hacia uno de ellos con
 su enlace =..=; en este caso, el directorio común =proyecto= está
-dentro del directorio =/home/usr2=, y representamos la /liga
+dentro del directorio =/home/usr2=. La figura representa la /liga
 simbólica/ desde =/home/usr1= como una línea punteada.
 
-Notarán que hay una excepción: El directorio raiz. En este caso,
+Hay una excepción a esta regla: El directorio raiz. En este caso,
 tanto =.= como =..= apuntan al mismo directorio.
 
-Y esta es la razón que mencionamos hace algunas líneas por la cual no
-podemos ver a un árbol de archivos, ni en Windows ni en Unix, como a
-un /grafo dirigido acíclico/: Tanto las entradas =.= (al apuntar al
-mismo directorio donde están contentidas) como las entradas =..= (al
-apuntar al directorio padre) crean ciclos.
+Esta es la razón por la cual no se puede tomar rigurosamente a un
+árbol de archivos como a un /grafo dirigido acíclico/, ni en Windows
+ni en Unix: Tanto las entradas =.= (al apuntar al mismo directorio
+donde están contentidas) como las entradas =..= (al apuntar al
+directorio padre) crean ciclos.
 
 ** Operaciones con directorios
 # <<DIR_oper_dirs>>

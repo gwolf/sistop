@@ -654,6 +654,8 @@ nombres alfanuméricos, por ejemplo el primer puerto paralelo se denomina
 =LPT1= y el segundo puerto serie =COM2=. 
 
 ** Sistemas tipo Unix
+#<<HW_sist_unix>>
+
 Unix introdujo el concepto de que /todo es un archivo/: en el sistema
 Unix original, todos los dispositivos podían ser controlados a través
 de un /archivo especial/ que, en vez de almacenar información, apunta
@@ -665,10 +667,10 @@ introduce los /espacios de nombres mutables/, que presenta con
 interfaz de archivo prácticamente cualquier objeto empleado
 por el sistema.
 
-Las principales estructuras relacionadas que se encuentran en un
+Las principales estructuras relacionadas de este tipo que existen en un
 sistema tipo Unix son:
 
-- Dispositivos de caracteres :: Dispositivos con los cuales la
+- Dispositivos de caracteres :: Son aquellos en los cuales la
      información es leída o escrita de a un caracter a la vez y se
      presentan como /streams/ (flujos) de información, ya sea
      entrante, saliente o mixta. Algunos pueden permitir operaciones
@@ -677,7 +679,7 @@ sistema tipo Unix son:
 
      Ejemplos: impresora, unidad de cinta, modem.
 
-- Dispositivos de bloques :: Dispositivos que presentan una interfaz
+- Dispositivos de bloques :: Presentan una interfaz
      de /acceso aleatorio/ y entregan o reciben la información en
      /bloques/ de tamaño predeterminado.
 

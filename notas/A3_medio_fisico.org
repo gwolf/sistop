@@ -232,7 +232,7 @@ comparar a los algoritmos en cuestión.
      predecible, el algoritmo /C-SCAN/ (SCAN Circular) realiza las
      operaciones en el disco únicamente en un sentido — Si el
      algoritmo lee en órden /descendente/, al llegar a la solicitud
-     del cilindro más bajo, brincará de vuelta hasta el más alto para
+     del cilindro más bajo, saltará de vuelta hasta el más alto para
      volver a iniciar desde ahí. Esto tiene como resultado, claro, que
      el recorrido total aumente (aumentando hasta los 326 para nuestra
      cadena de referencia.
@@ -328,7 +328,7 @@ disco. Podemos ver el impacto de esto directamente en dos factores:
      estos defectos al formatear el disco /a bajo nivel/.
 
      Hoy en día, el controlador del disco detecta estos fallos y se
-     los /brinca/, presentando un mapa LBA lineal y completo. Los
+     los /salta/, presentando un mapa LBA lineal y completo. Los
      discos duros típicamente vienen con cierto número de /sectores de
      reserva/ para que, conforme se van detectando potenciales daños,
      estos puedan reemplazarse de forma transparente.

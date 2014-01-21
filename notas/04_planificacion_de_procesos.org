@@ -72,10 +72,10 @@ Podemos hablar de tres tipos principales de planificación:
 		   #+attr_latex: width=0.5\textwidth
 		   [[./img/planificador_corto_plazo.png]]
 
-Relacionando con los [[03_administracion_de_procesos.org#estados_de_un_proceso][estados de un proceso]] que abordamos en el
-capítulo \ref{PROC} (/Administración de procesos/), y volviendo al
-diagrama entonces presentado (reproducido aquí por comodidad como
-figura \ref{PLAN_estados_proceso}), podríamos ubicar a estos tres
+Relacionando con los estados de un proceso abordados en la
+sección \ref{PROC_estados_de_un_proceso}, y volviendo al
+diagrama entonces presentado (reproducido por comodidad de referencia
+en la figura \ref{PLAN_estados_proceso}), podríamos ubicar a estos tres
 planificadores en las siguientes transiciones entre estados:
 
 #+attr_latex: width=0.4\textwidth
@@ -1036,7 +1036,7 @@ Ahora bien, tras centrarnos para toda la presente discusión en los
 procesos, ¿cómo caben los /hilos/ en este panorama? Depende de cómo
 éstos son /mapeados/ a procesos a ojos del planificador.
 
-Como vimos en la unidad de /Administración de procesos/, hay dos
+Como fue expuesto en la sección \ref{PROC_tipos_de_hilos}, hay dos
 clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
 que son completamente gestionados dentro del proceso y sin ayuda del
 sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
@@ -1147,7 +1147,7 @@ operación).
 Las implementaciones de =pthreads= tanto en Windows como en Linux
 sólo contemplan SCS.
 
-Respecto a los otros aspectos mencionados en esta unidad, la
+Respecto a los otros aspectos mencionados en este capítulo, la
 especificación =pthreads= incluye funciones por medio de las cuales
 el programador puede solicitar al núcleo la prioridad de cada uno de
 los hilos por separado (=pthread_setschedprio=) e incluso solicitar
@@ -1450,7 +1450,7 @@ su lógica para permitir puntos de prevención adicionales.
 Otro enfoque es hacer al núcleo entero completamente interrumpible,
 asegurándose de que, a lo largo de todo su código, todas las
 modificaciones a estructuras internas estén protegidas por mecanismos
-de sincronización, como los estudiados en la unidad anterior. Este
+de sincronización, como los estudiados en la sección \ref{PROC_concurrencia}. Este
 método ralentiza varios procesos del núcleo, pero es mucho más
 flexible, y ha sido adoptado por los diversos sistemas
 operativos. Tiene la ventaja adicional de que permite que haya /hilos/

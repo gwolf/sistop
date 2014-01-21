@@ -5,18 +5,17 @@
 # <<MEM>>
 El único espacio de almacenamiento que el procesador puede utilizar
 directamente, más allá de los registros (que si bien le son internos y
-sumamente rápidos, pero de capacidad muy escasa) es la memoria
+sumamente rápidos, son de capacidad demasiado limitada) es la memoria
 física. Todas las arquitecturas de procesador tienen instrucciones
 para interactuar con la memoria, pero ninguna lo tiene para hacerlo
 con medios /persistentes/ de almacenamiento, como las unidades de
-disco[fn:: En la unidad /Sistemas de entrada y salida/ se estudiará cómo se
-interactúa con estas]. Cabe mencionar que cuando se encuentre en un texto
+disco. Cabe mencionar que cuando se encuentre en un texto
 referencia al /almacenamiento primario/ siempre se referirá a la
 memoria, mientras que el /almacenamiento secundario/ se refiere a los
 discos u otros medios de almacenamiento persistente.
 
 Todos los programas a ejecutar deben cargarse a la memoria
-del sistema antes de ser utilizados. En esta unidad se mostrará cómo
+del sistema antes de ser utilizados. En este capítulo se mostrará cómo
 administra el sistema operativo a la memoria para permitir que varios
 procesos la compartan — Esta tarea debe preverse desde el proceso de
 compilación de los programas (en particular, la fase de
@@ -1914,7 +1913,7 @@ procesado (sean instrucciones o datos) debe pasar por la memoria, por
 el /almacenamiento primario/. Sólo desde ahí puede el procesador
 leer la información directamente.
 
-A lo largo de la presente unidad se ha mencionado que la MMU incluye ya
+A lo largo del presente capítulo se ha mencionado que la MMU incluye ya
 desde el hardware el concepto de /permisos/, separando claramente las
 regiones de memoria donde se ubica el código del programa (y son, por
 tanto, ejecutables y de sólo lectura) de aquellas donde se encuentran

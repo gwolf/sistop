@@ -11,8 +11,8 @@ hoy, todos los usuarios de equipo de cómputo dan por sentado y
 comprenden a grandes rasgos la organización del espacio de
 almacenamiento en un /directorio jerárquico/, con unidades de
 almacenamiento llamadas /archivos/, de diferentes tipos según su
-función. En la primer parte de esta unidad revisaremos algo más a
-profundidad a este modelo, para posteriormente ver los detalles de la
+función. En el presente capítulo se revisará la semántica que compone
+a este modelo, para en el capítulo \ref{FS} continuar con los detalles de la
 gestión del espacio físico donde éstos están alojados.
 
 La abstracción que hoy conocemos como /sistemas de archivos/ es una de
@@ -59,10 +59,6 @@ red, o compresión y cifrado de la información. Una referencia más
 detallada acerca de ventajas, desventajas, técnicas y mecanismos de la
 división y comunicación entre capas puede ubicarse en el artículo de
 [[https://dl.acm.org/citation.cfm?doid=174613.174616][Heidemann y Popek (1994)]].
-
-En esta unidad tocaremos también algunos conceptos relacionados con
-los subsistemas de entrada y salida, aunque estos pertenecen
-mayormente a otras unidades, al igual que los controladores.
 
 * Concepto de archivo
 
@@ -730,9 +726,9 @@ dirigidos por medio de dos mecanismos:
 
 - Liga dura :: La entrada de un archivo en un directorio Unix es la
                relación entre la ruta del archivo y el /número de
-               i-nodo/ en el sistema de archivos.[fn:: Abordaremos a
-               detalle el significado y la estructura de un i-nodo más
-               adelante en esta misma unidad] Si tenemos un archivo
+               i-nodo/ en el sistema de archivos[fn:: Abordaremos a
+               detalle el significado y la estructura de un i-nodo en
+               el capítulo \ref{FS}.]. Si tenemos un archivo
                existente y creamos una /liga dura/ a él, ésta es
                sencillamente otra entrada en el directorio apuntando
                al mismo /i-nodo/. Ambas entradas, pues, son el mismo

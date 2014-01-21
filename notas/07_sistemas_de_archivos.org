@@ -190,7 +190,7 @@ Podemos encontrar dos casos de uso primarios hoy en día para
 dispositivos orientados a bloques no administrados a través de la
 abstracción de los sistemas de archivos:
 
-- Espacio de intercambio :: Como vimos en la [[04_administracion_de_memoria.org#acomodo_de_paginas][unidad anterior]], la
+- Espacio de intercambio :: Como vimos en la sección \ref{MEM_acomodo_de_paginas}, la
      gestión de la porción de la memoria virtual que está en disco es
      mucho más eficiente cuando se hace sin cruzar por la abstracción
      del sistema operativo — Esto es, cuando se hace en un volumen en
@@ -402,9 +402,10 @@ de directorio en cuestión, recuperar un archivo es tan simple como
 volver a ponerle el primer caracter a su nombre.
 
 Este es un ejemplo de un /mecanismo flojo/ (en contraposición de los
-/mecanismos ansiosos/, como los vistos en la sección de [[04_administracion_de_memoria.org#pag_sobre_demanda][paginación
-sobre demanda]]). Eliminar un archivo toma un trabajo mínimo, mismo que
-es /diferido/ al momento de reutilización de la entrada de directorio.
+/mecanismos ansiosos/, como los vistos en la sección
+\ref{MEM_pag_sobre_demanda}). Eliminar un archivo requiere de un
+trabajo mínimo, mismo que es /diferido/ al momento de reutilización de
+la entrada de directorio.
 
 ** Compresión y /desduplicación/
 # <<FS_compr_dedup>>

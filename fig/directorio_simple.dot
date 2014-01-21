@@ -13,11 +13,10 @@
                   label="UFD: sys";
                   color=lightgray
                   style=filled;
-                  list;
-                  copy;
-                  edit;
-                  login;
-          }
+                  {rank = same list copy};
+                  {rank = same edit login};
+		  list -> edit [style=invis];
+	  }
           subgraph cluster2 {
                   label="UFD: mail";
                   color=lightgray
@@ -36,9 +35,11 @@
                   label="UFD: usr2";
                   color=lightgray
                   style=filled;
-                  tarea_c;
+                  {rank=same tarea_c tarea_o};
                   instrucciones;
-          }
+		  instrucciones -> tarea_c [style=invis];
+		  instrucciones -> tarea_o [style=invis];
+	  }
           sys -> list;
           sys -> copy;
           sys -> edit;
@@ -58,6 +59,7 @@
           test_c1 [label="test.c"];
           a_out [label="a.out"];
           tarea_c [label="tarea.c"];
+	  tarea_o [label="tarea.o"];
           m_usr1 [label="usr1"];
           m_usr2 [label="usr2"];
   }

@@ -17,11 +17,18 @@ digraph G {
 
   usr1 -> test_c1;
   usr1 -> a_out;
-  usr2 -> tarea_c2;
+  usr2 -> tarea;
   usr2 -> instrucciones;
   usr3 -> tarea_c;
   usr3 -> a_out2;
-  
+  usr3 -> proyectos;
+
+  tarea -> tarea_c2;
+  tarea -> tarea_o;
+
+  proyectos -> tesis_txt;
+  proyectos -> ideas_txt;
+
   root [label="<raiz>", shape=box];
   bin [shape=box];
   home [shape=box];
@@ -29,10 +36,15 @@ digraph G {
   usr1 [shape=box];
   usr2 [shape=box];
   usr3 [shape=box];
+  tarea [shape=box];
+  proyectos [shape=box];
   a_out [label="a.out"];
   test_c1 [label="test.c"];
   a_out2 [label="a.out"];
   tarea_c [label="tarea.c"];
+  tarea_o [label="tarea.o"];
   tarea_c2 [label="tarea.c"];
+  tesis_txt [label="tesis.txt"];
+  ideas_txt [label="ideas.txt"];
 }
 #+end_src

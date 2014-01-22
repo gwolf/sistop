@@ -1,0 +1,12 @@
+digraph G {
+	home -> jose -> proyecto -> miembros;
+	home -> pedro -> proyecto;
+	miembros -> jose;
+	miembros -> pedro;
+	{rank=same jose pedro};
+	home [shape=box];
+	jose [shape=box];
+	proyecto [shape=box];
+	pedro [shape=box];
+	miembros [shape=box];
+}

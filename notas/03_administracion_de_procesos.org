@@ -290,12 +290,13 @@ pero muchos de esos conceptos en realidad son independientes del
 escenario: más bien nos ocupa la relación entre procesos que deben
 compartir recursos o deben sincronizar sus tareas.
 
-** Problemas clásicos de concurrencia
 Para presentar los problemas y conceptos relacionados con la
-concurrencia suelen utilizarse ejemplos muy simplificados basados en
-cuestiones de la vida real. Cada ejemplo presenta uno o más
+concurrencia suelen utilizarse algunos problemas clásicos, que
+presentan casos particulares muy simplificados, y puede encontrárseles
+relación con distintas cuestiones que un programador enfrentará en
+la vida real. Cada ejemplo presenta uno o más
 conceptos. Se recomienda comprender bien el ejemplo, el problema y la
-solución y realizar alguna ejercitación antes de pasar al siguiente
+solución y desmenuzar buscando los casos límite como ejercicio antes de pasar al siguiente
 caso. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
 
@@ -305,6 +306,14 @@ una solución válida. Algunos de estos problemas fueron originalmente
 planteados como justificación del desarrollo de las estructuras de
 control presentadas o de nuevos paradigmas de concurrencia y muchos
 son aun objeto de debate e investigación.
+
+Para profundizar más en este tema, se recomienda el libro «[[http://greenteapress.com/semaphores/][The little
+book of semaphores]]» de Allen Downey (2008) para profundizar en este
+tema. En este libro (de libre descarga) se encuentran muchos ejemplos
+que ilustran el uso de semáforos no sólo para resolver problemas de
+sincronización, sino como un mecanismo simple de comunicación entre
+procesos. También se desarrollan distintas soluciones para los
+problemas clásicos (y no tan clásicos).
 
 ** Problema: el jardín ornamental
 # <<PROC_problemas_clasicos>>
@@ -1678,14 +1687,6 @@ Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
        emplearse arreglos de semáforos o usar condicionales en el
        flujo. Esta segunda restricción haría efectivamente irresoluble
        al problema, por lo que se ignorará.
-
-
-Se recomienda el libro «[[http://greenteapress.com/semaphores/][The little book of semaphores]]» de Allen Downey
-(2008) para profundizar en este tema. En este libro, se encuentran
-muchos ejemplos que ilustran el uso de semáforos no sólo para resolver
-problemas de sincronización, sino como un mecanismo simple de
-comunicación entre procesos. También se desarrollan distintas
-soluciones para los problemas clásicos (y no tan clásicos).
 
 *** Primer acercamiento
 

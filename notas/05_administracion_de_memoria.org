@@ -1104,7 +1104,7 @@ Técnicamente, cuando se habla de memoria virtual, no se está
 haciendo referencia a un /intercambiador/ (/swapper)/, sino al /paginador/.
 
 ** Paginación sobre demanda
-# <<MEM_pag_sobre_demada>>
+# <<MEM_pag_sobre_demanda>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
 Se debe considerar que existe una gran cantidad de /código durmiente/: Código
@@ -1749,7 +1749,7 @@ esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
 termine con su tarea. Veremos este punto en breve, al hablar del
-conjunto activo (sección \ref{MEM_conjunto_activo}).
+conjunto activo (sección \ref{MEM_mod_conjunto_activo}).
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1857,7 +1857,7 @@ proceso con menor prioridad, al que esté causando más cantidad de
 fallos, o al que esté ocupando más memoria.
 
 *** Modelando el /conjunto activo/
-# <<MEM_conjunto_activo>>
+# <<MEM_mod_conjunto_activo>>
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que se va a presentar una situación de hiperpaginación —

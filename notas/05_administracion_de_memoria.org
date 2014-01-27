@@ -1004,7 +1004,7 @@ proceso) del hijo. Es frecuente encontrar el siguiente código:
     /* Soy el proceso hijo */
     /* (...) */
    } else if (pid < 0) {
-    /* Ocurrio un error, no se creo un proceso hijo */
+    /* Ocurrió un error, no se creó un proceso hijo */
    } else {
     /* Soy el proceso padre */
     /* La variable 'pid' tiene el PID del proceso hijo */
@@ -1995,7 +1995,7 @@ Y lo que el código resultante en ensamblador efectúa es:
    porque, en la arquitectura x86-32, los accesos a memoria deben
    estar /alineados a 32 bits/.
 
-#+begin_src asm
+#+begin_src [x86masm]Assembler
 ; main
         pushl $3
         pushl $2
@@ -2333,8 +2333,8 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
 #+begin_src c
   int datos[8000][8000];
   
-  /* Version correcta: El ciclo externo va sobre el */
-  /* indice externo, el ciclo interno va sobre el indice */
+  /* Versión correcta: El ciclo externo va sobre el */
+  /* índice externo, el ciclo interno va sobre el índice */
   /* interno. El arreglo en memoria sera recorrido */
   /* secuencialente. */
   for (i=0; i<8000; i++) {
@@ -2343,7 +2343,7 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
     }
    }
   
-  /* Si el ciclo externo es empleado para el indice interno */
+  /* Si el ciclo externo es empleado para el índice interno */
   /* y viceversa, el recorrido en memoria sera de "puntitos" */
   /* distribuidos por todo el espacio que ocupa datos[], */
   /* reemplazando a los contenidos del TLB una y otra vez, y */

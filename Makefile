@@ -103,7 +103,7 @@ libro_tex: libro_index
 	sed -i 's/\\ref{FS_FIS}/\\ref{sec-11}/' $(libro_tex)
 
 libro_pdf: fig libro_index libro_tex
-	cd notas ; echo q|pdflatex sistemas_operativos.tex ; echo q|pdflatex sistemas_operativos.tex
+	cd notas && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
 
 beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)

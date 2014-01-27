@@ -370,7 +370,7 @@ utilizar un solo torniquete, =cuenta= siempre tiene el valor correcto
 
 ¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
 programación convierten cada instrucción en una serie más o menos
-larga de operaciones de máquina (instrucciones assembler). De modo,
+larga de operaciones de máquina (instrucciones ensamblador). De modo,
 que una instrucción aparentemente simple como =cuenta = cuenta + 1=
 habitualmente implica varias operaciones de más bajo nivel:
 
@@ -540,9 +540,9 @@ multitarea durante la ejecución de la sección crítica. Así, un
 torniquete deberá hacer:
 
 #+begin_src C
-disable # Suspender temporariamente las interrupciones
-cuenta = cuenta + 1
-enable # Habilitar nuevamente las interrupciones
+disable(); /* Suspender temporariamente las interrupciones */
+cuenta = cuenta + 1;
+enable(); /* Habilitar nuevamente las interrupciones */
 #+end_src C
 
 Durante el lapso en el que las interrupciones están suspendidas no
@@ -582,7 +582,7 @@ int cuenta = 0;
 ...
 if (flag) wait;
 /* Aqui flag=0 */
-flag = 1; /* Comienzo de la sección crítica */
+flag = 1; /* Inicio de la sección crítica */
 cuenta = cuenta + 1;
 flag = 0; /* Fin de la sección crítica */
 #+end_src C
@@ -602,14 +602,12 @@ de eventos:
 Notar que el problema aquí es que la bandera también es un recurso
 compartido: lo único que ha cambiado es que ahora la sección crítica
 está en otro lugar. La solución funcionaría si se pudiera
-garantizar que la secuencia de operaciones
+garantizar que la secuencia de operaciones se realizara atómicamente:
 
 #+begin_src C
 if (bandera) wait;
 bandera = 1
 #+end_src C
-
-se realice atómicamente. 
 
 **** Intento 4: Manejar la bandera con instrucciones atómicas
 Algunas arquitecturas de computadoras permiten realizar determinadas
@@ -620,13 +618,15 @@ instrucción =INC=.
 Usando esto, la solución es:
 
 #+begin_src C
-int bandera; /* 0 => desocupada */
-
-while(++bandera != 1) bandera--; /* Debe generar "INC" */
-/* Sección crítica */
-cuenta = cuenta + 1;
-
-bandera--;
+  int bandera; /* 0 => desocupada */
+  
+  while (++bandera != 1) {
+      bandera--; /* Debe generar "INC" */
+  }
+  /* Sección crítica */
+  cuenta = cuenta + 1;
+  
+  bandera--;
 #+end_src C
 
 Esto funciona correctamente siempre que la operación /++bandera/ sea
@@ -634,7 +634,9 @@ atómica.  Sin embargo, hay dos problemas a considerar: un proceso
 puede permanecer mucho tiempo repitiendo el ciclo:
 
 #+begin_src C
-while(++bandera!=1) bandera--;
+  while (++bandera!=1) {
+      bandera--;
+  }
 #+end_src C
 
 De hecho, si el sistema operativo decide darle alta prioridad a este
@@ -663,7 +665,9 @@ int turno = 1; /* Inicialmente el turno es del proceso 1 */
 Ahora el código del proceso 1 contendría algo como: 
 
 #+begin_src C
-while(turno != 1) esperar(); /* Otro proceso? */
+while (turno != 1) {
+    esperar(); /* ¿Otro proceso? */
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 turno = 2;
@@ -672,7 +676,9 @@ turno = 2;
 Y el del proceso dos:
 
 #+begin_src C
-while(turno != 2) esperar();
+while (turno != 2) {
+    esperar();
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 turno = 1;
@@ -700,7 +706,9 @@ int b1, b2;
 /* Proceso 1: */
 ...
 b1 = 1;
-if (b2) esperar();
+if (b2) {
+    esperar();
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 b1 = 0;
@@ -708,7 +716,9 @@ b1 = 0;
 /* Proceso 2: */
 ...
 b2 = 1;
-if (b1) esperar();
+if (b1) {
+    esperar();
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 b2 = 0;
@@ -743,7 +753,9 @@ int quien;
 ...
 b1=1;
 quien=2;
-if ( b2 && (quien==2)) esperar();
+if ( b2 && (quien==2)) {
+    esperar();
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 b1=0;
@@ -752,7 +764,9 @@ b1=0;
 ...
 b2=1;
 quien=1;
-if ( b1 && quien==1) esperar();
+if ( b1 && quien==1) {
+    esperar();
+}
 /* Sección crítica */
 cuenta = cuenta + 1;
 b1=0;
@@ -1112,7 +1126,7 @@ cuales se mencionarán los siguientes:
 
 	     #+begin_src python
 	     require random
-	     n = random.randint(1,10) # Numero de hilos
+	     n = random.randint(1,10) # Número de hilos
 	     cuenta = 0
 	     mutex = Semaphore(1)
 	     barrera = Semaphore(0)
@@ -1848,18 +1862,20 @@ se declara un método de la siguiente manera (Silberschatz):
 #+begin_src java
 public class SimpleClass {
   // . . .
-  public synchronized void safeMethod() {
-    /* Implementation of safeMethod() */
+  public synchronized void metodoSeguro() {
+    /* Implementación de metodoSeguro() */
   // . . .
   }
 }
 #+end_src
 
 Y se inicializa a un =SimpleClass sc = new SimpleClass()=, cuando
-se llame a =sc.safeMethod()=, la máquina virtual verificará si ningún
-otro proceso está ejecutando =safeMethod()=; en caso de que no sea
+se llame a =sc.metodoSeguro()=, la máquina virtual verificará si ningún
+otro proceso está ejecutando =metodoseguro()=; en caso de que no sea
 así, le permitirá la ejecución obteniendo el candado, y en caso de sí
-haberlo, el hilo se bloqueará hasta que el candado sea liberado.
+haberlo, el hilo se bloqueará hasta que el candado sea liberado — Esto
+es, la propiedad =synchronized= hace que todo acceso al método en
+cuestión sea protegido por una mutex.
 
 El modelo de sincronización basado en monitores no sólo provee la
 exclusión mutua. A través de /variables de condición/ (VCs) se puede
@@ -1878,14 +1894,14 @@ objetos, no sólo los lenguajes clásicamente relacionados con la
 programación orientada a objetos permiten emplear monitores.
 
 #+begin_src C
-/* Implementacion para cinco filosofos */
+/* Implementacion para cinco filósofos */
 #define PENSANDO 1
 #define HAMBRIENTO 2
 #define COMIENDO 3
 
-pthread_cond_t  VC[5]; /* Una VC por filosofo */
+pthread_cond_t  VC[5]; /* Una VC por filósofo */
 pthread_mutex_t M;     /* Mutex para el monitor */
-int estado[5];         /* Estado de cada filosofo */
+int estado[5];         /* Estado de cada filósofo */
 
 void palillos_init () {
     int i;
@@ -1921,7 +1937,7 @@ void piensa(int i) {
 }
 
 /* No incluir 'actualiza' en los encabezados, */
-/* es una funcion interna/privada */
+/* es una función interna/privada */
 int actualiza (int i) {
     if ((estado[(i - 1) % 5] != COMIENDO) &&
         (estado[i] == HAMBRIENTO) &&
@@ -1976,7 +1992,7 @@ void *filosofo(void *arg) {
 
 int main() {
   int i;
-  pthread_t th[5];  /* IDs de los hilos filosofos */
+  pthread_t th[5];  /* IDs de los hilos filósofos */
   pthread_attr_t attr = NULL;
   palillos_init();
   for (i=0; i<5; i++) {

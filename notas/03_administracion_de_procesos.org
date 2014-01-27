@@ -28,11 +28,11 @@ está esperando para continuar su ejecución — en un momento
 determinado sólo puede estar ejecutando sus instrucciones un número
 de procesos igual o menor al número de procesadores que tenga el sistema.
 
-En este capítulo se desarrollan los conceptos relacionados con procesos,
-hilos, concurrencia y sincronización — se abordarán en el capítulo
-\ref{PLAN} (/Planificación de procesos/) las técnicas y algoritmos que
-emplea el sistema operativo para determinar cómo y en qué orden hacer
-los cambios de proceso que nos brindan la ilusión de simultaneidad.
+En este capítulo se desarrollan los conceptos relacionados con
+procesos, hilos, concurrencia y sincronización — Las técnicas y
+algoritmos que emplea el sistema operativo para determinar cómo y en
+qué orden hacer los cambios de proceso que nos brindan la ilusión de
+simultaneidad se abordarán en el capítulo \ref{PLAN}.
 
 ** Estados de un proceso
 # <<PROC_estados_de_un_proceso>>
@@ -86,13 +86,12 @@ uno de los procesos actuales se suele almacenar en una estructura llamada
 - Información de planificación (scheduling) :: La prioridad del
      proceso, la /cola/ en que está agendado, y demás información que
      puede ayudar al sistema operativo a planificar los procesos; se
-     profundizará el tema en el capítulo \ref{PLAN} (/Planificación de
-     procesos/).
+     profundizará el tema en el capítulo \ref{PLAN}.
 
 - Información de administración de memoria :: La información de mapeo
      de memoria (páginas o segmentos, dependiendo del sistema
      operativo), incluyendo la pila (/stack/) de llamadas. Se abordará
-     el tema en el capítulo \ref{MEM} (/Administración de memoria/).
+     el tema en el capítulo \ref{MEM}.
 
 - Información de contabilidad :: Información de la utilización de
      recursos que ha tenido este proceso — Puede incluir el tiempo

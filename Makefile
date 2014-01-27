@@ -14,6 +14,7 @@ dir_laminas = laminas
 idx_laminas = $(dir_laminas)/index.org
 
 libro = notas/sistemas_operativos.org
+libro_tex = notas/sistemas_operativos.tex
 
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
@@ -77,13 +78,32 @@ libro_index:
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
 
-libro_pdf: fig libro_index
+libro_tex: libro_index
 	# Si org-mode se queja de no tener definido "book" en
 	# org-export-latex-classes, referirse a
 	# http://orgmode.org/worg/org-tutorials/org-latex-export.html
-	emacs --batch --visit=$(libro) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf
-	# sed 's/usepackage{hyperref}/usepackage[unicode=true]{hyperref}/g' -i notas/sistemas_operativos.tex
-	# - cd notas ; echo q|pdflatex sistemas_operativos.tex ; echo q|pdflatex sistemas_operativos.tex
+	emacs --batch --visit=$(libro) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-latex
+
+	# Feo pero necesario: Para hacer referencia al capítulo y no a
+	# su primer sección (para que en el PDF generado no diga "en
+	# el capítulo 6.1"), hay que substituir todas las referencias
+	# al capítulo a secas por la correspondiente a su etiqueta numérica.
+	#
+	# No tengo mejor manera que hacerlo que esta... Sucia pero efectiva :-/
+	sed -i 's/\\ref{PRES}/\\ref{sec-1}/' $(libro_tex)
+	sed -i 's/\\ref{INTRO}/\\ref{sec-2}/' $(libro_tex)
+	sed -i 's/\\ref{HW}/\\ref{sec-3}/' $(libro_tex)
+	sed -i 's/\\ref{PROC}/\\ref{sec-4}/' $(libro_tex)
+	sed -i 's/\\ref{PLAN}/\\ref{sec-5}/' $(libro_tex)
+	sed -i 's/\\ref{MEM}/\\ref{sec-6}/' $(libro_tex)
+	sed -i 's/\\ref{DIR}/\\ref{sec-7}/' $(libro_tex)
+	sed -i 's/\\ref{FS}/\\ref{sec-8}/' $(libro_tex)
+	sed -i 's/\\ref{SL}/\\ref{sec-9}/' $(libro_tex)
+	sed -i 's/\\ref{VIRT}/\\ref{sec-10}/' $(libro_tex)
+	sed -i 's/\\ref{FS_FIS}/\\ref{sec-11}/' $(libro_tex)
+
+libro_pdf: fig libro_index libro_tex
+	cd notas ; echo q|pdflatex sistemas_operativos.tex ; echo q|pdflatex sistemas_operativos.tex
 
 beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)

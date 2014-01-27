@@ -173,9 +173,9 @@ adicionales; estas se presentan como una base general común a los
 principales sistemas operativos.
 
 Vale la pena mencionar que esta semántica para el manejo de archivos
-presenta a cada archivo como si fuera una /unidad de cinta/,
-permitiéndonos avanzar o retroceder la cabeza lectora/escritora dentro
-de ella.
+presenta a cada archivo como si fuera una /unidad de cinta/, dentro de
+la cual la cabeza lectora/escritora simulada puede avanzar o
+retroceder.
 
 ** Tablas de archivos abiertos
 # <<DIR_tablas_de_archivos>>
@@ -194,8 +194,8 @@ que implemente el sistema; un ejemplo de las diferentes semánticas
 posibles es el descrito en la sección \ref{DIR_bloq_arch}.
 
 Ahora, ¿por qué estas tablas son mantenidas tanto por el sistema
-operativo como por cada uno de los procesos? ¿No nos lleva esto a una
-situación que presenta información redundante?
+operativo como por cada uno de los procesos? ¿No lleva esto a una
+situación de información redundante?
 
 La respuesta es que la información que cada uno debe manejar es
 distinta. El sistema operativo necesita:
@@ -422,9 +422,9 @@ reconozca al tipo de un archivo:
      no es necesario tener acceso al fuente del programa para crear
      traducciones y temas.
 
-     En el tema particular que en esta sección nos concierne, la
-     división de recursos incluye un campo llamado /creador/, que indica
-     cuál programa fue el que generó al archivo. Si el usuario solicita
+     En el tema particular que concierne a esta sección, la división
+     de recursos incluye un campo llamado /creador/, que indica cuál
+     programa fue el que generó al archivo. Si el usuario solicita
      ejecutar un archivo de datos, el sistema operativo lanzaría al
      programa /creador/, indicándole que abra al archivo en cuestión.
 
@@ -586,7 +586,7 @@ dispositivo que, para cualquier transferencia solicitada desde o hacia
 \ref{HW_sist_unix} define los dispositivos /de caracteres/ y /de
 bloques.]
 
-Esto es, si bien el sistema operativo nos presenta una abstracción por
+Esto es, si bien el sistema operativo presenta una abstracción por
 medio de la cual la lectura (=read()=) puede ser de un tamaño
 arbitrario, todas las transferencias de datos desde cualquiera de los
 discos serán de un múltiplo del tamaño de bloques, definido por el
@@ -641,13 +641,13 @@ separador de directorios.
 
 Los primeros sistemas de archivos limitaban el concepto de directorio
 a una representación plana de los archivos que lo conformaban, sin
-ningún concepto de /jerarquía de directorios/ como el que hoy nos es
-natural. Esto se debía, en primer término, a lo limitado del espacio
-de almacenamiento de las primeras computadoras en implementar esta
-metáfora (por lo limitado del espacio de almacenamiento, los usuarios
-no dejaban sus archivos a largo plazo en el
-disco, sino que los tenían ahí meramente mientras los requerían), y en
-segundo término, a que no se había aún desarrollado un concepto de
+ningún concepto de /jerarquía de directorios/ como el que hoy resulta
+natural a los usuarios. Esto se debía, en primer término, a lo
+limitado del espacio de almacenamiento de las primeras computadoras en
+implementar esta metáfora (por lo limitado del espacio de
+almacenamiento, los usuarios no dejaban sus archivos a largo plazo en
+el disco, sino que los tenían ahí meramente mientras los requerían), y
+en segundo término, a que no se había aún desarrollado un concepto de
 separación, permisos y privilegios como el que poco después
 aparecería.
 
@@ -1000,7 +1000,7 @@ entrada del directorio, que apunta a =pedro=.
 *** Otros esquemas de organización
 
 Por más que el uso de sistemas de archivos basados en directorios
-jerárquicos nos parece universal y muy ampliamente aceptado, hay cada
+jerárquicos parece universal y es muy ampliamente aceptado, hay cada
 vez más casos de uso que apuntan a que se pueda estar por dar la
 bienvenida a una nueva metáfora de organización de archivos.
 
@@ -1115,7 +1115,7 @@ sería hoy en día el FTP.
 Por otro lado, desde mediados de los 1980, es posible realizar estas
 transferencias de forma /implícita/ y /automática/, empleando
 /sistemas de archivos sobre la red/ (o lo que es lo mismo, /sistemas
-de archivos remotos/).  Estos se nos presentan como caso particular de
+de archivos remotos/).  Estos se presentan como caso particular de
 la /abstracción de sistemas no-físicos/ que fueron mencionados en la sección
 anterior: Si bien el sistema operativo no tiene acceso /real/ a los
 archivos y directorios que le solicitará el usuario, a través de los

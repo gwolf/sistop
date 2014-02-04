@@ -670,19 +670,20 @@ total)]].
 
 * Esquemas de asignación de espacio
 
-Hasta ahora hemos mencionado que la /entrada de directorio/ apunta al
-punto donde inicia el espacio empleado por el archivo, pero no hemos
-detallado en cómo se implementa la asignación y administración de
-dicho espacio. Haremos un breve repaso de los tres principales
-mecanismos, después de lo cual detallaremos cómo es la implementación
-de FAT, hablando un poco de sus virtudes y debilidades.
+Hasta este punto, la presentación de la /entrada de directorio/ se ha
+limitado a indicar que ésta apunta al punto donde inicia el espacio
+empleado por el archivo. No se ha detallado en cómo se implementa la
+asignación y administración de dicho espacio. En esta sección se hará
+un breve repaso de los tres principales mecanismos, para después de
+ésta explicar cómo es la implementación de FAT, abordando sus
+principales virtudes y debilidades.
 
 ** Asignación contigua
 
 Los primeros sistemas de archivos en disco empleaban un esquema de
 /asignación contigua/. Para implementar un sistema de archivos de este
 tipo, no haría falta el contar con una /tabla de asignación de
-archivos/: Bastaría con la información que vimos que forma parte del
+archivos/: Bastaría con la información que forma parte del
 directorio de FAT — La extensión del archivo y la dirección de su
 primer /cluster/.
 
@@ -707,8 +708,12 @@ podamos asignar a un nuevo archivo.
 Los esquemas de asignación contigua se emplean hoy en día
 principalmente en sistemas de archivo de sólo lectura — Por ejemplo,
 lo emplea el sistema principal que utilizan los CD-ROMs, el
-/ISO-9660/, dado que está pensado para aprovechar al máximo un espacio
-que, una vez grabado, sólo podrá abrirse en modo de sólo lectura.
+/ISO-9660/, pensado para aprovechar al máximo un espacio que, una vez
+grabado, sólo podrá abrirse en modo de sólo lectura. Esto explica por
+qué, a diferencia de como ocurre en cualquier otro medio de
+almacenamiento, al /quemar/ un CD-ROM es necesario preparar primero
+una /imagen/ en la que los archivos ocupen sus posiciones definitivas,
+y esta imagen debe grabarse al disco en una sola operación.
 
 ** Asignación ligada
 
@@ -722,8 +727,8 @@ Para hacer esto, hay dos mecanismos: El primero, reservar un espacio
 al final de cada /cluster/ para guardar el apuntador, y el segundo,
 crear una tabla independiente, que guarde únicamente los apuntadores.
 
-En el primer caso, si manejamos /clusters/ de 2048 bytes, y reservamos
-los 4 bytes (32 bits) finales de cada uno, nos encontraríamos con una
+En el primer caso, si se manejan /clusters/ de 2048 bytes, y se reservan
+los 4 bytes (32 bits) finales de cada uno, el resultado sería de gran
 incomodidad al programador: Frecuentemente, los programadores buscan
 alinear sus operaciones con las fronteras de las estructuras
 subyacentes, para optimizar los accesos (por ejemplo, evitar que un
@@ -732,10 +737,10 @@ bloques en disco). El programador tendría que diseñar sus estructuras
 para ajustarse a la poco ortodoxa cantidad de 2044 bytes.
 
 Y más allá de esta inconveniencia, guardar los apuntadores al final de
-cada /cluster/ hace mucho más lento el manejo de nuestros archivos: Si
-no tenemos en una sola ubicación la relación de /clusters/ que conforman
-a un archivo, para propósitos prácticos, todas las transferencias
-tendrán que ser /secuenciales/: Si queremos llegar directamente a
+cada /cluster/ hace mucho más lento el manejo de todos los archivos:
+Al no tener en una sola ubicación la relación de /clusters/ que conforman
+a un archivo, todas las transferencias se convierten en
+/secuenciales/: Para llegar directamente a
 determinado bloque del archivo, habrá que atravesar todos los bloques
 previos para encontrar su ubicación.
 
@@ -750,12 +755,16 @@ el espacio necesario para guardar un apuntador.
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer /cluster/
 [[./img/ditaa/fs_asignacion_ligada.png]]
 
-Empleando asignación ligada, tenemos muchas ventajas. En primer lugar,
-desaparece la /fragmentación externa/.[fn:: El concepto que manejan los
-usuarios en general como /fragmentación/ es muy distinto, y sí se
-presenta bajo este esquema: Cada archivo se separa en pequeños
-/fragmentos/ que pueden terminar esparcidos por todo el disco,
-impactando fuertemente en el rendimiento del sistema]
+La principal ventaja del empleo de asignación ligada es que desaparece
+la /fragmentación interna/.[fn:: Con /fragmentación interna/ se hace
+aquí referencia al concepto presentado en la sección
+\ref{MEM_fragmentacion}. El fenómeno generalmente conocido como
+/fragmentación/ se refiere a la necesidad de /compactación/; es muy
+distinto, y sí se presenta bajo este esquema: Cada archivo se separa
+en pequeños /fragmentos/ que pueden terminar esparcidos por todo el
+disco, impactando fuertemente en el rendimiento del sistema] Al ya no
+requerir la /pre-asignación/ de un espacio contiguo, cada uno de los
+archivos puede crecer o reducirse según sea necesario.
 
 Ahora, la /asignación ligada/ no sólo resulta más lenta que la
 contigua, sino que presenta una mayor /sobrecarga administrativa/: El
@@ -766,52 +775,74 @@ Este esquema también presenta /fragilidad de metadatos/: Si alguno de
 los apuntadores se pierde o corrompe, lleva a que se pierda el archivo
 /completo/ desde ese punto y hasta su final (y abre la puerta a la
 corrupción de otro archivo, si el apuntador queda apuntando hacia un
-bloque empleado por éste). Hay dos maneras de mitigar este problema:
-El empleado por FAT es guardar una (o, bajo FAT12, dos) copias
-adicionales de la tabla de asignación, mismas que el sistema
-verificará que se mantengan consistentes. Por otro lado, podría
-manejarse una estructura de /lista doblemente ligada/ (en vez de una
-/lista ligada/ sencilla) en que cada elemento apunte tanto al
-siguiente como al anterior. En ambos casos, sin embargo, la sobrecarga
-administrativa se duplica.
+bloque empleado por éste; el tema de fallos y recuperación bajo estos
+esquemas es abordado en la sección \ref{FS_fallos_recuperacion}).
+
+Hay dos mecanismos de mitigación para este problema: El empleado por
+FAT es guardar una (o, bajo FAT12, dos) copias adicionales de la tabla
+de asignación, entre las cuales que el sistema puede verificar si se
+mantengan consistentes y buscar corregirlas en caso contrario. Por
+otro lado, puede manejarse una estructura de /lista doblemente ligada/
+(en vez de una /lista ligada/ sencilla) en que cada elemento apunte
+tanto al siguiente como al anterior, con lo cual, en caso de
+detectarse una inconsistencia en la información, esta pueda ser
+recorrida /de atrás hacia adelante/ para confirmar los datos
+correctos. En ambos casos, sin embargo, la sobrecarga administrativa
+se duplica.
 
 ** Asignación indexada
 
-Por último, tenemos la /asignación indexada/, el mecanismo empleado
+El tercer modelo es la /asignación indexada/, el mecanismo empleado
 por casi todos los sistemas de archivos modernos. En este esquema, se
 crea una estructura intermedia entre el directorio y los datos, única
 para cada archivo: el /i-nodo/ (o /nodo de información/). Cada i-nodo
 guarda los metadatos y la lista de bloques del archivo, reduciendo la
-probabilidad de que se presente la /corrupción de apuntadores/ que
-mencionamos al hablar de la asignación ligada.
+probabilidad de que se presente la /corrupción de apuntadores/
+mencionada en la sección anterior.
 
 La sobrecarga administrativa bajo este esquema potencialmente es mucho
 mayor: Al asignar el i-nodo, éste se crea ocupando como mínimo un
-/cluster/ completo. Para un archivo que quepa en un sólo /cluster/, esto
-es un desperdicio del 100% de espacio; para archivos más grandes, la
-sobrecarga relativa disminuye, pero se mantiene siempre superior a la
-de la asignación indexada.
+/cluster/ completo. En el caso de un archivo pequeño, que quepa en un
+sólo /cluster/, esto representa un desperdicio del 100% de espacio (un
+/cluster/ para el i-nodo y otro para los datos);[fn:: Algunos sistemas
+de archivos, como ReiserFS, BTRFS o UFS, presentan esquemas de
+asignación /sub-cluster/. Estos denominan /colas/ (/tails/) a los
+archivos muy pequeños, y pueden ubicarlos ya sea dentro de su mismo
+i-nodo o compartiendo un mismo cluster con un /desplazamiento/ dentro
+de éste. Esta práctica no ha sido adoptada por sistemas de archivos de
+uso mayoritario por su complejidad relativa.] para archivos más
+grandes, la sobrecarga relativa disminuye, pero se mantiene siempre
+superior a la de la asignación indexada.
 
 #+attr_latex: width=0.9\textwidth
 #+label: FS_fs_asignacion_indexada
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
 [[./img/ditaa/fs_asignacion_indexada.png]]
 
-Un esquema de asignación indexada nos da un mejor manejo de caché que
-la asignación ligada: Si bien en dicho caso es común guardar copia de
-la tabla de asignación en memoria para mayor agilidad, con la
+Un esquema de asignación indexada nos da una mayor eficiencia de caché
+que la asignación ligada: Si bien en dicho caso es común guardar copia
+de la tabla de asignación en memoria para mayor agilidad, con la
 asignación indexada bastará hacer caché /únicamente de la información
-importante/, esto es, únicamente de los archivos que estamos empleando
-actualmente. Al hacer caché únicamente de lo que es relevante al
-sistema en un momento dado, se da mejor uso a un recurso más escaso
-(y, por tanto, valioso): La memoria.
+importante/, esto es, únicamente de los archivos que se emplean en un
+momento dado. El /mapa de asignación/ para los archivos y directorios
+que no hayan sido empleados recientemente no requerirán estar en
+memoria.
 
-Ahora, ¿qué pasa cuando la lista de /clusters/ de un archivo no cabe en
-un i-nodo? Podemos ver este ejemplo en el archivo azul del esquema
-ejemplo: En este caso, cada i-nodo puede guardar únicamente tres
-apuntadores. Al tener un archivo con cuatro /clusters/, se hace
-necesario extender el i-nodo con una lista adicional. La
-implementación más común de este esquema es que, dependiendo del
+Claro está, mientras que en los esquemas anteriores la tabla central
+de asignación de archivos puede emplearse directamente como el
+/bitmap/ del volumen, en los sistemas de archivos de asignación
+indexada se vuelve necesario contar con un /bitmap/ independiente —
+Pero al sólo requerir representar si cada /cluster/ está vacío u
+ocupado (y ya no apuntar al siguiente), resulta de mucho menor tamaño.
+
+Ahora, ¿qué pasa cuando la lista de /clusters/ de un archivo no cabe
+en un i-nodo? Este ejemplo se ilustra en el tercer archivo de la
+figura \ref{FS_fs_apuntadores_indirectos}: En el caso ilustrado, cada
+i-nodo puede guardar únicamente tres apuntadores.[fn:: Esto resulta un
+límite demasiado bajo, y fue elegido meramente para ilustrar el
+presente punto.] Al tener un archivo con cuatro /clusters/, se hace
+necesario extender al i-nodo con una lista adicional. La
+implementación más común de este mecanismo es que, dependiendo del
 tamaño del archivo, se empleen apuntadores con los niveles de
 indirección que /vayan haciendo falta/.
 
@@ -821,77 +852,80 @@ indirección que /vayan haciendo falta/.
 [[./img/dot/fs_apuntadores_indirectos.png]]
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
-esquema y únicamente tres indirecciones? Supongamos cantidades
-que podríamos encontrar frecuentemente hoy en día: /Clusters/ de 4KB y
-direcciones de 32 bits. Esto significa que en un /cluster/ vacío caben
-128 apuntadores ($4096 \over 32$). Supongamos también que en el i-nodo
-los metadatos ocupan 224 bytes, dejando espacio para 100 apuntadores:
+esquema y únicamente tres indirecciones? Suponiendo magnitudes que
+típicas hoy en día (/clusters/ de 4KB y direcciones de 32 bits), en un
+/cluster/ vacío caben 128 apuntadores ($4096 \over 32$). Si los
+metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 100
+apuntadores:
 
-- Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede ser
-  representado directamente en el i-nodo, y requeriremos de un sólo
-  acceso a disco para obtener su lista de /clusters/
+- Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede ser referido
+  por completo directamente en el i-nodo, y es necesario un sólo
+  acceso a disco para obtener su lista de /clusters/.
 - Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
   representarse con el bloque de indirección sencilla, y obtener su
-  lista de /clusters/ nos significa dos accesos a disco adicionales.
-- Con el bloque de doble indirección, podemos referirnos a archivos
-  mucho más grandes:
+  lista de /clusters/ significa dos accesos a disco adicionales.
+- Con el bloque de doble indirección, puede hacerse referencia a
+  archivos mucho más grandes:
 
   $(100-3 + 128 + (128\times 128) ) \times 4KB = 66436KB \approx 65MB$
 
-  Sin embargo, aquí ya debe llamarnos la atención otro importante
-  punto: Si queremos acceder a estos 65MB, tendremos que realizar
-  hasta 131 accesos a disco. A partir de este punto, el sistema
-  operativo reducirá fuertemente el tiempo de acceso si puede lograr
-  que todos los /clusters/ que apunten a esta información estén cerca
-  unos de otros.
-- Empleando triple indirección, llegamos hasta:
+  Sin embargo, aquí ya llama la atención otro importante punto: Para
+  acceder a estos 65MB, es necesario que realizar hasta 131 accesos a
+  disco. A partir de este punto, resulta importante que el sistema
+  operativo asigne /clusters/ cercanos para los metadatos (y, de ser
+  posible, para los datos), pues la diferencia en tiempo de acceso
+  puede ser muy grande.
+
+- Empleando triple indirección, se puede llegar hasta:
 
   $(100-3 + 128 + (128 \times 128) + (128 \times 128 \times 128) )
   \times 2KB = 8455044KB \approx 8GB$
 
-  Esto es más de lo que puede representarse en 32 bits. La cantidad de
-  bloques que tendríamos que leer, sin embargo, para encontrar todos
-  los /clusters/ nos significarían hasta 16516 accesos a disco.
+  Esto es ya más de lo que puede representarse en un sistema de 32
+  bits. La cantidad de bloques a leerse, sin embargo, para encontrar
+  todos los /clusters/ significarían hasta 16516 accesos a disco (en
+  el peor de los casos).
 
 ** Las tablas en FAT
 # <<FS_tablas_fat>>
 
-Volvamos al caso que estamos tomando como ejemplo, el sistema de
-archivos FAT. En este sistema, cada entrada del directorio apunta al
-primer /cluster/ que ocupa ada uno de los archivos, y se emplea un
+Volviendo al caso que se presenta como ejemplo, el sistema de
+archivos FAT: en este sistema, cada entrada del directorio apunta al
+primer /cluster/ que ocupa cada uno de los archivos, y se emplea un
 esquema de asignación ligada. El directorio tiene también un campo
 indicando la /longitud total/ del archivo, pero esto no es empleado
 para leer la información, sino para poderla presentar más ágilmente al
-usuario.
+usuario (y para que el sistema operativo sepa dónde indicar /fin de
+archivo/ al leer el último /cluster/ que compone a determinado archivo).
 
 La estructura fundamental de este sistema de archivos es la tabla de
 asignación de archivos (/File Allocation Table/) — Tanto que de ella
-toma su nombre FAT. Esta estructura ocupa los primeros sectores del
-disco, antes incluso del directorio, y por su importancia, se almacena
-por duplicado (los discos flexibles son mucho menos confiables que los
-discos duros, y el sistema de archivos fue introducido antes de que la
-PC pudiera emplear un disco duro).
+toma su nombre FAT.
 
 Cada entrada de la FAT mide lo que la longitud /correspondiente a su
 versión (12, 16 o 32 bits), y puede tener uno de cuatro valores
 posibles:
 
-- Libre :: El valor =0x000=, =0x0000= o =0x00000000= (dependiendo de
-           la versión de FAT) indica que el /cluster/ está disponible, y
-           puede ser asignado por el sistema de archivos cuando haga falta.
-- Siguiente :: Cuando el valor es menor hasta =0xFF6=, =0xFFF6= o
-               =0xFFFFFFF6=, indica la ubicación del /siguiente
-               cluster/ del archivo.
-- Dañado :: Si el valor de una entrada es =0xFF7=, =0xFFF7= o
-            =0xFFFFFFF7=, indica que el /cluster/ es un espacio del
-            disco dañado, y no debe ser utilizado para almacenar datos.
-- Fin :: Los valores =0xFFF=, =0xFFFF= o =0xFFFFFFFF= indican que se
-         trata del último /cluster/ de un archivo.
+| FAT12   | FAT16    | FAT32        | Significado                          |
+|---------+----------+--------------+--------------------------------------|
+| =0x000= | =0x0000= | =0x00000000= | Disponible, puede ser asignado       |
+| =0xFF7= | =0xFFF7= | =0xFFFFFFF7= | /Cluster/ dañado, no debe utilizarse |
+| =0xFFF= | =0xFFFF= | =0xFFFFFFFF= | Último /cluster/ de un archivo       |
+#+TBLFM: $1=0x000=
+
+Cualquier otro valor indica la ubicación del siguiente /cluster/ que
+forma parte del archivo al cual pertenece el registro en cuestión.
+
+Llama la atención que haya un valor especial para indicar que un
+/cluster/ tiene sectores dañados. Esto remite de vuelta al momento
+histórico de la creación de la familia FAT: Siendo el medio
+predominante de almacenamiento el disco flexible, los errores en la
+superficie eran mucho más frecuentes de lo que lo son hoy en día.
 
 Una característica que puede llamar la atención de FAT es que
 parecería permitir la fragmentación de archivos /por diseño/: Dado que
-el descriptor de cada /cluster/ /debe apuntar/ al siguiente, podemos
-asumir que el /caso común/ es que los /clusters/ no ocuparán contiguos
+el descriptor de cada /cluster/ /debe apuntar/ al siguiente, puede
+asumirse que el /caso común/ es que los /clusters/ no ocuparán contiguos
 en el disco. Claro está, la tabla puede apuntar a varios /clusters/
 adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
@@ -1014,6 +1048,7 @@ de mantenimiento para volver a un rango operacional.
 # sistema, como el cálculo del espacio disponible.
 
 * Fallos y recuperación
+# <<FS_fallos_recuperacion>>
 
 El sistema de archivos en el cual estamos estamos basando nuestros
 ejemplos, FAT, es /relativamente frágil/: No es difícil que se nos

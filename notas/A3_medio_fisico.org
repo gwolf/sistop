@@ -135,8 +135,10 @@ discos de vinil, y se podía ver a simple vista la frontera entre una
 pista y la siguiente.
 
 Un /sector/ es un segmento de arco de uno de los cilindros, y contiene
-siempre la misma cantidad de información (históricamente 512 bytes;
-actualmente se están adoptando gradualmente sectores de 4096 bytes)
+siempre la misma cantidad de información (históricamente 512 bytes; en
+actualmente se están adoptando gradualmente sectores de 4096
+bytes. Refiérase a la sección \ref{FS_FIS_limitaciones} para una mayor
+discusión al respecto.)
 
 Un archivo almacenado secuencialmente ocupa /sectores adyacentes/ a lo
 largo de una misma pista y con una misma cabeza.
@@ -266,6 +268,7 @@ ante la cadena de referencia dada.
      cadena de referencia presentada).
 
 *** Limitaciones de los algoritmos presentados
+# <<FS_FIS_limitaciones>>
 
 Ahora bien, ¿por qué se mencionó que estos algoritmos hoy en día ya
 casi no se usan?
@@ -368,6 +371,21 @@ agregó también una memoria caché dedicada
 para las operaciones de lectura y escritura. El controlador del disco
 es hoy en día capaz de implementar estos mismos algoritmos de forma
 completamente autónoma del sistema operativo.
+
+Y si bien las diferentes unidades de disco duro habían mantenido
+sectores de 512 bytes desde los primeros discos duros, a partir de la
+aprobación del /Formato Avanzado/ en 2010 que incrementa los sectores
+a 4096 bytes, presenta otra abstracción más: Un disco con sectores de
+4096 bytes que es empleado por el sistema operativo como si fuera de
+512[fn:: Al día de hoy, los principales sistemas operativos pueden ya
+hacer referencia al nuevo tamaño de bloque, pero la cantidad de
+equipos que corren sistemas /heredados/ o de controladores que no
+permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
+que efectuar, dentro de la lógica de su controlador, una emulación — Y
+una modificación de un sólo sector se vuelve un /ciclo
+lectura-modificación-escritura/ (/RMW/), que redunda en una espera de
+por lo menos una revolución adicional (8ms con un disco de 7200RPM)
+del disco antes de que la operación pueda completarse.
 
 Resulta claro que, dados estos cambios en la manera en que debe
 referirse a los bloques del disco, el sistema operativo no cuenta ya
@@ -580,7 +598,7 @@ seguramente brinda amplio espacio para investigación y desarrollo para
 los próximos años.
 
 * RAID: Más allá de los límites físicos
-
+# <<FS_FIS_RAID>>
 En la sección \ref{FS_conceptos} se presentó muy escuetamente al
 concepto de /volumen/, mencionando que un volumen /típicamente/
 coincide con una partición, aunque no siempre es el caso — Sin
@@ -981,6 +999,9 @@ las diferentes regiones del sistema.
 - [[http://lwn.net/Articles/529077/][A hash-based DoS attack on Btrfs]] (LWN)
 
 - [[http://linux.slashdot.org/story/12/12/15/0055217/denial-of-service-attack-found-in-btrfs-file-system][Denial-of-Service Attack Found In Btrfs File-System]] (Slashdot)
+
+- [[http://storage.toshiba.com/docs/services-support-documents/toshiba_4kwhitepaper.pdf][4K Sector Disk Drives: Transitioning to the Future with Advanced
+  Format Technologies]] (Michael E. Fitzpatrick, Toshiba, 2011)
 
 - [[http://delivery.acm.org/10.1145/150000/146943/p26-rosenblum.pdf][The Design and Implementation of a Log-Structured File System]] (John
   K. Ousterhout, Mendel Rosenblum, 1992)

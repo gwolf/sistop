@@ -6,7 +6,7 @@
 ** Objetivo de la presentación (1)
 - Identificar los elementos arquitecturales principales del
   almacenamiento /primario/ y /secundario/ en un sistema /von Neumann/
-- Conocer el principal mecanismos de comunicación y transferencia de
+- Conocer el principal mecanismo de comunicación y transferencia de
   datos entre ellos
 - Familiarizarse con los principales conceptos (y magnitudes) de
   medición de rendimiento en este campo
@@ -108,14 +108,10 @@ Paridad, Acarreo
   - Transparente a la programación (gestionada por el controlador)
   - Varios niveles de caché
 
-** Jerarquía de almacenamiento (vista clásica/idealizada)
-#+attr_latex: height=0.6\textheight
-#+caption: Jerarquía de almacenamiento (Silberschatz, Galvin, Gagne; p. 11)
-[[../img/jerarquia.png]]
-** Jerarquía de almacenamiento (vista más real)
+** Jerarquía de almacenamiento
 #+attr_latex: height=0.7\textheight
 ##+attr_latex: width=\textwidth
-#+caption: La realidad de los niveles es menos rígida... (e incluso esta representación admite varias mejorías)
+#+caption: Diferentes niveles de almacenamiento: Diferencias en costo, velocidad y capacidad
 [[../img/dot/jerarquia_memoria.png]]
 ** ¿Tiempo de acceso? ¿Tasa de transferencia?
 #+BEGIN_CENTER
@@ -140,13 +136,14 @@ xt_t$
 | *Tecnología*    | Multipuerto, CMOS | SRAM CMOS      | CMOS DRAM      | Magnética  |
 | *Acceso (ns)*   | 0.25-0.5          | 0.5-25         | 80-250         | 5,000,000  |
 | *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
-| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
+| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. Op.  |
 | *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
 #+latex: }
 #+END_CENTER
 ** Almacenamiento /primario/ y /secundario/
 - El procesador /sólo puede manejar directamente/ a la memoria
   principal
+  - Sólo el almacenamiento primario es parte de la arquitectura von Neumann
   - Se le conoce también como /almacenamiento primario/
 - Discos, cintas, almacenamiento /estado sólido/ son /almacenamiento
   secundario/
@@ -251,45 +248,6 @@ xt_t$
   - Consolas de 8 bits (Nintendo NES): Bloquear modificaciones al
     buffer de pantalla durante el refresco vertical
 
-** Acceso directo a memoria (DMA)
-#+BEGIN_CENTER
-Problema: En la sección de un proceso en que está /limitado por
-entrada-salida/, la transferencia de información se vuelve cuello de
-botella
-#+END_CENTER
-- Modo /entrada/salida programada/
-- Gran cantidad y frecuencia de interrupciones
-- Imposible realizar trabajo real
-#+BEGIN_CENTER
-Respuesta: /Acceso Directo a Memoria/
-#+END_CENTER
-
-** Acceso directo a memoria (DMA)
-- Orientado a dispositivos de gran ancho de banda
-  - Unidades de disco
-  - Multimedia
-  - Red
-  - Memoria y caché
-- Transferencia en bloques, empleando un /controlador/
-  - Dirección física base de memoria
-  - Cantidad de datos a transferir
-  - /Puerto/ del dispositivo
-  - Dirección de la transferencia (/desde/ o /hacia/ memoria)
-- Limitante: Contención en el bus de memoria
-
-** Coherencia de caché
-#+BEGIN_CENTER
-¿Qué problema puede causar una transferencia /no iniciada por el
-procesador/?
-#+END_CENTER
-- Incongruencia entre la memoria real y /páginas/ de caché existentes
-  - Caché coherente :: Mecanismos /en hardware/ que notifican a los
-       controladores de caché que las páginas están /sucias/
-  - No coherente :: El sistema operativo debe realizar esta operación
-- Sistemas híbridos en lo relativo a la coherencia
-  - Caché de nivel superior (en el procesador) no coherente, cachés
-    inferiores coherentes
-
 ** Llamadas al sistema
 - De cierto modo análogas/complementarias a las interrupciones
 - Mecanismo para que un proceso /solicite un servicio/ al sistema
@@ -303,7 +261,7 @@ procesador/?
 
 ** Flujo de control en una llamada al sistema
 #+attr_latex: width=\textwidth
-#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema (Silberschatz, Galvin, Gagne; p.22)
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
 [[../img/dot/llamada_al_sistema.png]]
 ** Tipos de llamadas al sistema (1)
 #+BEGIN_CENTER
@@ -372,6 +330,46 @@ munmap(0xb773c000, 4096)                = 0
 close(2)                                = 0
 exit_group(0)                           = ?
 #+end_src
+
+** Acceso directo a memoria (DMA)
+#+BEGIN_CENTER
+Problema: En la sección de un proceso en que está /limitado por
+entrada-salida/, la transferencia de información se vuelve cuello de
+botella
+#+END_CENTER
+- Modo /entrada/salida programada/
+- Gran cantidad y frecuencia de interrupciones
+- Imposible realizar trabajo real
+#+BEGIN_CENTER
+Respuesta: /Acceso Directo a Memoria/
+#+END_CENTER
+
+** Acceso directo a memoria (DMA)
+- Orientado a dispositivos de gran ancho de banda
+  - Unidades de disco
+  - Multimedia
+  - Red
+  - Memoria y caché
+- Transferencia en bloques, empleando un /controlador/
+  - Dirección física base de memoria
+  - Cantidad de datos a transferir
+  - /Puerto/ del dispositivo
+  - Dirección de la transferencia (/desde/ o /hacia/ memoria)
+- Limitante: Contención en el bus de memoria
+
+** Coherencia de caché
+#+BEGIN_CENTER
+¿Qué problema puede causar una transferencia /no iniciada por el
+procesador/? (O por /otros procesadores/)
+#+END_CENTER
+\pause
+- Incongruencia entre la memoria real y /páginas/ de caché existentes
+  - Caché coherente :: Mecanismos /en hardware/ que notifican a los
+       controladores de caché que las páginas están /sucias/
+  - No coherente :: El sistema operativo debe realizar esta operación
+- Sistemas híbridos en lo relativo a la coherencia
+  - Caché de nivel superior (en el procesador) no coherente, cachés
+    inferiores coherentes
 
 * Multiprocesamiento
 ** Multiprocesamiento y multiprogramación
@@ -518,7 +516,7 @@ Puede haber varios puntos de asimetría:
 
 ** Más allá: Cómputo distribuído
 - Distribuir un proceso de cómputo para ser realizado /entre
-  computadoras independientes
+  computadoras independientes/
   - Más formalmente: Entre procesadores /que no comparten memoria/
     (almacenamiento primario)
 - Dos modalidades principales (mas un /adosado/):
@@ -543,12 +541,12 @@ Puede haber varios puntos de asimetría:
 - Pueden ser heterogéneas (en capacidades y en arquitectura)
 - Presentan /elasticidad/ para permitir conexiones/desconexiones de
   nodos en el tiempo de vida de un cálculo
+\pause
 #+BEGIN_CENTER
 ¿Quién quiere presentar el ejemplo de alguna malla?
 #+END_CENTER
 
 ** Cómputo en la nube
-- Abordaremos el tema de nuevo tras hablar de la /virtualización/
 - Caso específico y /de moda/
 - Partición de recursos (/cliente-servidor/)
 - Orientado a la /tercerización/ de servicios específicos

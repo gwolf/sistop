@@ -42,15 +42,18 @@ libro_index:
 	echo '#+latex_header: \linespread{1.05}' >> $(libro)
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
-	echo '#+title: Sistemas Operativos' >> $(libro)
+	echo '#+title: Fundamentos de Sistemas Operativos' >> $(libro)
 
 	echo '' >> $(libro)
-	echo '#+latex: \\frontmatter' >> $(libro)
-	echo '* Presentación' >> $(libro)
+#	echo '#+latex: \\frontmatter' >> $(libro)
+	echo '#+latex: \\chapter*{Presentación}' >> $(libro)
+	echo '#+latex: \\addcontentsline{toc}{chapter}{Presentación}' >> $(libro)
+	echo '#+html: <h1>Presentación</h1>' >> $(libro)
+#	echo '* Presentación' >> $(libro)
 	echo '#+include: 00_presentacion.org :minlevel 1' >> $(libro)
 
 	echo '' >> $(libro)
-	echo '#+latex: \\mainmatter' >> $(libro)
+#	echo '#+latex: \\mainmatter' >> $(libro)
 	for CAPITULO in notas/01_introduccion.org \
 			notas/02_estructuras_basicas.org \
 			notas/03_administracion_de_procesos.org \

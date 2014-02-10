@@ -81,20 +81,200 @@ El texto comprende los siguientes capítulos:
      y complejidad de la /concurrencia/, y su relación con el
      /paralelismo/ y /multiprocesamiento/.
 
-- 3. Administración de procesos ::
-- 4. Planificación de procesos ::
-- 5. Administración de memoria ::
-- 6. Organización de archivos ::
-- 7. Sistemas de archivos ::
+- 3. Administración de procesos :: La entidad principal con la que
+     interactúa un sistema operativo (sea para brindarle servicios o
+     para imponerle restricciones) es el proceso. Este capítulo inicia
+     presentando los diferentes estados de los procesos y la relación
+     entre estas y sus /hermanos menores/ (los /hilos/), y los
+     principales modelos empleados para el multiprocesamiento.
+
+     Todos los sistemas operativos modernos tienen que enfrentar a la
+     /concurrencia/: La incertidumbre del ordenamiento en el tiempo
+     entre eventos relativos a los diferentes procesos e hilos. La
+     parte medular de este capítulo presenta a las /primitivas de
+     sincronización/: Mutexes, semáforos y monitores. Para
+     ilustrarlas, se emplean los patrones y problemas clásicos que se
+     han seguido a lo largo de su desarrollo histórico.
+
+     Pero las primitivas pueden sólamente utilizarse entre procesos
+     que /cooperan deliberadamente/ entre sí. Un sistema operativo
+     debe implementar protección y separación incluso entre procesos
+     que /compiten/ o que sencillamente no saben el uno acerca del
+     otro. Por ello, la última sección de este capítulo aborda los
+     diferentes mecanismos que existen para evitar las situaciones de
+     /bloqueo mutuo/.
+
+- 4. Planificación de procesos :: Para que varios procesos coexistan
+     en un sistema de cómputo, el primer recurso que el sistema
+     operativo debe /multiplexar/ entre todos ellos es el tiempo de
+     cómputo: El uso del procesador. Este capítulo presenta los
+     diferentes niveles de /planificador/ que forman parte de un
+     sistema operativo, y analiza al /planificador a corto plazo/
+     (también conocido como /despachador/). Se presentan los
+     principales algoritmos, y se ilustra cómo los sistemas operativos
+     modernos van empleando técnicas mixtas de varios de ellos.
+
+     Por último, se abordan tres temas brevemente: Los diferentes
+     modelos de planificación de hilos y profundizar en su relación
+     con los procesos, las particularidades de la planificación en un
+     entorno con multiprocesadores reales, y las necesidades de
+     planificación de /tiempo real/.
+
+- 5. Administración de memoria :: Los /programas/ sólo se vuelven
+     procesos cuando se les asigna memoria: Cuando dejan de ser el
+     resultado de una compilación guardada estáticamente para
+     convertirse en una entidad dinámica. Este capítulo presenta en
+     primer lugar la visión /desde dentro/ de la memoria por parte de
+     cada uno de los procesos: El espacio de direccionamiento y el
+     acomodo clásico de las regiones de un proceso en la memoria que
+     le es asignada.
+
+     Para que los distintos procesos compartan la memoria del sistema,
+     a lo largo de la historia se han presentado diferentes
+     esquemas. Se presentan someramente los esquemas de partición
+     contigua fija y variable, para profundizar posteriormente en los
+     que ofrecen mayor flexibilidad al sistema operativo y se
+     mantienen en uso al día de hoy: La segmentación y la
+     paginación. De esta última, se continúa para presentar la
+     abstracción que ha liberado a los sistemas operativos para
+     /sobrecomprometer/ la memoria de forma eficiente y prácticamente
+     transparente: La memoria virtual.
+
+     Al manejar la memoria de un proceso surgen puntos importantes a
+     tomar en cuenta en lo relativo a la seguridad en cómputo; la
+     parte final de este capítulo presenta la vulnerabilidad conocida
+     como /desbordamiento de pila/ (/buffer overflow/), y algunas
+     estrategias de mitigación que se han implementado con el paso de
+     los años para mitigar su peligrosidad.
+
+- 6. Organización de archivos :: De cara al usuario, probablemente la
+     principal abstracción implementada por el sistema operativo es la
+     organización de la información sobre un medio persistente. Hoy en
+     día, la norma es que esta organización se realice en /archivos/
+     estructurados sobre una estructura jerárquica llamada
+     /directorio/. Este capítulo se centra en explicar esta
+     abstracción, sin entrar aún en detalles respecto a cómo se llega
+     a un respaldo físico de la misma.
+
+     Estos conceptos parecen tan pervasivos y universales que podría
+     pensarse que no requieren mayor análisis. Sin embargo, resulta
+     importante abordar las diferencias semánticas derivadas del
+     desarrollo histórico de distintos sistemas. En este capítulo se
+     presentan varios conceptos cuya implementación en un medio que
+     asegure la persistencia se describirá en el siguiente capítulo.
+
+     Por último, en este capítulo se incluye un breve repaso de
+     distintos tipos de sistemas de archivos en red, enfatizando
+     nuevamente en los cambios semánticos derivados de la distinta
+     historia de cada implementación.
+
+- 7. Sistemas de archivos :: Este capítulo presenta la contraparte
+     obligada del anterior: ¿Cómo se estructuran los dispositivos de
+     almacenamiento a largo plazo, a los cuales nos referimos
+     genéricamente como /discos/? ¿Cómo se van plasmando las
+     estructuras mediante las cuales el usuario organiza la
+     información en bloques dentro de un dispositivo? ¿Qué problemas
+     pueden derivar del uso de estos /sistemas de archivos/, y qué
+     métodos para evitarlos o resolverlos se han implementado?
+
+     La parte central de este capítulo se centra en un sistema de
+     archivos bastante viejo, pero aún en muy amplio uso en el cómputo
+     moderno: La familia /FAT/.
 
 Los siguientes temas resultan muy importantes para la comprensión y
 para el desarrollo futuro de la materia, pero dado que son /empleados/
 por el sistema operativo (y no necesariamente son /parte integral/ del
 mismo), se presentan como apéndices
 
-- A. Software libre y licenciamiento ::
-- B. Virtualización ::
-- C. El medio físico y el almacenamiento ::
+- A. Software libre y licenciamiento :: Estudiar sistemas operativos
+     cruza necesariamente la temática del /software libre/. Uno de los
+     principios fundamentales del desarrollo histórico es la /libertad
+     de aprender/, esto es, todo software que se diga /libre/ debe
+     permitir a sus usuarios comprender sus estructuras básicas, la
+     relación entre ellas, y la lógica general de su programación.
+
+     Hoy en día existe una gran cantidad de sistemas operativos
+     libres, tanto de propósito general como enfocados a un nicho. El
+     /movimiento ideológico/ del software libre, contrario a cualquier
+     pronóstico que pudiera haberse hecho al iniciarse en 1984,
+     claramente ha cambiado al desarrollo del cómputo. Todos los
+     sistemas operativos que pueden ser estudiados /de primera mano/,
+     constatando la implementación de sus principios son
+     necesariamente (aunque con una definición ligeramente laxa)
+     software libre.
+
+     Hacia el año 2000 se fue haciendo claro que estas ideas no pueden
+     aplicarse únicamente al software. Poco a poco fue definiéndose
+     una noción mucho más amplia, la de los /bienes culturales
+     libres/. El presente libro busca ser una contribución a esta
+     categoría.
+
+     El primer apéndice aborda brevemente estos temas, así como los
+     principales modelos de licenciamiento libre utilizados.
+
+- B. Virtualización :: La virtualización es una herramienta muy útil,
+     y cada vez más al alcance de todos, para el aprendizaje de los
+     sistemas operativos. Hay una gran cantidad de recursos para
+     comprender desde los primeros momentos del arranque de la
+     computadora. Empleando imágenes de máquinas virtuales, pueden
+     comprenderse y desmenuzarse los distintos elementos del sistema
+     operativo, e incluso observar el resultado de realizar
+     modificaciones sobre un sistema operativo real. Es, por tanto,
+     una herramienta muy importante para acompañar al aprendizaje de
+     esta materia.
+
+     La virtualización es también una tecnología que permea cada vez
+     más aspectos del uso profesional del cómputo, y comprenderlo
+     ayudará al lector a elegir las herramientas específicas a
+     emplear.
+
+     Pero hablar de /la virtualización/ como un todo ignoraría
+     aspectos fundamentales de la riqueza que presenta este campo. Al
+     igual que con los conceptos presentados a lo largo del libro, la
+     virtualización es presentada a partir de su perspectiva
+     histórica, y detallando hacia las distintas modalidades que se
+     han desarrollado al paso del tiempo.
+
+- C. El medio físico y el almacenamiento :: En el capítulo \ref{FS} se
+     presenta cómo se /concretiza/ la abstracción de archivos y
+     directorios para plasmarlo en un gran arreglo lineal de datos, en
+     una entidad aún abstracta a la cual se sigue haciendo referencia
+     con el nombre genérico de /disco/. Este apéndice se ocupa de los
+     detalles físicos del acomodo de la información en su medio.
+
+     Pero un /disco/ va mucho más allá de un dispositivo que
+     simplemente vuelca dicho arreglo a un medio persistente. En
+     primer término, los /discos magnéticos rotativos/ (el medio
+     dominante de almacenamiento) presentan peculiaridades que los
+     sistemas operativos tuvieron que saber resolver. El desarrollo de
+     la tecnología, sin embargo, fue /arrebatando/ estas áreas del
+     ámbito del sistema operativo, entregándolas a la optimización
+     realizada dentro del /hardware controlador/.
+
+     Por otro lado, la tecnología de /almacenamiento en estado sólido/
+     ha llegado a niveles de madurez que en determinados mercados ya
+     la colocan claramente por encima de los discos magnéticos. Esto
+     implica cambios importantes para el modo en que el sistema
+     operativo debe estructurar y modificar la información.
+
+     Por último, un /volumen/ ya no necesariamente se refiere a un
+     único medio físico. Este apéndice aborda tanto a /RAID/, el
+     primer mecanismo que se popularizó para /agregar/ varias unidades
+     para mejorar tanto la capacidad máxima y la confiabilidad de un
+     volumen, como al manejo avanzado de volúmenes, en que el sistema
+     operativo incorpora la lógica de RAID con la del manejo de
+     sistemas de archivos para lograr mucho mayor flexibilidad.
 
 #+latex: \section*{Licenciamiento}
 #+html: <h2>Licenciamiento</h2>
+
+Este libro fue desarrollado como parte del [[http://www.latinproject.org/][Proyecto LATIn]], que busca
+la creación de libros de texto /libres/ para nivel universitario, y
+enfocado a Latinoamérica.
+
+Cualquier porción de este libro puede ser reproducido y utilizado para
+todo fin, bajo los términos de la licencia /[[https://creativecommons.org/licenses/by-sa/4.0/deed.es][Creative
+Commons-Atribución-CompartirIgual]]/ (/CC-BY-SA/) versión 4.0.
+
+Este modelo de licenciamiento se presenta y explica en la sección
+\ref{SL_CC}.

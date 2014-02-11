@@ -10,7 +10,7 @@ procesos que lo vayan solicitando, y a las políticas que empleará
 para que el uso que den a dicho tiempo no sea excesivo respecto al
 uso esperado del sistema.
 
-Podemos hablar de tres tipos principales de planificación:
+Existen tres tipos principales de planificación:
 
 - A largo plazo :: Decide qué procesos serán los siguientes en ser
                    iniciados. Este tipo de planificación era el más
@@ -63,8 +63,9 @@ Podemos hablar de tres tipos principales de planificación:
                    encargado de planificar /los procesos que están
                    listos para ejecución/.
 
-		   En algunos textos, al /planificador a corto plazo/
-                   se le llama /despachador/ (/dispatcher/).
+		   El /planificador a corto plazo/ es también
+                   frecuentemente denominado /despachador/
+                   (/dispatcher/).
 
 		   #+label: PLAN_planificador_corto_plazo
 		   #+caption: Planificador a corto plazo, o /despachador/
@@ -75,7 +76,7 @@ Podemos hablar de tres tipos principales de planificación:
 Relacionando con los estados de un proceso abordados en la
 sección \ref{PROC_estados_de_un_proceso}, y volviendo al
 diagrama entonces presentado (reproducido por comodidad de referencia
-en la figura \ref{PLAN_estados_proceso}), podríamos ubicar a estos tres
+en la figura \ref{PLAN_estados_proceso}), podrían ubicarse a estos tres
 planificadores en las siguientes transiciones entre estados:
 
 #+attr_latex: width=0.4\textwidth
@@ -96,13 +97,13 @@ planificadores en las siguientes transiciones entre estados:
    Implementa las transiciones entre los estados /Listo/ y /En
    ejecución/.
 
-En esta sección nos ocuparemos particularmente el planificador /a
-corto plazo/, y refiriéndonos como mucho a algunas características del
+En esta sección se trata particularmente el planificador /a corto
+plazo/, haciendo referencia como mucho a algunos efectos del
 planificador /a mediano plazo/.
 
 ** Tipos de proceso
 
-Como ya hemos visto, los procesos típicamente alternan entre /ráfagas/
+Como ya se ha visto, los procesos típicamente alternan entre /ráfagas/
 (periodos, en inglés /bursts/) en que realizan principalmente cómputo
 interno (están /limitados por CPU/, /CPU-bound/) y otras en que la
 atención está puesta en transmitir los datos desde o hacia
@@ -110,22 +111,22 @@ dispositivos externos (están /limitados por entrada-salida/,
 /I/O-bound/). Dado que cuando un proceso se suspende para realizar
 entrada-salida deja de estar /listo/ (y pasa a estar /bloqueado/), y
 desaparece de la atención del planificador a corto plazo, en todo
-momento podemos separar los procesos que están en ejecución y listos
+momento los procesos que están en ejecución y listos pueden separarse
 en:
 
 - Procesos largos :: Aquellos que /por mucho tiempo/[fn:: ¿Cuánto es
-     mucho? Dependerá de las políticas generales que definamos para el
+     mucho? Dependerá de las políticas generales que se definan para el
      sistema] han estado en /listos/ o en ejecución, esto es,
      procesos que estén en una larga ráfaga limitada por CPU.
 
 - Procesos cortos :: Aquellos que, ya sea que en /este momento/[fn:: Y
      también, /este momento/ debe ser interpretado con la granularidad
-     acorde a nuestro sistema] estén en una ráfaga limitada por
+     acorde al sistema] estén en una ráfaga limitada por
      entrada-salida y requieran atención meramente ocasional del
      procesador, o tienden a estar bloqueados esperando a eventos
      (como los procesos interactivos).
 
-Típicamente buscaremos dar un tratamiento /preferente/ a los procesos
+Típicamente se busca dar un tratamiento /preferente/ a los procesos
 cortos, en particular a los interactivos. Cuando un usuario está
 interactuando con un proceso, si no tiene una respuesta /inmediata/ a
 su interacción con el equipo (sea proporcionar comandos, recibir la
@@ -136,7 +137,7 @@ será la de una respuesta degradada.
 
 Resulta intuitivo que cada patrón de uso del sistema debe seguir
 políticas de planificación distintas. Por ejemplo, en el caso de un
-proceso interactivo, buscaremos ubicar al proceso en una /cola/
+proceso interactivo, se buscará ubicar al proceso en una /cola/
 preferente (para obtener un tiempo de respuesta más ágil, para mejorar
 la percepción del usuario), pero en caso de sufrir demoras, es
 preferible buscar dar una respuesta /consistente/, aún si la respuesta
@@ -162,8 +163,8 @@ sobrevivir ajustándose a la evolución del hardware.
                ticks (esto es, entre 20 y 180 ms), y en Linux, entre
                10 y 200 ticks (o milisegundos).
 
-¿Qué mecanismos o métricas podemos emplear para medir el
-comportamiento del sistema bajo determinado planificador? Partamos de
+¿Qué mecanismos o métricas se  emplean para medir el
+comportamiento del sistema bajo determinado planificador? Partiendo de
 los siguientes conceptos, para un proceso $p$ que requiere de un
 tiempo $t$ de ejecución:
 
@@ -174,7 +175,7 @@ tiempo $t$ de ejecución:
 
 - Tiempo en espera ($E = T - t$) :: También referido como /tiempo
      perdido/. Del tiempo de respuesta total, cuánto tiempo $p$ está
-     listo y esperando ejecutar. Desde la óptica de $p$, desearíamos
+     listo y esperando ejecutar. Desde la óptica de $p$, se desearía
      que $E_p \rightarrow 0$
 
 - Proporción de penalización ($P = \frac{T}{t}$) :: Fracción del
@@ -184,12 +185,12 @@ tiempo $t$ de ejecución:
      $P$. Fracción del tiempo de respuesta durante la cual $p$ pudo
      ejecutarse.
 
-Para referirnos a un grupo de procesos con requisitos similares, todos
-ellos requiriendo de un mismo tiempo $t$, nos referiremos a $T(t)$,
+Para hacer referencia a un grupo de procesos con requisitos similares, todos
+ellos requiriendo de un mismo tiempo $t$, se emplea $T(t)$,
 $E(t) = T(t) - t$, $P(t) = \frac{T(t)}{t}$ y $R(t) = \frac{t}{T(t)}$.
 
 Además de estos tiempos, expresados en relación al tiempo efectivo de
-los diversos procesos del sistema, tenemos también:
+los diversos procesos del sistema, es necesario considerar también:
 
 - Tiempo núcleo o /kernel/ :: Tiempo que pasa el sistema en espacio de
      núcleo, incluyendo entre otras funciones[fn:: Estas funciones
@@ -202,8 +203,8 @@ los diversos procesos del sistema, tenemos también:
      listos está vacía y no puede realizarse ningún trabajo.
 
 - Utilización del CPU :: Porcentaje del tiempo en que el CPU está
-     realizando /trabajo útil/. Si bien conceptualmente podemos
-     ubicar dicha utilización entre 0 y 100%, en sistemas reales se
+     realizando /trabajo útil/. Si bien conceptualmente puede
+     ubicarse dicha utilización entre 0 y 100%, en sistemas reales se
      ha observado (Silberschatz, p.179) que se ubica en un rango
      entre el 40 y el 90%.
 
@@ -220,19 +221,20 @@ Por ejemplo, si llegan a la cola de procesos listos:
 
 Si el tiempo que toma al sistema efectuar un cambio de contexto es de
 un /tick/, y la duración de cada /quantum/ es de 5 ticks, en un
-ordenamiento de ronda,[fn:: Claro está, veremos este ordenamiento en
-breve, en la sección \ref{PLAN_RoundRobin}.] tendríamos:
+ordenamiento de ronda,[fn:: Este mecanismo se presentará en breve, en
+la sección \ref{PLAN_RoundRobin}.] se observaría un resultado como el
+que ilustra la figura \ref{PLAN_planificador}.
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planificador
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 2 /ticks/
 [[./img/ditaa/planificador.png]]
 
-Si consideráramos al tiempo ocupado por el núcleo como un proceso más,
+Al considerar al tiempo ocupado por el núcleo como un proceso más,
 cuyo trabajo en este espacio de tiempo finalizó junto con los
-demás,[fn:: Normalmente /no/ consideramos al núcleo al hacer este
+demás,[fn:: Normalmente /no/ se considera al núcleo al hacer este
 cálculo, dado que en este ámbito todo el trabajo que hace puede verse
-como /burocracia/ ante los resultados deseados del sistema] tendríamos
+como /burocracia/ ante los resultados deseados del sistema] se obtiene
 por resultado:
 
 | Proceso         | $t$ |  $T$ |   $E$ |  $P$ |   $R$ |
@@ -248,19 +250,20 @@ por resultado:
 | Promedio total  | 6.4 | 18.4 | 12.00 | 2.88 | 0.348 |
 #+TBLFM: @I$6..@IIII$6=($2/$3); EN f-3::@I$5..@IIII$5=($3/$2); EN f-2::@I$4..@IIII$4=($3-$2); EN f-2
 
-Tomemos en cuenta que, para obtener $T$, se parte del momento en que
-el proceso llegó a la cola, no el punto de inicio de nuestra línea de
-tiempo. Asumimos en este caso que el núcleo llega también en 0.
+Abordando cada proceso, para obtener $T$ se parte del momento en que
+el proceso llegó a la cola, no el punto de inicio de la línea de
+tiempo. En este caso, dado que el núcleo /siempre/ está en ejecución,
+se asume que inició también en 0.
 
-Respecto al patrón de llegada y salida de los procesos, lo manejaremos
-también basados en una proporción. Si tenemos una /frecuencia de
+Respecto al patrón de llegada y salida de los procesos, lo se maneja
+también basado en una relación. Partiendo de una /frecuencia de
 llegada/ promedio de nuevos procesos a la cola de procesos listos
 $\alpha$, y el /tiempo de servicio requerido/ promedio $\beta$,
-definimos el /valor de saturación/ $\rho$ como $\rho =
+se define el /valor de saturación/ $\rho$ como $\rho =
 \frac{\alpha}{\beta}$.
 
-Cuando $\rho = 0$, nunca llegan nuevos procesos, por lo cual nuestro
-sistema estará /desocupado/. Cuando $\rho = 1$, los procesos son
+Cuando $\rho = 0$, nunca llegan nuevos procesos, por lo cual el
+sistema estará eventualmente /desocupado/. Cuando $\rho = 1$, los procesos son
 despachados al mismo ritmo al que van llegando. Cuando $\rho > 1$, el
 ritmo de llegada de procesos es mayor que la velocidad a la cual la
 computadora puede darles servicio, con lo cual la cola de procesos
@@ -268,6 +271,7 @@ listos tenderá a crecer (y la calidad de servicio, la proporción de
 respuesta $R$, para cada proceso se decrementará).
 
 * Algoritmos de planificación
+# <<PLAN_alg_planif>>
 
 El planificador a corto plazo puede ser invocado cuando un proceso se
 encuentra en algunas de las cuatro siguientes circunstancias:
@@ -289,36 +293,33 @@ definitivamente de la lista de ejecución.]; un sistema que opera bajo
 casos, mientras que uno que opera bajo /multitarea cooperativa/ no
 necesariamente reconocerá dichos estados.
 
-Ahora, para los algoritmos a continuación, recordemos que en este caso
-estamos hablando únicamente del /despachador/. Un proceso siempre
-abandonará la cola de procesos listos al requerir de un servicio del
-sistema.
+Ahora, para los algoritmos a continuación, cabe recordar que se trata
+únicamente del /despachador/. Un proceso siempre abandonará la cola de
+procesos listos al requerir de un servicio del sistema.
 
-Para todos los ejemplos a continuación, asumamos que los tiempos están
-dados en /ticks/; no nos preocupa en este caso a cuánto tiempo de
-reloj estos equivalen, sino el rendimiento relativo del sistema entero
-ante una carga dada.
-
-Revisemos, pues, los principales algoritmos de planificación.
+Para todos los ejemplos a continuación, los tiempos están
+dados en /ticks/; no es relevante a cuánto /tiempo de reloj/ estos
+equivalen, sino el rendimiento relativo del sistema entero ante una
+carga dada.
 
 La presente sección está basada fuertemente en el capítulo 2 de /An
 operating systems vade mecum/ (Raphael Finkel, 1988).
 
 ** Objetivos de la planificación
 
-Los algoritmos que presentaremos a continuación son respuestas que
-intentan, de diferentes maneras y desde distintos supuestos base,
-darse a los siguientes objetivos principales (tomemos en cuenta que
+Los algoritmos que seránn presentados a continuación son respuestas
+que intentan, de diferentes maneras y desde distintos supuestos base,
+darse a los siguientes objetivos principales (tomando en cuenta que
 algunos de estos objetivos pueden ser mutuamente contradictorios):
 
-- Ser justo :: Debemos tratar de /igual manera/ a todos los procesos
-               que compartan las mismas características[fn:: Como
-               veremos, un algoritmo de planificación puede
-               /priorizar/ de diferente manera a los procesos según
-               distintos criterios, sin por ello dejar de ser justo,
-               siempre que dé la misma prioridad y respuesta a
-               procesos equivalentes.], y nunca postergar
-               indefinidamente a uno de ellos.
+- Ser justo :: Debe tratarse de /igual manera/ a todos los procesos
+               que compartan las mismas características[fn:: Un
+               algoritmo de planificación puede /priorizar/ de
+               diferente manera a los procesos según distintos
+               criterios, sin por ello dejar de ser justo, siempre que
+               dé la misma prioridad y respuesta a procesos
+               equivalentes.], y nunca postergar indefinidamente a uno
+               de ellos.
 
 - Maximizar el rendimiento :: Dar servicio a la mayor parte de
      procesos por unidad de tiempo.
@@ -369,7 +370,9 @@ cooperativo, con la mínima lógica posible: Cada proceso se ejecuta en
 el órden en que fue llegando, y hasta que /suelta el control/. El
 despachador es muy simple, básicamente una cola FIFO.
 
-Consideremos los siguientes procesos: (Finkel 1988, p.35)
+Para comparar los distintos algoritmos de planificación que serán
+presentados, se presentará el resultado de cada uno de ellos sobre el
+siguiente juego de procesos: (Finkel 1988, p.35)
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   Llegada |     |        |     |     |     |      |
@@ -408,17 +411,18 @@ un temporizador) sigue siendo ampliamente empleado.
 
 El esquema /ronda/ busca dar una relación de respuesta buena tanto
 para procesos largos como para los cortos. La principal diferencia
-entre la ronda y FCFS es que en este caso sí emplearemos multitarea
-preventiva: A cada proceso que esté en la lista de procesos listos lo
-atenderemos por un sólo /quantum/ ($q$). Si un proceso no ha
+entre la ronda y FCFS es que en este caso sí emplea multitarea
+preventiva: Cada proceso que esté en la lista de procesos listos puede
+ejecutarse por un sólo /quantum/ ($q$). Si un proceso no ha
 terminado de ejecutar al final de su /quantum/, será interrumpido y
 puesto al final de la lista de procesos listos, para que espere a su
-turno nuevamente. Los procesos que nos entreguen los planificadores a
-mediano o largo plazo se agregarán también al final de esta lista.
+turno nuevamente. Los procesos que sean /despertados/ por los
+planificadores a mediano o largo plazo se agregarán también al final
+de esta lista.
 
-Con la misma tabla de procesos que encontramos en el caso anterior
+Con la misma tabla de procesos presentada en el caso anterior
 (y, por ahora, ignorando la sobrecarga administrativa provocada por
-los cambios de contexto), obtendríamos los siguientes resultados:
+los cambios de contexto) se obtienen los siguientes resultados:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   Llegada |     |        |     |     |     |      |
@@ -437,11 +441,11 @@ los cambios de contexto), obtendríamos los siguientes resultados:
 [[./img/ditaa/planif_rr1.png]]
 
 La /ronda/ puede ser ajustada modificando la duración de
-$q$. Conforme incrementamos $q$, la ronda tiende a convertirse en
+$q$. Conforme se incrementa $q$, la ronda tiende a convertirse en
 FCFS — Si cada /quantum/ es arbitrariamente grande, todo proceso
 terminará su ejecución dentro de su /quantum/; por otro lado,
-conforme decrece $q$, mayor frecuencia de cambios de contexto
-tendremos; esto llevaría a una mayor ilusión de tener un procesador
+conforme decrece $q$, se tiene una mayor frecuencia de cambios de
+contexto; esto llevaría a una mayor ilusión de tener un procesador
 dedicado por parte de cada uno de los procesos, dado que cada proceso
 sería incapaz de notar las /ráfagas/ de atención que éste le da
 (avance rápido durante un periodo corto seguido de un periodo sin
@@ -450,12 +454,12 @@ dada la fuerte penalización que iría agregando la sobrecarga
 administrativa.
 
 Finkel (1988, p.35) se refiere a esto como el /principio de la
-histéresis/: /Hay que resistirse al cambio/. Como ya lo mencionamos,
+histéresis/: /Hay que resistirse al cambio/. Como ya lo se mencionó,
 FCFS mantiene al mínimo posible la sobrecarga administrativa, y
 –aunque sea marginalmente– resulta en mejor rendimiento global.
 
-Si repetimos el análisis anterior bajo este mismo mecanismo, pero con
-un /quantum/ de 4 /ticks/, tendremos:
+Si se repite el análisis anterior bajo este mismo mecanismo, pero con
+un /quantum/ de 4 /ticks/, el resultado es:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   Llegada |     |        |     |     |     |      |
@@ -484,26 +488,26 @@ promedio del 80% de los procesos.
 # <<PLAN_spn>>
 (Del inglés, /Shortest Process Next/)
 
-Cuando no tenemos la posibilidad de implementar multitarea
-preventiva, pero requerimos de un algoritmo más /justo/, y contamos
+Cuando no se tiene la posibilidad de implementar multitarea
+preventiva, pero se requiere de un algoritmo más /justo/, contando
 con información /por anticipado/ acerca del tiempo que requieren los
-procesos que forman la lista, podemos elegir el más corto de los
+procesos que forman la lista, puede elegirse el más corto de los
 presentes.
 
 Ahora bien, es muy difícil contar con esta información antes de
 ejecutar el proceso. Es más frecuente buscar /caracterizar/ las
 necesidades del proceso: Ver si durante su historia de ejecución[fn::
-No perdamos de vista que todos estos mecanismos se aplican al
+Cabe recordar que todos estos mecanismos se aplican al
 /planificador a corto plazo/. Cuando un proceso se bloquea esperando
 una operación de E/S, sigue en ejecución, y la información de
-contabilidad que tenemos sigue alimentándose. SPN se ``nutre''
-precisamente de dicha información de contabilidad] ha sido un proceso
+contabilidad del mismo sigue alimentándose. SPN se ``nutre''
+precisamente de dicha información de contabilidad.] ha sido un proceso
 tendiente a manejar ráfagas /limitadas por entrada-salida/ o
 /limitadas por procesador/, y cuál es su tendencia actual.
 
 Para estimar el tiempo que requerirá un proceso $p$ en su próxima
 invocación, es común emplear el /promedio exponencial/
-$e_p$. Definimos un /factor atenuante/ $0 \le f \le 1$, que
+$e_p$. Se define un /factor atenuante/ $0 \le f \le 1$, que
 determinará qué tan reactivo será el promedio obtenido a la última
 duración; es común que este valor sea cercano a 0.9.
 
@@ -513,19 +517,16 @@ Si el $p$ empleó $q$ /quantums/ durante su última invocación,
 $e_p' = fe_p + (1-f)q$
 #+END_CENTER
 
-Podemos tomar como /semilla/ para el $e_p$ inicial un número elegido
+Se puede tomar como /semilla/ para el $e_p$ inicial un número elegido
 arbitrariamente, o uno que ilustre el comportamiento actual del
 sistema (como el promedio del $e_p$ de los procesos actualmente en
-ejecución).
+ejecución). La figura \ref{PLAN_promedio_exponencial} presenta la
+predicción de tiempo requerido que determinado proceso va obteniendo
+en sus diversas entradas a la cola de ejecución, basado en su
+comportamiento previo, con distintos factores atenuantes.
 
-#+attr_latex: width=0.7\textwidth
-#+attr_html: width="510" height="280"
-#+label: PLAN_promedio_exponencial
-#+caption: Promedio exponencial (predicción de próxima solicitud de tiempo) de un proceso. (Silberschatz, p.183)
-[[./img/promedio_exponencial.png]]
-
-Empleando el mismo juego de datos de procesos que hemos venido
-manejando como resultados de las estimaciones, obtendríamos el
+Empleando el mismo juego de datos de procesos que se ha venido
+manejando como resultados de las estimaciones, se obtiene el
 siguiente resultado:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
@@ -550,9 +551,15 @@ atendido, especialmente con valores de $\rho$ cercanos o superiores a
 1 — Un proceso más largo que el promedio está predispuesto a sufrir
 inanición.
 
+#+attr_latex: width=0.6\textwidth
+#+attr_html: width="640" height="480"
+#+label: PLAN_promedio_exponencial
+#+caption: Promedio exponencial (predicción de próxima solicitud de tiempo) de un proceso.
+[[./img/gnuplot/promedio_exponencial.png]]
+
 En un sistema poco ocupado, en que la cola de procesos listos es
 corta, SPN generará resultados muy similares a los de FCFS. Sin
-embargo, podemos observar en el ejemplo que con sólo una permutación
+embargo, puede observarse en el ejemplo que con sólo una permutación
 en los cinco procesos ejemplos (/B/ y /C/), los factores de
 penalización a los procesos ejemplo resultaron muy beneficiados.
 
@@ -574,7 +581,7 @@ penalización.
 
 (/Highest Penalty Ratio Next/)
 
-Si no contamos con multitarea preventiva, las alternativas
+En un sistema que no cuenta con multitarea preventiva, las alternativas
 presentadas hasta ahora resultan invariablmente injustas: FCFS
 favorece a los procesos largos, y SPN a los cortos. Un intento de
 llegar a un algoritmo más balanceado es HPRN.
@@ -589,7 +596,7 @@ procesos más largos sufran inanición.
 En los experimentos realizados por Finkel, HPRN se sitúa siempre en
 un punto medio entre FCFS y SPN; su principal desventaja se presenta
 conforme crece la cola de procesos listos, ya que $P$ tiene que
-calcularse para todos ellos cada vez que el despachador toma una
+calcularse para cada uno de ellos cada vez que el despachador toma una
 decisión.
 
 ** Ronda egoísta (SRR)
@@ -602,8 +609,8 @@ no son programados directamente para su ejecución, sino que se les
 forma en la cola de /procesos nuevos/, y se avanza únicamente con la
 cola de /procesos aceptados/.
 
-Para SRR emplearemos los parámetros $a$ y $b$, ajustables según las
-necesidades de nuestro sistema. $a$ indica el ritmo según el cual se
+Para SRR se emplean los parámetros $a$ y $b$, ajustables según las
+necesidades del sistema. $a$ indica el ritmo según el cual se
 incrementará la prioridad de los procesos de la cola de /procesos
 nuevos/, y $b$ el ritmo del incremento de prioridad para los /procesos
 aceptados/. Cuando la prioridad de un proceso nuevo /alcanza/ a la
@@ -611,7 +618,7 @@ prioridad de un proceso aceptado, el nuevo se vuelve aceptado. Si la
 cola de procesos aceptados queda vacía, se acepta el proceso nuevo con
 mayor prioridad.
 
-Veamos el comportamiento en nuestro ejemplo:
+El comportamiento de SRR con los procesos ejemplo es:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   Llegada |     |        |     |     |     |      |
@@ -653,8 +660,8 @@ El mecanismo descrito en la sección anterior, la /ronda egoísta/,
 introdujo el concepto de tener no una sino que varias colas de
 procesos, que recibirán diferente tratamiento. Este mecanismo es muy
 poderoso, y se emplea en prácticamente todos los planificadores en uso
-hoy en día. Veamos brevemente, antes de abordar al esquema de
-retroalimentación multinivel, cómo opera un sistema con múltiples
+hoy en día. Antes de abordar al esquema de retroalimentación
+multinivel, conviene presentar cómo opera un sistema con múltiples
 colas de prioridad.
 
 #+attr_latex: width=0.6\textwidth
@@ -662,7 +669,7 @@ colas de prioridad.
 #+caption: Representación de un sistema con cinco colas de prioridad y siete procesos listos
 [[./img/dot/planif_multicolas.png]]
 
-La figura \ref{PLAN_planif_multicolas} nos ilustra cómo se presentaría
+La figura \ref{PLAN_planif_multicolas} ilustra cómo se presentaría
 una situación bajo esta lógica: El sistema hipotético tiene cinco
 colas de prioridad, y siete procesos listos para ser puestos en
 ejecución. Puede haber colas vacías, como en este caso la 3. Dado que
@@ -684,8 +691,8 @@ El mecanismo de retroalimentación multinivel favorece a los procesos
 cortos, dado que terminarán sus tareas sin haber sido marcados como
 de prioridades inferiores.
 
-La ejecución del mismo juego de datos que hemos manejado bajo este
-esquema nos da los siguientes resultados:
+La ejecución del juego de datos con que han sido presentados los
+algoritmos anteriores bajo este esquema da los siguientes resultados:
 
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
@@ -699,29 +706,30 @@ esquema nos da los siguientes resultados:
 |----------+-----------+-----+--------+-----+-----+-----+------|
 | Promedio |           |   4 |        |     |   9 |   5 | 2.04 |
 
-Dado que ahora tenemos que representar la cola en la que está cada uno
-de los procesos, en la figura \ref{PLAN_planif_fb_bas} presentamos
+Dado que ahora hay que representar la cola en la que está cada uno
+de los procesos, en la figura \ref{PLAN_planif_fb_bas} se presenta
 sobre cada una de las líneas de proceso la prioridad de la cola en que
-se encuentra antes del /quantum/ en que se ejecuta:
+se encuentra antes del /quantum/ a iniciar:
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_fb_bas
 #+caption: Retroalimentación multinivel (FB) básica
 [[./img/ditaa/planif_fb_bas.png]]
 
-Podemos observar que prácticamente todos los números apuntan a que
+Llama la atención que prácticamente todos los números apuntan a que
 esta es una peor estrategia que las presentadas anteriormente — Los
 únicos procesos beneficiados en esta ocasión son los recién llegados,
 que podrán avanzar al principio, mientras los procesos más largos
 serán castigados y podrán eventualmente (a mayor $\rho$) enfrentar
 inanición.
 
-Sin embargo, esta estrategia nos permite ajustar dos variables: Una es
+Sin embargo, esta estrategia permite ajustar dos variables: Una es
 la cantidad de veces que un proceso debe ser ejecutado antes de ser
 /degradado/ a la prioridad inferior, y la otra es la duración del
 /quantum/ asignado a las colas subsecuentes.
 
-Vemos también un caso que se repite a los /ticks/ 8, 10, 11, 13 y 14:
+Otro fenómeno digno a comentar es el que se presenta a los /ticks/ 8,
+10, 11, 13 y 14:
 El despachador interrumpe la ejecución del proceso activo, para volver
 a cedérsela. Esto ocurre porque, efectivamente, concluyó su /quantum/
 — Idealmente, el despachador se dará cuenta de esta situación de
@@ -729,7 +737,7 @@ inmediato y no iniciará un cambio de contexto /al mismo proceso/. En
 caso contrario, el trabajo perdido por gasto administrativo se vuelve
 innecesariamente alto.
 
-El panorama cambia si ajustamos estas variables: Si elegimos un
+El panorama cambia al ajustar estas variables: Si se elige un
 /quantum/ de $2^nq$, donde $n$ es el identificador de cola y $q$ la
 longitud del /quantum/ base, un proceso largo será detenido por un
 cambio de contexto al llegar a $q$, $3q$, $7q$, $15q$, etc. lo que
@@ -738,9 +746,9 @@ $\log(\frac{t(p)}{q})$, lo cual resulta atractivo frente a los
 $\frac{t(p)}{q}$ cambios de contexto que tendría bajo un esquema de
 ronda.
 
-Veamos cómo se comporta nuestro juego de procesos con una
+Tras de estos ajustes ante el juego de procesos con una
 retroalimentación multinivel con un incremento exponencial al
-/quantum/:
+/quantum/ se obtiene como resultado:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ | /P/ |
 |          |   Llegada |     |        |     |     |     |     |
@@ -758,15 +766,17 @@ retroalimentación multinivel con un incremento exponencial al
 #+caption: Retroalimentación multinivel (FB) con $q$ exponencial
 [[./img/ditaa/planif_fb_exp.png]]
 
-Vemos en este caso que, a pesar de que esta estrategia favorece a los
+Los promedios de tiempos de terminación, respuesta, espera y
+penalización para este conjunto de procesos resultan mejores incluso
+que los de la ronda.
+
+En este caso, a pesar de que esta estrategia favorece a los
 procesos recién llegados, al /tick/ 3, 9 y 10, llegan nuevos procesos,
 pero a pesar de estar en la cola de mayor prioridad, no son puestos en
 ejecución, dado que llegaron a la mitad del /quantum/ (largo) de otro
-proceso. Incluso los promedios de tiempos de terminación, respuesta,
-espera y penalización para este conjunto de procesos resultan mejores
-que los de la ronda.
+proceso.
 
-Típicamente veremos incrementos mucho más suaves, y de crecimiento
+Típicamente se emplean incrementos mucho más suaves, y de crecimiento
 más controlado, como $nq$ o inlcuso $q\log(n)$, dado que en caso
 contrario un proceso muy largo podría causar muy largas inaniciones
 para el resto del sistema.
@@ -819,12 +829,12 @@ A pesar de su simplicidad, el esquema de planificación por lotería
 resulta justo tanto a procesos cortos como a largos, y presenta una
 degradación muy suave incluso en entornos de saturación. Claro, al
 derivar de un proceso aleatorio, resulta imposible presentar una
-comparación de este mecanismo con los que abordamos previamente.
+comparación de este mecanismo abordados previamente.
 
 ** Esquemas híbridos
 
-En líneas generales, podemos clasificar a los siete algoritmos
-presentados sobre dos discriminadores primarios: Si están pensados
+En líneas generales, los siete algoritmos presentados pueden
+clasificarse sobre dos discriminadores primarios: Si están pensados
 para emplearse en multitarea cooperativa o preventiva, y si emplean
 información /intrínseca/ a los procesos evaluados o no lo hacen, esto
 es, si un proceso es tratado de distinta forma dependiendo de su
@@ -857,7 +867,7 @@ continuación, algunos ejemplos de esquemas híbridos.
 Al introducir varias colas, se abre la posibilidad de que cada una de
 ellas siga un esquema diferente para elegir cuál de sus procesos está
 a la cabeza. En los ejemplos antes presentados, todas las colas
-operaban siguiendo una ronda, pero podríamos contemplar, por ejemplo,
+operaban siguiendo una ronda, pero podría contemplarse, por ejemplo,
 que parte de las colas sean procesadas siguiendo una variación de PSPN
 que /empuje/ a los procesos más largos a colas que les puedan dar
 atención con menor número de interrupciones (incluso sin haberlos
@@ -871,8 +881,8 @@ lo antes posible su ejecución.
 
 *** Métodos dependientes del estado del sistema
 
-Podemos variar también ciertos parámetros dependiendo del estado
-actual del sistema, e incluso tomando en consideración valores
+Los parámetros de operación pueden variar también dependiendo del
+estado actual del sistema, e incluso tomando en consideración valores
 externos al despachador. Algunas ideas al respecto son:
 
 - Si los procesos listos son /en promedio/ no muy largos, y el valor
@@ -951,22 +961,23 @@ externos al despachador. Algunas ideas al respecto son:
   cuales construye.
 
 ** Resumiendo
+# <<PLAN_resumen_algoritmos>>
 
-En esta sección presentamos algunos mecanismos básicos de
-planificación a corto plazo. Como lo indicamos en la parte final, es
-muy poco común encontrar a ninguno de estos mecanismos en un /estado
-puro/ — Normalmente se encuentra combinación de ellos, con diferentes
+En esta sección se presentan algunos mecanismos básicos de
+planificación a corto plazo. Como se indica en la parte final, es muy
+poco común encontrar a ninguno de estos mecanismos en un /estado puro/
+— Normalmente se encuentra combinación de ellos, con diferentes
 parámetros según el nivel en el cual se está ejecutando.
 
 *** Rendimiento ante diferentes cargas de procesos
 
-Recordemos que, si bien presentamos una comparación de los diferentes
-algoritmos ante una determinada carga de procesos, no podemos asumir
-que su comportamiento será igual ante diferentes distribuciones: Un
-patrón de trabajo donde predominen los procesos cortos y haya unos
-pocos procesos largos probablemente se verá mucho más penalizado por
-un esquema SRR (y mucho más favorecido por un SPN o PSPN) que uno en
-el cual predominen los procesos largos.
+Los algoritmos presentados en el transcurso de esta sección fueron
+presentados y comparados ante una determinada carga de procesos. No se
+puede asumir, sin embargo, que su comportamiento será igual ante
+diferentes distribuciones: Un patrón de trabajo donde predominen los
+procesos cortos y haya unos pocos procesos largos probablemente se
+verá mucho más penalizado por un esquema SRR (y mucho más favorecido
+por un SPN o PSPN) que uno en el cual predominen los procesos largos.
 
 #+attr_html: height="483"
 #+attr_latex: width=0.7\textwidth
@@ -987,16 +998,16 @@ tendrían ante 50,000 procesos generados de forma aleatoria, siguiendo
 una distribución exponencial tanto en sus tiempos de llegada como
 duraciones en ejecución, y manteniendo como parámetro de equilibrio un
 nivel de saturación $\rho = 0.8 (\alpha = 0.8, \beta = 1.0)$,
-obteniendo como resultado las figuras que aquí reproducimos
+obteniendo como resultado las figuras aquí reproducidas
 (\ref{PLAN_penalizaciones_por_algoritmo_planificador} y
 \ref{PLAN_tiempo_en_espera_por_algoritmo_planificador}) comparando
 algunos aspectos importantes de los diferentes despachadores.
 
 *** Duración mínima del /quantum/
 
-Observamos que la penalización por cambios de contexto en esquemas
+La penalización por cambios de contexto en esquemas
 preventivos como la /ronda/ puede evitarse empleando /quantums/
-mayores. Por otro lado, ¿qué tan corto tiene sentido que sea un
+mayores. Pero abordando la contraparte, ¿qué tan corto tiene sentido que sea un
 /quantum/? Con el hardware y las estructuras requeridas por los
 sistemas operativos de uso general disponibles hoy en día, un cambio
 de contexto requiere del órden de 10 microsegundos (Silberschatz,
@@ -1014,11 +1025,11 @@ cambiaba el juego de registros. De este modo, un sólo procesador de
 muy alta velocidad para su momento (1 MHz) aparecía ante las
 aplicaciones como 10 procesadores efectivos, cada uno de 100 KHz,
 reduciendo los costos al implementar sólamente una vez cada una de las
-unidades funcionales. Podemos ver una evolución de esta idea retomada
+unidades funcionales. Puede verse una evolución de esta idea retomada
 hacia mediados de la década del 2000 en los procesadores que manejan
 hilos de ejecución.[fn:: Aunque la arquitecura de la CDC6600 era
 /plenamente superescalar/, a diferencia de los procesadores
-/Hyperthreading/, que abordaremos brevemente en la sección
+/Hyperthreading/, que será abordada brevemente en la sección
 \ref{PLAN_proc_hyperthread}, en que para que dos instrucciones se
 ejecuten simultáneamente deben ser de naturalezas distintas, no
 requiriendo ambas de la misma /unidad funcional/ del CPU. El
@@ -1032,7 +1043,7 @@ un entorno cambiante, con picos de ocupación.
 
 * Planificación de hilos
 
-Ahora bien, tras centrarnos para toda la presente discusión en los
+Ahora bien, tras centrar toda la presente discusión en los
 procesos, ¿cómo caben los /hilos/ en este panorama? Depende de cómo
 éstos son /mapeados/ a procesos a ojos del planificador.
 
@@ -1041,8 +1052,8 @@ clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
 que son completamente gestionados dentro del proceso y sin ayuda del
 sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
 son gestionados por el sistema operativo como si fueran
-procesos. Partiendo de esto, podemos hablar de tres modelos
-principales de mapeo:
+procesos. Partiendo de esto, existen tres modelos principales de
+mapeo:
 
 - Muchos a uno :: Muchos hilos son agrupados en un sólo proceso. Los
                   /hilos verdes/ entran en este supuesto: Para el
@@ -1103,7 +1114,7 @@ principales de mapeo:
      sistema que no soporte más que el modelo /uno a muchos/, el
      sistema puede caer en éste como /modo degradado/.
 
-No nos ocupamos en este caso de los primeros — Cada marco de
+No se detalla en el presente texto respecto a los primeros — Cada marco de
 desarrollo o máquina virtual que emplee /hilos de usuario/
 actuará cual sistema operativo ante ellos, probablemente con alguno
 de los mecanismos ilustrados anteriormente.
@@ -1156,16 +1167,16 @@ el empleo de determinado algoritmo de planificación
 
 * Planificación de multiprocesadores
 
-Hasta este punto, nos hemos concentrado en la planificación asumiendo
-un sólo procesador. Del mismo modo que lo que vimos hasta este
-momento, no hay una sóla estrategia que pueda ser vista como superior
-a las demás.
+Hasta este punto, el enfoque de este capítulo se ha concentrado en la
+planificación asumiendo un sólo procesador. Del mismo modo que lo que
+se ha visto hasta este momento, no hay una sóla estrategia que pueda
+ser vista como superior a las demás en todos los casos.
 
 Para trabajar en multiprocesadores, puede mantenerse una sóla lista de
 procesos e ir despachándolos a cada uno de los procesadores como
 unidades de ejecución equivalentes e idénticas, o pueden mantenerse
-listas separadas de procesos. Veremos algunos argumentos respecto a
-estos enfoques.
+listas separadas de procesos. A continuación se presentan algunos
+argumentos respecto a estos enfoques.
 
 ** Afinidad a procesador
 
@@ -1187,7 +1198,7 @@ caché en chip (L2), y mantener únicamente el del controlador de
 memoria (L3).
 
 Pero dado que la situación antes descrita varía de computadora a
-computadora, no podemos enunciar una regla general — Más allá de que
+computadora, no se puede enunciar una regla general — Más allá de que
 el sistema operativo debe conocer cómo están estructurados los
 diversos procesadores que tiene a su disposición, y buscar realizar
 las migraciones /más baratas/, aquellas que tengan lugar entre los
@@ -1223,7 +1234,7 @@ procesadores con procesos encolados y a la espera, o incluso ambas
 situaciones.
 
 La divergencia entre la carga de cada uno de los procesadores debe ser
-lo más pequeña posible. Para lograr esto, podemos emplear esquemas de
+lo más pequeña posible. Para lograr esto, se pueden emplear esquemas de
 /balanceo de cargas/: Algoritmos que analicen el estado de las colas
 de procesos y, de ser el caso, transfieran procesos entre las colas
 para homogeneizarlas. Claro está, el balanceo de cargas puede actuar
@@ -1251,45 +1262,55 @@ Ambos mecanismos pueden emplearse –y normalmente lo hacen– en el mismo
 sistema. Los principales sistemas operativos modernos emplean casi
 siempre ambos mecanismos.
 
-Como sea, debemos mantener en mente que todo balanceo de cargas que
+Como sea, debe mantenerse en mente que todo balanceo de cargas que
 se haga entre los procesadores conllevará una penalización en
 términos de afinidad al CPU.
 
 ** Colas de procesos: ¿Una o varias?
 
-En esta sección partimos del supuesto que hay una cola de procesos
+En los puntos relativos al multiprocesamiento hasta ahora abordados se
+parte del supuesto que hay una cola de procesos
 listos por cada procesador. Si, en cambio, hubiera una cola global de
 procesos listos de la cual el siguiente proceso a ejecutarse fuera
 asignándose al siguiente procesador, fuera éste cualquiera de los
-disponibles, podríamos ahorrarnos incluso elegir entre una estrategia
+disponibles, podría ahorrarse incluso elegir entre una estrategia
 de migración /por empuje/ o /por jalón/ — Mientras hubiera procesos
 pendientes, éstos serían asignados al siguiente procesador que
 tuviera tiempo disponible.
 
 El enfoque de una sóla cola, sin embargo, no se usa en ningún sistema
 en uso amplio. Esto es en buena medida porque un mecanismo así haría
-mucho más difícil mantener la afinidad a cierto procesador y restaría
+mucho más difícil mantener la afinidad al procesador y restaría
 flexibilidad al sistema completo.
 
 ** Procesadores con soporte a /hilos hardware/ (/hyperthreading/)
 # <<PLAN_proc_hyperthread>>
 
 El término de /hilos/ como abstracción general de algo que corre con
-mayor frecuencia y dentro de un mismo proceso puede llevarnos a una
-confusión, dado que en esta sección abordaremos dos temas
-relacionados. En este caso, nos referimos a los hilos en hardware que
-forman parte de ciertos procesadores, ofreciendo al sistema una
-/casi/ concurrencia adicional.
+mayor frecuencia y dentro de un mismo proceso puede llevar a una
+confusión, dado que en esta sección se tocan dos temas
+relacionados. Para esta subsección en particular, se hace referencia a
+los /hilos en hardware/ que forman parte de ciertos procesadores,
+ofreciendo al sistema una /casi/ concurrencia adicional.
 
 Conforme han subido las frecuencias de reloj en el cómputo más allá de
-lo que podemos llevar al sistema entero como una sóla unidad, una
+lo que permite llevar al sistema entero como una sóla unidad, una
 respuesta recurrente ha sido incrementar el paralelismo. Y esto no
 sólo se hace proveyendo componentes completos adicionales, sino que
 separando las /unidades funcionales/ de un procesador.
 
+#+attr_latex: width=\textwidth
+#+label: PLAN_pipeline
+#+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
+[[./img/ditaa/pipeline.png]]
+
 El flujo de una sóla instrucción a través de un procesador simple como
 el MIPS puede ser dividido en cinco secciones principales, creando una
-estructura conocida como /pipeline/ (tubería):
+estructura conocida como /pipeline/ (tubería). Idealmente, en todo
+momento habrá una instrucción diferente ejecutando en cada una de las
+secciones del procesador, como lo ilustra la figura
+\ref{PLAN_pipeline}. Las secciones en los procesadores MIPS clásicos
+son:
 
 - Recuperación de la instrucción (/Instruction Fetch/, IF)
 - Decodificación de la instrucción (/Instruction Decode/, ID)
@@ -1297,14 +1318,9 @@ estructura conocida como /pipeline/ (tubería):
 - Acceso a datos (MEM)
 - Almacenamiento (Writeback, WB)
 
-#+attr_latex: width=\textwidth
-#+label: PLAN_pipeline
-#+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
-[[./img/ditaa/pipeline.png]]
-
 La complejidad de los procesadores actuales ha crecido ya por encima
 de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
-embargo tomaremos esta separación como base para la explicación. Un
+embargo se presenta esta separación como base para la explicación. Un
 procesador puede iniciar el procesamiento de una instrucción cuando la
 siguiente apenas avanzó la quinta parte de su recorrido — De este
 modo, puede lograr un paralelismo interno, manteniendo idealmente
@@ -1323,7 +1339,7 @@ procesadores presentan a un mismo /núcleo/ de procesador como si
 estuviera compuesto de dos o más /hilos hardware/ (conocidos en el
 mercado como /hyper-threads/). Esto puede llevar a una mayor
 utilización del procesador, siguiendo patrones como el ilustrado en
-el esquema.
+la figura \ref{PLAN_hyperthread}
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_hyperthread
@@ -1332,8 +1348,10 @@ el esquema.
 
 Hay que recordar que, a pesar de que se /presenten/ como hilos
 independientes, el rendimiento de cada uno depende de la secuencia
-particular de instrucciones del otro — No podemos esperar que el
-incremento en el procesamiento sea de 2x, ni mucho menos.
+particular de instrucciones del otro — No puede esperarse que el
+incremento en el procesamiento sea de 2x; la figura presenta
+varios puntos en que un hilo está en /espera por procesador/, dado que
+el otro está empleando las unidades funcionales que éste requiere.
 
 La planificación de los hilos hardware sale del ámbito del presente
 material, y este tema se presenta únicamente para aclarar un concepto que
@@ -1349,27 +1367,27 @@ aprovechamiento del paralelismo), o uno de arquitectura de sistemas
 (estudio del pipeline, aspectos del hardware).
 
 Esta estrategia guarda gran similitud, y no puede evitar hacerse el
-paralelo, con la /compartición de procesador/ presentada en la sección
-final de /Algoritmos de planificación/.
+paralelo, con la /compartición de procesador/ empleada por la CDC6600,
+presentada en la sección \ref{PLAN_resumen_algoritmos}.
 
 * Tiempo real
 
 Todos los esquemas de manejo de tiempo hasta este momento se han
 enfocado a repartir el tiempo disponible entre todos los procesos que
-requieren atención. No hemos tocado, sin embargo, a los procesos que
-/requieren garantías de tiempo/ — Esto es, procesos que para poder
+requieren atención. Es necesario también abordar a los procesos que
+/requieren garantías de tiempo/: procesos que para poder
 ejecutarse deben garantizar el haber tenido determinado tiempo de
-proceso antes de que un tiempo límite. Los procesos con estas
+proceso antes de un tiempo límite. Los procesos con estas
 características se conocen como /de tiempo real/.
 
-Podemos encontrar ejemplos de procesos que requieren este tipo de
-planificación a todo nivel — los ejemplos más comunes son los
+Hay ejemplos de procesos que requieren este tipo de
+planificación a todo nivel; los ejemplos más comunes son los
 controladores de dispositivos y los recodificadores o reproductores de
 medios (audio, video). La lógica general es la misma:
 
 Para agendarse como un proceso con requisitos de tiempo real, éste
-debe declarar sus requisitos (formalmente, /efectuar su reserva de
-recursos/) de tiempo al iniciar su ejecución o en el transcurso de la
+debe declarar sus requisitos de tiempo (formalmente, /efectuar su
+reserva de recursos/) al iniciar su ejecución o en el transcurso de la
 misma. Claro está, siendo que los procesos de tiempo real obtienen una
 /prioridad/ mucho mayor a otros, normalmente se requerirá al iniciar
 el proceso que éste /declare/ que durante parte de su ejecución
@@ -1377,7 +1395,7 @@ trabajará con restricciones de tiempo real.
 
 ** Tiempo real duro y suave
 
-Supongamos que un dispositivo genera periódicamente determinada
+Supóngase que un dispositivo genera periódicamente determinada
 cantidad de información y la va colocando en un área determinada de
 memoria compartida (en un /buffer/). Al inicializarse, su controlador
 declarará al sistema operativo cuánto tiempo de ejecución le tomará
@@ -1389,25 +1407,25 @@ En un sistema capaz de operar con garantías de tiempo real, si el
 sistema operativo puede /garantizar/ que en ese intervalo le otorgará
 al proceso en cuestión suficiente tiempo para procesar esta
 información, el proceso se ejecuta; en caso contrario, recibe un error
-por medio del cual podrá alertar al usuario.
+/antes de que esto ocurra/ por medio del cual podrá alertar al usuario.
 
 Los sistemas en que el tiempo máximo es garantizable son conocidos
 como de /tiempo real duro/.
 
 La necesidad de atención en tiempo real puede manejarse /periódica/
 (por ejemplo, /requiero del procesador por 30ms cada segundo/), o
-/aperiódica/, por ocurrencia única (/necesito que este proceso, que me
+/aperiódica/, por ocurrencia única (/necesito que este proceso, que
 tomará 600ms, termine de ejecutarse en menos de 2s/).
 
 Realizar una reserva de recursos requiere que el planificador sepa con
 certeza cuánto tiempo toma realizar las tareas de sistema que
 ocurrirán en el periodo en cuestión. Cuando entran en juego algunos
-componentes de los sistemas operativos de propósito general que
-tienen una latencia con variaciones impredecibles (como el
-almacenamiento en disco o la memoria virtual) se vuelve imposible
-mantener las garantías de tiempo ofrecidas, por lo cual, en un
-sistema operativo de uso general /no es posible/ implementar tiempo
-real duro en dichos sistemas.
+componentes de los sistemas de propósito general que tienen una
+latencia con variaciones impredecibles (como el almacenamiento en
+disco o la memoria virtual) se vuelve imposible mantener las garantías
+de tiempo ofrecidas. Por esta razón, en un sistema operativo de
+propósito general empleando hardware estándar /no es posible/
+implementar tiempo real duro.
 
 Para solventar necesidades como las expresadas en sistemas de uso general, el
 /tiempo real suave/ sigue requiriendo que los procesos críticos

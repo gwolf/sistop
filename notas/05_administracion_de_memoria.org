@@ -95,11 +95,11 @@ ininterrumpido de memoria, cuando en realidad puede haber alta
 /fragmentación/.
 
 Se explicará cómo la MMU cubre estas necesidades, y qué mecanismos
-emplea para lograrlo — Y qué debemos cuidar, incluso como
-programadores de aplicaciones de alto nivel, para aprovechar de la
+emplea para lograrlo — Y qué cuidados se deben conservar, incluso como
+programadores de aplicaciones en lenguajes de alto nivel, para aprovechar de la
 mejor manera estas funciones (y evitar, por el contrario, que los
-programas se vuelvan lentos por no saber manejar la memoria)
-correctamente.
+programas se vuelvan lentos por no manejar la memoria
+correctamente).
 
 La MMU es también la encargada de verificar que un proceso no tenga
 acceso a leer o modificar los datos de otro — Si el sistema operativo
@@ -222,8 +222,7 @@ relativa a su ejecución.
      manual de la memoria/ (como C), esta área es la que se maneja a
      través de las llamadas de la familia de =malloc= y =free=. En
      lenguajes con gestión automática, esta área es monitoreada por
-     los /recolectores de basura/ (volveremos a estos conceptos más
-     adelante).
+     los /recolectores de basura/.
 
 - Pila de llamadas :: Consiste en un espacio de memoria que se usa para
      almacenar la secuenciade funciones que han sido llamadas dentro 
@@ -265,7 +264,7 @@ Existen diferentes estrategias de resolución, que se pueden clasificar en:
      computadoras previas al multiprocesamiento. En la arquitectura
      compatible con PC, el formato ejecutable =.COM= es un volcado de
      memoria directo de un archivo objeto con las direcciones
-     indicadas de forma absoluta. Esto lo podemos ver hoy
+     indicadas de forma absoluta. Esto puede verse hoy
      principalmente en sistemas embebidos o de función específica.
 
 - En tiempo de carga :: Al cargarse a memoria el programa y antes de
@@ -721,8 +720,9 @@ en que /realmente/ se encuentra en la memoria del sistema).
 [[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
-presentado en el libro de Silberschatz, Galvin y Gagné. Este presenta
-presenta un esquema minúsculo: Un /espacio de direccionamiento/ de 32
+presentado en la figura \ref{MEM_ejemplo_de_paginacion} (Silberschatz,
+p.292). Este presenta un esquema minúsculo de paginación: Un /espacio
+de direccionamiento/ de 32
 bytes (5 bits), organizado en 8 páginas de 4 bytes cada una (esto es,
 la página es representada con los 3 bits /más significativos/ de la
 dirección, y el desplazamiento con los 2 bits /menos
@@ -822,7 +822,7 @@ tabla de páginas en memoria, y apuntar al inicio de la tabla con un
 juego de registros especiales: el /registro de base de la tabla de
 páginas/ (/PTBR/, /Page Table Base Register/) y el /registro de
 longitud de la tabla de páginas/ (/PTLR/, /Page Table Length
-Register/),[fn:: ¿Por qué necesitamos el segundo? Porque es
+Register/),[fn:: ¿Por qué es necesario el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del /PTLR/ se evita desperdiciar grandes cantidades
@@ -1283,10 +1283,6 @@ Ahora bien, ¿cómo decidir qué páginas remplazar marcándolas como
 este algoritmo es que, para una patrón de accesos dado, permita obtener el
 menor número de fallos de página.
 
-Esta sección está basada en los ejemplos presentados en los
-presentados en el libro /Operating Systems Concepts Essentials/
-(Silberschatz, Galvin y Gagné, 2011).
-
 De la misma forma como se realizó la descripción de los algoritmos de
 planificación de procesos, para analizar los algoritmos de reemplazo 
 se usará una /cadena de referencia/. Esto es, sobre una lista
@@ -1332,21 +1328,21 @@ con dos o tres marcos.
 [[../img/gnuplot/expectativa_fallas_contra_marcos.png]]
 
 Un fenómeno interesante que se presenta con algunos algoritmos es la
-/anomalía de Belady/: Si bien la lógica indica que a mayor número de
-marcos disponibles se tendrá una menor cantidad de fallos de página,
-como lo ilustra la figura \ref{MEM_expectativa_fallas_marcos},
-con algunas de cadenas de referencia y bajo ciertos algoritmos puede
-haber una /regresión/, en la cual la cantidad de fallos aumenta aún
-con una mayor cantidad de marcos, como se puede ver en la figura
-\ref{MEM_anomalia_belady}.
+/anomalía de Belady/, publicada en 1969: Si bien la lógica indica que
+a mayor número de marcos disponibles se tendrá una menor cantidad de
+fallos de página, como lo ilustra la figura
+\ref{MEM_expectativa_fallas_marcos}, con algunas de cadenas de
+referencia y bajo ciertos algoritmos puede haber una /regresión/, en
+la cual la cantidad de fallos aumenta aún con una mayor cantidad de
+marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
 
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height=320
 #+label: MEM_anomalia_belady
-#+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
+#+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos. La cadena de referencia que genera este comportamiento es /1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5/ (Belady, 1969)
 [[./img/gnuplot/anomalia_belady.png]]
 
-Es importante recalcar que si bien la anomalía de Belady se nos
+Es importante recalcar que si bien la anomalía de Belady se
 presenta como un problema importante ante la evaluación de los
 algoritmos, en el texto de Luis La Red (p.559-569) se puede observar
 que en simulaciones con características más cercanas a las de los
@@ -1361,6 +1357,7 @@ con tres marcos, y con la siguiente cadena de referencia:
 #+end_quote
 
 *** Primero en entrar, primero en salir (FIFO)
+# <<MEM_FIFO>>
 
 El algoritmo de más simple y obvia implementación es, nuevamente, el
 FIFO: Al cargar una página en memoria, se toma nota de en qué momento
@@ -1391,12 +1388,9 @@ probabilidad de ser reemplazadas, sin importar su frecuencia de uso.
 Con las condiciones aquí presentadas, un esquema FIFO causará 15
 fallos de página en un total de 20 accesos requeridos.
 
-El algoritmo FIFO es vulnerable a la anomalía de Belady. Esto puede
-ilustrarse al pasar de 3 a 4 marcos con la cadena de referencia:
-
-#+BEGIN_QUOTE
-1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
-#+END_QUOTE
+El algoritmo FIFO es vulnerable a la anomalía de Belady. La figura
+\ref{MEM_anomalia_belady} ilustra este fenómeno al pasar de 3 a 4
+marcos.
 
 La prevalencia de cadenas que desencadenan la anomalía de Belady fue
 uno de los factores principales que llevaron al diseño de nuevos
@@ -1749,8 +1743,8 @@ servidor de documentos pasa la mayor parte de su tiempo simplemente
 esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
-termine con su tarea. Veremos este punto en breve, al hablar del
-conjunto activo (sección \ref{MEM_mod_conjunto_activo}).
+termine con su tarea. En la sección \ref{MEM_mod_conjunto_activo} se
+retomará este tema.
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1839,7 +1833,7 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+label: MEM_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -1869,7 +1863,7 @@ conjunto activo, el proceso accese de golpe una serie de páginas que
 no había referenciado en cierto tiempo.
 
 #+label: MEM_conjunto_activo
-#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/conjunto_activo.png]]
@@ -2054,7 +2048,7 @@ int main(int argc, char **argv) {
 #+end_src
 
 El problema con este código reside en el =strcpy(buffer, argv[1])= —
-Dado que el código es recibido del usuario, no tenemos la /certeza/
+Dado que el código es recibido del usuario, no se tiene la /certeza/
 de que el argumento que recibe el programa por línea de comandos
  (empleando =argv[1]=) quepa en el arreglo =buffer[256]=. Esto es, 
 si se ejecuta el programa ejemplo con una cadena de 120 caracteres:
@@ -2092,7 +2086,7 @@ En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
 error exitosamente y detuvo la ejecución — Pero no lo hizo: El
 =Segmentation fault= no fue generado al sobreescribir el buffer ni al
 intentar procesarlo, sino después de terminar de hacerlo: Al llegar
-nuestro código al =return 0=.
+la ejecución del código al =return 0=.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_500
@@ -2399,6 +2393,10 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
 - [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
   explícitas/completas que las de Linux
 
+- [[http://dl.acm.org/citation.cfm?doid=363011.363155][An anomaly in space-time characteristics of certain programs running
+  in a paging machine]] (Belady, Nelson, Shedler 1969; Communications of
+  the ACM)
+
 - [[/biblio/Windows_Internals_sample_chapters.pdf][Understanding the Linux Virtual Memory Manager]], por Mel Gorman
   (2004). Un libro bajo licencia libre, parte de la colección [[http://www.informit.com/imprint/series_detail.aspx?ser=335494][Bruce
   Perens' Open Source Series]]; aborda a profundidad los mecanismos y
@@ -2428,10 +2426,10 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
   septiembre 2013, /Communications of the ACM/)
 
 - [[http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/][Anatomy of a killer bug: How just 5 characters can murder iPhone,
-  Mac apps]]: A fines de agosto del 2013, se descubrió una /cadena
-  Unicode de la muerte/, que causa que cualquier programa que intente
-  desplegarla en pantalla en la línea de productos Apple se
-  /caiga/. Chris Williams escribió este interesante artículo en que
-  muestra el proceso de averiguar, a partir del /reporte de falla/
-  generado por el sistema y analizando el contenido de la memoria que
-  éste reporta, cómo puede encontrar un /desbordamiento de entero/.
+ Mac apps]]: A fines de agosto del 2013, se descubrió una /cadena
+ Unicode de la muerte/, que causa que cualquier programa que intente
+ desplegarla en pantalla en la línea de productos Apple se
+ /caiga/. Chris Williams escribió este interesante artículo en que
+ muestra el proceso de averiguar, a partir del /reporte de falla/
+ generado por el sistema y analizando el contenido de la memoria que
+ éste reporta, cómo puede encontrar un /desbordamiento de entero/.

@@ -558,6 +558,95 @@ Puede haber varios puntos de asimetría:
   - Software como servicio (/SaaS/)
   - Infraestructura como servicio (/IaaS/)
 
+** Límites del paralelismo
+- [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Gene Amdahl (1967)]] observó que la ganancia derivada de paralelizar
+  el código llega a un límite natural: El tiempo requerido por la
+  /porción secuencial/ del código
+- La /porción paralelizable/ puede repartirse entre varios
+  procesadores, pero siemprehay una importante proporción no
+  paralelizable
+  - Inicialización
+  - Puntos de control/acumulación de datos
+  - Interacción con el usuario
+  - etc.
+
+** Ley de Amdahl
+- $T(1)$ :: Tiempo de ejecución del programa con un sólo procesador
+- $T(P)$ :: Tiempo de ejecución con $P$ procesadores
+- $t_s$ :: Tiempo requerido por la porción secuencial
+- $t_p(P)$ :: Tiempo requerido para la porción paralela entre $P$
+  procesadores
+#+BEGIN_CENTER
+$g=\frac{T(1)}{T(P)}=\frac{t_s+t_p(1)}{t_s+\frac{t_p(1)}{P}}$
+#+END_CENTER
+
+** Ilustrando la ley de Amdahl (1)
+#+begin_latex
+\begin{columns}
+\begin{column}{0.3\textwidth}
+  \centering
+  \includegraphics[height=0.33\textheight]{../img/dot/amdahl_1.png} \\
+  Procesadores: 1, $t=500$
+\end{column}
+\begin{column}{0.3\textwidth}
+  \centering
+  \includegraphics[height=0.33\textheight]{../img/dot/amdahl_2.png} \\
+  Procesadores: 2, $t=400$, ganancia: 1.25x
+\end{column}
+\begin{column}{0.3\textwidth}
+  \centering
+  \includegraphics[height=0.33\textheight]{../img/dot/amdahl_4.png} \\
+  Procesadores: 4, $t=350$, ganancia: 1.4x
+\end{column}
+\end{columns}
+#+end_latex
+#+BEGIN_CENTER
+Ley de Amdahl: ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.
+#+END_CENTER
+
+** Ilustrando la ley de Amdahl (2)
+#+attr_latex: width=0.6\textwidth
+#+label: HW_amdahl_porcentajes
+#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl
+[[../img/gnuplot/amdahl.png]]
+
+** Desmenuzando a Amdahl
+- El paralelismo puede aumentar fuertemente nuestro rendimiento
+  - ... ¿O no?
+- Incluso con un 95% de ejecución paralela, se llega a un techo de
+  ganancia al llegar a los 20 CPUs
+  - Cada procesador tiene un costo económico no trivial
+  - ¿Vale realmente la pena ir migrando hacia un paralelismo cada vez
+     mayor?
+
+** Observación de Gustafson
+- Por muchos años, la ley de Amdahl disminuyó el interés en el cómputo
+  paralelo
+- En 1988, John Gustafson obtuvo ganancias superiores a 1020x en una
+  supercomputadora de 1024 procesadores
+- [[http://www.johngustafson.net/pubs/pub13/amdahl.htm][Publicó una observación]] que hizo re-evaluar este conocimiento
+- La modificación no (sólo) será al tiempo de cómputo, /sino que al
+  problema mismo/
+- Un artículo de apenas una cuartilla y lenguaje muy sencillo rompió
+  el /bloqueo mental/ contra el paralelismo
+
+** Observación de Gustafson
+#+latex: { \small
+(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
+independiente del número de procesadores, /lo cual virtualmente nunca
+ocurre de este modo/. Uno no toma un problema de tamaño fijo para
+ejecutarlo en varios procesadores como no sea para hacer un
+ejercicio académico; en la práctica, /el tamaño del problema crece con
+el número de procesadores/. Al obtener procesadores más poderosos, el
+problema generalmente se expande para aprovechar las facilidades
+disponibles. Los usuarios tienen control sobre cosas como la
+resolución de la malla, el número de pasos, la complejidad de los
+operadores y otros parámetros que usualmente se ajustan para permitir
+que el programa se ejecute en el tiempo deseado. Por tanto, podría ser más
+realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
+constante.
+
+#+latex: }
 * Conceptos nuevos
 ** En esta presentación vimos...
 - Jerarquía de almacenamiento

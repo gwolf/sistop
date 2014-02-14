@@ -438,62 +438,65 @@ incrementar en 1 el contador. Sin embargo, ¡en este caso =cuenta=
 tiene el valor 1!. A este problema también se lo conoce como /problema
 de las actualizaciones múltiples/.
 
-/Esto parece muy específico/ Si bien este análisis parece muy
-específico es fácil ver que la misma circustancia podría darse en un
-sistema de reserva de vuelos (p. ej.: puede que dos operadores vean un
-asiento vacío en su copia local de los asientos y ambos marquen el
-mismo asiento como ocupado) o con dos procesos que decidan cambiar
-simultáneamente datos en un archivo. Aquí las operaciones ya no son
-necesariamente operaciones internas de la máquina.
+- Esto parece muy específico ::
 
-/¿Pero no es muy poco probable que ...?/  
-Por otro lado, uno podría pensar (con cierta cuota de razón) que la
-secuencia de eventos propuesta es muy poco probable: usualmente un
-sistema operativo ejecuta miles de instrucciones antes de cambiar de
-un proceso a otro. De hecho, en la práctica este problema es muy
-frecuentemente ignorado y los programas funcionan muy bien la mayoría
-de las veces. Esto permite ver una característica importante de los
-programas concurrentes: es muy usual que un programa funcione
-perfectamente la mayor parte del tiempo, pero de vez en cuando puede
-fallar. Subsecuentes ejecuciones con los mismos argumentos producen
-nuevamente el resultado correcto. Esto hace que los problemas de
-concurrencia sean muy difíciles de detectar y más aun de corregir. Es
-importante (y mucho más efectivo) realizar un buen diseño inicial de
-un programa concurrente en lugar de intentar arreglarlo cuando se
-detecta alguna falla. También es interesante notar que dependiendo del
-sistema, puede ser que alguna de las instrucciones sea muy lenta, en
-el caso de un sistema de reserva de asientos de aviones, las
-operaciones pueden durar un tiempo importante (p. ej.: desde que el
-operador muestra los asientos disponibles hasta que el cliente elige
-el asiento) haciendo mucho más probable que ocurra una secuencia no
-deseada.
+  Si bien este análisis parece muy específico es fácil ver que la
+  misma circustancia podría darse en un sistema de reserva de vuelos
+  (p. ej.: puede que dos operadores vean un asiento vacío en su copia
+  local de los asientos y ambos marquen el mismo asiento como ocupado)
+  o con dos procesos que decidan cambiar simultáneamente datos en un
+  archivo. Aquí las operaciones ya no son necesariamente operaciones
+  internas de la máquina.
 
-**** ¿Vale la pena preocuparse?
+- ¿Pero no es muy poco probable que...? ::
 
-A modo de ilustración de la gravedad del
-problema, estos son algunos valores para el resultado final de la
-variable =cuenta= cuando se ejecuta el programa anterior en
-Pascal-FC[fn:: http://www-users.cs.york.ac.uk/burns/pf.html]:
-25 29 31 20 21 26 27 18 31 35. Notesé que incluso uno de los valores
-es menor que /20/ (que es lo mínimo que cuenta cada torniquete). Es un
-ejercicio interesante pensar qué secuencia de eventos podría producir
-tal valor y cuál es el mínimo valor posible.
+  Por otro lado, uno podría pensar (con cierta cuota de razón) que la
+  secuencia de eventos propuesta es muy poco probable: usualmente un
+  sistema operativo ejecuta miles de instrucciones antes de cambiar de
+  un proceso a otro. De hecho, en la práctica este problema es muy
+  frecuentemente ignorado y los programas funcionan muy bien la mayoría
+  de las veces. Esto permite ver una característica importante de los
+  programas concurrentes: es muy usual que un programa funcione
+  perfectamente la mayor parte del tiempo, pero de vez en cuando puede
+  fallar. Subsecuentes ejecuciones con los mismos argumentos producen
+  nuevamente el resultado correcto. Esto hace que los problemas de
+  concurrencia sean muy difíciles de detectar y más aun de corregir. Es
+  importante (y mucho más efectivo) realizar un buen diseño inicial de
+  un programa concurrente en lugar de intentar arreglarlo cuando se
+  detecta alguna falla. También es interesante notar que dependiendo del
+  sistema, puede ser que alguna de las instrucciones sea muy lenta, en
+  el caso de un sistema de reserva de asientos de aviones, las
+  operaciones pueden durar un tiempo importante (p. ej.: desde que el
+  operador muestra los asientos disponibles hasta que el cliente elige
+  el asiento) haciendo mucho más probable que ocurra una secuencia no
+  deseada.
 
-**** Pero yo tengo muchos núcleos
+- ¿Vale la pena preocuparse? ::
 
-Otra cuestión que puede parecer
-artificiosa es que en el ejemplo hay un solo procesador o núcleo. Sin
-embargo, tener más de un procesador no sólo no soluciona el problema
-sino que lo empeora: ahora las operaciones de lectura o escritura
-pueden ejecutarse directamente en paralelo y aparecen nuevos problemas
-de coherencia de caché. En la siguiente discusión muchas veces se
-presupone que hay un solo procesador, sin que eso invalide la
-discusión para equipos multiprocesadores.
+  A modo de ilustración de la gravedad del problema, estos son algunos
+  valores para el resultado final de la variable =cuenta= cuando se
+  ejecuta el programa anterior en Pascal-FC[fn::
+  http://www-users.cs.york.ac.uk/burns/pf.html]: 25 29 31 20 21 26 27
+  18 31 35. Notesé que incluso uno de los valores es menor que /20/
+  (que es lo mínimo que cuenta cada torniquete). Es un ejercicio
+  interesante pensar qué secuencia de eventos podría producir tal
+  valor y cuál es el mínimo valor posible.
 
-Antes de presentar posibles soluciones, se verán algunos conceptos
-importantes.
+- Pero tenemos muchos núcleos ::
+
+  Otra cuestión que puede parecer artificiosa es que en el ejemplo hay
+  un solo procesador o núcleo. Sin embargo, tener más de un procesador
+  no sólo no soluciona el problema sino que lo empeora: ahora las
+  operaciones de lectura o escritura pueden ejecutarse directamente en
+  paralelo y aparecen nuevos problemas de coherencia de caché. En la
+  siguiente discusión muchas veces se presupone que hay un solo
+  procesador, sin que eso invalide la discusión para equipos
+  multiprocesadores.
 
 *** Algunos conceptos de concurrencia
+
+Antes de abordar posibles soluciones al problema presentado, se
+presentan las definiciones de algunos conceptos importantes.
 
 - Operación atómica :: Operación que requiere la garantía de que se
      ejecutará como una sóla unidad de ejecución, o fallará
@@ -503,7 +506,7 @@ importantes.
      operación, sino que /el efecto de que se le retire el flujo/ no
      llevará a comportamiento inconsistente.
 
-- Condición de carrera :: (Race condition) Categoría de errores de
+- Condición de carrera :: (En inglés, /Race condition/) Categoría de errores de
      programación que involucra a dos procesos que fallan al comunicarse
      su estado mutuo, llevando a resultados inconsistentes. Es uno de
      los problemas más frecuentes y difíciles de depurar, y ocurre
@@ -534,99 +537,106 @@ un estado (=cuenta = 0=) que no es el mismo que conoce el =torniquete1=
 (=cuenta = 1=).
 
 *** Soluciones posibles (y no tanto)
-**** Intento 1: No utilizar multitarea
-En este sencillo ejemplo una posible solución es utilizar una sola
-entrada (o torniquete). Esto podría ser una solución en tanto que no
-haya mucha gente que haga cola para entrar. Sin embargo, en un sistema
-análogo de reserva de pasajes aereos no parece tener mucho sentido que
-todos los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado,
-ya deberían ser claras las ventajas de la multitarea y el poseer
-distintos núcleos.
 
-**** Intento 2: Suspender la multitarea durante la sección crítica
-Una versión más relajada de la alternativa anterior es suspender la
-multitarea durante la ejecución de la sección crítica. Así, un
-torniquete deberá hacer:
+El planteamiento del problema del /jardín ornamental/ busca llevar al
+lector a ir encontrando, a través de sucesivos refinamientos, los
+mecanismos principales que se emplean para resolver –en general– los
+problemas que implican el acceso concurrente a una sección crítica. Se
+presentan a continuación, pues, los sucesivos /intentos/.
 
-#+begin_src C
-disable(); /* Suspender temporariamente las interrupciones */
-cuenta = cuenta + 1;
-enable(); /* Habilitar nuevamente las interrupciones */
-#+end_src C
+- Intento 1: No utilizar multitarea ::
+  En este sencillo ejemplo una posible solución es utilizar una sola
+  entrada (o torniquete). Esto podría ser una solución en tanto que no
+  haya mucha gente que haga cola para entrar. Sin embargo, en un sistema
+  análogo de reserva de pasajes aereos no parece tener mucho sentido que
+  todos los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado,
+  ya deberían ser claras las ventajas de la multitarea y el poseer
+  distintos núcleos.
 
-Durante el lapso en el que las interrupciones están suspendidas no
-puede haber un cambio de contexto pues el planificador depende de la
-interrupción del reloj (salvo que el proceso realice una
-llamada bloqueante durante la región crítica).
+- Intento 2: Suspender la multitarea durante la sección crítica ::
+  Una versión más relajada de la alternativa anterior es suspender la
+  multitarea durante la ejecución de la sección crítica. Así, un
+  torniquete deberá hacer:
 
-Esta solución puede resultar conveniente para sistemas sencillos, pero
-en un sistema multiusuario se torna inusable por varios motivos:
+  #+begin_src C
+  disable(); /* Suspender temporal las interrupciones */
+  cuenta = cuenta + 1;
+  enable(); /* Habilitar nuevamente las interrupciones */
+  #+end_src C
 
-- Permitir que un programa de usuario deshabilite las interrupciones
-  en un sistema operativo de propósito general involucra un gran
-  problema de seguridad: cualquier usuario podría hacer un programa
-  malicioso (o sencillamente erroneo) que deshabilite las
-  interrupciones y suspenda indefinidamente el resto del sistema.
+  Durante el lapso en el que las interrupciones están suspendidas no
+  puede haber un cambio de contexto pues el planificador depende de la
+  interrupción del reloj (salvo que el proceso realice una
+  llamada bloqueante durante la región crítica).
 
-- No funciona para sistemas distribuídos (como el sistema de reserva
-  de pasajes aereos), ni siquiera para sistemas multinúcleo o
-  multiprocesador, ya que las interrupciones se deshabilitan en un
-  sólo núcleo (si bien también es posible detener a los demás
-  procesadores, representa un costo demasiado alto).
+  Esta solución puede resultar conveniente para sistemas sencillos, pero
+  en un sistema multiusuario se torna inusable por varios motivos:
 
-- Expone detalles de hardware y podría provocar mal funcionamiento de
-  algún periférico si el procesamiento de la sección crítica es
-  demasiado largo.
+  - Permitir que un programa de usuario deshabilite las interrupciones
+    en un sistema operativo de propósito general involucra un gran
+    problema de seguridad: cualquier usuario podría hacer un programa
+    malicioso (o sencillamente erroneo) que deshabilite las
+    interrupciones y suspenda indefinidamente el resto del sistema.
 
-**** Intento 3: Utilizar una bandera
-Utilizar una bandera parece ser una solución muy sencilla: mediante
-una variable de bandera se indica si hay un proceso en la región crítica:
+  - No funciona para sistemas distribuídos (como el sistema de reserva
+    de pasajes aereos), ni siquiera para sistemas multinúcleo o
+    multiprocesador, ya que las interrupciones se deshabilitan en un
+    sólo núcleo (si bien también es posible detener a los demás
+    procesadores, representa un costo demasiado alto).
 
-#+begin_src C
-int bandera = 0; /* 0 => región crítica libre, 1 => ocupada */
-int cuenta = 0; 
-...
+  - Expone detalles de hardware y podría provocar mal funcionamiento de
+    algún periférico si el procesamiento de la sección crítica es
+    demasiado largo.
 
-/* Torniquete1 */
-...
-if (flag) wait;
-/* Aqui flag=0 */
-flag = 1; /* Inicio de la sección crítica */
-cuenta = cuenta + 1;
-flag = 0; /* Fin de la sección crítica */
-#+end_src C
+- Intento 3: Utilizar una bandera ::
+  Utilizar una bandera parece ser una solución muy sencilla: mediante
+  una variable de bandera se indica si hay un proceso en la región crítica:
 
-Sin embargo esto no funciona, ahora puede darse la siguiente secuencia
-de eventos:
+  #+begin_src C
+  int bandera = 0; /* 0 => región crítica libre, 1 => ocupada */
+  int cuenta = 0;
+  /* ... */
 
-1. =bandera==0;=
-2. =torniquete2=: =if (bandera) wait;=
-3. Nuevo cambio de contexto
-4. =torniquete1=: =if (bandera) wait;=
-5. =torniquete1=: =bandera = 1;=
-6. =torniquete2=: =bandera = 1;=
-7. =torniquete2=: =cuenta = cuenta + 1;=
-8. =torniquete1=: =cuenta = cuenta + 1; /* Ups, no se respetó la región crítica */=
+  /* Torniquete1 */
+  /* ... */
+  if (bandera) wait;
+  /* Aquí bandera=0 */
+  bandera = 1; /* Inicio de la sección crítica */
+  cuenta = cuenta + 1;
+  bandera = 0; /* Fin de la sección crítica */
+  #+end_src C
 
-Notar que el problema aquí es que la bandera también es un recurso
-compartido: lo único que ha cambiado es que ahora la sección crítica
-está en otro lugar. La solución funcionaría si se pudiera
-garantizar que la secuencia de operaciones se realizara atómicamente:
+  Sin embargo esto no funciona, ahora puede darse la siguiente secuencia
+  de eventos:
 
-#+begin_src C
-if (bandera) wait;
-bandera = 1
-#+end_src C
+  1. =bandera==0;=
+  2. =torniquete2=: =if (bandera) wait;=
+  3. Nuevo cambio de contexto
+  4. =torniquete1=: =if (bandera) wait;=
+  5. =torniquete1=: =bandera = 1;=
+  6. =torniquete2=: =bandera = 1;=
+  7. =torniquete2=: =cuenta = cuenta + 1;=
+  8. =torniquete1=: =cuenta = cuenta + 1; /* Ups, no se respetó la región crítica */=
 
-**** Intento 4: Manejar la bandera con instrucciones atómicas
-Algunas arquitecturas de computadoras permiten realizar determinadas
-operaciones sencillas (como actualizar una bandera) de forma atómica
-(p. ej.: VAX tiene la instrucción =test_and_set= y el i386 tiene la
-instrucción =INC=.
+  Notar que el problema aquí es que la bandera también es un recurso
+  compartido: lo único que ha cambiado es que ahora la sección crítica
+  está en otro lugar. La solución funcionaría si se pudiera
+  garantizar que la secuencia de operaciones se realizara atómicamente:
 
-Usando esto, la solución es:
+  #+begin_src C
+  if (bandera) wait;
+  bandera = 1
+  #+end_src C
 
-#+begin_src C
+- Intento 4: Manejar la bandera con instrucciones atómicas ::
+  Algunas arquitecturas de computadoras permiten realizar determinadas
+  operaciones sencillas (como actualizar una bandera) de forma atómica
+  (p. ej.: VAX tiene la instrucción =test_and_set= y el i386 tiene la
+  instrucción =INC=.
+
+  Usando esto, la solución es:
+
+  #+begin_src C
   int bandera; /* 0 => desocupada */
   
   while (++bandera != 1) {
@@ -636,121 +646,121 @@ Usando esto, la solución es:
   cuenta = cuenta + 1;
   
   bandera--;
-#+end_src C
+  #+end_src C
 
-Esto funciona correctamente siempre que la operación /++bandera/ sea
-atómica.  Sin embargo, hay dos problemas a considerar: un proceso
-puede permanecer mucho tiempo repitiendo el ciclo:
+  Esto funciona correctamente siempre que la operación /++bandera/ sea
+  atómica.  Sin embargo, hay dos problemas a considerar: un proceso
+  puede permanecer mucho tiempo repitiendo el ciclo:
 
-#+begin_src C
+  #+begin_src C
   while (++bandera!=1) {
       bandera--;
   }
-#+end_src C
+  #+end_src C
 
-De hecho, si el sistema operativo decide darle alta prioridad a este
-proceso es posible que esté un tiempo infinito en este ciclo,
-impidiendo que otro proceso decremente la bandera. Y aún cuando el
-sistema operativo decida cambiar de proceso en el siguiente tic de
-reloj, es evidente que se podría aprovechar el procesador para hacer
-algo útil durante ese tiempo y que suspender el proceso de otra manera
-le da más posibilidad a otros procesos para que cambien la bandera. A
-esto se lo conoce como /espera activa/ o /espera ocupada/ (/busy
-waiting/ en inglés) y es una condición que se desea evitar.
+  De hecho, si el sistema operativo decide darle alta prioridad a este
+  proceso es posible que esté un tiempo infinito en este ciclo,
+  impidiendo que otro proceso decremente la bandera. Y aún cuando el
+  sistema operativo decida cambiar de proceso en el siguiente tic de
+  reloj, es evidente que se podría aprovechar el procesador para hacer
+  algo útil durante ese tiempo y que suspender el proceso de otra manera
+  le da más posibilidad a otros procesos para que cambien la bandera. A
+  esto se lo conoce como /espera activa/ o /espera ocupada/ (/busy
+  waiting/ en inglés) y es una condición que se desea evitar.
 
-El otro problema tiene que ver con el hardware: determinadas
-arquitecturas no permiten instrucciones que lean y actualicen en una
-única operación una dirección de memoria (se requiere una operación
-para leer y otra para escribir).  En particular, ninguna arquitectura
-RISC lo permite (p. ej.: SPARC, RS 6000, ...).
+  El otro problema tiene que ver con el hardware: determinadas
+  arquitecturas no permiten instrucciones que lean y actualicen en una
+  única operación una dirección de memoria (se requiere una operación
+  para leer y otra para escribir).  En particular, ninguna arquitectura
+  RISC lo permite (p. ej.: SPARC, RS 6000, ...).
 
-**** Intento 5: Utilizar turnos
-Una alternativa para evitar el problema de la actualización múltiple a
-una bandera es utilizar turnos
+- Intento 5: Utilizar turnos ::
+  Una alternativa para evitar el problema de la actualización múltiple a
+  una bandera es utilizar turnos
 
-#+begin_src C
-int turno = 1; /* Inicialmente el turno es del proceso 1 */
-#+end_src C
-Ahora el código del proceso 1 contendría algo como: 
+  #+begin_src C
+  int turno = 1; /* Inicialmente el turno es del proceso 1 */
+  #+end_src C
+  Ahora el código del proceso 1 contendría algo como:
 
-#+begin_src C
-while (turno != 1) {
-    esperar(); /* ¿Otro proceso? */
-}
-/* Sección crítica */
-cuenta = cuenta + 1;
-turno = 2;
-#+end_src C
+  #+begin_src C
+  while (turno != 1) {
+      esperar(); /* ¿Otro proceso? */
+  }
+  /* Sección crítica */
+  cuenta = cuenta + 1;
+  turno = 2;
+  #+end_src C
 
-Y el del proceso dos:
+  Y el del proceso dos:
 
-#+begin_src C
-while (turno != 2) {
-    esperar();
-}
-/* Sección crítica */
-cuenta = cuenta + 1;
-turno = 1;
-#+end_src C
+  #+begin_src C
+  while (turno != 2) {
+      esperar();
+  }
+  /* Sección crítica */
+  cuenta = cuenta + 1;
+  turno = 1;
+  #+end_src C
 
-Esto garantiza que no hay dos procesos en sección crítica. Pero nótese
-que hacer esto equivale a tener un solo torniquete: sólo podrá haber
-una persona ingresando a la vez... o incluso peor, las personas
-deberán utilizar alternativamente los torniquetes. Así que si bien
-esto soluciona el problema de la actualización múltiple en realidad es
-una solución muy restrictiva: un proceso que no está en la sección
-crítica puede obligar a que otro proceso espere mucho tiempo para
-ingresar a la sección crítica. De aquí en más se buscarán soluciones en
-las que no ocurra esto.
+  Esto garantiza que no hay dos procesos en sección crítica. Pero nótese
+  que hacer esto equivale a tener un solo torniquete: sólo podrá haber
+  una persona ingresando a la vez... o incluso peor, las personas
+  deberán utilizar alternativamente los torniquetes. Así que si bien
+  esto soluciona el problema de la actualización múltiple en realidad es
+  una solución muy restrictiva: un proceso que no está en la sección
+  crítica puede obligar a que otro proceso espere mucho tiempo para
+  ingresar a la sección crítica. De aquí en más se buscarán soluciones en
+  las que no ocurra esto.
 
-**** Intento 6: Indicar la intención de entrar a la sección crítica
+- Intento 6: Indicar la intención de entrar a la sección crítica ::
+  Para paliar los efectos de la solución anterior se puede intentar
+  indicar si el otro proceso también está queriendo entrar en la sección
+  crítica. El código sería:
 
-Para paliar los efectos de la solución anterior se puede intentar
-indicar si el otro proceso también está queriendo entrar en la sección
-crítica. El código sería:
+  #+begin_src C
+  int b1, b2;
+  /* ... */
 
-#+begin_src C
-int b1, b2;
-...
-/* Proceso 1: */
-...
-b1 = 1;
-if (b2) {
-    esperar();
-}
-/* Sección crítica */
-cuenta = cuenta + 1;
-b1 = 0;
-...
-/* Proceso 2: */
-...
-b2 = 1;
-if (b1) {
-    esperar();
-}
-/* Sección crítica */
-cuenta = cuenta + 1;
-b2 = 0;
-...
-#+end_src C
+  /* Proceso 1: */
+  /* ... */
+  b1 = 1;
+  if (b2) {
+      esperar();
+  }
+  /* Sección crítica */
+  cuenta = cuenta + 1;
+  b1 = 0;
+  /* ... */
+  /* Proceso 2: */
+  /* ... */
+  b2 = 1;
+  if (b1) {
+      esperar();
+  }
+  /* Sección crítica */
+  cuenta = cuenta + 1;
+  b2 = 0;
+  /* ... */
+  #+end_src C
 
-Nuevamente aquí está garantizado que no puede haber dos procesos en la
-región crítica, pero este enfoque sufre de un problema grave: ambos
-procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
-bandera en 1 y luego se cambia el control al proceso 2 quien también
-colocará su bandera en 1).
+  Nuevamente aquí está garantizado que no puede haber dos procesos en la
+  región crítica, pero este enfoque sufre de un problema grave: ambos
+  procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
+  bandera en 1 y luego se cambia el control al proceso 2 quien también
+  colocará su bandera en 1).
 
 *** Una solución: el Algoritmo de Peterson
-**** Presentación del algoritmo
+
 La primera solución a esta problema fue propuesta por Dekker
 en 1957. Sin embargo su explicación es bastante extensa (aunque
-perfectamente entendible) y en cambio se presentará la solución
+perfectamente comprensible). Se presentará la solución
 planteada por Peterson unos cuantos años más tarde: en 1970.
 
 La solución está basada en una combinación de los intentos anteriores:
-utilizar banderas para indicar qué proceso puede entrar pero además
-usa un turno para desempatar en caso de que ambos procesos quieran
-entrar. En cierto modo es un algoritmo amable: si un proceso
+utilizar banderas para indicar qué proceso puede entrar, pero además
+usa un turno para /desempatar/ en caso de que ambos procesos busquen
+entrar a la vez. En cierto modo es un algoritmo /amable/: si un proceso
 detecta que el otro proceso fue el primero en actualizar el turno,
 entonces lo deja pasar:
 
@@ -781,17 +791,19 @@ cuenta = cuenta + 1;
 b1=0;
 #+end_src C
 
-**** Notas sobre la solución de Peterson
+Cabe apuntar las siguientes notas sobre la solución de Peterson:
+
 - Espera activa :: La solución presentada mantiene todavía el problema
-                   de la espera activa (también llamados spinlocks) :
+                   de la espera activa (también llamados /spinlocks/):
                    un proceso puede consumir mucho tiempo de
                    procesador sólo para esperar que otro proceso
-                   cambie una bandera y en un sistema con prioridades
-                   la cosa puede ser bastante dañina. Una forma de
+                   cambie una bandera, lo cual en un sistema con
+                   manejo de /prioridades/, puede resultar dañino para
+                   el desempeño global. Una forma de
                    mitigar los efectos es forzar (o sugerir) cambios
                    de contexto en esos puntos a través de una
-                   primitiva del lenguaje o del sistema operativo
-                   (p. ej.: /sleep/ o /yield/) pero debe resultar
+                   /primitiva/ del lenguaje o del sistema operativo
+                   (p. ej.: =sleep= o =yield=), pero debe resultar
                    claro que de ninguna forma es una solución
                    general. Por esta razón los sistemas operativos o
                    lenguajes suelen proveer alguna abstracción para
@@ -800,7 +812,7 @@ b1=0;
                    problema. Se verán algunas de esas abstracciones
                    más adelante.
 
-Para mayores detalles acerca de las razones, ventajas y desventajas
+		   Para mayores detalles acerca de las razones, ventajas y desventajas
                    del uso de spinlocks en sistemas operativos reales,
                    referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html#%281%29][Spin Locks & Other Forms of
                    Mutual Exclusion]] (Theodore P. Baker 2010)
@@ -809,26 +821,35 @@ Para mayores detalles acerca de las razones, ventajas y desventajas
 - Solución para más procesos :: El algoritmo de Peterson sirve
      únicamente cuando hay dos procesos que compiten para acceder a
      una región crítica. ¿Qué se puede hacer si hay más de dos
-     entradas al jardín - o si hay más de dos puntos de venta de
-     pasajes aereos- ? La solución a este problema más general fue
+     entradas al jardín, o si hay más de dos puntos de venta de
+     pasajes aereos? La solución a este problema más general fue
      propuesta por Dijkstra en 1968 y posteriormente Eisenberg y
-     McGuire (en 1972) y Lamport (en 1974) presentarons distintas
-     soluciones. La más ampliamente utilizada y sencilla de entender
-     es la propuesta por Lamport, también conocida como el algoritmo
-     de la panadería por su semejanza con el sistema de turnos
+     McGuire en 1972 y Lamport en 1974 presentaron distintas
+     soluciones.
+
+     La más ampliamente utilizada y sencilla de entender
+     es la propuesta por Lamport, también conocida como el /algoritmo
+     de la panadería/ por su semejanza con el sistema de turnos
      utilizado para atender a los clientes en una panadería.
 
 - Solución para equipos multiprocesadores :: Esta solución (y también la de
      Lamport y todos los autores mencionadas hasta ahora) falla en equipos
-     multiprocesadores pues aparecen problemas de coherencia de
+     multiprocesadores, pues aparecen problemas de coherencia de
      caché. Se necesitan precauciones especiales en equipos con más de
      un procesador.
-** Más conceptos de concurrencia
-*** /Mutexes/
+
+** Mecanismos de sincronización
+
+En la presente sección se enumeran los principales mecanismos que
+pueden emplearse para programar considerando a la concurrencia:
+Candados, semáforos y variables de condición.
+
+*** Regiones de exlcusión mutua: candados o /mutexes/
+
 Una de las alternativas que suele ofrecer un lenguaje concurrente o
-sistema operativo para evitar la /espera ocupada/ a la que obliga el
+sistema operativo para evitar la / espera activa/ a la que obliga el
 algoritmo de Peterson (o similiares) se llama /mutex/ o también
-/lock/ (candado).
+/candado/ (lock).
 
 La palabra /mutex/ nace de la frecuencia con que se habla de las
 /regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
@@ -846,10 +867,11 @@ va a interrumpir mientras se está dentro de esta región — Eso sería
 muy peligroso, dado que permitiría que el sistema operativo pierda el
 control del planificador, volviendo (para propósitos prácticos) a un
 esquema de multitarea cooperativa. El mutex es un /mecanismo de
-prevención/ que mantiene en espera a cualquier hilo o proceso que
-quiera entrar a la /sección crítica/ hasta que el proceso que la está
-ejecutando salga de ella. Si no hay ningún hilo o proceso en esa
-sección crítica (o cuando un hilo sale de esa sección crítica), uno
+prevención/, que mantiene en espera a cualquier hilo o proceso que
+quiera entrar a la /sección crítica/, reteniéndolo antes de entrar a
+ésta hasta que el proceso que la está
+ejecutando salga de ella. Si no hay ningún hilo o proceso en dicha
+sección crítica (o cuando un hilo sale de ella), uno
 sólo de los que esperan podrá ingresar.
 
 Como se vio en el ejemplo anterior, para que un mutex sea efectivo
@@ -886,8 +908,8 @@ sub asigna_asiento {
 
 Se debe tener en cuenta que en este caso se utiliza una implementación
 de hilos, esto hace que la solución sea dependiente del lenguaje
-específico de implementación, en este caso: Perl. Al ser
-=proximo_asiento= una variable compartida tiene algunas /propiedades/
+específico de implementación, en este caso Perl. Al ser
+=$proximo_asiento= una variable compartida tiene algunas /propiedades/
 adicionales, en este caso, la de poder operar como un mutex. La
 implementación en Perl resulta muy /limpia/, dado que evita el uso
 de un candado explícito — Se podría leer la línea 5 como /exclusión
@@ -938,6 +960,11 @@ asigna_asiento() {
 }
 #+end_src
 
+Cabe mencionar que =lockfile= no es una función implementada en Bash,
+sino que envuelve a una /llamada al sistema/. El sistema operativo
+garantiza que la verificación y creación de este /candado/ se
+efectuará de forma atómica.
+
 Un mutex es, pues, una herramienta muy sencilla, y podría verse como
 la pieza básica para la sincronización entre procesos. Lo fundamental
 para emplearlos es identificar las regiones críticas del código, y
@@ -947,15 +974,21 @@ garantice atomicidad.
 *** Semáforos
 
 La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
-resolver algunos problemas de sincronización. Edsger Dijkstra, en 1968, propuso
-los /semáforos/.
+resolver algunos problemas de sincronización. Edsger Dijkstra, en
+1968, propuso los /semáforos/.[fn:: El símil presentado por Dijkstra
+no es del semáforo vial, con una luz roja y una luz verde (dicho
+esquema se asemeja al del /mutex/). La referencia esa la del semáforo
+de tren, que permite el paso estando /arriba/, e indica espera estando
+/abajo/.]
 
 Un semáforo es una variable de tipo entero que tiene definida la
 siguiente interfaz:
 
 - Inicialización :: Se puede inicializar el semáforo a cualquier valor
                     entero, pero después de esto, su valor no puede ya
-                    ser leído.
+                    ser leído. Un semáforo es una /estructura
+                    abstracta/, y su valor es tomado como /opaco/
+                    (invisible) al programador.
 
 - Decrementar :: Cuando un hilo decrementa el semáforo, si el valor es
                  negativo, el hilo se /bloquea/ y no puede continuar

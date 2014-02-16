@@ -16,6 +16,8 @@ sistemas operativos, sino que directamente –como se explica en la
 sección \ref{SL_bienes_cult_lib}– para el presente libro en
 particular.
 
+** /Free as in Freedom/: El proyecto GNU
+
 Citando [[https://www.gnu.org/philosophy/free-sw.es.html][la definición que brinda la Fundación del Software Libre (Free
 Software Foundation)]], el software libre es todo programa en el cual
 los usuarios tienen la libertad para /ejecutar, copiar, distribuir,
@@ -36,9 +38,165 @@ software/:
 #+end_quote
 
 El software libre en tanto /movimiento ideológico/ tiene bien
-identificados sus orígenes y génesis: 
+identificados sus orígenes y génesis: En septiembre de 1983, Richard
+M. Stallman [[https://www.gnu.org/gnu/gnu-history.html][anunció el nacimiento del /Proyecto GNU/]], que buscaba
+crear un sistema operativo tipo Unix, junto con todas las herramientas
+básicas del sistema (partiendo naturalmente desde la creación de un
+entorno de edición y un compilador).  Tras sistematizar los
+fundamentos del proyecto, en marzo de 1985 publicó el /[[https://www.gnu.org/gnu/manifesto.html][Manifiesto
+GNU]]/, documento que al día de hoy es lectura obligada para comprender
+al fenómeno que nació en ese momento.
 
-** Algunas licencias comunes
+Algunos meses más tarde, en octubre de 1985, creó la /[[http://www.fsf.org][Fundación de
+Software Libre]]/ (FSF, /Free Software Foundation/), enfocada en la
+consecución de fondos para impulsar la creación de dicho sistema, en
+dar a conocer su trabajo, tanto para lograr que fuera ampliamente
+utilizado como para reclutar a más programadores y acelerar su ritmo
+de desarrollo.
+
+El trabajo de la FSF es desde cualquier óptica impresionante por su
+magnitud y por su envergadura técnica. Sin embargo, probablemente su
+mayor contribución sea la /Licencia Pública General/ (GPL), que será
+abordada en la sección \ref{SL_copyleft}.
+
+** El software libre antes de GNU
+
+El software libre como hoy se conoce existió mucho antes del proyecto
+GNU: Era la norma prácticamente hasta la aparición de las computadoras
+personales.
+
+Los sistemas operativos, las herramientas de sistema y los
+compiladores eran, en un principio, entregadas por los fabricantes
+junto con el equipo de cómputo no sólo como /objetos binarios/, sino
+que en código fuente. Esto era natural: Los operadores de las
+computadoras no limitaban su uso a adecuar el software, sino que era
+común que adecuaran también el hardware: Cada equipo instalado era,
+hasta cierto punto, único.
+
+Para hacerlo, claro, casi siempre era necesario modificar al software
+de forma correspondiente. Esto requería el acceso al código fuente, e
+implícitamente pasaba por las /cuatro libertades/ ya enunciadas.
+
+Durante las primeras décadas, prácticamente la totalidad del
+desarrollo del cómputo se llevó a cabo siguiendo la /tradición
+académica/: Los programas eran distribuídos, sea en cintas o incluso
+en listados impresos, requiriendo únicamente –como en un artículo
+científico– que se preserve la /atribución de autoría/. Sólo de este
+modo puede entenderse el desarrollo (y la supervivencia hasta el día
+de hoy) de sistemas con la relevancia de /CP-CMS/, creado por la muy
+pragmática y corporativa empresa IBM y cuya progenie sigue empleándose
+como núcleo de su arquitectura de virtualización /z/VM/ (ver sección
+\ref{VIRT_asist_por_hw}) o Unix.
+
+Unix nació como una reacción al sistema operativo /Multics/,
+desarrollado principalmente entre 1965 y 1970, y en el que
+participaban de forma conjunta varias empresas y el Instituto de
+Tecnología de Massachusetts (MIT). Multics resultó un proyecto
+demasiado grande, y AT&T lo abandonó en 1969; del equipo de AT&T que
+trabajaba en Unix, dos de los desarrolladores (Ken Thompson y Dennis
+Ritchie) comenzaron a escribir en 1969 un sistema mucho menos
+ambicioso, tomando algunos de los principales criterios de diseño,
+pero simplificando fuertemente el modelo de usuario y los requisitos
+en hardware. El nombre de Unix (originalmente /Unics/) es, de hecho,
+una broma sobre el nombre /Multics/.
+
+Citando a Dennis Ritchie: [fn:: /The Evolution of the Unix
+Time-sharing System; Language Design and Programming Methodology
+conference; Sydney,
+Australia, 1979. http://cm.bell-labs.com/cm/cs/who/dmr/hist.html]
+
+#+BEGIN_CENTER
+Lo que queríamos preservar no sólo era un buen ambiente en el cual
+programar, sino que un sistema alrededor del cual pudiera formarse una
+cofradía. Sabíamos por experiencia propia que la esencia del cómputo
+comunal, provisto por computadoras de acceso remoto y tiempo
+compartido, no se limita únicamente a escribir programas en una
+terminal en vez de emplear tarjetas perforadas, sino que favorece la
+comunicación cercana.
+#+END_CENTER
+
+El párrafo inicial de este apéndice, que hace referencia a la
+/naturaleza social/ del software libre, resuena con esta cita. El
+desarrollo de software va mucho más allá de su impacto técnico: Es una
+actividad tan social como cualquier otro desarrollo intelectual.
+
+A lo largo de sus primeros diez años de vida, Unix pasó rápidamente de
+ser un sistema /de juguete/ a ser, sin proponérselo, la base de
+desarrollo tecnológico sobre la cual se tendieron las bases de
+Internet. Decenas de empresas y universidades obtuvieron copias de
+Unix y lo modificaron, agregando funcionalidad — Y /compartiendo/ esta
+nueva funcionalidad con el resto de la /comunidad/ que se formó
+alrededor de Unix.
+
+** El /software propietario/ como anomalía histórica
+
+La /anomalía histórica/ resulta, más bien, el auge que tuvo el
+software /propietario/ o /privativo/.[fn:: Se designa de esta forma al
+software /no-libre/.] Una de las probables razones para éste puede
+ser, paradójicamente, el nacimiento del segmento del cómputo
+/aficionado/, como los presentados en la sección
+\ref{INTRO_computadoras_personales}: Las primeras computadoras
+personales carecían del almacenamiento y poder de cómputo suficiente
+para siquiera compilar sus propios entornos operativos, razón por la
+cual las empresas productoras recurrieron a una /distribución
+exclusivamente binaria/.
+
+El inicio de la masificación del cómputo llevó a que varias empresas
+nacientes identificaran un nicho de mercado donde podrían vender
+/licencias de uso/ de los programas que produjeran, cobrando
+relativamente poco por cada licencia, pero aspirando a vender un gran
+volumen.
+
+En este sentido, vale mucho la pena leer la [[https://upload.wikimedia.org/wikipedia/commons/1/14/Bill_Gates_Letter_to_Hobbyists.jpg][carta abierta a los
+entusiastas]] que Bill Gates, socio de la entonces naciente y pequeña
+empresa /Micro-Soft/ publicó en varias revistas de cómputo personal;
+la publicación original fue en el /Homebrew Computer Club Newsletter/
+(/periódico del club de cómputo casero/) en enero de 1976, y fue
+replicado en varias otras revistas.
+
+Esta carta abierta tuvo amplias repercusiones, y desató un interesante
+debate que los lectores interesados podrán encontrar (y seguir en
+copias de los textos originales) desde el [[https://en.wikipedia.org/wiki/Open_Letter_to_Hobbyists][artículo de Wikipedia
+repecto a esta /carta abierta/]].
+
+** Esquemas libres de licenciamiento
+
+Las licencias resultan fundamentales para comprender al software
+libre, tanto en su planteamiento ideológico primigenio como en el tipo
+de comunidad de desarrollo que aglutinan. Lo que es más, sólo se puede
+hablar de software libre en tanto esté asociado a un esquema de
+licenciamiento, dado que es éste el que determina las condiciones de
+uso a que estará sujeto un programa.[fn:: Todos los países firmantes
+de la Convención de Berna garantizan la protección del derecho de
+autor /sin necesidad de registro/, de donde deriva que todo programa
+que sea publicado sin una licencia que /expresamente/ lo haga libre,
+estará sujeto a /todos los derechos reservados/: Prohibición a todo
+tipo de uso sin autorización expresa y explícita del autor.]
+
+A continuación, se abordan los dos principales enfoques del
+licenciamiento libre.
+
+*** Licenciamiento académico/permisivo: MIT, BSD, X11, etc.
+
+
+
+*** Licenciamiento /Copyleft/: GPL, LGPL, CDDL, etc.
+# <<SL_copyleft>>
+
+Para la FSF, el desarrollo de software es explícitamente un hecho
+social, y la creación de un sistema libre es un imperativo ético. La
+principal herramienta que emplearon para difundir y /exigir/ la
+libertad del software fue el conjunto de licencias /Copyleft/.[fn::
+Término empleado para contraponerse a la noción de /Copyright/,
+/Derecho de autor/.] Y como se vio, si bien esto podría no ser
+compartido por los diferentes actores (personas y empresas), el
+desarrollo de Unix partió desde este mismo punto de vista.
+
+
+/Licencia Pública General/ (/General Public License/, GPL) y
+/Licencia Pública General para Bibliotecas/ (/Library General Public
+License/, LGPL, hoy renombrada a /Licencia Pública General
+Disminuída/, /Lesser General Public License/).
 
 * Bienes culturales libres
 # <<SL_bienes_cult_lib>>

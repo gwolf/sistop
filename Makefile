@@ -93,17 +93,17 @@ libro_tex: libro_index
 	# al capítulo a secas por la correspondiente a su etiqueta numérica.
 	#
 	# No tengo mejor manera que hacerlo que esta... Sucia pero efectiva :-/
-	sed -i 's/\\ref{PRES}/\\ref{sec-1}/' $(libro_tex)
-	sed -i 's/\\ref{INTRO}/\\ref{sec-2}/' $(libro_tex)
-	sed -i 's/\\ref{HW}/\\ref{sec-3}/' $(libro_tex)
-	sed -i 's/\\ref{PROC}/\\ref{sec-4}/' $(libro_tex)
-	sed -i 's/\\ref{PLAN}/\\ref{sec-5}/' $(libro_tex)
-	sed -i 's/\\ref{MEM}/\\ref{sec-6}/' $(libro_tex)
-	sed -i 's/\\ref{DIR}/\\ref{sec-7}/' $(libro_tex)
-	sed -i 's/\\ref{FS}/\\ref{sec-8}/' $(libro_tex)
-	sed -i 's/\\ref{SL}/\\ref{sec-9}/' $(libro_tex)
-	sed -i 's/\\ref{VIRT}/\\ref{sec-10}/' $(libro_tex)
-	sed -i 's/\\ref{FS_FIS}/\\ref{sec-11}/' $(libro_tex)
+	# sed -i 's/\\ref{PRES}/\\ref{sec-1}/' $(libro_tex) No recibe número: No es gestionado por .org
+	sed -i 's/\\ref{INTRO}/\\ref{sec-1}/' $(libro_tex)
+	sed -i 's/\\ref{HW}/\\ref{sec-2}/' $(libro_tex)
+	sed -i 's/\\ref{PROC}/\\ref{sec-3}/' $(libro_tex)
+	sed -i 's/\\ref{PLAN}/\\ref{sec-4}/' $(libro_tex)
+	sed -i 's/\\ref{MEM}/\\ref{sec-5}/' $(libro_tex)
+	sed -i 's/\\ref{DIR}/\\ref{sec-6}/' $(libro_tex)
+	sed -i 's/\\ref{FS}/\\ref{sec-7}/' $(libro_tex)
+	sed -i 's/\\ref{SL}/\\ref{sec-8}/' $(libro_tex)
+	sed -i 's/\\ref{VIRT}/\\ref{sec-9}/' $(libro_tex)
+	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(libro_tex)
 
 libro_pdf: fig libro_index libro_tex
 	cd notas && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex

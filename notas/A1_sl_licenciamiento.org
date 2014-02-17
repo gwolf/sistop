@@ -13,7 +13,7 @@ Si bien este tema es meramente tangente al que desarrolla el libro,
 los autores consideran importante incluirlo no sólo por la importancia
 que el software libre ha tenido para el desarrollo y estudio de los
 sistemas operativos, sino que directamente –como se explica en la
-sección \ref{SL_bienes_cult_lib}– para el presente libro en
+sección \ref{SL_obras_cult_lib}– para el presente libro en
 particular.
 
 ** /Free as in Freedom/: El proyecto GNU
@@ -178,9 +178,59 @@ licenciamiento libre.
 
 *** Licenciamiento académico/permisivo: MIT, BSD, X11, etc.
 
+Las licencias derivadas del /primer momento/ del software libre
+descrito son, en su conjunto, como licencias /académicas/ o
+/permisivas/. Esto es porque, sin dejar de cubrir las cuatro
+libertades presentadas al principio del presente apéndice, el único
+requisito que imponen ante el usuario o distribuidor es el de la
+/atribución/.
 
+De ahí el símil con la /academia/. No es de sorprender que algunas de
+las licencias más frecuentemente referidas de este tipo provengan
+directamente del ámbito Universitario: La licencia MIT proviene del
+Instituto de Tecnología de Massachusetts (ampliamente conocido bajo
+dicha sigla), y la licencia BSD hace referencia a la /Distribución de
+Software de Berkeley/, una de las principales ramas del desarrollo
+histórico de Unix, lidereada por la Universidad de California en
+Berekeley.
 
-*** Licenciamiento /Copyleft/: GPL, LGPL, CDDL, etc.
+Hay decenas de licencias que caben en esta categoría, con variaciones
+relativamente muy menores entre ellas. Los principales puntos que
+tienen en común son:
+
+- Son licencias /muy cortas/. Siendo documentos legales, son muy
+  sencillas y no dejan espacio a interpretaciones ambiguas.
+
+- Se limitan a autorizar expresamente el uso del software, en fuente o
+  en binario, y a /rechazar cualquier reclamo de garantía o
+  responsabilidad por su uso/.
+
+- Permiten la derivación en proyectos propietarios.
+
+Una crítica reiterada al uso de estos esquemas de licenciamiento por
+parte de la FSF es que permiten la /privatización/ de mejorías hechas
+al software libre — Pero al mismo tiempo, este punto constituye una de
+las principales fortalezas de este licenciamiento.
+
+La masificación de Internet, y su adopción en los sistemas operativos
+más variados, se debió en gran parte a que el desarrollo de la /pila
+TCP/IP/ fue liberado bajo un licenciamiento BSD. Al día de hoy, muchos
+de los componentes fundamentales de conectividad en prácticamente la
+totalidad de sistemas operativos siguen incluyendo la nota de que los
+derechos de autor de determinados componentes pertenecen a /los
+regentes de la Universidad de California/.
+
+Dado que empresas tan dispares como Sun Microsystems, Digital
+Research, IBM, Hewlett-Packard, Microsoft y Apple (por mencionar sólo
+a las que han dirigido distintos aspectos del mercado del cómputo)
+pudieron adoptar esta pila ya desarrollada, y que había una masa
+crítica de /sistemas abiertos/ empleando TCP/IP, este protocolo de red
+creció hasta eclipsar a las diferentes apuestas propietarias de las
+diferentes empresas. Posteriormente, con el auge de los sistemas
+operativos libres, estos pudieron también adoptar esta base
+tecnológica en igualdad de condiciones.
+
+*** Licenciamiento /Copyleft/: GPL, LGPL, MPL, CDDL, etc.
 # <<SL_copyleft>>
 
 Para la FSF, el desarrollo de software es explícitamente un hecho
@@ -192,15 +242,269 @@ Término empleado para contraponerse a la noción de /Copyright/,
 compartido por los diferentes actores (personas y empresas), el
 desarrollo de Unix partió desde este mismo punto de vista.
 
+Como se mencionó al inicio del presente apéndice, una de las
+principales obras de la FSF fue la creación de un modelo de
+licenciamiento que expresa este imperativo ético: Una familia de
+licencias cuyos principales exponentes son la /Licencia Pública
+General/ (/General Public License/, GPL) y la /Licencia Pública
+General para Bibliotecas/ (/Library General Public License/, LGPL, hoy
+renombrada a /Licencia Pública General Disminuída/, /Lesser General
+Public License/).
 
-/Licencia Pública General/ (/General Public License/, GPL) y
-/Licencia Pública General para Bibliotecas/ (/Library General Public
-License/, LGPL, hoy renombrada a /Licencia Pública General
-Disminuída/, /Lesser General Public License/).
+Existen varios ejemplos de licenciamiento que siguen estas ideas
+básicas; probablemente los más importantes sean la /Licencia Pública
+de Mozilla/ (MPL) o la /Licencia Común de Distribución y Desarrollo/
+(CDDL, desarrollada por Sun Microsystems), y su principal diferencia
+con las presentadas por la FSF es que fueron propuestas no por grupos
+idealistas para el desarrollo de software aún inexistente, sino que
+por empresas que teníán ya un cuerpo de software, y encontraron este
+modelo como el más /sustentable/ para continuar su desarrollo.
 
-* Bienes culturales libres
-# <<SL_bienes_cult_lib>>
+La principal característica de estos esquemas es que permiten el uso
+del software para cualquier fin, imponiendo como única condición que,
+/en caso de redistribución/ (ya sea en su estado original o con
+modificaciones), el destinatario no sólo reciba el objeto binario
+ejecutable sino que el código fuente del cual éste provino, /bajo las
+mismas condiciones de licenciamiento original/.
 
+Este esquema asegura que lo que una vez fue software libre /Copyleft/
+siempre lo siga siendo. El licenciamiento GPL ha llevado a que muchas
+empresas empleen al sistema operativo Linux como base para su
+desarrollo /contribuyan/ sus cambios de vuelta a la comunidad —
+Convirtiendo a Linux al paso de los años de un sistema relativamente
+aficionado y con mediocre soporte a hardware en un sistema
+verdaderamente sólido y universal.
 
-** La familia de licencias /Creative Commons/
+Muchos han criticado a este /espíritu viral/ de las licencias
+/Copyleft/: Una vez que un proyecto incorpora componentes GPL, esta
+licencia podría /infectar/ al proyecto entero obligándolo a adoptar
+esta licencia, resultando en graves perjuicios para las empresas que
+invierten en desarrollo. Si bien esto se ha demostrado falso
+repetidamente, sigue siendo un punto de propaganda frecuentemente
+empleado para evitar el empleo de software libre.
+
+El objetivo del presente apéndice no es entrar a desmenuzar las
+diferencias entre estos esquemas o resolver las controversias, sino
+únicamente presentarlos de forma descriptiva.
+
+* Obras culturales libres
+# <<SL_obras_cult_lib>>
+
+Los distintos esquemas de software libre fueron logrando una masa
+crítica y poco a poco rompieron las predicciones de fracaso. 1998 fue
+un año crítico, en que varios importantes proyectos propietarios
+decidieron migrar a un licenciamiento libre por resultar más
+conveniente y sustentable.
+
+Ya con esta experiencia previa, y conforme el acceso a Internet se
+masificaba cada vez más, comenzó a verse la necesidad de crear con
+esquemas similares de licenciamiento libre para otros productos de la
+creatividad humana, no únicamente para el desarrollo del
+software. Si bien las licencias académicas podrían aplicarse sin
+demasiado problema a productos que no fueran software, las licencias
+/Copyleft/ llevan demasiadas referencias al /código fuente/ y al
+/binario/ como parte de su definición.
+
+Del mismo modo que hay diferentes /escuelas de pensamiento/ y puntos
+de vista ideológicos que han llevado al surgimiento de diversas
+licencias de software libre, respondiendo a distintas necesidades y
+matices ideológicos.
+
+El proyecto /Wikipedia/ fue anunciado en enero del 2001. Al convocar a
+/todo mundo/ y no sólo a un manojo de especialistas, a crear contenido
+enciclopédico, este experimento iniciado por Jimmy Wales y Larry
+Sanger demostró que la creación es un acto profundamente social. Miles
+de voluntarios de todo el mundo han contribuído para hacer de la
+Wikipedia el compendio de conocimiento humano más grande de la
+historia. Al nacer, la Wikipedia adoptó el modelo de licenciamiento
+recomendado por la FSF para manuales y libros de texto: La /Licencia
+de Documentación Libre de GNU/ (GFDL).
+
+El modelo de la GFDL resulta, sin embargo, de dificil comprensión y
+aplicación para muchos autores, y la licencia no resulta apta para
+obras creativas más allá de lo que puede constituir
+/documentación/.
+
+El marco regulatorio de la Convención de Berna, que rige al derecho de
+autor, estipula (como ya se mencionó) que toda creación plasmada en un
+medio físico está protegida, y todo uso no expresamente autorizado por
+una licencia expresa está prohibido. La tarea de crear esquemas de
+licenciamiento aptos para lo que se fue definiendo como /obras
+culturales libres/ resultó más compleja por la riqueza de su
+expresión. En pocos años hubo una proliferación de licencias que
+buscaban ayudar a los autores de obras creativas de todo tipo — No se
+abordarán los distintos intentos, sino que –aprovechando que la
+distancia en tiempo permiten simplificar– se tocará sólo el esquema de
+licenciamiento que más impacto ha tenido.
+
+** La familia de licencias /Creative Commons/ 
 # <<SL_CC>>
+
+En el año 2001, el abogado estadounidense Larry Lessig inició el
+proyecto /[[http://www.creativecommons.org/][Creative Commons]]/ (en adelante, \textsc{CC}). Citando del
+libro /Construcción Colaborativa del Conocimiento/ (Wolf, Miranda
+2011):
+
+#+begin_quote
+Pero no sólo el conocimiento formalizado puede compartirse. En 2001
+nació Creative Commons (\textsc{cc}), impulsada por el abogado
+estadounidense Larry Lessig. Esta organización liderada localmente en
+una gran cantidad de países por personalidades versadas en temas
+legales, fue creada para servir como punto de referencia para quien
+quiera crear obras artísticas, intelectuales y científicas
+libres. Asimismo, ofrece un marco legal para que gente no experta en
+estos temas pueda elegir los términos de licenciamiento que juzgue más
+adecuados para su creación, sin tener que ahondar de más en las áridas
+estepas legales; se mantiene asesorada y liderada por un grupo de
+abogados, cuya principal labor es traducir y adecuar las licencias
+base de \textsc{cc} para cada una de las jurisdicciones en que sean
+aplicables. Alrededor de este modelo ha surgido un grupo de creadores,
+y una gran cantidad de sitios de alto perfil en la red han acogido su
+propuesta. Si bien no todas las licencias de \textsc{cc} califican
+como cultura libre, algunas que claramente sí lo son han ayudado
+fuertemente a llevar estas ideas a la conciencia general.
+#+end_quote
+
+\textsc{CC} creó un conjunto de licencias, permitiendo a los autores
+expresar distintos /grados/ de libertad para sus obras. Uno de los
+principales elementos para su éxito y adopción masiva fue simplificar
+la explicación de estos distintos elementos, y la presentación de las
+alternativas bajo siglas mnemotécnicas.
+
+Las licencias \textsc{CC} han pasado, al momento de edición del
+presente material, por cuatro versiones mayores, que han ido
+corrigiendo defectos en el lenguaje legal, y agregando o clarificando
+conceptos. Las opciones de las licencias \textsc{CC} son:[fn:: Parte del
+texto aquí presentado ha sido tomado del [[https://creativecommons.org/choose/?lang=es][asistente para la elección de
+licencias]] de Creative Commons; dicho texto está licenciado bajo un
+esquema CC-BY (atribución) 4.0.]
+
+- CC0 (Dominio Público) :: La rigidez del convenio de Berna hace muy
+     dificil en la mayor parte de las jurisdicciones el liberar una
+     obra renunciando expresamente a todos los derechos patrimoniales
+     que conlleva. La licencia /cero/ o /dedicación al dominio
+     público/ explicita esta renuncia expresa de derechos.
+
+- BY (Atribución) :: Todas las combinaciones de licencias \textsc{CC}
+     a excepción de CC0 incluyen la cláusula de /atribución/: La obra
+     puede emplearse para cualquier fin, pero toda redistribución debe
+     reconocer el crédito de manera adecuada, proporcionar un enlace a
+     la licencia, e indicar si se han realizado cambios. Puede hacerlo
+     en cualquier forma razonable, pero no de forma tal que sugiera
+     que tiene el apoyo del licenciante o lo recibe por el uso que
+     hace.
+
+- SA (Compartir Igual) :: Si un usuario del la obra en cuestión decide
+     mezclar, transformar o crear nuevo material a partir de ella,
+     puede distribuir su contribución siempre que utilice la misma
+     licencia que la obra original. Esto es, la cláusula /Compartir
+     Igual/ le confiere un caracter /Copyleft/ al licenciamiento
+     elegido.
+
+- NC (No Comercial) :: La obra puede ser utilizada, reproducida o
+     modificada según lo permitido por los otros componentes elegidos
+     de la licencia siempre y cuando esto no se considere o dirija
+     hacia una ganancia comercial o monetaria.
+
+- ND (No Derivadas) :: La obra puede ser redistribuída acorde con los
+     otros componentes elegidos de la licencia, pero debe ser
+     redistribuída sólo si no se afecta su integridad: no puede ser
+     modificada sin autorización expresa del autor.
+
+Las licencias \textsc{CC} han sido empleadas para todo tipo de
+creaciones: Libros, música, películas, artes plásticas — Incluso, si
+bien no era su fin original, para licenciamiento de software. Y su
+gran éxito estiba no sólo en su uso, sino en que han llevado la noción
+del licenciamiento permisivo y de las obras culturales libres a una
+gran cantidad de creadores que, sin \textsc{CC}, probablemente habrían
+publicado sus creaciones bajo la tradicional modalidad /todos los
+derechos reservados/.
+
+*** Creative Commons y las obras culturales libres
+
+No todas las licencias \textsc{CC} califican de /obras culturales
+libres/: En 2005, Benjamin /Mako/ Hill exploró el paralelismo entre
+\textsc{CC} y el movimiento del software libre en su texto /Towards a
+Standard of Freedom: Creative Commons and the Free Software Movement/;
+este trabajo sirvió como semilla para la definición de /Obras
+culturales libres/, publicada en 2006. De forma paralela a las cuatro
+libertades del software, esta definición acepta como obras libres a
+aquellas que garantizan:
+
+- La libertad de usar el trabajo y disfrutar de los beneficios de su
+  uso.
+- La libertad de estudiar el trabajo y aplicar el conocimiento
+  adquirido de él.
+- La libertad de hacer y redistribuir copias, totales o parciales, de
+  la información o expresión.
+- La libertad de hacer cambios y mejoras, y distribuir los trabajos
+  derivados.
+
+De las opciones de licenciamiento \textsc{CC}, las que están aprobados
+como obras culturales libres son /CC0/ (Dominio Público), /BY/
+(Atribución) y /SA/ (Compartir Igual). Las variedades NC (No
+Comercial) y ND (No Derivadas), si bien permitenuna mayor divulgación
+y circulación de la obra, restringen demasiado la apropiación que
+puede realizar un usuario, por lo que no constituyen obras culturales
+libres.
+
+* El licenciamiento empleado para la presente obra
+
+Los autores de este libro buscaron contribuir con material de calidad
+libremente apropiable y reutilizable para la enseñanza superior en
+países hispanoparlantes. Para lograr este fin, todo el material
+contenido en el libro (texto, código fuente e imágenes) está
+licenciado bajo /Creative Commons Atribución 4.0 Internacional/ (CC BY
+4.0)[fn:: https://creativecommons.org/licenses/by/4.0/deed.es], salvo
+si se menciona explícitamente de otra manera.
+
+#+BEGIN_CENTER
+#+attr_latex: width=0.33\textwidth
+#+attr_html: width=500 height=176
+[[./img/CC-BY-SA.png]]
+#+END_CENTER
+
+Esto significa que usted es libre para:
+
+- /Compartir/ — copiar y redistribuir el material en cualquier medio o
+  formato
+- /Adaptar/ — remezclar, transformar y crear a partir del material
+- Para cualquier propósito, /incluso comercialmente/
+- El licenciante no puede revocar estas libertades en tanto usted siga
+  los términos de la licencia
+
+Bajo los siguientes términos:
+
+- /Atribución/ — Usted debe reconocer el crédito de una obra de manera
+  adecuada, proporcionar un enlace a la licencia, e indicar si se han
+  realizado cambios . Puede hacerlo en cualquier forma razonable, pero
+  no de forma tal que sugiera que tiene el apoyo del licenciante o lo
+  recibe por el uso que hace.
+
+No hay restricciones adicionales — Usted no puede aplicar términos
+legales ni medidas tecnológicas que restrinjan legalmente a otros
+hacer cualquier uso permitido por la licencia.
+
+* Otros recursos
+
+- [[https://www.gnu.org/gnu/manifesto.html][The GNU Manifesto]] (Richard Stallman, 1985, Dr. Dobb's Journal)
+
+- [[https://gnu.org/licenses/gpl.html][GNU General Public License version 3]] (Free Software
+  Foundation, 2007)
+
+- [[http://www.dwheeler.com/blog/2006/09/01/#gpl-bsd][GPL, BSD, and NetBSD - why the GPL rocketed Linux to success]] (David
+  A. Wheeler, 2006)
+
+- [[https://lwn.net/Articles/108250/][The Grumpy Editor's guide to free documentation licenses]] (Jonathan
+  Corbet, 2004, Linux Weekly News)
+
+- [[https://gnu.org/licenses/fdl.html][GNU Free Documentation License version 1.3]] (Free Software
+  Foundation, 2008)
+
+- [[http://seminario.edusol.info/][Construcción Colaborativa del Conocimiento]] (Gunnar Wolf, Alejandro
+  Miranda, 2011)
+
+- [[http://www.advogato.org/article/851.html][Towards a Standard of Freedom: Creative Commons and the Free
+  Software Movement]] (Benjamin /Mako/ Hill, 2005)
+
+- [[http://freedomdefined.org/Definition/Es][Obras culturales libres]] (Freedom Defined, 2006)

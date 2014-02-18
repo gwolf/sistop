@@ -29,7 +29,7 @@
   entre procesos
   - Estudiando su implementación basada en semáforos
 - Comprender la aplicación de los patrones a problemas reales
-  - Abordando cuatro de problemas clásicos de sincronización
+  - Abordando problemas clásicos de sincronización
 
 ** Concurrencia
 - No tenemos que preocuparnos cuando todos los datos que maneja un
@@ -150,7 +150,7 @@ En inglés, /resource starvation/
   una sección crítica
   - Pero el flujo no permite que otro proceso, posiblemente de otra
     clase, entre a dicha sección
-- El sistema continúa siendo productivo, pero uno de los recursos
+- El sistema continúa siendo productivo, pero uno o más de los procesos
   puede estar detenido por un tiempo arbitrariamente largo.
 
 ** Primer acercamiento: /Reservas de autobús/
@@ -194,7 +194,7 @@ Líneas 4 y 5:
   - (Al menos) el sistema operativo debe implementar la protección
     entre procesos
 
-** Mismo ejemplo, empleando un /mutex/
+** Mismo ejemplo, empleando un candado (/mutex/)
 #+begin_src perl
 my ($proximo_asiento :shared, $capacidad :shared);
 $capacidad = 40;
@@ -226,7 +226,7 @@ variable, con /ámbito léxico/
 - ¡No las implementes tú mismo!
   - Parecen conceptos simples... Pero no lo son
   - Utilicemos el conocimiento acumulado de medio siglo
-** Mutex
+** Candados (Mutex)
 - Contracción de /Mutual Exclusion/, exclusión mutua
 - Un mecanismo que asegura que la región protegida del código se
   ejecutará como si fuera atómica
@@ -245,6 +245,10 @@ variable, con /ámbito léxico/
   - ¡Increíblemente versátiles para lo limitado de su interfaz!
 - Se han publicado muchos patrones basados en su interfaz, modelando
   interacciones muy complejas
+#+BEGIN_CENTER
+*¡Ojo!* No piensen en semáforos viales, verde/amarillo/rojo (eso sería
+un /mutex/. Piensen en semáforos de tren.
+#+END_CENTER
 
 ** Las tres operaciones de los semáforos
 - Inicializar :: Puede inicializarse a cualquier valor entero. Una

@@ -43,8 +43,8 @@ de ejecución. Estos son:
 - Nuevo :: Se solicitó al sistema operativo la creación de un proceso,
            y sus recursos y estructuras están siendo creadas.
 
-- Listo :: Está listo para iniciar o continuar su ejecución pero no
-           tiene un procesador disponible.
+- Listo :: Está listo para iniciar o continuar su ejecución pero el sistema
+		no le ha asignado un procesador.
 
 - En ejecución :: El proceso está siendo ejecutado en este
                   momento. Sus instrucciones están siendo procesadas
@@ -58,7 +58,7 @@ de ejecución. Estos son:
             operativo debe realizar ciertas operaciones de limpieza
             para poder eliminarlo de la lista.[fn:: Estas operaciones
             pueden incluir notificar al proceso padre, cerrar las
-            conexiones de red que tenía activas, etc.]
+            conexiones de red que tenía activas, liberar memoria, etc.]
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
                a la espera de ser /limpiadas/ por el sistema operativo
@@ -72,7 +72,8 @@ de ejecución. Estos son:
 
 La información que debe manipular el sistema operativo relativa a cada
 uno de los procesos actuales se suele almacenar en una estructura llamada
-/bloque de control de proceso/ (/PCB/ - /Process Control Block/):
+/bloque de control de proceso/ (/PCB/ - /Process Control Block/). El 
+PCB incluye campos como:
 
 - Estado del proceso :: El estado actual del proceso.
 
@@ -208,7 +209,7 @@ un /equipo de trabajo/):
      se crean muchos hilos idénticos, que realizarán las mismas tareas
      sobre diferentes datos. Este modelo es muy frecuentemente
      utilizado para cálculos matemáticos (p. ej.: criptografía,
-     render). Puede combinarse con un estilo jefe/trabajador para irle
+     render, álgebra lineal). Puede combinarse con un estilo jefe/trabajador para irle
      dando al usuario una previsualización del resultado de su
      cálculo, dado que éste se irá ensamblando progresivamente, pedazo
      por pedazo.
@@ -282,7 +283,7 @@ procesos externos es fundamental.
 
 Se verá que pueden aparecer muchos problemas cuando se estudia la
 interacción entre hilos del mismo proceso, la sincronización entre
-distintos procesos, la asignación de recursos por parte del núcleo a
+distintos procesos, la asignación de recursos por parte del sistema operativo a
 procesos simultáneos, o incluso cuando interactuan usuarios de
 diferentes computadoras de una red — se presentarán distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
@@ -300,16 +301,16 @@ solución y desmenuzar buscando los casos límite como ejercicio antes de pasar 
 caso. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
 
-Para cada problema se mostrará /una forma/ de resolverlo los problemas
-propuestos anteriormenete, pero para todos estos problemas hay más de
+Para cada problema se mostrará /una forma/ de resolverlo 
+aunque en general hay más de
 una solución válida. Algunos de estos problemas fueron originalmente
 planteados como justificación del desarrollo de las estructuras de
 control presentadas o de nuevos paradigmas de concurrencia y muchos
 son aun objeto de debate e investigación.
 
 Para profundizar más en este tema, se recomienda el libro «[[http://greenteapress.com/semaphores/][The little
-book of semaphores]]» de Allen Downey (2008) para profundizar en este
-tema. En este libro (de libre descarga) se encuentran muchos ejemplos
+book of semaphores]]» de Allen Downey (2008).
+En este libro (de libre descarga) se encuentran muchos ejemplos
 que ilustran el uso de semáforos no sólo para resolver problemas de
 sincronización, sino como un mecanismo simple de comunicación entre
 procesos. También se desarrollan distintas soluciones para los
@@ -323,13 +324,13 @@ problemas clásicos (y no tan clásicos).
 Un gran jardín ornamental se abre al público para que todos puedan
 apreciar sus fantásticas rosas, arbustos y plantas acuáticas. Por
 supuesto, se cobra una módica suma de dinero a la entrada para lo cual
-se colocan dos torniquetes, uno en cada una de sus entradas. Se desea
+se colocan dos torniquetes, uno en cada una de sus dos entradas. Se desea
 conocer cuánta gente ha ingresado al jardín así que se instala una
 computadora conectada a ambos torniquetes: cada torniquete envía una
 señal cuando una persona ingresa al jardín. Se realiza un modelo
 simplificado de la situación, así que no se estudiarán los
 detalles del hardware utilizado. Aquí es importante notar que los dos
-torniquetes son objetos que existen y se comportan en paralelo: los
+torniquetes son objetos que existen y se comportan en paralelo e independientemente: los
 eventos que generan no tienen un orden predecible. Es decir, que
 cuando se escriba el software no se sabe en qué momento llegará cada
 visitante ni qué torniquete utilizará.
@@ -361,9 +362,11 @@ proceso torniquete2() {
 
 main() {
 	cuenta = 0;
-	/* Lanzar ambos procesos */
-        torniquete1();
-        torniquete2();
+	/* Lanzar ambos procesos concurrentemente*/
+        concurrentemente { //
+		torniquete1();
+	        torniquete2();
+	}
         /* Esperar a que ambos finalicen */
         esperar(torniquete1);
         esperar(torniquete2);
@@ -381,7 +384,8 @@ utilizar un solo torniquete, =cuenta= siempre tiene el valor correcto
 programación convierten cada instrucción en una serie más o menos
 larga de operaciones de máquina (instrucciones ensamblador). De modo,
 que una instrucción aparentemente simple como =cuenta = cuenta + 1=
-habitualmente implica varias operaciones de más bajo nivel:
+habitualmente implica varias operaciones de más bajo nivel (las instrucciones
+de ejemplo corresponden a arquitecturas Intel x86):
 
 - =LEER= :: Leer =cuenta= desde la memoria (p. ej. =mov $cuenta, %rax=). 
 - =INC= :: Incrementar el registro (p. ej. =add $1, %rax=).
@@ -419,7 +423,7 @@ incrementar el contador en 1 y el resultado final fue que la cuenta se
 incrementó en dos unidades.
 
 Pero, también puede darse la siguiente secuencia de eventos durante la
-ejecución de esas dos instrucciones:
+ejecución de estas instrucciones:
 
 1. =cuenta = 0=
 2. =torniquete1=: =LEER= 		(resultado: =rax= de $p_1$ = 0, =cuenta = 0=) 
@@ -448,7 +452,7 @@ de las actualizaciones múltiples/.
   archivo. Aquí las operaciones ya no son necesariamente operaciones
   internas de la máquina.
 
-- ¿Pero no es muy poco probable que...? ::
+- ¿Pero no es muy poco probable ::
 
   Por otro lado, uno podría pensar (con cierta cuota de razón) que la
   secuencia de eventos propuesta es muy poco probable: usualmente un
@@ -517,11 +521,12 @@ presentan las definiciones de algunos conceptos importantes.
      compartidos.
 
 - Recurso compartido :: Un recurso que puede ser accedido desde más de
-     un proceso. En muchos escenarios esto es un variable en memoria,
+     un proceso. En muchos escenarios esto es un variable en memoria 
+     (como =cuenta= en el jardín ornamental),
      pero podrían ser archivos, periféricos, etc...
 
-Dado que el sistema no tiene forma de saber cuales instrucciones (o
-áreas del código) deben funcionar de forma atómica, se debe asegurar
+Dado que el sistema no tiene forma de saber cuáles instrucciones (o
+áreas del código) deben funcionar de forma atómica, el programador debe asegurar
 la atomicidad de forma explícita, mediante la sincronización de los
 procesos. El sistema no debe permitir la ejecución de parte de esa
 área en dos procesos de forma simultánea (sólo puede haber un proceso
@@ -666,7 +671,7 @@ presentan a continuación, pues, los sucesivos /intentos/.
   algo útil durante ese tiempo y que suspender el proceso de otra manera
   le da más posibilidad a otros procesos para que cambien la bandera. A
   esto se lo conoce como /espera activa/ o /espera ocupada/ (/busy
-  waiting/ en inglés) y es una condición que se desea evitar.
+  waiting/ en inglés) y es una situación que se desea evitar.
 
   El otro problema tiene que ver con el hardware: determinadas
   arquitecturas no permiten instrucciones que lean y actualicen en una
@@ -847,7 +852,7 @@ Candados, semáforos y variables de condición.
 *** Regiones de exlcusión mutua: candados o /mutexes/
 
 Una de las alternativas que suele ofrecer un lenguaje concurrente o
-sistema operativo para evitar la / espera activa/ a la que obliga el
+sistema operativo para evitar la /espera activa/ a la que obliga el
 algoritmo de Peterson (o similiares) se llama /mutex/ o también
 /candado/ (lock).
 
@@ -868,7 +873,8 @@ muy peligroso, dado que permitiría que el sistema operativo pierda el
 control del planificador, volviendo (para propósitos prácticos) a un
 esquema de multitarea cooperativa. El mutex es un /mecanismo de
 prevención/, que mantiene en espera a cualquier hilo o proceso que
-quiera entrar a la /sección crítica/, reteniéndolo antes de entrar a
+quiera entrar a la /sección crítica/ protegida por el mutex,
+ reteniéndolo antes de entrar a
 ésta hasta que el proceso que la está
 ejecutando salga de ella. Si no hay ningún hilo o proceso en dicha
 sección crítica (o cuando un hilo sale de ella), uno
@@ -977,9 +983,9 @@ La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
 resolver algunos problemas de sincronización. Edsger Dijkstra, en
 1968, propuso los /semáforos/.[fn:: El símil presentado por Dijkstra
 no es del semáforo vial, con una luz roja y una luz verde (dicho
-esquema se asemeja al del /mutex/). La referencia esa la del semáforo
+esquema se asemeja al del /mutex/). La referencia es a la del semáforo
 de tren, que permite el paso estando /arriba/, e indica espera estando
-/abajo/.]
+/abajo/.] 
 
 Un semáforo es una variable de tipo entero que tiene definida la
 siguiente interfaz:
@@ -1245,7 +1251,7 @@ cuales se mencionarán los siguientes:
 *** Variables de condición
 
 Las variables de condición presentan una extensión sobre el
-comportamiento de las mutexes, buscando darles la "inteligencia" de
+comportamiento de los mutexes, buscando darles la "inteligencia" de
 responder ante determinados eventos. Una variable de condición siempre
 opera /en conjunto con/ un mutex, y en algunas implementaciones es
 necesario indicar cuál será dicho mutex desde la misma inicialización
@@ -1299,7 +1305,7 @@ int pthread_cond_destroy(pthread_cond_t *cond);
 En un entorno multihilos es común que haya una división de tareas tipo
 /línea de ensamblado/, que se puede generalizar a que un grupo de
 hilos van /produciendo/ ciertas estructuras, a ser /consumidas/ por
-otro.
+otro grupo.
 
 Un ejemplo de este problema puede ser un programa /orientado a
 eventos/, en que eventos de distinta naturaleza pueden producirse, y
@@ -1308,7 +1314,8 @@ eventos pueden /apilarse/ en un buffer que será procesado por los
 hilos encargados conforme se vayan liberando. Esto impone ciertos
 requisitos, como:
 
-     - Agregar o retirar un elemento del buffer tiene que ser hecho de
+     - Debido a que el buffer es un recurso compartido por los hilos,
+	agregar o retirar un elemento del buffer tiene que ser hecho de
        forma atómica. Si más de un proceso intentara hacerlo al mismo
        tiempo, se correría el riesgo de que se corrompan los datos.
 
@@ -1507,7 +1514,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
     mutex.release()
   #+end_src
 
-  El semáforo =cuarto_vacio= sigue un patrón llamado /apagador/. El
+  El semáforo =cuarto_vacio= sigue un patrón visto antes llamado /apagador/. El
   escritor utiliza al apagador como a cualquier mutex: lo utiliza para
   rodear a su sección crítica. El lector, sin embargo, lo emplea de
   otra manera. Lo primero que hace es verificar /si la luz está
@@ -1583,7 +1590,8 @@ recursos — temática recurrente en el campo de los sistemas operativos.
      hambre. El hambre es mala consejera, por lo que intenta
      =comer()=. Los requisitos son:
 
-     - Sólo un filósofo puede sostener determinado palito a la vez.
+     - Sólo un filósofo puede sostener determinado palito a la vez, esto es
+       los palitos son recursos de acceso exclusivo.
 
      - Debe ser imposible que un filósofo muera de inanición estando a
        la espera de un palito.
@@ -2029,9 +2037,10 @@ int main() {
   pthread_t th[5];  /* IDs de los hilos filósofos */
   pthread_attr_t attr = NULL;
   palillos_init();
-  for (i=0; i<5; i++) {
+  for (i=0; i<5; i++) 
     pthread_create(&th[i], attr, filosofo, (int*) &i);
-  }
+  for (i=0; i<5; i++) 
+    pthread_join(th[i],NULL);
 }
 #+end_src
 
@@ -2147,8 +2156,9 @@ secuencia:
 8. /A/ solicita otra unidad de cinta y se bloquea
 
 9. El sistema operativo no tiene otra unidad de cinta por
-   asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
-   otro proceso (o queda en espera).
+   asignar. Mantiene bloqueado tanto /A/ como /B/ y otorga el control de vuelta a
+   otro proceso (o queda en espera). En este caso ni /A/ ni /B/ serán desbloqueados
+   nunca.
 
 #+attr_latex: width=0.5\textwidth
 #+label: PROC_bloqueo_mutuo_simple
@@ -2592,7 +2602,7 @@ proceso, lo cual puede no ser conocido en el momento de su ejecución.
 # <<PROC_det_y_rec_bloq>>
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
-situación de bloqueo que ya se presentó y de buscar la mejor manera de
+situación de bloqueo que ya se produjo y de buscar la mejor manera de
 salir de ella. La detección de bloqueos podría ser una tarea
 /periódica/, y si bien no puede prevenir situaciones de bloqueo, puede
 detectarlas una vez que ya ocurrieron y limitar su impacto.
@@ -2696,7 +2706,7 @@ recuperación:
   del cómputo que han realizado hasta este momento se perderá.
 
 - /Retroceder/ a los procesos implicados hasta el último /punto de
-  control/ (/checkpoint/) conocido. Esto es posible únicamente cuando
+  control/ (/checkpoint/) seguro onocido. Esto es posible únicamente cuando
   el sistema implementa esta funcionalidad, que tiene un elevado costo
   adicional. Cuando el estado de uno de los procesos depende de
   factores externos a éste, es imposible implementar fielmente los
@@ -2777,7 +2787,7 @@ empleada en todos los sistemas operativos de propósito general)
 es el llamado /algoritmo del avestruz/: ignorar
 las situaciones de bloqueo (escondiéndose de ellas como avestruz que
 esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
-suficientemente poco frecuente.
+suficientemente poco frecuente o si ocurre que su impacto no afecte al sistema.
 
 *** Justificando a los avestruces
 

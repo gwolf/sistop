@@ -16,7 +16,7 @@ discos u otros medios de almacenamiento persistente.
 
 Todos los programas a ejecutar deben cargarse a la memoria
 del sistema antes de ser utilizados. En este capítulo se mostrará cómo
-administra el sistema operativo a la memoria para permitir que varios
+el sistema operativo administra la memoria para permitir que varios
 procesos la compartan — Esta tarea debe preverse desde el proceso de
 compilación de los programas (en particular, la fase de
 /ligado/). Hoy en día, además, casi todos los sistemas operativos
@@ -43,7 +43,7 @@ sistema operativo, re-alineada, y entregada.
 
 Un procesador que soporta un /espacio de direccionamiento/ de 16 bits
 puede referirse /directamente/ a hasta $2^{16}$ bytes, esto es, a
-hasta 65,536 bytes (64K). Estos procesadores fueron comunes en las
+hasta 65,536 bytes (64KB). Estos procesadores fueron comunes en las
 décadas de 1970 y 1980 — Los más conocidos incluyen al Intel 8080 y
 8085, Zilog Z80, MOS 6502 y 6510, y Motorola 6800. Hay que recalcar
 que estos procesadores son reconocidos como procesadores de /8 bits/,
@@ -60,7 +60,7 @@ inicio oficial con el procesador 80386 (o simplemente 386).
 Este procesador podía referenciar desde el punto de vista teórico 
 hasta $2^{32}$ bytes (4GB) de RAM. No obstante, debido a las 
 limitaciones tecnológicas (y tal vez estratégicas) para producir 
-memorias con esta capacidad, se tomó más de veinte años que las 
+memorias con esta capacidad, tomó más de veinte años para que las 
 memorias ampliamente disponibles alcanzaran dicha capacidad.
 
 Hoy en día, los procesadores dominantes son de 32 o 64 bits. En el caso de
@@ -84,9 +84,14 @@ por muchos años aún.
 
 ** Hardware: de la unidad de manejo de memoria (MMU)
 
-A lo largo de la historia de las computadoras ha sido necesario
-emplear más memoria de la que está directamente disponible, con el 
-propósito de ofrecer a los procesos más espacio de lo que puede 
+Con la introducción de sistemas multitarea, es decir, dos o más 
+programas ejecutandose, se vio la necesidad de tener más de un
+programa cargado en memoria. Esto conlleva que el sistema operativo
+junto con información del programa a ejecutar debe resolver cómo
+ubicar los programas en la memoria física disponible.
+
+Luego ha sido necesario emplear más memoria de la que está directamente disponible, 
+con el propósito de ofrecer a los procesos más espacio de lo que puede 
 direccionar /la arquitectura (hardware) empleada. Por otro lado, 
 la abstracción de un espacio virtualmente ilimitado para realizar sus
 operaciones incluso cuando la memoria /real/ es mucho menor a la
@@ -144,7 +149,7 @@ Conforme el procesador avanza en la ejecución de las instrucciones
 producen accesos a memoria. Por un lado, tiene que buscar en
 memoria la siguiente instrucción a ejecutar. Por otro lado, estas
 instrucciones pueden requerirle uno o más operadores adicionales que
-deben ser leídos de la memoria. Por último, la instrucción puede
+deban ser leídos de la memoria. Por último, la instrucción puede
 requerir guardar su resultado en cierta dirección de memoria.
 
 Hace años esto no era un problema — La velocidad del procesador
@@ -203,13 +208,14 @@ el archivo ejecutable a memoria, sino que tiene que proporcionar la
 estructura para que éste vaya guardando la información de estado
 relativa a su ejecución.
 
-- Sección de texto :: Es el nombre que recibe la imagen en memoria de
+- Sección (o segmento) de texto :: Es el nombre que recibe la imagen en memoria de
      las instrucciones a ser ejecutadas. Usualmente, la sección de
      texto ocupa las direcciones /más bajas/ del espacio en memoria.
 
 - Sección de datos :: Espacio fijo preasignado para las variables
-     globales. Este espacio es fijado en tiempo de compilación, y no
-     puede cambiar (aunque los datos que carga sí cambian en el tiempo
+     globales y datos incializados (como las cadena de caracteres por ejemplo). 
+     Este espacio es fijado en tiempo de compilación, y no
+     puede cambiar (aunque los datos que cargados allí sí cambian en el tiempo
      de vida del proceso)
 
 - Espacio de /libres/ ::  Espacio de memoria que se emplea
@@ -219,13 +225,13 @@ relativa a su ejecución.
      el /Heap/.
 
      Cuando el programa es escrito en lenguajes que requieren /manejo
-     manual de la memoria/ (como C), esta área es la que se maneja a
+     dinámica manual de la memoria/ (como C), esta área es la que se maneja a
      través de las llamadas de la familia de =malloc= y =free=. En
      lenguajes con gestión automática, esta área es monitoreada por
      los /recolectores de basura/.
 
 - Pila de llamadas :: Consiste en un espacio de memoria que se usa para
-     almacenar la secuenciade funciones que han sido llamadas dentro 
+     almacenar la secuencia de funciones que han sido llamadas dentro 
      del proceso, con sus parámetros, direcciones de /retorno/, 
      variables locales, etc. La pila ocupa la parte /más alta/ del 
      espacio en memoria, y /crece hacia abajo/.
@@ -256,7 +262,7 @@ abordará un ejemplo de cómo esto puede tener importantes consecuencias.].
 Ahora bien, en los sistemas actuales, los procesos requieren coexistir
 con otros, para lo cual las direcciones indicadas en el /texto/ del
 programa pueden requerir ser traducidas al lugar /relativo al sitio de
-inicio del proceso en memoria/ — Esto es, las direcciones son /resueltas/.
+inicio del proceso en memoria/ — Esto es, las direcciones son /resueltas/ o traducidas.
 Existen diferentes estrategias de resolución, que se pueden clasificar en:
 
 - En tiempo de compilación :: El texto del programa tiene la dirección
@@ -334,8 +340,8 @@ Desde la perspectiva del sistema operativo, cada uno de los espacios
 asignados a un proceso es una /partición/. Cuando el sistema operativo
 inicia, toda la memoria disponible es vista como un sólo bloque, y
 conforme se van ejecutando procesos, este bloque va siendo subdividido
-para satisfacer sus requisitos. Cada proceso debe indicar al sistema
-operativo cuánta memoria va a requerir a lo largo de su vida prevista.
+para satisfacer sus requisitos. Al cargar un programa el sistema
+operativo calcula cuánta memoria va a requerir a lo largo de su vida prevista.
 Esto incluye el espacio requerido para la asignación dinámica de memoria
 con la familia de funciones =malloc= y =free=.
 
@@ -426,9 +432,10 @@ Siguiendo de cierto modo la lógica requerida por la compactación
 se encuentran los sistemas que utilizan /intercambio/ (/swap/) entre la
 memoria primaria y secundaria. En estos sistemas, el sistema operativo
 puede /comprometer/ más espacio de memoria del que tiene físicamente
-disponible. Cuando hay más procesos de los que caben en memoria, el
-sistema suspende a uno de ellos (usualmente un proceso "bloqueado")
-y almacena una copia de su imagen en memoria en almacenamiento secundario.
+disponible. Cuando la memoria se acaba, el
+sistema suspende a un proceso (usualmente un proceso "bloqueado")
+y almacena una copia de su imagen en memoria en almacenamiento secundario 
+para luego poder restaurarlo.
 
 Hay algunas restricciones a observar previo a suspender un proceso.
 Por ejemplo, se debe considerar si el proceso tiene pendiente alguna 
@@ -464,7 +471,7 @@ Al desarrollar un programa en un lenguaje de alto nivel, el programador
 usualmente no se preocupa por la ubicación en la memoria física de los
 diferentes elementos que lo componen. Esto se debe a que
 en estos lenguajes las variables y funciones son referenciadas por sus
-/nombres/, no por su ubicación[fn:: Al programar en lenguaje C, un
+/nombres/, no por su ubicación[fn:: Al programar en lenguaje C por ejemplo, un
 programador puede trabajar a este mismo nivel de abstracción, puede
 referirse directamente a las ubicaciones en memoria de sus datos
 empleando /aritmética de apuntadores/.]. No obstante, cuando se compila el
@@ -474,7 +481,7 @@ ubicará a cada una de las secciones presentadas en la sección
 
 Esto permite activar los mecanismos que evitan la escritura accidental de las 
 secciones de memoria del proceso que no se deberían modificar 
-(aquellas que contienen  código), y permitir la escritura de aquellas 
+(aquellas que contienen  código o de sólo lectura), y permitir la escritura de aquellas 
 que sí (en las cuales se  encuentran las variables globales, 
 la pila o /stack/ y el espacio de asignación dinámica o /heap/).
 
@@ -516,7 +523,7 @@ alguna estructura de datos,
 obtiene la dirección base, el tamaño del segmento y sus atributos
 de protección. Luego, aplicando el mecanismo explicado en secciones
 anteriores, toma la dirección base del segmento y le suma el desplazamiento
-para obtener una /dirección lineal/. 
+para obtener una /dirección lineal física/. 
 
 La traducción de una dirección lógica a una dirección lineal puede fallar
 por diferentes razones: Si el segmento no se encuentra en memoria, ocurrirá
@@ -528,7 +535,7 @@ ocurrirá una excepción del tipo /violación de segmento/
 
 Una de las principales ventajas del uso de segmentación consiste en
 permitir que cada uno de los segmentos tenga un distinto
-/juego de permisos/ para el proceso en cuestiónn: El sistema operativo
+/juego de permisos/ para el proceso en cuestión: El sistema operativo
 puede indicar, por ejemplo, que el /segmento de texto/ (el código del
 programa) sea de lectura y ejecución, mientras que las secciones de
 datos, libres y pila (donde se almacena y trabaja la información misma
@@ -538,7 +545,7 @@ inquebrantable: El código /automodificable/ conlleva importantes
 riesgos de seguridad, pero bajo ciertos supuestos, el sistema debe
 permitir su ejecución. Además, muchos lenguajes de programación
 permiten la /metaprogramación/, que requiere la ejecución de código
-construído al vuelo.].
+construído en tiempo de ejecución.].
 
 De este modo, se puede evitar que un error en
 la programación resulte en que datos proporcionados por el usuario o
@@ -569,7 +576,7 @@ mismo tiempo en sucesión, puede separar su texto (e incluso los datos
 correspondientes) en diferentes segmentos.
 
 A lo largo de la ejecución del programa, algunos de sus segmentos
-pueden no emplearse por largos periodos de tiempo. Estas páginas
+pueden no emplearse por largos periodos de tiempo. Éstos 
 pueden ser enviadas al /espacio de intercambio/ (/swap/) ya sea a
 solicitud del proceso o por iniciativa del sistema operativo.
 
@@ -669,8 +676,9 @@ desperdicio injustificado de recursos.
 # <<MEM_paginacion>>
 
 La fragmentación externa y, por tanto, la necesidad de compactación
-pueden evitarse por completo empleando la /paginación/. Esta consiste
-en que cada proceso esté compuesto por una serie de /páginas/, dejando
+pueden evitarse por completo empleando la /paginación/. Ésta consiste
+en que cada proceso está dividio en varios bloques (más pequeños que los segmentos) 
+de tamaño fijo llamados /páginas/, dejando
 de requerir que la asignación sea de un área /contigua/ de
 memoria. Claro está, esto requiere de mayor espacialización por parte
 del hardware, y mayor información relacionada a cada uno de los
@@ -721,7 +729,7 @@ en que /realmente/ se encuentra en la memoria del sistema).
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
 presentado en la figura \ref{MEM_ejemplo_de_paginacion} (Silberschatz,
-p.292). Este presenta un esquema minúsculo de paginación: Un /espacio
+p.292). Éste presenta un esquema minúsculo de paginación: Un /espacio
 de direccionamiento/ de 32
 bytes (5 bits), organizado en 8 páginas de 4 bytes cada una (esto es,
 la página es representada con los 3 bits /más significativos/ de la
@@ -750,7 +758,7 @@ La MMU verifica en la tabla de páginas, y encuentra que la página 1
 corresponde al marco número 6 (110), por lo que traduce la dirección
 lógica 00101 (5) a la física 11001 (26).
 
-Se puede tomar la paginación como una suerte de resolución de
+Se puede tomar la paginación como una suerte de resolución o traducción de
 direcciones en tiempo de ejecución, pero con una /base/ distinta para
 cada una de las páginas.
 
@@ -766,7 +774,8 @@ evitar que una proporción sensible de la memoria se pierda en
 fragmentación interna, se podría tomar como estrategia  emplear un tamaño
 de página tan pequeño como fuera posible.
 
-Sin embargo, la sobrecarga administrativa en que se incurre por
+Sin embargo, la sobrecarga administrativa (el tamaño de la tabla de paginación) 
+en que se incurre por
 gestionar demasiadas páginas pequeñas se vuelve una limitante en
 sentido opuesto:
 
@@ -827,7 +836,7 @@ prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del /PTLR/ se evita desperdiciar grandes cantidades
 de memoria indicando todo el espacio no utiilzado.] De esta manera, en
-el cambio de contexto sólo hay que cambiar dos registros, y además
+el cambio de contexto sólo hay que cambiar estos dos registros, y además
 se cuenta con un espacio muy amplio para guardar las tablas de páginas
 que se necesiten. El problema con este mecanismo es la velocidad:
 Se estaría penalizando a /cada acceso a memoria/ con un acceso de
@@ -894,7 +903,8 @@ más gravoso para el sistema que los beneficios obtenidos de la
 paginación.
 
 Aprovechando que la mayor parte del espacio de direccionamiento de un
-proceso está típicamente vacío, se puede subdividir el identificador
+proceso está típicamente vacío (la pila de llamadas y el heap),
+ se puede subdividir el identificador
 de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
@@ -991,7 +1001,7 @@ crear un nuevo proceso es el empleo de la llamada al sistema
 a un nuevo proceso /idéntico/ al que lo llamó, diferenciándose
 únicamente en /el valor entregado/ por la llamada a =fork()=. Si
 ocurre algún error, el sistema entrega un número negativo (indicando
-la causa del error). En caso de ser exitoso, El proceso nuevo (o
+la causa del error). En caso de ser exitoso, el proceso nuevo (o
 proceso /hijo/) recibe el valor =0=, mientras que el proceso
 preexistente (o proceso padre) recibe el PID (número identificador de
 proceso) del hijo. Es frecuente encontrar el siguiente código:
@@ -1076,7 +1086,8 @@ todos los procesos activos en el sistema superara el total de espacio
 físico. Es ahí donde entra en juego la /memoria virtual/: Para ofrecer
 a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
-disco duro), a través de un esquema de /intercambio/ (/swap/).
+disco duro), a través de un esquema de /intercambio/ (/swap/) guardando
+y trayendo páginas enteras.
 
 #+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
@@ -1094,7 +1105,7 @@ intercambio (\ref{MEM_swap}) a través del intercambio parcial
 (\ref{MEM_intercambio_parcial}), permitiendo que continuara la
 ejecución del proceso incluso con ciertos segmentos /intercambiados/
 (/swappeados/) a disco, la memoria virtual lo hace aún más conveniente
-al aumentar la /granularidad/ del intercambio: Ahora ya no sólo se
+al aumentar la /granularidad/ del intercambio: Ahora ya no se
 enviarán a disco secciones lógicas completas del proceso (segmentos),
 sino que se podrá reemplazar página por página, aumentando significativamente
 el rendimiento resultante. Al emplear la memoria virtual, de
@@ -1108,7 +1119,7 @@ haciendo referencia a un /intercambiador/ (/swapper)/, sino al /paginador/.
 # <<MEM_pag_sobre_demanda>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
-Se debe considerar que existe una gran cantidad de /código durmiente/: Código
+Se debe considerar que existe una gran cantidad de /código durmiente o inalcanzable/: Código
 que sólo se emplea eventualmente, como el que responde ante una
 situación de excepción o el que se emplea sólo ante circunstancias
 particulares (por ejemplo, la exportación de un documento a
@@ -1120,12 +1131,12 @@ como prácticamente todas las existen hoy en día, no puede /ver/
 directamente más que a la memoria principal] el código sí puede
 comenzar ejecutarse sin estar /completamente/ en memoria: Basta con
 haber cargado la página donde están las instrucciones que permiten
-continuar con su ejecición.
+continuar con su ejecución actual.
 
 La /paginación sobre demanda/ significa que, para comenzar a ejecutar
 un proceso, el sistema operativo carga /sólamente la porción
-necesaria/ para comenzar la ejecución, y que a lo largo de la
-ejecución de cada uno de los procesos, el paginador /es flojo/:[fn:: En
+necesaria/ para comenzar la ejecución (posiblemente una página o ninguna),
+ y que a lo largo de la ejecución, el paginador /es flojo/:[fn:: En
 cómputo, muchos procesos pueden determinarse como /ansiosos/
 (/eager/), cuando buscan realizar todo el trabajo que puedan desde el
 inicio, o /flojos/ (/lazy/), si buscan hacer el trabajo mínimo en un
@@ -1164,8 +1175,8 @@ solicitada para luego continuar con su ejecución:
    como al TLB para indicar que la tabla está en memoria.
 
 6. Termina la suspensión del proceso, continuando con la instrucción
-   que desencadenó al fallo. El proceso puede continuar tal como si la
-   página siempre hubiera estado presente en memoria.
+   que desencadenó al fallo. El proceso puede continuar sin notar 
+   que la página había sido intercambiada.
 
 Llevando este proceso al extremo, se puede pensar en un sistema de
 /paginación puramente sobre demanda/ (/pure demand paging/): En un
@@ -1193,7 +1204,7 @@ Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
 de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
-prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
+prácticos podemos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
 
@@ -1232,7 +1243,7 @@ se asigna en el espacio libre del sistema de archivos. Esto lleva a
 que, conforme crece la fragmentación del disco, la memoria virtual
 quede esparcida por todo el disco duro. La generalidad de sistemas tipo 
 Unix, en contraposición, reservan una partición de disco /exclusivamente/ 
-para la memoria virtual.
+para intercambio.
 
 ** Reemplazo de páginas
 
@@ -1251,8 +1262,8 @@ memoria. Se hace necesario encontrar una forma justa y adecuada de
 llevar a cabo un /reemplazo de páginas/ que permita continuar
 satisfaciendo sus necesidades.
 
-El reemplazo de páginas es una parte fundamental de la paginación
-sobre demanda, ya que es la pieza que posibilita una verdadera separación
+El reemplazo de páginas es una parte fundamental de la paginación, 
+ya que es la pieza que posibilita una verdadera separación
 entre memoria lógica y física. El mecanismo básico a ejecutar es simple: 
 Si todos los marcos están ocupados, el sistema deberá encontrar una página 
 que pueda liberar (una /página víctima/) y grabarla al espacio de 
@@ -1274,7 +1285,7 @@ acceso de escritura a dicha página.
 
 Cuando el sistema operativo elige una página víctima, si su /bit de
 página sucia/ está encendido, es necesario grabarla al disco, pero si
-está apagada, se garantiza la información en disco es idéntica su copia en 
+está apagado, se garantiza que la información en disco es idéntica  a su copia en 
 memoria, y permite ahorrar la mitad del tiempo de transferencia.
 
 Ahora bien, ¿cómo decidir qué páginas remplazar marcándolas como
@@ -1332,7 +1343,7 @@ Un fenómeno interesante que se presenta con algunos algoritmos es la
 a mayor número de marcos disponibles se tendrá una menor cantidad de
 fallos de página, como lo ilustra la figura
 \ref{MEM_expectativa_fallas_marcos}, con algunas de cadenas de
-referencia y bajo ciertos algoritmos puede haber una /regresión/, en
+referencia y bajo ciertos algoritmos puede haber una /regresión/ o degradación, en
 la cual la cantidad de fallos aumenta aún con una mayor cantidad de
 marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
 
@@ -1359,7 +1370,7 @@ con tres marcos, y con la siguiente cadena de referencia:
 *** Primero en entrar, primero en salir (FIFO)
 # <<MEM_FIFO>>
 
-El algoritmo de más simple y obvia implementación es, nuevamente, el
+El algoritmo de más simple y de obvia implementación es, nuevamente, el
 FIFO: Al cargar una página en memoria, se toma nota de en qué momento
 fue cargada, y cuando llegue el momento de reemplazar una página
 vieja, se elige la que haya sido cargada hace más tiempo.
@@ -1398,10 +1409,10 @@ algoritmos de reemplazo de páginas.
 
 *** Reemplazo de páginas óptimo (OPT, MIN)
 
-Un segundo algoritmo, de interés casi puramente teórico, fue
+Un segundo algoritmo, de interés puramente teórico, fue
 propuesto, y es típicamente conocido como OPT o MIN. Bajo este
 algoritmo, el enunciado será elegir como página víctima a aquella
-página que /no vaya a ser utilizada/ por un tiempo máximo.
+página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
 
 
 #+attr_latex: width=\textwidth
@@ -1411,7 +1422,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo.
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
 mantiene como curiosidad teórica porque requiere conocimiento a priori
-de las necesidades del sistema — Y si esto es impracticable ya en los
+de las necesidades a futuro del sistema — Y si esto es impracticable ya en los
 algoritmos de despachadores, lo será mucho más con un
 recurso de reemplazo tan dinámico como la memoria.
 
@@ -1488,10 +1499,10 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
 
 - Bit de referencia :: Esta es una aproximación bastante
      común. Consiste en que todas las entradas de la tabla de páginas
-     tengan un bit adicional, al que llamaremos /de referencia/. Al
-     iniciar la ejecución, todos los bits de referencia están apagados
+     tengan un bit adicional, al que llamaremos /de referencia/ (bit de acceso). 
+     Al iniciar la ejecución, todos los bits de referencia están apagados
      (0). Cada vez que se referencia a un marco, su bit de referencia
-     se enciende.
+     se enciende (esto en general lo realiza el hardware).
 
      El sistema operativo invoca periódicamente a que se apaguen
      nuevamente todos los bits de referencia. En caso de presentarse
@@ -1554,11 +1565,11 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      - (0,1) :: No ha sido utilizada recientemente, pero está
                 modificada. No es tan buena opción, porque es
                 necesario escribir la página a disco antes de
-                reemplazarla, pero puede se elegida.
+                reemplazarla, pero puede ser elegida.
 
      - (1,0) :: El marco está /limpio/, pero fue empleado
                 recientemente, por lo que probablemente se vuelva a
-                requerir pronto
+                requerir pronto.
 
      - (1,1) :: Empleada recientemente y /sucia/ — Sería necesario
                 escribir la página a disco antes de reemplazar, y
@@ -1784,7 +1795,7 @@ reemplazo de páginas.
 El reemplazo local es más rígido y no permite aprovechar para mejorar
 el rendimiento los periodos de inactividad de algunos de los
 procesos. En contraposición, los esquemas basados en reemplazo global
-puede llevar a rendimiento inconsistente: Dado que la asignación de
+pueden llevar a rendimiento inconsistente: Dado que la asignación de
 memoria física sale del control de cada proceso, puede que la misma
 sección de código presente tiempos de ejecución muy distintos si
 porciones importantes de su memoria fueron paginadas a disco.
@@ -1927,7 +1938,8 @@ profundizar un poco más acerca de cómo está estructurada la
 /pila de llamadas/ (/stack/).
 
 El /stack/ es el mecanismo que brinda un sentido local a la
-representación del código estructurado. Está dividido en /marcos/ (sin
+representación del código estructurado. Está dividido en /marcos de
+activación/ (sin
 relación con el concepto de marcos empleado al hablar de memoria
 virtual); durante el periodo en que es el marco /activo/ (esto es,
 cuando no se ha transferido el control a ninguna otra función), está
@@ -1935,16 +1947,16 @@ delimitado por dos valores, almacenados en registros:
 
 - Apuntador a la pila :: (/Stack pointer/, /SP/) Apunta al /final
      actual/ (dirección inferior) de la pila. En arquitecturas x86,
-     emplea el registro =ESP=.
+     emplea el registro =ESP=;cuando se le pide al procesador que actúe sobre
+     /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
+     este registro
 - Apuntador del marco :: (/Frame pointer/, =FP=, o /Base local/, =LB=)
      Apunta al /inicio/ del marco actual, o lo que es lo mismo, al
      final del marco anterior. En arquitecturas x86, emplea el
-     registro =EBP=; cuando se le pide al procesador que actúe sobre
-     /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
-     este registro.
+     registro =EBP=.
 
 A cada función a que va entrando la ejecución del proceso, se va
-creando un /marco/ en el stack, que incluye:
+creando un /marco de activación/ en el stack, que incluye:
 
 - Los argumentos recibidos por la función
 - La dirección de retorno al código que la invocó
@@ -2237,7 +2249,7 @@ destino se debe saltar.
 Un atacante puede emplear varias técnicas para ayudarse a /adivinar/
 detalles acerca del acomodo en memoria de un proceso, y, con un
 buffer suficientemente grande, es común ver /cadenas de NOP/, esto
-es, una extensión grand de operaciones nulas, seguidas del
+es, una extensión grande de operaciones nulas, seguidas del
 /shellcode/, para aumentar las probabilidades de que el control se
 transfiera a un punto útil.
 
@@ -2324,30 +2336,30 @@ instale su propia versión de una biblioteca para que pueda tener el control de 
 que la usan e incluso del mismo sistema operativo [fn:: Esto se puede lograr, por ejemplo, 
 alterando la configuración del entorno en la cual el sistema busca las bibliotecas.].
 
-* Consideraciones de rendimiento
+#* Consideraciones de rendimiento
 #+begin_src c
-  int datos[8000][8000];
-  
-  /* Versión correcta: El ciclo externo va sobre el */
-  /* índice externo, el ciclo interno va sobre el índice */
-  /* interno. El arreglo en memoria sera recorrido */
-  /* secuencialente. */
-  for (i=0; i<8000; i++) {
-    for (j=0; j<8000; j++) {
-      datos[i][j] += 1;
-    }
-   }
-  
-  /* Si el ciclo externo es empleado para el índice interno */
-  /* y viceversa, el recorrido en memoria sera de "puntitos" */
-  /* distribuidos por todo el espacio que ocupa datos[], */
-  /* reemplazando a los contenidos del TLB una y otra vez, y */
-  /* con un fuerte impacto al rendimiento. */
-  for (i=0; i<8000; i++) {
-    for (j=0; j<8000; j++) {
-      datos[j][i] += 1;
-    }
-   }
+#  int datos[8000][8000];
+#  
+#  /* Versión correcta: El ciclo externo va sobre el */
+#  /* índice externo, el ciclo interno va sobre el índice */
+#  /* interno. El arreglo en memoria sera recorrido */
+# /* secuencialente. */
+#  for (i=0; i<8000; i++) {
+#    for (j=0; j<8000; j++) {
+#      datos[i][j] += 1;
+#    }
+#   }
+#  
+#  /* Si el ciclo externo es empleado para el índice interno */
+#  /* y viceversa, el recorrido en memoria sera de "puntitos" */
+#  /* distribuidos por todo el espacio que ocupa datos[], */
+#  /* reemplazando a los contenidos del TLB una y otra vez, y */
+#  /* con un fuerte impacto al rendimiento. */
+#  for (i=0; i<8000; i++) {
+#    for (j=0; j<8000; j++) {
+#      datos[j][i] += 1;
+#    }
+#   }
 #+end_src
 
 * Otros recursos

@@ -31,8 +31,8 @@ unidad de procesamiento son:
                      puede encontrar una situación que no puede resolver
                      por sí misma (una instrucción o dirección inválida, 
                      una división por cero, etc.) ante lo cual le pasa el
-                     control al sistema operativo para que este trate o
-                     resuelva esta situación.
+                     control al sistema operativo para que éste trate o
+                     resuelva la situación.
 - Multiplexación :: En un sistema multiproceso, el sistema operativo es el 
                     encargado de administrar la unidad de procesamiento 
                     dando la ilusión a los procesos que están ejecutando 
@@ -111,7 +111,8 @@ y otras.
 
 La memoria más rápida de la computadora son los /registros/, ubicados
 dentro de cada /uno de los/ núcleos de cada uno de los CPUs. Las
-arquitecturas tipo RISC sólo contemplan la ejecución de instrucciones
+arquitecturas tipo RISC (Reduced Instruction Set Computer) 
+sólo contemplan la ejecución de instrucciones
 entre registros (excepto, claro, las de carga y almacenamiento a
 memoria primaria).
 
@@ -222,14 +223,14 @@ Las funciones del sistema operativo respecto a las interrupciones son:
                                   ya ha sido atendida, etc.
 - Abstraer las interrupciones ::  El sistema operativo oculta a los programas de
                                   usuario la existencia de interrupciones de
-                                  hardware ya que estas son dependientes de la
+                                  hardware ya que éstas son dependientes de la
                                   arquitectura del procesador. En cambio el
                                   sistema operativo lo comunica de una forma
                                   unificada a través de distintos mecanismos,
                                   por ejemplo mensajes o señales o detiendo el
                                   proceso que espera la acción relacionada con
                                   una interrupción y continuando su ejecución
-                                  cuando esta ocurre.
+                                  cuando ésta ocurre.
 - Punto de entrada al sistema operativo :: Como se verá más adelante en la 
                                 sección \ref{HW_SYSCALLS}, muchos procesadores y
                                 sistemas operativos utilizan las interrupciones
@@ -243,7 +244,7 @@ Las funciones del sistema operativo respecto a las interrupciones son:
                                 instrucción especial =syscall=.
 - Atender excepciones y fallas :: Como se discutió antes, durante la
      ejecución de un programa pueden ocurrir situaciones anómalas, 
-     como por ejemplo, una división por cero. Desde el punto de
+     como por ejemplo, una división sobre cero. Desde el punto de
      vista del CPU, esto es similar a una interrupción de hardware y
      debe ser tratada por el sistema operativo. Dependiendo de la
      causa de la excepción, el sistema operativo tomará acción para
@@ -269,7 +270,7 @@ fue cediendo terreno ante la aparición sobre principios de los setenta
 de las terminales de texto con pantalla de video y teclado.
 
 Conceptualmente una terminal de texto es un dispositivo mediante el cual
-la computadora envía y recibe un flujo de caracteres desde y hacia el usuario.
+la computadora recibe y envía un flujo de caracteres desde y hacia el usuario respectivamente.
 Las operaciones más complejas, como edición, borrado y movimiento,
 en general son tratadas con /secuencias de escape/, esto es, una serie
 de caracteres simples que tomados en conjunto representan una acción
@@ -322,12 +323,12 @@ RAM. En las secciones \ref{HW_interrupciones}
 memoria/), se explica cómo es que se efectúan dichas referencias.
 
 Los dispositivos de almacenamiento (discos, memorias flash, cintas)
-pueden ser vistos como una región donde la computadora leee y escribe
+pueden ser vistos como una región donde la computadora lee y escribe
 una serie de bytes que preservarán su valor incluso luego de apagada
 la computadora.
 
 A nivel de hardware el sistema operativo no accede al dispositivo de
-almacenamiento byte por byte, sino que estos se agrupan en /bloques/
+almacenamiento byte por byte, sino que éstos se agrupan en /bloques/
 de tamaño fijo.  El manejo de estos bloques (adminstración de bloques
 libres, lectura y escritura) es una tarea fundamental del sistema
 operativo, que asimismo se encarga de presentar abstracciones como la
@@ -350,7 +351,7 @@ en la ejecución de un proceso.
 
 Por otro lado si el sistema operativo utiliza una política de 
 planificación de procesos preventiva (capítulo \ref{PLAN}), 
-como la /Ronda/ (/Round Robin/), debe interrumpir al proceso
+como la /Ronda/ (/Round Robin/),  éste debe interrumpir al proceso
 en ejecución luego de cierta cantidad de unidades de tiempo. Esto
 se implementa haciendo que el temporizador de la computadora
 genere interrupciones periódicamente, lo cual luego invocará al planificador
@@ -499,13 +500,13 @@ De forma análoga a las interrupciones, se puede hablar
 de las llamadas al sistema. El sistema operativo protege a un proceso
 de otro, y previene que un proceso ejecutándose en espacio no
 privilegiado tenga acceso directo a los dispositivos. Cuando un
-proceso requiere de alguna acción privilegiada, acede a ellas levantando
+proceso requiere de alguna acción privilegiada, acede a ellas realizando 
 una /llamada al sistema/. Las llamadas al sistema pueden agruparse, a
 grandes rasgos, en:
 
 - Control de procesos :: Crear o finalizar un proceso, obtener
-     atributos del proceso, esperar cierto tiempo, asignar o liberar
-     memoria, etc.
+     atributos del proceso, esperar la finalización de un proceso o cierto tiempo, 
+	asignar o liberar memoria, etc.
 
 - Manipulación de archivos :: Crear, borrar o renombrar un archivo;
      abrir o cerrar un archivo existente; modificar sus /metadatos/;

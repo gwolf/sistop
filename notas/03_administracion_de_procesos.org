@@ -452,7 +452,7 @@ de las actualizaciones múltiples/.
   archivo. Aquí las operaciones ya no son necesariamente operaciones
   internas de la máquina.
 
-- ¿Pero no es muy poco probable ::
+- ¿Pero no es muy poco probable? ::
 
   Por otro lado, uno podría pensar (con cierta cuota de razón) que la
   secuencia de eventos propuesta es muy poco probable: usualmente un
@@ -853,8 +853,8 @@ Candados, semáforos y variables de condición.
 
 Una de las alternativas que suele ofrecer un lenguaje concurrente o
 sistema operativo para evitar la /espera activa/ a la que obliga el
-algoritmo de Peterson (o similiares) se llama /mutex/ o también
-/candado/ (lock).
+algoritmo de Peterson (o similiares) se llama /mutex/ o /candado/
+(lock).
 
 La palabra /mutex/ nace de la frecuencia con que se habla de las
 /regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
@@ -2706,7 +2706,7 @@ recuperación:
   del cómputo que han realizado hasta este momento se perderá.
 
 - /Retroceder/ a los procesos implicados hasta el último /punto de
-  control/ (/checkpoint/) seguro onocido. Esto es posible únicamente cuando
+  control/ (/checkpoint/) seguro conocido. Esto es posible únicamente cuando
   el sistema implementa esta funcionalidad, que tiene un elevado costo
   adicional. Cuando el estado de uno de los procesos depende de
   factores externos a éste, es imposible implementar fielmente los
@@ -2787,7 +2787,8 @@ empleada en todos los sistemas operativos de propósito general)
 es el llamado /algoritmo del avestruz/: ignorar
 las situaciones de bloqueo (escondiéndose de ellas como avestruz que
 esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
-suficientemente poco frecuente o si ocurre que su impacto no afecte al sistema.
+suficientemente poco frecuente, o si ocurre, que su impacto no afecte
+al sistema.
 
 *** Justificando a los avestruces
 

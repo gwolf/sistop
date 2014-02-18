@@ -225,7 +225,7 @@ relativa a su ejecución.
      el /Heap/.
 
      Cuando el programa es escrito en lenguajes que requieren /manejo
-     dinámica manual de la memoria/ (como C), esta área es la que se maneja a
+     dinámico manual de la memoria/ (como C), esta área es la que se maneja a
      través de las llamadas de la familia de =malloc= y =free=. En
      lenguajes con gestión automática, esta área es monitoreada por
      los /recolectores de basura/.
@@ -677,8 +677,8 @@ desperdicio injustificado de recursos.
 
 La fragmentación externa y, por tanto, la necesidad de compactación
 pueden evitarse por completo empleando la /paginación/. Ésta consiste
-en que cada proceso está dividio en varios bloques (más pequeños que los segmentos) 
-de tamaño fijo llamados /páginas/, dejando
+en que cada proceso está dividio en varios bloques
+de tamaño fijo (más pequeños que los segmentos) llamados /páginas/, dejando
 de requerir que la asignación sea de un área /contigua/ de
 memoria. Claro está, esto requiere de mayor espacialización por parte
 del hardware, y mayor información relacionada a cada uno de los
@@ -1119,7 +1119,8 @@ haciendo referencia a un /intercambiador/ (/swapper)/, sino al /paginador/.
 # <<MEM_pag_sobre_demanda>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
-Se debe considerar que existe una gran cantidad de /código durmiente o inalcanzable/: Código
+Se debe considerar que existe una gran cantidad de /código durmiente/
+o /inalcanzable/: Código
 que sólo se emplea eventualmente, como el que responde ante una
 situación de excepción o el que se emplea sólo ante circunstancias
 particulares (por ejemplo, la exportación de un documento a
@@ -1204,7 +1205,7 @@ Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
 de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
-prácticos podemos ignorar a $t_a$. Con los valores presentados, seleccionando
+prácticos se puede ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
 
@@ -1243,7 +1244,7 @@ se asigna en el espacio libre del sistema de archivos. Esto lleva a
 que, conforme crece la fragmentación del disco, la memoria virtual
 quede esparcida por todo el disco duro. La generalidad de sistemas tipo 
 Unix, en contraposición, reservan una partición de disco /exclusivamente/ 
-para intercambio.
+para paginación.
 
 ** Reemplazo de páginas
 
@@ -1499,7 +1500,7 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
 
 - Bit de referencia :: Esta es una aproximación bastante
      común. Consiste en que todas las entradas de la tabla de páginas
-     tengan un bit adicional, al que llamaremos /de referencia/ (bit de acceso). 
+     tengan un bit adicional, al que llamaremos /de referencia/ o /de acceso/.
      Al iniciar la ejecución, todos los bits de referencia están apagados
      (0). Cada vez que se referencia a un marco, su bit de referencia
      se enciende (esto en general lo realiza el hardware).
@@ -1947,7 +1948,7 @@ delimitado por dos valores, almacenados en registros:
 
 - Apuntador a la pila :: (/Stack pointer/, /SP/) Apunta al /final
      actual/ (dirección inferior) de la pila. En arquitecturas x86,
-     emplea el registro =ESP=;cuando se le pide al procesador que actúe sobre
+     emplea el registro =ESP=; cuando se pide al procesador que actúe sobre
      /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
      este registro
 - Apuntador del marco :: (/Frame pointer/, =FP=, o /Base local/, =LB=)

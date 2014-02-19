@@ -103,8 +103,8 @@ estarán disponibles con un archivo son:
 - Borrar :: Elimina al archivo del directorio y, de ser procedente,
             libera el espacio del dispositivo
 
-- Abrir :: Solicita al sistema operativo verificar si el archivo existe y
-	   se cuenta con el
+- Abrir :: Solicita al sistema operativo verificar si el archivo existe o
+	   puede ser creado (dependiendo del modo requerido) y se cuenta con el
            acceso para el /modo de acceso/ al archivo indicado y
            si el medio lo soporta (por ejemplo, a pesar de contar con
            todos los permisos necesarios, el sistema operativo no debe
@@ -237,7 +237,8 @@ Por otro lado, el proceso necesita:
      operativos, los descriptores 0, 1 y 2 están relacionados a
      /flujos de datos/: respectivamente, la entrada estándar
      (=STDIN=), la salida estándar (=STDOUT=) y el error estándar
-     (=STDERR=), esto es la terminal.]
+     (=STDERR=); si el usuario no lo indica de otro modo, la terminal
+     desde donde fue ejecutado el proceso.]
 
 - Permisos :: Los modos válidos de acceso para un archivo. Esto no
               necesariamente es igual a los permisos que tiene el
@@ -306,8 +307,8 @@ programa/ (bloqueo mandatorio compartido), mientras que en Unix esta
 responsabilidad recae en cada uno de los programas de aplicación]
 
 Cabe mencionar que el manejo de bloqueos con archivos requiere del
-mismo cuidado que el de bloqueo por recursos que el que cubierto en
-la sección \ref{PROC_bloq_mutuos}: Dos procesos intentando adquirir un
+mismo cuidado que el de bloqueo por recursos cubierto en la
+sección \ref{PROC_bloq_mutuos}: Dos procesos intentando adquirir un
 candado exclusivo sobre dos archivos pueden caer en un bloqueo mutuo
 tal como ocurre con cualquier otro recurso.
 
@@ -615,7 +616,7 @@ ver también cómo organizar una gran cantidad de archivos.
 
 ** Evolución del concepto de /directorio/
 
-El concepto dominante en almacenaimiento hoy en día es el /directorios
+El concepto dominante en almacenaimiento hoy en día es el de /directorios
 jerárquicos/. Esto no siempre fue así; conviene revisar brevemente su
 historia para explicar el por qué de ciertos detalles de
 implementación del esquema actualmente dominante.

@@ -262,8 +262,14 @@ abordará un ejemplo de cómo esto puede tener importantes consecuencias.].
 Ahora bien, en los sistemas actuales, los procesos requieren coexistir
 con otros, para lo cual las direcciones indicadas en el /texto/ del
 programa pueden requerir ser traducidas al lugar /relativo al sitio de
-inicio del proceso en memoria/ — Esto es, las direcciones son /resueltas/ o traducidas.
-Existen diferentes estrategias de resolución, que se pueden clasificar en:
+inicio del proceso en memoria/ — Esto es, las direcciones son
+/resueltas/ o traducidas.  Existen diferentes estrategias de
+resolución, que se pueden clasificar a grandes rasgos[fn:: Esta
+explicación simplifica muchos detalles; para el lector interesado en
+profundizar en este tema, se recomienda el libro /Linkers and Loaders/
+(Ligadores y cargadores) de John R. Levine (1999). El libro está
+disponible en línea desde el sitio Web del autor,
+http://www.iecc.com/linker/ ] en:
 
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de las variables y funciones. Esto era muy común en las
@@ -2282,17 +2288,17 @@ no fuera del alcance de los atacantes.
 
 ** Ligado estático y dinámico de bibliotecas
 
-Las /bibliotecas de código/ - O simplemente /bibliotecas/  implementan el
+Las /bibliotecas de código/ (o simplemente /bibliotecas/) implementan el
 código de una serie de funcionalidades generales, que
 pueden ser usadas en diferentes programas y contextos. Un ejemplo clásico sería la
 biblioteca estándar de C, la cual ofrece funciones básicas
 de entrada / salida, manejo de cadenas, entre otras.
 
 A medida que el software crece en complejidad, los programadores hacen uso
-del concepto de /reutilización de código/ para aprovechar la implementación de
-alguna funcionalidad, que se encuentre disponible como biblioteca. 
+de la /reutilización de código/ para aprovechar la implementación de
+la funcionalidad que ofrezcan las distintas bibliotecas. 
 De esta forma, evitan "reinventar la rueda", y se concentran en
-las funcionalidades específicas del software que están construyendo.
+la funcionalidad específica del software que están construyendo.
 
 El concepto de /ligado/ se refiere al proceso mediante el cual, se toma el 
 /codigo objeto/ de un programa junto con el código de las bibliotecas que éste usa
@@ -2313,32 +2319,102 @@ dentro del programa que usa la biblioteca denominado /stub/,el cual en tiempo de
 ejecución solicita que se  cargue la biblioteca requerida. Otra estrategia que 
 se puede utilizar consiste en  incluir algunas indicaciones que le permiten 
 al sistema operativo, en el momento  de crear el proceso, ubicar las 
-bibliotecas que este requiere para su ejecución. En cualquier caso, el ligado 
+bibliotecas que este requerirá para su ejecución. En cualquier caso, el ligado 
 dinámico busca que las bibliotecas sólo sean cargadas cuando sean requeridas.
+
+La figura \ref{MEM_tipo_resol_direcc} ilustra el momento en que ocurre
+cada uno de estos ligados: El ligado estático es realizado por el
+/editor de ligado/, uniendo en un sólo /módulo cargable/ al programa
+compilado (/módulo objeto/) con las bibliotecas (/otros objetos/); el
+ligado dinámico es realizado parcialmente en tiempo de carga (para las
+/bibliotecas del sistema/) y parcialmente en tiempo de ejecución (para
+las /bibliotecas de carga dinámica/).[fn:: Refiérase al libro /Linkers
+and Loaders/ (ligadores y cargadores) de John R. Levine (1999) para
+mayores detalles respecto a este proceso.]
+
+*** Las bibliotecas y la seguridad
 
 El ligado dinámico puede traer consigo una serie de problemas, entre los cuales
 se destacan el manejo de versiones de las bibliotecas y potenciales vulnerabilidades. 
-El primer problema se puede observar en ambientes Windows como el /infierno de las DLL/. Este
+El primer problema es conocido, en ambientes Windows, como el /infierno de las DLL/. Este
 /infierno/ se puede causar de muchas formas. Por ejemplo, si al al instalar un nuevo programa,
 se instala también una versión incompatible de una biblioteca que es usada por otros programas.
-Esto causa que los demás programas no se puedan ejecutar. De otro lado, si no se 
-tienen los controles suficientes, al desinstalar un programas se puede borrar accidentalmente
-una biblioteca compartida, lo cual también causaría que otros programas dejen de funcionar.
+Esto causa que los demás programas no se puedan ejecutar — Y lo que es
+más, hace que la depuración del fallo sea muy difícil. Por otro lado, si no se 
+tienen los controles suficientes, al desinstalar un programa se puede borrar 
+una biblioteca compartida, lo cual puede llevar a que otros programas dejen de funcionar.
 
-El /infiero de las DLL/ puede ser prevenido mediante estrategias como el versionamiento de las
-biblioteca de ligado dinámico, y mediante el uso de scripts de instalación que verifican si existe
-en el sistema una versión compatible de la biblioteca. En caso contrario, se instalará la biblioteca
-requerida.
+El /infiero de las DLL/ puede ser prevenido mediante estrategias como
+el /versionamiento/ de las biblioteca de ligado dinámico (esto es,
+hacer que cada componente de las bibliotecas lleve la versión que
+implementa o /nivel de compatibilidad/ que implementa),[fn:: Este
+nivel de compatibilidad incluye no sólo a la /interfaz de aplicación
+al programador/ (API, definida en las secciones \ref{HW_SYSCALLS} y
+\ref{HW_syscall_arch_api}), sino también la /interfaz de aplicación
+binaria/ (ABI), esto es, no sólo la información de el nombre de las
+funciones que expone y los tipos de argumentos que reciben, sino
+también la ubicación en memoria de su definición en un archivo ya
+compilado.] y mediante el uso de scripts de instalación o /gestores de
+dependencias/ que verifican si existe en el sistema una versión
+compatible de la biblioteca. Teniendo esta información, la biblioteca
+en cuestión se instalará únicamente en caso necesario.
 
-La vulnerabilidad en el ligado dinámico se presenta debido a que el programa usa un
-código proporcionado por terceros, y /confía/ que la biblioteca funciona tal como se espera sin
-incluir código malicioso. Por tal razón, desde el punto de vista teórico bastaría que un atacante 
-instale su propia versión de una biblioteca para que pueda tener el control de los programas
-que la usan e incluso del mismo sistema operativo [fn:: Esto se puede lograr, por ejemplo, 
-alterando la configuración del entorno en la cual el sistema busca las bibliotecas.].
+El ligado dinámico puede presentar problemas o vulerabilidades debido
+a que el programa usa un código proporcionado por terceros, y /confía/
+que la biblioteca funciona tal como se espera sin incluir código
+malicioso. Por tal razón, desde el punto de vista teórico bastaría que
+un atacante instale su propia versión de una biblioteca para que pueda
+tener el control de los programas que la usan e incluso del mismo
+sistema operativo.[fn:: Esto se puede lograr, por ejemplo, alterando
+la configuración del entorno en la cual el sistema busca las
+bibliotecas.] En el caso de bilbiotecas ligadas /estáticamente/, dado
+que estas forman ya parte del programa, un atacante tendría que
+modificar al archivo objeto mismo del programa para alterar las
+bibliotecas.
 
-#* Consideraciones de rendimiento
-#+begin_src c
+Así las cosas, más allá de la economía de espacio en memoria, ¿cómo se
+explica que sea tanto más popular el ligado dinámico en los sistemas
+operativos modernos?
+
+Parte muy importante de la respuesta es la /mantenibilidad/: Si es
+encontrado un fallo en una biblioteca de carga dinámica, basta con que
+los desarrolladores lo corrijan una vez (cuidando, claro, de mantener
+la compatibildad binaria) y reemplazar a dicha biblioteca en disco
+/una sola vez/. Todos los programas que liguen dinámicamente con esta
+biblioteca tendrán disponible de inmediato la versión actualizada. En
+mucho sistemas operativos, el /gestor de paquetes/ puede detectar
+cuáles de los procesos en ejecución emplean a determinada biblioteca
+dinámica, y reiniciarlos de forma transparente al administrador.
+
+En contraste, de estar el fallo en una biblioteca de ligado estático,
+el código afectado estaría incluído como parte de /cada uno de los
+programas/ ligados con ella. Como consecuencia, para corregir este
+defecto, cada uno de los programas afectados tendría que ser
+recompilado (o, por lo menos, /religado/) antes de poderse beneficiar
+de las correcciones.
+
+Y si bien este proceso resulta manual y tedioso para un administrador
+de sistemas con acceso a las fuentes de los programas que tiene
+instalados, resulta mucho más oneroso aún para quienes emplean
+software /propietario/ (En la sección \ref{SL_propietario} se aborda
+con mayor detenimiento lo que significa el software propietario en
+contraposición al software libre).
+
+Cabe mencionar que el comportamiento del sistema ante la actualización
+de una biblioteca descrita ilustra una de las diferencias semánticas
+entre sistemas Windows y sistemas Unix que serán abordadas en el
+capítulo \ref{DIR}: Mientras un sistema Unix permite la eliminación de
+un archivo /que está siendo utilizado/, Windows no la permite. Esto
+explica por qué las actualizaciones de bibliotecas en sistemas Windows
+se aplican /durante el proceso de apagado/: Mientras haya procesos que
+tienen abierta una biblioteca, ésta no puede ser reemplazada. Caso
+contrario en sistemas Unix, en que el archivo puede ser reemplazado,
+pero mientras no sean reiniciados los procesos en cuestión, éstos
+seguirán ejecutando la versión de la biblioteca con el error.
+
+
+# * Consideraciones de rendimiento
+# #+begin_src c
 #  int datos[8000][8000];
 #  
 #  /* Versión correcta: El ciclo externo va sobre el */
@@ -2361,7 +2437,7 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
 #      datos[j][i] += 1;
 #    }
 #   }
-#+end_src
+# #+end_src
 
 * Otros recursos
 
@@ -2405,6 +2481,10 @@ alterando la configuración del entorno en la cual el sistema busca las bibliote
   memoria
 - [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
   explícitas/completas que las de Linux
+
+- [[http://www.iecc.com/linker/][Linkers and Loaders]] (John R. Levine, 1999), libro dedicado a la
+  tarea de los editores de ligado y el proceso de carga de los
+  programas.
 
 - [[http://dl.acm.org/citation.cfm?doid=363011.363155][An anomaly in space-time characteristics of certain programs running
   in a paging machine]] (Belady, Nelson, Shedler 1969; Communications of

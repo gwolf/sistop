@@ -6,12 +6,12 @@
 		  style=filled;
                   compilador;
                   objmod;
+                  ligado;
           }
           subgraph cluster1 {
                   label="Tiempo de carga";
                   color=lightgray;
 		  style=filled;
-                  ligado;
 		  modulo;
 		  cargador;
           }
@@ -37,7 +37,7 @@
           bibliosist [label="Biblioteca\nde sistema"]
           cargador [label="Cargador",
                     shape = box];
-          dll [label="Biblioteca\nde sistema\nde carga\ndinámica"];
+          dll [label="Biblioteca\nde carga\ndinámica"];
           imagenram [label="Imagen del\nbinario en\nmemoria",
                      shape = box];
   }

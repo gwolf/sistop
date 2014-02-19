@@ -1,0 +1,20 @@
+digraph G {
+	rankdir=LR;
+	subgraph cluster_trab {
+		bgcolor="#AAAAAA";
+		label="Tareas pendientes"
+		T1 -> T2 -> T3 -> T4 -> Tn;
+	}
+	subgraph cluster_cpu {
+		label="Procesos activos";
+		P1 -> P2 -> P3 -> P4 -> Pn;
+	}
+	{rank=same T1 P1}
+	T1 [shape=box, style="filled", fillcolor="white"];
+	T2 [shape=box, style="filled", fillcolor="white"];
+	T3 [shape=box, style="filled", fillcolor="white"];
+	T4 [shape=box, label="...", color="#AAAAAA", style="filled", fillcolor="white"];
+	Tn [shape=box, style="filled", fillcolor="white"];
+	P4 [label="...", color=white];
+	T3 -> P1 [style=dashed];
+}

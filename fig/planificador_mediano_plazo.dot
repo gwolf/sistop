@@ -1,0 +1,20 @@
+digraph G {
+	rankdir=LR;
+	inicio [shape=point];
+	fin [shape=point];
+	cola_listos [shape=box, style=filled, color=black, fontcolor=white, label="Cola de procesos listos"];
+	proc_swap [shape=box, style=filled, color="#888888", fontcolor=white, label="Procesos en intercambio (swap)"];
+	cola_es [shape=box, style=filled, color="#444444", fontcolor=white, label="Cola de entrada/salida"];
+	cpu [shape=circle, label="CPU"];
+	es [shape=parallelogram, label="E/S"];
+	inicio -> cola_listos [label="Inicio", style=dashed];
+	cola_listos -> cpu;
+	cpu -> fin [label="Fin", style=dashed];
+	cpu -> proc_swap [label="Envío a intercambio"];
+	proc_swap -> cola_listos [label="Regreso de intercambio"];
+	cpu -> cola_es [label="Solicitud de E/S"];
+	cola_es -> es;
+	es -> cola_listos [label="E/S completada"];
+	{rank=same proc_swap cpu cola_es};
+	{rank=same cola_listos es};
+}

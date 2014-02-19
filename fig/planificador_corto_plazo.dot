@@ -1,0 +1,20 @@
+digraph G {
+	subgraph cluster_listos {
+		{rank=same P1 P2 P3 P4 P5};
+		label="Cola de procesos listos";
+		bgcolor="#AAAAAA";
+	}
+	P1 [shape=box, style=filled, color="white", fontcolor="black"];
+	P2 [shape=box, style=filled, color="white", fontcolor="black"];
+	P3 [shape=box, style=filled, color="white", fontcolor="black"];
+	P4 [shape=box, style=filled, color="white", fontcolor="black"];
+	P5 [shape=box, style=filled, color="white", fontcolor="black"];
+	planif [shape=parallelogram, label="Despachador"];
+	CPU [shape=circle];
+	P1 -> planif;
+	P2 -> planif;
+	P3 -> planif;
+	P4 -> planif;
+	P5 -> planif;
+	planif -> CPU;
+}

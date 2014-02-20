@@ -5,7 +5,7 @@
 # <<PLAN>>
 
 La /planificación de procesos/ se refiere a cómo determina el sistema
-operativo al órden en que irá cediendo el uso del procesador a los
+operativo al orden en que irá cediendo el uso del procesador a los
 procesos que lo vayan solicitando, y a las políticas que empleará
 para que el uso que den a dicho tiempo no sea excesivo respecto al
 uso esperado del sistema.
@@ -126,7 +126,7 @@ en:
      procesador, o tienden a estar bloqueados esperando a eventos
      (como los procesos interactivos).
 
-Típicamente se busca dar un tratamiento /preferente/ a los procesos
+Por lo general se busca dar un tratamiento /preferente/ a los procesos
 cortos, en particular a los interactivos. Cuando un usuario está
 interactuando con un proceso, si no tiene una respuesta /inmediata/ a
 su interacción con el equipo (sea proporcionar comandos, recibir la
@@ -146,22 +146,29 @@ demora de un segundo, el usuario sentirá menos falta de control si en
 promedio tardan medio segundo, pero ocasionalmente hay picos de cinco.
 
 Para este tema, en vez de emplear unidades temporales formales
-(p. ej. fracciones de segundo), es común emplear /quantums/ y
-/ticks/. Esto es en buena medida porque, si bien en el campo del
+(p. ej. fracciones de segundo), es común emplear /ticks/ y
+/quantums/. Esto es en buena medida porque, si bien en el campo del
 cómputo las velocidades de acceso y uso efectivo cambian
 constantemente, los conceptos y las definiciones permanecen. Además,
 al ser ambos parámetros ajustables, una misma implementación puede
 sobrevivir ajustándose a la evolución del hardware.
 
-- /Tick/ :: Una fracción de segundo durante la cual se puede realizar
-            trabajo útil. Es una medida caprichosa y arbitraria; en
-            Linux (a partir de la versión 2.6.8), un /tick/ dura un
+- /Tick/ :: Una fracción de tiempo durante la cual se puede realizar
+            trabajo útil - Esto es, usar la CPU sin interrupción[fn:: Ignorando
+	    las interrupciones causadas por los dispositivos de 
+            entrada y salida y otras señales que llegan a la CPU]. El tiempo
+	    correspondiente a un tick está determinado por una señal (interrupción)
+	    periódica, emitida por el /temporizador/ (timer). La frecuencia con 
+	    que ocurre esta señal se establece al inicio del sistema. Por ejemplo,
+	    una frecuencia de /temporizador/ de 100 Hertz implica que éste
+	    emitirá una señal cada 10 milisegundos.
+            En Linux (a partir de la versión 2.6.8), un /tick/ dura un
             milisegundo, en Windows, entre 10 y 15 milisegundos.
 - /Quantum/ :: El tiempo mínimo que se permitirá a un proceso el uso
                del procesador. En Windows, dependiendo de la clase de
                proceso que se trate, un /quantum/ durará entre 2 y 12
                ticks (esto es, entre 20 y 180 ms), y en Linux, entre
-               10 y 200 ticks (o milisegundos).
+               10 y 200 ticks (10 y 200 milisegundos respectivamente).
 
 ¿Qué mecanismos o métricas se  emplean para medir el
 comportamiento del sistema bajo determinado planificador? Partiendo de
@@ -307,7 +314,7 @@ operating systems vade mecum/ (Raphael Finkel, 1988).
 
 ** Objetivos de la planificación
 
-Los algoritmos que seránn presentados a continuación son respuestas
+Los algoritmos que serán presentados a continuación son respuestas
 que intentan, de diferentes maneras y desde distintos supuestos base,
 darse a los siguientes objetivos principales (tomando en cuenta que
 algunos de estos objetivos pueden ser mutuamente contradictorios):
@@ -367,7 +374,7 @@ algunos de estos objetivos pueden ser mutuamente contradictorios):
 El esquema más simple de planificación es el /Primero llegado, primero
 servido/ (/First come, first serve/, /FCFS/). Este es un mecanismo
 cooperativo, con la mínima lógica posible: Cada proceso se ejecuta en
-el órden en que fue llegando, y hasta que /suelta el control/. El
+el orden en que fue llegando, y hasta que /suelta el control/. El
 despachador es muy simple, básicamente una cola FIFO.
 
 Para comparar los distintos algoritmos de planificación que serán
@@ -1010,7 +1017,7 @@ preventivos como la /ronda/ puede evitarse empleando /quantums/
 mayores. Pero abordando la contraparte, ¿qué tan corto tiene sentido que sea un
 /quantum/? Con el hardware y las estructuras requeridas por los
 sistemas operativos de uso general disponibles hoy en día, un cambio
-de contexto requiere del órden de 10 microsegundos (Silberschatz,
+de contexto requiere del orden de 10 microsegundos (Silberschatz,
 p.187), por lo que incluso con el /quantum/ de 10ms (el más corto que
 manejan tanto Linux como Windows), representa apenas la milésima parte
 del tiempo efectivo de proceso.

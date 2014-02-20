@@ -264,9 +264,9 @@ un /equipo de trabajo/):
 ** Introducción
 
 Desde un punto de vista formal, la /concurrencia/ no se refiere a dos
-o más eventos que ocurren a la vez sino a dos o más eventos cuyo órden
+o más eventos que ocurren a la vez sino a dos o más eventos cuyo orden
 es /no determinista/, esto es, eventos acerca de los cuales /no se
-puede predecir el órden relativo en que ocurrirán/. Si bien dos
+puede predecir el orden relativo en que ocurrirán/. Si bien dos
 procesos (o también dos hilos) completamente independientes entre sí
 ejecutándose simultáneamente son dos procesos concurrentes, la
 concurrencia se ocupa principalmente de procesos cuya ejecución está
@@ -1246,7 +1246,7 @@ cuales se mencionarán los siguientes:
 	  Sobre este patrón base se pueden refinar muchos
           comportamientos. Por ejemplo, asegurar que sólo una pareja
           esté bailando al mismo tiempo, o asegurar que los hilos en
-          espera vayan bailando en el órden en que llegaron.
+          espera vayan bailando en el orden en que llegaron.
 
 *** Variables de condición
 
@@ -1824,7 +1824,7 @@ mayor complejidad. El elemento clave de su lógica es que, si bien el
 =agente()= (el sistema operativo) seguirá enviando una señal por
 cada ingrediente disponible, los tres intermediarios se sincronizarán
 empleando al arreglo =que_tengo= (protegido por =interm_mutex=), y de
-este modo cada hilo (independientemente del órden en que fue invocado)
+este modo cada hilo (independientemente del orden en que fue invocado)
 señalizará a los otros intermediarios qué ingredientes hay en la mesa,
 y una vez que sepa a qué fumador notificar, dejará el estado listo
 para recibir una nueva notificación.
@@ -2360,7 +2360,7 @@ recursos más altos, por lo que conduce a una alta inanición.
 Para la evasión de bloqueos, el sistema partiría de poseer, además de
 la información descrita en el caso anterior, información acerca de
 /cuándo/ requiere un proceso utilizar cada recurso. De este modo, el
-planificador puede marcar qué órden de ejecución (esto es, qué
+planificador puede marcar qué orden de ejecución (esto es, qué
 /flujos/) entre dos o más procesos son /seguros/ y cuáles son
 /inseguros/
 
@@ -2527,7 +2527,7 @@ estado /es seguro/ cuando hay una secuencia de procesos (denominada
 
 En el peor de los casos, esta secuencia segura llevaría a bloquear
 todas las solicitudes excepto las del único proceso que puede avanzar
-sin peligro en el órden presentado.
+sin peligro en el orden presentado.
 
 Se presnta un ejemplo simplificando, asumiendo sólo una clase de
 procesos, e iniciando con 2 instancias libres:
@@ -2591,7 +2591,7 @@ El algoritmo del banquero es un algoritmo conservador, dado que evita
 entrar en un estado inseguro a pesar de que dicho estado no lleve con
 certeza a un bloqueo mutuo. Sin embargo, su política es la más liberal
 que permite asegurar que no se caerá en bloqueos mutuos, sin conocer el
-/órden y tiempo/ en que cada uno de los procesos requeriría los
+/orden y tiempo/ en que cada uno de los procesos requeriría los
 recursos.
 
 Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
@@ -2714,7 +2714,7 @@ recuperación:
 
   Podría parecer que retroceder a un punto previo llevaría
   indefectiblemente a que se repita la situación — pero los bloqueos
-  mutuos requieren de un órden de ejecución específico para
+  mutuos requieren de un orden de ejecución específico para
   aparecer. Muy probablemente, una ejecución posterior logrará
   salvar el bloqueo — y en caso contrario, puede repetirse este paso.
 

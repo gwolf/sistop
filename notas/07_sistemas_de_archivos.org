@@ -89,7 +89,7 @@ conceptos para almacenar, ubicar o recuperar la información:
      /metadatos/ adicionales están en los respectivos /i-nodos/.
 
 - Metadatos :: Recibe este nombre toda la información /acerca de/ un
-               archivo que /no es/ el archivo mismo. Por ejemplo, el
+               archivo que /no es/ el contenido del archivo mismo. Por ejemplo, el
                nombre, tamaño o tipo del archivo, su propietario, el
                control de acceso, sus fechas de creación, último
                acceso y modificación, ubicación en disco, etc.
@@ -403,7 +403,7 @@ Queda claro que FAT es un sistema heredado, y que exhibe muchas
 prácticas que ya se han abandonado en diseños modernos de sistemas de
 archivos. Se vio que dentro de la entrada de directorio de cada archivo
 está prácticamente su /i-nodo/ completo: La información de permisos,
-atributos, fechas de creaación — Y muy particularmente, el apuntador
+atributos, fechas de creación — Y muy particularmente, el apuntador
 al /cluster/ de inicio (bytes 26-28, mas los 20-22 para FAT32). Esto
 resulta en una de las grandes debilidades de FAT: La tendencia a la
 fragmentación.
@@ -835,7 +835,8 @@ i-nodo o compartiendo un mismo cluster con un /desplazamiento/ dentro
 de éste. Esta práctica no ha sido adoptada por sistemas de archivos de
 uso mayoritario por su complejidad relativa.] para archivos más
 grandes, la sobrecarga relativa disminuye, pero se mantiene siempre
-superior a la de la asignación indexada.
+superior a la de la asignación ligada.
+#Aca creo que está mal "asignación indexada"
 
 #+attr_latex: width=0.9\textwidth
 #+label: FS_fs_asignacion_indexada
@@ -966,7 +967,7 @@ padre, el doceavo byte de la entrada (que indica los /atributos del
 archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
 \ref{FS_atributos_fat}) tiene activado el bit 4.
 
-Un directorio es almacenado en disto /exactamente/ como cualquier otro
+Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del
 /cluster/ es pequeño (2KB), podrá almacenar sólo 64 entradas ($2048
 \over 32$) y cada
@@ -990,7 +991,7 @@ desde varios directorios, pueden ubicarse sólo cerca de uno de
 ellos]. Esto tiene por consecuencia que los archivos que presentan
 /cercanía temática/ (que pertenecen al mismo usuario o proyecto, o que
 por alguna razón están en la misma parte de la jerarquía del sistema)
-quedan ubicados en discos cerca unos de otros (y cerca de sus
+quedan ubicados en disco cerca unos de otros (y cerca de sus
 directorios). Y dado que
 es probable que sean empleados aproximadamente al mismo tiempo, esto
 reduce las distancias que recorrerán las cabezas. Además, al esparcir

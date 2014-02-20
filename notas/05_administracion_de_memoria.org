@@ -2294,9 +2294,9 @@ pueden ser usadas en diferentes programas y contextos. Un ejemplo clásico serí
 biblioteca estándar de C, la cual ofrece funciones básicas
 de entrada / salida, manejo de cadenas, entre otras.
 
-A medida que el software crece en complejidad, los programadores hacen uso
-de la /reutilización de código/ para aprovechar la implementación de
-la funcionalidad que ofrezcan las distintas bibliotecas. 
+A medida que el software crece en complejidad, los programadores recurren
+a la /reutilización de código/ para aprovechar la implementación de
+la funcionalidad que ofrecen las distintas bibliotecas. 
 De esta forma, evitan "reinventar la rueda", y se concentran en
 la funcionalidad específica del software que están construyendo.
 
@@ -2305,17 +2305,17 @@ El concepto de /ligado/ se refiere al proceso mediante el cual, se toma el
 para crear un archivo ejecutable. De forma general existen dos tipos de ligado, que
 se explican a continuación.
 
-El ligado estático consiste en tomar el código de una biblioteca e integrarlo al
+El /ligado estático/ consiste en tomar el código de una biblioteca e integrarlo al
 código del programa para generar el archivo ejecutable. Esto implica que
 /cada programa/ tiene su propia copia del código de la biblioteca, lo cual puede
 causar un desperdicio de memoria y disco si existen muchos programas que usan 
 la misma versión.
 
-Por su parte, en el ligado dinámico el código de las bibliotecas no se copia dentro
+Por su parte, en el /ligado dinámico/ el código de las bibliotecas no se copia dentro
 de la imagen ejecutable del programa, pero requiere establecer algún mecanismo
 para informar que el programa necesita un código externo. Esto se puede implementar 
-de diferentes formas. Por ejemplo,se puede incluir un fragmento de código 
-dentro del programa que usa la biblioteca denominado /stub/,el cual en tiempo de 
+de diferentes formas. Por ejemplo, se puede incluir un fragmento de código 
+dentro del programa que usa la biblioteca denominado /stub/, el cual en tiempo de 
 ejecución solicita que se  cargue la biblioteca requerida. Otra estrategia que 
 se puede utilizar consiste en  incluir algunas indicaciones que le permiten 
 al sistema operativo, en el momento  de crear el proceso, ubicar las 
@@ -2362,13 +2362,13 @@ en cuestión se instalará únicamente en caso necesario.
 
 El ligado dinámico puede presentar problemas o vulerabilidades debido
 a que el programa usa un código proporcionado por terceros, y /confía/
-que la biblioteca funciona tal como se espera sin incluir código
+en que la biblioteca funciona tal como se espera sin incluir código
 malicioso. Por tal razón, desde el punto de vista teórico bastaría que
 un atacante instale su propia versión de una biblioteca para que pueda
 tener el control de los programas que la usan e incluso del mismo
 sistema operativo.[fn:: Esto se puede lograr, por ejemplo, alterando
 la configuración del entorno en la cual el sistema busca las
-bibliotecas.] En el caso de bilbiotecas ligadas /estáticamente/, dado
+bibliotecas.] En el caso de bibliotecas ligadas /estáticamente/, dado
 que estas forman ya parte del programa, un atacante tendría que
 modificar al archivo objeto mismo del programa para alterar las
 bibliotecas.

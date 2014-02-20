@@ -19,8 +19,8 @@ con diferentes usos y propósitos, algunos de los cuales se usan de forma
 transparente para el usuario promedio.
 
 Del mismo modo, aunque se abordarán diversas tecnologías que pueden
-clasificarse como virtualización, la línea divisoria entre ellos no
-siempre es tan clara. Una implementación específica puede caer en más
+clasificarse como virtualización, la línea divisoria entre cada una de ellas no
+siempre es clara. Una implementación específica puede caer en más
 de una categoría, o puede ir migrando naturalmente de un tipo hacia
 otro.
 
@@ -29,10 +29,10 @@ aunque parece estarlo. Más específicamente, presentar a un sistema elementos
 que se comporten de la misma forma que un componente físico (hardware), sin que 
 exista en realidad — Un acto de ilusionismo o de magia, en cual se busca
 presentar el elemento de forma tan convincente que la ilusión se mantenga tanto
-como sea posible [fn:: Una aproximación inicial a este concepto puede ser
-una imagen de disco en formato ISO: mediante determinados mecanismos, es posible
+como sea posible.[fn:: Una aproximación inicial a este concepto puede ser
+un archivo con la imagen de un disco en formato ISO: mediante determinados mecanismos, es posible
 "engañar" a un sistema operativo de forma que "piense" que al acceder al archivo ISO
-está efectivamente leyendo un CD o DVD de una unidad que no existe físicamente].
+está efectivamente leyendo un CD o DVD de una unidad que no existe físicamente.]
 
 La naturaleza de dichos elementos, y el cómo se implementan, dependen del
 tipo de virtualización.
@@ -51,11 +51,11 @@ La técnica de virtualización más sencilla, y que hace más tiempo
 existe en las computadoras personales, es la emulación. Emular
 consiste en implementar /en software/ algo que se presente como el
 hardware de un sistema de cómputo completo, típicamente de una arquitectura hardware
-distinta a la del anfitrión (la arquitectura /nativa/) [fn:: A lo largo de esta discusión, se hará
+distinta a la del anfitrión (la arquitectura /nativa/).[fn:: A lo largo de esta discusión, se hará
 referencia a la /arquitectura hardware/ como al juego de
 instrucciones que puede ejecutar /nativamente/ un procesador. Por
 ejemplo, un procesador x86 moderno puede ejecutar nativamente código
-i386 y x86_64, pero no ARM]. El emulador puede ser visto (de una forma
+i386 y x86_64, pero no ARM.] El emulador puede ser visto (de una forma
 tremendamente simplificada) como una lista de equivalencias, de cada
 una de las instrucciones en la arquitectura /huésped/ a la
 arquitectura del sistema /anfitrión/.
@@ -83,22 +83,22 @@ Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
 aparecieron emuladores que permitían ejecutar programas de una línea
 en la otra, prácticamente a la misma velocidad que en el sistema nativo.
 
-Hoy en día, la emulación se emplea para hacer /desarrollos
-cruzados/, más que para emplear software /ya escrito y
-compilado/.  La mayor parte de la emulación tradicional hoy se emplea
-para el /desarrollo de software/. Hoy en día, la mayor parte de las
-computadoras vendidas son sistemas /embebidos/[fn:: Computadoras
-pequeñas, limitadas en recursos, y típicamente carentes de una
-interfaz usuario — Desde puntos de acceso y ruteadores hasta los
-controladores de cámaras, equipos de sonido, automóviles, y un
-larguísimo etcétera] o dispositivos móviles, que hacen imposible (o,
-por lo menos, muy difícil) desarrollar software directamente en
-ellos. Los programadores desarrollan en equipos de escritorio, corren
-entornos de prueba en emuladores del equipo destino. Incluso es necesaria la
-emulación plena de la arquitectura hardware, dada la asimetría entre
-los equipos de escritorio y los embebidos, es común que la velocidad
-del emulador sea muy similar –incluso superior– a la del hardware
-emulado.
+Hoy en día, la emulación se emplea para hacer /desarrollos cruzados/,
+más que para emplear software /ya escrito y compilado/.  La mayor
+parte de la emulación tradicional hoy se emplea para el /desarrollo de
+software/. Hoy en día, la mayor parte de las computadoras vendidas son
+sistemas /embebidos/[fn:: Computadoras pequeñas, limitadas en
+recursos, y típicamente carentes de una interfaz usuario — Desde
+puntos de acceso y ruteadores hasta los controladores de cámaras,
+equipos de sonido, automóviles, y un larguísimo etcétera] o
+dispositivos móviles, que hacen imposible (o, por lo menos, muy
+difícil) desarrollar software directamente en ellos. Los programadores
+desarrollan en equipos de escritorio, corren entornos de prueba en
+emuladores del equipo destino. A pesar del costo computacional de
+realizar la emulación, la diferencia de velocidad entre los equipo de
+escritorio de gama alta y los embebidos permiten que frecuentemente la
+velocidad del emulador sea muy similar –incluso superior– a la del
+hardware emulado.
 
 ** Emulando arquitecturas inexistentes
 
@@ -126,7 +126,7 @@ microcomputadoras más populares — El MOS 6502, el Zilog Z80 y el Intel
 
 Hay una diferencia muy importante entre la emulación de una
 arquitectura real y la de una arquitectura inexistente: Emular una
-computadora entera requiere que implementar no sólo las
+computadora entera requiere implementar no sólo las
 instrucciones de su procesador, sino que /todos los chips de apoyo/,
 ¡incluso hay que convertir la entrada del teclado en las
 interrupciones que generaría un controlador de teclado! Emular una
@@ -139,7 +139,7 @@ caracteres, estas sí existen como /ciudadanos de primera clase/ en
 casi todas las arquitecturas meramente virtuales.
 
 Esta idea ha sido ampliamente adoptada y forma parte de
-nuestra vida diaria. En la década de los 1990, /Sun Microsystems/
+la vida diaria. En la década de los 1990, /Sun Microsystems/
 desarrolló e impulsó la arquitectura /Java/, actualizando la idea de
 las /máquinas-p/ a los paradigmas de desarrollo que aparecieron a lo
 largo de veinte años, y dado que el cómputo había dejado de ser un campo

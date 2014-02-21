@@ -359,7 +359,7 @@ esta posición privilegiada, manejando a todos los directorios que
 derivaran de éste como si fueran archivos, repartidos por el disco.
 
 #+caption: Significado de cada uno de los bits del byte de /atributos del archivo/ en el directorio FAT. La semántica que se presenta es la empleada por los sistemas MS-DOS y Windows; otros sistemas pueden presentar comportamientos adicionales.
-#+label: FS_artributos_fat
+#+label: FS_atributos_fat
 | Bit | Nombre        | Descripción                                  |
 |-----+---------------+----------------------------------------------|
 |   0 | Sólo lectura  | El sistema no permitirá que sea modificado.  |
@@ -393,7 +393,7 @@ pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
 archivo — Si el doceavo byte de una entrada de directorio, que indica
 los /atributos del archivo/ (ver figura
-\ref{FS_entrada_directorio_fat} y cuadro \ref{FS_artributos_fat}) tiene
+\ref{FS_entrada_directorio_fat} y cuadro \ref{FS_atributos_fat}) tiene
 al bit 4 activado, la región de datos correspondientes a dicho archivo
 será interpretada como un subdirectorio.
 

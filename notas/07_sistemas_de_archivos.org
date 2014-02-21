@@ -332,12 +332,8 @@ FAT12), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
 tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
 = 7168$ bytes, esto es, $7168 \over 32 = 224$ entradas como máximo. Y
 si bien esto puede no parecer muy limitado, ocupar cuatro entradas por
-archivo[fn::
-#+latex: \url{https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names}
-#+html: Ver Wikipedia: <a href="https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names">File Allocation Table: Long file names</a>
-]
-cuando, empleando VFAT, se tiene un nombre medianamente largo reduce
-fuertemente el panorama.
+archivo cuando, empleando VFAT, se tiene un nombre medianamente largo
+reduce fuertemente el panorama.
 
 El problema no resulta tan severo como podría parecer: Para FAT32, el
 directorio raiz ya no está ubicado en un espacio reservado, sino que

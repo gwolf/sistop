@@ -1069,7 +1069,7 @@ mapeo:
                   tiempo entre sus hilos.
 
 		  #+label: PLAN_hilos_muchos_a_uno
-		  #+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+		  #+caption: Mapeo de hilos /muchos a uno/ (Imagen: Beth Plale; ver /otros recursos/)
 		  #+attr_html: height="160"
 		  #+attr_latex: width=0.3\textwidth
 		  [[./img/hilos_muchos_a_uno.png]]
@@ -1093,7 +1093,7 @@ mapeo:
                demás estructuras.
 
 	       #+label: PLAN_hilos_uno_a_uno
-	       #+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+	       #+caption: Mapeo de hilos /uno a uno/ (Imagen: Beth Plale; ver /otros recursos/)
 	       #+attr_html: height="161"
 	       #+attr_latex: width=0.3\textwidth
 	       [[./img/hilos_uno_a_uno.png]]
@@ -1111,7 +1111,7 @@ mapeo:
      más/ estarán mapeados a cada LWP.
 
      #+label: PLAN_hilos_muchos_a_muchos
-     #+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
+     #+caption: Mapeo de hilos /muchos a muchos/ (Imagen: Beth Plale; ver /otros recursos/)
      #+attr_html: height="161"
      #+attr_latex: width=0.3\textwidth
      [[./img/hilos_muchos_a_muchos.png]]
@@ -1505,23 +1505,60 @@ proceso de mayor prioridad, serán tratados como si fueran de la
 prioridad de dicho recurso /hasta que terminen de utilizar el recurso
 en cuestión/, tras lo cual volverán a su prioridad nativa.
 
-* Recursos adicionales
-- [[http://stimulationofcp.sourceforge.net/][Simulación de algoritmos de planificación]]: Programa en Java escrito
-  por P. A. Krishnan para un curso de Sistemas Operativos, presentando la
-  simulación de distintos algoritmos de planificación.
-- [[http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml][Thread Scheduling (ctd): quanta, switching and scheduling
-  algorithms]] (/Javamex tutorial and performance information/)
-- [[http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors][Microprocessor Design / Pipelined Processors]], WikiBooks.org
-- [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Thread scheduling and synchronization]], Beth Plale, Indiana University
-- /Páginas de manual/ de Linux para [[http://man7.org/linux/man-pages/man7/pthreads.7.html][pthreads]], [[http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html][pthread_attr_setscope]],
-  [[http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html][sched_setscheduler]] (/kernel.org/)
-- [[http://blogs.msdn.com/b/microsoft_press/archive/2012/04/16/sample-chapters-windows-internals-sixth-edition-part-1.aspx?Redirected=true][Windows Internals, 6th edition]], de Mark Russinovich, David
-  A. Solomon y Alex Ionescu, por Microsoft Press. El capítulo 5 aborda
-  a profundidad los temas de hilos y procesos bajo Windows; está
-  disponible como ejemplo del libro para su descarga en la página
-  referida
-- [[https://lwn.net/Articles/563185/][Optimizing preemption]], Jonathan Corbet, /Linux Weekly News/, agosto
-  del 2013
+* Otros recursos
+
+- /Simulation of CPU Process scheduling/
+  #+latex: \otrorec{http://stimulationofcp.sourceforge.net/}
+  #+html: <br/><a href="http://stimulationofcp.sourceforge.net/">http://stimulationofcp.sourceforge.net/</a><br/>
+  P. A. Krishnan
+  (1999-2009); programa en Java desarrollado para un curso de Sistemas
+  Operativos, presentando la simulación de distintos algoritmos de
+  planificación.
+
+- /Thread Scheduling (ctd): quanta, switching and scheduling
+  algorithms/
+  #+latex: \otrorec{http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml}
+  #+html: <br/><a href="http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml">http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml</a><br/>
+  Neil Coffey (2013); Javamex tutorial and performance information
+
+- /Microprocessor Design / Pipelined Processors/
+  #+latex: \otrorec{http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors}
+  #+html: <br/><a href="http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors">http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors</a><br/>
+  WikiBooks.org (2007-2013)
+
+- /Thread scheduling and synchronization/
+  #+latex: \otrorec{http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf}
+  #+html: <br/><a href="http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf">http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf</a><br/>
+  Beth Plale (2003); Indiana University
+
+- /Páginas de manual/ de Linux:
+
+  - Hilos POSIX (=pthreads=)
+    #+latex: \otrorec{http://man7.org/linux/man-pages/man7/pthreads.7.html}
+    #+html: <br/><a href="http://man7.org/linux/man-pages/man7/pthreads.7.html">http://man7.org/linux/man-pages/man7/pthreads.7.html</a><br/>
+
+  - Modificación del ámbito de contención (=pthread_attr_setscope=)
+    #+latex: \otrorec{http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html}
+    #+html: <br/><a href="http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html">http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html</a><br/>
+
+  - Interfaz para solicitar cambios a los parámetros y políticas de
+    planificación (=sched_setscheduler=)
+    #+latex: \otrorec{http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html}
+    #+html: <br/><a href="http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html">http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html</a><br/>
+
+- /Windows Internals, 6th edition/
+  #+latex: \otrorec{http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx}
+  #+html: <br/><a href="http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx">http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx</a><br/>
+  Mark Russinovich, David A. Solomon y Alex Ionescu (2012); por
+  Microsoft Press. El capítulo 5 aborda a profundidad los temas de
+  hilos y procesos bajo Windows, y está disponible como ejemplo del
+  libro para su descarga en la página referida.
+
+- /Optimizing preemption/
+  #+latex: \otrorec{https://lwn.net/Articles/563185/}
+  #+html: <br/><a href="https://lwn.net/Articles/563185/">https://lwn.net/Articles/563185/</a><br/>
+  Jonathan Corbet (2013), /Linux Weekly News/
+
 #
 # REVISAR:
 #

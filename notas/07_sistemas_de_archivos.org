@@ -331,9 +331,13 @@ hasta el día de hoy, por su limitada capacidad, se formatea bajo
 FAT12), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
 tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
 = 7168$ bytes, esto es, $7168 \over 32 = 224$ entradas como máximo. Y
-si bien esto puede no parecer muy limitado, [[https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names][ocupar cuatro entradas por
-archivo]] cuando, empleando VFAT, se tiene un nombre medianamente largo
-reduce fuertemente el panorama.
+si bien esto puede no parecer muy limitado, ocupar cuatro entradas por
+archivo[fn::
+#+latex: \url{https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names}
+#+html: Ver Wikipedia: <a href="https://en.wikipedia.org/wiki/File_Allocation_Table#VFAT_long_file_names">File Allocation Table: Long file names</a>
+]
+cuando, empleando VFAT, se tiene un nombre medianamente largo reduce
+fuertemente el panorama.
 
 El problema no resulta tan severo como podría parecer: Para FAT32, el
 directorio raiz ya no está ubicado en un espacio reservado, sino que
@@ -341,7 +345,7 @@ como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
 #+label: FS_directorio_vfat
-#+caption: Entradas representando archivo con nombre largo bajo VFAT (Peter Clark)
+#+caption: Entradas representando archivo con nombre largo bajo VFAT (Imagen: Peter Clark, ver /otros recursos/)
 #+attr_html: width="652" height="331"
 #+attr_latex: width=\textwidth
 [[./img/directorio_vfat.png]]
@@ -952,7 +956,7 @@ adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
 #+label: FS_tabla_fat
-#+caption: Ejemplo de entradas en la tabla de asignación de archivos ([[http://www.beginningtoseethelight.org/fat16/index.htm][Peter Clark]])
+#+caption: Ejemplo de entradas en la tabla de asignación de archivos (Imagen: Peter Clark, ver /otros recursos/)
 #+attr_latex: width=\textwidth
 [[../img/tabla_fat.png]]
 
@@ -1327,62 +1331,102 @@ particularidades), y dado que estos sistemas aprovechan mejor varias
 de sus características, es probable que el interés en estos sistemas
 de archivos resurja.
 
-
 * Otros recursos
 # <<FS_otros_recursos>>
 
-- Practical File System Design (Dominic Giampaolo, 1999): El autor fue
-  parte del equipo que implementó el sistema operativo BeOS, un
-  sistema de alto rendimiento pensado para correr en estaciones de
-  alto rendimiento, particularmente enfocado al video. El proyecto
-  fracasó a la larga, y BeOS (así como BeFS, el sistema que describe)
-  ya no se utilizan. Este libro tiene una muy buena descripción de
-  varios sistemas de archivos, y aborda a profundidad técnicas que
-  hace 15 años eran verdaderamente novedosas, y hoy forman parte de
-  casi todos los sistemas de archivos con uso amplio, e incluso
-  algunas que no se han logrado implementar y que BeFS sí ofrecía.
+- /Practical File System Design/
+  #+latex: \otrorec{http://www.nobius.org/~dbg/}
+  #+html: <br/><a href="http://www.nobius.org/~dbg/">http://www.nobius.org/~dbg/</a><br/>
+  Dominic Giampaolo (1999). El autor fue parte del equipo que
+  implementó el sistema operativo BeOS, un sistema de alto rendimiento
+  pensado para correr en estaciones de alto rendimiento,
+  particularmente enfocado al video. El proyecto fracasó a la larga, y
+  BeOS (así como BeFS, el sistema que describe) ya no se
+  utilizan. Este libro, descargable desde el sitio Web del autor,
+  tiene una muy buena descripción de varios sistemas de archivos, y
+  aborda a profundidad técnicas que hace 15 años eran verdaderamente
+  novedosas, y hoy forman parte de casi todos los sistemas de archivos
+  con uso amplio, e incluso algunas que no se han logrado implementar
+  y que BeFS sí ofrecía.
 
-- [[http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf][A method for the construction of Minimum-Redundancy Codes]] (Davud
-  A. Huffman, 1952)
+- /A method for the construction of Minimum-Redundancy Codes/
+  #+latex: \otrorec{http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf}
+  #+html: <br/><a href="http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf">http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf</a><br/>
+  David A. Huffman (1952); Proceedings of the I. R. E
 
-- [[http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][FAT Root Directory Structure on Floppy Disk and File Information]]
-  (Mufti Mohammed, Codeguru, 2007)
+- /FAT Root Directory Structure on Floppy Disk and File Information/
+  #+latex: \otrorec{http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831}
+  #+html: <br/><a href="http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831">http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831</a><br/>
+  Mufti Mohammed (2007); Codeguru
 
-- [[http://www.beginningtoseethelight.org/fat16/index.htm][File Allocation Table - 16bit]] (Peter Clark)
+- /File Allocation Table: 16bit/
+  #+latex: \otrorec{http://www.beginningtoseethelight.org/fat16/index.htm)}
+  #+html: <br/><a href="http://www.beginningtoseethelight.org/fat16/index.htm)">http://www.beginningtoseethelight.org/fat16/index.htm</a><br/>
+  Peter Clark (2001)
 
-- [[http://www.linuxcommand.org/man_pages/dosfsck8.html][Dosfsck - check and repair MS-DOS filesystems]] (Werner
-  Almesberger, 1997)
+- /Dosfsck: check and repair MS-DOS filesystems/
+  #+latex: \otrorec{http://www.linuxcommand.org/man_pages/dosfsck8.html}
+  #+html: <br/><a href="http://www.linuxcommand.org/man_pages/dosfsck8.html">http://www.linuxcommand.org/man_pages/dosfsck8.html</a><br/>
+  Werner Almesberger (1997)
 
-- [[http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf][A Fast File System for UNIX]] (Marshall Kirk Mckusick, William N. Joy,
-  Samuel J. Lefler, Robert S. Fabry, 1984)
+- /A Fast File System for UNIX/
+  #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)}
+  #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)">http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)</a><br/>
+  Marshall Kirk Mckusick, William N. Joy, Samuel J. Lefler, Robert
+  S. Fabry (1984); ACM Transactions on Computer Systems
 
-- [[http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf][The Design and Implementation of a Log-Structured File System]]
-  (Mendel Rosenblum, J. K. Ousterhout, 1992)
+- /The Design and Implementation of a Log-Structured File System/
+  #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf}
+  #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf">http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf</a><br/>
+  Mendel Rosenblum, J. K. Ousterhout (1992); ACM Transactions on
+  Computer Systems
 
-- [[http://www.nongnu.org/ext2-doc/][The Second Extended File System: Internal Layout]] (Dave Poirier,
-  2001-2011)
+- /The Second Extended File System: Internal Layout/
+  #+latex: \otrorec{http://www.nongnu.org/ext2-doc/)}
+  #+html: <br/><a href="http://www.nongnu.org/ext2-doc/)">http://www.nongnu.org/ext2-doc/)</a><br/>
+  Dave Poirier (2001-2011)
 
-- [[http://www.cyanezfdz.me/nilfs2-en-linux.html][NILFS2 en Linux]] (César Yáñez)
+- /NILFS2 en Linux/
+  #+latex: \otrorec{http://cyanezfdz.me/articles/2012/08/nilfs2.html}
+  #+html: <br/><a href="http://cyanezfdz.me/articles/2012/08/nilfs2.html">http://cyanezfdz.me/articles/2012/08/nilfs2.html</a><br/>
+  César Yáñez (2012)
 
-- [[http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos][Los discos desde la perspectiva de un sistema de archivos]] (César
-  Yáñez)
+- /Disks from the Perspective of a File System/
+  #+latex: \otrorec{http://queue.acm.org/detail.cfm?id=2367378}
+  #+html: <br/><a href="http://queue.acm.org/detail.cfm?id=2367378">http://queue.acm.org/detail.cfm?id=2367378</a><br/>
+  Marshall Kirk McKusick (2012); ACM Queue
 
-- [[http://lwn.net/Articles/529077/][A hash-based DoS attack on Btrfs]] (LWN)
+  - Traducción al español: /Los discos desde la perspectiva de un
+    sistema de archivos/
+    #+latex: \otrorec{http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos}
+    #+html: <br/><a href="http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos">http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos</a><br/>
+    César Yáñez (2013)
 
-- [[http://linux.slashdot.org/story/12/12/15/0055217/denial-of-service-attack-found-in-btrfs-file-system][Denial-of-Service Attack Found In Btrfs File-System]] (Slashdot)
+- /A hash-based DoS attack on Btrfs/
+  #+latex: \otrorec{http://lwn.net/Articles/529077/}
+  #+html: <br/><a href="http://lwn.net/Articles/529077/">http://lwn.net/Articles/529077/</a><br/>
+  Jonathan Corbet (2012); Linux Weekly News
 
-- [[http://bugs.debian.org/cgi-bin/bugreport.cgi?archive=no&bug=682840][Default /etc/apache2/mods-available/disk_cache.conf is incompatible
-  with ext3]] (bug de Debian ilustrando los límites en números de
-  archivos para Ext3)
+- /Default /etc/apache2/mods-available/disk_cache.conf is incompatible
+  with ext3/
+  #+latex: \otrorec{http://bugs.debian.org/682840}
+  #+html: <br/><a href="http://bugs.debian.org/682840">http://bugs.debian.org/682840</a><br/>
+  Christoph Berg (2012). Reporte de fallo de Debian ilustrando los
+  límites en números de archivos para Ext3.
 
-- [[http://delivery.acm.org/10.1145/150000/146943/p26-rosenblum.pdf][The Design and Implementation of a Log-Structured File System]] (John
-  K. Ousterhout, Mendel Rosenblum, 1992)
+- /File-system development with stackable layers/
+  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=174613.174616}
+  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=174613.174616">https://dl.acm.org/citation.cfm?id=174613.174616</a><br/>
+  Heidemann y Popek (1994); ACM Transactions on Computer Systems
 
-- [[https://dl.acm.org/citation.cfm?doid%3D174613.174616][File-system development with stackable layers]] (Heidemann y Popek,
-  1994 ACM Transactions on Computer Systems)
+- /Serverless network file systems/
+  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=225535.225537}
+  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=225535.225537">https://dl.acm.org/citation.cfm?id=225535.225537</a><br/>
+  Thomas E. Anderson et. al. (1996); ACM Transactions on Computer
+  Systems
 
-- [[https://dl.acm.org/citation.cfm?doid=225535.225537][Serverless network file systems]] (Thomas E. Anderson et. al., 1996,
-  ACM Transactions on Computer Systems)
-
-- [[https://lwn.net/Articles/353411/][Log-structured file systems: There's one in every SSD]] (Valerie
-  Aurora, 2009)
+- /Log-structured file systems: There's one in every SSD/
+  #+latex: \otrorec{https://lwn.net/Articles/353411/}
+  #+html: <br/><a href="https://lwn.net/Articles/353411/">https://lwn.net/Articles/353411/</a><br/>
+  Valerie Aurora (2009); Linux
+  Weekly News

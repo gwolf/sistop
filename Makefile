@@ -42,6 +42,7 @@ libro_index:
 	echo '#+latex_header: \linespread{1.05}' >> $(libro)
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
+#	echo '#+latex_header: \\renewcommand{\href}[2]{#2\\footnote{\url{#1}}}' >> $(libro)
 	echo '#+title: Fundamentos de Sistemas Operativos' >> $(libro)
 
 	echo '' >> $(libro)

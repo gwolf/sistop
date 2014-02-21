@@ -1904,7 +1904,7 @@ orden de los últimos miles a decenas de miles de accesos a memoria.
 Para una cobertura a mayor profundidad del material presentado en
 esta sección, se sugiere estudiar los siguientes textos:
 
-- [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing The Stack For Fun And Profit]] (Aleph One, revista
+- [[http://www.phrack.org/issues.html?issue=49&id=14][Smashing The Stack For Fun And Profit]] (Aleph One, revista
   Phrack, 1996)
 - [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
   disponible en Web)
@@ -2442,14 +2442,27 @@ seguirán ejecutando la versión de la biblioteca con el error.
 
 * Otros recursos
 
-- [[https://lwn.net/Articles/79036/][The Grumpy Editor goes 64-bit]] — Experiencia del editor de Linux
-  Weekly News al migrar a una arquitectura de 64 bits en 2004. Lo más
-  interesante del artículo son los comentarios, ilustran buena parte
-  de los pros y contras de una migración de 32 a 64 bits.
-- [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto
-  propiamente sea del nivel adecuado. En todo caso, buscar algo de Valgrind.
-- [[http://ghostbar.ath.cx/2013/01/27/less-swap/][Less swap]] (blog de Jose Luis Rivas) — Controlando el "swappiness" de
-  Linux vía =vm.swappiness=
+- /The Grumpy Editor goes 64-bit/
+  #+latex: \otrorec{https://lwn.net/Articles/79036/}
+  #+html: <br/><a href="https://lwn.net/Articles/79036/">https://lwn.net/Articles/79036/</a><br/>
+  Jonathan Corbet (2004); Linux Weekly News.  Experiencia del editor
+  de Linux Weekly News al migrar a una arquitectura de 64 bits
+  en 2004. Lo más interesante del artículo son los comentarios,
+  ilustran buena parte de los pros y contras de una migración de 32 a
+  64 bits.
+
+- /Using Valgrind to debug Xen Toolstacks/
+  #+latex: \otrorec{http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/}
+  #+html: <br/><a href="http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/">http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/</a><br/>
+  Ian J. Campbell (2013). Presenta un ejemplo de uso de la herramienta
+  /Valgrind/, para encontrar problemas en la asignación, uso y
+  liberación de memoria en un programa en C.
+# Liga muerta :( Como sea, me gustaría adaptar lo que relata para
+# mencionarlo con memoria virtual
+#
+# - /Less swap/ (http://ghostbar.ath.cx/2013/01/27/less-swap/), Jose
+#   Luis Rivas (2013). Entrada  Controlando el "swappiness" de Linux vía
+#   =vm.swappiness=
 # My old X61 has 2G in RAM and 3G in Swap. It seems my using-habit for
 # Google Chrome is heavy (more than 20 tabs open most of the time) so
 # my swap is normally being used above the 1.8G-mark. That means, my
@@ -2477,53 +2490,84 @@ seguirán ejecutando la versión de la biblioteca con el error.
 #
 # Now my system is really smooth and using Chrome + Terminal + Tmux +
 # Rhythmbox is acceptable.
-- [[http://troysunix.blogspot.mx/2011/07/process-memory-usage.html][Process memory usage]], ejemplos de pmap en diferentes Unixes
-- [[http://www.adrien-revol.com/blog/index.php?post/2009/12/10/20-Linux-System-Monitoring-Tools][20 Linux system monitoring tools]], varias de ellas enfocadas a la
-  memoria
-- [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
-  explícitas/completas que las de Linux
 
-- [[http://www.iecc.com/linker/][Linkers and Loaders]] (John R. Levine, 1999), libro dedicado a la
+- /Process memory usage/
+  #+latex: \otrorec{http://troysunix.blogspot.mx/2011/07/process-memory-usage.html}
+  #+html: <br/><a href="http://troysunix.blogspot.mx/2011/07/process-memory-usage.html">http://troysunix.blogspot.mx/2011/07/process-memory-usage.html</a><br/>
+  ejemplos de pmap en diferentes Unixes
+
+- /Página de manual de pmap en NetBSD/
+  #+latex: \otrorec{http://www.daemon-systems.org/man/pmap.1.html}
+  #+html: <br/><a href="http://www.daemon-systems.org/man/pmap.1.html">http://www.daemon-systems.org/man/pmap.1.html</a><br/>
+  Más allá de
+  simplemente mostrar la operación de una herramienta del sistema en
+  Unix, esta página de manual ilustra claramente la estructura de la
+  organización de la memoria.
+
+- /Linkers and Loaders/
+  #+latex: \otrorec{http://www.iecc.com/linker/}
+  #+html: <br/><a href="http://www.iecc.com/linker/">http://www.iecc.com/linker/</a><br/>
+  John R. Levine
+  (1999). Libro de libre descarga y redistribución, dedicado a la
   tarea de los editores de ligado y el proceso de carga de los
   programas.
 
-- [[http://dl.acm.org/citation.cfm?doid=363011.363155][An anomaly in space-time characteristics of certain programs running
-  in a paging machine]] (Belady, Nelson, Shedler 1969; Communications of
-  the ACM)
+- /An anomaly in space-time characteristics of certain programs
+  running in a paging machine/
+  #+latex: \otrorec{http://dl.acm.org/citation.cfm?doid=363011.363155}
+  #+html: <br/><a href="http://dl.acm.org/citation.cfm?doid=363011.363155">http://dl.acm.org/citation.cfm?doid=363011.363155</a><br/>
+  Belady, Nelson,
+  Shedler (1969); Communications of the ACM
 
-- [[/biblio/Windows_Internals_sample_chapters.pdf][Understanding the Linux Virtual Memory Manager]], por Mel Gorman
-  (2004). Un libro bajo licencia libre, parte de la colección [[http://www.informit.com/imprint/series_detail.aspx?ser=335494][Bruce
-  Perens' Open Source Series]]; aborda a profundidad los mecanismos y
-  algoritmos relativos a la memoria empleados por el sistema operativo
-  Linux. Entra en detalles técnicos con bastante profundidad,
-  presentándolos poco a poco, por lo que no resulta demasiado complejo
-  de leer. El primer tercio del libro (216 páginas) describe los
-  mecanismos, y los dos tercios restantes siguen el código
-  comentado. El libro está también [[http://www.makelinux.net/books/lvmm/][disponible en formato HTML]] en
+- /Understanding the Linux Virtual Memory Manager/
+  #+latex:  \otrorec{http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf}
+  #+html: <br/><a href="http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf">http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf</a><br/>
+  Mel Gorman (2004).  Libro de libre descarga y redistribución, parte
+  de la colección /Bruce Perens' Open Source Series/.  Aborda a
+  profundidad los mecanismos y algoritmos relativos a la memoria
+  empleados por el sistema operativo Linux. Entra en detalles técnicos
+  a profundidad, presentándolos poco a poco, por lo que no resulta
+  demasiado complejo de leer. El primer tercio del libro describe los
+  mecanismos, y los dos tercios restantes siguen el código comentado
+  que los implementa.
 
-- [[http://www.swansontec.com/sregisters.html][The art of picking Intel registers]] explica el uso de los
-  principales registros en la arquitectura x86
+- /The art of picking Intel registers/
+  #+latex: \otrorec{http://www.swansontec.com/sregisters.html}
+  #+html: <br/><a href="http://www.swansontec.com/sregisters.html">http://www.swansontec.com/sregisters.html</a><br/>
+  William Swanson (2003).
 
-- [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
-  disponible en Web)
+- /The Tao of Buffer Overflows/
+  #+latex: \otrorec{http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf}
+  #+html: <br/><a href="http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf">http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf</a><br/>
+  Enrique Sánchez (trabajo en proceso, facilitado por el autor)
 
-- [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing the Stack for fun and profit]], /Aleph One/, 1996: Uno de los
-  primeros artículos publicados acerca de los /buffers rebasados/
+- /Smashing the Stack for fun and profit/
+  #+latex: \otrorec{http://www.phrack.org/issues.html?issue=49&id=14}
+  #+html: <br/><a href="http://www.phrack.org/issues.html?issue=49&id=14">http://www.phrack.org/issues.html?issue=49&id=14</a><br/>
+  /Aleph One/ (1996): Uno de los primeros artículos publicados acerca de los
+  /buffers desbordados/
 
-- [[http://kingcope.wordpress.com/2013/01/24/attacking-the-windows-78-address-space-randomization/][Attacking the Windows 7/8 Address Space Randomization]] explica cómo
-  puede burlarse la protección ALSR (aleatorización de direcciones) en
-  Windows 7 y 8, logrando una dirección predecible de memoria hacia la
-  cual saltar. Puede interesarles también leer la [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][discusión en
-  Slashdot]] una vez que esto fue hecho público.
+- /Attacking the Windows 7/8 Address Space Randomization/
+  #+latex: \otrorec{http://kingcope.wordpress.com/2013/01/24/}
+  #+html: <br/><a href="http://kingcope.wordpress.com/2013/01/24/">http://kingcope.wordpress.com/2013/01/24/</a><br/>
+  /Kingcopes/ (2013):
+  Explica cómo puede burlarse la protección ALSR (aleatorización de
+  direcciones) en Windows 7 y 8, logrando una dirección predecible de
+  memoria hacia la cual saltar.
 
-- [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory access]] (Cristoph Lameter,
-  septiembre 2013, /Communications of the ACM/)
+- /An overview of Non-Uniform Memory Access/
+  #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2500468.2500477}
+  #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2500468.2500477">https://dl.acm.org/citation.cfm?doid=2500468.2500477</a><br/>
+  Cristoph Lameter (2013); /Communications of the ACM/
 
-- [[http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/][Anatomy of a killer bug: How just 5 characters can murder iPhone,
- Mac apps]]: A fines de agosto del 2013, se descubrió una /cadena
- Unicode de la muerte/, que causa que cualquier programa que intente
- desplegarla en pantalla en la línea de productos Apple se
- /caiga/. Chris Williams escribió este interesante artículo en que
- muestra el proceso de averiguar, a partir del /reporte de falla/
- generado por el sistema y analizando el contenido de la memoria que
- éste reporta, cómo puede encontrar un /desbordamiento de entero/.
+- /Anatomy of a killer bug: How just 5 characters can murder iPhone,
+  Mac apps/
+  #+latex: \otrorec{http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/}
+  #+html: <br/><a href="http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/">http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/</a><br/>
+  Chris Williams (2013); The Register. A fines de agosto del 2013, se
+  descubrió una /cadena Unicode de la muerte/, que causa que cualquier
+  programa que intente desplegarla en pantalla en la línea de
+  productos Apple se /caiga/. Este artículo relata el proceso de
+  averiguar, a partir del /reporte de falla/ generado por el sistema y
+  analizando el contenido de la memoria que éste reporta, cómo se
+  puede encontrar un /desbordamiento de entero/.

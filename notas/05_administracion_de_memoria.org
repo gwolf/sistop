@@ -2064,6 +2064,10 @@ func:
         subl $20,%esp
 #+end_src
 
+La figura \ref{MEM_stackframe} ilustra cómo queda la región inferior
+del stack (el espacio de trabajo de la función actual) una vez que
+tuvieron lugar estos cuatro pasos.
+
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_stackframe
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
@@ -2147,7 +2151,8 @@ En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
 error exitosamente y detuvo la ejecución — Pero no lo hizo: El
 =Segmentation fault= no fue generado al sobreescribir el buffer ni al
 intentar procesarlo, sino después de terminar de hacerlo: Al llegar
-la ejecución del código al =return 0=.
+la ejecución del código al =return 0=. En este punto, el stack del
+código ejemplo luce como lo presenta la figura \ref{MEM_overflow_500}.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_500
@@ -2234,11 +2239,12 @@ es saltar /hacia adentro del stack/.
 Para hacerlo, si en vez de proporcionar simplemente una cadena
 suficientemente grande para sobrepasar el buffer se /inyecta/ una
 cadena con código ejecutable válido, y sobreescribiera la dirección de
-retorno con la dirección de su código /dentro del buffer/, tendría
-256 bytes de espacio para especificar código arbitrario. Este código
+retorno con la dirección de su código /dentro del buffer/, tendría 256
+bytes de espacio para especificar código arbitrario. Este código
 típicamente se llama /shellcode/, pues se emplea para obtener un
 /shell/ (un intérprete de comandos) que ejecuta con los privilegios
-del proceso explotado.
+del proceso explotado. Este escenario se ilustra en la figura
+\ref{MEM_overflow_jump}.
 
 *** Mecanismos de mitigación
 
@@ -2313,7 +2319,8 @@ suerte.], insertado entre los buffers y la dirección de retorno, que
 es verificado antes de regresar de una función. Si se presentó un
 desbordamiento de buffer, el valor del /canario/ será reemplazado por
 basura, y el sistema podrá detener la ejecución del proceso
-comprometido antes de que brinde privilegios elevados al atacante.
+comprometido antes de que brinde privilegios elevados al atacante. La
+figura \ref{MEM_overflow_canary} ilustra este mecanismo.
 
 #+attr_latex: width=0.9\textwidth
 #+label: MEM_overflow_canary
@@ -2364,8 +2371,9 @@ al sistema operativo, en el momento  de crear el proceso, ubicar las
 bibliotecas que este requerirá para su ejecución. En cualquier caso, el ligado 
 dinámico busca que las bibliotecas sólo sean cargadas cuando sean requeridas.
 
-La figura \ref{MEM_tipo_resol_direcc}, presentada al principio de este
-capítulo, ilustra el momento en que ocurre cada uno de estos ligados:
+La figura \ref{MEM_tipo_resol_direcc}
+(pág. \pageref{MEM_tipo_resol_direcc}, ilustra el momento en que
+ocurre cada uno de estos ligados:
 El ligado estático es realizado por el /editor de ligado/, uniendo en
 un sólo /módulo cargable/ al programa compilado (/módulo objeto/) con
 las bibliotecas (/otros objetos/); el ligado dinámico es realizado

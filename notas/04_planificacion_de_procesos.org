@@ -1071,7 +1071,7 @@ mapeo:
 \hfill
 \subfigure[Muchos a muchos \label{PLAN_hilos_muchos_a_muchos}]{\includegraphics[width=0.25\textwidth]{img/hilos_muchos_a_muchos.png}}
 \caption {Tres modelos de mapeo de hilos a procesos. (Imágenes: Beth Plale; ver \emph{Otros recursos})}
-\label{HW_amdahl}
+\label{PLAN_modelos_de_hilos}
 \end{figure}
 #+end_latex
 
@@ -1112,6 +1112,9 @@ mapeo:
                   uno sólo de ellos realiza una llamada /bloqueante/
                   al sistema.
 
+		  La figura \ref{PLAN_hilos_muchos_a_uno} ilustra este
+                  modelo.
+
 - Uno a uno :: Cada hilo es ejecutado como un /proceso ligero/
                (/lightweight process/ o /LWP/); podría dar la
                impresión de que este esquema desperdicia la principal
@@ -1129,6 +1132,9 @@ mapeo:
                su existencia, el sistema operativo debe poder
                implementar los LWP.
 
+	       La esquematización de este modelo puede apreciarse en
+               la figura \ref{PLAN_hilos_uno_a_uno}.
+
 - Muchos a muchos :: Este mecanismo permite que existan hilos de ambos
      modelos: Permite la existencia de /hilos unidos/ (/bound
      threads/), en que cada hilo corresponde a un (y sólo un) LWP, y
@@ -1139,6 +1145,9 @@ mapeo:
      características de ambos esquemas; en caso de ejecutarse en un
      sistema que no soporte más que el modelo /uno a muchos/, el
      sistema puede caer en éste como /modo degradado/.
+
+     Este modelo se presenta en la figura
+     \ref{PLAN_hilos_muchos_a_muchos}.
 
 No se detalla en el presente texto respecto a los primeros — Cada marco de
 desarrollo o máquina virtual que emplee /hilos de usuario/

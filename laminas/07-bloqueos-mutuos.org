@@ -109,7 +109,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 - Conservadoras :: Controlan más el proceso de asignación de recursos
 
 ** Espectro liberal-conservador de políticas
-#+attr_latex: width=1.1\textwidth
+#+attr_latex: height=0.7\textheight
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[../img/dot/deadlocks_conserv_lib.png]]
 
@@ -294,10 +294,11 @@ sus consecuencias.
 - Sistemas uniprocesador, sólo avance vertical/horizontal
   - Sistemas multiprocesador, avance diagonal
 - Áreas de riesgo: Cuando /alguno de los recursos rivales/ es otorgado
-- El bloqueo mutuo se produce en la /intersección/ de I_2—I_3 e
-  I_6—I_7
-- En la situación descrita, el sistema debe mantener a /B/ congelado
-  por lo menos hasta que /A/ llegue a I_3
+- El bloqueo mutuo se produce cuando $3 \le t_A \le 7$, y $4 \le t_B
+  \le 6$
+- Pero, /sabiendo esto/, el SO debe mantener a $t_B < 2$ siempre que
+  $2 \le t_A \le 3$
+  - O a $t_A < 2$ siempre que $2 \le t_B \le 4$.
 
 ** Analizando esta estrategia
 - Muy dificil de implementar en un sistema de propósito general
@@ -566,7 +567,7 @@ condiciones de Coffman /pueden presentarse/.
 ** Ejemplo 2
 
 #+attr_latex: width=0.4\textwidth
-#+caption: Ejemplo con categorías de recursos (Imágenes: Samuel Oporto Díaz)
+#+caption: Ejemplo con categorías de recursos (Imágenes: Luis La Red)
 [[../img/deteccion_bloqueos_por_pasos_1.png]]
 
 ** Ejemplo 2
@@ -664,7 +665,7 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Sin embargo...
 
 ** Recapitulando: Conservadores y liberales
-#+attr_latex: width=1.1\textwidth
+#+attr_latex: height=0.7\textheight
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[../img/dot/deadlocks_conserv_lib.png]]
 

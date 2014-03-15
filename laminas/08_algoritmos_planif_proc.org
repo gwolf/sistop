@@ -46,7 +46,7 @@ Vemos que hay tres tipos muy distintos de planificación.
 
 ** Planificador a mediano plazo
 - Cuáles procesos hay que /bloquear/
-  - Por escacez/saturación de algún recurso (p.ej. almacenamiento primario)
+  - Por escasez/saturación de algún recurso (p.ej. almacenamiento primario)
   - Por haber iniciado una operación que no puede satisfacerse aún
 - Cuáles procesos hay que /desbloquear/
   - A la espera de algún dispositivo
@@ -55,7 +55,7 @@ Vemos que hay tres tipos muy distintos de planificación.
 
 ** Planificador a mediano plazo
 #+caption: Planificador a mediano plazo, o /agendador/
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.9\textwidth
 [[../img/dot/planificador_mediano_plazo.png]]
 
 ** Planificador a corto plazo
@@ -82,9 +82,9 @@ Vemos que hay tres tipos muy distintos de planificación.
 - *Corto plazo*: Activar ejecución, Tiempo terminado
 #+latex: \end{column}\end{columns}
 
-** El enfoque de esta sección
+** El enfoque de esta unidad
 #+BEGIN_CENTER
-En esta sección hablaremos particularmente del planificador /a corto
+En esta unidad hablaremos particularmente del planificador /a corto
 plazo/
 
 Cuando un proceso es /suspendido/ (o /bloqueado/) y posteriormente
@@ -101,6 +101,9 @@ reactivado, lo trataremos como /un proceso nuevo/.
 - Esto nos lleva a separar los procesos en...
 
 ** Tipos de proceso
+#+BEGIN_CENTER
+*Ojo: ¡Un poco contraintuitivo!*
+#+END_CENTER
 - Largos :: Han estado /listos/ o /en ejecución/ por mucho tiempo
   - Esto es, están en una ráfaga limitada por CPU
 - Cortos :: En este momento están en una ráfaga limitada por E/S
@@ -117,15 +120,14 @@ tiempos /estándar/ (s, ms, ns), sino que:
 #+end_center
 - /Tick/ :: Un tiempo mínimo dado durante el cual se puede realizar
             trabajo útil. Medida caprichosa y arbitraria.
-
-	    En Windows, un /tick/ dura entre 10 y 15 ms. En Linux
-	    (2.6.8 en adelante), dura 1 ms.
+  - En Windows, un /tick/ dura entre 10 y 15 ms.
+  - En Linux (2.6.8 en adelante), dura 1 ms.
 
 - /Quantum/ :: Tiempo mínimo, expresado en /ticks/, que se permitirá a
                un proceso el uso del procesador.
 
-	       En Windows, 2—12 /ticks/ (esto es, 20—180ms). En Linux,
-	       10—200 /ticks/ (10-200ms)
+  - En Windows, 2 a 12 /ticks/ (esto es, 20 a 180ms).
+  - En Linux, 10 a 200 /ticks/ (10 a 200ms)
 
 ** ¿Qué es /mejor/?
 - No hay un sólo criterio para definir qué es una /mejor/ respuesta
@@ -167,6 +169,8 @@ Para un proceso $p$ que requiere ejecutarse por tiempo $t$,
 
 - Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
      listos está vacía y no puede realizarse ningún trabajo.
+     - El sistema operativo aprovecha este tiempo para realizar
+       /tareas de mantenimiento/
 
 - Utilización del CPU :: Porcentaje del tiempo en que el CPU está
      realizando /trabajo útil/.
@@ -278,7 +282,7 @@ Cuando un proceso:
 4. Pasa de /ejecutando/ a /terminado/
    - Cuando finaliza su ejecución
 #+BEGIN_CENTER
-Para la multitarea cooperativa, pueden ser sólo 1 y 4.
+Para la multitarea cooperativa, podrían ser sólo 1 y 4.
 #+END_CENTER
 ** Nuestros procesos base
 #+BEGIN_CENTER
@@ -386,6 +390,7 @@ de procesos:
 - Multitarea cooperativa
 - Pero requerimos un algoritmo más /justo/ que FCFS
 - Sabemos cuánto tiempo va a requerir cada proceso
+  \pause
   - No por /magia/: Podemos estimar / predecir basados en su historia
     - Recuerden: Un proceso puede /entrar y salir/ del ámbito del
       despachador
@@ -483,6 +488,23 @@ Es común que $f \approx 0.9$
 - Principal desventaja: Es un algoritmo /caro/
   - Cuando hay muchos procesos en la cola, $P$ tiene que calcularse
     para todos ellos a cada invocación del despachador
+
+
+** Mecanismos con múltiples colas
+- Hasta ahora, se evalúa cómo ordenar los procesos en la /cola única/
+  de procesos listos
+- Dar trato diferenciado a procesos con perfiles distintos es complicado
+- ... ¿Y si montamos /distintas colas/ de procesos listos?
+  - Asignando determinado /patrón de comportamiento/ a la migración de
+    una cola a otra
+  - Dando un /trato diferenciado/ a los procesos de distintas colas
+
+** Mecanismos con múltiples colas
+#+attr_latex: width=0.7\textwidth
+#+label: PLAN_planif_multicolas
+#+caption: Representación de un sistema con cinco colas de prioridad y siete procesos listos
+[[../img/dot/planif_multicolas.png]]
+
 
 ** Retroalimentación multinivel (FB)
 - /Multilevel Feedback/
@@ -669,7 +691,7 @@ Elige /dos/ sistemas operativos en uso /relativamente común/ en
 ambientes de producción, y describe cómo es su mecanismo de
 planificación.
 
-*Entrega: Jueves 10 de octubre via EDUCAFI*
+*Entrega: viernes 21 de marzo via EDUCAFI*
 #+END_CENTER
 
 ** Tarea: ¿Qué quiero que desarrollen?
@@ -712,7 +734,7 @@ planificación.
     usuario, etc.
 - A continuación, algunos ejemplos
 
-** FCFS/SPN o RR, dependiendo de $\rho$
+** Preventiva o cooperativa, dependiendo de $\rho$
 - Si los procesos son /en promedio/ cortos y $\rho < 1$
   - Métodos con la mínima sobrecarga administrativa (FCFS o SPN)
   - O un RR con /quantum/ muy largo (evitando los problemas de la

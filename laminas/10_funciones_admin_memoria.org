@@ -112,11 +112,13 @@ principio de /localidad de referencia/:
 - Un procesador de 64 bits puede direccionar hasta 16 exabytes —
   $2^{64}$ bytes (18,446,744,073,709,551,616 bytes)
 - El hardware actual está limitado por un criterio económico a entre
-  $2^{40}$ y $2^{48}$ bits, 1TB y 256TB
+  $2^{34}$ y $2^{48}$ bits, 16GB y 256TB
   - El costo de más de 256TB RAM hace extremadamente improbable que
     sea requerido en suficientes procesadores de propósito general
+    - En un sistema /actual/ de escritorio, es muy poco probable
+      llegar a requerir incluso más de 16GB
   - Cada bit de direccionamiento necesario requiere un pin en el CPU,
-    por tanto, tiene un costo directo
+    por tanto, tiene un costo económico directo
 
 ** ¿Más allá?
 - ¿Qué tan lejos podemos llegar?
@@ -158,6 +160,9 @@ principio de /localidad de referencia/:
   - Hacer esta verificación desde el sistema operativo mismo
     incurriría en costos demasiado grandes
   - Una verificación estática no puede ser suficientemente exhaustiva
+    - Direcciones construidas al vuelo
+    - Modos indirectos de referencia a memoria
+    - ...
 
 ** Protección de acceso: Primera aproximación
 #+begin_center
@@ -175,12 +180,12 @@ sean /contiguos/
 
 ** Registros base y límite: Ejemplo (1)
 - A un proceso le fue asignado un espacio de 64K (65535 bytes)
-- A partir de la dirección 504214 (492K)
+- A partir de la dirección 503808 (492K)
 #+begin_center
 Esto se traduce a:
 #+end_center
-- El /registro base/ contiene 504214
-- El /registro limite/ contiene 65535
+- El /registro base/ contiene 503808 (0x7B000)
+- El /registro limite/ contiene 65535 ($2^{16}$, 0xFFFF)
 ** Registros base y límite: Ejemplo (2)
 #+attr_latex: width=\textwidth
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
@@ -190,11 +195,11 @@ Esto se traduce a:
 #+begin_center
 Comportamiento del MMU
 #+end_center
-- Solicita acceso a $direcc < 504214$ \rarrow *Falla:*
+- Solicita acceso a $direcc < 503808$ \rarrow *Falla:*
   - Violación de segmento (/segmentation fault/)
-- Solicita acceso a $504214 < direcc < 569749$ \rarrow *OK*
+- Solicita acceso a $503808 \le direcc \le 56943$ \rarrow *OK*
   - Se otorga acceso a la dirección
-- Solicita acceso a $569749 < direcc$ \rarrow *Falla:*
+- Solicita acceso a $569343 < direcc$ \rarrow *Falla:*
   - Violación de segmento (/segmentation fault/)
 
 * Espacio en memoria
@@ -220,6 +225,9 @@ Comportamiento del MMU
 - Las direcciones más /bajas/ del espacio asignado
 - El procesador va /avanzando/ sobre este espacio mediante el
   registro de instrucción
+- Su contenido /normalmente/ no debería cambiar
+  - Aunque hay código legal auto-modificable...
+  - Afortunadamente, cada vez menos
 
 ** Sección de datos
 - Espacio fijo preasignado para variables /globales/

@@ -1,0 +1,1199 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<style type="text/css">
+body {
+  font-family: Arial, Helvetica;
+}
+
+table {
+    border: solid 1px black;
+    border-collapse: collapse;
+    margin: 2em;
+    padding: 1em;
+    margin-right: auto;
+    margin-left:auto;
+}
+
+td.pos {
+    color: #888;
+}
+
+td.txt, td.hex {
+    font-family: Courier;
+}
+
+/* Nombre DOS */
+.b9800,.b9801,.b9802,.b9803,.b9804,.b9805,.b9806,.b9807,.b9808,.b9809,.b980a,
+.b9880,.b9881,.b9882,.b9883,.b9884,.b9885,.b9886,.b9887,.b9888,.b9889,.b988a,
+.b98e0,.b98e1,.b98e2,.b98e3,.b98e4,.b98e5,.b98e6,.b98e7,.b98e8,.b98e9,.b98ea,
+.dc1 {background: #0c0;}
+
+/* Atributos */
+.b980b, .b988b, .b98eb, .dc2 {background: #c00;}
+
+/* Reservado */
+.b980c, .b988c, .b98ec, .dc3 {background: #888;}
+
+/* Hora y fecha de creación */
+.b980d, .b980e, .b980f, .b9810, .b9811,
+.b988d, .b988e, .b988f, .b9890, .b9891,
+.b98ed, .b98ee, .b98ef, .b98f0, .b98f1,
+.dc4 {background: #440;}
+
+/* Fecha de último acceso */
+.b9812, .b9813, .b9892, .b9893, .b98f2, .b98f3, .dc5 {background: #770;}
+
+/* Hora y fecha de modificación */
+.b9816, .b9817, .b9818, .b9819,
+.b9896, .b9897, .b9898, .b9899,
+.b98f6, .b98f7, .b98f8, .b98f9, .dc6 {background: #aa0;}
+
+/* Bits altos primer cluster FAT32 */
+.b9814, .b9815, .b9894, .b9895, .b98f4, .b98f5, .dc7 {background: #00D;}
+
+/* Bits bajos primer cluster FAT32 */
+.b981a, .b981b, .b989a, .b989b, .b98fa, .b98fb, .dc8 {background: #00A;}
+
+/* Tamaño del archivo en bytes */
+.b981c, .b981d, .b981e, .b981f,
+.b989c, .b989d, .b989e, .b989f,
+.b98fc, .b98fd, .b98fe, .b98ff, .dc9 {background: #0AA;}
+
+/* Nombre extendido */
+
+/* Atributos extra (siempre 0x0f) */
+.b982b, .b984b, .b986b, .b98ab, .b98cb, .dc11 {background: #369;}
+
+/* Tipo (siempre 0x00) */
+.b982c, .b984c, .b986c, .b98ac, .b98cc, .dc12 {background: #639;}
+
+/* Checksum del nombre en DOS */
+.b982d, .b984d, .b986d, .b98ad, .b98cd, .dc13 {background: #693;}
+
+/* Primer cluster (siempre 0x0000) DOS */
+.b983a, .b983b, .b985a, .b985b, .b987a, .b987b, .b98ba, .b98bb,
+.b98da, .b98db, .dc14 {background: #af6;}
+
+/* Nombre extendido: Espacio no utilizado */
+.b982f, .b9830, .b9831, .b9832, .b9833, .b9834,
+.b9835, .b9836, .b9837, .b9838, .b9839, .b983c,
+.b983d, .b983e, .b983f, .b98a2, .b98a3, .b98a4,
+.b98a5, .b98a6, .b98a7, .b98a8, .b98a9, .b98aa,
+.b98ae, .b98af, .b98b0, .b98b1, .b98b2, .b98b3,
+.b98b4, .b98b5, .b98b6, .b98b7, .b98b8, .b98b9,
+.b98bc, .b98bd, .b98bd, .b98be, .b98bf,
+.dc15 {background: #ddd;}
+
+/* Número de secuencia nombre extendido */
+.b9820, .b9840, .b9860, .b98a0, .b98c0, .dc16 {background: #cc0}
+
+/* FAT ID */
+.b4000, .b4001, .b4002, .b4003, .fc1 {background: #f88;}
+
+/* Indicación de fin de cadena */
+.b4004, .b4005, .b4006, .b4007, .fc2 {background: #888;}
+
+/* Clusters vacíos */
+.b4010, .b4011, .b4012, .b4013, .b4014, .b4015, .b4016, .b4017,
+.b4018, .b4019, .b401a, .b401b, .b401c, .b401d, .b401e, .b401f,
+.b4090, .b4091, .b4092, .b4093, .b4094, .b4095, .b4096, .b4097,
+.b4098, .b4099, .b409a, .b409b, .b409c, .b409d, .b409e, .b409f,
+ .fc3 {background: #88f;}
+
+/* Directorio raiz (un solo cluster) */
+.b4008, .b4009, .b400a, .b400b, .fc4 {background: #8f8}
+
+/* Primer cadena (un solo cluster) */
+.b400c, .b400d, .b400e, .b400f, .fc5 {background: #8ff;}
+
+/* Segunda cadena (12 clusters) */
+.b4020, .b4021, .b4022, .b4023, .b4024, .b4025, .b4026, .b4027,
+.b4028, .b4029, .b402a, .b402b, .b402c, .b402d, .b402e, .b402f,
+.b4030, .b4031, .b4032, .b4033, .b4034, .b4035, .b4036, .b4037,
+.b4038, .b4039, .b403a, .b403b, .b403c, .b403d, .b403e, .b403f,
+.b4040, .b4041, .b4042, .b4043, .b4044, .b4045, .b4046, .b4047,
+.b4048, .b4049, .b404a, .b404b, .b404c, .b404d, .b404e, .b404f,
+.fc6 {background: #f8f;}
+
+/* Tercera cadena (16 clusters) */
+.b4050, .b4051, .b4052, .b4053, .b4054, .b4055, .b4056, .b4057,
+.b4058, .b4059, .b405a, .b405b, .b405c, .b405d, .b405e, .b405f,
+.b4060, .b4061, .b4062, .b4063, .b4064, .b4065, .b4066, .b4067,
+.b4068, .b4069, .b406a, .b406b, .b406c, .b406d, .b406e, .b406f,
+.b4070, .b4071, .b4072, .b4073, .b4074, .b4075, .b4076, .b4077,
+.b4078, .b4079, .b407a, .b407b, .b407c, .b407d, .b407e, .b407f,
+.b4080, .b4081, .b4082, .b4083, .b4084, .b4085, .b4086, .b4087,
+.b4088, .b4089, .b408a, .b408b, .b408c, .b408d, .b408e, .b408f,
+.fc7 {background: #ff8;}
+
+.color {
+    width: 2em;
+    spacing: 0.5em;
+    border: solid 1px black;
+}
+
+.def {padding: 0.3em;}
+
+th {padding:1em; border: solid 1px black;}
+</style>
+</head>
+<body>
+<p>A continuación se presenta el análisis de una imagen de disco de
+  1440KB (la capacidad de los discos flexbles de 3.5 pulgadas, doble
+  lado, doble densidad) formateado a FAT32.</p>
+<p>La imagen fue generada en un sistema Linux, siguiendo los
+  siguientes pasos:<p>
+<pre>
+  dd if=/dev/zero of=vfat32.img bs=1024 count=1440
+  /sbin/mkfs.vfat -F 32 vfat32.img
+  mount -o loop vfat32.img /mnt/
+  echo 'Tenemos un archivo corto' > /mnt/CORTO1.TXT
+  dd if=/dev/zero 'of=/mnt/Un archivo con nombre largo.dat' bs=1024 count=2
+  dd if=/dev/zero 'of=/mnt/tercer_archivo' bs=1024 count=6
+  dd if=/dev/zero 'of=/mnt/Un archivo con nombre largo.dat' bs=1024 count=8
+  umount /mnt
+  hexdump -C vfat32.img
+</pre>
+<p>Cabe mencionar que el sistema fue <em>forzado</em> a emplear 32
+  bits (no los 12 recomendados para un sistema de archivos así de
+  pequeño) para que el análisis resultara más cercano a los datos
+  estudiados.</p>
+<h1>Entradas del directorio bajo VFAT</h1>
+<table class="mapa">
+<tr><td class="pos">00009800</td>
+<td>&nbsp;</td>
+<td class="hex b9800">43</td>
+<td class="hex b9801">4f</td>
+<td class="hex b9802">52</td>
+<td class="hex b9803">54</td>
+<td class="hex b9804">4f</td>
+<td class="hex b9805">31</td>
+<td class="hex b9806">20</td>
+<td class="hex b9807">20</td>
+<td class="hex b9808">54</td>
+<td class="hex b9809">58</td>
+<td class="hex b980a">54</td>
+<td class="hex b980b">20</td>
+<td class="hex b980c">00</td>
+<td class="hex b980d">64</td>
+<td class="hex b980e">55</td>
+<td class="hex b980f">b6</td>
+<td>&nbsp;</td>
+<td class="txt b9800">C</td>
+<td class="txt b9801">O</td>
+<td class="txt b9802">R</td>
+<td class="txt b9803">T</td>
+<td class="txt b9804">O</td>
+<td class="txt b9805">1</td>
+<td class="txt b9806"> </td>
+<td class="txt b9807"> </td>
+<td class="txt b9808">T</td>
+<td class="txt b9809">X</td>
+<td class="txt b980a">T</td>
+<td class="txt b980b"> </td>
+<td class="txt b980c">.</td>
+<td class="txt b980d">d</td>
+<td class="txt b980e">U</td>
+<td class="txt b980f">.</td>
+</tr>
+<tr><td class="pos">00009810</td>
+<td>&nbsp;</td>
+<td class="hex b9810">81</td>
+<td class="hex b9811">44</td>
+<td class="hex b9812">81</td>
+<td class="hex b9813">44</td>
+<td class="hex b9814">00</td>
+<td class="hex b9815">00</td>
+<td class="hex b9816">55</td>
+<td class="hex b9817">b6</td>
+<td class="hex b9818">81</td>
+<td class="hex b9819">44</td>
+<td class="hex b981a">03</td>
+<td class="hex b981b">00</td>
+<td class="hex b981c">19</td>
+<td class="hex b981d">00</td>
+<td class="hex b981e">00</td>
+<td class="hex b981f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9810">.</td>
+<td class="txt b9811">D</td>
+<td class="txt b9812">.</td>
+<td class="txt b9813">D</td>
+<td class="txt b9814">.</td>
+<td class="txt b9815">.</td>
+<td class="txt b9816">U</td>
+<td class="txt b9817">.</td>
+<td class="txt b9818">.</td>
+<td class="txt b9819">D</td>
+<td class="txt b981a">.</td>
+<td class="txt b981b">.</td>
+<td class="txt b981c">.</td>
+<td class="txt b981d">.</td>
+<td class="txt b981e">.</td>
+<td class="txt b981f">.</td>
+</tr>
+<tr><td class="pos">00009820</td>
+<td>&nbsp;</td>
+<td class="hex b9820">43</td>
+<td class="hex b9821">6f</td>
+<td class="hex b9822">00</td>
+<td class="hex b9823">2e</td>
+<td class="hex b9824">00</td>
+<td class="hex b9825">64</td>
+<td class="hex b9826">00</td>
+<td class="hex b9827">61</td>
+<td class="hex b9828">00</td>
+<td class="hex b9829">74</td>
+<td class="hex b982a">00</td>
+<td class="hex b982b">0f</td>
+<td class="hex b982c">00</td>
+<td class="hex b982d">b3</td>
+<td class="hex b982e">00</td>
+<td class="hex b982f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9820">C</td>
+<td class="txt b9821">o</td>
+<td class="txt b9822">.</td>
+<td class="txt b9823">.</td>
+<td class="txt b9824">.</td>
+<td class="txt b9825">d</td>
+<td class="txt b9826">.</td>
+<td class="txt b9827">a</td>
+<td class="txt b9828">.</td>
+<td class="txt b9829">t</td>
+<td class="txt b982a">.</td>
+<td class="txt b982b">.</td>
+<td class="txt b982c">.</td>
+<td class="txt b982d">.</td>
+<td class="txt b982e">.</td>
+<td class="txt b982f">.</td>
+</tr>
+<tr><td class="pos">00009830</td>
+<td>&nbsp;</td>
+<td class="hex b9830">ff</td>
+<td class="hex b9831">ff</td>
+<td class="hex b9832">ff</td>
+<td class="hex b9833">ff</td>
+<td class="hex b9834">ff</td>
+<td class="hex b9835">ff</td>
+<td class="hex b9836">ff</td>
+<td class="hex b9837">ff</td>
+<td class="hex b9838">ff</td>
+<td class="hex b9839">ff</td>
+<td class="hex b983a">00</td>
+<td class="hex b983b">00</td>
+<td class="hex b983c">ff</td>
+<td class="hex b983d">ff</td>
+<td class="hex b983e">ff</td>
+<td class="hex b983f">ff</td>
+<td>&nbsp;</td>
+<td class="txt b9830">.</td>
+<td class="txt b9831">.</td>
+<td class="txt b9832">.</td>
+<td class="txt b9833">.</td>
+<td class="txt b9834">.</td>
+<td class="txt b9835">.</td>
+<td class="txt b9836">.</td>
+<td class="txt b9837">.</td>
+<td class="txt b9838">.</td>
+<td class="txt b9839">.</td>
+<td class="txt b983a">.</td>
+<td class="txt b983b">.</td>
+<td class="txt b983c">.</td>
+<td class="txt b983d">.</td>
+<td class="txt b983e">.</td>
+<td class="txt b983f">.</td>
+</tr>
+<tr><td class="pos">00009840</td>
+<td>&nbsp;</td>
+<td class="hex b9840">02</td>
+<td class="hex b9841">6e</td>
+<td class="hex b9842">00</td>
+<td class="hex b9843">20</td>
+<td class="hex b9844">00</td>
+<td class="hex b9845">6e</td>
+<td class="hex b9846">00</td>
+<td class="hex b9847">6f</td>
+<td class="hex b9848">00</td>
+<td class="hex b9849">6d</td>
+<td class="hex b984a">00</td>
+<td class="hex b984b">0f</td>
+<td class="hex b984c">00</td>
+<td class="hex b984d">b3</td>
+<td class="hex b984e">62</td>
+<td class="hex b984f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9840">.</td>
+<td class="txt b9841">n</td>
+<td class="txt b9842">.</td>
+<td class="txt b9843"> </td>
+<td class="txt b9844">.</td>
+<td class="txt b9845">n</td>
+<td class="txt b9846">.</td>
+<td class="txt b9847">o</td>
+<td class="txt b9848">.</td>
+<td class="txt b9849">m</td>
+<td class="txt b984a">.</td>
+<td class="txt b984b">.</td>
+<td class="txt b984c">.</td>
+<td class="txt b984d">.</td>
+<td class="txt b984e">b</td>
+<td class="txt b984f">.</td>
+</tr>
+<tr><td class="pos">00009850</td>
+<td>&nbsp;</td>
+<td class="hex b9850">72</td>
+<td class="hex b9851">00</td>
+<td class="hex b9852">65</td>
+<td class="hex b9853">00</td>
+<td class="hex b9854">20</td>
+<td class="hex b9855">00</td>
+<td class="hex b9856">6c</td>
+<td class="hex b9857">00</td>
+<td class="hex b9858">61</td>
+<td class="hex b9859">00</td>
+<td class="hex b985a">00</td>
+<td class="hex b985b">00</td>
+<td class="hex b985c">72</td>
+<td class="hex b985d">00</td>
+<td class="hex b985e">67</td>
+<td class="hex b985f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9850">r</td>
+<td class="txt b9851">.</td>
+<td class="txt b9852">e</td>
+<td class="txt b9853">.</td>
+<td class="txt b9854"> </td>
+<td class="txt b9855">.</td>
+<td class="txt b9856">l</td>
+<td class="txt b9857">.</td>
+<td class="txt b9858">a</td>
+<td class="txt b9859">.</td>
+<td class="txt b985a">.</td>
+<td class="txt b985b">.</td>
+<td class="txt b985c">r</td>
+<td class="txt b985d">.</td>
+<td class="txt b985e">g</td>
+<td class="txt b985f">.</td>
+</tr>
+<tr><td class="pos">00009860</td>
+<td>&nbsp;</td>
+<td class="hex b9860">01</td>
+<td class="hex b9861">55</td>
+<td class="hex b9862">00</td>
+<td class="hex b9863">6e</td>
+<td class="hex b9864">00</td>
+<td class="hex b9865">20</td>
+<td class="hex b9866">00</td>
+<td class="hex b9867">61</td>
+<td class="hex b9868">00</td>
+<td class="hex b9869">72</td>
+<td class="hex b986a">00</td>
+<td class="hex b986b">0f</td>
+<td class="hex b986c">00</td>
+<td class="hex b986d">b3</td>
+<td class="hex b986e">63</td>
+<td class="hex b986f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9860">.</td>
+<td class="txt b9861">U</td>
+<td class="txt b9862">.</td>
+<td class="txt b9863">n</td>
+<td class="txt b9864">.</td>
+<td class="txt b9865"> </td>
+<td class="txt b9866">.</td>
+<td class="txt b9867">a</td>
+<td class="txt b9868">.</td>
+<td class="txt b9869">r</td>
+<td class="txt b986a">.</td>
+<td class="txt b986b">.</td>
+<td class="txt b986c">.</td>
+<td class="txt b986d">.</td>
+<td class="txt b986e">c</td>
+<td class="txt b986f">.</td>
+</tr>
+<tr><td class="pos">00009870</td>
+<td>&nbsp;</td>
+<td class="hex b9870">68</td>
+<td class="hex b9871">00</td>
+<td class="hex b9872">69</td>
+<td class="hex b9873">00</td>
+<td class="hex b9874">76</td>
+<td class="hex b9875">00</td>
+<td class="hex b9876">6f</td>
+<td class="hex b9877">00</td>
+<td class="hex b9878">20</td>
+<td class="hex b9879">00</td>
+<td class="hex b987a">00</td>
+<td class="hex b987b">00</td>
+<td class="hex b987c">63</td>
+<td class="hex b987d">00</td>
+<td class="hex b987e">6f</td>
+<td class="hex b987f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9870">h</td>
+<td class="txt b9871">.</td>
+<td class="txt b9872">i</td>
+<td class="txt b9873">.</td>
+<td class="txt b9874">v</td>
+<td class="txt b9875">.</td>
+<td class="txt b9876">o</td>
+<td class="txt b9877">.</td>
+<td class="txt b9878"> </td>
+<td class="txt b9879">.</td>
+<td class="txt b987a">.</td>
+<td class="txt b987b">.</td>
+<td class="txt b987c">c</td>
+<td class="txt b987d">.</td>
+<td class="txt b987e">o</td>
+<td class="txt b987f">.</td>
+</tr>
+<tr><td class="pos">00009880</td>
+<td>&nbsp;</td>
+<td class="hex b9880">55</td>
+<td class="hex b9881">4e</td>
+<td class="hex b9882">41</td>
+<td class="hex b9883">52</td>
+<td class="hex b9884">43</td>
+<td class="hex b9885">48</td>
+<td class="hex b9886">7e</td>
+<td class="hex b9887">31</td>
+<td class="hex b9888">44</td>
+<td class="hex b9889">41</td>
+<td class="hex b988a">54</td>
+<td class="hex b988b">20</td>
+<td class="hex b988c">00</td>
+<td class="hex b988d">00</td>
+<td class="hex b988e">59</td>
+<td class="hex b988f">b6</td>
+<td>&nbsp;</td>
+<td class="txt b9880">U</td>
+<td class="txt b9881">N</td>
+<td class="txt b9882">A</td>
+<td class="txt b9883">R</td>
+<td class="txt b9884">C</td>
+<td class="txt b9885">H</td>
+<td class="txt b9886">~</td>
+<td class="txt b9887">1</td>
+<td class="txt b9888">D</td>
+<td class="txt b9889">A</td>
+<td class="txt b988a">T</td>
+<td class="txt b988b"> </td>
+<td class="txt b988c">.</td>
+<td class="txt b988d">.</td>
+<td class="txt b988e">Y</td>
+<td class="txt b988f">.</td>
+</tr>
+<tr><td class="pos">00009890</td>
+<td>&nbsp;</td>
+<td class="hex b9890">81</td>
+<td class="hex b9891">44</td>
+<td class="hex b9892">81</td>
+<td class="hex b9893">44</td>
+<td class="hex b9894">00</td>
+<td class="hex b9895">00</td>
+<td class="hex b9896">59</td>
+<td class="hex b9897">b6</td>
+<td class="hex b9898">81</td>
+<td class="hex b9899">44</td>
+<td class="hex b989a">14</td>
+<td class="hex b989b">00</td>
+<td class="hex b989c">00</td>
+<td class="hex b989d">20</td>
+<td class="hex b989e">00</td>
+<td class="hex b989f">00</td>
+<td>&nbsp;</td>
+<td class="txt b9890">.</td>
+<td class="txt b9891">D</td>
+<td class="txt b9892">.</td>
+<td class="txt b9893">D</td>
+<td class="txt b9894">.</td>
+<td class="txt b9895">.</td>
+<td class="txt b9896">Y</td>
+<td class="txt b9897">.</td>
+<td class="txt b9898">.</td>
+<td class="txt b9899">D</td>
+<td class="txt b989a">.</td>
+<td class="txt b989b">.</td>
+<td class="txt b989c">.</td>
+<td class="txt b989d"> </td>
+<td class="txt b989e">.</td>
+<td class="txt b989f">.</td>
+</tr>
+<tr><td class="pos">000098a0</td>
+<td>&nbsp;</td>
+<td class="hex b98a0">42</td>
+<td class="hex b98a1">6f</td>
+<td class="hex b98a2">00</td>
+<td class="hex b98a3">00</td>
+<td class="hex b98a4">00</td>
+<td class="hex b98a5">ff</td>
+<td class="hex b98a6">ff</td>
+<td class="hex b98a7">ff</td>
+<td class="hex b98a8">ff</td>
+<td class="hex b98a9">ff</td>
+<td class="hex b98aa">ff</td>
+<td class="hex b98ab">0f</td>
+<td class="hex b98ac">00</td>
+<td class="hex b98ad">59</td>
+<td class="hex b98ae">ff</td>
+<td class="hex b98af">ff</td>
+<td>&nbsp;</td>
+<td class="txt b98a0">B</td>
+<td class="txt b98a1">o</td>
+<td class="txt b98a2">.</td>
+<td class="txt b98a3">.</td>
+<td class="txt b98a4">.</td>
+<td class="txt b98a5">.</td>
+<td class="txt b98a6">.</td>
+<td class="txt b98a7">.</td>
+<td class="txt b98a8">.</td>
+<td class="txt b98a9">.</td>
+<td class="txt b98aa">.</td>
+<td class="txt b98ab">.</td>
+<td class="txt b98ac">.</td>
+<td class="txt b98ad">Y</td>
+<td class="txt b98ae">.</td>
+<td class="txt b98af">.</td>
+</tr>
+<tr><td class="pos">000098b0</td>
+<td>&nbsp;</td>
+<td class="hex b98b0">ff</td>
+<td class="hex b98b1">ff</td>
+<td class="hex b98b2">ff</td>
+<td class="hex b98b3">ff</td>
+<td class="hex b98b4">ff</td>
+<td class="hex b98b5">ff</td>
+<td class="hex b98b6">ff</td>
+<td class="hex b98b7">ff</td>
+<td class="hex b98b8">ff</td>
+<td class="hex b98b9">ff</td>
+<td class="hex b98ba">00</td>
+<td class="hex b98bb">00</td>
+<td class="hex b98bc">ff</td>
+<td class="hex b98bd">ff</td>
+<td class="hex b98be">ff</td>
+<td class="hex b98bf">ff</td>
+<td>&nbsp;</td>
+<td class="txt b98b0">.</td>
+<td class="txt b98b1">.</td>
+<td class="txt b98b2">.</td>
+<td class="txt b98b3">.</td>
+<td class="txt b98b4">.</td>
+<td class="txt b98b5">.</td>
+<td class="txt b98b6">.</td>
+<td class="txt b98b7">.</td>
+<td class="txt b98b8">.</td>
+<td class="txt b98b9">.</td>
+<td class="txt b98ba">.</td>
+<td class="txt b98bb">.</td>
+<td class="txt b98bc">.</td>
+<td class="txt b98bd">.</td>
+<td class="txt b98be">.</td>
+<td class="txt b98bf">.</td>
+</tr>
+<tr><td class="pos">000098c0</td>
+<td>&nbsp;</td>
+<td class="hex b98c0">01</td>
+<td class="hex b98c1">74</td>
+<td class="hex b98c2">00</td>
+<td class="hex b98c3">65</td>
+<td class="hex b98c4">00</td>
+<td class="hex b98c5">72</td>
+<td class="hex b98c6">00</td>
+<td class="hex b98c7">63</td>
+<td class="hex b98c8">00</td>
+<td class="hex b98c9">65</td>
+<td class="hex b98ca">00</td>
+<td class="hex b98cb">0f</td>
+<td class="hex b98cc">00</td>
+<td class="hex b98cd">59</td>
+<td class="hex b98ce">72</td>
+<td class="hex b98cf">00</td>
+<td>&nbsp;</td>
+<td class="txt b98c0">.</td>
+<td class="txt b98c1">t</td>
+<td class="txt b98c2">.</td>
+<td class="txt b98c3">e</td>
+<td class="txt b98c4">.</td>
+<td class="txt b98c5">r</td>
+<td class="txt b98c6">.</td>
+<td class="txt b98c7">c</td>
+<td class="txt b98c8">.</td>
+<td class="txt b98c9">e</td>
+<td class="txt b98ca">.</td>
+<td class="txt b98cb">.</td>
+<td class="txt b98cc">.</td>
+<td class="txt b98cd">Y</td>
+<td class="txt b98ce">r</td>
+<td class="txt b98cf">.</td>
+</tr>
+<tr><td class="pos">000098d0</td>
+<td>&nbsp;</td>
+<td class="hex b98d0">5f</td>
+<td class="hex b98d1">00</td>
+<td class="hex b98d2">61</td>
+<td class="hex b98d3">00</td>
+<td class="hex b98d4">72</td>
+<td class="hex b98d5">00</td>
+<td class="hex b98d6">63</td>
+<td class="hex b98d7">00</td>
+<td class="hex b98d8">68</td>
+<td class="hex b98d9">00</td>
+<td class="hex b98da">00</td>
+<td class="hex b98db">00</td>
+<td class="hex b98dc">69</td>
+<td class="hex b98dd">00</td>
+<td class="hex b98de">76</td>
+<td class="hex b98df">00</td>
+<td>&nbsp;</td>
+<td class="txt b98d0">_</td>
+<td class="txt b98d1">.</td>
+<td class="txt b98d2">a</td>
+<td class="txt b98d3">.</td>
+<td class="txt b98d4">r</td>
+<td class="txt b98d5">.</td>
+<td class="txt b98d6">c</td>
+<td class="txt b98d7">.</td>
+<td class="txt b98d8">h</td>
+<td class="txt b98d9">.</td>
+<td class="txt b98da">.</td>
+<td class="txt b98db">.</td>
+<td class="txt b98dc">i</td>
+<td class="txt b98dd">.</td>
+<td class="txt b98de">v</td>
+<td class="txt b98df">.</td>
+</tr>
+<tr><td class="pos">000098e0</td>
+<td>&nbsp;</td>
+<td class="hex b98e0">54</td>
+<td class="hex b98e1">45</td>
+<td class="hex b98e2">52</td>
+<td class="hex b98e3">43</td>
+<td class="hex b98e4">45</td>
+<td class="hex b98e5">52</td>
+<td class="hex b98e6">7e</td>
+<td class="hex b98e7">31</td>
+<td class="hex b98e8">20</td>
+<td class="hex b98e9">20</td>
+<td class="hex b98ea">20</td>
+<td class="hex b98eb">20</td>
+<td class="hex b98ec">00</td>
+<td class="hex b98ed">00</td>
+<td class="hex b98ee">58</td>
+<td class="hex b98ef">b6</td>
+<td>&nbsp;</td>
+<td class="txt b98e0">T</td>
+<td class="txt b98e1">E</td>
+<td class="txt b98e2">R</td>
+<td class="txt b98e3">C</td>
+<td class="txt b98e4">E</td>
+<td class="txt b98e5">R</td>
+<td class="txt b98e6">~</td>
+<td class="txt b98e7">1</td>
+<td class="txt b98e8"> </td>
+<td class="txt b98e9"> </td>
+<td class="txt b98ea"> </td>
+<td class="txt b98eb"> </td>
+<td class="txt b98ec">.</td>
+<td class="txt b98ed">.</td>
+<td class="txt b98ee">X</td>
+<td class="txt b98ef">.</td>
+</tr>
+<tr><td class="pos">000098f0</td>
+<td>&nbsp;</td>
+<td class="hex b98f0">81</td>
+<td class="hex b98f1">44</td>
+<td class="hex b98f2">81</td>
+<td class="hex b98f3">44</td>
+<td class="hex b98f4">00</td>
+<td class="hex b98f5">00</td>
+<td class="hex b98f6">58</td>
+<td class="hex b98f7">b6</td>
+<td class="hex b98f8">81</td>
+<td class="hex b98f9">44</td>
+<td class="hex b98fa">08</td>
+<td class="hex b98fb">00</td>
+<td class="hex b98fc">00</td>
+<td class="hex b98fd">18</td>
+<td class="hex b98fe">00</td>
+<td class="hex b98ff">00</td>
+<td>&nbsp;</td>
+<td class="txt b98f0">.</td>
+<td class="txt b98f1">D</td>
+<td class="txt b98f2">.</td>
+<td class="txt b98f3">D</td>
+<td class="txt b98f4">.</td>
+<td class="txt b98f5">.</td>
+<td class="txt b98f6">X</td>
+<td class="txt b98f7">.</td>
+<td class="txt b98f8">.</td>
+<td class="txt b98f9">D</td>
+<td class="txt b98fa">.</td>
+<td class="txt b98fb">.</td>
+<td class="txt b98fc">.</td>
+<td class="txt b98fd">.</td>
+<td class="txt b98fe">.</td>
+<td class="txt b98ff">.</td>
+</tr>
+</tr></table>
+
+<table class="leyenda">
+<tr>
+  <td class="color dc1">&nbsp;</td>
+  <td class="def">Nombre DOS</td>
+  <td class="color dc2">&nbsp;</td>
+  <td class="def">Atributos DOS</td>
+</tr>
+<tr>
+  <td class="color dc3">&nbsp;</td>
+  <td class="def">Reservado</td>
+  <td class="color dc4">&nbsp;</td>
+  <td class="def">Hora y fecha de creación</td>
+</tr>
+<tr>
+  <td class="color dc5">&nbsp;</td>
+  <td class="def">Fecha de último acceso</td>
+  <td class="color dc6">&nbsp;</td>
+  <td class="def">Hora y fecha de modificación</td>
+</tr>
+<tr>
+  <td class="color dc7">&nbsp;</td>
+  <td class="def">Bits altos del primer cluster FAT32</td>
+  <td class="color dc8">&nbsp;</td>
+  <td class="def">Bits bajos del primer cluster FAT32</td7>
+</tr>
+<tr>
+  <td class="color dc9">&nbsp;</td>
+  <td class="def">Tamaño del archivo en bytes</td>
+  <td class="color dc10">&nbsp;</td>
+  <td class="def">Nombre extendido VFAT</td>
+</tr>
+<tr>
+  <td class="color dc11">&nbsp;</td>
+  <td class="def">Atributos extra (siempre 0x0f)</td>
+  <td class="color dc12">&nbsp;</td>
+  <td class="def">Tipo (siempre 0x00)</td>
+</tr>
+<tr>
+  <td class="color dc13">&nbsp;</td>
+  <td class="def">Checksum del nombre en DOS</td>
+  <td class="color dc14">&nbsp;</td>
+  <td class="def">Primer cluster DOS (siempre 0x0000)</td>
+</tr>
+<tr>
+  <td class="color dc15">&nbsp;</td>
+  <td class="def">Espacio sobrante del nombre extendido</td>
+  <td class="color dc16">&nbsp;</td>
+  <td class="def">Número de secuencia del nombre extendido</td>
+</tr>
+</table>
+
+<h1>Tabla de asignación de archivos (FAT)</h1>
+<p>Puede aquí verse que el controlador de FAT32 en Linux evita
+  fragmentar archivos de ser posible: La segunda cadena
+  (correspondiente a la tercera entrada de directorio) dejó 4 clusters
+  vacíos antes de sí, pero la tercera (correspondiente a la segunda
+  entrada de directorio) comienza apenas después de esa:
+  Probablemente, los clusters 4-7 (0x4010, 0x4014, 0x4018, 0x401c)
+  habían sido previamente asignados a esta entrada, pero fueron
+  liberados al sobreescribir al archivo para evitar la
+  fragmentación.</p>
+<p>No perder en cuenta: La numeración para los clusters va en
+  incrementos de 32 bits (4 bytes). Los números presentados a la
+  izquierda son la <em>posición en disco</em>, medida en bytes. El
+  primer cluster está en 0x4000, el segundo en 0x4004 (ambos
+  reservados para el sistema), el tercero en 0x4008 (el directorio
+  raiz), y apenas el cuarto (0x400c) es el primero disponible para
+  datos del usuario.
+<p>Hay dos copias idénticas de esta tabla: La reproducida, iniciada en
+  0x4000, y otra iniciada en 0x6c00.</p>
+<table class="mapa">
+<tr><td class="pos">00004000</td>
+<td>&nbsp;</td>
+<td class="hex b4000">f0</td>
+<td class="hex b4001">ff</td>
+<td class="hex b4002">ff</td>
+<td class="hex b4003">0f</td>
+<td class="hex b4004">ff</td>
+<td class="hex b4005">ff</td>
+<td class="hex b4006">ff</td>
+<td class="hex b4007">0f</td>
+<td class="hex b4008">f8</td>
+<td class="hex b4009">ff</td>
+<td class="hex b400a">ff</td>
+<td class="hex b400b">0f</td>
+<td class="hex b400c">ff</td>
+<td class="hex b400d">ff</td>
+<td class="hex b400e">ff</td>
+<td class="hex b400f">0f</td>
+<td>&nbsp;</td>
+<td class="txt b4000">.</td>
+<td class="txt b4001">.</td>
+<td class="txt b4002">.</td>
+<td class="txt b4003">.</td>
+<td class="txt b4004">.</td>
+<td class="txt b4005">.</td>
+<td class="txt b4006">.</td>
+<td class="txt b4007">.</td>
+<td class="txt b4008">.</td>
+<td class="txt b4009">.</td>
+<td class="txt b400a">.</td>
+<td class="txt b400b">.</td>
+<td class="txt b400c">.</td>
+<td class="txt b400d">.</td>
+<td class="txt b400e">.</td>
+<td class="txt b400f">.</td>
+</tr>
+<tr><td class="pos">00004010</td>
+<td>&nbsp;</td>
+<td class="hex b4010">00</td>
+<td class="hex b4011">00</td>
+<td class="hex b4012">00</td>
+<td class="hex b4013">00</td>
+<td class="hex b4014">00</td>
+<td class="hex b4015">00</td>
+<td class="hex b4016">00</td>
+<td class="hex b4017">00</td>
+<td class="hex b4018">00</td>
+<td class="hex b4019">00</td>
+<td class="hex b401a">00</td>
+<td class="hex b401b">00</td>
+<td class="hex b401c">00</td>
+<td class="hex b401d">00</td>
+<td class="hex b401e">00</td>
+<td class="hex b401f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4010">.</td>
+<td class="txt b4011">.</td>
+<td class="txt b4012">.</td>
+<td class="txt b4013">.</td>
+<td class="txt b4014">.</td>
+<td class="txt b4015">.</td>
+<td class="txt b4016">.</td>
+<td class="txt b4017">.</td>
+<td class="txt b4018">.</td>
+<td class="txt b4019">.</td>
+<td class="txt b401a">.</td>
+<td class="txt b401b">.</td>
+<td class="txt b401c">.</td>
+<td class="txt b401d">.</td>
+<td class="txt b401e">.</td>
+<td class="txt b401f">.</td>
+</tr>
+<tr><td class="pos">00004020</td>
+<td>&nbsp;</td>
+<td class="hex b4020">09</td>
+<td class="hex b4021">00</td>
+<td class="hex b4022">00</td>
+<td class="hex b4023">00</td>
+<td class="hex b4024">0a</td>
+<td class="hex b4025">00</td>
+<td class="hex b4026">00</td>
+<td class="hex b4027">00</td>
+<td class="hex b4028">0b</td>
+<td class="hex b4029">00</td>
+<td class="hex b402a">00</td>
+<td class="hex b402b">00</td>
+<td class="hex b402c">0c</td>
+<td class="hex b402d">00</td>
+<td class="hex b402e">00</td>
+<td class="hex b402f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4020">.</td>
+<td class="txt b4021">.</td>
+<td class="txt b4022">.</td>
+<td class="txt b4023">.</td>
+<td class="txt b4024">.</td>
+<td class="txt b4025">.</td>
+<td class="txt b4026">.</td>
+<td class="txt b4027">.</td>
+<td class="txt b4028">.</td>
+<td class="txt b4029">.</td>
+<td class="txt b402a">.</td>
+<td class="txt b402b">.</td>
+<td class="txt b402c">.</td>
+<td class="txt b402d">.</td>
+<td class="txt b402e">.</td>
+<td class="txt b402f">.</td>
+</tr>
+<tr><td class="pos">00004030</td>
+<td>&nbsp;</td>
+<td class="hex b4030">0d</td>
+<td class="hex b4031">00</td>
+<td class="hex b4032">00</td>
+<td class="hex b4033">00</td>
+<td class="hex b4034">0e</td>
+<td class="hex b4035">00</td>
+<td class="hex b4036">00</td>
+<td class="hex b4037">00</td>
+<td class="hex b4038">0f</td>
+<td class="hex b4039">00</td>
+<td class="hex b403a">00</td>
+<td class="hex b403b">00</td>
+<td class="hex b403c">10</td>
+<td class="hex b403d">00</td>
+<td class="hex b403e">00</td>
+<td class="hex b403f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4030">.</td>
+<td class="txt b4031">.</td>
+<td class="txt b4032">.</td>
+<td class="txt b4033">.</td>
+<td class="txt b4034">.</td>
+<td class="txt b4035">.</td>
+<td class="txt b4036">.</td>
+<td class="txt b4037">.</td>
+<td class="txt b4038">.</td>
+<td class="txt b4039">.</td>
+<td class="txt b403a">.</td>
+<td class="txt b403b">.</td>
+<td class="txt b403c">.</td>
+<td class="txt b403d">.</td>
+<td class="txt b403e">.</td>
+<td class="txt b403f">.</td>
+</tr>
+<tr><td class="pos">00004040</td>
+<td>&nbsp;</td>
+<td class="hex b4040">11</td>
+<td class="hex b4041">00</td>
+<td class="hex b4042">00</td>
+<td class="hex b4043">00</td>
+<td class="hex b4044">12</td>
+<td class="hex b4045">00</td>
+<td class="hex b4046">00</td>
+<td class="hex b4047">00</td>
+<td class="hex b4048">13</td>
+<td class="hex b4049">00</td>
+<td class="hex b404a">00</td>
+<td class="hex b404b">00</td>
+<td class="hex b404c">ff</td>
+<td class="hex b404d">ff</td>
+<td class="hex b404e">ff</td>
+<td class="hex b404f">0f</td>
+<td>&nbsp;</td>
+<td class="txt b4040">.</td>
+<td class="txt b4041">.</td>
+<td class="txt b4042">.</td>
+<td class="txt b4043">.</td>
+<td class="txt b4044">.</td>
+<td class="txt b4045">.</td>
+<td class="txt b4046">.</td>
+<td class="txt b4047">.</td>
+<td class="txt b4048">.</td>
+<td class="txt b4049">.</td>
+<td class="txt b404a">.</td>
+<td class="txt b404b">.</td>
+<td class="txt b404c">.</td>
+<td class="txt b404d">.</td>
+<td class="txt b404e">.</td>
+<td class="txt b404f">.</td>
+</tr>
+<tr><td class="pos">00004050</td>
+<td>&nbsp;</td>
+<td class="hex b4050">15</td>
+<td class="hex b4051">00</td>
+<td class="hex b4052">00</td>
+<td class="hex b4053">00</td>
+<td class="hex b4054">16</td>
+<td class="hex b4055">00</td>
+<td class="hex b4056">00</td>
+<td class="hex b4057">00</td>
+<td class="hex b4058">17</td>
+<td class="hex b4059">00</td>
+<td class="hex b405a">00</td>
+<td class="hex b405b">00</td>
+<td class="hex b405c">18</td>
+<td class="hex b405d">00</td>
+<td class="hex b405e">00</td>
+<td class="hex b405f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4050">.</td>
+<td class="txt b4051">.</td>
+<td class="txt b4052">.</td>
+<td class="txt b4053">.</td>
+<td class="txt b4054">.</td>
+<td class="txt b4055">.</td>
+<td class="txt b4056">.</td>
+<td class="txt b4057">.</td>
+<td class="txt b4058">.</td>
+<td class="txt b4059">.</td>
+<td class="txt b405a">.</td>
+<td class="txt b405b">.</td>
+<td class="txt b405c">.</td>
+<td class="txt b405d">.</td>
+<td class="txt b405e">.</td>
+<td class="txt b405f">.</td>
+</tr>
+<tr><td class="pos">00004060</td>
+<td>&nbsp;</td>
+<td class="hex b4060">19</td>
+<td class="hex b4061">00</td>
+<td class="hex b4062">00</td>
+<td class="hex b4063">00</td>
+<td class="hex b4064">1a</td>
+<td class="hex b4065">00</td>
+<td class="hex b4066">00</td>
+<td class="hex b4067">00</td>
+<td class="hex b4068">1b</td>
+<td class="hex b4069">00</td>
+<td class="hex b406a">00</td>
+<td class="hex b406b">00</td>
+<td class="hex b406c">1c</td>
+<td class="hex b406d">00</td>
+<td class="hex b406e">00</td>
+<td class="hex b406f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4060">.</td>
+<td class="txt b4061">.</td>
+<td class="txt b4062">.</td>
+<td class="txt b4063">.</td>
+<td class="txt b4064">.</td>
+<td class="txt b4065">.</td>
+<td class="txt b4066">.</td>
+<td class="txt b4067">.</td>
+<td class="txt b4068">.</td>
+<td class="txt b4069">.</td>
+<td class="txt b406a">.</td>
+<td class="txt b406b">.</td>
+<td class="txt b406c">.</td>
+<td class="txt b406d">.</td>
+<td class="txt b406e">.</td>
+<td class="txt b406f">.</td>
+</tr>
+<tr><td class="pos">00004070</td>
+<td>&nbsp;</td>
+<td class="hex b4070">1d</td>
+<td class="hex b4071">00</td>
+<td class="hex b4072">00</td>
+<td class="hex b4073">00</td>
+<td class="hex b4074">1e</td>
+<td class="hex b4075">00</td>
+<td class="hex b4076">00</td>
+<td class="hex b4077">00</td>
+<td class="hex b4078">1f</td>
+<td class="hex b4079">00</td>
+<td class="hex b407a">00</td>
+<td class="hex b407b">00</td>
+<td class="hex b407c">20</td>
+<td class="hex b407d">00</td>
+<td class="hex b407e">00</td>
+<td class="hex b407f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4070">.</td>
+<td class="txt b4071">.</td>
+<td class="txt b4072">.</td>
+<td class="txt b4073">.</td>
+<td class="txt b4074">.</td>
+<td class="txt b4075">.</td>
+<td class="txt b4076">.</td>
+<td class="txt b4077">.</td>
+<td class="txt b4078">.</td>
+<td class="txt b4079">.</td>
+<td class="txt b407a">.</td>
+<td class="txt b407b">.</td>
+<td class="txt b407c"> </td>
+<td class="txt b407d">.</td>
+<td class="txt b407e">.</td>
+<td class="txt b407f">.</td>
+</tr>
+<tr><td class="pos">00004080</td>
+<td>&nbsp;</td>
+<td class="hex b4080">21</td>
+<td class="hex b4081">00</td>
+<td class="hex b4082">00</td>
+<td class="hex b4083">00</td>
+<td class="hex b4084">22</td>
+<td class="hex b4085">00</td>
+<td class="hex b4086">00</td>
+<td class="hex b4087">00</td>
+<td class="hex b4088">23</td>
+<td class="hex b4089">00</td>
+<td class="hex b408a">00</td>
+<td class="hex b408b">00</td>
+<td class="hex b408c">ff</td>
+<td class="hex b408d">ff</td>
+<td class="hex b408e">ff</td>
+<td class="hex b408f">0f</td>
+<td>&nbsp;</td>
+<td class="txt b4080">!</td>
+<td class="txt b4081">.</td>
+<td class="txt b4082">.</td>
+<td class="txt b4083">.</td>
+<td class="txt b4084">&quot;</td>
+<td class="txt b4085">.</td>
+<td class="txt b4086">.</td>
+<td class="txt b4087">.</td>
+<td class="txt b4088">#</td>
+<td class="txt b4089">.</td>
+<td class="txt b408a">.</td>
+<td class="txt b408b">.</td>
+<td class="txt b408c">.</td>
+<td class="txt b408d">.</td>
+<td class="txt b408e">.</td>
+<td class="txt b408f">.</td>
+</tr>
+<tr><td class="pos">00004090</td>
+<td>&nbsp;</td>
+<td class="hex b4090">00</td>
+<td class="hex b4091">00</td>
+<td class="hex b4092">00</td>
+<td class="hex b4093">00</td>
+<td class="hex b4094">00</td>
+<td class="hex b4095">00</td>
+<td class="hex b4096">00</td>
+<td class="hex b4097">00</td>
+<td class="hex b4098">00</td>
+<td class="hex b4099">00</td>
+<td class="hex b409a">00</td>
+<td class="hex b409b">00</td>
+<td class="hex b409c">00</td>
+<td class="hex b409d">00</td>
+<td class="hex b409e">00</td>
+<td class="hex b409f">00</td>
+<td>&nbsp;</td>
+<td class="txt b4090">.</td>
+<td class="txt b4091">.</td>
+<td class="txt b4092">.</td>
+<td class="txt b4093">.</td>
+<td class="txt b4094">.</td>
+<td class="txt b4095">.</td>
+<td class="txt b4096">.</td>
+<td class="txt b4097">.</td>
+<td class="txt b4098">.</td>
+<td class="txt b4099">.</td>
+<td class="txt b409a">.</td>
+<td class="txt b409b">.</td>
+<td class="txt b409c">.</td>
+<td class="txt b409d">.</td>
+<td class="txt b409e">.</td>
+<td class="txt b409f">.</td>
+</tr>
+</table>
+<table class="leyenda">
+<tr>
+  <td class="color fc1">&nbsp;</td>
+  <td class="def">FAT ID</td>
+  <td class="color fc2">&nbsp;</td>
+  <td class="def">Indicación de fin de cadena</td>
+</tr>
+<tr>
+  <td class="color fc3">&nbsp;</td>
+  <td class="def">Clusters vacíos</td>
+  <td class="color fc4">&nbsp;</td>
+  <td class="def">El directorio raiz cabe en un sólo cluster</td>
+</tr>
+<tr>
+  <td class="color fc5">&nbsp;</td>
+  <td class="def">Primer cadena (un solo cluster, 0x00000300)</td>
+  <td class="color fc6">&nbsp;</td>
+  <td class="def">Segunda cadena (12 clusters desde 0x00001400)</td>
+</tr>
+<tr>
+  <td class="color fc7">&nbsp;</td>
+  <td class="def">Tercera cadena (16 clusters desde 0x00002000)</td>
+</tr>
+</table>
+</body>
+</html>

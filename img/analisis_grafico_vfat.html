@@ -20,7 +20,7 @@ td.pos {
 }
 
 td.txt, td.hex {
-    font-family: Courier;
+    font-family: Monospace;
 }
 
 /* Nombre DOS */
@@ -97,6 +97,7 @@ td.txt, td.hex {
 /* Clusters vacíos */
 .b4010, .b4011, .b4012, .b4013, .b4014, .b4015, .b4016, .b4017,
 .b4018, .b4019, .b401a, .b401b, .b401c, .b401d, .b401e, .b401f,
+.b4089, .b408a, .b408b, .b408c, .b408d, .b408e, .b408f,
 .b4090, .b4091, .b4092, .b4093, .b4094, .b4095, .b4096, .b4097,
 .b4098, .b4099, .b409a, .b409b, .b409c, .b409d, .b409e, .b409f,
  .fc3 {background: #88f;}
@@ -124,8 +125,7 @@ td.txt, td.hex {
 .b4070, .b4071, .b4072, .b4073, .b4074, .b4075, .b4076, .b4077,
 .b4078, .b4079, .b407a, .b407b, .b407c, .b407d, .b407e, .b407f,
 .b4080, .b4081, .b4082, .b4083, .b4084, .b4085, .b4086, .b4087,
-.b4088, .b4089, .b408a, .b408b, .b408c, .b408d, .b408e, .b408f,
-.fc7 {background: #ff8;}
+.b4088, .fc7 {background: #ff8;}
 
 .color {
     width: 2em;
@@ -151,7 +151,7 @@ th {padding:1em; border: solid 1px black;}
   echo 'Tenemos un archivo corto' > /mnt/CORTO1.TXT
   dd if=/dev/zero 'of=/mnt/Un archivo con nombre largo.dat' bs=1024 count=2
   dd if=/dev/zero 'of=/mnt/tercer_archivo' bs=1024 count=6
-  dd if=/dev/zero 'of=/mnt/Un archivo con nombre largo.dat' bs=1024 count=8
+  dd if=/dev/zero 'of=/mnt/Un archivo con nombre largo.dat' bs=1024 count=7
   umount /mnt
   hexdump -C vfat32.img
 </pre>
@@ -1104,28 +1104,28 @@ th {padding:1em; border: solid 1px black;}
 <td class="hex b4081">00</td>
 <td class="hex b4082">00</td>
 <td class="hex b4083">00</td>
-<td class="hex b4084">22</td>
+<td class="hex b4084">ff</td>
 <td class="hex b4085">00</td>
-<td class="hex b4086">00</td>
-<td class="hex b4087">00</td>
-<td class="hex b4088">23</td>
+<td class="hex b4086">ff</td>
+<td class="hex b4087">ff</td>
+<td class="hex b4088">0f</td>
 <td class="hex b4089">00</td>
 <td class="hex b408a">00</td>
 <td class="hex b408b">00</td>
-<td class="hex b408c">ff</td>
-<td class="hex b408d">ff</td>
-<td class="hex b408e">ff</td>
-<td class="hex b408f">0f</td>
+<td class="hex b408c">00</td>
+<td class="hex b408d">00</td>
+<td class="hex b408e">00</td>
+<td class="hex b408f">00</td>
 <td>&nbsp;</td>
 <td class="txt b4080">!</td>
 <td class="txt b4081">.</td>
 <td class="txt b4082">.</td>
 <td class="txt b4083">.</td>
-<td class="txt b4084">&quot;</td>
+<td class="txt b4084">.</td>
 <td class="txt b4085">.</td>
 <td class="txt b4086">.</td>
 <td class="txt b4087">.</td>
-<td class="txt b4088">#</td>
+<td class="txt b4088">.</td>
 <td class="txt b4089">.</td>
 <td class="txt b408a">.</td>
 <td class="txt b408b">.</td>
@@ -1186,13 +1186,15 @@ th {padding:1em; border: solid 1px black;}
 </tr>
 <tr>
   <td class="color fc5">&nbsp;</td>
-  <td class="def">Primer cadena (un solo cluster, 0x00000300)</td>
+  <td class="def">Primer cadena (un solo cluster: 0003)</td>
   <td class="color fc6">&nbsp;</td>
-  <td class="def">Segunda cadena (12 clusters desde 0x00001400)</td>
+  <td class="def">Segunda cadena (12 clusters: 0008 a 0013)</td>
 </tr>
 <tr>
   <td class="color fc7">&nbsp;</td>
-  <td class="def">Tercera cadena (16 clusters desde 0x00002000)</td>
+  <td class="def">Tercera cadena (16 clusters: 0014 a 0021)</td>
+  <td></td>
+  <td></td>
 </tr>
 </table>
 </body>

@@ -328,13 +328,21 @@ presente=no).
     - DS :: /Data Segment/ (sección de datos)
     - SS :: /Stack Segment/ (pila de llamadas)
     - ES, FS, GS :: /Extra Segment/ (cualquier otro acceso)
-  - En PowerPC, hay 16 segmentos de 24 bits, que permiten direccionar
-    hasta 52 bits
+
+** ¿Qué tanto se aprovecha /en verdad/?
 - El código que mejor aprovecha una arquitectura de segmentación es
   /muy difícil/ de transportar a otra arquitectura
+  - El compilador puede generar acorde a la arquitectura objetivo,
+    pero... ¿Qué tanto beneficia al /programador/?
+  - Recuerden que para eso se presentó (supuestamente)...
+- Técnicas para direccionar más memoria de la que podemos /comprender/
+  - El Pentium Pro (1995) permite, a través de segmentación, ver 36
+    bits (64GB) de memoria en una arquitectura de 32 bits
+  - En PowerPC, hay 16 segmentos de 24 bits, que permiten direccionar
+    hasta 52 bits
 
 ** La segmentación hoy
-- La segmentación ha caído en desuso en casi todas las arquitecturas
+- La segmentación va cayendo en desuso en casi todas las arquitecturas
   modernas
   - Incluso en x86: Al entrar en modo de 64 bits, se inhabilitan
     /casi/ todos los registros de segmento (quedan FS y GS)
@@ -467,10 +475,17 @@ demasiado pequeñas?
     - /Dirección/ de la transferencia
 - Tenemos que hacer (como máximo) transferencias del tamaño de la
   página en memoria
+  - Es poco probable que las páginas lógicamente consecutivas estén
+    físicamente contiguas
 - Fragmentar la memoria física en páginas muy pequeñas reduce la
   velocidad de transferencia de disco
 
 ** Impacto en el PCB
+#+BEGIN_CENTER
+Volvamos a hacer cuentas:
+
+¿Cuánto pesa cada esquema de asignación de memoria?
+#+END_CENTER
 - Partición fija :: Un /registro base/ para indicar el /inicio/ del
                     espacio del proceso
 - Partición flexible :: Un registro base y un /registro límite/ para
@@ -491,10 +506,21 @@ de direccionamiento de 32 bits...
 \pause
 - $\frac{40}{8} \times 1048576$ \rarrow ¡¿5MB para la tabla de páginas?!
 \pause
-- $\frac{5242880}{4096} = 1280$ \rarrow ¡¿La tabla de páginas mide 1280 páginas?!
+- $\frac{5242880}{4096} = 1280$ \rarrow ¡¿La tabla de páginas mide
+  1280 páginas?!
+\pause
+- Con memoria DDR3-14900 y transferencia pico de 15GB/s, le agrega
+  0.3ms al cambio de contexto
+  - Quedamos en que un cambio de contexto /típico/ debe ser <1ms...
 ** ¿Cuánto ocuparía en una computadora real actual?
 #+BEGIN_CENTER
 ... ¿Quién se aventura a sacar números para un sistema de 64 bits?
+
+\pause
+
+Un tip: Basta multiplicar los números de la lámina anterior por
+4,294,967,296
+
 #+END_CENTER
 
 

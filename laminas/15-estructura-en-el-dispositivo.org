@@ -10,26 +10,6 @@
   sistemas operativos
   - Comprendido casi universalmente por los usuarios
 
-** Abstracción primaria
-- El modelo primario, con el cual todos estaremos familiarizados, es
-  el del /directorio jerárquico/
-- Unidad de almacenamiento visible al usuario: /Archivo/
-  - No podemos grabar información como no sea en un archivo
-  - Se ubica por un /nombre/ (o por una /ruta/) en el /directorio/
-- Una de las abstracciones más longevas en la historia de la
-  computación
-
-** Nos /muerde/ el tiempo...
-- Desafortunadamente, /mea culpa, mea culpa, mea máxima culpa/... No
-  nos alcanzó el tiempo para desmenuzar en clase lo que esta
-  abstracción significa
-  - Su evolución
-  - Sus interfaces
-- Los invito fuertemente a revisar el material que debíamos haber
-  cubierto
-  - [[http://sistop.gwolf.org/html/06_sistemas_de_archivos.html][Secciones 1, 2 y 3 del capítulo 7, Sistemas de Archivos]]
-  - [[http://sistop.gwolf.org/laminas/14-archivos-y-directorios.pdf][Presentación #14, Archivos y directorios]]
-
 ** Bajando de nivel
 - Entraremos directamente en detalles respecto a la organización de la
   información en un /dispositivo persistente/
@@ -43,7 +23,7 @@
 - No siempre es el caso
   - Primeros años del cómputo: Medios secuenciales (tarjetas o cintas,
     (de papel o magnéticas)
-- Hoy en día, tendencia a ir adoptando mediosde /estado sólido/
+- Hoy en día, tendencia a ir adoptando medios de /estado sólido/
   - Dispositivos sin partes móviles
   - Guardan la información en un tipo de /memoria/ que no requiere
     corriente constante para mantener la información
@@ -128,7 +108,7 @@ cuantos términos
   - Razonable para mantener en memoria para un sistema de escritorio
     actual
   - Y ha ido creciendo a una razón aceptable desde los /viejos
-    tiempos/ (p. ej., 10KB para 40GB en sectores de 512 bytes, común
+    tiempos/ (p. ej., 10KB para 40MB en sectores de 512 bytes, común
     hacia fines de los 1980s)
 
 
@@ -262,7 +242,7 @@ cuantos términos
 
 ** FAT: Entrada de directorio
 #+attr_latex: width=\textwidth
-#+caption: Formato de la entrada del directorio bajo FAT32 ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
+#+caption: Formato de la entrada del directorio bajo FAT32 (longitudes en bytes) ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
 [[../img/ditaa/entrada_directorio_fat.png]]
 
 ** FAT: La extensión VFAT
@@ -274,8 +254,8 @@ cuantos términos
   - Los sistemas MS-DOS ignoran dichas entradas
 
 ** FAT: La extensión VFAT
-#+caption: Entradas de directorio representando archivos con y sin nombres largo bajo VFAT
-#+attr_latex: width=\textwidth
+#+caption: Entradas de directorio representando archivos (con y sin nombres largos) bajo VFAT
+#+attr_latex: height=0.7\textheight
 [[../img/directorio_vfat.png]]
 
 ** FAT: Tamaño máximo del directorio
@@ -291,7 +271,7 @@ cuantos términos
   - Al igual que lo son todos los subdirectorios
 
 ** Directorios, ordenamiento y velocidad
-- El directorio es una estructura /muy frecuentemente utilizada/
+- El directorio es una estructura /usada muy frecuentemente/
   - Hay que optimizarla a su principal tipo de uso
 - Muy frecuentemente ocupa distintos sectores / clusters
   - Si guardáramos el directorio /ordenado/, cada modificación sería
@@ -339,7 +319,8 @@ cuantos términos
   espacio que ocupa cada uno de los archivos?
 
 ** Asignación contigua
-- Sólo en los sistemas de archivos /muy/ antiguos
+- Esquema empleado en los sistemas de archivos /muy/ antiguos
+  - Y en los diseñados para no modificación — p.ej. ISO9660
 - Bastaría con la información que tiene el directorio FAT
   - /Punto/ de inicio del archivo
   - Longitud total

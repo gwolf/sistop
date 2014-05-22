@@ -5,18 +5,19 @@
 # <<MEM>>
 El único espacio de almacenamiento que el procesador puede utilizar
 directamente, más allá de los registros (que si bien le son internos y
-sumamente rápidos, son de capacidad demasiado limitada) es la memoria
+sumamente rápidos, pero de capacidad muy escasa) es la memoria
 física. Todas las arquitecturas de procesador tienen instrucciones
 para interactuar con la memoria, pero ninguna lo tiene para hacerlo
 con medios /persistentes/ de almacenamiento, como las unidades de
-disco. Cabe mencionar que cuando se encuentre en un texto
+disco[fn:: En la unidad /Sistemas de entrada y salida/ se estudiará cómo se
+interactúa con estas]. Cabe mencionar que cuando se encuentre en un texto
 referencia al /almacenamiento primario/ siempre se referirá a la
 memoria, mientras que el /almacenamiento secundario/ se refiere a los
 discos u otros medios de almacenamiento persistente.
 
 Todos los programas a ejecutar deben cargarse a la memoria
-del sistema antes de ser utilizados. En este capítulo se mostrará cómo
-el sistema operativo administra la memoria para permitir que varios
+del sistema antes de ser utilizados. En esta unidad se mostrará cómo
+administra el sistema operativo a la memoria para permitir que varios
 procesos la compartan — Esta tarea debe preverse desde el proceso de
 compilación de los programas (en particular, la fase de
 /ligado/). Hoy en día, además, casi todos los sistemas operativos
@@ -43,7 +44,7 @@ sistema operativo, re-alineada, y entregada.
 
 Un procesador que soporta un /espacio de direccionamiento/ de 16 bits
 puede referirse /directamente/ a hasta $2^{16}$ bytes, esto es, a
-hasta 65,536 bytes (64KB). Estos procesadores fueron comunes en las
+hasta 65,536 bytes (64K). Estos procesadores fueron comunes en las
 décadas de 1970 y 1980 — Los más conocidos incluyen al Intel 8080 y
 8085, Zilog Z80, MOS 6502 y 6510, y Motorola 6800. Hay que recalcar
 que estos procesadores son reconocidos como procesadores de /8 bits/,
@@ -58,9 +59,9 @@ fabricantes introdujeron a mediados de los años 1980 los procesadores
 con arquitectura de 32 bits. Por ejemplo, la arquitectura IA-32 de Intel tiene su 
 inicio oficial con el procesador 80386 (o simplemente 386). 
 Este procesador podía referenciar desde el punto de vista teórico 
-hasta $2^{32}$ bytes (4GB) de RAM. No obstante, debido a las 
+hasta $2^{32}}$ bytes de RAM. No obstante, debido a las 
 limitaciones tecnológicas (y tal vez estratégicas) para producir 
-memorias con esta capacidad, tomó más de veinte años para que las 
+memorias con esta capacidad, se tomó más de veinte años que las 
 memorias ampliamente disponibles alcanzaran dicha capacidad.
 
 Hoy en día, los procesadores dominantes son de 32 o 64 bits. En el caso de
@@ -84,14 +85,9 @@ por muchos años aún.
 
 ** Hardware: de la unidad de manejo de memoria (MMU)
 
-Con la introducción de sistemas multitarea, es decir, dos o más 
-programas ejecutandose, se vio la necesidad de tener más de un
-programa cargado en memoria. Esto conlleva que el sistema operativo
-junto con información del programa a ejecutar debe resolver cómo
-ubicar los programas en la memoria física disponible.
-
-Luego ha sido necesario emplear más memoria de la que está directamente disponible, 
-con el propósito de ofrecer a los procesos más espacio de lo que puede 
+A lo largo de la historia de las computadoras ha sido necesario
+emplear más memoria de la que está directamente disponible, con el 
+propósito de ofrecer a los procesos más espacio de lo que puede 
 direccionar /la arquitectura (hardware) empleada. Por otro lado, 
 la abstracción de un espacio virtualmente ilimitado para realizar sus
 operaciones incluso cuando la memoria /real/ es mucho menor a la
@@ -100,11 +96,11 @@ ininterrumpido de memoria, cuando en realidad puede haber alta
 /fragmentación/.
 
 Se explicará cómo la MMU cubre estas necesidades, y qué mecanismos
-emplea para lograrlo — Y qué cuidados se deben conservar, incluso como
-programadores de aplicaciones en lenguajes de alto nivel, para aprovechar de la
+emplea para lograrlo — Y qué debemos cuidar, incluso como
+programadores de aplicaciones de alto nivel, para aprovechar de la
 mejor manera estas funciones (y evitar, por el contrario, que los
-programas se vuelvan lentos por no manejar la memoria
-correctamente).
+programas se vuelvan lentos por no saber manejar la memoria)
+correctamente.
 
 La MMU es también la encargada de verificar que un proceso no tenga
 acceso a leer o modificar los datos de otro — Si el sistema operativo
@@ -124,7 +120,9 @@ acceso a memoria/ para verificar que esté en el rango permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
 64K (65535 bytes) a partir de la dirección 504214 (492K), el /registro
-base/ contendría 504214, y el /registro límite/ 65535. Si hubiera una
+base/ contendría 504214, y el /registro límite/ 65535[fn:: De hecho esto sucedía
+en los procesadores x86 con registros de 16 bits, que pueden almacenar un
+valor máximo de 65535 ($2^{16} - 1$. Si hubiera una
 instrucción por parte de dicho proceso que solicitara una dirección
 menor a 504214 o mayor a 569749 (556K), la MMU lanzaría una excepción
 o /trampa/ interrumpiendo el procesamiento, e indicando al sistema
@@ -149,7 +147,7 @@ Conforme el procesador avanza en la ejecución de las instrucciones
 producen accesos a memoria. Por un lado, tiene que buscar en
 memoria la siguiente instrucción a ejecutar. Por otro lado, estas
 instrucciones pueden requerirle uno o más operadores adicionales que
-deban ser leídos de la memoria. Por último, la instrucción puede
+deben ser leídos de la memoria. Por último, la instrucción puede
 requerir guardar su resultado en cierta dirección de memoria.
 
 Hace años esto no era un problema — La velocidad del procesador
@@ -208,14 +206,13 @@ el archivo ejecutable a memoria, sino que tiene que proporcionar la
 estructura para que éste vaya guardando la información de estado
 relativa a su ejecución.
 
-- Sección (o segmento) de texto :: Es el nombre que recibe la imagen en memoria de
+- Sección de texto :: Es el nombre que recibe la imagen en memoria de
      las instrucciones a ser ejecutadas. Usualmente, la sección de
      texto ocupa las direcciones /más bajas/ del espacio en memoria.
 
 - Sección de datos :: Espacio fijo preasignado para las variables
-     globales y datos incializados (como las cadena de caracteres por ejemplo). 
-     Este espacio es fijado en tiempo de compilación, y no
-     puede cambiar (aunque los datos que cargados allí sí cambian en el tiempo
+     globales. Este espacio es fijado en tiempo de compilación, y no
+     puede cambiar (aunque los datos que carga sí cambian en el tiempo
      de vida del proceso)
 
 - Espacio de /libres/ ::  Espacio de memoria que se emplea
@@ -225,13 +222,14 @@ relativa a su ejecución.
      el /Heap/.
 
      Cuando el programa es escrito en lenguajes que requieren /manejo
-     dinámico manual de la memoria/ (como C), esta área es la que se maneja a
+     manual de la memoria/ (como C), esta área es la que se maneja a
      través de las llamadas de la familia de =malloc= y =free=. En
      lenguajes con gestión automática, esta área es monitoreada por
-     los /recolectores de basura/.
+     los /recolectores de basura/ (volveremos a estos conceptos más
+     adelante).
 
 - Pila de llamadas :: Consiste en un espacio de memoria que se usa para
-     almacenar la secuencia de funciones que han sido llamadas dentro 
+     almacenar la secuenciade funciones que han sido llamadas dentro 
      del proceso, con sus parámetros, direcciones de /retorno/, 
      variables locales, etc. La pila ocupa la parte /más alta/ del 
      espacio en memoria, y /crece hacia abajo/.
@@ -262,21 +260,15 @@ abordará un ejemplo de cómo esto puede tener importantes consecuencias.].
 Ahora bien, en los sistemas actuales, los procesos requieren coexistir
 con otros, para lo cual las direcciones indicadas en el /texto/ del
 programa pueden requerir ser traducidas al lugar /relativo al sitio de
-inicio del proceso en memoria/ — Esto es, las direcciones son
-/resueltas/ o traducidas.  Existen diferentes estrategias de
-resolución, que se pueden clasificar a grandes rasgos[fn:: Esta
-explicación simplifica muchos detalles; para el lector interesado en
-profundizar en este tema, se recomienda el libro /Linkers and Loaders/
-(Ligadores y cargadores) de John R. Levine (1999). El libro está
-disponible en línea desde el sitio Web del autor,
-http://www.iecc.com/linker/ ] en:
+inicio del proceso en memoria/ — Esto es, las direcciones son /resueltas/.
+Existen diferentes estrategias de resolución, que se pueden clasificar en:
 
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de las variables y funciones. Esto era muy común en las
      computadoras previas al multiprocesamiento. En la arquitectura
      compatible con PC, el formato ejecutable =.COM= es un volcado de
      memoria directo de un archivo objeto con las direcciones
-     indicadas de forma absoluta. Esto puede verse hoy
+     indicadas de forma absoluta. Esto lo podemos ver hoy
      principalmente en sistemas embebidos o de función específica.
 
 - En tiempo de carga :: Al cargarse a memoria el programa y antes de
@@ -346,13 +338,12 @@ Desde la perspectiva del sistema operativo, cada uno de los espacios
 asignados a un proceso es una /partición/. Cuando el sistema operativo
 inicia, toda la memoria disponible es vista como un sólo bloque, y
 conforme se van ejecutando procesos, este bloque va siendo subdividido
-para satisfacer sus requisitos. Al cargar un programa el sistema
-operativo calcula cuánta memoria va a requerir a lo largo de su vida prevista.
+para satisfacer sus requisitos. Cada proceso debe indicar al sistema
+operativo cuánta memoria va a requerir a lo largo de su vida prevista.
 Esto incluye el espacio requerido para la asignación dinámica de memoria
 con la familia de funciones =malloc= y =free=.
 
 *** Fragmentación
-# <<MEM_fragmentacion>>
 
 La /fragmentación/ comienza a aparecer cuando más procesos terminan su
 ejecución, y el sistema operativo libera la memoria asignada a cada
@@ -435,13 +426,12 @@ totalidad de la memoria (probablemente más de una vez por bloque).
 # <<MEM_swap>>
 
 Siguiendo de cierto modo la lógica requerida por la compactación
-se encuentran los sistemas que utilizan /intercambio/ (/swap/) entre la
+se encuentran los sistemas que utilizan /intercambio/ (/swapping/) entre la
 memoria primaria y secundaria. En estos sistemas, el sistema operativo
 puede /comprometer/ más espacio de memoria del que tiene físicamente
-disponible. Cuando la memoria se acaba, el
-sistema suspende a un proceso (usualmente un proceso "bloqueado")
-y almacena una copia de su imagen en memoria en almacenamiento secundario 
-para luego poder restaurarlo.
+disponible. Cuando hay más procesos de los que caben en memoria, el
+sistema suspende a uno de ellos (usualmente un proceso "bloqueado")
+y almacena una copia de su imagen en memoria en almacenamiento secundario.
 
 Hay algunas restricciones a observar previo a suspender un proceso.
 Por ejemplo, se debe considerar si el proceso tiene pendiente alguna 
@@ -477,7 +467,7 @@ Al desarrollar un programa en un lenguaje de alto nivel, el programador
 usualmente no se preocupa por la ubicación en la memoria física de los
 diferentes elementos que lo componen. Esto se debe a que
 en estos lenguajes las variables y funciones son referenciadas por sus
-/nombres/, no por su ubicación[fn:: Al programar en lenguaje C por ejemplo, un
+/nombres/, no por su ubicación[fn:: Al programar en lenguaje C, un
 programador puede trabajar a este mismo nivel de abstracción, puede
 referirse directamente a las ubicaciones en memoria de sus datos
 empleando /aritmética de apuntadores/.]. No obstante, cuando se compila el
@@ -487,7 +477,7 @@ ubicará a cada una de las secciones presentadas en la sección
 
 Esto permite activar los mecanismos que evitan la escritura accidental de las 
 secciones de memoria del proceso que no se deberían modificar 
-(aquellas que contienen  código o de sólo lectura), y permitir la escritura de aquellas 
+(aquellas que contienen  código), y permitir la escritura de aquellas 
 que sí (en las cuales se  encuentran las variables globales, 
 la pila o /stack/ y el espacio de asignación dinámica o /heap/).
 
@@ -529,7 +519,7 @@ alguna estructura de datos,
 obtiene la dirección base, el tamaño del segmento y sus atributos
 de protección. Luego, aplicando el mecanismo explicado en secciones
 anteriores, toma la dirección base del segmento y le suma el desplazamiento
-para obtener una /dirección lineal física/. 
+para obtener una /dirección lineal/. 
 
 La traducción de una dirección lógica a una dirección lineal puede fallar
 por diferentes razones: Si el segmento no se encuentra en memoria, ocurrirá
@@ -541,7 +531,7 @@ ocurrirá una excepción del tipo /violación de segmento/
 
 Una de las principales ventajas del uso de segmentación consiste en
 permitir que cada uno de los segmentos tenga un distinto
-/juego de permisos/ para el proceso en cuestión: El sistema operativo
+/juego de permisos/ para el proceso en cuestiónn: El sistema operativo
 puede indicar, por ejemplo, que el /segmento de texto/ (el código del
 programa) sea de lectura y ejecución, mientras que las secciones de
 datos, libres y pila (donde se almacena y trabaja la información misma
@@ -551,7 +541,7 @@ inquebrantable: El código /automodificable/ conlleva importantes
 riesgos de seguridad, pero bajo ciertos supuestos, el sistema debe
 permitir su ejecución. Además, muchos lenguajes de programación
 permiten la /metaprogramación/, que requiere la ejecución de código
-construído en tiempo de ejecución.].
+construído al vuelo.].
 
 De este modo, se puede evitar que un error en
 la programación resulte en que datos proporcionados por el usuario o
@@ -582,7 +572,7 @@ mismo tiempo en sucesión, puede separar su texto (e incluso los datos
 correspondientes) en diferentes segmentos.
 
 A lo largo de la ejecución del programa, algunos de sus segmentos
-pueden no emplearse por largos periodos de tiempo. Éstos 
+pueden no emplearse por largos periodos de tiempo. Estas páginas
 pueden ser enviadas al /espacio de intercambio/ (/swap/) ya sea a
 solicitud del proceso o por iniciativa del sistema operativo.
 
@@ -682,9 +672,8 @@ desperdicio injustificado de recursos.
 # <<MEM_paginacion>>
 
 La fragmentación externa y, por tanto, la necesidad de compactación
-pueden evitarse por completo empleando la /paginación/. Ésta consiste
-en que cada proceso está dividio en varios bloques
-de tamaño fijo (más pequeños que los segmentos) llamados /páginas/, dejando
+pueden evitarse por completo empleando la /paginación/. Esta consiste
+en que cada proceso esté compuesto por una serie de /páginas/, dejando
 de requerir que la asignación sea de un área /contigua/ de
 memoria. Claro está, esto requiere de mayor espacialización por parte
 del hardware, y mayor información relacionada a cada uno de los
@@ -702,8 +691,8 @@ páginas/.
 
 Cuando se trabaja bajo una arquitectura que maneja paginación, las
 direcciones que maneja el CPU ya no son presentadas de forma absoluta.
-Los bits de cada dirección se separan en un /identificador de página/ y un
-/desplazamiento/, de forma similar a lo presentado al hablar de
+Los bits de cada dirección se separa en un identificador de página y un
+desplazamiento, de forma similar a lo presentado al hablar de
 resolución de instrucciones en tiempo de ejecución. La principal
 diferencia con lo entonces abordado es que cada proceso tendrá ya no
 un único espacio en memoria, sino una multitud de páginas.
@@ -734,9 +723,8 @@ en que /realmente/ se encuentra en la memoria del sistema).
 [[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
-presentado en la figura \ref{MEM_ejemplo_de_paginacion} (Silberschatz,
-p.292). Éste presenta un esquema minúsculo de paginación: Un /espacio
-de direccionamiento/ de 32
+presentado en el libro de Silberschatz, Galvin y Gagné. Este presenta
+presenta un esquema minúsculo: Un /espacio de direccionamiento/ de 32
 bytes (5 bits), organizado en 8 páginas de 4 bytes cada una (esto es,
 la página es representada con los 3 bits /más significativos/ de la
 dirección, y el desplazamiento con los 2 bits /menos
@@ -764,7 +752,7 @@ La MMU verifica en la tabla de páginas, y encuentra que la página 1
 corresponde al marco número 6 (110), por lo que traduce la dirección
 lógica 00101 (5) a la física 11001 (26).
 
-Se puede tomar la paginación como una suerte de resolución o traducción de
+Se puede tomar la paginación como una suerte de resolución de
 direcciones en tiempo de ejecución, pero con una /base/ distinta para
 cada una de las páginas.
 
@@ -780,8 +768,7 @@ evitar que una proporción sensible de la memoria se pierda en
 fragmentación interna, se podría tomar como estrategia  emplear un tamaño
 de página tan pequeño como fuera posible.
 
-Sin embargo, la sobrecarga administrativa (el tamaño de la tabla de paginación) 
-en que se incurre por
+Sin embargo, la sobrecarga administrativa en que se incurre por
 gestionar demasiadas páginas pequeñas se vuelve una limitante en
 sentido opuesto:
 
@@ -837,12 +824,12 @@ tabla de páginas en memoria, y apuntar al inicio de la tabla con un
 juego de registros especiales: el /registro de base de la tabla de
 páginas/ (/PTBR/, /Page Table Base Register/) y el /registro de
 longitud de la tabla de páginas/ (/PTLR/, /Page Table Length
-Register/),[fn:: ¿Por qué es necesario el segundo? Porque es
+Register/),[fn:: ¿Por qué necesitamos el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del /PTLR/ se evita desperdiciar grandes cantidades
 de memoria indicando todo el espacio no utiilzado.] De esta manera, en
-el cambio de contexto sólo hay que cambiar estos dos registros, y además
+el cambio de contexto sólo hay que cambiar dos registros, y además
 se cuenta con un espacio muy amplio para guardar las tablas de páginas
 que se necesiten. El problema con este mecanismo es la velocidad:
 Se estaría penalizando a /cada acceso a memoria/ con un acceso de
@@ -909,8 +896,7 @@ más gravoso para el sistema que los beneficios obtenidos de la
 paginación.
 
 Aprovechando que la mayor parte del espacio de direccionamiento de un
-proceso está típicamente vacío (la pila de llamadas y el heap),
- se puede subdividir el identificador
+proceso está típicamente vacío, se puede subdividir el identificador
 de página en dos (o más) niveles, por ejemplo, separando una dirección
 de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
@@ -1007,7 +993,7 @@ crear un nuevo proceso es el empleo de la llamada al sistema
 a un nuevo proceso /idéntico/ al que lo llamó, diferenciándose
 únicamente en /el valor entregado/ por la llamada a =fork()=. Si
 ocurre algún error, el sistema entrega un número negativo (indicando
-la causa del error). En caso de ser exitoso, el proceso nuevo (o
+la causa del error). En caso de ser exitoso, El proceso nuevo (o
 proceso /hijo/) recibe el valor =0=, mientras que el proceso
 preexistente (o proceso padre) recibe el PID (número identificador de
 proceso) del hijo. Es frecuente encontrar el siguiente código:
@@ -1021,7 +1007,7 @@ proceso) del hijo. Es frecuente encontrar el siguiente código:
     /* Soy el proceso hijo */
     /* (...) */
    } else if (pid < 0) {
-    /* Ocurrió un error, no se creó un proceso hijo */
+    /* Ocurrio un error, no se creo un proceso hijo */
    } else {
     /* Soy el proceso padre */
     /* La variable 'pid' tiene el PID del proceso hijo */
@@ -1092,8 +1078,7 @@ todos los procesos activos en el sistema superara el total de espacio
 físico. Es ahí donde entra en juego la /memoria virtual/: Para ofrecer
 a los procesos mayor espacio en memoria del que existe físicamente, el
 sistema emplea espacio en /almacenamiento secundario/ (típicamente,
-disco duro), a través de un esquema de /intercambio/ (/swap/) guardando
-y trayendo páginas enteras.
+disco duro), a través de un esquema de /intercambio/ (/swapping/).
 
 #+label: MEM_esquema_gral_mem_virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
@@ -1111,7 +1096,7 @@ intercambio (\ref{MEM_swap}) a través del intercambio parcial
 (\ref{MEM_intercambio_parcial}), permitiendo que continuara la
 ejecución del proceso incluso con ciertos segmentos /intercambiados/
 (/swappeados/) a disco, la memoria virtual lo hace aún más conveniente
-al aumentar la /granularidad/ del intercambio: Ahora ya no se
+al aumentar la /granularidad/ del intercambio: Ahora ya no sólo se
 enviarán a disco secciones lógicas completas del proceso (segmentos),
 sino que se podrá reemplazar página por página, aumentando significativamente
 el rendimiento resultante. Al emplear la memoria virtual, de
@@ -1122,11 +1107,10 @@ Técnicamente, cuando se habla de memoria virtual, no se está
 haciendo referencia a un /intercambiador/ (/swapper)/, sino al /paginador/.
 
 ** Paginación sobre demanda
-# <<MEM_pag_sobre_demanda>>
+# <<MEM_pag_sobre_demada>>
 
 La memoria virtual entra en juego desde la carga misma del proceso.
-Se debe considerar que existe una gran cantidad de /código durmiente/
-o /inalcanzable/: Código
+Se debe considerar que existe una gran cantidad de /código durmiente/: Código
 que sólo se emplea eventualmente, como el que responde ante una
 situación de excepción o el que se emplea sólo ante circunstancias
 particulares (por ejemplo, la exportación de un documento a
@@ -1138,12 +1122,12 @@ como prácticamente todas las existen hoy en día, no puede /ver/
 directamente más que a la memoria principal] el código sí puede
 comenzar ejecutarse sin estar /completamente/ en memoria: Basta con
 haber cargado la página donde están las instrucciones que permiten
-continuar con su ejecución actual.
+continuar con su ejecición.
 
 La /paginación sobre demanda/ significa que, para comenzar a ejecutar
 un proceso, el sistema operativo carga /sólamente la porción
-necesaria/ para comenzar la ejecución (posiblemente una página o ninguna),
- y que a lo largo de la ejecución, el paginador /es flojo/:[fn:: En
+necesaria/ para comenzar la ejecución, y que a lo largo de la
+ejecución de cada uno de los procesos, el paginador /es flojo/:[fn:: En
 cómputo, muchos procesos pueden determinarse como /ansiosos/
 (/eager/), cuando buscan realizar todo el trabajo que puedan desde el
 inicio, o /flojos/ (/lazy/), si buscan hacer el trabajo mínimo en un
@@ -1182,8 +1166,8 @@ solicitada para luego continuar con su ejecución:
    como al TLB para indicar que la tabla está en memoria.
 
 6. Termina la suspensión del proceso, continuando con la instrucción
-   que desencadenó al fallo. El proceso puede continuar sin notar 
-   que la página había sido intercambiada.
+   que desencadenó al fallo. El proceso puede continuar tal como si la
+   página siempre hubiera estado presente en memoria.
 
 Llevando este proceso al extremo, se puede pensar en un sistema de
 /paginación puramente sobre demanda/ (/pure demand paging/): En un
@@ -1211,7 +1195,7 @@ Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
 mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
 de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
-prácticos se puede ignorar a $t_a$. Con los valores presentados, seleccionando
+prácticos ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
 1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
 
@@ -1250,7 +1234,7 @@ se asigna en el espacio libre del sistema de archivos. Esto lleva a
 que, conforme crece la fragmentación del disco, la memoria virtual
 quede esparcida por todo el disco duro. La generalidad de sistemas tipo 
 Unix, en contraposición, reservan una partición de disco /exclusivamente/ 
-para paginación.
+para la memoria virtual.
 
 ** Reemplazo de páginas
 
@@ -1269,8 +1253,8 @@ memoria. Se hace necesario encontrar una forma justa y adecuada de
 llevar a cabo un /reemplazo de páginas/ que permita continuar
 satisfaciendo sus necesidades.
 
-El reemplazo de páginas es una parte fundamental de la paginación, 
-ya que es la pieza que posibilita una verdadera separación
+El reemplazo de páginas es una parte fundamental de la paginación
+sobre demanda, ya que es la pieza que posibilita una verdadera separación
 entre memoria lógica y física. El mecanismo básico a ejecutar es simple: 
 Si todos los marcos están ocupados, el sistema deberá encontrar una página 
 que pueda liberar (una /página víctima/) y grabarla al espacio de 
@@ -1283,7 +1267,7 @@ la página víctima y una para traer la página de reemplazo), y por
 tanto, a una doble demora.
 
 Se puede, con un mínimo de /burocracia/ adicional (aunque requiere de
-apoyo de la MMU): implementar un mecanismo que disminuya la probabilidad
+/APOYO de la MMU): implementar un mecanismo que disminuya la probabilidad
 de tener que realizar esta doble transferencia: Agregar un /bit
 de modificación/ o /bit de página sucia/ (/dirty bit/) a la tabla de
 páginas. Este bit se marca como apagado siempre que se carga una
@@ -1292,7 +1276,7 @@ acceso de escritura a dicha página.
 
 Cuando el sistema operativo elige una página víctima, si su /bit de
 página sucia/ está encendido, es necesario grabarla al disco, pero si
-está apagado, se garantiza que la información en disco es idéntica  a su copia en 
+está apagada, se garantiza la información en disco es idéntica su copia en 
 memoria, y permite ahorrar la mitad del tiempo de transferencia.
 
 Ahora bien, ¿cómo decidir qué páginas remplazar marcándolas como
@@ -1300,6 +1284,10 @@ Ahora bien, ¿cómo decidir qué páginas remplazar marcándolas como
 /algoritmo de reemplazo de páginas/. La característica que se busca en
 este algoritmo es que, para una patrón de accesos dado, permita obtener el
 menor número de fallos de página.
+
+Esta sección está basada en los ejemplos presentados en los
+presentados en el libro /Operating Systems Concepts Essentials/
+(Silberschatz, Galvin y Gagné, 2011).
 
 De la misma forma como se realizó la descripción de los algoritmos de
 planificación de procesos, para analizar los algoritmos de reemplazo 
@@ -1339,28 +1327,20 @@ dado que a cada solicitud se debería reemplazar el único marco
 disponible. El rendimiento evaluado sería en los casos de que se cuenta
 con dos o tres marcos.
 
-#+attr_latex: width=0.6\textwidth
-#+attr_html: height=320
-#+label: MEM_expectativa_fallas_marcos
-#+caption: Relación ideal entre el número de marcos y fallos de página
-[[../img/gnuplot/expectativa_fallas_contra_marcos.png]]
-
 Un fenómeno interesante que se presenta con algunos algoritmos es la
-/anomalía de Belady/, publicada en 1969: Si bien la lógica indica que
-a mayor número de marcos disponibles se tendrá una menor cantidad de
-fallos de página, como lo ilustra la figura
-\ref{MEM_expectativa_fallas_marcos}, con algunas de cadenas de
-referencia y bajo ciertos algoritmos puede haber una /regresión/ o degradación, en
-la cual la cantidad de fallos aumenta aún con una mayor cantidad de
-marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
+/anomalía de Belady/: Si bien la lógica indica que a mayor número de
+marcos disponibles se tendrá una menor cantidad de fallos de página,
+con algunas de cadenas de referencia y bajo ciertos algoritmos puede
+haber una /regresión/, en la cual la cantidad de fallos aumenta aún
+con una mayor cantidad de marcos.
 
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: width=0.7\textwidth
 #+attr_html: height=320
 #+label: MEM_anomalia_belady
-#+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos. La cadena de referencia que genera este comportamiento es /1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5/ (Belady, 1969)
+#+caption: Comportamiento del algoritmo FIFO que exhibe la anomalía de Belady al pasar de 3 a 4 marcos
 [[./img/gnuplot/anomalia_belady.png]]
 
-Es importante recalcar que si bien la anomalía de Belady se
+Es importante recalcar que si bien la anomalía de Belady se nos
 presenta como un problema importante ante la evaluación de los
 algoritmos, en el texto de Luis La Red (p.559-569) se puede observar
 que en simulaciones con características más cercanas a las de los
@@ -1375,9 +1355,8 @@ con tres marcos, y con la siguiente cadena de referencia:
 #+end_quote
 
 *** Primero en entrar, primero en salir (FIFO)
-# <<MEM_FIFO>>
 
-El algoritmo de más simple y de obvia implementación es, nuevamente, el
+El algoritmo de más simple y obvia implementación es, nuevamente, el
 FIFO: Al cargar una página en memoria, se toma nota de en qué momento
 fue cargada, y cuando llegue el momento de reemplazar una página
 vieja, se elige la que haya sido cargada hace más tiempo.
@@ -1406,9 +1385,12 @@ probabilidad de ser reemplazadas, sin importar su frecuencia de uso.
 Con las condiciones aquí presentadas, un esquema FIFO causará 15
 fallos de página en un total de 20 accesos requeridos.
 
-El algoritmo FIFO es vulnerable a la anomalía de Belady. La figura
-\ref{MEM_anomalia_belady} ilustra este fenómeno al pasar de 3 a 4
-marcos.
+El algoritmo FIFO es vulnerable a la anomalía de Belady. Esto puede
+ilustrarse al pasar de 3 a 4 marcos con la cadena de referencia:
+
+#+BEGIN_QUOTE
+1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
+#+END_QUOTE
 
 La prevalencia de cadenas que desencadenan la anomalía de Belady fue
 uno de los factores principales que llevaron al diseño de nuevos
@@ -1416,10 +1398,10 @@ algoritmos de reemplazo de páginas.
 
 *** Reemplazo de páginas óptimo (OPT, MIN)
 
-Un segundo algoritmo, de interés puramente teórico, fue
+Un segundo algoritmo, de interés casi puramente teórico, fue
 propuesto, y es típicamente conocido como OPT o MIN. Bajo este
 algoritmo, el enunciado será elegir como página víctima a aquella
-página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
+página que /no vaya a ser utilizada/ por un tiempo máximo.
 
 
 #+attr_latex: width=\textwidth
@@ -1429,7 +1411,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
 mantiene como curiosidad teórica porque requiere conocimiento a priori
-de las necesidades a futuro del sistema — Y si esto es impracticable ya en los
+de las necesidades del sistema — Y si esto es impracticable ya en los
 algoritmos de despachadores, lo será mucho más con un
 recurso de reemplazo tan dinámico como la memoria.
 
@@ -1506,10 +1488,10 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
 
 - Bit de referencia :: Esta es una aproximación bastante
      común. Consiste en que todas las entradas de la tabla de páginas
-     tengan un bit adicional, al que llamaremos /de referencia/ o /de acceso/.
-     Al iniciar la ejecución, todos los bits de referencia están apagados
+     tengan un bit adicional, al que llamaremos /de referencia/. Al
+     iniciar la ejecución, todos los bits de referencia están apagados
      (0). Cada vez que se referencia a un marco, su bit de referencia
-     se enciende (esto en general lo realiza el hardware).
+     se enciende.
 
      El sistema operativo invoca periódicamente a que se apaguen
      nuevamente todos los bits de referencia. En caso de presentarse
@@ -1572,11 +1554,11 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      - (0,1) :: No ha sido utilizada recientemente, pero está
                 modificada. No es tan buena opción, porque es
                 necesario escribir la página a disco antes de
-                reemplazarla, pero puede ser elegida.
+                reemplazarla, pero puede se elegida.
 
      - (1,0) :: El marco está /limpio/, pero fue empleado
                 recientemente, por lo que probablemente se vuelva a
-                requerir pronto.
+                requerir pronto
 
      - (1,1) :: Empleada recientemente y /sucia/ — Sería necesario
                 escribir la página a disco antes de reemplazar, y
@@ -1761,8 +1743,8 @@ servidor de documentos pasa la mayor parte de su tiempo simplemente
 esperando solicitudes, y podría reducirse a un uso mínimo de memoria
 física, sin embargo, al solicitársele un documento, se le deberían
 poder asignar más marcos (para trabajar en una /ráfaga/) hasta que
-termine con su tarea. En la sección \ref{MEM_mod_conjunto_activo} se
-retomará este tema.
+termine con su tarea. Veremos este punto en breve, al hablar del
+conjunto activo (sección \ref{MEM_conjunto_activo}).
 
 *** Ámbitos del algoritmo de reemplazo de páginas
 
@@ -1802,14 +1784,14 @@ reemplazo de páginas.
 El reemplazo local es más rígido y no permite aprovechar para mejorar
 el rendimiento los periodos de inactividad de algunos de los
 procesos. En contraposición, los esquemas basados en reemplazo global
-pueden llevar a rendimiento inconsistente: Dado que la asignación de
+puede llevar a rendimiento inconsistente: Dado que la asignación de
 memoria física sale del control de cada proceso, puede que la misma
 sección de código presente tiempos de ejecución muy distintos si
 porciones importantes de su memoria fueron paginadas a disco.
 
 ** Hiperpaginación
 
-Es un fenómeno que se puede presentar por varias razones: cuando (bajo 
+Es un fenómeno que se puede presentar por varias razones: Cuando (bajo 
 un esquema de reemplazo local) un proceso tiene asignadas
  pocas páginas para llevar a cabo su trabajo, y genera fallos
 de página con tal frecuencia que le imposibilita realizar trabajo
@@ -1851,7 +1833,7 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+label: MEM_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349)
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -1870,7 +1852,7 @@ proceso con menor prioridad, al que esté causando más cantidad de
 fallos, o al que esté ocupando más memoria.
 
 *** Modelando el /conjunto activo/
-# <<MEM_mod_conjunto_activo>>
+# <<MEM_conjunto_activo>>
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que se va a presentar una situación de hiperpaginación —
@@ -1881,7 +1863,7 @@ conjunto activo, el proceso accese de golpe una serie de páginas que
 no había referenciado en cierto tiempo.
 
 #+label: MEM_conjunto_activo
-#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/conjunto_activo.png]]
@@ -1904,7 +1886,7 @@ orden de los últimos miles a decenas de miles de accesos a memoria.
 Para una cobertura a mayor profundidad del material presentado en
 esta sección, se sugiere estudiar los siguientes textos:
 
-- [[http://www.phrack.org/issues.html?issue=49&id=14][Smashing The Stack For Fun And Profit]] (Aleph One, revista
+- [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing The Stack For Fun And Profit]] (Aleph One, revista
   Phrack, 1996)
 - [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
   disponible en Web)
@@ -1926,7 +1908,7 @@ procesado (sean instrucciones o datos) debe pasar por la memoria, por
 el /almacenamiento primario/. Sólo desde ahí puede el procesador
 leer la información directamente.
 
-A lo largo del presente capítulo se ha mencionado que la MMU incluye ya
+A lo largo de la presente unidad se ha mencionado que la MMU incluye ya
 desde el hardware el concepto de /permisos/, separando claramente las
 regiones de memoria donde se ubica el código del programa (y son, por
 tanto, ejecutables y de sólo lectura) de aquellas donde se encuentran
@@ -1945,8 +1927,7 @@ profundizar un poco más acerca de cómo está estructurada la
 /pila de llamadas/ (/stack/).
 
 El /stack/ es el mecanismo que brinda un sentido local a la
-representación del código estructurado. Está dividido en /marcos de
-activación/ (sin
+representación del código estructurado. Está dividido en /marcos/ (sin
 relación con el concepto de marcos empleado al hablar de memoria
 virtual); durante el periodo en que es el marco /activo/ (esto es,
 cuando no se ha transferido el control a ninguna otra función), está
@@ -1954,16 +1935,16 @@ delimitado por dos valores, almacenados en registros:
 
 - Apuntador a la pila :: (/Stack pointer/, /SP/) Apunta al /final
      actual/ (dirección inferior) de la pila. En arquitecturas x86,
-     emplea el registro =ESP=; cuando se pide al procesador que actúe sobre
-     /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
-     este registro
+     emplea el registro =ESP=.
 - Apuntador del marco :: (/Frame pointer/, =FP=, o /Base local/, =LB=)
      Apunta al /inicio/ del marco actual, o lo que es lo mismo, al
      final del marco anterior. En arquitecturas x86, emplea el
-     registro =EBP=.
+     registro =EBP=; cuando se le pide al procesador que actúe sobre
+     /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
+     este registro.
 
 A cada función a que va entrando la ejecución del proceso, se va
-creando un /marco de activación/ en el stack, que incluye:
+creando un /marco/ en el stack, que incluye:
 
 - Los argumentos recibidos por la función
 - La dirección de retorno al código que la invocó
@@ -2009,7 +1990,7 @@ Y lo que el código resultante en ensamblador efectúa es:
    porque, en la arquitectura x86-32, los accesos a memoria deben
    estar /alineados a 32 bits/.
 
-#+begin_src [x86masm]Assembler
+#+begin_src asm
 ; main
         pushl $3
         pushl $2
@@ -2030,8 +2011,7 @@ func:
 *** C y las funciones de manejo de cadenas
 
 El lenguaje de programación C fue creado con el propósito de ser tan
-simple como sea posible, manteniéndose tan cerca del hardware como se
-pudiera, para que pudiera ser empleado 
+simple como sea posible, manteniéndose , para que pudiera ser empleado 
 como un lenguaje de programación para un sistema operativo portable. 
 Y si bien en 1970 era visto como un lenguaje bastante de alto nivel, 
 hoy en día es lo más bajo nivel en que programa la mayor parte de los desarrolladores
@@ -2067,7 +2047,7 @@ int main(int argc, char **argv) {
 #+end_src
 
 El problema con este código reside en el =strcpy(buffer, argv[1])= —
-Dado que el código es recibido del usuario, no se tiene la /certeza/
+Dado que el código es recibido del usuario, no tenemos la /certeza/
 de que el argumento que recibe el programa por línea de comandos
  (empleando =argv[1]=) quepa en el arreglo =buffer[256]=. Esto es, 
 si se ejecuta el programa ejemplo con una cadena de 120 caracteres:
@@ -2105,7 +2085,7 @@ En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
 error exitosamente y detuvo la ejecución — Pero no lo hizo: El
 =Segmentation fault= no fue generado al sobreescribir el buffer ni al
 intentar procesarlo, sino después de terminar de hacerlo: Al llegar
-la ejecución del código al =return 0=.
+nuestro código al =return 0=.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_500
@@ -2198,7 +2178,7 @@ típicamente se llama /shellcode/, pues se emplea para obtener un
 /shell/ (un intérprete de comandos) que ejecuta con los privilegios
 del proceso explotado.
 
-*** Mecanismos de mitigación
+** Mecanismos de mitigación
 
 Claro está, el mundo no se queda quieto. Una vez que estos mecanismos
 de ataque se dieron a conocer, comenzó un fuerte trabajo para crear
@@ -2211,7 +2191,7 @@ límites. La desventaja de esto es que hace falta cambiar al /factor
 humano/, lo cual resulta prácticamente imposible de lograr con
 suficiente profundidad[fn:: El ejemplo más claro de este problema es la función
 /gets/, la cual sigue siendo enseñada y usada en los cursos básicos de
-programación en C.]. Muchos desarrolladores esgrimen argumentos en
+programación en C]. Muchos desarrolladores esgrimen argumentos en
 contra de estas prácticas, como la pérdida de rendimiento que estas
 funciones requieren, y muchos otros sencillamente nunca se dieron por
 enterados de la necesidad de programar correctamente.
@@ -2256,7 +2236,7 @@ destino se debe saltar.
 Un atacante puede emplear varias técnicas para ayudarse a /adivinar/
 detalles acerca del acomodo en memoria de un proceso, y, con un
 buffer suficientemente grande, es común ver /cadenas de NOP/, esto
-es, una extensión grande de operaciones nulas, seguidas del
+es, una extensión grand de operaciones nulas, seguidas del
 /shellcode/, para aumentar las probabilidades de que el control se
 transfiera a un punto útil.
 
@@ -2288,181 +2268,99 @@ no fuera del alcance de los atacantes.
 
 ** Ligado estático y dinámico de bibliotecas
 
-Las /bibliotecas de código/ (o simplemente /bibliotecas/) implementan el
+Las /bibliotecas de código/ - O simplemente /bibliotecas/  implementan el
 código de una serie de funcionalidades generales, que
 pueden ser usadas en diferentes programas y contextos. Un ejemplo clásico sería la
 biblioteca estándar de C, la cual ofrece funciones básicas
 de entrada / salida, manejo de cadenas, entre otras.
 
-A medida que el software crece en complejidad, los programadores recurren
-a la /reutilización de código/ para aprovechar la implementación de
-la funcionalidad que ofrecen las distintas bibliotecas. 
+A medida que el software crece en complejidad, los programadores hacen uso
+del concepto de /reutilización de código/ para aprovechar la implementación de
+alguna funcionalidad, que se encuentre disponible como biblioteca. 
 De esta forma, evitan "reinventar la rueda", y se concentran en
-la funcionalidad específica del software que están construyendo.
+las funcionalidades específicas del software que están construyendo.
 
 El concepto de /ligado/ se refiere al proceso mediante el cual, se toma el 
 /codigo objeto/ de un programa junto con el código de las bibliotecas que éste usa
 para crear un archivo ejecutable. De forma general existen dos tipos de ligado, que
 se explican a continuación.
 
-El /ligado estático/ consiste en tomar el código de una biblioteca e integrarlo al
+El ligado estático consiste en tomar el código de una biblioteca e integrarlo al
 código del programa para generar el archivo ejecutable. Esto implica que
 /cada programa/ tiene su propia copia del código de la biblioteca, lo cual puede
 causar un desperdicio de memoria y disco si existen muchos programas que usan 
 la misma versión.
 
-Por su parte, en el /ligado dinámico/ el código de las bibliotecas no se copia dentro
+Por su parte, en el ligado dinámico el código de las bibliotecas no se copia dentro
 de la imagen ejecutable del programa, pero requiere establecer algún mecanismo
 para informar que el programa necesita un código externo. Esto se puede implementar 
-de diferentes formas. Por ejemplo, se puede incluir un fragmento de código 
-dentro del programa que usa la biblioteca denominado /stub/, el cual en tiempo de 
+de diferentes formas. Por ejemplo,se puede incluir un fragmento de código 
+dentro del programa que usa la biblioteca denominado /stub/,el cual en tiempo de 
 ejecución solicita que se  cargue la biblioteca requerida. Otra estrategia que 
 se puede utilizar consiste en  incluir algunas indicaciones que le permiten 
 al sistema operativo, en el momento  de crear el proceso, ubicar las 
-bibliotecas que este requerirá para su ejecución. En cualquier caso, el ligado 
+bibliotecas que este requiere para su ejecución. En cualquier caso, el ligado 
 dinámico busca que las bibliotecas sólo sean cargadas cuando sean requeridas.
-
-La figura \ref{MEM_tipo_resol_direcc}, presentada al principio de este
-capítulo, ilustra el momento en que ocurre cada uno de estos ligados:
-El ligado estático es realizado por el /editor de ligado/, uniendo en
-un sólo /módulo cargable/ al programa compilado (/módulo objeto/) con
-las bibliotecas (/otros objetos/); el ligado dinámico es realizado
-parcialmente en tiempo de carga (para las /bibliotecas del sistema/) y
-parcialmente en tiempo de ejecución (para las /bibliotecas de carga
-dinámica/).[fn:: Refiérase al libro /Linkers and Loaders/ (ligadores y
-cargadores) de John R. Levine (1999) para mayores detalles respecto a
-este proceso.]
-
-*** Las bibliotecas y la seguridad
 
 El ligado dinámico puede traer consigo una serie de problemas, entre los cuales
 se destacan el manejo de versiones de las bibliotecas y potenciales vulnerabilidades. 
-El primer problema es conocido, en ambientes Windows, como el /infierno de las DLL/. Este
+El primer problema se puede observar en ambientes Windows como el /infierno de las DLL/. Este
 /infierno/ se puede causar de muchas formas. Por ejemplo, si al al instalar un nuevo programa,
 se instala también una versión incompatible de una biblioteca que es usada por otros programas.
-Esto causa que los demás programas no se puedan ejecutar — Y lo que es
-más, hace que la depuración del fallo sea muy difícil. Por otro lado, si no se 
-tienen los controles suficientes, al desinstalar un programa se puede borrar 
-una biblioteca compartida, lo cual puede llevar a que otros programas dejen de funcionar.
+Esto causa que los demás programas no se puedan ejecutar. De otro lado, si no se 
+tienen los controles suficientes, al desinstalar un programas se puede borrar accidentalmente
+una biblioteca compartida, lo cual también causaría que otros programas dejen de funcionar.
 
-El /infiero de las DLL/ puede ser prevenido mediante estrategias como
-el /versionamiento/ de las biblioteca de ligado dinámico (esto es,
-hacer que cada componente de las bibliotecas lleve la versión que
-implementa o /nivel de compatibilidad/ que implementa),[fn:: Este
-nivel de compatibilidad incluye no sólo a la /interfaz de aplicación
-al programador/ (API, definida en las secciones \ref{HW_SYSCALLS} y
-\ref{HW_syscall_arch_api}), sino también la /interfaz de aplicación
-binaria/ (ABI), esto es, no sólo la información de el nombre de las
-funciones que expone y los tipos de argumentos que reciben, sino
-también la ubicación en memoria de su definición en un archivo ya
-compilado.] y mediante el uso de scripts de instalación o /gestores de
-dependencias/ que verifican si existe en el sistema una versión
-compatible de la biblioteca. Teniendo esta información, la biblioteca
-en cuestión se instalará únicamente en caso necesario.
+El /infiero de las DLL/ puede ser prevenido mediante estrategias como el versionamiento de las
+biblioteca de ligado dinámico, y mediante el uso de scripts de instalación que verifican si existe
+en el sistema una versión compatible de la biblioteca. En caso contrario, se instalará la biblioteca
+requerida.
 
-El ligado dinámico puede presentar problemas o vulerabilidades debido
-a que el programa usa un código proporcionado por terceros, y /confía/
-en que la biblioteca funciona tal como se espera sin incluir código
-malicioso. Por tal razón, desde el punto de vista teórico bastaría que
-un atacante instale su propia versión de una biblioteca para que pueda
-tener el control de los programas que la usan e incluso del mismo
-sistema operativo.[fn:: Esto se puede lograr, por ejemplo, alterando
-la configuración del entorno en la cual el sistema busca las
-bibliotecas.] En el caso de bibliotecas ligadas /estáticamente/, dado
-que estas forman ya parte del programa, un atacante tendría que
-modificar al archivo objeto mismo del programa para alterar las
-bibliotecas.
+La vulnerabilidad en el ligado dinámico se presenta debido a que el programa usa un
+código proporcionado por terceros, y /confía/ que la biblioteca funciona tal como se espera sin
+incluir código malicioso. Por tal razón, desde el punto de vista teórico bastaría que un atacante 
+instale su propia versión de una biblioteca para que pueda tener el control de los programas
+que la usan e incluso del mismo sistema operativo [fn:: Esto se puede lograr, por ejemplo, 
+alterando la configuración del entorno en la cual el sistema busca las bibliotecas.].
 
-Así las cosas, más allá de la economía de espacio en memoria, ¿cómo se
-explica que sea tanto más popular el ligado dinámico en los sistemas
-operativos modernos?
+** Recuperación de datos del intercambio
 
-Parte muy importante de la respuesta es la /mantenibilidad/: Si es
-encontrado un fallo en una biblioteca de carga dinámica, basta con que
-los desarrolladores lo corrijan una vez (cuidando, claro, de mantener
-la compatibildad binaria) y reemplazar a dicha biblioteca en disco
-/una sola vez/. Todos los programas que liguen dinámicamente con esta
-biblioteca tendrán disponible de inmediato la versión actualizada. En
-mucho sistemas operativos, el /gestor de paquetes/ puede detectar
-cuáles de los procesos en ejecución emplean a determinada biblioteca
-dinámica, y reiniciarlos de forma transparente al administrador.
-
-En contraste, de estar el fallo en una biblioteca de ligado estático,
-el código afectado estaría incluído como parte de /cada uno de los
-programas/ ligados con ella. Como consecuencia, para corregir este
-defecto, cada uno de los programas afectados tendría que ser
-recompilado (o, por lo menos, /religado/) antes de poderse beneficiar
-de las correcciones.
-
-Y si bien este proceso resulta manual y tedioso para un administrador
-de sistemas con acceso a las fuentes de los programas que tiene
-instalados, resulta mucho más oneroso aún para quienes emplean
-software /propietario/ (En la sección \ref{sec-8-1-3} se aborda
-con mayor detenimiento lo que significa el software propietario en
-contraposición al software libre).
-
-Cabe mencionar que el comportamiento del sistema ante la actualización
-de una biblioteca descrita ilustra una de las diferencias semánticas
-entre sistemas Windows y sistemas Unix que serán abordadas en el
-capítulo \ref{DIR}: Mientras un sistema Unix permite la eliminación de
-un archivo /que está siendo utilizado/, Windows no la permite. Esto
-explica por qué las actualizaciones de bibliotecas en sistemas Windows
-se aplican /durante el proceso de apagado/: Mientras haya procesos que
-tienen abierta una biblioteca, ésta no puede ser reemplazada. Caso
-contrario en sistemas Unix, en que el archivo puede ser reemplazado,
-pero mientras no sean reiniciados los procesos en cuestión, éstos
-seguirán ejecutando la versión de la biblioteca con el error.
-
-
-# * Consideraciones de rendimiento
-# #+begin_src c
-#  int datos[8000][8000];
-#  
-#  /* Versión correcta: El ciclo externo va sobre el */
-#  /* índice externo, el ciclo interno va sobre el índice */
-#  /* interno. El arreglo en memoria sera recorrido */
-# /* secuencialente. */
-#  for (i=0; i<8000; i++) {
-#    for (j=0; j<8000; j++) {
-#      datos[i][j] += 1;
-#    }
-#   }
-#  
-#  /* Si el ciclo externo es empleado para el índice interno */
-#  /* y viceversa, el recorrido en memoria sera de "puntitos" */
-#  /* distribuidos por todo el espacio que ocupa datos[], */
-#  /* reemplazando a los contenidos del TLB una y otra vez, y */
-#  /* con un fuerte impacto al rendimiento. */
-#  for (i=0; i<8000; i++) {
-#    for (j=0; j<8000; j++) {
-#      datos[j][i] += 1;
-#    }
-#   }
-# #+end_src
+* Consideraciones de rendimiento
+#+begin_src c
+  int datos[8000][8000];
+  
+  /* Version correcta: El ciclo externo va sobre el */
+  /* indice externo, el ciclo interno va sobre el indice */
+  /* interno. El arreglo en memoria sera recorrido */
+  /* secuencialente. */
+  for (i=0; i<8000; i++) {
+    for (j=0; j<8000; j++) {
+      datos[i][j] += 1;
+    }
+   }
+  
+  /* Si el ciclo externo es empleado para el indice interno */
+  /* y viceversa, el recorrido en memoria sera de "puntitos" */
+  /* distribuidos por todo el espacio que ocupa datos[], */
+  /* reemplazando a los contenidos del TLB una y otra vez, y */
+  /* con un fuerte impacto al rendimiento. */
+  for (i=0; i<8000; i++) {
+    for (j=0; j<8000; j++) {
+      datos[j][i] += 1;
+    }
+   }
+#+end_src
 
 * Otros recursos
 
-- /The Grumpy Editor goes 64-bit/
-  #+latex: \otrorec{https://lwn.net/Articles/79036/}
-  #+html: <br/><a href="https://lwn.net/Articles/79036/">https://lwn.net/Articles/79036/</a><br/>
-  Jonathan Corbet (2004); Linux Weekly News.  Experiencia del editor
-  de Linux Weekly News al migrar a una arquitectura de 64 bits
-  en 2004. Lo más interesante del artículo son los comentarios,
-  ilustran buena parte de los pros y contras de una migración de 32 a
-  64 bits.
-
-- /Using Valgrind to debug Xen Toolstacks/
-  #+latex: \otrorec{http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/}
-  #+html: <br/><a href="http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/">http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/</a><br/>
-  Ian J. Campbell (2013). Presenta un ejemplo de uso de la herramienta
-  /Valgrind/, para encontrar problemas en la asignación, uso y
-  liberación de memoria en un programa en C.
-# Liga muerta :( Como sea, me gustaría adaptar lo que relata para
-# mencionarlo con memoria virtual
-#
-# - /Less swap/ (http://ghostbar.ath.cx/2013/01/27/less-swap/), Jose
-#   Luis Rivas (2013). Entrada  Controlando el "swappiness" de Linux vía
-#   =vm.swappiness=
+- [[https://lwn.net/Articles/79036/][The Grumpy Editor goes 64-bit]] — Experiencia del editor de Linux
+  Weekly News al migrar a una arquitectura de 64 bits en 2004. Lo más
+  interesante del artículo son los comentarios, ilustran buena parte
+  de los pros y contras de una migración de 32 a 64 bits.
+- [[http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/][Using Valgrind to debug Xen Toolstacks]] — Revisar, no sé si el texto
+  propiamente sea del nivel adecuado. En todo caso, buscar algo de Valgrind.
+- [[http://ghostbar.ath.cx/2013/01/27/less-swap/][Less swap]] (blog de Jose Luis Rivas) — Controlando el "swappiness" de
+  Linux vía =vm.swappiness=
 # My old X61 has 2G in RAM and 3G in Swap. It seems my using-habit for
 # Google Chrome is heavy (more than 20 tabs open most of the time) so
 # my swap is normally being used above the 1.8G-mark. That means, my
@@ -2490,84 +2388,45 @@ seguirán ejecutando la versión de la biblioteca con el error.
 #
 # Now my system is really smooth and using Chrome + Terminal + Tmux +
 # Rhythmbox is acceptable.
+- [[http://troysunix.blogspot.mx/2011/07/process-memory-usage.html][Process memory usage]], ejemplos de pmap en diferentes Unixes
+- [[http://www.adrien-revol.com/blog/index.php?post/2009/12/10/20-Linux-System-Monitoring-Tools][20 Linux system monitoring tools]], varias de ellas enfocadas a la
+  memoria
+- [[http://www.daemon-systems.org/man/pmap.1.html][Manual de pmap en NetBSD]], con varias opciones más
+  explícitas/completas que las de Linux
 
-- /Process memory usage/
-  #+latex: \otrorec{http://troysunix.blogspot.mx/2011/07/process-memory-usage.html}
-  #+html: <br/><a href="http://troysunix.blogspot.mx/2011/07/process-memory-usage.html">http://troysunix.blogspot.mx/2011/07/process-memory-usage.html</a><br/>
-  ejemplos de pmap en diferentes Unixes
+- [[/biblio/Windows_Internals_sample_chapters.pdf][Understanding the Linux Virtual Memory Manager]], por Mel Gorman
+  (2004). Un libro bajo licencia libre, parte de la colección [[http://www.informit.com/imprint/series_detail.aspx?ser=335494][Bruce
+  Perens' Open Source Series]]; aborda a profundidad los mecanismos y
+  algoritmos relativos a la memoria empleados por el sistema operativo
+  Linux. Entra en detalles técnicos con bastante profundidad,
+  presentándolos poco a poco, por lo que no resulta demasiado complejo
+  de leer. El primer tercio del libro (216 páginas) describe los
+  mecanismos, y los dos tercios restantes siguen el código
+  comentado. El libro está también [[http://www.makelinux.net/books/lvmm/][disponible en formato HTML]] en
 
-- /Página de manual de pmap en NetBSD/
-  #+latex: \otrorec{http://www.daemon-systems.org/man/pmap.1.html}
-  #+html: <br/><a href="http://www.daemon-systems.org/man/pmap.1.html">http://www.daemon-systems.org/man/pmap.1.html</a><br/>
-  Más allá de
-  simplemente mostrar la operación de una herramienta del sistema en
-  Unix, esta página de manual ilustra claramente la estructura de la
-  organización de la memoria.
+- [[http://www.swansontec.com/sregisters.html][The art of picking Intel registers]] explica el uso de los
+  principales registros en la arquitectura x86
 
-- /Linkers and Loaders/
-  #+latex: \otrorec{http://www.iecc.com/linker/}
-  #+html: <br/><a href="http://www.iecc.com/linker/">http://www.iecc.com/linker/</a><br/>
-  John R. Levine
-  (1999). Libro de libre descarga y redistribución, dedicado a la
-  tarea de los editores de ligado y el proceso de carga de los
-  programas.
+- [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
+  disponible en Web)
 
-- /An anomaly in space-time characteristics of certain programs
-  running in a paging machine/
-  #+latex: \otrorec{http://dl.acm.org/citation.cfm?doid=363011.363155}
-  #+html: <br/><a href="http://dl.acm.org/citation.cfm?doid=363011.363155">http://dl.acm.org/citation.cfm?doid=363011.363155</a><br/>
-  Belady, Nelson,
-  Shedler (1969); Communications of the ACM
+- [[http://www.phrack.org/issues.html?issue=49&id=14#article][Smashing the Stack for fun and profit]], /Aleph One/, 1996: Uno de los
+  primeros artículos publicados acerca de los /buffers rebasados/
 
-- /Understanding the Linux Virtual Memory Manager/
-  #+latex:  \otrorec{http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf}
-  #+html: <br/><a href="http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf">http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf</a><br/>
-  Mel Gorman (2004).  Libro de libre descarga y redistribución, parte
-  de la colección /Bruce Perens' Open Source Series/.  Aborda a
-  profundidad los mecanismos y algoritmos relativos a la memoria
-  empleados por el sistema operativo Linux. Entra en detalles técnicos
-  a profundidad, presentándolos poco a poco, por lo que no resulta
-  demasiado complejo de leer. El primer tercio del libro describe los
-  mecanismos, y los dos tercios restantes siguen el código comentado
-  que los implementa.
+- [[http://kingcope.wordpress.com/2013/01/24/attacking-the-windows-78-address-space-randomization/][Attacking the Windows 7/8 Address Space Randomization]] explica cómo
+  puede burlarse la protección ALSR (aleatorización de direcciones) en
+  Windows 7 y 8, logrando una dirección predecible de memoria hacia la
+  cual saltar. Puede interesarles también leer la [[http://tech.slashdot.org/story/13/01/25/2146222/hacker-bypasses-windows-78-address-space-layout-randomization][discusión en
+  Slashdot]] una vez que esto fue hecho público.
 
-- /The art of picking Intel registers/
-  #+latex: \otrorec{http://www.swansontec.com/sregisters.html}
-  #+html: <br/><a href="http://www.swansontec.com/sregisters.html">http://www.swansontec.com/sregisters.html</a><br/>
-  William Swanson (2003).
+- [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory access]] (Cristoph Lameter,
+  septiembre 2013, /Communications of the ACM/)
 
-- /The Tao of Buffer Overflows/
-  #+latex: \otrorec{http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf}
-  #+html: <br/><a href="http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf">http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf</a><br/>
-  Enrique Sánchez (trabajo en proceso, facilitado por el autor)
-
-- /Smashing the Stack for fun and profit/
-  #+latex: \otrorec{http://www.phrack.org/issues.html?issue=49&id=14}
-  #+html: <br/><a href="http://www.phrack.org/issues.html?issue=49&id=14">http://www.phrack.org/issues.html?issue=49&id=14</a><br/>
-  /Aleph One/ (1996): Uno de los primeros artículos publicados acerca de los
-  /buffers desbordados/
-
-- /Attacking the Windows 7/8 Address Space Randomization/
-  #+latex: \otrorec{http://kingcope.wordpress.com/2013/01/24/}
-  #+html: <br/><a href="http://kingcope.wordpress.com/2013/01/24/">http://kingcope.wordpress.com/2013/01/24/</a><br/>
-  /Kingcopes/ (2013):
-  Explica cómo puede burlarse la protección ALSR (aleatorización de
-  direcciones) en Windows 7 y 8, logrando una dirección predecible de
-  memoria hacia la cual saltar.
-
-- /An overview of Non-Uniform Memory Access/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2500468.2500477}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2500468.2500477">https://dl.acm.org/citation.cfm?doid=2500468.2500477</a><br/>
-  Cristoph Lameter (2013); /Communications of the ACM/
-
-- /Anatomy of a killer bug: How just 5 characters can murder iPhone,
-  Mac apps/
-  #+latex: \otrorec{http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/}
-  #+html: <br/><a href="http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/">http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/</a><br/>
-  Chris Williams (2013); The Register. A fines de agosto del 2013, se
-  descubrió una /cadena Unicode de la muerte/, que causa que cualquier
-  programa que intente desplegarla en pantalla en la línea de
-  productos Apple se /caiga/. Este artículo relata el proceso de
-  averiguar, a partir del /reporte de falla/ generado por el sistema y
-  analizando el contenido de la memoria que éste reporta, cómo se
-  puede encontrar un /desbordamiento de entero/.
+- [[http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/][Anatomy of a killer bug: How just 5 characters can murder iPhone,
+  Mac apps]]: A fines de agosto del 2013, se descubrió una /cadena
+  Unicode de la muerte/, que causa que cualquier programa que intente
+  desplegarla en pantalla en la línea de productos Apple se
+  /caiga/. Chris Williams escribió este interesante artículo en que
+  muestra el proceso de averiguar, a partir del /reporte de falla/
+  generado por el sistema y analizando el contenido de la memoria que
+  éste reporta, cómo puede encontrar un /desbordamiento de entero/.

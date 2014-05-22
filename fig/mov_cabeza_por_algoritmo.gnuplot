@@ -16,7 +16,7 @@
 # #+TBLFM: @3$3..@10$3=@-1$3 + abs(@-1$2 - @0$2)::@3$5..@10$5=@-1$5 + abs(@-1$4 - @0$4)::@3$7..@11$7=@-1$7 + abs(@-1$6 - @0$6)::@3$9..@10$9=@-1$9 + abs(@-1$8 - @0$8)::@3$11..@10$11=@-1$11 + abs(@-1$10 - @0$10)
 
 reset
-set term pngcairo fontscale 1.5 size 1024,768
+set term pngcairo  size 1024,768
 data='fig/mov_cabeza_por_algoritmo.gnuplot.data'
 set multiplot
 

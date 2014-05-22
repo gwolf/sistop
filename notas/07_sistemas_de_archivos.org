@@ -393,7 +393,7 @@ pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
 archivo — Si el doceavo byte de una entrada de directorio, que indica
 los /atributos del archivo/ (ver figura
-\ref{FS_entrada_directorio_fat} y cuadro \ref{FS_artributos_fat}) tiene
+\ref{FS_entrada_directorio_fat} y cuadro 7.2) tiene
 al bit 4 activado, la región de datos correspondientes a dicho archivo
 será interpretada como un subdirectorio.
 
@@ -964,7 +964,7 @@ sistema operativo. Lo único que distingue a un directorio de un
 archivo normal es que, en la entrada que lo describe en su directorio
 padre, el doceavo byte de la entrada (que indica los /atributos del
 archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
-\ref{FS_atributos_fat}) tiene activado el bit 4.
+7.1) tiene activado el bit 4.
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del

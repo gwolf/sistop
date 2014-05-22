@@ -1,5 +1,5 @@
 reset
-set term pngcairo fontscale 2 size 1024,1024
+set term pngcairo  size 1024,1024
 data='fig/ley_de_moore.gnuplot.data'
 set key bottom right
 set grid

@@ -4,7 +4,7 @@
 * Introducción 
 # <<HW>>
 
-Todos los sitemas de cómputo están compuestos por al menos una unidad de proceso
+Todos los sistemas de cómputo están compuestos por al menos una unidad de proceso
 junto con dispositivos que permiten ingresar datos  (teclado, mouse, micrófono, 
 etc.) y otros que permiten obtener resultados (pantalla, impresora, parlantes, 
 etc.). Como se vio anteriormente, una de las funciones del sistema operativo es la de 
@@ -78,34 +78,45 @@ costo-beneficio suficiente para usarse como memoria primaria.
 
 Una respuesta parcial a este problema es la creación de una jerarquía
 de almacenamiento, yendo de una pequeña área de memoria mucho más cara
-hasta un gran espacio de memoria muy económica. En particular, la
-relación entre las capas superiores está administrada por hardware
+pero extremadamente rápida y hasta un gran espacio de memoria muy
+económica, aunque mucho más lenta, como lo ilustran la figura
+\ref{HW_jerarquia_memoria} y el cuadro
+\ref{HW_tabla_velocidad_gestor_memoria}.  En particular, la relación
+entre las capas superiores está administrada por hardware
 especializado de modo que su existencia resulta transparente al
 programador.
 
 #+caption: Velocidad y gestor de los principales niveles de memoria. (Silberschatz, Galvin, Gagne; p.28)
-| Nivel           | 1                 | 2              | 3              | 4          |
-|-----------------+-------------------+----------------+----------------+------------|
-| *Nombre*        | Registros         | Cache          | Memoria princ. | Disco      |
-| *Tamaño*        | <1KB              | <16MB          | <64GB          | >100GB     |
-| *Tecnología*    | Multipuerto, CMOS | SRAM CMOS      | CMOS DRAM      | Magnética  |
-| *Acceso (ns)*   | 0.25-0.5          | 0.5-25         | 80-250         | 5,000,000  |
-| *Transf (MB/s)* | 20,000-100,000    | 5,000-10,000   | 1,000-5,000    | 20-150     |
-| *Administra*    | Compilador        | Hardware       | Sist. Op.      | Sist. op.  |
-| *Respaldado en* | Cache             | Memoria princ. | Disco          | CD o cinta |
+#+label: HW_tabla_velocidad_gestor_memoria
+| Nivel            | 1            | 2         | 3         | 4           |
+|------------------+--------------+-----------+-----------+-------------|
+| *Nombre*         | Registros    | Cache     | Memoria   | Disco       |
+| *Tamaño*         | <1KB         | <16MB     | <64GB     | >100GB      |
+| *Tecnología*     | Multipuerto, | CMOS      | CMOS      | Magnética   |
+|                  | CMOS         | SRAM      | DRAM      |             |
+| *Acceso (ns)*    | 0.25-0.5     | 0.5-25    | 80-250    | 5,000,000   |
+| *Transferencia*  | 20-100 GB/s  | 5-10 GB/s | 1-5 GB/s  | 20-150 MB/s |
+| *Gestionado por* | Compilador   | Hardware  | Sistema   | Sistema     |
+|                  |              |           | Operativo | Operativo   |
+| *Respaldado en*  | Cache        | Memoria   | Disco     | CD, cinta   |
 
 Ahora bien, si bien la relación entre estos medios de almacenamiento
-puede parecer natural, para una computadora tiene una
-realidad completamente distinta: los registros son parte integral del
+puede parecer natural, para una computadora tiene una realidad
+completamente distinta: los registros son parte integral del
 procesador, y la memoria está a sólo un paso de distancia (el
 procesador puede referirse a ella directamente, de forma transparente,
 indicando la dirección desde un programa). El caché no existe para
 efectos prácticos: el procesador no hace referencia directa a él, sino
-que es manejado por los controladores de acceso a memoria.
+que es manejado por los controladores de acceso a memoria. Y por
+último, el acceso o modificación de cualquier dato almacenado en disco
+requiere en primer término de la transferencia a memoria, y sólamente
+cuando ésta haya finalizado, el llamado a las rutinas que son
+presentadas en la sección \ref{HW_disp_almacenamiento}, y analizadas
+en los capítulos \ref{DIR} y \ref{FS}.
 
-Como se verá, el sistema operativo es el encargado de mantener todas estas 
-jerarquías de memoria consistentes y de realizar las transferencias entre unas 
-y otras.
+Como se verá, el sistema operativo es el encargado de mantener la
+información almacenada en todos estos tipos de memoria de forma
+consistente, y de realizar las transferencias entre unas y otras.
 
 *** Registros
 
@@ -227,7 +238,7 @@ Las funciones del sistema operativo respecto a las interrupciones son:
                                   arquitectura del procesador. En cambio el
                                   sistema operativo lo comunica de una forma
                                   unificada a través de distintos mecanismos,
-                                  por ejemplo mensajes o señales o detiendo el
+                                  por ejemplo mensajes o señales o deteniendo el
                                   proceso que espera la acción relacionada con
                                   una interrupción y continuando su ejecución
                                   cuando ésta ocurre.
@@ -295,6 +306,7 @@ del sistema operativo, presentándolo de forma adecuada al
 usuario.
 
 * Dispositivos de almacenamiento
+# <<HW_disp_almacenamiento>>
 
 El almacenamiento en memoria primaria es /volátil/, esto es, se pierde
 al interrumpirse el suministro eléctrico. Esto no era muy importante
@@ -374,7 +386,7 @@ según la velocidad requerida por sus componentes y otras
 características que determinan su topología.
 
 #+attr_html: height=618px
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=0.7\textwidth
 #+label: HW_northbridge_southbridge
 #+caption: Diagrama de la comunicación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/. Imagen de la Wikipedia: /Puente Norte/
 [[./img/northbridge_southbridge.png]]

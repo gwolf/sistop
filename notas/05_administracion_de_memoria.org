@@ -2496,6 +2496,121 @@ seguirán ejecutando la versión de la biblioteca con el error.
 
 ** Temas de investigación sugeridos
 
+- Esquemas de asignación de memoria en una realidad NUMA ::
+
+  La realidad que se expuso en el capítulo respecto al
+  multiprocesamiento simétrico como fuertemente dominante en relación
+  a los sistemas NUMA se mantiene cierta... Pero va cambiando
+  rápidamente, y los sistemas NUMA son cada vez más comunes.
+
+  Claro está, la popularización de los sistemas NUMA tiene un alto
+  impacto en cómo se manejan los esquemas de administración de
+  memoria. Al entrar en juego la /afinidad/ de cada proceso a un CPU
+  dado, la administración de la memoria y el planificador
+  (despachador) de procesos quedan fuertemente interrelacionados.
+
+  En el número de septiembre del 2013 de la revista /Communications of
+  the ACM/ aparece un artículo corto, conciso y bastante interesante,
+  de Cristoph Lameter: [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory
+  access]]. Sugiero emplearlo como punto de partida.
+
+- Cargado y ligado de programas ::
+
+  Este tema ocupa un punto intermedio entre el estudio de los sistemas
+  operativos y el de los compiladores. Para los lectores del presente
+  libro, comprender este punto común puede resultar de interés.
+
+  Al convertir un programa escrito en determinado lenguaje de
+  programación por un humano en código ejecutable, no sólo hay que
+  convertir las instrucciones y proveer las abstracciones mínimas —
+  También es necesario que preparar al código para poder ser
+  /reubicado/ en la memoria.
+
+  El proceso de /cargado/ se refiere a cómo la imagen binaria del
+  programa que está grabada en un medio de almacenamiento es
+  modificada al llevarse a memoria para adecuarse al espacio que le
+  asigna el sistema operativo; el proceso de /ligado/ es cómo se
+  maneja su integración con las bibliotecas compartidas.
+
+  En este proceso entran temas como la gestión de /memoria
+  compartida/, las /indicaciones al compilador/ para generar /código
+  independiente de su posición/, etc.
+
+- Mecanismos para mantener la coherencia en caché ::
+
+  En un entorno multiprocesador, el acceso concurrente a las mismas
+  posiciones de memoria se vuelve muy complicado — Por decir lo
+  menos. Los distintos niveles de memoria caché tienen que sincronizar
+  su operación (a altísima velocidad) y permitir que avancen los
+  procesos compartiendo datos.
+
+  Hay varios mecanismos para mantener la coherencia. Algunas líneas
+  para comenzar la investigación pueden ser, para computadoras
+  razonablemente pequeñas, los mecanismos /fisgones/ (/snoopy/) de
+  invalidación y de actualización, y para equipos más grandes, los
+  mecanismos por hardware de /directorio/; los protocolos /fisgones/
+  son tambíén conocidos por sus siglas, o por las universidades donde
+  fueron diseñados: MSI, MESI (Illinois), MOSI (Berkeley), MOESI y
+  MESIF.
+
+- Relación con sistemas operativos en uso ::
+
+  Este capítulo es probablemente el que mejor nos permite ver
+  directamente la relación entre los temas cubiertos y su manejo en un
+  sistema operativo actual. Una manera sencilla de comprender el
+  efecto de los diversos parámetros del subsistema de memoria virtual
+  es la empírica: ¿Cómo reacciona un sistema operativo de propósito
+  general ante cambios en los distintos valores y umbrales? ¿Cuáles
+  serían las condiciones límite? ¿Qué comportamientos esperaríamos
+  llevando al sistema a estos extremos, y cuáles encontramos en la
+  realidad? ¿Cómo es la interfaz al administrador del sistema?
+
+  Prácticamente todos los sistemas operativos que se emplean hoy
+  permiten ajustar estos valores, y la comparación entre sistemas
+  operativos distintos seguramente resultará también interesante al
+  lector; en el caso de Linux, se sugiere revisar la documentación de
+  los parámetros de /sysctl/ relativos a la memoria virtual. Estos
+  están documentados en:
+
+  https://github.com/torvalds/linux/blob/master/Documentation/sysctl/vm.txt
+
+- Otras categorías de vulnerabilidad ::
+
+  Este capítulo presentó al /desbordamiento de pila/, una de las
+  vulnerabilidades clásicas y que más se siguen explotando al día de
+  hoy. Se presentaron algunos mecanismos de mitigación, pero la
+  conclusión es lapidaria: La correcta protección de límites es de
+  responsabilidad exclusiva e ineludible del desarrollador.
+
+  Sin embargo, el desbordamiento de pila no es la única
+  vulnerabilidad. Hay varias vulnerabilidades relacionadas con el
+  acomodo o el tamaño específico de los datos en la memoria. Dos
+  ejemplos:
+
+  - En agosto del 2013, se descubrió lo que se popularizó como una
+    /cadena Unicode de la muerte/: Un conjunto de caracteres que causa
+    que cualquier programa que intente desplegarlos en pantalla en la
+    línea de productos Apple se /caiga/. El siguiente artículo,
+    publicado por Chris Williams, relata el proceso que llevó a
+    averiguar, a partir del /reporte de falla/ generado por el sistema
+    y analizando el contenido de la memoria que éste reporta, cómo se
+    puede encontrar un /desbordamiento de entero/.
+
+    http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/
+
+  - En abril de 2014 se dio a conocer un fallo en la biblioteca
+    criptográfica /OpenSSL/, particularmente en la rutina que
+    implementa el /Heartbeat/. Dada la gran base instalada de usuarios
+    de OpenSSL, y lo sensible de la información que expone al
+    atacante, desde su descubrimiento se dio por hecho que esta es una
+    de las vulnerabilidades con mayor impacto a nivel mundial. Dado el
+    renombre que implica descubrir una vulnerabilidad de este tamaño,
+    los descubridores de este fallo montaron el sitio
+    http://heartbleed.com/ donde hay todo tipo de ligas describiendo
+    esta problemática; otro artículo que la explica muy claramente es:
+
+    http://www.theregister.co.uk/2014/04/09/heartbleed_explained/
+
 ** Lecturas relacionadas
 - /The Grumpy Editor goes 64-bit/
   #+latex: \otrorec{https://lwn.net/Articles/79036/}
@@ -2615,14 +2730,3 @@ seguirán ejecutando la versión de la biblioteca con el error.
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2500468.2500477">https://dl.acm.org/citation.cfm?doid=2500468.2500477</a><br/>
   Cristoph Lameter (2013); /Communications of the ACM/
 
-- /Anatomy of a killer bug: How just 5 characters can murder iPhone,
-  Mac apps/
-  #+latex: \otrorec{http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/}
-  #+html: <br/><a href="http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/">http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/</a><br/>
-  Chris Williams (2013); The Register. A fines de agosto del 2013, se
-  descubrió una /cadena Unicode de la muerte/, que causa que cualquier
-  programa que intente desplegarla en pantalla en la línea de
-  productos Apple se /caiga/. Este artículo relata el proceso de
-  averiguar, a partir del /reporte de falla/ generado por el sistema y
-  analizando el contenido de la memoria que éste reporta, cómo se
-  puede encontrar un /desbordamiento de entero/.

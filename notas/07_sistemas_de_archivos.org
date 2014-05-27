@@ -623,6 +623,7 @@ ventajas, sin embargo, por las desventajas que implica, no puede
 tomarse como el modo de operación por omisión.
 
 *** Desduplicación
+# <<FS_desduplicacion>>
 
 Hay una estrategia fundamentalmente distinta para optimizar el uso del
 espacio de almacenamiento, logrando muy altos niveles de /sobreuso/:
@@ -1333,6 +1334,32 @@ de archivos resurja.
 ** Preguntas de autoevaluación
 
 ** Temas de investigación sugeridos
+
+- Desduplicación ::
+
+  Una de las características que ofrecen varios sistemas operativos de
+  última generación es la /desduplicación/, presentada en la sección
+  \ref{FS_desduplicacion}: La detección de sectores idénticos
+  pertenecientes a más de un archivo, para evitar repetirlos varias
+  veces en el disco (es un fenómeno que ocurre mucho más de lo que
+  esperaríamos). Esta detección se realiza típicamente por medio de
+  /hashes criptográficos/.
+
+  ¿Cómo opera un poco más a detalle este mecanismo? ¿Qué tan confiable
+  es? (esto es, ¿se recomienda utilizar ya en sistemas en producción?)
+  ¿Qué tan eficiente resulta con los datos que se encuentran
+  típicamente?  ¿Qué pasa con el espacio libre reportado al sistema?
+  ¿No se cae en riesgos de /sobrecomprometimiento/ (/overcommit/)?
+  ¿Qué diferencias tienen la /desduplicación en línea/ y la
+  /desduplicación fuera de línea/ (/online deduplication/, /offline
+  deduplication/)? ¿Cómo opera el /hash criptográfico/? ¿Hay veces que
+  resulte insuficiente?  ¿Qué alternativas hay?
+
+  Como referencia informal al respecto, sugiero leer el siguiente hilo
+  de discusión al respecto en la lista de DebConf (el congreso de
+  Debian):
+
+  http://lists.debconf.org/lurker/message/20130813.100610.f38cd67f.en.html
 
 ** Lecturas relacionadas
 # <<FS_otros_recursos>>

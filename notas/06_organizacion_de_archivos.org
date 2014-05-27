@@ -1352,6 +1352,29 @@ compartir un archivo de uso intensivo y aleatorio.
 ** Preguntas de autoevaluación
 
 ** Temas de investigación sugeridos
+- Sistemas de archivos distribuídos ::
+
+  En este capítulo se abordaron tres sistemas de archivos /remotos/,
+  de los cuales sólo el último puede verse como un sistema de archivos
+  /distribuído/: Bajo AFS, los datos almacenados no están en una única
+  computadora. Pero AFS tiene ya muchos años de haber sido
+  desarrollado, por lo cual su diseño no consideró muchos de los
+  aspectos de las redes de datos globales actuales.
+
+  En los últimos años se han presentado varias propuestas de sistemas
+  de archivos verdaderamente distribuídos, aptos para la
+  implementación de /nubes/ de datos y de una distribución geográfica
+  de la información; algunos ejemplos de estos sistemas de archivos
+  son GlusterFS (desarrollado por RedHat), S3 (de Amazon), GoogleFS
+  (de Google), Windows Distributed File System (de Microsoft), y CEPH
+  (también de RedHat).
+
+  ¿Qué semántica ofrecen estos sistemas de archivos? ¿Cómo se comparan
+  con la nativa de las diferentes plataformas? ¿Cómo se opera en caso
+  de desconexión o falla, parcial o total? ¿Qué características hacen
+  a estos sistemas /especialmente/ buenos para su uso distribuído?
+  ¿Habría alguna desventaja de emplear esos sistemas en un entorno de
+  red local?
 
 ** Lecturas relacionadas
 - /File System Interface: Functions for manipulating files/

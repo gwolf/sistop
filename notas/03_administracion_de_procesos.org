@@ -2885,8 +2885,52 @@ recursos), no debe sorprender a nadie que los ingenieros se inclinen
 por adoptar la estrategia del avestruz — claro está, siempre que no
 haya opción /razonable/.
 
-* Otros recursos
+* Ejercicios
 
+** Preguntas de autoevaluación
+
+** Temas de investigación sugeridos
+
+- Sistemas de arranque modernos en sistemas tipo Unix ::
+
+  Un tema no directamente relacionado con el expuesto en este
+  capítulo, pero que puede ligarse con varios de los conceptos aquí
+  abordados, es la gestión del arranque del sistema: Una vez que el
+  núcleo carga y hace un recorrido básico del hardware creándose un
+  mapa de cómo es el sistema en que está corriendo, tiene que llevar
+  el equipo a un estado funcional para sus usuarios. ¿Cómo ocurre
+  esto?
+
+  Tradicionalmente, los sistemas Unix se dividían entre dos
+  filosofías de arranque (los sistemas /SysV/ y los sistemas
+  /BSD/). Pero la realidad del cómputo ha cambiado con el
+  tiempo. Tras una etapa de largas discusiones al respecto, la mayor
+  parte de las distribuciones están migrando a /systemd/, desarrollado
+  originalmente por RedHat.
+
+  ¿Cuáles son los planteamientos básicos de los arranques tipo /SysV/
+  y tipo /BSD/? ¿A qué tipo de cambios en /la realidad/ es que se hace
+  referenciarefiero?  ¿Por qué los esquemas tradicionales ya no son
+  suficientes para los sistemas actuales? ¿En qué se parecen y en qué
+  se diferencian los sistemas clásicos y /systemd/? ¿Qué ventajas y
+  desventajas conllevan?
+
+- Problemas adicionales de sincronización ::
+
+  De todo el libro, es en este capítulo en que más se trata
+  directamente con código. Si bien para presentar como casos de
+  ejemplo se emplearon cinco de los casos clásicos (el /jardín
+  ornamental/, el /problema productor-consumidor/, el /problema
+  lectores-escritores/, la /cena de los filósofos/ y los /fumadores
+  compulsivos/), hay muchos otros casos ampliamente analizados.
+
+  El libro libremente redistribuíble [[http://greenteapress.com/semaphores][The little book of semaphores]]
+  (Allan Downey, 2008) tiene más de 20 problemas de sincronización,
+  planteados junto con su implementación empleando semáforos en el
+  lenguaje Python. Profundizar en alguno de estos problemas
+  adicionales ayudará al aprendizaje de los temas expuestos.
+
+** Lecturas relacionadas
 - /Tutorial de hilos de Perl/
   #+latex: \otrorec{http://perldoc.perl.org/perlthrtut.html}
   #+html: <br/><a href="http://perldoc.perl.org/perlthrtut.html">http://perldoc.perl.org/perlthrtut.html</a><br/>

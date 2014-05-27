@@ -1050,8 +1050,71 @@ lectura errónea de lo comentado por Amdahl, su artículo sencillo y de
 apenas más de una cuartilla de extensión cambió la percepción acerca
 de la utilidad misma del paralelismo masivo.
 
-* Otros recursos
+* Ejercicios
 
+** Preguntas de autoevaluación
+
+** Temas de investigación sugeridos
+- Rootkits: Escondiéndose del administrador ::
+
+  Complementando a la división de espacio usuario y espacio kernel,
+  cabe preguntarse acerca de cómo se pueden /burlar/ los
+  mecanismos de seguridad.
+
+  Si bien a estas alturas del texto aún no se ha profundizado en
+  muchos de estos temas, un enfoque podría comenzazr con enumerar las
+  amenazas: Una vez que un atacante logró /romper/ a un programa al
+  que tenía acceso, engañando al sistema operativo para que le dé
+  acceso privilegiado, buscará para esconder sus rastros del
+  administrador y, además, asegurarse de tener un mecanismo fácil para
+  entrar posteriormente.
+
+  ¿Cómo lo hace? ¿Cómo se puede detectar?
+
+- Sistemas basados en /malla/ o /grid/ ::
+
+  El modelo de cómputo distribuído basado en una /malla/ o /grid/ es
+  muy flexible, y lo han adoptado proyectos de todo tipo. ¿Qué es lo
+  que se distribuye? ¿Cómo se /paquetiza/ la información? ¿Cómo se
+  re-agrega? ¿Qué tanto costo computacional adicional significa el
+  separar en estos paquetes a la información?
+
+  Se puede emplear un modelo /grid/ con /participantes/ conocidos, con
+  una membresía predeterminada, pero muchos proyectos lo abren a
+  participación pública. ¿Hay consideraciones de seguridad a tomar en
+  cuenta?
+
+- El Módulo de Plataforma Confiable (TPM o /SecureBoot/) ::
+
+  Tras muchos años de encontrar gran resistencia por parte de la
+  industria, al día de hoy buena parte de las computadoras nuevas
+  vienen con un /módulo de plataforma confiable/ (/Trusted Platform
+  Module/) activo. Este polémico módulo implementa verificación de la
+  integridad del sistema operativo, evitando que un ataque (sea un
+  virus o un /agente hostil/) ejecute código que /altere la operación/
+  del sistema operativo o incluso ejecute antes de éste y lo envuelva
+  (por ejemplo, en un esquema de virtualización).
+
+  El esquema TPM, sin embargo, también puede evitar que el dueño de
+  una computadora la use /como él quiera/, forzándolo a ejecutar
+  únicamente los sistemas operativos /aprobados/ o /firmados/ por el
+  fabricante.
+
+  Como lectura para este tema resultan referencia obligada los varios
+  artículos en el [[http://mjg59.dreamwidth.org/][blog del desarrollador /Matthew Garrett/]],
+  particularmente entre septiembre del 2011 y mayo del 2013. Garrett
+  lidereó la alternativa que al día de hoy más se usa para poder
+  iniciar Linux en un sistema bajo TPM; tiene /decenas/ de artículos
+  desde muy descriptivos y generales hasta técnicos y específicos a
+  puntos muy particulares.
+
+  Otro artículo interesante al respecto es el de, de Jonathan Corbet
+  (septiembre 2013): [[https://lwn.net/Articles/566169/][BSD-style securelevel comes to Linux —
+  Again]]. Explica con bastante detalle cómo es que se plantea
+  implementar el nivel de protección que busca ofrecer TPM desde un
+  sistema Linux.
+
+** Lecturas relacionadas
 - /Can programming be liberated from the von Neumann style?: a
   functional style and its algebra of programs/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=359576.359579}

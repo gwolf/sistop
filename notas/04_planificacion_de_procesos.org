@@ -1534,8 +1534,95 @@ proceso de mayor prioridad, serán tratados como si fueran de la
 prioridad de dicho recurso /hasta que terminen de utilizar el recurso
 en cuestión/, tras lo cual volverán a su prioridad nativa.
 
-* Otros recursos
+* Ejercicios
 
+** Preguntas de autoevaluación
+
+** Temas de investigación sugeridos
+
+- Planificación en sistemas operativos /reales/ ::
+
+  A lo largo del presente capítulo se expusieron los principales
+  esquemas base de planificación, si bien enunciados muy en líneas
+  generales. Se mencionó también que muchos de estos esquemas pueden
+  emplearse de forma híbrida, y que su comportamiento puede ser
+  parametrizado llevando a resultados muy distintos.
+
+  Saliendo de la teoría hacia el terreno de lo aplicado, elija dos
+  sistemas operativos en uso /relativamente común/ en ambientes de
+  producción, y averigüe qué mecanismos de planificación emplean.
+
+  ¿A cuáles de los esquemas presentados se parece más? Los sistemas
+  evaluados, ¿ofrecen al usuario o administrador alguna interfaz para
+  cambiar el mecanismo empleado o ajustar sus parámetros? ¿Hay
+  configuraciones distintas que puedan emplearse en este ámbito para
+  sistemas de escritorio, embebidos, móviles o servidores?
+
+- Núcleo prevenible, tiempo real, y optimización fina ::
+
+  Los sistemas operativos modernos buscan /exprimir/ hasta el último
+  pedacito de rendimiento. Para estudiar cómo lo hacen, resulta
+  interesante seguir las discusiones (y a la implementación) de
+  Linux. Los últimos diez años han sido de fuerte profesionalización y
+  optimización.
+
+  Para el tema de planificación de procesos, un punto muy importante
+  fue la introducción del /kernel prevenible/ (o /interrumpible/),
+  en 2004.
+
+  ¿Qué significa que el núcleo mismo del sistema operativo puede ser
+  interrumpido? ¿Quién lo puede interrumpir? ¿Qué consecuencias tuvo
+  esto, en complejidad de código y en velocidad?
+
+  Pueden basarse para la preparación de este tema en un interesante
+  reporte de NIST (Instituto Nacional de Estándares y Tecnología) de
+  diciembre del 2002, [[http://www.aeolean.com/html/RealTimeLinux/RealTimeLinuxReport-2.0.0.pdf][Introduction to Linux for Real-Time Control:
+  Introductory Guidelines and Reference for Control Engineers and
+  Managers]]. Detalla muy bien cuáles son los requisitos (y las razones
+  detrás de ellos) para la implementación de sistemas operativos de
+  tiempo real, e incluye una revisión del panorama de este campo, muy
+  interesante y muy buen recurso para construir desde ahí.
+
+  Otra referencia muy recomendable al respecto es el artículo
+  de Jonathan Corbet, publicado en agosto del 2013 por /Linux Weekly News/,
+  [[https://lwn.net/Articles/563185/][Optimizing preemption]].
+
+  Si bien este tema toca principalmente temas de planificación de
+  procesos, estos temas van relacionados muy de cerca con los
+  presentados en el capítulo \ref{MEM}, y particularmente en las
+  secciones \ref{MEM_espacio_en_memoria} y \ref{MEM_buffer_overflow}.
+
+- Las clases de planificación en Linux y =SCHED_DEADLINE= ::
+
+  En Linux, a partir de la versión 2.6.23, se usa un mecanismo de
+  planificación llamado /Planificador Completamente Justo/
+  (/Completely Fair Scheduler/). Sin embargo, para responder a
+  procesos específicos con necesidades diferentes, Linux mantiene
+  también /clases de planificación/ independientes, las primeras de
+  ellas más parecidas a los mecanismos simples aquí cubiertos:
+  =SCHED_RR= y =SCHED_FIFO=.
+
+  En marzo del 2014, con el anuncio de la versión 3.14 del kernel, fue
+  agregada la clase =SCHED_DEADLINE=, principalmente pensada para dar
+  soporte a las necesidades de tiempo real. Esta opera bajo una lógica
+  =EDF= (/Primer Plazo Primero/, /Earliest Deadline First/).
+
+  Además de revisar este algoritmo, resulta interesante comprender
+  cómo el sistema da soporte a la /mezcla/ de distintas clases de
+  planificación en un mismo sistema vivo; se sugiere hacer un breve
+  análisis acerca de qué tanto =EDF= (o =SCHED_DEADLINE=, esta
+  implementación específica) es tiempo real suave o duro.
+
+  Algunas ligas al respecto:
+
+  - [[https://lwn.net/Articles/575497/][Artículo en LWN de diciembre de 2013 anticipando la inclusión de
+    SCHED_DEADLINE]], que presenta los conceptos, e incluye una
+    discusión al respecto que puede resultarles interesante y útil
+  - [[https://en.wikipedia.org/wiki/SCHED_DEADLINE][La página de la clase de planificación SCHED_DEADLINE en
+    Wikipedia]]
+  - [[https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/scheduler/sched-deadline.txt?id=712e5e34aef449ab680b35c0d9016f59b0a4494c][La documentación de SCHED_DEADLINE en el núcleo de Linux]]
+
+** Lecturas relacionadas
 - /Simulation of CPU Process scheduling/
   #+latex: \otrorec{http://stimulationofcp.sourceforge.net/}
   #+html: <br/><a href="http://stimulationofcp.sourceforge.net/">http://stimulationofcp.sourceforge.net/</a><br/>

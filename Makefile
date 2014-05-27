@@ -109,10 +109,10 @@ libro_tex: libro_index
 	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(srcdir)/$(libro_tex)
 
 libro_latin_tex: libro_tex
-	rm $(srcdir)/$(libro_latin_tex)
+	rm -f $(srcdir)/$(libro_latin_tex)
 	./$(srcdir)/latin/latinize.rb $(srcdir)/$(libro_tex) $(srcdir)/$(libro_latin_tex)
 
-libro_latin_pdf: libro_latin_tex
+libro_latin_pdf: fig libro_latin_tex
 	cd $(srcdir) && pdflatex $(libro_latin_tex) && pdflatex $(libro_latin_tex)
 
 libro_pdf: fig libro_index libro_tex

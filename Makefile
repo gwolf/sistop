@@ -113,7 +113,7 @@ libro_latin_tex: libro_tex
 	./$(srcdir)/latin/latinize.rb $(srcdir)/$(libro_tex) $(srcdir)/$(libro_latin_tex)
 
 libro_latin_pdf: fig libro_latin_tex
-	cd $(srcdir) && pdflatex $(libro_latin_tex) && pdflatex $(libro_latin_tex)
+	- cd $(srcdir) ; echo q | pdflatex $(libro_latin_tex) ; echo q | pdflatex $(libro_latin_tex)
 
 libro_pdf: fig libro_index libro_tex
 	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex

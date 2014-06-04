@@ -4,14 +4,14 @@
           rankdir=LR;
 
           subgraph cluster_resulta {
-                  label = "Volumen RAID0\nresultante (3TB)";
+                  label = "Volumen RAID1\nresultante (3TB)";
 		  subgraph cluster_vol1 {
-			  label = "Subvolumen RAID1\n 1 (3TB)";
+			  label = "Subvolumen RAID0\n 1 (3TB)";
 			  1 -> 2 [label = "+"];
 			  2 -> 3 [label = "+"];
 		  }
 		  subgraph cluster_vol2 {
-			  label = "Subvolumen RAID1\n2 (3TB)";
+			  label = "Subvolumen RAID0\n2 (3TB)";
 			  4 -> 5 [label = "+", style = dotted];
 			  5 -> 6 [label = "+", style = dotted];
 		  }

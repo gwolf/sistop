@@ -462,6 +462,192 @@ pequeñas, desde microcontroladores hasta teléfonos y tabletas), la
 norma es la arquitectura ARM, también bajo versiones específicas de
 sistemas operativos Unix y Windows (en ese orden).
 
+* Dispositivos móviles
+
+En los últimos años, buena parte del desarrollo en el mundo del
+cómputo se ha volcado hacia el modelo de cómputo representado,
+genéricamente, por los /dispositivos móviles/. Dado el interés que
+estas plataformas han despertado, se torna necesario abordar el tema,
+aunque sea más para anotar similitudes que diferencias con el resto de
+los equipos de cómputo. Para hacer esto, sin embargo, es necesario
+primero abordar la definición: ¿En qué consiste un /dispositivo
+móvil/? ¿Cuáles son los límites de su definición? ¿Qué fronteras se le
+pueden definir?
+
+** Reseña histórica
+
+Tener una plataforma de cómputo móvil ha sido uno de los anhelos más
+reiterados del cómputo; ya en 1975, antes de la aparición de todos los
+sistemas reseñados en la sección \ref{INTRO_computadoras_personales}
+(a excepción de la Altair 8800) IBM lanzó al mercado su primer
+computadora portátil: La IBM 5100, de 25Kg de peso y con una pantalla
+de 5 pulgadas (equivalente a un teléfono celular grande del día de
+hoy). Esta computadora tuvo un éxito muy limitado en buena medida por
+su precio: 9,000 dólares en su configuración más básica la dejaban
+claramente fuera del alcance del mercado de los entusiastas de la
+época, y la incomodidad de su pequeña pantalla llevó al entorno
+corporativo a preferir seguir usando las minicomputadoras con
+terminales estándar para la época.
+
+Este mercado también vio una importante convergencia, en este caso
+/desde abajo/: La miniautrización vivida en la década de los '70 fue,
+a fin de cuentas, iniciada por el CPU Intel 4004, diseñado
+expresamente para las calculadoras Busicom. Durante dicha década
+nacieron las calculadoras portátiles. Estas comenzaron implementando
+únicamente las operaciones aritméticas básicas, pero con el paso del
+tiempo aparecieron las /calculadoras científicas/, incluyendo
+operaciones trigonométricas. En 1974, Hewlett-Packard lanzó al mercado
+la /HP-65/, la primer calculadora de bolsillo plenamente programable.
+
+Para 1984, ya ante la franca popularización de las /aplicaciones
+ofimáticas/, la empresa británica /Psion/ lanzó la /Psion Organiser/,
+que se anunciaba como /la primer computadora de bolsillo práctica del
+mundo/: Era vendida con reloj, calculadora, una base de datos sencilla, y
+cartuchos de expansión con aplicaciones ejemplo (ciencia, matemáticas
+y finanzas), además de un entorno de programación para que el usuario
+desarrollara sus propias aplicaciones.
+
+#+attr_html: width="446" height="822"
+#+attr_latex: width=0.25\textwidth
+#+label: INTRO_psion_organiser
+#+caption: /Psion Organiser/, anunciada como /la primer computadora de bolsillo práctica del mundo/ en 1984. En la imagen, un dispositivo de su segunda generación. (Imagen de la Wikipedia: /Psion Organiser/)
+[[./img/psion_organiser.jpg]]
+
+El hardware del /Organiser/ original era, claro está, muy
+limitado. Con sólo 4KB de ROM y 2KB de RAM no incluía un sistema
+operativo, y el lenguaje de programación disponible al usuario era
+meramente un ensamblador. No tener un sistema operativo significa que,
+en vez de hacer las /llamadas al sistema/ necesarias para realizar
+transferencias (como se verá en la sección \ref{HW_SYSCALLS} y en el
+capítulo \ref{FS}), el programador tenía que avanzar y transferir
+/byte por byte/. Dos años más tarde, la segunda generación del
+/Organiser/ salió al mercado con un sistema operativo monotarea y
+mucho mayor espacio de almacenamiento. Varias generaciones más tarde,
+este sistema operativo es el que hacia 1998 se convirtió en /Symbian/,
+que fuera el sistema operativo dominante del mercado de celulares
+durante la mayor parte de la década del 2000.
+
+Siguiendo los pasos del /Organiser/, muchas otras empresas fueron
+creando pequeños equipos con aproximadamente la misma funcionalidad
+básica (lista de contactos, notas y agenda) e interfaz usuario,
+definiendo el término de /Asistente Digital Personal/ (/Personal
+Digital Assistant/, PDA). Hubo diferentes hitos durante la década de
+los '90, aunque destaca particularmente la plataforma /Palm/. Esta fue
+la primer plataforma exitosa en incorporar una interfaz usuario táctil
+con escritura basada en reconocimiento de la letra (que era /trazada/
+por medio de una pluma especial, o /stylus/, en la pantalla).
+
+El siguiente paso natural fue unir la funcionalidad del cada vez más
+popular teléfono celular con la del PDA. Ya desde 1996 se
+comercializaron equipos ofreciendo la funcionalidad integrada, y el
+término /smartphone/ (/teléfono inteligente/) se empleó por primera
+vez en 1998. Como se verá en la sección
+\ref{INTRO_diferencia_moviles}, el reto de mantener la señalización
+estable significó que muchos de estos teléfonos resultaban en una
+suerte de /Frankenstein/, con dos /personalidades/ claramente
+diferenciadas.
+
+En el año 2007, Apple presentó su hoy icónico /iPhone/. Visto desde un
+punto de vista técnico, la principal inovación de este equipo fue una
+nueva interfaz gráfica denominada /multitouch/ (/multitoque/), que
+permite al usuario interactuar directamente con sus dedos (por medio
+de toques combinados o /gestos/ y ya no requiriendo de un /stylus/) e
+incluso de la inclinación del dispositivo. Y si bien el teléfono mismo
+no representó un salto en las capacidades del hardware, Apple logró
+diseñar una interfaz inovadora –como ya lo había hecho en 1984 con la
+Macintosh– que se convirtió rápidamente en estándar para todo un
+mercado.
+
+Hasta este punto, prácticamente la totalidad de dispositivos en el
+segmento reconocido como móvil eran reconocibles por su tamaño: Casi
+todos los dispositivos mencionados en esta sección están hechos para
+caber en el bolsillo de una camisa. Sin embargo, a este segmento deben
+agregarse las /tabletas/. La historia de su desarrollo y adopción se
+parecen a la aquí presentada respecto a la interfaz de los teléfonos
+inteligentes (e incluso, llevada más al extremo): Existen antecedentes
+desde 1915,[fn:: El registro de [[http://www.freepatentsonline.com/1117184.pdf][patente 1,117,184]] de los Estados
+Unidos se refiere a una máquina para reconocer los caracteres escritos
+en una hoja] numerosas descripciones literarias en la ciencia ficción
+a lo largo del siglo XX, y varias implementaciones funcionales desde
+inicios de la década de los '90. Sin embargo, las tabletas parecieron
+por largos años estar destinadas a nunca conquistar al mercado, hasta
+el año 2010, en que Apple lanzó un equipo con la misma interfaz de su
+/iPhone/ pero del tamaño de una computadora portátil estándar.
+
+Todos los sistemas disponibles hoy en día, claro está, tienen
+muchísima mayor complejidad que la del /Psion Organizer/, y hay varias
+familias de sistemas operativos de uso frecuente; se describirán a
+continuación, y muy a grandes rasgos, sólo algunos de los sistemas
+existentes. En la presente sección se enumeran únicamente con su
+información general, y en la siguiente sección se mencionan algunas de
+sus características técnicas.
+
+- iOS :: El sistema operativo de Apple, y diseñado exclusivamente para
+         el hardware producido por dicha compañía. Fue el primero en
+         implementar la interfaz usuario /multitouch/ y, en buena
+         medida, se puede ver como el responsable de la explosión y
+         universalización en el uso de dispositivos móviles.
+
+- Android :: Diseñado por la compañía /Google/, basa la mayor parte de
+             su operación en software libre (un núcleo Linux, máquina
+             virtual Java, y muchas de las bibliotecas de sistema
+             comunes en sistemas Linux), agregando una capa de
+             servicios propietarios. La estrategia de Google ha sido
+             inversa a la de Apple: En vez de fabricar sus propios
+             dispositivos, otorga licencias para el uso de este
+             sistema operativo a prácticamente todos los fabricantes
+             de hardware, con lo que la amplia mayoría de los modelos
+             de teléfonos inteligentes y tabletas corren sobre
+             Android.
+
+- Windows Phone :: Microsoft ofrece una versión de su sistema
+                   operativo, compilado para procesadores ARM. Este
+                   sistema operativo se ha mantenido como muy poco
+                   popular, en claro contraste con su dominación en el
+                   cómputo /tradicional/; el principal fabricante que
+                   vende equipos con /Windows Phone/ es Nokia (que,
+                   después de haber sido la compañía líder en
+                   telefonía, fue adquirida por Microsoft mismo).
+
+- Symbian :: Si bien este sistema operativo ya está declarado como
+             oficialmente muerto, su impacto en el desarrollo temprano
+             del segmento fue fundamental, y no puede ser
+             ignorado. Symbian fue la plataforma principal para Nokia
+             en su época de gloria, así como para muchos otros
+             fabricantes. Casi todas las empresas que antiguamente
+             operaban con Symbian han mudado su oferta a sistemas
+             Android.
+
+- Firefox OS :: La fundación Mozilla, responsable del navegador
+                Firefox (y heredera del histórico Netscape) está
+                intentando entrar al mercado móbil con este sistema,
+                basado (al igual que Android) en el núcleo de Linux,
+                pero orientado a ofrecer una interfaz de programación
+                completamente basada en los estándares y lenguajes en
+                uso para la Web. Esta plataforma hace una apuesta
+                mucho más agresiva que las demás a un esquema de
+                conexión permanente a la red de datos.
+
+
+** Características diferenciadoras
+# <<INTRO_diferencia_moviles>>
+
+# Principios de diseño Symbian:
+
+# 1.    the integrity and security of user data is paramount
+# 2.    user time must not be wasted
+# 3.    all resources are scarce
+
+# Symbian EKA2: 
+#   supports sufficiently fast real-time response to build a single-core
+#   phone around it—that is, a phone in which a single processor core
+#   executes both the user applications and the signalling stack.
+
+# - Movilidad y GPS
+# - Reconfigurabilidad de las redes
+# - No hay swap; FS basado en estado sólido
+# - CPU y OS orientados al bajo consumo (uso de batería)
+
 * Organización de los sistemas operativos
 
 Para comenzar el estudio de los sistemas operativos, la complejidad

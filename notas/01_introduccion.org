@@ -354,9 +354,11 @@ primeros años, muchos programas se ejecutaban directamente sobre el
 hardware, arrancando desde el BIOS y sin emplear el sistema operativo.
 
 ** El impacto del entorno gráfico (WIMP)
+# <<INTRO_wimp>>
 
 Hacia mediados de los '80 comenzaron a aparecer computadoras con
-interfaces gráficas basadas en el paradigma WIMP (/Windows, Icons,
+interfaces usuario gráficas (/Graphical User Interfaces/, /GUIs/)
+basadas en el paradigma WIMP (/Windows, Icons,
 Menus, Pointer/; Ventanas, Iconos, Menúes, Apuntador), que permitían
 la interacción con varios programas al mismo tiempo. Esto /no
 necesariamente/ significa que sean sistemas multitarea — Por ejemplo,
@@ -450,12 +452,11 @@ computación en /fierros grandes/ y /fierros chicos/.
 
 Al día de hoy, la arquitectura derivada de Intel (y la PC) es el claro
 ganador de este proceso de 35 años, habiendo conquistado casi la
-totalidad de los casos de uso, incluso las máquinas Apple.  
-Hoy en día, la arquitectura Intel ejecuta
-desde subportátiles hasta supercomputadoras y centros de datos; el
-sistema operativo específico varía según el uso, yendo
-mayoritariamente hacia Windows, con los diferentes Unixes concentrados
-en los equipos servidores.
+totalidad de los casos de uso, incluso las máquinas Apple.  Hoy en
+día, la arquitectura Intel ejecuta desde subportátiles hasta
+supercomputadoras y centros de datos; el sistema operativo específico
+varía según el uso, yendo mayoritariamente hacia Windows, con los
+diferentes Unixes concentrados en los equipos servidores.
 
 En el frente de los dispositivos /embebidos/ (las computadoras más
 pequeñas, desde microcontroladores hasta teléfonos y tabletas), la
@@ -508,7 +509,7 @@ y finanzas), además de un entorno de programación para que el usuario
 desarrollara sus propias aplicaciones.
 
 #+attr_html: width="446" height="822"
-#+attr_latex: width=0.25\textwidth
+#+attr_latex: width=0.2\textwidth
 #+label: INTRO_psion_organiser
 #+caption: /Psion Organiser/, anunciada como /la primer computadora de bolsillo práctica del mundo/ en 1984. En la imagen, un dispositivo de su segunda generación. (Imagen de la Wikipedia: /Psion Organiser/)
 [[./img/psion_organiser.jpg]]
@@ -526,6 +527,12 @@ mucho mayor espacio de almacenamiento. Varias generaciones más tarde,
 este sistema operativo es el que hacia 1998 se convirtió en /Symbian/,
 que fuera el sistema operativo dominante del mercado de celulares
 durante la mayor parte de la década del 2000.
+
+#+attr_html: width="350", height="297"
+#+attr_latex: width=0.35\textwidth
+#+label: INTRO_pda_casio
+#+caption: Sharp ZQ-770, diseño bajo uno de los formatos de /PDA/ (Asistente Personal Digital/) más popularizados de la década de los '90. (Imagen de la Wikipedia: /Sharp Wizard/)
+[[./img/pda_sharp.jpg]]
 
 Siguiendo los pasos del /Organiser/, muchas otras empresas fueron
 creando pequeños equipos con aproximadamente la misma funcionalidad
@@ -546,6 +553,12 @@ vez en 1998. Como se verá en la sección
 estable significó que muchos de estos teléfonos resultaban en una
 suerte de /Frankenstein/, con dos /personalidades/ claramente
 diferenciadas.
+
+#+attr_html: width="640", height="396"
+#+attr_latex: width=0.5\textwidth
+#+label: INTRO_iphone
+#+caption: El /iPhone/, de Apple, introdujo la primer interfaz usuario /multitouch/ y detonó la popularidad de los /teléfonos inteligentes/ — Y con ello, del cómputo móvil (Imagen de la Wikipedia: /iPhone 2/)
+[[./img/iphone.jpg]]
 
 En el año 2007, Apple presentó su hoy icónico /iPhone/. Visto desde un
 punto de vista técnico, la principal inovación de este equipo fue una
@@ -586,7 +599,10 @@ sus características técnicas.
          el hardware producido por dicha compañía. Fue el primero en
          implementar la interfaz usuario /multitouch/ y, en buena
          medida, se puede ver como el responsable de la explosión y
-         universalización en el uso de dispositivos móviles.
+         universalización en el uso de dispositivos móviles. Al igual
+         que el sistema operativo que emplean para sus equipos de
+         escritorio, MacOS X, iOS está basado en el núcleo /Darwin/,
+         derivado de FreeBSD, un sistema libre tipo Unix.
 
 - Android :: Diseñado por la compañía /Google/, basa la mayor parte de
              su operación en software libre (un núcleo Linux, máquina
@@ -601,13 +617,15 @@ sus características técnicas.
              Android.
 
 - Windows Phone :: Microsoft ofrece una versión de su sistema
-                   operativo, compilado para procesadores ARM. Este
-                   sistema operativo se ha mantenido como muy poco
-                   popular, en claro contraste con su dominación en el
-                   cómputo /tradicional/; el principal fabricante que
-                   vende equipos con /Windows Phone/ es Nokia (que,
-                   después de haber sido la compañía líder en
-                   telefonía, fue adquirida por Microsoft mismo).
+                   operativo, compatible a nivel API con el Windows de
+                   escritorio, pero compilado para procesador
+                   ARM. Este sistema operativo no ha logrado
+                   conquistar gran popularidad, en claro contraste con
+                   su dominación en el cómputo /tradicional/ de
+                   escritorio; el principal fabricante que vende
+                   equipos con /Windows Phone/ es Nokia (que, después
+                   de haber sido la compañía líder en telefonía, fue
+                   adquirida por Microsoft mismo).
 
 - Symbian :: Si bien este sistema operativo ya está declarado como
              oficialmente muerto, su impacto en el desarrollo temprano
@@ -632,21 +650,219 @@ sus características técnicas.
 ** Características diferenciadoras
 # <<INTRO_diferencia_moviles>>
 
-# Principios de diseño Symbian:
+Resultará claro, a partir de los sistemas recién presentados, así como
+la gran mayoría de los sistemas operativos empleados para dispositivos
+móviles, que la diferenciación entre el segmento móvil y el cómputo
+tradicional /no está/ en el sistema operativo mismo, sino que en capas
+superiores. Sin embargo, la diferencia va mucho más allá de un cambio
+en la interfaz usuario; las características de estos dispositivos
+indudablemente determinan cuestiones de fondo. A continuación, se
+exponen algunas de las características más notorias.
 
-# 1.    the integrity and security of user data is paramount
-# 2.    user time must not be wasted
-# 3.    all resources are scarce
+*** Almacenamiento en estado sólido
 
-# Symbian EKA2: 
-#   supports sufficiently fast real-time response to build a single-core
-#   phone around it—that is, a phone in which a single processor core
-#   executes both the user applications and the signalling stack.
+La primer característica notoria al manipular un teléfono o una
+tableta es que ya no se hace con la noción de fragilidad que siempre
+acompañó al cómputo: Los discos duros son dispositivos de altísima
+precisión mecánica, y un pequeño golpe puede significar su avería
+absoluta y definitiva. Los dispositivos móviles operan con
+almacenamiento en /estado sólido/, esto es, en componentes
+electrónicos sin partes móviles. La evolución y las características
+del almacenamiento en estado sólido serán cubiertas en la sección
+\ref{FS_FIS_estado_solido}.
 
-# - Movilidad y GPS
-# - Reconfigurabilidad de las redes
-# - No hay swap; FS basado en estado sólido
-# - CPU y OS orientados al bajo consumo (uso de batería)
+Al estar principalmente orientados a este medio de almacenamiento, en
+líneas generales, los sistemas operativos móviles no emplean memoria
+virtual, tema que será cubierto en la sección \ref{MEM_virtual}. No
+pueden, por tanto, mantener en ejecución programas que excedan del
+espacio /real/ de memoria con que cuente el sistema — Y esto conlleva
+importantes consideraciones de diseño.
+
+*** Multitarea, pero /monocontexto/
+
+La forma de uso de las computadoras dio un salto cualitativo, tanto en
+el mundo corporativo hacia la década de los '60 como en el personal
+hacia inicios de los '90, con la introducción de sistemas con
+capacidades multitarea (ver la sección
+\ref{INTRO_multiprogramados}). Los usuarios se han acostumbrado a que
+sus equipos hagan muchas cosas (aparentemente) al mismo tiempo, y es
+ya una expectativa común el poder tener abierta una cantidad
+arbitraria, a veces incluso excesiva, de programas en ejecución — Al
+grado que prácticamente los usuarios promedio del cómputo reconocen
+perfectamente la /hiperpaginación/ (que será descrita en la sección
+\ref{MEM_hiperpaginacion}) por sus síntomas.
+
+La popularización del cómputo móvil llevó, sin embargo, a una fuerte
+/reducción/ en las expectativas de multitarea. Esto principalmente por
+dos razones; la primera es que, al carecer los dispositivos móviles de
+memoria virtual, la memoria disponible se vuelve nuevamente un bien
+escaso, y el sistema operativo se ve obligado a limitar al número de
+/procesos interactivos/ en ejecución.[fn:: Formalmente, no es el
+sistema operativo mismo, sino que el /software de sistema/, que
+monitorea el uso y rendimiento, y toma decisiones a más alto nivel. En
+todas las plataformas mencionadas, existe una fuerte distinción entre
+los programas que operan como /servicios/ y se mantienen activos en el
+fondo y aquellos que operan en primer plano, con interfaz gráfica e
+interacción directa con el usuario.]
+
+Esta distinción también puede explicarse por el modelo de uso de estos
+dispositivos: Comparadas con las pantallas de equipos de escritorio,
+donde las pantallas más frecuentemente utilizadas son de 17
+pulgadas,[fn:: La medida más habitual para las pantallas indica las
+pulgadas que miden /en diagonal/. Tras muchos años en que la relación
+de dimensión vertical contra horizontal o /aspecto/ de las pantallas
+fuera de 3:4, este formato ha ido siendo reemplazado por el de 9:16,
+por lo que la medida en pulgadas por sí sola ahora lleva una carga de
+ambigüedad.] los teléfonos van en general de las 3.5 a las 5
+pulgadas. Una interfaz usuario diseñada para un tipo de pantalla no
+puede resultar satisfactoria en el otro.
+
+Las interfaces usuario empleadas por los sistemas móviles abandonan el
+modelo de interacción /WIMP/ presentado en la sección
+\ref{INTRO_wimp}, así como la /metáfora del escritorio/, para volver a
+la de un sólo programa visible en todo momento.
+
+Al buscar satisfacer las necesidades de un mercado mucho más amplio y
+mucho menos versado en los detalles del cómputo, todas estas
+interfaces conllevan importante simplificaciones. Una de las más
+notorias es que los usuarios ya no solicitan la finalización de un
+programa: Los programas van siendo lanzados (y utilizados uno por
+uno), y /si caben en memoria/ son mantenidos abiertos para evitar las
+demoras de volver a inicializar. El sistema define políticas por medio
+de las cuales estos programas serán finalizados y /evacuados/ de
+memoria al llegar a determinados umbrales.
+
+*** Consumo eléctrico
+
+Una de las áreas en que más visible ha sido el desarrollo cualitativo
+durante los últimos años es la optimización del consumo eléctrico de
+los equipos de cómputo. Y si bien no puede negarse la importancia del
+ahorro eléctrico en las oficinas y centros de datos, donde el trabajo
+diario cada vez depende más del cómputo, tampoco puede ignorarse la
+importancia de popularización de las computadoras portátiles. Y
+agregando algunos patrones particulares a estos dispositivos, la
+popularización del cómputo móvil ha llevado a una verdadera revolución
+en este aspecto.
+
+El ahorro del consumo eléctrico tiene dos principales vertientes: Por
+un lado, el desarrollo de hardware más eficiente energéticamente
+independientemente del modo en que opere, y por el otro, la creación
+de mecanismos por medio de los cuales un equipo de cómputo pueda
+detectar cambios en el patrón de actividad (o el operador pueda
+indicarle un cambio en la respuesta esperada), y éste reaccione
+reduciendo su demanda (lo cual típicamente se obtiene reduciendo la
+velocidad de ciertos componentes del equipo).
+
+El primer esquema de ahorro de energía con amplio soporte, tanto por
+parte de hardware de diversos fabricantes como de prácticamente todos
+los sistemas operativos ampliamente utilizado, fue APM (/Advanced
+Power Management/, /Gestión Avanzada de la Energía/). Pasado cierto
+tiempo, APM fue reemplazado por ACPI (/Advanced Configuration and
+Power Interface/, /Interfaz Avanzada de Configuración y Energía/); la
+principal diferencia entre ambas es que, mientras que bajo APM la
+implementación de los diferentes niveles de energía se implementaban
+en el /firmware/ de la computadora o cada uno de sus dispositivos, en
+ACPI la responsabilidad recae en el sistema operativo; esto brinda
+mucho mayor flexibilidad a la implementación, a cambio de una mayor
+complejidad para los desarrolladores.
+
+Pero la verdadera diferencia en el tema que esta sección aborda es la
+frecuencia de los cambios de estado: Un servidor o computadora de
+escritorio tiene sólo un /evento/ constante (el ajuste de frecuencia
+del procesador dependiendo de la carga, potencialmente hasta decenas
+de veces por segundo); una computadora portátil debe adoptar
+diferentes /perfiles/ dependiendo de si está conectada a la red
+eléctrica o está operando por batería, o si tiene la /tapa/ (pantalla)
+abierta o cerrada. Los usuarios de computadoras portátiles típicamente
+buscan trabajar conectados a la red eléctrica tanto como sea posible,
+dado que es /vox populi/ que esto mejorará la vida útil de su
+batería. Y si bien estos cambios de entorno existen (y guardan una
+innegable complejidad), su ocurrencia es muy baja.
+
+En el cómputo móvil, los eventos son muchos y muy distintos. En primer
+lugar, los dispositivos móviles operan bajo una filosofía de /siempre
+encendido/: A pesar de que el usuario no esté atento a su dispositivo,
+éste tiene que estar encendido y al pendiente del entorno — Algunos
+ejemplos casi obvios: En caso de entrar una llamada telefónica, tiene
+que responder inmediatamente alertando al usuario. El equipo tiene que
+estar siempre alerta a las condiciones cambiantes de red (tanto
+telefónica como de datos), midiendo la señal de las antenas celulares
+más cercanas; mantenerse asociado a una antena remota requiere más
+energía que a una cercana. Y, dado que estos equipos están diseñados
+para /moverse/ junto con el usuario, convirtiéndose en un asistente o
+una extensión para sus actividades diarias, optimizan su
+funcionamiento para operar como norma desde su batería, no conectados
+a la red eléctrica. Si bien una computadora portátil se considera muy
+eficiente si permite la operación /autónoma/ por seis horas, un
+teléfono que brinde menos de un día de autonomía sería evaluado como
+extremadamente incómodo o impráctico.
+
+El ahorro de energía que permite estos patrones de uso no sólo se debe
+al hardware cada vez más eficiente que emplean los dispositivos
+móviles, sino que a una programación de las aplicaciones en que los
+desarrolladores explícitamente buscan patrones eficientes, fácil
+/suspensión/, y minimizando la necesidad de /despertar/ al hardware.
+
+*** Entorno cambiante
+
+Los centros de datos, las computadoras de escritorio, e incluso las
+computadoras portátiles tienen una forma de operación bastante
+estable: Durante el transcurso de una sesión de trabajo (e incluso
+durante la vida entera del equipo, en el caso de los servidores) su
+visión del mundo no está sujeta a mayores cambios. Un usuario puede
+mantener por largos periodos de tiempo su /configuración de consumo
+energético/. Las interfaces y direcciones de red son típicamente
+estables, y si hubiera un problema de señal, la reparación o
+reubicación se haría en la infraestructura de red, no en el equipo
+cliente. El formato de la pantalla, claro está, es también estable.
+
+Uno de los cambios más difíciles de implementar en el software del
+sistema fue precisamente el de brindar la plasticidad necesaria en
+estos diferentes aspectos: El dispositivo móvil debeser más agresivo
+en sus cambios de perfil de energía, respondiendo a un entorno
+cambiante. Puede aumentar o disminuir la luminosidad de la pantalla
+dependiendo de la luminosidad circundante, o desactivar determinada
+funcionalidad si está ya en niveles críticos de carga. Con respecto a
+la red, debe poder aprovechar las conexiones fugaces mientras el
+usuario se desplaza, iniciando eventos como el de /sincronización/. Y
+encargándose de detener (tan limpiamente como sea posible) a los
+procesos que van dejando de responder. Y por último, claro, la
+interfaz usuario: Los dispositivos móviles no tienen una orientación
+única natural, como sí la tienen las computadoras. Las interfaces
+usuario deben pensarse para que se puedan /reconfigurar/ ágilmente
+ante la rotación de la pantalla.
+
+*** El /jardín amurallado/
+
+Una consecuencia indirecta (y no técnica) del nacimiento de las
+plataformas móviles es la popularización de un modelo de distribución
+de software conocido como /jardín amurallado/ o, lo que es lo mismo,
+una /plataforma cerrada/.
+
+Partiendo de que los teléfonos inteligentes, en un primer momento, y
+las tabletas y dispositivos similares posteriormente buscan satisfacer
+a un mercado mucho mayor al de los entusiastas del cómputo,[fn:: Y
+también como respuesta a que algunos usuarios encontraron cómo romper
+la protección y poder desarrollar e instalar aplicaciones
+extraoficiales en esta plataforma, diseñada originalmente para sólo
+correr software de Apple.] Apple anunció en julio del 2008 (un año
+después del lanzamiento del iPhone) su /tienda de aplicaciones/ o /app
+store/. La peculiaridad de esta tienda en relación al modelo de
+cómputo que ha imperado históricamente es que, si bien cualquier
+desarrollador puede crear una aplicación y enviarla, Apple se reserva
+el derecho de aprobarla, o eliminarla en cualquier momento. Esto es,
+este modelo le permite erigirse en juez, determinando qué puede
+ejecutar un usuario y qué no.
+
+Este mismo modelo fue adoptado por Google para su sistema Android, en
+un principio bajo el nombre /Mercado Android/, y desde el 2012 como
+/Google Play/. Microsoft hizo lo propio con su /Windows Phone Store/.
+
+Este modelo de autorización y distribución de software, sin embargo,
+rompe con lo que Jonathan Zittrain (2008) define como la
+/generatividad/ de los equipos de cómputo y de la red en general. Para
+ampliar el debate en este entido, el libro de Zittrain se ha vuelto
+referencia obligada, y está disponible completo en línea.
 
 * Organización de los sistemas operativos
 
@@ -752,3 +968,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
   #+latex: \otrorec{http://www.joelonsoftware.com/articles/Biculturalism.html}
   #+html: <br/><a href="http://www.joelonsoftware.com/articles/Biculturalism.html">http://www.joelonsoftware.com/articles/Biculturalism.html</a><br/>
   Joel Spolsky (2003); Joel on Software
+- /The future of the Internet and how to stop it/
+  #+latex: \otrorec{http://futureoftheinternet.org/}
+  #+html: <br/><a href="http://futureoftheinternet.org/">http://futureoftheinternet.org/</a><br/>
+  Jonathan Zittrain (2008); Yale University Press

@@ -445,10 +445,10 @@ Y otro importante jugador que entró en escena durante los '90 fue el
 software libre, por medio de varias implementaciones distintas de
 sistemas tipo Unix — principalmente, Linux y los *BSD (FreeBSD,
 NetBSD, OpenBSD). Estos sistemas implementaron, colaborativamente y a
-escala mundial, software compatibles con las PC y con el que se ejecutaba en las
-estaciones de trabajo a gran escala, con alta confiabilidad, y
-cerrando por fin la divergencia del árbol del desarrollo de la
-computación en /fierros grandes/ y /fierros chicos/.
+escala mundial, software compatible tanto con las PC como con el que
+se ejecutaba en las estaciones de trabajo a gran escala, con alta
+confiabilidad, y cerrando por fin la divergencia del árbol del
+desarrollo de la computación en /fierros grandes/ y /fierros chicos/.
 
 Al día de hoy, la arquitectura derivada de Intel (y la PC) es el claro
 ganador de este proceso de 35 años, habiendo conquistado casi la
@@ -474,6 +474,24 @@ los equipos de cómputo. Para hacer esto, sin embargo, es necesario
 primero abordar la definición: ¿En qué consiste un /dispositivo
 móvil/? ¿Cuáles son los límites de su definición? ¿Qué fronteras se le
 pueden definir?
+
+Es dificil encontrar límites claros y duros para lo que este concepto
+abarca; en el transcurso de esta sección se abordan las
+características de las computadoras diseñadas no sólo a nivel hardware
+sino que de interfaz usuario para que su propietario las cargue
+consigo y las convierta en un asistente para sus actividades
+cotidianas, para la organización de su vida diaria. Partiendo de esta
+definición se tiene que un /teléfono inteligente/ será tratado como
+dispositivo móvil, pero una computadora portátil no, puesto que su
+interfaz es la misma de una computadora estándar.
+
+Claro, esta definición –indudablemente rápida e imperfecta– deja una
+gran área gris, y permite cierta ambigüedad. Por ejemplo, las más
+recientes versiones de algunos entornos de usuario (notablemente, la
+interfaz primaria de Windows, o los entornos GNOME y Unity de Linux)
+buscan /unificar la experiencia/, incorporando conceptos del
+/multitouch/ a los escritorios y acercando los casos de uso. Tómense,
+pues, estos lineamientos como meramente indicativos.
 
 ** Reseña histórica
 
@@ -783,19 +801,25 @@ En el cómputo móvil, los eventos son muchos y muy distintos. En primer
 lugar, los dispositivos móviles operan bajo una filosofía de /siempre
 encendido/: A pesar de que el usuario no esté atento a su dispositivo,
 éste tiene que estar encendido y al pendiente del entorno — Algunos
-ejemplos casi obvios: En caso de entrar una llamada telefónica, tiene
-que responder inmediatamente alertando al usuario. El equipo tiene que
-estar siempre alerta a las condiciones cambiantes de red (tanto
-telefónica como de datos), midiendo la señal de las antenas celulares
-más cercanas; mantenerse asociado a una antena remota requiere más
-energía que a una cercana. Y, dado que estos equipos están diseñados
-para /moverse/ junto con el usuario, convirtiéndose en un asistente o
-una extensión para sus actividades diarias, optimizan su
-funcionamiento para operar como norma desde su batería, no conectados
-a la red eléctrica. Si bien una computadora portátil se considera muy
-eficiente si permite la operación /autónoma/ por seis horas, un
-teléfono que brinde menos de un día de autonomía sería evaluado como
-extremadamente incómodo o impráctico.
+ejemplos casi obvios:
+
+- En caso de entrar una llamada telefónica, tiene que responder
+  inmediatamente alertando al usuario. La interfaz usuario del
+  teléfono puede parecer apagada, pero su lógica –y, muy importante,
+  su señalización a redes– se mantienen activas.
+- El equipo tiene que estar siempre alerta a las condiciones
+  cambiantes de red (tanto telefónica como de datos), midiendo la
+  señal de las antenas celulares más cercanas; mantenerse asociado a
+  una antena remota requiere más energía que a una cercana.
+- Dado que estos equipos están diseñados para /moverse/ junto con el
+  usuario, convirtiéndose en un asistente o una extensión para sus
+  actividades diarias, optimizan su funcionamiento para operar como
+  norma desde su batería, no conectados a la red eléctrica. Valga en
+  este caso la comparación: Un teléfono que brinde menos de un día de
+  /operación autónoma/ sería sin duda evaluado como extremadamente
+  incómodo e impráctico, en tanto una computadora portátil se
+  considera muy eficiente si permite la operación autónoma por seis
+  horas.
 
 El ahorro de energía que permite estos patrones de uso no sólo se debe
 al hardware cada vez más eficiente que emplean los dispositivos
@@ -818,7 +842,7 @@ cliente. El formato de la pantalla, claro está, es también estable.
 
 Uno de los cambios más difíciles de implementar en el software del
 sistema fue precisamente el de brindar la plasticidad necesaria en
-estos diferentes aspectos: El dispositivo móvil debeser más agresivo
+estos diferentes aspectos: El dispositivo móvil debe ser más agresivo
 en sus cambios de perfil de energía, respondiendo a un entorno
 cambiante. Puede aumentar o disminuir la luminosidad de la pantalla
 dependiendo de la luminosidad circundante, o desactivar determinada

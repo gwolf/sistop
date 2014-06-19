@@ -46,7 +46,7 @@ Existen tres tipos principales de planificación:
      de transferencia de datos con algún dispositivo).
 
      En algunos textos, al /planificador a mediano plazo/ se le llama
-     /agendador/ (/scheduler/).
+     /agendador/ (/scheduler/). En otros, se encarga principalmente de transferir procesos enteros (suspendidos) desde memoria principal a memoria secundaria (y viceversa) cuando la memoria principal comienza a escasear.
 
      #+label: PLAN_planificador_mediano_plazo
      #+caption: Planificador a mediano plazo, o /agendador/
@@ -185,8 +185,9 @@ tiempo $t$ de ejecución:
      listo y esperando ejecutar. Desde la óptica de $p$, se desearía
      que $E_p \rightarrow 0$
 
-- Proporción de penalización ($P = \frac{T}{t}$) :: Fracción del
-     tiempo de respuesta durante la cual $p$ estuvo en espera.
+- Proporción de penalización ($P = \frac{T}{t}$) :: Proporción del 
+     tiempo de respuesta en relación al tiempo de uso del procesador
+     (en qué proporción fue penalizado el proceso).
 
 - Proporción de respuesta ($R = \frac{t}{T}$) :: Inverso de
      $P$. Fracción del tiempo de respuesta durante la cual $p$ pudo
@@ -204,7 +205,20 @@ los diversos procesos del sistema, es necesario considerar también:
      incluyen principalmente la atención a interrupciones, el servicio
      a llamadas al sistema, y cubrir diversas tareas administrativas.]
      el empleado en decidir e implementar la política de planificación
-     y los cambios de contexto.
+     y los cambios de contexto. Este tiempo no se contabiliza cuando
+     se calcula el tiempo de CPU utilizado por un proceso.
+
+- Tiempo de sistema :: Tiempo que pasa un proceso en espacio núcleo 
+     atendiendo el pedido de un proceso (syscall). Se incluye dentro 
+     del tiempo de uso de CPU de un proceso y suele discriminarse del 
+     tiempo de usuario.
+
+- Tiempo de usuario :: Tiempo que pasa un proceso en modo usuario, es 
+     decir, ejecutando las instrucciones del programa. 
+
+- Tiempo de uso del procesador: tiempo durante el cual el procesador 
+       ejecutó instrucciones por cuenta de un proceso (sean en modo 
+       usuario o en modo núcleo).
 
 - Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
      listos está vacía y no puede realizarse ningún trabajo.
@@ -262,10 +276,10 @@ el proceso llegó a la cola, no el punto de inicio de la línea de
 tiempo. En este caso, dado que el núcleo /siempre/ está en ejecución,
 se asume que inició también en 0.
 
-Respecto al patrón de llegada y salida de los procesos, lo se maneja
-también basado en una relación. Partiendo de una /frecuencia de
+Respecto al patrón de llegada y salida de los procesos, se lo maneja
+también basado en una relación: partiendo de una /frecuencia $\alpha$ de
 llegada/ promedio de nuevos procesos a la cola de procesos listos
-$\alpha$, y el /tiempo de servicio requerido/ promedio $\beta$,
+, y el /tiempo de servicio requerido/ promedio $\beta$,
 se define el /valor de saturación/ $\rho$ como $\rho =
 \frac{\alpha}{\beta}$.
 
@@ -296,7 +310,7 @@ En el primer y cuarto casos, el sistema operativo siempre tomará el
 control[fn:: En el primer caso, el proceso entrará en el dominio del
 /planificador a mediano plazo/, mientras que en el cuarto saldrá
 definitivamente de la lista de ejecución.]; un sistema que opera bajo
-/multitarea preventiva/ implementará también el segundo y tercer
+/multitarea apropiativa/ implementará también el segundo y tercer
 casos, mientras que uno que opera bajo /multitarea cooperativa/ no
 necesariamente reconocerá dichos estados.
 
@@ -419,7 +433,7 @@ un temporizador) sigue siendo ampliamente empleado.
 El esquema /ronda/ busca dar una relación de respuesta buena tanto
 para procesos largos como para los cortos. La principal diferencia
 entre la ronda y FCFS es que en este caso sí emplea multitarea
-preventiva: Cada proceso que esté en la lista de procesos listos puede
+apropiativa: Cada proceso que esté en la lista de procesos listos puede
 ejecutarse por un sólo /quantum/ ($q$). Si un proceso no ha
 terminado de ejecutar al final de su /quantum/, será interrumpido y
 puesto al final de la lista de procesos listos, para que espere a su
@@ -496,7 +510,7 @@ promedio del 80% de los procesos.
 (Del inglés, /Shortest Process Next/)
 
 Cuando no se tiene la posibilidad de implementar multitarea
-preventiva, pero se requiere de un algoritmo más /justo/, contando
+apropiativa, pero se requiere de un algoritmo más /justo/, contando
 con información /por anticipado/ acerca del tiempo que requieren los
 procesos que forman la lista, puede elegirse el más corto de los
 presentes.
@@ -570,13 +584,13 @@ embargo, puede observarse en el ejemplo que con sólo una permutación
 en los cinco procesos ejemplos (/B/ y /C/), los factores de
 penalización a los procesos ejemplo resultaron muy beneficiados.
 
-*** SPN preventivo (PSPN)
+*** SPN apropiativo (PSPN)
 
 (/Preemptive Shortest Process Next/)
 
 Finkel (1988, p.44) apunta a que, a pesar de que intuitivamente daría
 una mayor ganancia combinar las estrategias de SPN con un esquema de
-multitarea preventiva, el comportamiento obtenido es muy similar para
+multitarea apropiativa, el comportamiento obtenido es muy similar para
 la amplia mayoría de los procesos. Incluso para procesos muy largos,
 PSPN no los penaliza mucho más allá de lo que lo haría la ronda, y
 obtiene mejores promedios de forma consistente porque, al despachar
@@ -588,7 +602,7 @@ penalización.
 
 (/Highest Penalty Ratio Next/)
 
-En un sistema que no cuenta con multitarea preventiva, las alternativas
+En un sistema que no cuenta con multitarea apropiativa, las alternativas
 presentadas hasta ahora resultan invariablmente injustas: FCFS
 favorece a los procesos largos, y SPN a los cortos. Un intento de
 llegar a un algoritmo más balanceado es HPRN.
@@ -604,7 +618,9 @@ En los experimentos realizados por Finkel, HPRN se sitúa siempre en
 un punto medio entre FCFS y SPN; su principal desventaja se presenta
 conforme crece la cola de procesos listos, ya que $P$ tiene que
 calcularse para cada uno de ellos cada vez que el despachador toma una
-decisión.
+decisión. Otro problema es que requiere conocer el tiempo de ejecución
+ /t/ de un proceso de antemano. Algunos sistemas utilizan alguna 
+estimación de /t/ en base a la historia anterior.
 
 ** Ronda egoísta (SRR)
 
@@ -842,7 +858,7 @@ comparación de este mecanismo abordados previamente.
 
 En líneas generales, los siete algoritmos presentados pueden
 clasificarse sobre dos discriminadores primarios: Si están pensados
-para emplearse en multitarea cooperativa o preventiva, y si emplean
+para emplearse en multitarea cooperativa o apropiativa, y si emplean
 información /intrínseca/ a los procesos evaluados o no lo hacen, esto
 es, si un proceso es tratado de distinta forma dependiendo de su
 historial de ejecución.
@@ -858,7 +874,7 @@ historial de ejecución.
 |               |                 | penalizado (HPRN)       |
 |---------------+-----------------+-------------------------|
 | *Preventiva*  | Ronda (RR)      | Proceso más corto       |
-|               | Lotería         | preventivo (PSPN),      |
+|               | Lotería         | apropiativo (PSPN),     |
 |               |                 | Retroalimentación (FB), |
 |               |                 | Ronda egoísta (SRR)     |
 |---------------+-----------------+-------------------------|
@@ -1013,7 +1029,7 @@ algunos aspectos importantes de los diferentes despachadores.
 *** Duración mínima del /quantum/
 
 La penalización por cambios de contexto en esquemas
-preventivos como la /ronda/ puede evitarse empleando /quantums/
+apropiativos como la /ronda/ puede evitarse empleando /quantums/
 mayores. Pero abordando la contraparte, ¿qué tan corto tiene sentido que sea un
 /quantum/? Con el hardware y las estructuras requeridas por los
 sistemas operativos de uso general disponibles hoy en día, un cambio

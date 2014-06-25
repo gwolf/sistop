@@ -44,7 +44,7 @@ situaciones de bajo rendimiento, de conflictos entre aplicaciones,
 demoras en la ejecución, y comprender lo que ocurre /tras bambalinas/
 resulta fundamental para realizar nuestro trabajo. Los sistemas de
 archivos resultan un área de especial interés para administradores de
-sistemas: ¿Cómo comparar las virtudes y desventajas de tantos sistemas
+sistemas: ¿cómo comparar las virtudes y desventajas de tantos sistemas
 existentes? ¿Por qué puede resultarnos conveniente mezclarlos en el
 mismo servidor? ¿Cómo evitar la corrupción o pérdida de información?
 Lo que es más, ¿cómo recuperar información de un disco dañado?
@@ -175,7 +175,7 @@ programa moderadadamente extenso resulta a todas luces un desperdicio.
 ** Sistemas en lotes con dispositivos de carga (/spool/)
 
 Una mejora natural a este último punto fue la invención del /spool/:
-Un mecanismo de entrada/salida que permitía que una computadora de
+un mecanismo de entrada/salida que permitía que una computadora de
 propósito específico, mucho más económica y limitada, leyera las
 tarjetas y las fuera convirtiendo a cinta magnética, un medio mucho
 más rápido, teniéndola lista para que la computadora central la
@@ -228,16 +228,16 @@ En primer término, la tarea de programación y depuración del código se
 simplificó fuertemente al poder el programador hacer directamente
 cambios y someter el programa a la ejecución inmediata. En segundo
 término, la computadora /nunca más estaría simplemente esperando a
-que esté listo un progama/: Mientras un programador editaba o compilaba su programa,
+que esté listo un progama/: mientras un programador editaba o compilaba su programa,
 la computadora seguía calculando lo que otros procesos requirieran.
 
 Un cambio fundamental entre el modelo de /multiprogramación/ y de
 /tiempo compartido/ es el tipo de control sobre la multitarea:
-(se verá en detalle en el capítulo \ref{PROC} (/Administración de
+(se verá en detalle en el capítulo \ref{PROC} /Administración de
 procesos/)
 
 - Multitarea /cooperativa/ o /no apropiativa/ :: (/Cooperative
-     multitasking/) La implementaron los sistemas multiprogramados: Cada
+     multitasking/) La implementaron los sistemas multiprogramados: cada
      proceso tenía control del CPU hasta que éste hacía una llamada al
      sistema (o indicara su /disposición a cooperar/ por medio de la
      llamada =yield=: /ceder el paso/).
@@ -320,7 +320,7 @@ software mínimo de sistema — Nuevamente, un proto-sistema operativo.
 #+caption: La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras con intérprete de BASIC. (Imagen de la Wikipedia: /Commodore PET/)
 [[./img/commodore_pet.jpg]]
 
-** La computadora para fines "serios": La familia PC
+** La computadora para fines "serios": la familia PC
 
 Al aparecer las computadoras personales "serias", orientadas a la
 oficina más que al hobby, a principios de los '80 (particularmente
@@ -554,9 +554,9 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 - /Making EPERM friendlier/
   #+latex: \otrorec{http://lwn.net/Articles/532771/}
   #+html: <br/><a href="http://lwn.net/Articles/532771/">http://lwn.net/Articles/532771/</a><br/>
-  Michael Kerrisk (2013); Linux Weekly News: Explica algunas de las
-  limitantes de la semántica POSIX: Falta de granularidad en el
-  reporte de mensajes de error (=EPERM=), y =errno= global por hilo.
+  Michael Kerrisk (2013); Linux Weekly News: explica algunas de las
+  limitantes de la semántica POSIX como la falta de granularidad en el
+  reporte de mensajes de error (=EPERM=) y =errno= global por hilo.
 - /Biculturalism/
   #+latex: \otrorec{http://www.joelonsoftware.com/articles/Biculturalism.html}
   #+html: <br/><a href="http://www.joelonsoftware.com/articles/Biculturalism.html">http://www.joelonsoftware.com/articles/Biculturalism.html</a><br/>

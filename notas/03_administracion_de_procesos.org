@@ -845,7 +845,7 @@ Cabe apuntar las siguientes notas sobre la solución de Peterson:
 
 En la presente sección se enumeran los principales mecanismos que
 pueden emplearse para programar considerando a la concurrencia:
-Candados, semáforos y variables de condición.
+candados, semáforos y variables de condición.
 
 *** Regiones de exlcusión mutua: candados o /mutexes/
 
@@ -862,7 +862,7 @@ como si fuera atómica.
 #+attr_html: height="261"
 #+attr_latex: width=0.8\textwidth
 #+label: PROC_secc_crit
-#+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
+#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/
 [[./img/gnuplot/secc_crit.png]]
 
 Hay que tener en cuenta que un mutex /no implica/ que el código no se
@@ -1568,7 +1568,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   #+end_src
 
   En la implementación de los escritores, esto puede parecer inútil:
-  Únicamente se agregó un mutex redundante alrededor de lo que ya
+  únicamente se agregó un mutex redundante alrededor de lo que ya
   se tenía. Sin embargo, al hacer que el lector pase por un
   torniquete antes de actualizar =lectores=, obligando a que
   se mantenga encendida la luz, se lo fuerza a esperar a que el
@@ -2160,7 +2160,7 @@ secuencia:
 
 #+attr_latex: width=0.5\textwidth
 #+label: PROC_bloqueo_mutuo_simple
-#+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
+#+caption: Esquema clásico de un bloqueo mutuo simple: los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 [[./img/dot/bloqueo_mutuo_simple.png]]
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
@@ -2217,7 +2217,7 @@ rivales/ (que no requieran acceso exclusivo — por ejemplo, empleo de
 archivos en el disco, sin que exista un acceso directo del proceso al
 disco), pero sólo uno podría obtener recursos de forma exclusiva al
 mismo tiempo. Este mecanismo sería la /serialización/, y la situación
-antes descrita se resolvería de la siguiente manera:
+antes descripta se resolvería de la siguiente manera:
 
 1. /A/ solicita una unidad de cinta y se bloquea
 
@@ -2365,7 +2365,7 @@ planificador puede marcar qué orden de ejecución (esto es, qué
 #+attr_html: height="350"
 #+attr_latex: width=0.7\textwidth
 #+label: PROC_tray_proc_evasion_bloqueo
-#+caption: Evasión de bloqueos: Los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un plotter y una impresora, exponiéndose a bloqueo mutuo.
+#+caption: Evasión de bloqueos: los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un plotter y una impresora, exponiéndose a bloqueo mutuo.
 [[./img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
 El análisis de la interacción entre dos procesos se representa como en
@@ -2673,7 +2673,7 @@ sistema /en un momento dado/):
 
 #+attr_latex: width=0.7\textwidth
 #+label: PROC_deteccion_bloqueos
-#+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
+#+caption: Detección de ciclos denotando bloqueos: grafo de procesos y recursos en un momento dado.
 [[./img/dot/deteccion_bloqueos.png]]
 
 En la gráfica /Detección de ciclos denotando bloqueos/, se procede así:

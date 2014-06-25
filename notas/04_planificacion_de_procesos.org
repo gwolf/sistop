@@ -85,7 +85,7 @@ planificadores en las siguientes transiciones entre estados:
 [[./img/dot/estados_proceso.png]]
 
 1. El planificador a largo plazo se encarga de /admitir/ un nuevo
-   proceso: La transición de /Nuevo/ a /Listo/.
+   proceso: la transición de /Nuevo/ a /Listo/.
 
 2. El planificador a mediano plazo maneja la /activación/ y /bloqueo/
    de un proceso relacionado con /eventos/ — Esto es, las transiciones
@@ -387,7 +387,7 @@ algunos de estos objetivos pueden ser mutuamente contradictorios):
 
 El esquema más simple de planificación es el /Primero llegado, primero
 servido/ (/First come, first serve/, /FCFS/). Este es un mecanismo
-cooperativo, con la mínima lógica posible: Cada proceso se ejecuta en
+cooperativo, con la mínima lógica posible: cada proceso se ejecuta en
 el orden en que fue llegando, y hasta que /suelta el control/. El
 despachador es muy simple, básicamente una cola FIFO.
 
@@ -433,7 +433,7 @@ un temporizador) sigue siendo ampliamente empleado.
 El esquema /ronda/ busca dar una relación de respuesta buena tanto
 para procesos largos como para los cortos. La principal diferencia
 entre la ronda y FCFS es que en este caso sí emplea multitarea
-apropiativa: Cada proceso que esté en la lista de procesos listos puede
+apropiativa: cada proceso que esté en la lista de procesos listos puede
 ejecutarse por un sólo /quantum/ ($q$). Si un proceso no ha
 terminado de ejecutar al final de su /quantum/, será interrumpido y
 puesto al final de la lista de procesos listos, para que espere a su
@@ -475,7 +475,7 @@ dada la fuerte penalización que iría agregando la sobrecarga
 administrativa.
 
 Finkel (1988, p.35) se refiere a esto como el /principio de la
-histéresis/: /Hay que resistirse al cambio/. Como ya lo se mencionó,
+histéresis/: /hay que resistirse al cambio/. Como ya lo se mencionó,
 FCFS mantiene al mínimo posible la sobrecarga administrativa, y
 –aunque sea marginalmente– resulta en mejor rendimiento global.
 
@@ -517,7 +517,7 @@ presentes.
 
 Ahora bien, es muy difícil contar con esta información antes de
 ejecutar el proceso. Es más frecuente buscar /caracterizar/ las
-necesidades del proceso: Ver si durante su historia de ejecución[fn::
+necesidades del proceso: ver si durante su historia de ejecución[fn::
 Cabe recordar que todos estos mecanismos se aplican al
 /planificador a corto plazo/. Cuando un proceso se bloquea esperando
 una operación de E/S, sigue en ejecución, y la información de
@@ -693,7 +693,7 @@ colas de prioridad.
 [[./img/dot/planif_multicolas.png]]
 
 La figura \ref{PLAN_planif_multicolas} ilustra cómo se presentaría
-una situación bajo esta lógica: El sistema hipotético tiene cinco
+una situación bajo esta lógica: el sistema hipotético tiene cinco
 colas de prioridad, y siete procesos listos para ser puestos en
 ejecución. Puede haber colas vacías, como en este caso la 3. Dado que
 la cola de mayor prioridad es la 0, el planificador elegirá únicamente
@@ -746,7 +746,7 @@ que podrán avanzar al principio, mientras los procesos más largos
 serán castigados y podrán eventualmente (a mayor $\rho$) enfrentar
 inanición.
 
-Sin embargo, esta estrategia permite ajustar dos variables: Una es
+Sin embargo, esta estrategia permite ajustar dos variables: una es
 la cantidad de veces que un proceso debe ser ejecutado antes de ser
 /degradado/ a la prioridad inferior, y la otra es la duración del
 /quantum/ asignado a las colas subsecuentes.
@@ -760,7 +760,7 @@ inmediato y no iniciará un cambio de contexto /al mismo proceso/. En
 caso contrario, el trabajo perdido por gasto administrativo se vuelve
 innecesariamente alto.
 
-El panorama cambia al ajustar estas variables: Si se elige un
+El panorama cambia al ajustar estas variables: si se elige un
 /quantum/ de $2^nq$, donde $n$ es el identificador de cola y $q$ la
 longitud del /quantum/ base, un proceso largo será detenido por un
 cambio de contexto al llegar a $q$, $3q$, $7q$, $15q$, etc. lo que
@@ -805,7 +805,7 @@ contrario un proceso muy largo podría causar muy largas inaniciones
 para el resto del sistema.
 
 Para evitar la inanición, puede considerarse también la
-retroalimentación en sentido inverso: Si un proceso largo fue
+retroalimentación en sentido inverso: si un proceso largo fue
 /degradado/ a la cola $C_P$ y pasa determinado tiempo sin recibir
 servicio, puede /promoverse/ de nuevo a la cola $C_{P-1$} para que no
 sufra inanición.
@@ -838,13 +838,13 @@ puesto en ejecución no varía entre invocaciones sucesivas del
 planificador.
 
 Las prioridades pueden representarse en este esquema de forma muy
-sencilla: Un proceso al que se le quiere dar mayor prioridad
+sencilla: un proceso al que se le quiere dar mayor prioridad
 simplemente tendrá más boletos; si el proceso $A$ tiene 20 boletos y
 el proceso $B$ tiene 60, será tres veces más probable que el siguiente
 turno toque a $B$ que a $A$.
 
 El esquema de planificación por lotería contempla que los procesos
-puedan cooperar entre sí: Si $B$ estuviera esperando un resultado de
+puedan cooperar entre sí: si $B$ estuviera esperando un resultado de
 $A$, podría transferirle sus boletos para aumentar la probabilidad de
 que sea puesto en ejecución.
 
@@ -857,7 +857,7 @@ comparación de este mecanismo abordados previamente.
 ** Esquemas híbridos
 
 En líneas generales, los siete algoritmos presentados pueden
-clasificarse sobre dos discriminadores primarios: Si están pensados
+clasificarse sobre dos discriminadores primarios: si están pensados
 para emplearse en multitarea cooperativa o apropiativa, y si emplean
 información /intrínseca/ a los procesos evaluados o no lo hacen, esto
 es, si un proceso es tratado de distinta forma dependiendo de su
@@ -974,7 +974,7 @@ externos al despachador. Algunas ideas al respecto son:
   por decisión del despachador o por estar en alguna espera).
 
   Esta prioridad interna depende también del tamaño de la lista de
-  procesos listos para su ejecución: Entre más procesos haya
+  procesos listos para su ejecución: entre más procesos haya
   pendientes, más fuerte será la modificación que efectúe.
 
   El despachador ejecutará al proceso que tenga una mayor prioridad
@@ -997,7 +997,7 @@ parámetros según el nivel en el cual se está ejecutando.
 Los algoritmos presentados en el transcurso de esta sección fueron
 presentados y comparados ante una determinada carga de procesos. No se
 puede asumir, sin embargo, que su comportamiento será igual ante
-diferentes distribuciones: Un patrón de trabajo donde predominen los
+diferentes distribuciones: un patrón de trabajo donde predominen los
 procesos cortos y haya unos pocos procesos largos probablemente se
 verá mucho más penalizado por un esquema SRR (y mucho más favorecido
 por un SPN o PSPN) que uno en el cual predominen los procesos largos.
@@ -1041,7 +1041,7 @@ del tiempo efectivo de proceso.
 Una estrategia empleada por Control Data Corporation para la CDC6600
 (comercializada a partir de 1964, y diseñada por Seymour Cray) fue
 emplear hardware especializado que permitiera efectivamente /compartir
-el procesador/: Un sólo procesador tenía 10 /juegos/ de registros,
+el procesador/: un sólo procesador tenía 10 /juegos/ de registros,
 permitiéndole alternar entre 10 procesos con un /quantum/ efectivo
 igual a la velocidad del reloj. A cada paso del reloj, el procesador
 cambiaba el juego de registros. De este modo, un sólo procesador de
@@ -1071,7 +1071,7 @@ procesos, ¿cómo caben los /hilos/ en este panorama? Depende de cómo
 éstos son /mapeados/ a procesos a ojos del planificador.
 
 Como fue expuesto en la sección \ref{PROC_tipos_de_hilos}, hay dos
-clases principales de hilo: Los /hilos de usuario/ o /hilos verdes/,
+clases principales de hilo: los /hilos de usuario/ o /hilos verdes/,
 que son completamente gestionados dentro del proceso y sin ayuda del
 sistema operativo, y los /hilos de núcleo/ o /hilos de kernel/, que sí
 son gestionados por el sistema operativo como si fueran
@@ -1079,7 +1079,7 @@ procesos. Partiendo de esto, existen tres modelos principales de
 mapeo:
 
 - Muchos a uno :: Muchos hilos son agrupados en un sólo proceso. Los
-                  /hilos verdes/ entran en este supuesto: Para el
+                  /hilos verdes/ entran en este supuesto: para el
                   sistema operativo, hay un sólo proceso; mientras
                   tiene la ejecución, éste se encarga de repartir el
                   tiempo entre sus hilos.
@@ -1121,7 +1121,7 @@ mapeo:
                implementar los LWP.
 
 - Muchos a muchos :: Este mecanismo permite que existan hilos de ambos
-     modelos: Permite la existencia de /hilos unidos/ (/bound
+     modelos: permite la existencia de /hilos unidos/ (/bound
      threads/), en que cada hilo corresponde a un (y sólo un) LWP, y
      de /hilos no unidos/ (/unbound threads/), de los cuales /uno o
      más/ estarán mapeados a cada LWP.
@@ -1149,7 +1149,7 @@ procesos se refleja aproximadamente en la categorización de los hilos
 POSIX (=pthreads=) denominada el /ámbito de contención/.
 
 Hay dos enfoques respecto a la /contención/ que deben tener los
-hilos, esto es: En el momento que un proceso separa su ejecución en
+hilos, esto es: en el momento que un proceso separa su ejecución en
 dos hilos, ¿debe cada uno de estos recibir la misma atención que
 recibiría un proceso completo?
 
@@ -1258,13 +1258,13 @@ situaciones.
 
 La divergencia entre la carga de cada uno de los procesadores debe ser
 lo más pequeña posible. Para lograr esto, se pueden emplear esquemas de
-/balanceo de cargas/: Algoritmos que analicen el estado de las colas
+/balanceo de cargas/: algoritmos que analicen el estado de las colas
 de procesos y, de ser el caso, transfieran procesos entre las colas
 para homogeneizarlas. Claro está, el balanceo de cargas puede actuar
 precisamente en sentido contrario de la afinidad al procesador, y
 efectivamente puede reubicar a los procesos con afinidad suave.
 
-Hay dos estrategias primarias de balanceo: Por un lado, la migración
+Hay dos estrategias primarias de balanceo: por un lado, la migración
 activa o migración /por empuje/ (/push migration/) consiste en una
 tarea que ejecuta como parte del núcleo y periódicamente revisa el
 estado de los procesadores, y en caso de encontrar un desbalance mayor
@@ -1289,7 +1289,7 @@ Como sea, debe mantenerse en mente que todo balanceo de cargas que
 se haga entre los procesadores conllevará una penalización en
 términos de afinidad al CPU.
 
-** Colas de procesos: ¿Una o varias?
+** Colas de procesos: ¿una o varias?
 
 En los puntos relativos al multiprocesamiento hasta ahora abordados se
 parte del supuesto que hay una cola de procesos
@@ -1515,7 +1515,7 @@ pueda ser nuevamente agendado — Esto es, un proceso de alta prioridad
 no podrá avanzar hasta que uno de baja prioridad libere su recurso.
 
 La respuesta introducida por Solaris 2 a esta situación a este
-fenómeno es la /herencia de prioridades/: Todos los procesos que estén
+fenómeno es la /herencia de prioridades/: todos los procesos que estén
 accesando (y, por tanto, bloqueando) recursos requeridos por un
 proceso de mayor prioridad, serán tratados como si fueran de la
 prioridad de dicho recurso /hasta que terminen de utilizar el recurso
@@ -1580,7 +1580,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 #
 # Menciona César que uno de los puntos que determina la prioridad de
 # los procesos es la razón por la cual se hacen llamadas al sistema:
-# Un proceso interactivo en espera lanzó llamadas al sistema
+# un proceso interactivo en espera lanzó llamadas al sistema
 # relacionadas con audio, video, red, teclado, etc. Un proceso no
 # interactivo fue suspendido por exceder su quantum, pero puede haber
 # otorgado la ejecución por sincronización/bloqueo/etc.

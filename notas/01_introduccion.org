@@ -52,9 +52,7 @@ sistemas en el
 mismo servidor? ¿Cómo evitar la corrupción o pérdida de información?
 Lo que es más, ¿cómo recuperar información de un disco dañado?
 
-# ACUERDOS EN TÉRMINOS:
-# ¿Seguridad en cómputo (México) o seguridad informática (Argentina)?
-En el área de la seguridad en cómputo, la relación resulta obvia.
+En el área de la seguridad informática, la relación resulta obvia.
 Desde el punto de vista del atacante, si le interesa localizar
 vulnerabilidades que permitan elevar
 su nivel de privilegios, ¿cómo podría lograrlo sin comprender
@@ -77,6 +75,7 @@ soluciones pueden ser extrapoladas a otros campos.
 El camino por delante es largo, y puede resultar interesante y divertido.
 
 * Funciones y objetivos de los sistemas operativos
+# <<INTRO_funciones>>
 
 El sistema operativo es el único programa que interactúa directamente
 con el hardware de la computadora. Sus funciones primarias son:
@@ -100,7 +99,7 @@ con el hardware de la computadora. Sus funciones primarias son:
      implementar políticas que los asignen de forma efectiva y acorde
      a las necesidades establecidas para dicho sistema.
 
-- Aislamiento :: En un sistema multiusuario y multitarea cada proceso 
+- Aislamiento :: En un sistema multiusuario y multitarea cada proceso
 		 y cada usuario no tendrá que
                  preocuparse por otros que estén usando el mismo
                  sistema — Idealmente, su /experiencia/ será la misma
@@ -892,6 +891,109 @@ rompe con lo que Jonathan Zittrain (2008) define como la
 ampliar el debate en este entido, el libro de Zittrain se ha vuelto
 referencia obligada, y está disponible completo en línea.
 
+* Seguridad informática
+
+No puede perderse de vista la importancia de la /seguridad
+informática/. Puede verse el impacto de este concepto en prácticamente
+todos los componentes que conforman a un sistema operativo. Para no ir
+más lejos, las funciones principales presentadas en la sección
+\ref{INTRO_funciones} cruzan necesariamente por criterios de
+seguridad. Algunas consideraciones ejemplo podrían ser:
+
+- Abstracción :: El sistema operativo debe asegurarse no sólo de
+                 proveer las abstracciones necesarias, sino que
+                 también debe asegurarse de que ninguno de sus
+                 usuarios pueda /evadir/ dichas abstracciones. Por
+                 ejemplo, el que un usuario tenga derecho de modificar
+                 un archivo que esté alojado en determinada unidad de
+                 disco, ese usuario no debe poder escribir
+                 /directamente/ al disco — Su acceso debe estar
+                 limitado a la interfaz que el sistema le ofrece.
+
+- Administración de recursos :: Si el sistema operativo definió
+     determinada política de asignación de recursos, debe evitar que
+     el usuario exceda las asignaciones aceptables, sea en el curso de
+     su uso normal, o incluso ante patrones de uso /oportunista/ —
+     Esto es, conociendo los mecanismos y políticas, un usuario no
+     debe poder lograr que el sistema le permite el uso por encima de
+     lo definido.
+
+- Aislamiento :: Si el sistema operativo ofrece separación entre los
+                 datos, procesos y recursos de sus distintos usuarios,
+                 ninguno de ellos debe –accidental o intencionalmente–
+                 tener acceso a la información que otro haya marcado
+                 como privada. Además, retomando el inciso anterior,
+                 ninguno de los usuarios debe poder lograr que, por
+                 sus acciones, el sistema /penalice/ a otros usuarios
+                 más allá de lo que la política de asignación de
+                 recursos estipule.
+
+Claro está, estos tres incisos son presentados únicamente como
+ejemplo; a lo largo de la obra se presentarán varios casos
+relacionados con los distintos temas que se abordan.
+
+Naturalmente, todo problema que se plantee relativo a la seguridad
+informática puede ser abordado (por lo menos) desde dos puntos de
+vista antagonistas: El la /protección/, que busca definir y proteger
+los aspectos en que intervenga la seguridad para un problema dado, y
+el del /ataque/, que busca las debilidades o /vulnerabilidades/ en
+determinada implementación de un esquema de seguridad que permitan a
+quien las conozca violar los límites que el administrador del sistema
+busca imponerle. Y claro, si bien el tipo de análisis para estos
+puntos es muy distinto, comprender ambos puntos de vista resulta no
+únicamente legítimos sino necesario para una formación profesional
+completa.
+
+Todas las áreas que aborda la presente obra tienen aspectos que pueden
+analizarse desde el punto de vista de la seguridad informática, y más
+que dedicar un capítulo en particular a este tema, la apuesta es por
+abordar a la seguridad de forma transversal.
+
+** Código malicioso
+
+Los sistemas operativos, al igual que todo programa de cómputo,
+presentan imperfecciones, errores u omisiones, tanto en su diseño como
+en su implementación. El /código malicioso/ (también conocido como
+/malware/) consiste en programas diseñados para /aprovechar/ a dichas
+/vulnerabilidades/ para adquirir privilegios de ejecución o acceso a
+datos que de otro modo no habrían logrado.
+
+Si la vulnerabilidad que aprovecha el código malicioso es resultado de
+un error en la implementación, el desarrollador del sistema operativo
+típicamente podrá corregirla y poner esta corrección (coloquialmente
+denominada /parche/) a disposición de los usuarios; en los sistemas
+operativos modernos, la instalación de estas correcciones se efectúa
+de forma automatizada. Por otro lado, si la vulnerabilidad es
+consecuencia de una debilidad en el /diseño/, su corrección puede ser
+mucho más compleja — Incluso puede ser imposible de resolver, como el
+caso presentado en la sección \ref{MEM_buffer_overflow}.[fn:: El caso
+de los desbordamientos de buffer no se debe directamente al diseño de
+uno de los sistemas operativos en particular. Su existencia, así como
+su presencia generalizada más de 40 años después de haberse descrito,
+puede explicarse por la imposibilidad de resolverse este problema sin
+el consumo reiterado de recursos de cómputo con operaciones demasiado
+frecuentes. En este caso en particular, el desbordamiento puede
+evitarse únicamente usando lenguajes con gestión automática de
+memoria, mucho más lentos que los lenguajes de bajo nivel, o
+concienizando a los desarrolladores de las prácticas responsables de
+programación.]
+
+Cabe mencionar que una gran cantidad de código malicioso atacan a una
+capa particularmente débil de todo sistema de cómputo: Al usuario. Un
+aspecto frecuente (y de muy difícil solución) de estos programas es
+que /engañan/ al usuario presentándose como código legítimo, y si
+éste reacciona como el código malicioso busca, le permitirá la
+ejecución en el sistema con sus privilegios.
+
+El código malicioso tiende a agruparse y clasificarse de acuerdo a su
+comportamiento, particularmente de cara al usuario: /Virus/,
+/gusanos/, /caballos de troya/, /exploits/, y muchos más. Sin embargo,
+y dado que sus diferencias radican particularmente en su diferente
+comportamiento /ante el usuario/ o /como programa en ejecución/ (y se
+comportan en líneas generales del mismo modo ante el sistema
+operativo), se determinó que entrar en detalles al respecto resultaría
+fuera del ámbito de la presente obra.
+
 * Organización de los sistemas operativos
 
 Para comenzar el estudio de los sistemas operativos, la complejidad
@@ -911,7 +1013,7 @@ encontrar líneas bases.
 
 - Monolíticos :: La mayor parte de los sistemas operativos
 		 históricamente han sido /monolíticos/ — Esto
-		 significa que hay un sólo /proceso privilegiado/ 
+		 significa que hay un sólo /proceso privilegiado/
 	  	 (justamente el sistema operativo) que
 		 opera en modo supervisor, y dentro del cual se
 		 encuentran todas las rutinas para las diversas tareas

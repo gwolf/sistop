@@ -11,10 +11,11 @@ Hay sistemas operativos de todo tipo, desde muy simples hasta
 terriblemente complejos, y entre más casos de uso hay para el cómputo
 en la vida diaria, más variedad habrá en ellos.
 
-No nos referiremos al sistema operativo como lo ve el usuario final, o
+A lo largo del presente texto, no se hace referencia al sistema
+operativo como lo /ve/ o /usa/ el usuario final, o
 como lo vende la mercadotecnia — El ambiente gráfico, los programas
-que se ejecutan en éste, los lenguajes de programación en que están 
-desarrollados y en que más fácilmente se puede desarrollar para ellos, 
+que se ejecutan en éste, los lenguajes de programación en que están
+desarrollados y en que más fácilmente se puede desarrollar para ellos,
 e incluso el conjunto básico de funciones que las bibliotecas base ofrecen son
 principalmente /clientes/ del sistema operativo — Se ejecutan sobre él, y
 ofrecen su implementación a sus usuarios (incluídos, claro, los
@@ -34,41 +35,44 @@ comunes al programar, que pueden resultar desde un rendimiento
 deficiente hasta pérdida de información.
 
 Como desarrolladores, comprender el funcionamiento básico de los
-sistemas operativos y las principales alternativas que nos ofrecen en
+sistemas operativos y las principales alternativas que ofrecen en
 muchos de sus puntos, o saber diseñar algoritmos y procesos que se ajusten
-mejor al sistema operativo en que vayamos a ejecutarlo, puede resultar
-en una diferencia cualitativa decisiva en nuestros productos.
+mejor al sistema operativo en que vayan a ejecutarse, puede resultar
+en una diferencia cualitativa decisiva en el producto final.
 
-Como administradores de sistemas, muchas veces podemos enfrentarnos a
+Parte de las tareas diarias de los administradores de sistemas incluye
+enfrentarse a
 situaciones de bajo rendimiento, de conflictos entre aplicaciones,
-demoras en la ejecución, y comprender lo que ocurre /tras bambalinas/
-resulta fundamental para realizar nuestro trabajo. Los sistemas de
+demoras en la ejecución. Para ello, resulta fundamental comprender lo
+que ocurre /tras bambalinas/. Los sistemas de
 archivos resultan un área de especial interés para administradores de
 sistemas: ¿Cómo comparar las virtudes y desventajas de tantos sistemas
-existentes? ¿Por qué puede resultarnos conveniente mezclarlos en el
+existentes? ¿Por qué puede resultar conveniente mezclar distintos
+sistemas en el
 mismo servidor? ¿Cómo evitar la corrupción o pérdida de información?
 Lo que es más, ¿cómo recuperar información de un disco dañado?
 
 # ACUERDOS EN TÉRMINOS:
 # ¿Seguridad en cómputo (México) o seguridad informática (Argentina)?
-En el área de la seguridad en cómputo, la relación resulta obvia:
-si nos interesa localizar vulnerabilidades que nos permitan elevar
-nuestro nivel de privilegios, ¿cómo podríamos hacerlo sin comprender
+En el área de la seguridad en cómputo, la relación resulta obvia.
+Desde el punto de vista del atacante, si le interesa localizar
+vulnerabilidades que permitan elevar
+su nivel de privilegios, ¿cómo podría lograrlo sin comprender
 cómo se engranan los diversos componentes de un sistema? La cantidad
-de tareas que debe cubrir un sistema operativo es tremenda, y veremos
-ejemplos de sitios donde un atacante puede enfocar sus energías. Del
+de tareas que debe cubrir un sistema operativo es tremenda, y se verán
+ejemplos de sitios donde dicho atacante puede enfocar sus energías. Del
 mismo modo, para quien busca /defender/ un sistema (o una red), resulta
 fundamental comprender cuáles son los vectores de ataque más comunes y
 –nuevamente– la relación entre los componentes involucrados para poder
-remediar o, mejor, prevenir dichos ataques.
+remediar o, mejor aún, prevenir dichos ataques.
 
-Y claro está, podemos ver al mundo en general, fuera del entorno del
+Y claro está, puede verse al mundo en general, fuera del entorno del
 cómputo, como una serie de modelos interactuantes. Muchos de los
-métodos y algoritmos que aquí veremos pueden emplearse fuera del
-entorno del cómputo, y una vez que comprendamos los problemas de
+métodos y algoritmos que se abordan en esta obra pueden emplearse
+fuera del entorno del cómputo; una vez comprendidos los problemas de
 concurrencia, de competencia por recursos, o de protección y separación
-que han sido resueltos en el campo de los sistemas operativos, podemos
-extrapolar estas soluciones a otros campos.
+que han sido resueltos en el campo de los sistemas operativos, estas
+soluciones pueden ser extrapoladas a otros campos.
 
 El camino por delante es largo, y puede resultar interesante y divertido.
 

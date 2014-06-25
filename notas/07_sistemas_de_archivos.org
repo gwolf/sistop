@@ -843,7 +843,7 @@ superior a la de la asignación ligada.
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
 [[./img/ditaa/fs_asignacion_indexada.png]]
 
-Un esquema de asignación indexada nos da una mayor eficiencia de caché
+Un esquema de asignación indexada brinda una mayor eficiencia de caché
 que la asignación ligada: Si bien en dicho caso es común guardar copia
 de la tabla de asignación en memoria para mayor agilidad, con la
 asignación indexada bastará hacer caché /únicamente de la información
@@ -1263,7 +1263,7 @@ volverse a registrar sin peligro.
 Este esquema es el más implementado hoy en día, y está presente en
 casi todos los sistemas de archivos modernos. Si bien con un sistema
 con bitácora no hace falta verificar el sistema de archivos completo
-tras una detención abrupta, esta no nos exime de que, de tiempo en
+tras una detención abrupta, esta no exime de que, de tiempo en
 tiempo, el sistema de archivos sea verificado: Es altamente
 recomendado hacer una verificación periódica en caso de presentarse
 alguna corrupción, sea por algún bug en la implementación, fallos en

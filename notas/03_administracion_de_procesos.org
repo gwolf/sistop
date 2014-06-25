@@ -31,8 +31,8 @@ de procesos igual o menor al número de procesadores que tenga el sistema.
 En este capítulo se desarrollan los conceptos relacionados con
 procesos, hilos, concurrencia y sincronización — Las técnicas y
 algoritmos que emplea el sistema operativo para determinar cómo y en
-qué orden hacer los cambios de proceso que nos brindan la ilusión de
-simultaneidad se abordarán en el capítulo \ref{PLAN}.
+qué orden hacer los cambios de proceso que brindan al usuario la
+ilusión de simultaneidad se abordarán en el capítulo \ref{PLAN}.
 
 ** Estados de un proceso
 # <<PROC_estados_de_un_proceso>>
@@ -179,7 +179,7 @@ recursos más comparable con una situación de multiproceso estándar.
 
 Hay tres patrones en los que caen generalmente los modelos de hilos;
 se puede emplear más de uno de estos patrones en diferentes áreas de
-nuestra aplicación, e incluso se pueden /anidar/ (esto es, se podría
+cada aplicación, e incluso se pueden /anidar/ (esto es, se podría
 tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
 un /equipo de trabajo/):
 
@@ -237,7 +237,7 @@ un /equipo de trabajo/):
      sobre bloques de la información total a procesar, cada hilo puede
      enfocarse a hacer sólo un paso y pasarle los datos a otro hilo
      conforme vaya terminando. Una de las principales ventajas de este
-     modelo es que nos ayuda a mantener rutinas simples de comprender,
+     modelo es que ayuda a mantener rutinas simples de comprender,
      y permite que el procesamiento de datos continúe incluso si parte
      del programa está bloqueado esperando E/S.
 
@@ -287,8 +287,8 @@ procesos simultáneos, o incluso cuando interactuan usuarios de
 diferentes computadoras de una red — se presentarán distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
 pero muchos de esos conceptos en realidad son independientes del
-escenario: más bien nos ocupa la relación entre procesos que deben
-compartir recursos o deben sincronizar sus tareas.
+escenario: más bien esta sección se centra en la relación entre
+procesos que deben compartir recursos o sincronizar sus tareas.
 
 Para presentar los problemas y conceptos relacionados con la
 concurrencia suelen utilizarse algunos problemas clásicos, que
@@ -2851,22 +2851,22 @@ que no puedan recuperarse).
 *** De avestruces, ingenieros y matemáticos
 
 Esta misma contraposición puede leerse, hasta cierto punto en tono de
-broma, como un síntoma de la tensión que caracteriza a nuestra
-profesión: la computación nació como ciencia dentro de los
+broma, como un síntoma de la tensión que caracteriza al cómputo como
+profesión: la computación nació como /ciencia/ dentro de los
 departamentos de matemáticas en diversas facultades, sin embargo, al
-pasar de los años ha ido integrando cada vez más a la ingeniería. Y el
+pasar de los años ha ido integrando cada vez más a la /ingeniería/. Y el
 campo, una de las áreas más jóvenes pero al mismo tiempo más
 prolíficas del conocimiento humano, está en una constante discusión y
-definición: ¿Qué somos? ¿Matemáticos, ingenieros, o... alguna otra
-cosa?
+definición: ¿Cómo puede describirse mejor a sus profesionales? ¿Como
+matemáticos, ingenieros, o... alguna otra cosa?
 
 La asignación de recursos, pues, puede verse desde el punto de vista
 matemático: es un problema con un planteamiento de origen, y hay
 varias estrategias distintas (los mecanismos y algoritmos descritos en
 esta sección). Pueden no ser perfectos, pero el problema no ha
 /demostrado/ ser intratable. Y un bloqueo es claramente un error — una
-situación de excepción, inaceptable. Los matemáticos en nuestro árbol
-genealógico académico nos llaman a no ignorar este problema, a
+situación de excepción, inaceptable. Los matemáticos del árbol
+genealógico académico llaman a no ignorar este problema, a
 resolverlo sin importar la complejidad computacional.
 
 Los ingenieros, más aterrizados en el /mundo real/, tienen como parte

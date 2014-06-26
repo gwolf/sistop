@@ -93,7 +93,7 @@ puntos de acceso y ruteadores hasta los controladores de cámaras,
 equipos de sonido, automóviles, y un larguísimo etcétera] o
 dispositivos móviles, que hacen imposible (o, por lo menos, muy
 difícil) desarrollar software directamente en ellos. Los programadores
-desarrollan en equipos de escritorio, corren entornos de prueba en
+desarrollan en equipos de escritorio, ejecutan entornos de prueba en
 emuladores del equipo destino. A pesar del costo computacional de
 realizar la emulación, la diferencia de velocidad entre los equipo de
 escritorio de gama alta y los embebidos permiten que frecuentemente la
@@ -115,8 +115,8 @@ serie de instrucciones a las que hoy se clasificarían como /código intermedio/
 lenguaje base para este sistema fue el /Pascal/, mismo que fue
 adoptado muy ampliamente de manera principal en entornos académicos a
 lo largo de los 1970 y 1980 por su limpieza y claridad
-estructural. Todo programa compilado para correr en en un /sistema-p/
-correría sin modificaciones en cualquier arquitectura hardware que lo
+estructural. Todo programa compilado para ejecutarse en un /sistema-p/
+ejecutaría sin modificaciones en cualquier arquitectura hardware que lo
 implementara.
 
 Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
@@ -147,7 +147,7 @@ especializado y escaso para masificarse, invirtiendo fuertemente en
 publicidad para impulsar su adopción.
 
 Uno de los slogans que mejor describen la intención de Sun fue /WORA/:
-/Write Once, Run Anywhere/ (escribe una vez, corre donde sea). El
+/Write Once, Run Anywhere/ (escribe una vez, ejecuta donde sea). El
 equivalente a una /máquina-p/ (rebautizada como /JVM/: /Máquina
 Virtual Java/) se implementaría para las arquitecturas hardware más
 limitadas y más poderosas. Sun creó también el lenguaje Java, diseñado
@@ -406,7 +406,7 @@ hipervisor bajo arquitectura x86 excede con mucho el ámbito del
 presente texto; se sugiere a los lectores interesados referirse al
 excelente artículo de [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bugnion et. al. (2012)]] detallando la
 implementación de /VMWare/.] Y si bien la virtualización permite
-aparentar varias computadoras distintas corriendo sobre el mismo
+aparentar varias computadoras distintas ejecutando sobre el mismo
 procesador, esta no incluye a los dispositivos. Al presentarse una
 máquina virtual, el sistema anfitrión esta casi siempre[fn:: Hay
 mecanismos para reservar y dirigir un dispositivo físico existente a
@@ -467,17 +467,17 @@ sistema operativo para que funcione sobre un sistema que parece real
 pero no lo es, la paravirtualización busca hacerlo /con pleno
 conocimiento y cooperación/ por parte de los sistemas huéspedes.  Esto
 es, la paravirtualización consiste en alojar a sistemas operativos
-huésped que, a sabiendas de que están corriendo en hardware
+huésped que, a sabiendas de que están ejecutando en hardware
 virtualizado, /no hacen llamadas directas a hardware/ sino que las
 traducen a llamadas al sistema operativo anfitrión.
 
 Vale la pena reiterar en este punto: los sistemas operativos huésped
-bajo un entorno paravirtualizado saben que no están corriendo sobre
+bajo un entorno paravirtualizado saben que no están ejecutando sobre
 hardware real, por lo que en vez de enviar las instrucciones que
 controlen al hardware, envían llamadas al sistema a su
 hipervisor. Hasta cierto punto, el proceso de adecuación
 de un sistema para que permita ser paravirtualizado puede ser equivalente
-a adecuar al sistema operativo para que corra en una arquitectura
+a adecuar al sistema operativo para que ejecute en una arquitectura
 nueva — muy parecida a la del hardware /real/, sí, pero con
 diferencias fundamentales en aspectos profundos.
 

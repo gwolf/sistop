@@ -65,7 +65,7 @@ lenguaje y la estructura de un procesador a otro — Para que una
 computadora pueda ser utilizada, requiere de una serie de chips de
 apoyo — Desde los controladores de cada uno de los /buses/ hasta los
 periféricos básicos (teclado, video). Casi todas las emulaciones
-incluirán un paso más allá: Los periféricos mismos (discos, interfaces
+incluirán un paso más allá: los periféricos mismos (discos, interfaces
 de red, puertos). Todo esto tiene que ser implementado por el
 emulador.
 
@@ -125,7 +125,7 @@ microcomputadoras más populares — El MOS 6502, el Zilog Z80 y el Intel
 80x86.
 
 Hay una diferencia muy importante entre la emulación de una
-arquitectura real y la de una arquitectura inexistente: Emular una
+arquitectura real y la de una arquitectura inexistente: emular una
 computadora entera requiere implementar no sólo las
 instrucciones de su procesador, sino que /todos los chips de apoyo/,
 ¡incluso hay que convertir la entrada del teclado en las
@@ -147,7 +147,7 @@ especializado y escaso para masificarse, invirtiendo fuertemente en
 publicidad para impulsar su adopción.
 
 Uno de los slogans que mejor describen la intención de Sun fue /WORA/:
-/Write Once, Run Anywhere/ (Escribe una vez, corre donde sea). El
+/Write Once, Run Anywhere/ (escribe una vez, corre donde sea). El
 equivalente a una /máquina-p/ (rebautizada como /JVM/: /Máquina
 Virtual Java/) se implementaría para las arquitecturas hardware más
 limitadas y más poderosas. Sun creó también el lenguaje Java, diseñado
@@ -163,7 +163,7 @@ que imposibilitó a Microsoft a desarrollar extensiones propietarias a
 Java (esto es, desarrollar máquinas virtuales que se salieran del
 estándar de la JVM), Microsoft desarrolló la arquitectura /.NET/. Su
 principal aporte en este campo es la separación definitiva entre
-lenguaje de desarrollo y código intermedio producido: La máquina
+lenguaje de desarrollo y código intermedio producido: la máquina
 virtual de /.NET/ está centrada en el /CLI/ (/Common Language
 Infrastructure/, Infraestructura de Lenguajes Comunes), compuesta a su
 vez por el /CIL/ (/Common Intermediate Language/, Lenguaje Intermedio
@@ -188,15 +188,15 @@ técnicas para reducir el tiempo que se desperdicia emulando:
 
 - Traducción dinámica :: Compilación parcial del código a ejecutar a
      formatos nativos, de modo que sólo la primera vez que se ejecuta
-     el código intermedio tiene que ser traducido
+     el código intermedio tiene que ser traducido.
 - Traducción predictiva :: Anticipar cuáles serán las siguientes
      secciones de código que tendrán que ser ejecutadas para,
      paralelamente al avance del programa,  traducirlas a código
-     nativo de forma preventiva
+     nativo de forma preventiva.
 - Compilación /justo a tiempo/ (JIT) :: Almacenar copia del código ya
      traducido de un programa, de modo que no tenga que traducirse ni
      siquiera a cada ejecución, sino que sólo una vez en la vida de
-     la máquina virtual
+     la máquina virtual.
 
 A través de estas estrategias, el rendimiento de las
 arquitecturas emuladas es ya prácticamente idéntico al del código
@@ -231,7 +231,7 @@ siendo así el primer procesador diseñado para /emular por hardware/ a
 otras arquitecturas. Crusoe fue lanzado al mercado con el CMS para la
 arquitectura x86 de Intel, y efectivamente, la emulación era
 completamente transparente al usuario.[fn:: Empleando Transmeta, se
-podían observar ciertos comportamientos curiosos: Por ejemplo, dado el
+podían observar ciertos comportamientos curiosos: por ejemplo, dado el
 amplio espacio de caché que implementaba el CMS, el código ejecutable
 se mantenía /ya traducido/ listo para el procesador, por lo cual la
 primera vez que se ejecutaba una función era notablemente más lenta
@@ -313,13 +313,13 @@ Uno de los modelos de esta familia fue la /S-360-67/, con la
 característica distintiva en ser la única de la serie 360 en ofrecer
 una unidad de manejo de memoria (MMU), con lo cual permitía la
 reubicación de programas en memoria. Esto, sin embargo, creaba un
-problema: El software desarrollado para los equipos más pequeños de la
+problema: el software desarrollado para los equipos más pequeños de la
 familia estaba creado bajo un paradigma de usuario único, y si bien
 podría ser ejecutado en este modelo, eso llevaría a un desperdicio de
 recursos (dado que el modelo 67 tenía todo lo necesario para operar en
 modo multitarea).
 
-La respuesta de IBM fue muy ingeniosa: Desarrollar un sistema
+La respuesta de IBM fue muy ingeniosa: desarrollar un sistema
 operativo mínimo, /CP/ (/Control Program/, Programa de Control) con el
 único propósito de crear y gestionar /máquinas virtuales/ dentro del
 hardware S/360-67, dentro de /cada una de las cuales/ pudiera
@@ -462,7 +462,7 @@ sigue presentando algunas desventajas:
   hardware necesarias.
 
 La /paravirtualización/, o /virtualización asistida por el sistema
-operativo/, parte de un planteamiento distinto: En vez de /engañar/ al
+operativo/, parte de un planteamiento distinto: en vez de /engañar/ al
 sistema operativo para que funcione sobre un sistema que parece real
 pero no lo es, la paravirtualización busca hacerlo /con pleno
 conocimiento y cooperación/ por parte de los sistemas huéspedes.  Esto
@@ -471,7 +471,7 @@ huésped que, a sabiendas de que están corriendo en hardware
 virtualizado, /no hacen llamadas directas a hardware/ sino que las
 traducen a llamadas al sistema operativo anfitrión.
 
-Vale la pena reiterar en este punto: Los sistemas operativos huésped
+Vale la pena reiterar en este punto: los sistemas operativos huésped
 bajo un entorno paravirtualizado saben que no están corriendo sobre
 hardware real, por lo que en vez de enviar las instrucciones que
 controlen al hardware, envían llamadas al sistema a su
@@ -484,7 +484,7 @@ diferencias fundamentales en aspectos profundos.
 Y si bien ya se explicó en la sección anterior que la virtualización puede
 ayudar a presentar un sistema idealizado que reduzca la inestabilidad
 en un sistema operativo, al hablar de paravirtualización este
-beneficio naturalmente crece: Los controladores de hardware sencillos
+beneficio naturalmente crece: los controladores de hardware sencillos
 y bien comprendidos que se usaban para gestionar los
 dispositivos emulados se convierten casi en simples pasarelas de
 llamadas al sistema, brindando además de una sobrecarga mínima, aún
@@ -501,7 +501,7 @@ Como se mencionó anteriormente, incorporar dentro de un sistema operativo
 una nueva arquitectura hardware. Para que los autores de un entorno que
 implemente paravirtualización logren que un sistema operativo nuevo
 pueda ser ejecutado en su arquitectura, deben poder manipular y
-modificar su código fuente: De otra manera, ¿cómo se le podría adecuar
+modificar su código fuente: de otra manera, ¿cómo se le podría adecuar
 para que supiera desenvolverse en un entorno no nativo?
 
 El proyecto de gestión de virtualización y paravirtualización /Xen/,
@@ -571,7 +571,7 @@ se describirán en breve. Dado que el sistema operativo es el
 único autorizado para tener acceso directo al hardware, no hace falta
 ejecutar un hipervisor.
 
-Podría presentarse un símil: Las tecnologías antes descritas de
+Podría presentarse un símil: las tecnologías antes descritas de
 virtualización implementan /hardware virtual/ para cada sistema
 operativo, mientras que los contenedores más bien presentan un
 /sistema operativo virtual/ para el conjunto de procesos que definen
@@ -631,7 +631,7 @@ menos en los siguientes áreas:
      como un árbol, en cuya raiz está siempre el proceso 1,
      =init=. Cada contenedor inicia su existencia ejecutando un =init=
      propio y enmascarando su identificador de proceso real por el
-     número 1
+     número 1.
 - Señales, comunicación entre procesos :: Ningún proceso de un
      contenedor debe poder interferir con la ejecución de uno en otro
      contenedor. El núcleo restringe toda comunicación entre procesos,
@@ -664,7 +664,7 @@ menos en los siguientes áreas:
 
 Una de las principales características que atrae a muchos
 administradores a elegir la virtualización por medio de contenedores
-es un consumo de recursos óptimo: Bajo los demás métodos de
+es un consumo de recursos óptimo: bajo los demás métodos de
 virtualización (y particularmente al hablar de emulación y de
 virtualización asistida por hardware), una máquina virtual siempre
 ocupará algunos recursos, así esté inactiva. El hipervisor tendrá que

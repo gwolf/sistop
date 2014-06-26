@@ -7,7 +7,7 @@
 A lo largo del capítulo \ref{DIR} se presentaron los elementos del sistema de archivos tal
 como son presentados al usuario final, sin entrar en detalles respecto
 a cómo organiza toda esta información el sistema operativo en un
-/dispositivo persistente/ — Mencionamos algunas estructuras base, pero
+/dispositivo persistente/ — mencionamos algunas estructuras base, pero
 dejándolas explícitamente pendientes de definición. En este capítulo
 se tratarán las principales estructuras y mecanismos
 empleados para que un sistema de archivos sea ya no sólamente una
@@ -116,7 +116,7 @@ conceptos para almacenar, ubicar o recuperar la información:
 
 - /Mapa de bits/ de espacio libre :: La función del bitmap es poder gestionar
      el espacio libre del disco. Recuérdese que el disco se presenta
-     asignado por /bloques/, típicamente de 4096 bytes — En el bitmap
+     asignado por /bloques/, típicamente de 4096 bytes — en el bitmap
      cada bloque se representa con un bit, con lo que aquí se puede
      encontrar de forma compacta el espacio ocupado y disponible, así
      como el lugar adecuado para crear un nuevo archivo.
@@ -138,13 +138,13 @@ conceptos para almacenar, ubicar o recuperar la información:
 Un sistema operativo puede dar soporte a varios distintos sistemas de
 archivos; un administrador de sistemas puede tener muy diferentes
 razones que influyan para elegir cuál sistema de
-archivos empleará para su información — Algunas razones para
+archivos empleará para su información — algunas razones para
 elegir a uno u otro son que el rendimiento de cada uno puede estar
 /afinado/ para diferentes patrones de carga, necesidad de emplear un
 dispositivo portátil para intercambiar datos con distintos sistemas, e
 incluso restricciones de hardware.[fn:: Por ejemplo, los /cargadores
 de arranque/ en algunas plataformas requieren poder leer el volumen
-donde está alojada la imágen del sistema operativo — Lo cual obliga a
+donde está alojada la imágen del sistema operativo — lo cual obliga a
 que esté en un sistema de archivos nativo a la plataforma.]
 
 A lo largo de esta sección se revisará cómo los principales
@@ -187,7 +187,7 @@ los archivos/, ni siquiera a las estructuras que apuntan hacia ellos,
 sólo describe al volumen para que pueda ser montado]
 
 Tras leer la información del superbloque, el sistema operativo
-determina en primer término si puede proceder — Si no sabe cómo
+determina en primer término si puede proceder — si no sabe cómo
 trabajar con el sistema de archivos en cuestión, por ejemplo, no
 puede presentar información útil alguna al usuario (e incluso
 arriesgaría destruirla).
@@ -230,7 +230,7 @@ abstracción de los sistemas de archivos:
 - Espacio de intercambio :: Como se vio en la sección \ref{MEM_acomodo_de_paginas}, la
      gestión de la porción de la memoria virtual que está en disco es
      mucho más eficiente cuando se hace sin cruzar por la abstracción
-     del sistema operativo — Esto es, cuando se hace en un volumen en
+     del sistema operativo — esto es, cuando se hace en un volumen en
      crudo. Y si bien el gestor de memoria virtual es parte innegable
      del sistema operativo, en un sistema /microkernel/ puede estar
      ejecutándose como proceso de usuario.
@@ -256,7 +256,7 @@ abstracción de los sistemas de archivos:
 
 El directorio es la estructura que relaciona a los archivos como son
 presentados al usuario –identificados por una ruta y un nombre– con
-las estructuras que los describen ante el sistema operativo — Los
+las estructuras que los describen ante el sistema operativo — los
 /i-nodos/.
 
 A lo largo de la historia de los sistemas de archivos, se han
@@ -270,7 +270,7 @@ Una vez que el sistema de archivos está /montado/ (ver
 \ref{DIR_montaje_directorios}), todas las referencias a archivos
 dentro de éste deben pasar a través del directorio. El directorio raiz
 está siempre en una ubicación /bien conocida/ dentro del sistema de
-archivos — Típicamente al inicio del volumen, en los primeros
+archivos — típicamente al inicio del volumen, en los primeros
 sectores[fn:: Una excepción a esta lógica se presentó en la década de
 los 1980, cuando los diseñadores del sistema AmigaOS decidieron ubicar
 al directorio en el sector /central/ de los volúmenes, para reducir a
@@ -391,7 +391,7 @@ lineales presentan un segundo problema: cómo reaccionar cuando se
 Como ya se presentó, FAT asigna un espacio fijo al directorio raiz,
 pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
-archivo — Si el doceavo byte de una entrada de directorio, que indica
+archivo — si el doceavo byte de una entrada de directorio, que indica
 los /atributos del archivo/ (ver figura
 \ref{FS_entrada_directorio_fat} y cuadro 7.2) tiene
 al bit 4 activado, la región de datos correspondientes a dicho archivo
@@ -403,7 +403,7 @@ Queda claro que FAT es un sistema heredado, y que exhibe muchas
 prácticas que ya se han abandonado en diseños modernos de sistemas de
 archivos. Se vio que dentro de la entrada de directorio de cada archivo
 está prácticamente su /i-nodo/ completo: la información de permisos,
-atributos, fechas de creación — Y muy particularmente, el apuntador
+atributos, fechas de creación — y muy particularmente, el apuntador
 al /cluster/ de inicio (bytes 26-28, mas los 20-22 para FAT32). Esto
 resulta en una de las grandes debilidades de FAT: la tendencia a la
 fragmentación.
@@ -436,7 +436,7 @@ resultar muy penalizado por la fragmentación.
 *** La eliminación de entradas del directorio
 
 Sólo unos pocos sistemas de archivos guardan sus directorios ordenados
-— Si bien esto facilitaría las operaciones más frecuentes que se
+— si bien esto facilitaría las operaciones más frecuentes que se
 realizan sobre de ellos (en particular, la búsqueda: cada vez que un
 directorio es recorrido hasta encontrar un archivo tiene que leerse
 potencialmente completo), mantenerlo ordenado ante cualquier
@@ -457,7 +457,7 @@ archivo pueden quedar separadas en diferentes sectores.]
 Ordenar las entradas del directorio teniendo sus contenidos ya en
 memoria y, en general, diferir las modificaciones al directorio
 resulta mucho más conveniente en el caso general. Esto vale también
-para la eliminación de archivos — A continuación se abordará la
+para la eliminación de archivos — a continuación se abordará la
 estrategia que sigue FAT. Cabe recordar que FAT fue diseñado cuando el
 medio principal de almacenamiento era el disco flexible, decenas de
 veces más lento que el disco duro, y con mucha menor confiabilidad.
@@ -469,7 +469,7 @@ ignorado, reemplazando el primer caracter de su nombre por =0xE5=. Ni
 la entrada de directorio, ni la /cadena/ de /clusters/ correspondiente
 en las tablas de asignación,[fn:: Este tema será abordado en breve, en
 la sección \ref{FS_tablas_fat}, al hablar de las tablas de asignación
-de archivos.] son eliminadas — Sólo son marcadas como
+de archivos.] son eliminadas — sólo son marcadas como
 /disponibles/. El espacio de almacenamiento que el archivo eliminado
 ocupa debe, entonces, ser /sumado/ al espacio libre que tiene el
 volumen. Es sólo cuando se crea un nuevo archivo empleando esa misma
@@ -659,7 +659,7 @@ falla del disco.]; este mecanismo permite una búsqueda rápida y
 confiable de coincidencias, sea a nivel archivo o a nivel bloque.
 
 La desduplicación puede realizarse /en línea/ o /fuera de línea/ —
-Esto es, analizar los datos buscando duplicidades al momento que estos
+esto es, analizar los datos buscando duplicidades al momento que estos
 llegan al sistema, o, dado que es una tarea intensiva tanto en uso de
 procesador como de entrada/salida, realizarla como una tarea posterior
 de mantenimiento, en un momento de menor ocupación del sistema.
@@ -707,7 +707,7 @@ Los primeros sistemas de archivos en disco empleaban un esquema de
 /asignación contigua/. Para implementar un sistema de archivos de este
 tipo, no haría falta el contar con una /tabla de asignación de
 archivos/: bastaría con la información que forma parte del
-directorio de FAT — La extensión del archivo y la dirección de su
+directorio de FAT — la extensión del archivo y la dirección de su
 primer /cluster/.
 
 #+attr_latex: width=0.7\textwidth
@@ -729,7 +729,7 @@ asignados; podemos tener mucho más espacio disponible que el que
 podamos asignar a un nuevo archivo.
 
 Los esquemas de asignación contigua se emplean hoy en día
-principalmente en sistemas de archivo de sólo lectura — Por ejemplo,
+principalmente en sistemas de archivo de sólo lectura — por ejemplo,
 lo emplea el sistema principal que utilizan los CD-ROMs, el
 /ISO-9660/, pensado para aprovechar al máximo un espacio que, una vez
 grabado, sólo podrá abrirse en modo de sólo lectura. Esto explica por
@@ -768,7 +768,7 @@ determinado bloque del archivo, habrá que atravesar todos los bloques
 previos para encontrar su ubicación.
 
 Particularmente por este segundo punto es mucho más común el empleo de
-una /tabla de asignación de archivos/ — Y precisamente así es como
+una /tabla de asignación de archivos/ — y precisamente así es como
 opera FAT (de hecho, esta tabla es la que le da su nombre). La tabla
 de asignación es un mapa de los /clusters/, representando a cada uno por
 el espacio necesario para guardar un apuntador.
@@ -855,7 +855,7 @@ Claro está, mientras que en los esquemas anteriores la tabla central
 de asignación de archivos puede emplearse directamente como el
 /bitmap/ del volumen, en los sistemas de archivos de asignación
 indexada se vuelve necesario contar con un /bitmap/ independiente —
-Pero al sólo requerir representar si cada /cluster/ está vacío u
+pero al sólo requerir representar si cada /cluster/ está vacío u
 ocupado (y ya no apuntar al siguiente), resulta de mucho menor tamaño.
 
 Ahora, ¿qué pasa cuando la lista de /clusters/ de un archivo no cabe
@@ -922,7 +922,7 @@ usuario (y para que el sistema operativo sepa dónde indicar /fin de
 archivo/ al leer el último /cluster/ que compone a determinado archivo).
 
 La estructura fundamental de este sistema de archivos es la tabla de
-asignación de archivos (/File Allocation Table/) — Tanto que de ella
+asignación de archivos (/File Allocation Table/) — tanto que de ella
 toma su nombre FAT.
 
 Cada entrada de la FAT mide lo que la longitud correspondiente a su
@@ -1004,11 +1004,11 @@ Los sistemas de archivos que están estructurados siguiendo esta lógica
 de grupos de asignación no evitan la fragmentación, pero sí la mayor
 parte de sus consecuencias negativas. Para mantener este esquema
 operando confiablemente, eso sí, requieren de mantener disponibilidad
-de espacio — Al presentarse saturación, esta estrategia pierde
+de espacio — al presentarse saturación, esta estrategia pierde
 efectividad. Para evitar que esto ocurra, es muy frecuente en los
 sistemas Unix que haya un cierto porcentaje (típicamente cercano al
 5%) del disco que esté disponible únicamente para el administrador —
-En caso de que el sistema de archivos pase del 95%, los usuarios no
+en caso de que el sistema de archivos pase del 95%, los usuarios no
 podrán escribir ya a él, pero el administrador puede efectuar tareas
 de mantenimiento para volver a un rango operacional.
 
@@ -1081,7 +1081,7 @@ inteligentes/ resultan relevantes porque, si bien antes el sistema
 operativo podía determinar con toda certeza si una operación se había
 realizado o no, hoy en día los controladores dan un /acuse de recibo/
 a la información en el momento en que la colocan en el caché
-incorporado del dispositivo — En caso de un fallo de corriente, esta
+incorporado del dispositivo — en caso de un fallo de corriente, esta
 información puede no haber sido escrita por completo al disco.
 
 Es importante recordar que las operaciones con los metadatos que conforman al
@@ -1107,7 +1107,7 @@ inconsistente/.
 ** Datos y metadatos
 
 En el ejemplo recién presentado, el sistema de archivos
-estará consistente siempre que se terminen los pasos 3 y 4 — La
+estará consistente siempre que se terminen los pasos 3 y 4 — la
 consistencia del sistema de archivos es independiente de la validez de
 los datos del archivo. Lo que busca el sistema de archivos, más que
 asegurar la integridad de los /datos/ de uno de los archivos, es
@@ -1200,7 +1200,7 @@ estos accesos en uno sólo, reduciendo el número de llamadas. Por otro
 lado, un patrón frecuente en sistemas Unix es, al crear un archivo de
 uso temporal, solicitar al sistema la creación de un archivo, abrir el
 archivo recién creado, y ya teniendo al descriptor de archivo,
-eliminarlo — En este caso, con estas tres operaciones seguidas, /soft
+eliminarlo — en este caso, con estas tres operaciones seguidas, /soft
 updates/ podría ahorrarse por completo la escritura a disco.
 
 Esta estrategia se vio impactada por los controladores inteligentes:
@@ -1213,7 +1213,7 @@ ordenamiento, esto rompe por completo la confiabilidad del proceso.
 Las actualizaciones suaves fueron implementadas hacia 2002 en el sistema operativo
 FreeBSD, y fueron adoptadas por los principales sistemas de la
 familia *BSD, aunque NetBSD lo retiró en 2012, prefiriendo el empleo
-de sistemas con bitácora — Muy probablemente, la lógica destrás de
+de sistemas con bitácora — muy probablemente, la lógica destrás de
 esta decisión sea la cantidad de sistemas que emplean esta segunda
 estrategia que se abordará a continuación, y lo complejo de mantener
 dentro del núcleo dos estrategias tan distintas.
@@ -1242,13 +1242,13 @@ sistema operativo sólo tiene que leer la bitácora, encontrar cuál fue
 la última operación efectuada, y aplicar las restantes.
 
 Una restricción de este esquema es que las transacciones guardadas en
-la bitácora deben ser /idempotentes/ — Esto es, si una de ellas es
+la bitácora deben ser /idempotentes/ — esto es, si una de ellas es
 efectuada dos veces, el efecto debe ser exactamente el mismo que si
 hubiera sido efectuada una sóla vez. Por poner un ejemplo, no sería
 válido que una transacción indicara "Agregar al directorio /x/ un
 archivo llamado /y/", dado que si la falla se produce después de
 procesar esta transacción pero antes de avanzar al apuntador de la
-bitácora, el directorio /x/ quedaría con dos archivos /y/ — Una
+bitácora, el directorio /x/ quedaría con dos archivos /y/ — una
 situación inconsistente. En todo caso, tendríamos que indicar
 "registrar al archivo /y/ en la posición /z/ del directorio /x/"; de
 esta manera, incluso si el archivo ya había sido registrado, puede

@@ -12,11 +12,11 @@ terriblemente complejos, y entre más casos de uso hay para el cómputo
 en la vida diaria, más variedad habrá en ellos.
 
 No nos referiremos al sistema operativo como lo ve el usuario final, o
-como lo vende la mercadotecnia — El ambiente gráfico, los programas
+como lo vende la mercadotecnia — el ambiente gráfico, los programas
 que se ejecutan en éste, los lenguajes de programación en que están 
 desarrollados y en que más fácilmente se puede desarrollar para ellos, 
 e incluso el conjunto básico de funciones que las bibliotecas base ofrecen son
-principalmente /clientes/ del sistema operativo — Se ejecutan sobre él, y
+principalmente /clientes/ del sistema operativo — se ejecutan sobre él, y
 ofrecen su implementación a sus usuarios (incluídos, claro, los
 desarrolladores). La diferencia en el uso son sólo –y si mucho–
 /consecuencias/ del diseño de un sistema operativo. Más aún, con el
@@ -99,7 +99,7 @@ con el hardware de la computadora. Sus funciones primarias son:
 - Aislamiento :: En un sistema multiusuario y multitarea cada proceso 
 		 y cada usuario no tendrá que
                  preocuparse por otros que estén usando el mismo
-                 sistema — Idealmente, su /experiencia/ será la misma
+                 sistema — idealmente, su /experiencia/ será la misma
                  que si el sistema estuviera exclusivamente dedicado a
                  su atención (aunque fuera un sistema menos
                  poderoso).
@@ -118,7 +118,7 @@ patrones de diseño que se siguen empleando décadas más tarde, sino
 recepción del premio Turing de Fernando Corbató en 1990, /[[http://dl.acm.org/citation.cfm?id=1283947][On building
 systems that will fail]]/), adecuar un sistema existente a un entorno
 cambiante, por mejor diseñado que éste estuviera, lleva casi
-inevitablemente a abrir espacios de comportamiento no previsto — El
+inevitablemente a abrir espacios de comportamiento no previsto — el
 espacio más propicio para que florezcan los fallos. Conocer los
 factores que motivaron a los distintos desarrollos puede ayudar a
 prever y prevenir problemas.
@@ -158,7 +158,7 @@ caracteres, corrompiéndolo e impidiendo su ejecución), o que entraran
 en un ciclo infinito, estableciendo /alarmas/ (/timers/) que
 interrumpirían la ejecución de un proceso si éste duraba más allá del
 tiempo estipulado. Estos monitores implicaban la modificación del
-hardware para contemplar dichas características de seguridad — Y ahí
+hardware para contemplar dichas características de seguridad — y ahí
 se puede hablar ya de la característica básica de gestión de recursos
 que identifica a los sistemas operativos.
 
@@ -209,7 +209,7 @@ protección  se encuentra en la /Unidad de Manejo de Memoria/ (MMU),
 presente en todas las computadoras de uso genérico desde los '90.
 
 Ciertos dispositivos requieren bloqueo para ofrecer acceso
-exclusivo/único — Cintas e impresoras, por ejemplo, son de acceso
+exclusivo/único — cintas e impresoras, por ejemplo, son de acceso
 estrictamente secuencial, y si dos usuarios intentaran usarlas al
 mismo tiempo, el resultado para ambos se corrompería. Para estos
 dispositivos, el sistema debe implementar otros /spools/ y mecanismos
@@ -271,7 +271,7 @@ computadora, el hardware emitía periódicamente al sistema operativo
 (como ahora se le denomina a una instancia de un programa en ejecución).
 
 Diferentes tipos de proceso pueden tener distinto nivel de importancia
-— Ya sea porque son más relevantes para el funcionamiento de la
+— ya sea porque son más relevantes para el funcionamiento de la
 computadora misma (procesos de sistema), porque tienen mayor carga de
 interactividad (por la experiencia del usuario) o por diversas
 categorías de usuarios (sistemas con contabilidad por tipo de
@@ -312,7 +312,7 @@ teclado. Estas computadoras popularizaron el lenguaje de programación
 BASIC, diseñado para usuarios novatos en los '60, y para permitir a
 los usuarios gestionar sus recursos (unidades de cinta, pantalla
 posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
-software mínimo de sistema — Nuevamente, un proto-sistema operativo.
+software mínimo de sistema — nuevamente, un proto-sistema operativo.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
@@ -359,7 +359,7 @@ Hacia mediados de los '80 comenzaron a aparecer computadoras con
 interfaces gráficas basadas en el paradigma WIMP (/Windows, Icons,
 Menus, Pointer/; Ventanas, Iconos, Menúes, Apuntador), que permitían
 la interacción con varios programas al mismo tiempo. Esto /no
-necesariamente/ significa que sean sistemas multitarea — Por ejemplo,
+necesariamente/ significa que sean sistemas multitarea — por ejemplo,
 la primer interfaz de MacOS permitía visualizar varias ventanas
 abiertas simultáneamente, pero sólo el proceso activo se
 ejecutaba.
@@ -480,7 +480,7 @@ que indique en qué clasificiación cae cada sistema, no es dificil
 encontrar líneas bases.
 
 - Monolíticos :: La mayor parte de los sistemas operativos
-		 históricamente han sido /monolíticos/ — Esto
+		 históricamente han sido /monolíticos/ — esto
 		 significa que hay un sólo /proceso privilegiado/ 
 	  	 (justamente el sistema operativo) que
 		 opera en modo supervisor, y dentro del cual se
@@ -525,7 +525,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 - Sistemas con concepciones híbridas :: No se puede  hablar de
      concepciones únicas ni de verdades absolutas. A lo largo del
      libro se verán ejemplos de /concepciones híbridas/ en este sentido
-     — Sistemas que son mayormente monolíticos pero manejan algunos
+     — sistemas que son mayormente monolíticos pero manejan algunos
      procesos que parecerían centrales a través de procesos de nivel
      usuario como los microkernel (por ejemplo, los sistemas de
      archivos en espacio de usuario, FUSE, en Linux).

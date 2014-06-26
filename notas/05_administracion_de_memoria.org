@@ -17,10 +17,10 @@ discos u otros medios de almacenamiento persistente.
 Todos los programas a ejecutar deben cargarse a la memoria
 del sistema antes de ser utilizados. En este capítulo se mostrará cómo
 el sistema operativo administra la memoria para permitir que varios
-procesos la compartan — Esta tarea debe preverse desde el proceso de
+procesos la compartan — esta tarea debe preverse desde el proceso de
 compilación de los programas (en particular, la fase de
 /ligado/). Hoy en día, además, casi todos los sistemas operativos
-emplean implementaciones que requieren de hardware especializado — La
+emplean implementaciones que requieren de hardware especializado — la
 /Unidad de Manejo de Memoria/ (MMU). Se describirá cómo se manejaban
 los sistemas multitarea antes de la universalización de las MMU, y qué
 rol juegan hoy en día.
@@ -35,7 +35,7 @@ bytes. Esto es, al solicitar el contenido de una dirección
 específica de memoria, el hardware entregará un byte (8 bits), y
 no menos. Si se requiere hacer una operación sobre /bits/ específicos,
 se deberá solicitar y almacenar bytes enteros. En algunas
-arquitecturas, el /tamaño de palabra/ es mayor — Por ejemplo, los
+arquitecturas, el /tamaño de palabra/ es mayor — por ejemplo, los
 procesadores Alpha incurrían en /fallas de alineación/ si se
 solicitaba una dirección de memoria no alineada a 64 bits, y toda
 llamada a direcciones /mal alineadas/ tenía que ser /atrapada/ por el
@@ -44,7 +44,7 @@ sistema operativo, re-alineada, y entregada.
 Un procesador que soporta un /espacio de direccionamiento/ de 16 bits
 puede referirse /directamente/ a hasta $2^{16}$ bytes, esto es, a
 hasta 65,536 bytes (64KB). Estos procesadores fueron comunes en las
-décadas de 1970 y 1980 — Los más conocidos incluyen al Intel 8080 y
+décadas de 1970 y 1980 — los más conocidos incluyen al Intel 8080 y
 8085, Zilog Z80, MOS 6502 y 6510, y Motorola 6800. Hay que recalcar
 que estos procesadores son reconocidos como procesadores de /8 bits/,
 pero con /espacio de direccionamiento/ de 16 bits. El procesador
@@ -100,14 +100,14 @@ ininterrumpido de memoria, cuando en realidad puede haber alta
 /fragmentación/.
 
 Se explicará cómo la MMU cubre estas necesidades, y qué mecanismos
-emplea para lograrlo — Y qué cuidados se deben conservar, incluso como
+emplea para lograrlo — y qué cuidados se deben conservar, incluso como
 programadores de aplicaciones en lenguajes de alto nivel, para aprovechar de la
 mejor manera estas funciones (y evitar, por el contrario, que los
 programas se vuelvan lentos por no manejar la memoria
 correctamente).
 
 La MMU es también la encargada de verificar que un proceso no tenga
-acceso a leer o modificar los datos de otro — Si el sistema operativo
+acceso a leer o modificar los datos de otro — si el sistema operativo
 tuviera que verificar cada una de las instrucciones ejecutadas por
 un programa para evitar errores en el acceso a la memoria, la 
 penalización en velocidad sería demasiado severa[fn:: Y de hecho está 
@@ -152,7 +152,7 @@ instrucciones pueden requerirle uno o más operadores adicionales que
 deban ser leídos de la memoria. Por último, la instrucción puede
 requerir guardar su resultado en cierta dirección de memoria.
 
-Hace años esto no era un problema — La velocidad del procesador
+Hace años esto no era un problema — la velocidad del procesador
 estaba básicamente sincronizada con la del manejador de memoria, y el
 flujo podía mantenerse básicamente estable. Pero conforme los
 procesadores se fueron haciendo más rápidos, y conforme se ha
@@ -262,7 +262,7 @@ abordará un ejemplo de cómo esto puede tener importantes consecuencias.].
 Ahora bien, en los sistemas actuales, los procesos requieren coexistir
 con otros, para lo cual las direcciones indicadas en el /texto/ del
 programa pueden requerir ser traducidas al lugar /relativo al sitio de
-inicio del proceso en memoria/ — Esto es, las direcciones son
+inicio del proceso en memoria/ — esto es, las direcciones son
 /resueltas/ o traducidas.  Existen diferentes estrategias de
 resolución, que se pueden clasificar a grandes rasgos[fn:: Esta
 explicación simplifica muchos detalles; para el lector interesado en
@@ -282,7 +282,7 @@ http://www.iecc.com/linker/ ] en:
 - En tiempo de carga :: Al cargarse a memoria el programa y antes de
      iniciar su ejecución, el /cargador/ (componente del sistema
      operativo) actualiza las referencias a memoria dentro del texto
-     para que apunten al lugar correcto — Claro está, esto depende de
+     para que apunten al lugar correcto — claro está, esto depende de
      que el compilador indique dónde están todas las referencias a
      variables y funciones.
 
@@ -333,7 +333,7 @@ direcciones en tiempo de carga o de ejecución, podrían emplear este
 esquema.
 
 El sistema operativo emplearía una región específica de la memoria del
-sistema (típicamente la /región baja/ — Desde la dirección en memoria
+sistema (típicamente la /región baja/ — desde la dirección en memoria
 0x00000000 hacia arriba), y una vez terminado el espacio necesario
 para el núcleo y sus estructuras, el sistema asigna espacio a cada uno
 de los procesos. Si la arquitectura en cuestión permite limitar los
@@ -397,7 +397,7 @@ disponibles:
 La /fragmentación externa/ se produce cuando hay muchos bloques libres
 entre bloques asignados a procesos; la /fragmentación interna/ se
 refiere a la cantidad de memoria dentro de un bloque que nunca se usará —
-Por ejemplo, si el sistema operativo maneja /bloques/ de 512 bytes y
+por ejemplo, si el sistema operativo maneja /bloques/ de 512 bytes y
 un proceso requiere sólo 768 bytes para su ejecución, el sistema le
 entregará dos bloques (1024 bytes), con lo cual desperdicia 256 bytes. En el
 peor de los casos, con un bloque de $n$ bytes, un proceso podría
@@ -428,7 +428,7 @@ permitiendo unificar varios bloques libres contiguos en uno solo.
 #+caption: Compactación de la memoria de procesos en ejecución
 [[./img/ditaa/compactacion_memoria.png]]
 
-La compactación tiene un costo alto — Involucra mover prácticamente la
+La compactación tiene un costo alto — involucra mover prácticamente la
 totalidad de la memoria (probablemente más de una vez por bloque).
 
 *** Intercambio (/swap/) con el almacenamiento secundario
@@ -461,10 +461,10 @@ personales tenían típicamente entre 1 y 8MB de memoria.
 
 Se debe considerar que las unidades de disco son del orden de decenas de miles
 de veces más lentas que la memoria, por lo que este proceso resulta
-muy caro — Por ejemplo, si la imagen en memoria de un proceso es de
+muy caro — por ejemplo, si la imagen en memoria de un proceso es de
 100MB, bastante conservador hoy en día, y la tasa de transferencia
 sostenida al disco de 50MB/s, intercambiar un proceso al disco toma
-dos segundos. Cargarlo de vuelta a memoria toma otros dos segundos — Y
+dos segundos. Cargarlo de vuelta a memoria toma otros dos segundos — y
 a esto debe sumarse el tiempo de posicionamiento de la cabeza de
 lectura/escritura, especialmente si el espacio a emplear no es
 secuencial y contiguo. Resulta obvio por qué esta técnica ha caído en
@@ -562,7 +562,7 @@ que permiten modificar la /dirección de retorno/ de una subrutina,
 como será descrito en la sección \ref{MEM_buffer_overflow}.] Es
 más, dado que el acceso de /ejecución/ está limitado a sólo
 los segmentos cargados del disco por el sistema operativo, un atacante
-no podrá introducir código ejecutable tan fácilmente — Tendría que
+no podrá introducir código ejecutable tan fácilmente — tendría que
 cargarlo como un segmento adicional con los permisos correspondientes.
 
 La segmentación también permite distinguir /niveles/ de acceso a la
@@ -755,7 +755,7 @@ desordenadas y ubicadas en posiciones no contiguas.
 
 Cuando el proceso quiere referirse a la letra /f/, lo hace indicando
 la dirección 00101 (5). De esta dirección, los tres bits más
-significativos (001, 1 — Y para la computadora, lo
+significativos (001, 1 — y para la computadora, lo
 /natural/ es comenzar a contar por el 0) se refieren a la página
 número 1, y los dos bits menos significativos (01, 1) indican al
 /desplazamiento/ dentro de ésta.
@@ -803,7 +803,7 @@ en esta sección.
 
 Hoy en día, el tamaño habitual de las páginas es de 4KB u 8KB
 ($2^{12}$ o $2^{13}$ bytes). Hay algunos sistemas operativos que
-soportan múltiples tamaños de página — Por ejemplo, Solaris puede
+soportan múltiples tamaños de página — por ejemplo, Solaris puede
 emplear páginas de 8KB y 4MB ($2^{13}$ o $2^{22}$ bytes), dependiendo
 del tipo de información que se declare que almacenarán.
 
@@ -829,7 +829,7 @@ registros son muy rápidos, sin embargo, son correspondientemente muy
 caros. El manejo de páginas más pequeñas (que es lo normal), y muy
 especialmente el uso de espacios de direccionamiento de 64 bits,
 harían prohibitivo este enfoque. Además, nuevamente, cada proceso
-tiene una tabla de páginas distinta — Se haría necesario hacer una
+tiene una tabla de páginas distinta — se haría necesario hacer una
 transferencia de información muy grande en cada cambio de contexto.
 
 Otra estrategia para enfrentar esta situación es almacenar la propia
@@ -846,7 +846,7 @@ el cambio de contexto sólo hay que cambiar estos dos registros, y además
 se cuenta con un espacio muy amplio para guardar las tablas de páginas
 que se necesiten. El problema con este mecanismo es la velocidad:
 Se estaría penalizando a /cada acceso a memoria/ con un acceso de
-memoria adicional — Si para resolver una dirección lógica a su
+memoria adicional — si para resolver una dirección lógica a su
 correspondiente dirección física hace fala consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
@@ -924,7 +924,7 @@ de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 Este esquema funciona adecuadamente para computadoras con direccionamiento
 de hasta 32 bits. Sin embargo, se debe considerar que cada nivel de páginas
 conlleva un acceso adicional a memoria en caso de fallo de página —
-Emplear paginación jerárquica con un nivel externo y uno interno
+emplear paginación jerárquica con un nivel externo y uno interno
 implica que un fallo de página /triplica/ (y no duplica, como sería
 con un esquema de paginación directo) el tiempo de acceso a
 memoria. Para obtener una tabla de páginas manejable bajo los
@@ -969,7 +969,7 @@ Otro caso, mucho más frecuente, es el de /compartir código/. Si un
 mismo programa es ejecutado varias veces, y dicho programa no
 emplea mecanismos de /código auto-modificable/, no tiene sentido que
 las páginas en que se representa cada una de dichas instancias ocupe
-un marco independiente — El sistema operativo puede asignar a páginas
+un marco independiente — el sistema operativo puede asignar a páginas
 de diversos procesos /el mismo conjunto de marcos/, con lo cual puede
 aumentar la capacidad percibida de memoria.
 
@@ -1042,7 +1042,7 @@ Cuesta trabajo comprender el por qué de esta lógica si no es por el
 empleo de la memoria compartida: el costo de =fork()= en un sistema
 Unix es muy bajo, se limita a crear las estructuras necesarias en la
 memoria del núcleo. Tanto el proceso padre como el proceso hijo
-comparten /todas/ sus páginas de memoria — Sin embargo, siendo dos
+comparten /todas/ sus páginas de memoria — sin embargo, siendo dos
 procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
 
@@ -1430,7 +1430,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
 mantiene como curiosidad teórica porque requiere conocimiento a priori
-de las necesidades a futuro del sistema — Y si esto es impracticable ya en los
+de las necesidades a futuro del sistema — y si esto es impracticable ya en los
 algoritmos de despachadores, lo será mucho más con un
 recurso de reemplazo tan dinámico como la memoria.
 
@@ -1580,7 +1580,7 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
                 recientemente, por lo que probablemente se vuelva a
                 requerir pronto.
 
-     - (1,1) :: Empleada recientemente y /sucia/ — Sería necesario
+     - (1,1) :: Empleada recientemente y /sucia/ — sería necesario
                 escribir la página a disco antes de reemplazar, y
                 probablemente vuelva a ser requerida pronto. Hay que
                 evitar reemplazarla.
@@ -1635,7 +1635,7 @@ sistema operativo completo se mantendrá siempre en memoria]
 
 Este esquema, si bien es simple, al requerir una gran cantidad de
 fallos de página explícitos puede penalizar el rendimiento del
-sistema — El esquema puede resultar /demasiado flojo/, no le vendría
+sistema — el esquema puede resultar /demasiado flojo/, no le vendría
 mal ser un poco más /ansioso/ y asignar, de inicio, un número
 determinado como mínimo utilizable de marcos.
 
@@ -1650,7 +1650,7 @@ varios fallos de página.
 
 Todas las arquitecturas proporcionan instrucciones de referencia
 directa a memoria (instrucciones que permiten especificar una
-dirección de memoria para leer o escribir) — Esto significa que todas
+dirección de memoria para leer o escribir) — esto significa que todas
 requerirán que, para que un proceso funcione adecuadamente, tenga por
 lo menos dos marcos asignados: en caso de que se le permitiera solo
 uno, si la instrucción ubicada en =0x00A2C8= solicita la carga de
@@ -1686,7 +1686,7 @@ Ahora, una vez establecido el número mínimo de marcos por proceso,
 
 Partiendo de que el rendimiento de un proceso será mejor entre menos
 fallos de paginación cause, se podría intentar otorgar a cada proceso
-el total de marcos que solicita — Pero esto tendría como resultado
+el total de marcos que solicita — pero esto tendría como resultado
 disminuir el grado de multiprogramación, y por tanto, reducir el uso
 efectivo total del procesador.
 
@@ -1746,7 +1746,7 @@ hoy en día manejan todos los sistemas operativos; si se quisera considerar,
 podría incluirse como factor la prioridad, multiplicando junto con $V_P$.
 
 El esquema de asignación proporcional sufre, sin embargo, cuando
-cambia el nivel de multiprogramación — Esto es, cuando se inicia un
+cambia el nivel de multiprogramación — esto es, cuando se inicia un
 nuevo proceso o finaliza un proceso en ejecución, deben recalcularse
 los espacios en memoria física asignados a cada uno de los procesos
 restantes. Si finaliza un proceso, el problema es menor, pues sólo se
@@ -1862,7 +1862,7 @@ Los síntomas de la hiperpaginación son muy claros, y no son difíciles
 de detectar. ¿Qué estrategia puede emplear el sistema operativo una
 vez que se da cuenta que se presentó esta situación?
 
-Una salida sería reducir el nivel de multiprogramación — Si la
+Una salida sería reducir el nivel de multiprogramación — si la
 paginación se presentó debido a que los requisitos de memoria de los
 procesos actualmente en ejecución no pueden ser satisfechos con la
 memoria física disponible, el sistema puede seleccionar a uno (o más)
@@ -1876,9 +1876,9 @@ fallos, o al que esté ocupando más memoria.
 
 Un pico en la cantidad de fallos de página no necesariamente
 significa que se va a presentar una situación de hiperpaginación —
-Muchas veces indica que el proceso cambió su /atención/ de un
+muchas veces indica que el proceso cambió su /atención/ de un
 conjunto de páginas a otro, o dicho de otro modo, que cambió el
-/conjunto activo/ del proceso — Y resulta natural que, al cambiar el
+/conjunto activo/ del proceso — y resulta natural que, al cambiar el
 conjunto activo, el proceso accese de golpe una serie de páginas que
 no había referenciado en cierto tiempo.
 
@@ -1894,7 +1894,7 @@ sobre los que está iterando en un momento dado.
 
 Idealmente, para evitar los problemas relacionados con la
 hiperpaginación, el sistema debe asignar a cada proceso suficientes páginas
-como para que mantenga en memoria física su conjunto activo — Y si no
+como para que mantenga en memoria física su conjunto activo — y si no
 es posible hacerlo, el proceso es un buen candidato para ser
 suspendido. Sin embargo, detectar con suficiente claridad como para
 efectuar este diagnóstico /cuál/ es el conjunto activo es una
@@ -1996,7 +1996,7 @@ Y lo que el código resultante en ensamblador efectúa es:
 2. En ensamblador, los nombres asignados a las variables y
    funciones no significan nada. La llamada =call= no es lo que
    se entendería como una llamada a función en un lenguaje de alto
-   nivel — Lo que hace el procesador es /empujar/ al stack la dirección
+   nivel — lo que hace el procesador es /empujar/ al stack la dirección
    de la siguiente instrucción, y cargar a éste la dirección
    en el fuente donde está la etiqueta de la función (esto es, transferir la
    ejecución hacia allá).
@@ -2007,7 +2007,7 @@ Y lo que el código resultante en ensamblador efectúa es:
    grabado/)
 4. Por último, con =subl=, resta el espacio necesario para alojar las
    variables locales, =buffer1= y =buffer2=. Notarán que, si bien
-   éstas son de 5 y 10 bytes, está recorriendo 20 bytes — Esto
+   éstas son de 5 y 10 bytes, está recorriendo 20 bytes — esto
    porque, en la arquitectura x86-32, los accesos a memoria deben
    estar /alineados a 32 bits/.
 
@@ -2069,7 +2069,7 @@ int main(int argc, char **argv) {
 #+end_src
 
 El problema con este código reside en el =strcpy(buffer, argv[1])= —
-Dado que el código es recibido del usuario, no se tiene la /certeza/
+dado que el código es recibido del usuario, no se tiene la /certeza/
 de que el argumento que recibe el programa por línea de comandos
  (empleando =argv[1]=) quepa en el arreglo =buffer[256]=. Esto es, 
 si se ejecuta el programa ejemplo con una cadena de 120 caracteres:
@@ -2104,7 +2104,7 @@ $
 *** De una falla a un ataque
 
 En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
-error exitosamente y detuvo la ejecución — Pero no lo hizo: el
+error exitosamente y detuvo la ejecución — pero no lo hizo: el
 =Segmentation fault= no fue generado al sobreescribir el buffer ni al
 intentar procesarlo, sino después de terminar de hacerlo: al llegar
 la ejecución del código al =return 0=.
@@ -2126,7 +2126,7 @@ el proceso es terminado.
 Ahora, lo expuesto anteriormente implica que el código /está demostrado
 vulnerable/, pero se ha /explotado/ aún. El siguiente paso es,
 conociendo el acomodo exacto de la memoria, sobreescribir únicamente
-lo necesario para altera del flujo del programa — Esto es,
+lo necesario para altera del flujo del programa — esto es,
 sobreescribir =RET= con una dirección válida. Para esto, es necesario
 conocer la longitud desde el inicio del buffer hasta donde terminan
 =RET= y =SFP=, en este caso particular, 264 bytes (256 del buffer mas 4 de
@@ -2182,7 +2182,7 @@ valores a ser comparados, en este caso el registro =%EBX= y el número
 dirección destino significa burlar la verificación.
 
 Por otro lado, el atacante podría usar la segunda técnica
-para lograr que el sistema haga algo más complejo — Por ejemplo, que ejecute 
+para lograr que el sistema haga algo más complejo — por ejemplo, que ejecute 
 código arbitrario que él proporcione. Para esto, el ataque más frecuente 
 es saltar /hacia adentro del stack/.
 
@@ -2342,7 +2342,7 @@ se destacan el manejo de versiones de las bibliotecas y potenciales vulnerabilid
 El primer problema es conocido, en ambientes Windows, como el /infierno de las DLL/. Este
 /infierno/ se puede causar de muchas formas. Por ejemplo, si al al instalar un nuevo programa,
 se instala también una versión incompatible de una biblioteca que es usada por otros programas.
-Esto causa que los demás programas no se puedan ejecutar — Y lo que es
+Esto causa que los demás programas no se puedan ejecutar — y lo que es
 más, hace que la depuración del fallo sea muy difícil. Por otro lado, si no se 
 tienen los controles suficientes, al desinstalar un programa se puede borrar 
 una biblioteca compartida, lo cual puede llevar a que otros programas dejen de funcionar.

@@ -27,7 +27,7 @@ otro.
 A nivel general, /virtualizar/ consiste en proveer algo que no está ahí,
 aunque parece estarlo. Más específicamente, presentar a un sistema elementos
 que se comporten de la misma forma que un componente físico (hardware), sin que 
-exista en realidad — Un acto de ilusionismo o de magia, en cual se busca
+exista en realidad — un acto de ilusionismo o de magia, en cual se busca
 presentar el elemento de forma tan convincente que la ilusión se mantenga tanto
 como sea posible.[fn:: Una aproximación inicial a este concepto puede ser
 un archivo con la imagen de un disco en formato ISO: mediante determinados mecanismos, es posible
@@ -61,9 +61,9 @@ una de las instrucciones en la arquitectura /huésped/ a la
 arquitectura del sistema /anfitrión/.
 
 Vale la pena recalcar que una emulación no se limita con traducir del
-lenguaje y la estructura de un procesador a otro — Para que una
+lenguaje y la estructura de un procesador a otro — para que una
 computadora pueda ser utilizada, requiere de una serie de chips de
-apoyo — Desde los controladores de cada uno de los /buses/ hasta los
+apoyo — desde los controladores de cada uno de los /buses/ hasta los
 periféricos básicos (teclado, video). Casi todas las emulaciones
 incluirán un paso más allá: los periféricos mismos (discos, interfaces
 de red, puertos). Todo esto tiene que ser implementado por el
@@ -88,7 +88,7 @@ más que para emplear software /ya escrito y compilado/.  La mayor
 parte de la emulación tradicional hoy se emplea para el /desarrollo de
 software/. Hoy en día, la mayor parte de las computadoras vendidas son
 sistemas /embebidos/[fn:: Computadoras pequeñas, limitadas en
-recursos, y típicamente carentes de una interfaz usuario — Desde
+recursos, y típicamente carentes de una interfaz usuario — desde
 puntos de acceso y ruteadores hasta los controladores de cámaras,
 equipos de sonido, automóviles, y un larguísimo etcétera] o
 dispositivos móviles, que hacen imposible (o, por lo menos, muy
@@ -121,7 +121,7 @@ implementara.
 
 Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
 1980, logrando implementaciones para las arquitecturas de
-microcomputadoras más populares — El MOS 6502, el Zilog Z80 y el Intel
+microcomputadoras más populares — el MOS 6502, el Zilog Z80 y el Intel
 80x86.
 
 Hay una diferencia muy importante entre la emulación de una
@@ -297,7 +297,7 @@ que se presentará en este apartado, así como en las secciones
 \ref{VIRT_paravirt} (/Paravirtualización/) y \ref{VIRT_contenedores}
 (/Contenedores/). Y si bien este /zumbido/ de la virtualización se ha
 producido mayormente a partir del 2006-2007, no se trata de
-tecnologías o ideas novedosas — Existe desde fines de los 1960. Hasta
+tecnologías o ideas novedosas — existe desde fines de los 1960. Hasta
 hace algunos años, sin embargo, se mantenía dentro del ámbito de los
 servidores a gran escala, fuera del alcance de la mayor parte de los
 usuarios. Es necesario estudiar la génesis de esta herramienta, para poder
@@ -362,7 +362,7 @@ características primarias que definen qué es un hipervisor son:
 
 - Es únicamente un /micro-sistema operativo/, dado que no cubre
   muchas de las áreas clásicas ni presenta las interfaces abstractas
-  al usuario final — Sistemas de archivos, mecanismos de comunicación
+  al usuario final — sistemas de archivos, mecanismos de comunicación
   entre procesos, gestión de memoria virtual, evasión de bloqueos,
   etcétera.
 
@@ -398,7 +398,7 @@ de programadores.
 
 En contraste con las arquitecturas diseñadas desde un principio para
 la virtualización, los usuarios de computadoras personales (inclusive
-cuando estas son servidores en centros de datos — Siguen estando
+cuando estas son servidores en centros de datos — siguen estando
 basadadas en la misma arquitectura básica) se enfrentan a una 
 mayor variedad de dispositivos para todo tipo de tareas.[fn:: Una
 descripción completa de la complejidad a la que debe enfrentarse un
@@ -424,7 +424,7 @@ del núcleo para enviar datos a dicho dispositivo es una sencilla y que
 ha sido empleada tanto tiempo que presenta muy poca inestabilidad.
 
 Y este último punto permite un acercamiento mayor a una de las ventajas que
-ofrecen los sistemas operativos virtualizados — La estabilidad. Los
+ofrecen los sistemas operativos virtualizados — la estabilidad. Los
 controladores de dispositivos provistos por fabricante han sido
 responsabilizados una y otra vez, y con justa razón, de la
 inestabilidad de los sistemas operativos de escritorio. En particular,
@@ -478,7 +478,7 @@ controlen al hardware, envían llamadas al sistema a su
 hipervisor. Hasta cierto punto, el proceso de adecuación
 de un sistema para que permita ser paravirtualizado puede ser equivalente
 a adecuar al sistema operativo para que corra en una arquitectura
-nueva — Muy parecida a la del hardware /real/, sí, pero con
+nueva — muy parecida a la del hardware /real/, sí, pero con
 diferencias fundamentales en aspectos profundos.
 
 Y si bien ya se explicó en la sección anterior que la virtualización puede
@@ -514,7 +514,7 @@ XP. Sin embargo, Xen sólo pudo ser empleado por muchos años como
 plataforma de paravirtualización de Linux porque, dado que la
 adaptación de Windows se realizó bajo los términos del /Academic
 Licensing Program/, que permitía a los investigadores acceso y
-modificación al código fuente, pero no su redistribución — La versión
+modificación al código fuente, pero no su redistribución — la versión
 paravirtualizable de Windows XP existe, pero no puede distribuirse
 fuera de XenSource.
 
@@ -575,7 +575,7 @@ Podría presentarse un símil: las tecnologías antes descritas de
 virtualización implementan /hardware virtual/ para cada sistema
 operativo, mientras que los contenedores más bien presentan un
 /sistema operativo virtual/ para el conjunto de procesos que definen
-el comportamiento de cada máquina virtual — Muchos autores presentan a
+el comportamiento de cada máquina virtual — muchos autores presentan a
 la virtualización por contenedores bajo el nombre /virtualización a
 nivel sistema operativo/. Y si bien el efecto a ojos del usuario
 puede ser comparable, este método más que una multiplexación de
@@ -604,7 +604,7 @@ ruta absoluta, el archivo que se abrirá será =/usr/local/boot.img=
 Ahora bien, =chroot()= no es (ni busca ser) un verdadero aislamiento,
 sólo proporciona un inicio[fn:: Como referencia a por qué no es un
 verdadero aislamiento, puede referirse al artículo /How to break out
-of a =chroot()= jail/ (Simes, 2002)] — Pero conforme más usuarios
+of a =chroot()= jail/ (Simes, 2002)] — pero conforme más usuarios
 comenzaban a utilizarlo para servicios en producción, se hizo claro
 que resultaría útil ampliar la conveniencia de =chroot()= a un
 verdadero aislamiento.

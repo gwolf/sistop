@@ -13,8 +13,10 @@ publish_src_pdf = ./biblio/*
 dir_laminas = laminas
 idx_laminas = $(dir_laminas)/index.org
 
-libro = notas/sistemas_operativos.org
-libro_tex = notas/sistemas_operativos.tex
+srcdir = notas
+libro = $(srcdir)/sistemas_operativos.org
+libro_tex = sistemas_operativos.tex
+libro_latin_tex = sistemas_operativos.latin.tex
 
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
@@ -55,26 +57,26 @@ libro_index:
 
 	echo '' >> $(libro)
 #	echo '#+latex: \\mainmatter' >> $(libro)
-	for CAPITULO in notas/01_introduccion.org \
-			notas/02_estructuras_basicas.org \
-			notas/03_administracion_de_procesos.org \
-			notas/04_planificacion_de_procesos.org \
-			notas/05_administracion_de_memoria.org \
-			notas/06_organizacion_de_archivos.org \
-			notas/07_sistemas_de_archivos.org ; do \
-		FILE=`echo $$CAPITULO | sed s/notas.//`; \
-		TITULO=`grep -i ^#+title: notas/$$FILE | sed s/^.*://`; \
+	for CAPITULO in $(srcdir)/01_introduccion.org \
+			$(srcdir)/02_estructuras_basicas.org \
+			$(srcdir)/03_administracion_de_procesos.org \
+			$(srcdir)/04_planificacion_de_procesos.org \
+			$(srcdir)/05_administracion_de_memoria.org \
+			$(srcdir)/06_organizacion_de_archivos.org \
+			$(srcdir)/07_sistemas_de_archivos.org ; do \
+		FILE=`echo $$CAPITULO | sed s/$(srcdir).//`; \
+		TITULO=`grep -i ^#+title: $(srcdir)/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
 	done
 
 	echo '' >> $(libro)
 	echo '#+latex: \\appendix' >> $(libro)
-	for APDX in notas/A1_sl_licenciamiento.org \
-		notas/A2_virtualizacion.org \
-	        notas/A3_medio_fisico.org; do \
-		APDX=`echo $$APDX | sed s/notas.//`; \
-		TITULO=`grep -i ^#+title: notas/$$APDX | sed s/^.*://`; \
+	for APDX in $(srcdir)/A1_sl_licenciamiento.org \
+		$(srcdir)/A2_virtualizacion.org \
+	        $(srcdir)/A3_medio_fisico.org; do \
+		APDX=`echo $$APDX | sed s/$(srcdir).//`; \
+		TITULO=`grep -i ^#+title: $(srcdir)/$$APDX | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$APDX :minlevel 1" >> $(libro); \
 	done
@@ -94,20 +96,27 @@ libro_tex: libro_index
 	# al capítulo a secas por la correspondiente a su etiqueta numérica.
 	#
 	# No tengo mejor manera que hacerlo que esta... Sucia pero efectiva :-/
-	# sed -i 's/\\ref{PRES}/\\ref{sec-1}/' $(libro_tex) No recibe número: No es gestionado por .org
-	sed -i 's/\\ref{INTRO}/\\ref{sec-1}/' $(libro_tex)
-	sed -i 's/\\ref{HW}/\\ref{sec-2}/' $(libro_tex)
-	sed -i 's/\\ref{PROC}/\\ref{sec-3}/' $(libro_tex)
-	sed -i 's/\\ref{PLAN}/\\ref{sec-4}/' $(libro_tex)
-	sed -i 's/\\ref{MEM}/\\ref{sec-5}/' $(libro_tex)
-	sed -i 's/\\ref{DIR}/\\ref{sec-6}/' $(libro_tex)
-	sed -i 's/\\ref{FS}/\\ref{sec-7}/' $(libro_tex)
-	sed -i 's/\\ref{SL}/\\ref{sec-8}/' $(libro_tex)
-	sed -i 's/\\ref{VIRT}/\\ref{sec-9}/' $(libro_tex)
-	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(libro_tex)
+	# sed -i 's/\\ref{PRES}/\\ref{sec-1}/' $(srcdir)/$(libro_tex) No recibe número: No es gestionado por .org
+	sed -i 's/\\ref{INTRO}/\\ref{sec-1}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{HW}/\\ref{sec-2}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{PROC}/\\ref{sec-3}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{PLAN}/\\ref{sec-4}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{MEM}/\\ref{sec-5}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{DIR}/\\ref{sec-6}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{FS}/\\ref{sec-7}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{SL}/\\ref{sec-8}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{VIRT}/\\ref{sec-9}/' $(srcdir)/$(libro_tex)
+	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(srcdir)/$(libro_tex)
+
+libro_latin_tex: libro_tex
+	rm -f $(srcdir)/$(libro_latin_tex)
+	./$(srcdir)/latin/latinize.rb $(srcdir)/$(libro_tex) $(srcdir)/$(libro_latin_tex)
+
+libro_latin_pdf: fig libro_latin_tex
+	- cd $(srcdir) ; echo q | pdflatex $(libro_latin_tex) ; echo q | pdflatex $(libro_latin_tex)
 
 libro_pdf: fig libro_index libro_tex
-	cd notas && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
+	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
 
 beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)
@@ -132,11 +141,11 @@ beamer: fig
 	rm $(idx_laminas)
 
 clean-publish-cache:
-	rm -f ~/.org-timestamps/notas*.cache
+	rm -f ~/.org-timestamps/$(srcdir)*.cache
 
 clean: clean-publish-cache clean_fig
-	rm -f notas/sistemas_operativos.*
-	rm -f ltxpng/*.png dot notas/*.tex notas/*.html notas/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
+	rm -f $(srcdir)/sistemas_operativos.*
+	rm -f ltxpng/*.png dot $(srcdir)/*.tex $(srcdir)/*.html $(srcdir)/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
 	rm -rf html
 	rm -rf pdf
 

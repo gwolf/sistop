@@ -1572,9 +1572,9 @@ recursos — temática recurrente en el campo de los sistemas operativos.
 
   En la implementación de los escritores, esto puede parecer inútil:
   Únicamente se agregó un mutex redundante alrededor de lo que ya
-  se tenía. Sin embargo, al obligar a que el lector pase por un
-  torniquete antes de actualizar =lectores=, lo cual obligaría a que
-  se mantenga encendida la luz, se obliga a que espere a que el
+  se tenía. Sin embargo, al hacer que el lector pase por un
+  torniquete antes de actualizar =lectores=, obligando a que
+  se mantenga encendida la luz, se lo fuerza a esperar a que el
   escritor suelte este mutex exterior. Nuevamente se puede ver cómo la misma
   estructura es tratada de dos diferentes maneras: para el lector es
   un torniquete, y para el escritor es un mutex.

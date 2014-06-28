@@ -216,7 +216,7 @@ relativa a su ejecución.
      globales y datos incializados (como las cadena de caracteres por ejemplo). 
      Este espacio es fijado en tiempo de compilación, y no
      puede cambiar (aunque los datos que cargados allí sí cambian en el tiempo
-     de vida del proceso)
+     de vida del proceso).
 
 - Espacio de /libres/ ::  Espacio de memoria que se emplea
      para la asignación dinámica de memoria /durante la ejecución/ del
@@ -880,8 +880,9 @@ por relativamente pocas entradas del TLB son muy altas.
 #+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
 [[./img/dot/paginacion_con_tlb.png]]
 
-Como sea, dado que el TLB es limitado, es necesario explicitar un
-mecanismo que indique dónde guardar las nuevas entradas una vez que el
+Como sea, dado que el TLB es limitado en tamaño, es necesario explicitar una
+política que indique dónde guardar las nuevas entradas (esto es, qué 
+entrada reemplazar) una vez que el
 TLB está lleno y se produce un fallo de página. Uno de los esquemas
 más comunes es emplear la entrada /menos recientemente utilizada/
 (/LRU/, /Least Recently Used/), nuevamente apelando a la localidad de
@@ -1160,7 +1161,7 @@ le sería imposible ejecutar código que no esté cargado en
 memoria,[fn:: Una computadora basada en la arquitectura von Neumann,
 como prácticamente todas las existen hoy en día, no puede /ver/
 directamente más que a la memoria principal] el código sí puede
-comenzar ejecutarse sin estar /completamente/ en memoria: Basta con
+comenzar a ejecutarse sin estar /completamente/ en memoria: Basta con
 haber cargado la página donde están las instrucciones que permiten
 continuar con su ejecución actual.
 
@@ -1197,10 +1198,10 @@ solicitada para luego continuar con su ejecución:
 
 3. Procede a traer la página del disco a la memoria. El primer paso es
    buscar un marco disponible (por ejemplo, a través de una tabla de
-   asignación de marcos)
+   asignación de marcos).
 
 4. Solicita al disco la lectura de la página en cuestión hacia el
-   marco especificado
+   marco especificado.
 
 5. Una vez que finaliza la lectura de disco, modifica tanto al PCB
    como al TLB para indicar que la tabla está en memoria.
@@ -1222,7 +1223,7 @@ programa, el proceso irá ocupando el espacio real que empleará.
 ** Rendimiento
 
 La paginación sobre demanda puede impactar fuertemente el rendimiento
-de un proceso -Se ha explicado ya que un acceso a disco es varios miles de
+de un proceso -se ha explicado ya que un acceso a disco es varios miles de
 veces más lento que el acceso a memoria. Es posible calcular el tiempo de
 acceso efectivo a memoria ($t_e$) a partir de la probabilidad que en
 un proceso se presente un fallo de página ($0 \le p \le 1$),
@@ -1251,7 +1252,7 @@ fallos de página a $\frac{1}{399,990}$.
 
 Cabe mencionar que este impacto al rendimiento no necesariamente
 significa que una proporción relativamente alta de fallos de página
-para un proceso impacte negativamente a todo el sistema — El mecanismo
+para un proceso impacte negativamente a todo el sistema — el mecanismo
 de paginación sobre demanda permite, al no requerir que se tengan en
 memoria todas las páginas de un proceso, que haya /más procesos
 activos/ en el mismo espacio en memoria, aumentando el grado de
@@ -1565,8 +1566,9 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      consiste en agregar /varios/ bits de referencia, conformándose
      como una /columna/: En vez de descartar su valor cada vez que
      transcurre el periodo determinado, el valor de la columna de
-     referencia es recorrido a la derecha, descartando el bit más
-     bajo. Por ejemplo, con una implementación de 4 bits, un
+     referencia es corrido a la derecha, descartando el bit más
+     bajo (una actualización sólo modifica el bit más significativo).
+     Por ejemplo, con una implementación de 4 bits, un
      marco que no ha sido empleado en los últimos 4 periodos tendría
      el valor 0000, mientras que un marco que sí ha sido referenciado
      los últimos cuatro periodos tendría 1111. Un marco que fue

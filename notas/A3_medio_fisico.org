@@ -29,7 +29,7 @@ de manejo avanzado de volúmenes (que serán cubiertos en la sección
 
 El principal medio de almacenamiento empleado en los últimos 40 años
 es el /disco magnético/. Hay dos tipos diferentes de disco, aunque la
-lógica de su funcionamiento es la misma: Los /discos duros/ y los
+lógica de su funcionamiento es la misma: los /discos duros/ y los
 /discos flexibles/ (o /floppies/).
 
 La principal diferencia entre estos es que los primeros son
@@ -50,7 +50,7 @@ cara, con dos cabezas lectoras) se deslizan por una ventana que tiene
 el estuche.
 
 La mayor parte de los discos flexibles presentaban velocidades de
-rotación de entre 300 y 400 revoluciones por minuto — Presentaban,
+rotación de entre 300 y 400 revoluciones por minuto — presentaban,
 pues, una /demora rotacional/ de entre 0.15 y 0.2 segundos. La /demora
 rotacional/ es el tiempo que toma la cabeza lectora en volver a
 posicionarse sobre un mismo sector del disco. (Ver figura
@@ -59,7 +59,7 @@ posicionarse sobre un mismo sector del disco. (Ver figura
 A lo largo de más de 20 años se presentaron muy diferentes formatos
 físicos siguiendo esta misma lógica, designándose principalmente por
 su tamaño (en pulgadas). La capacidad de los discos, claro está, fue
-creciendo con el paso de los años — Esto explica la aparente
+creciendo con el paso de los años — esto explica la aparente
 contradicción de que los discos (físicamente) más chicos tenían más
 capacidad que los más grandes.
 
@@ -75,11 +75,11 @@ capacidad que los más grandes.
 
 El nombre de /disco duro/ o /disco flexible/ se debe al medio empleado
 para el almacenamiento de la información (y no a la rigidez de su
-/estuche/, como mucha gente erróneamente cree): Mientras que los discos
+/estuche/, como mucha gente erróneamente cree): mientras que los discos
 flexibles emplean una hoja plástica flexible, los
 discos duros son metálicos. Los discos están /permanentemente/
 montados sobre un eje, lo que permite que tengan una velocidad de giro
-entre 20 y 50 veces mayor que los discos flexibles — Entre 4,200 y
+entre 20 y 50 veces mayor que los discos flexibles — entre 4,200 y
 15,000 revoluciones por minuto (RPM), esto es, con una demora
 rotacional de entre 2 y 7.14 milisegundos.
 
@@ -87,7 +87,7 @@ Además, a excepción de algunos modelos tempranos, los discos duros
 constituyen un paquete cerrado y sellado que incluye las cabezas de
 lectura y escritura, y toda la electrónica de control. Esto permite
 que los discos duros tengan densidades de almacenamiento y velocidades
-de transmisión muy superiores a la de los discos flexibles: Los
+de transmisión muy superiores a la de los discos flexibles: los
 primeros discos duros que se comercializaron para computadoras
 personales eran de 10MB (aproximadamente 70 discos flexibles de su
 época), y actualmente hay ya discos de 4TB. La velocidad máxima de
@@ -109,7 +109,7 @@ siguiente va entre 3 y 8ms.
 
 En un principio y hasta la década de los noventa, el sistema operativo
 siempre hacía referencia a la ubicación de un bloque de información en
-el disco es conocido como la /notación C-H-S/ — Indicando el cilindro,
+el disco es conocido como la /notación C-H-S/ — indicando el cilindro,
 cabeza y sector (/Cylinder, Head, Sector/) para ubicar a cada bloque
 de datos. Esto permite mapear el espacio de almacenamiento de un disco
 a un espacio tridimensional, con cual resulta trivial ubicar a un
@@ -151,7 +151,7 @@ varias solicitudes de transferencia pendientes, resulta importante
 encontrar un mecanismo óptimo para realizar la transferencia,
 minimizando el tiempo de demora. A continuación se describirán a
 grandes rasgos tres de los algoritmos históricos de planificación de
-acceso a disco — Para abordar después el por qué estos hoy en día casi
+acceso a disco — para abordar después el por qué estos hoy en día casi
 no son empleados.
 
 Como con los demás escenarios en que se han abordado algoritmos, para
@@ -173,10 +173,10 @@ ante la cadena de referencia dada.
 - FIFO :: Del mismo modo que cuando fueron presentados los algoritmos
           de asignación de procesador y de reemplazo de páginas, el
           primero y más sencillo de implementar es el /FIFO/ —
-          /Primero llegado, primero servido/.
+          /primero llegado, primero servido/.
 
           Este algoritmo puede verse como muy
-          /justo/, aunque sea muy poco eficiente: El movimiento total
+          /justo/, aunque sea muy poco eficiente: el movimiento total
           de cabezas para el caso planteado es de 622 cilindros,
           equivalente a poco más que recorrer de extremo a extremo el
           disco completo tres veces. Esto es, despreciando la demora
@@ -186,7 +186,7 @@ ante la cadena de referencia dada.
 
 	  Puede identificarse como causante de buena parte de esta
           demora a la quinta posición de la cadena de referencia:
-          Entre solicitudes para los cilindros contiguos 120 y 121,
+          entre solicitudes para los cilindros contiguos 120 y 121,
           llegó una solicitud al 15.
 
 	  Atender esta solicitud en FIFO significa un desplazamiento
@@ -208,13 +208,13 @@ ante la cadena de referencia dada.
           cilindros, muy cerca del mínimo absoluto posible.
 
 	  Una desventaja de SSTF es que puede llevar a la inanición:
-          Si hay una gran densidad de solicitudes para cilindros en
+          si hay una gran densidad de solicitudes para cilindros en
           determinada zona del disco, una solicitud para un cilindro
           alejado puede quedar a la espera
           indefinidamente.
 
 	  Ejemplificando esto con una serie de solicitudes distinta a
-          la cadena referencia: Si el sistema tuviera que atender
+          la cadena referencia: si el sistema tuviera que atender
           solicitudes por los cilindros /15, 175, 13, 20, 14, 32, 40,
           5, 6, 7/, SSTF /penalizaría/ a la segunda solicitud (175)
           hasta terminar con los cilindros bajos. Si durante el tiempo
@@ -252,7 +252,7 @@ ante la cadena de referencia dada.
      descrita como /LOOK/.
 
      Sin embargo, el patrón de atención a solicitudes de SCAN y LOOK
-     dejan qué desear: Al llegar a un extremo del recorrido, es
+     dejan qué desear: al llegar a un extremo del recorrido, es
      bastante probable que no haya ninguna solicitud pendiente en la
      primer mitad del recorrido de vuelta (dado que acaban de ser
      atendidas). El tiempo que demora atender a una solictud se
@@ -260,7 +260,7 @@ ante la cadena de referencia dada.
      rotacional (que depende de cuál sector del cilindro fue
      solicitado). Para mantener una tasa de transferencia más
      predecible, el algoritmo /C-SCAN/ (SCAN Circular) realiza las
-     operaciones en el disco únicamente en un sentido — Si el
+     operaciones en el disco únicamente en un sentido — si el
      algoritmo lee en orden /descendente/, al llegar a la solicitud
      del cilindro más bajo, saltará de vuelta hasta el más alto para
      volver a iniciar desde ahí. Esto tiene como resultado, claro, que
@@ -289,7 +289,7 @@ ejemplo, sería esperable que diera preferencia a los accesos a memoria
 virtual por encima de las solicitudes de abrir un nuevo archivo. Estos
 algoritmos tampoco permiten expresar esta necesidad.
 
-Pero el tercer punto es mucho más importante aún: Del mismo modo
+Pero el tercer punto es mucho más importante aún: del mismo modo
 que los procesadores se van haciendo más rápidos y que la memoria
 es cada vez de mayor capacidad, los controladores de discos también
 son cada vez más /inteligentes/, y /esconden/ cada vez más
@@ -304,8 +304,8 @@ noventa. Hasta ese momento, el sistema operativo tenía información de
 la ubicación /física/ de todos los bloques en el disco.
 
 Una de las desventajas, sin embargo, de este esquema es que el mismo
-BIOS tenía que conocer la /geometría/ de los discos — Y el BIOS
-presentaba límites duros en este sentido: Principalmente, no le era
+BIOS tenía que conocer la /geometría/ de los discos — y el BIOS
+presentaba límites duros en este sentido: principalmente, no le era
 posible referenciar más allá de 64 cilindros. Al aparecer la interfaz
 de discos IDE (/Electrónica integrada al dispositivo/) e ir
 reemplazando a la ST-506, se introdujo LBA.
@@ -375,13 +375,13 @@ completamente autónoma del sistema operativo.
 Y si bien las diferentes unidades de disco duro habían mantenido
 sectores de 512 bytes desde los primeros discos duros, a partir de la
 aprobación del /Formato Avanzado/ en 2010 que incrementa los sectores
-a 4096 bytes, presenta otra abstracción más: Un disco con sectores de
+a 4096 bytes, presenta otra abstracción más: un disco con sectores de
 4096 bytes que es empleado por el sistema operativo como si fuera de
 512[fn:: Al día de hoy, los principales sistemas operativos pueden ya
 hacer referencia al nuevo tamaño de bloque, pero la cantidad de
-equipos que corren sistemas /heredados/ o de controladores que no
+equipos que ejecutan sistemas /heredados/ o de controladores que no
 permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
-que efectuar, dentro de la lógica de su controlador, una emulación — Y
+que efectuar, dentro de la lógica de su controlador, una emulación — y
 una modificación de un sólo sector se vuelve un /ciclo
 lectura-modificación-escritura/ (/RMW/), que redunda en una espera de
 por lo menos una revolución adicional (8ms con un disco de 7200RPM)
@@ -396,7 +396,7 @@ planificación de acceso a disco.
 # <<FS_FIS_estado_solido>>
 
 Desde hace cerca de una década va creciendo consistentemente el uso de
-medios de almacenamiento de /estado sólido/ — Esto es, medios sin
+medios de almacenamiento de /estado sólido/ — esto es, medios sin
 partes móviles. Las características de estos medios de almacenamiento
 son muy distintas de las de los discos.
 
@@ -411,7 +411,7 @@ importantes novedades en los próximos años.
 Lo primero que llama la atención de estos medios de almacenamiento es
 que, a pesar de ser fundamentalmente distintos a los discos
 magnéticos, se presentan ante el sistema operativo como si fueran lo
-mismo: En lo que podría entenderse como un esfuerzo para ser
+mismo: en lo que podría entenderse como un esfuerzo para ser
 utilizados pronto y sin tener que esperar a que los desarrolladores de
 sistemas operativos adecuaran los controladores, se conectan a través
 de la misma interfaz y empleando la misma semántica que un disco
@@ -435,13 +435,13 @@ son:
            este estilo; hoy en día son poco comunes en el mercado,
            pero siguen existiendo.
 
-	   Su principal ventaja es la velocidad y durabilidad: El
+	   Su principal ventaja es la velocidad y durabilidad: el
            tiempo de acceso o escritura de datos es el mismo que el
            que podría esperarse de la memoria principal del sistema, y
            al no haber demoras mecánicas, este tiempo es el mismo
            independientemente de la dirección que se solicite.
 
-	   Su principal desventaja es el precio: En líneas generales,
+	   Su principal desventaja es el precio: en líneas generales,
            la memoria RAM es, por volumen de almacenamiento, cientos
            de veces más cara que el medio magnético. Y si bien el
            medio no se degrada con el uso, la batería sí, lo que
@@ -460,7 +460,7 @@ son:
      Programmable Read-Only Memory/, /Memoria de Sólo Lectura
      Programable y Borrable Eléctricamente/). Los EEPROM tienen la
      característica de que, además de lectura y escritura, hay un
-     tercer tipo de operación que deben implementar: El /borrado/. Un
+     tercer tipo de operación que deben implementar: el /borrado/. Un
      EEPROM ya utilizado debe borrarse antes de volverse a escribir a
      él. La principal característica que distingue a las memorias
      /flash/ de los EEPROMs tradicionales es que el espacio de
@@ -468,10 +468,10 @@ son:
      puede leer, borrar o escribir a cada uno de ellos por
      separado.[fn:: Estos dispositivos se conocen como /flash/ en
      referencia a los chips EPROM (antes de que fuera posible borrar
-     /eléctricamente/): Estos chips tenían una ventana en la parte
+     /eléctricamente/): estos chips tenían una ventana en la parte
      superior, y debían operar siempre cubiertos con una
      etiqueta. Para borrar sus contenidos, se retiraba la etiqueta y
-     se les administraba una descarga lumínica — Un /flash/.]
+     se les administraba una descarga lumínica — un /flash/.]
 
      El uso de dispositivos /flash/ para almacenamiento de información
      inició hacia 1995 como respuesta a las necesidades de las
@@ -524,7 +524,7 @@ Independientemente del tipo, las unidades de estado sólido presentan
 ventajas ante los discos rotativos, como un muy bajo consumo
 eléctrico, operación completamente silenciosa, y resistencia a la
 vibración o a los golpes. Además, el medio es /verdaderamente/ de
-acceso aleatorio: Al no ser ya un disco, desaparecen tanto la demora
+acceso aleatorio: al no ser ya un disco, desaparecen tanto la demora
 de movimiento de cabezas como la rotacional.
 
 *** Desgaste del medio
@@ -537,14 +537,14 @@ comenzar a degradarse y fallar. Las
 estructuras tradicionales de sistemas de archivos basados en disco
 /concentran/ una gran cantidad de modificaciones frecuentes a lo largo
 de la operación normal del sistema en ciertas regiones
-clave: Las tablas de asignación y directorios registran muchos más
+clave: las tablas de asignación y directorios registran muchos más
 cambios que la región de datos.
 
 Casi todos los controladores de discos Flash cuentan con mecanismos de
 /nivelamiento de escrituras/ (/write leveling/). Este mecanismo busca
 reducir el desgaste focalizado modificando el mapeo de los sectores
 que ve el sistema operativo respecto a los que son grabados /en
-verdad/ en el medio: En vez de actualizar un bloque (por ejemplo, un
+verdad/ en el medio: en vez de actualizar un bloque (por ejemplo, un
 directorio) /en su lugar/, el controlador le asigna un nuevo bloque de
 forma transparente, y marca el bloque original como libre.
 
@@ -564,7 +564,7 @@ de esta emulación es que no hizo falta desarrollar controladores
 adicionales para comenzar a emplear estos medios. La desventaja, sin
 embargo, es que al ocultarse el funcionamiento /real/ de las unidades
 de estado sólido, el sistema operativo no puede aprovechar las
-ventajas estructurales — Y más importante aún, no puede evitar las
+ventajas estructurales — y más importante aún, no puede evitar las
 debilidades inherentes al medio.
 
 Uno de los ejemplos más claros de esta falta de control real del medio
@@ -601,7 +601,7 @@ los próximos años.
 # <<FS_FIS_RAID>>
 En la sección \ref{FS_conceptos} se presentó muy escuetamente al
 concepto de /volumen/, mencionando que un volumen /típicamente/
-coincide con una partición, aunque no siempre es el caso — Sin
+coincide con una partición, aunque no siempre es el caso — sin
 profundizar más al respecto. En esta sección se presentará uno de los
 mecanismos que permite combinar diferentes /dispositivos físicos/ en
 un sólo volumen, llevando –bajo sus diferentes modalidades– a mayor
@@ -636,7 +636,7 @@ RAID no es un sólo esquema, sino que especifica un /conjunto/ de
 del almacenamiento en discos. Se exponen a continuación las
 características de los principales niveles en uso hoy en día.
 
-** RAID nivel 0: División en /franjas/
+** RAID nivel 0: división en /franjas/
 
 El primer nivel de RAID brinda una ganancia tanto en espacio total,
 dado que presenta a un volumen grande en vez de varios discos más
@@ -665,24 +665,24 @@ disco independiente.
 [[./img/ditaa/franjas_raid_0.png]]
 
 La confiabilidad del volumen, sin embargo, disminuye
-respecto a si cada uno de los discos se manejara por separado: Basta
+respecto a si cada uno de los discos se manejara por separado: basta
 con que uno de los discos presente daños para que la información
 contenida en el volumen se pierda.
 
 Un arreglo RAID nivel 0 puede construirse con un mínimo de dos discos.
 
-** RAID nivel 1: Espejo
+** RAID nivel 1: espejo
 
 Este nivel está principalmente orientado a aumentar la confiabilidad
-de la información: Los datos son grabados de forma /simultánea e
+de la información: los datos son grabados de forma /simultánea e
 idéntica/ en todos los discos que formen parte del volumen. El costo
 de mantener los datos en espejo, claro está, es el del espacio
-empleado: En su configuración habitual, de dos discos por volumen, el
+empleado: en su configuración habitual, de dos discos por volumen, el
 50% del espacio de almacenamiento se pierde por fungir como respaldo
 del otro 50%.
 
 La velocidad de acceso a los datos bajo RAID 1 es mayor a la que se
-lograría con un disco tradicional: Basta con obtener los datos de uno
+lograría con un disco tradicional: basta con obtener los datos de uno
 de los discos; el controlador RAID (sea el sistema operativo o una
 implementación en hardware) puede incluso programar las solicitudes de
 lectura para que se vayan repartiendo entre ambas unidades. La
@@ -704,10 +704,10 @@ corrección de errores. Estos han caído casi por completo en el desuso
 dado que los otros niveles, y muy en particular el nivel 5, ofrecen
 las mismas características, pero con mayor confiabilidad
 
-** RAID nivel 5: Paridad dividida por bloques
+** RAID nivel 5: paridad dividida por bloques
 
 El nivel 5 de RAID proporciona un muy buen equilibrio respecto a las
-características que se han mencionando:  brinda el espacio total
+características que se han mencionando: brinda el espacio total
 de almacenamiento de todos los discos que formen parte del volumen
 /menos uno/. Para cada una de las /franjas/, RAID5 calcula un bloque
 de /paridad/.
@@ -722,7 +722,7 @@ hacerlo, la falla en un segundo disco resultará en la pérdida de toda
 la información).
 
 En equipos RAID profesionales es común contar con discos de reserva
-/en caliente/ (/hot spares/): Discos que se mantienen apagados pero
+/en caliente/ (/hot spares/): discos que se mantienen apagados pero
 listos para trabajar. Si el controlador detecta un disco dañado, sin
 esperar a la intervención del administrador, desactiva al disco
 afectado y activa al /hot spare/, reconstruyendo de inmediato la
@@ -745,7 +745,7 @@ las lecturas tendrán que obtener la franja correspondiente de todos
 los discos del arreglo para poder calcularla.
 
 RAID 5 opera con un algoritmo de verificación y recuperación
-sorprendentemente eficiente y simple: El de una /suma XOR/, ilustrado
+sorprendentemente eficiente y simple: el de una /suma XOR/, ilustrado
 en la figura \ref{FS_FIS_redundancia_xor}. La operación booleana XOR
 (de /Exclusive OR/) suma los bits individuales, columna por
 columna. Si es un número par, almacena un 0, si es impar, almacena
@@ -778,12 +778,12 @@ Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
 aunque es común verlos más /anchos/, pues de este modo se desperdicia
 menos espacio en paridad. Si bien teóricamente un arreglo nivel 5
 puede ser arbitrariamente ancho, en la práctica es muy raro ver
-arreglos con más de 5 discos: Tener un arreglo más ancho aumentaría la
+arreglos con más de 5 discos: tener un arreglo más ancho aumentaría la
 probabilidad de falla. Si un arreglo que está ya operando en el modo
 interino de recuperación de datos se encuentra con una falla en
 cualquiera de sus discos, tendrá que reportar un fallo irrecuperable.
 
-** RAID nivel 6: Paridad por redundancia P+Q
+** RAID nivel 6: paridad por redundancia P+Q
 
 Se trata nuevamente de un nivel de RAID muy poco utilizado. Se basa en
 el mismo principio que el de RAID 5 pero, empleando dos distintos
@@ -791,7 +791,7 @@ algoritmos para calcular la paridad, permite la pérdida de hasta dos
 de los discos del arreglo. La complejidad computacional es
 sensiblemente mayor a la de RAID 5, no sólo porque se trata de un
 segundo cálculo de paridad, sino porque este cálculo debe hacerse
-empleando un algoritmo distinto y más robusto — Si bien para obtener
+empleando un algoritmo distinto y más robusto — si bien para obtener
 la paridad $P$ basta con hacer una operación /XOR/ sobre todos los
 segmentos de una /franja/, la segunda paridad $Q$ típicamente emplea
 al /algoritmo Reed-Solomon/, /paridad diagonal/ o /paridad dual
@@ -819,7 +819,7 @@ características de los diferentes niveles.
 
 Si bien pueden combinarse arreglos de todo tipo, hay combinaciones más
 frecuentes que otras. Con mucho, la más popular es la de los niveles
-1 + 0 — Esta combinación, frecuentemente llamada sencillamente /RAID
+1 + 0 — esta combinación, frecuentemente llamada sencillamente /RAID
 10/, ofrece un máximo de redundancia y rendimiento, sin sacrificar
 demasiado espacio.
 
@@ -836,16 +836,16 @@ intensivo para el arreglo entero (sólo para su disco espejo).
 
 Bajo este esquema, en el peor de los casos, un volumen con $n$
 discos físicos está conformado por $n \over 2$ volúmenes nivel 1, y por tanto
-puede soportar la pérdida de hasta $n \over 2$ discos — Siempre
+puede soportar la pérdida de hasta $n \over 2$ discos — siempre
 que estos no formen parte de un mismo volumen nivel 1.
 
 Esta combinación ilustra cómo el orden de los
-factores /sí altera/ al producto: Si en vez de la concatenación de
+factores /sí altera/ al producto: si en vez de la concatenación de
 varias unidades espejeadas (un volumen nivel 0 compuesto de varios
 volúmenes nivel 1) se armara el arreglo en orden inverso (esto
 es, como el espejeo de varias unidades concatenadas por franjas),
 ante un primer análisis parecería se obtienen los mismos beneficios —
-Pero analizando lo que ocurre en caso de falla, resulta claro que el
+pero analizando lo que ocurre en caso de falla, resulta claro que el
 nivel de redundancia resulta mucho menor.
 
 #+attr_latex: width=0.65\textwidth
@@ -891,9 +891,9 @@ generación del /Logical Volume Manager/, o /Gestor de Volúmenes
 Lógicos/) de Linux. La lógica de operación de LVM está basada en los
 siguientes conceptos:
 
-- Volumen físico :: Cada uno de los discos o unidades disponibles
+- Volumen físico :: Cada uno de los discos o unidades disponibles.
 - Grupo de volúmenes :: Conjunto de volúmenes físicos que serán
-     administrados como una sola entidad
+     administrados como una sola entidad.
 - Volumen lógico :: Espacio dentro del grupo de volúmenes que se presenta
 		    como un dispositivo, y que puede alojar sistemas
                     de archivos.
@@ -906,7 +906,7 @@ unidades físicamente existentes– crear las /unidades lógicas/, donde
 se alojarán los sistemas de archivos propiamente.
 
 Este esquema permite naturalmente una funcionalidad comparable con
-RAID 0: Puede crearse un grupo de volúmenes con todos los discos que
+RAID 0: puede crearse un grupo de volúmenes con todos los discos que
 disponibles, y dentro de este crear un volumen lógico
 único. Dependiendo de la configuración, este volumen lógico puede
 crecer abarcando todos los discos en cuestión, sea como simple
@@ -919,12 +919,12 @@ espejeados como otros que no lo estén, a diferencia de la estricta
 rigidez de RAID.
 
 Para los niveles 4, 5 y 6 de RAID, la correspondencia es más directa
-aún: Al crear un volumen, se le puede solicitar a LVM al crear un
-volumen lógico que cree un volumen con ese nivel de RAID — Obviamente,
+aún: al crear un volumen, se le puede solicitar a LVM al crear un
+volumen lógico que cree un volumen con ese nivel de RAID — obviamente,
 siempre que cuente con suficientes volúmenes físicos.
 
 El esquema de LVM no brinda, pues, funcionalidad estrictamente
-distinta a la que presenta RAID — Pero da al administrador del sistema
+distinta a la que presenta RAID — pero da al administrador del sistema
 flexibilidad: ampliar o reducir el espacio dedicado a cada uno de los
 volúmenes, incluso en un sistema en producción y con datos.
 
@@ -938,7 +938,7 @@ herramienta dado que excede del objetivo del presente material.
 
 Si bien LVM realiza una importante tarea de simplificación en la
 administración del sistema, su operación sigue siendo orientada a
-/bloques/: Los volúmenes lógicos deben aún ser formateados bajo el
+/bloques/: los volúmenes lógicos deben aún ser formateados bajo el
 sistema de archivos que el administrador del sistema considere acorde
 para la tarea requerida.
 
@@ -950,7 +950,7 @@ requerirá.] fue desarrollado por Sun Microsystems desde el año 2001,
 forma parte del sistema operativo /Solaris/ desde el 2005, y hoy en
 día puede emplearse desde los principales sistemas operativos
 libres.[fn:: ZFS no puede ser incorporado íntegramente al núcleo de
-Linux por /incompatibilidad de licencias/: Si bien ambos son software
+Linux por /incompatibilidad de licencias/: si bien ambos son software
 libre, los modelos de licenciamiento GPL (de Linux) y CDDL (de ZFS)
 son incompatibles.] Y si bien ZFS resulta suficientemente atractivo
 tan sólo por haber sido diseñado para que el usuario nunca más se tope
@@ -961,7 +961,7 @@ referirse al almacenamiento.
 En primer término, al igual que LVM presenta una primer integración
 entre conceptos, permitiendo unir de diferentes maneras varios
 dispositivos físicos en un dispositivo lógico, ZFS incluye en la misma
-lógica administrativa al sistema de archivos: En la configuración
+lógica administrativa al sistema de archivos: en la configuración
 estándar, basta conectar una unidad al sistema para que ésta aparezca
 como espacio adicional disponible para los usuarios. El espacio
 combinado de todas las unidades conforma un /fondo de almacenamiento/
@@ -972,12 +972,12 @@ archivos en una organización jerárquica. Pero a diferencia del esquema
 tradicional Unix en que cada sistema de archivos es preparado desde un
 principio para su función, en ZFS se pueden aplicar límites a
 jerarquías completas. Bajo un esquema ZFS, la creación y el montaje de
-un sistema de archivos es una operación sencilla — Al grado que se
+un sistema de archivos es una operación sencilla — al grado que se
 presenta como recomendación que, para cada usuario en el sistema, se
 genere un sistema de archivos nuevo e independiente.
 
 Una de las principales diferencias con los sistemas de archivos
-tradicionales es el manejo del espacio vacío: El espacio disponible
+tradicionales es el manejo del espacio vacío: el espacio disponible
 total del fondo de almacenamiento se reporta como disponible /para
 todos los sistemas de archivos/ que formen parte de éste. Sin embargo,
 se pueden indicar /reservas/ (mantener un mínimo del espacio

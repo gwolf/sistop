@@ -29,7 +29,7 @@ determinado sólo puede estar ejecutando sus instrucciones un número
 de procesos igual o menor al número de procesadores que tenga el sistema.
 
 En este capítulo se desarrollan los conceptos relacionados con
-procesos, hilos, concurrencia y sincronización — Las técnicas y
+procesos, hilos, concurrencia y sincronización — las técnicas y
 algoritmos que emplea el sistema operativo para determinar cómo y en
 qué orden hacer los cambios de proceso que brindan al usuario la
 ilusión de simultaneidad se abordarán en el capítulo \ref{PLAN}.
@@ -95,7 +95,7 @@ PCB incluye campos como:
      el tema en el capítulo \ref{MEM}.
 
 - Información de contabilidad :: Información de la utilización de
-     recursos que ha tenido este proceso — Puede incluir el tiempo
+     recursos que ha tenido este proceso — puede incluir el tiempo
      total empleado y otros (/de usuario/, cuando el procesador va
      avanzando sobre las instrucciones del programa propiamente, /de
      sistema/ cuando el sistema operativo está atendiendo las
@@ -846,7 +846,7 @@ Cabe apuntar las siguientes notas sobre la solución de Peterson:
 
 En la presente sección se enumeran los principales mecanismos que
 pueden emplearse para programar considerando a la concurrencia:
-Candados, semáforos y variables de condición.
+candados, semáforos y variables de condición.
 
 *** Regiones de exlcusión mutua: candados o /mutexes/
 
@@ -863,11 +863,11 @@ como si fuera atómica.
 #+attr_html: height="261"
 #+attr_latex: width=0.8\textwidth
 #+label: PROC_secc_crit
-#+caption: Sincronización: La exclusión de las /secciones críticas/ entre a varios procesos se protegen por medio de regiones de /exclusión mutua/
+#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/
 [[./img/gnuplot/secc_crit.png]]
 
 Hay que tener en cuenta que un mutex /no implica/ que el código no se
-va a interrumpir mientras se está dentro de esta región — Eso sería
+va a interrumpir mientras se está dentro de esta región — eso sería
 muy peligroso, dado que permitiría que el sistema operativo pierda el
 control del planificador, volviendo (para propósitos prácticos) a un
 esquema de multitarea cooperativa. El mutex es un /mecanismo de
@@ -917,7 +917,7 @@ específico de implementación, en este caso Perl. Al ser
 =$proximo_asiento= una variable compartida tiene algunas /propiedades/
 adicionales, en este caso, la de poder operar como un mutex. La
 implementación en Perl resulta muy /limpia/, dado que evita el uso
-de un candado explícito — Se podría leer la línea 5 como /exclusión
+de un candado explícito — se podría leer la línea 5 como /exclusión
 mutua sobre/ =$proximo_asiento=.
 
 En la implementación de hilos de Perl, la función =lock()= implementa
@@ -1035,7 +1035,7 @@ Un semáforo permite la implementación de varios patrones, entre los
 cuales se mencionarán los siguientes:
 
 - Señalizar :: Un hilo debe informar a otro que cierta condición está
-               ya cumplida — Por ejemplo, un hilo prepara una conexión
+               ya cumplida — por ejemplo, un hilo prepara una conexión
                en red mientras que otro calcula lo que tiene que
                enviar. No se puede arriesgar a comenzar a enviar
                antes de que la conexión esté lista. Se inicializa el
@@ -1056,14 +1056,14 @@ cuales se mencionarán los siguientes:
 
 	       #+end_src
 
-	       No importa si =prepara_conexion()= termina primero — En
+	       No importa si =prepara_conexion()= termina primero — en
 	       el momento en que termine, =senal= valdrá 1 y
 	       =envia_datos()= podrá proceder.
 
 - /Rendezvous/ :: Así se denomina en francés (y ha sido adoptado al
                   inglés) a quedar en una /cita/. Este patrón busca
                   que dos hilos se esperen mutuamente en cierto punto
-                  para continuar en conjunto — Por ejemplo, en una
+                  para continuar en conjunto — por ejemplo, en una
                   aplicación GUI, un hilo prepara la interfaz gráfica
                   y actualiza sus eventos mientras otro efectúa
                   cálculos para mostrar. Se desea presentar al usuario
@@ -1143,7 +1143,7 @@ cuales se mencionarán los siguientes:
 
 - Apagador :: Cuando se tiene una situación de /exclusión categórica/
               (basada en categorías y no en procesos individuales —
-              Varios procesos de la misma categoría pueden entrar a la
+              varios procesos de la misma categoría pueden entrar a la
               sección crítica, pero procesos de dos categorías
               distintas deben tenerlo prohibido), un /apagador/
               permite evitar la inanición de una de las categorías
@@ -1279,7 +1279,7 @@ Una variable de condición presenta las siguientes operaciones:
               (señaliza) a uno o más hilos (algunas implementaciones
               permiten indicar como argumento a cuántos hilos) de los
               que están bloqueados en la espera asociada. /No/ libera
-              el mutex — Esto significa que el flujo de ejecución /se
+              el mutex — esto significa que el flujo de ejecución /se
               mantiene en el invocante/, quien tiene que salir de su
               sección crítica (entregar el mutex) antes de que otro de
               los hilos continúe ejecutando.
@@ -1477,7 +1477,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   categórica/: se debe separar el uso de un recurso según la categoría
   del proceso. La presencia de un proceso en la sección crítica no
   lleva a la exclusión de otros, pero sí hay /categorías/ de procesos
-  que tienen distintas reglas — Para los escritores /sí/ hace falta
+  que tienen distintas reglas — para los escritores /sí/ hace falta
   una exclusión mutua completa.
 
 *** Primera aproximación
@@ -1571,7 +1571,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   #+end_src
 
   En la implementación de los escritores, esto puede parecer inútil:
-  Únicamente se agregó un mutex redundante alrededor de lo que ya
+  únicamente se agregó un mutex redundante alrededor de lo que ya
   se tenía. Sin embargo, al hacer que el lector pase por un
   torniquete antes de actualizar =lectores=, obligando a que
   se mantenga encendida la luz, se lo fuerza a esperar a que el
@@ -1712,7 +1712,7 @@ Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
      necesidades.].
 
      De tiempo en tiempo, el agente consigue una dosis de dos de los
-     ingredientes — Por ejemplo, si deja en la mesa un papel y tabaco,
+     ingredientes — por ejemplo, si deja en la mesa un papel y tabaco,
      el que trae los cerillos educadamente tomará los ingredientes, se
      hará un cigarro, y lo fumará.
 
@@ -1776,7 +1776,7 @@ El problema en este caso es que, al tener que cubrir un número de
 ingredientes mayor a uno, utilizar sólo un semáforo ya no funciona: si
 =agente()= decide proveer papel y cerillos, nada garantiza que no sea
 el =fumador['cerillo']= el que reciba la primer señal o que
-=fumador['tabaco']= reciba la segunda — Para que este programa avance
+=fumador['tabaco']= reciba la segunda — para que este programa avance
 hace falta, más que otra cosa, la buena suerte de que las señales sean
 recibidas por el proceso indicado.
 
@@ -1860,7 +1860,7 @@ seccion_critica();
 sem_post(semaforo);
 #+end_src
 
-El código presentado es absolutamente válido — Pero cae en una
+El código presentado es absolutamente válido — pero cae en una
 /espera activa/ que desperdicia innecesariamente y constantemente
 tiempo de procesador (y no tiene garantía de tener más éxito que una
 espera pasiva, como sería el caso con un =sem_wait()=).
@@ -1881,7 +1881,7 @@ embargo, es común ver casos como este.
 Los /monitores/ son estructuras provistas por el lenguaje o entorno de
 desarrollo que /encapsulan/ tanto a los datos /como a las funciones
 que los pueden manipular/, e impiden el acceso directo a las funciones
-potencialmente peligrosas — En otras palabras, son /tipos de datos
+potencialmente peligrosas — en otras palabras, son /tipos de datos
 abstractos/ (ADTs), /clases/ de /objetos/, y /exponen/ una serie de
 /métodos públicos/, además de poseer /métodos privados/ que emplean
 internamente.
@@ -1916,7 +1916,7 @@ Y se inicializa a un =SimpleClass sc = new SimpleClass()=, cuando
 se llame a =sc.metodoSeguro()=, la máquina virtual verificará si ningún
 otro proceso está ejecutando =metodoseguro()=; en caso de que no sea
 así, le permitirá la ejecución obteniendo el candado, y en caso de sí
-haberlo, el hilo se bloqueará hasta que el candado sea liberado — Esto
+haberlo, el hilo se bloqueará hasta que el candado sea liberado — esto
 es, la propiedad =synchronized= hace que todo acceso al método en
 cuestión sea protegido por una mutex.
 
@@ -2103,7 +2103,7 @@ avenidas del mismo rango en que no hay un semáforo, cada uno desde
 otra dirección. Los reglamentos de tránsito señalan que la precedencia
 la tiene /el automovilista que viene más por la derecha/. En este
 caso, cada uno de los cuatro debe ceder el paso al que tiene a la
-derecha — Y ante la ausencia de un criterio humano que rompa el
+derecha — y ante la ausencia de un criterio humano que rompa el
 bloqueo, deberían todos mantenerse esperando por siempre.
 
 # de aquí en adelante se hace mucha confusión entre los términos
@@ -2163,7 +2163,7 @@ secuencia:
 
 #+attr_latex: width=0.5\textwidth
 #+label: PROC_bloqueo_mutuo_simple
-#+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
+#+caption: Esquema clásico de un bloqueo mutuo simple: los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades de cinta /1/ y /2/.
 [[./img/dot/bloqueo_mutuo_simple.png]]
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
@@ -2214,13 +2214,13 @@ prevención de bloqueos.
 *** Serialización
 
 Una manera de evitar bloqueos /por completo/ sería el que un sistema
-operativo jamás asignara recursos a más de un proceso a la vez — Los
+operativo jamás asignara recursos a más de un proceso a la vez — los
 procesos podrían seguir efectuando cálculos o empleando recursos /no
 rivales/ (que no requieran acceso exclusivo — por ejemplo, empleo de
 archivos en el disco, sin que exista un acceso directo del proceso al
 disco), pero sólo uno podría obtener recursos de forma exclusiva al
 mismo tiempo. Este mecanismo sería la /serialización/, y la situación
-antes descrita se resolvería de la siguiente manera:
+antes descripta se resolvería de la siguiente manera:
 
 1. /A/ solicita una unidad de cinta y se bloquea
 
@@ -2305,7 +2305,7 @@ declarara /una sola vez/ qué recursos requeriría, pero posteriormente
 la estrategia se modificó, permitiendo que un proceso solicite
 recursos nuevamente, pero únicamente a condición de que previo a
 hacerlo /renuncien a los recursos/ que tenían en ese momento —
-Claro, pueden volver a incluirlos en la operación de solicitud.
+claro, pueden volver a incluirlos en la operación de solicitud.
 
 Al haber una /renuncia explícita/, se imposibilita de forma tajante
 que un conjunto de procesos entre en condición de bloqueo mutuo.
@@ -2368,7 +2368,7 @@ planificador puede marcar qué orden de ejecución (esto es, qué
 #+attr_html: height="350"
 #+attr_latex: width=0.7\textwidth
 #+label: PROC_tray_proc_evasion_bloqueo
-#+caption: Evasión de bloqueos: Los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un plotter y una impresora, exponiéndose a bloqueo mutuo.
+#+caption: Evasión de bloqueos: los procesos $A$ (horizontal) y $B$ (vertical) requieren del acceso exclusivo a un plotter y una impresora, exponiéndose a bloqueo mutuo.
 [[./img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
 El análisis de la interacción entre dos procesos se representa como en
@@ -2676,7 +2676,7 @@ sistema /en un momento dado/):
 
 #+attr_latex: width=0.7\textwidth
 #+label: PROC_deteccion_bloqueos
-#+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
+#+caption: Detección de ciclos denotando bloqueos: grafo de procesos y recursos en un momento dado.
 [[./img/dot/deteccion_bloqueos.png]]
 
 En la gráfica /Detección de ciclos denotando bloqueos/, se procede así:
@@ -2702,7 +2702,7 @@ su ejecución no avanzará más), hay varias estrategias para la
 recuperación:
 
 - Terminar a todos los procesos bloqueados. Esta es la técnica más
-  sencilla y, de cierto modo, más justa — Todos los procesos
+  sencilla y, de cierto modo, más justa — todos los procesos
   implicados en el bloqueo pueden ser relanzados, pero todo el estado
   del cómputo que han realizado hasta este momento se perderá.
 
@@ -2805,7 +2805,7 @@ programadores) ante la disyuntiva de afrontar restricciones para la
 forma y conveniencia de solicitar recursos.
 
 En este caso, se toma una decisión entre lo /correcto/ y lo
-/conveniente/ — Un sistema operativo formalmente no debería permitir
+/conveniente/ — un sistema operativo formalmente no debería permitir
 la posibilidad de que hubiera bloqueos, pero la inconveniencia
 presentada al usuario sería inaceptable.
 
@@ -2826,7 +2826,7 @@ características de acceso y bloqueo necesarias.
 
 La realidad del cómputo marca que es el programador de aplicaciones
 quien debe prever las situaciones de carrera, bloqueo e inanición en
-su código — El sistema operativo empleará ciertos mecanismos para
+su código — el sistema operativo empleará ciertos mecanismos para
 asegurar la seguridad en general entre los componentes del sistema,
 pero el resto recae en las manos del programador.
 

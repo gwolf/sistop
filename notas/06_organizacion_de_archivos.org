@@ -22,7 +22,7 @@ historia de la computación, sobreviviendo a lo largo de prácticamente
 todas las generaciones de sistemas operativos. Sin embargo, para poder
 analizar cómo es que el sistema operativo representa la información en
 el dispositivo físico, el presente capítulo inicia discutiendo cómo es
-que esta información es comprendida por los niveles más altos — Por
+que esta información es comprendida por los niveles más altos — por
 los programas en espacio de usuario.
 
 #+attr_latex: height=0.5\textheight
@@ -57,7 +57,7 @@ traducir la información resultante a un sistema de archivos.
 
 Cabe mencionar que varias de las capas aquí presentadas podrían
 perfectamente ser subdivididas, analizadas por separado, e incluso
-tratarse de forma completamente modular — De hecho, este es
+tratarse de forma completamente modular — de hecho, este es
 precisamente el modo en que se implementan de forma transparente
 características hoy en día tan comunes como sistemas de archivos en
 red, o compresión y cifrado de la información. Una referencia más
@@ -67,10 +67,10 @@ división y comunicación entre capas puede ubicarse en el artículo de
 
 * Concepto de archivo
 
-En primer término, un archivo es un /tipo de datos abstracto/ — Esto
+En primer término, un archivo es un /tipo de datos abstracto/ — esto
 es,  podría verse como una estructura que
 exclusivamente permite la manipulación por medio de una interfaz
-/orientada a objetos/: Los procesos en el sistema sólo pueden tener
+/orientada a objetos/: los procesos en el sistema sólo pueden tener
 acceso a los archivos por medio de la interfaz ofrecida por el sistema
 operativo.[fn:: Como se verá en la sección \ref{FS_volumenes_crudos}, esto no es /necesariamente/
 así, sin embargo, el uso de los dispositivos /en crudo/ es muy
@@ -80,7 +80,7 @@ sección describe las principales operaciones provistas por esta
 interfaz.
 
 Para el usuario, los archivos son la /unidad lógica mínima/ al hablar
-de almacenamiento: Todo el almacenamiento /persistente/ (que sobrevive
+de almacenamiento: todo el almacenamiento /persistente/ (que sobrevive
 en el tiempo, sea a reinicios del sistema, a pérdida de corriente o a
 otras circunstancias en el transcurso normal de ejecución) en el
 sistema al que tiene acceso, se efectúa dentro de archivos; el espacio
@@ -244,11 +244,11 @@ Por otro lado, el proceso necesita:
               necesariamente es igual a los permisos que tiene el
               archivo en cuestión en disco, sino que el /subconjunto/
               de dichos permisos bajo los cuales está operando para
-              este proceso en particular — Si un archivo fue abierto
+              este proceso en particular — si un archivo fue abierto
               en modo de sólo lectura, por ejemplo, este campo
               sólo permitirá la lectura.
 
-** Acceso concurrente: Bloqueo de archivos
+** Acceso concurrente: bloqueo de archivos
 # <<DIR_bloq_arch>>
 
 Dado que los archivos pueden emplearse como mecanismo de comunicación
@@ -265,7 +265,7 @@ es operar sobre el archivo entero.
 En general, la nomenclatura que se sigue para los bloqueos es:
 
 - Compartido :: (/Shared lock/) Podría verse como equivalente a un
-                bloqueo (o /candado/) para realizar lectura — Varios
+                bloqueo (o /candado/) para realizar lectura — varios
                 procesos pueden adquirir al mismo tiempo un bloqueo de
                 lectura, e indica que todos los que posean dicho
                 /candado/ tienen la expectativa de que el archivo no
@@ -308,7 +308,7 @@ responsabilidad recae en cada uno de los programas de aplicación]
 
 Cabe mencionar que el manejo de bloqueos con archivos requiere del
 mismo cuidado que el de bloqueo por recursos cubierto en la
-sección \ref{PROC_bloq_mutuos}: Dos procesos intentando adquirir un
+sección \ref{PROC_bloq_mutuos}: dos procesos intentando adquirir un
 candado exclusivo sobre dos archivos pueden caer en un bloqueo mutuo
 tal como ocurre con cualquier otro recurso.
 
@@ -316,7 +316,7 @@ tal como ocurre con cualquier otro recurso.
 
 Si los archivos son la /unidad lógica mínima/ con la
 que se puede guardar información en almacenamiento secundario,
-naturalmente sigue que existen archivos de diferentes tipos: Cada
+naturalmente sigue que existen archivos de diferentes tipos: cada
 archivo podría ser un documento de texto, un binario ejecutable, un
 archivo de audio o video, o un larguísimo etcetera, e intentar emplear
 a un archivo como uno de un tipo distinto puede resultar desde una
@@ -326,7 +326,7 @@ archivo binario resulta en una gran cantidad de hojas inútiles,
 particularmente tomando en cuenta que hay caracteres de control como
 el ASCII 12 (avance de forma, /form feed/), que llevan a las
 impresoras que operan en modo texto a iniciar una nueva página; llevar
-a un usuario a correr un archivo ejecutable /disfrazado/ de un
+a un usuario a ejecutar un archivo ejecutable /disfrazado/ de un
 documento inocuo, como se verá a continuación, fue un importante
 vector de infección de muchos virus.]
 
@@ -335,7 +335,7 @@ reconozca al tipo de un archivo:
 
 - Extensión :: En los sistemas CP/M de los 1970, el nombre de cada
                archivo se dividía en dos porciones, empleando como
-               elemento separador al punto: El nombre del archivo y su
+               elemento separador al punto: el nombre del archivo y su
                extensión. El sistema mantenía una lista de extensiones
                conocidas, para las cuales sabría cómo actuar, y este
                diseño se extendería a las aplicaciones, que sólo
@@ -355,8 +355,8 @@ reconozca al tipo de un archivo:
                no requieren ser del conocimiento del usuario, sino que
                son gestionadas por el sistema operativo, abre una vía
                de ataque automatizado que se popularizó en su momento:
-               El envío de correos con extensiones engañosas
-               duplicadas — Esto es, el programa maligno (un /programa
+               el envío de correos con extensiones engañosas
+               duplicadas — esto es, el programa maligno (un /programa
                troyano/) se envía a todos los contactos del usuario
                infectado, presentándose por ejemplo como una imágen,
                con el nombre =inocente.png.exe=. Por el esquema de
@@ -367,7 +367,7 @@ reconozca al tipo de un archivo:
 
 - Números mágicos :: La alternativa que emplean los sistemas Unix es,
      como siempre, simple y /elegante/, aunque indudablemente presenta
-     eventuales lagunas: El sistema mantiene una lista compilada de
+     eventuales lagunas: el sistema mantiene una lista compilada de
      las /huellas digitales/ de los principales formatos que debe
      manejar,[fn:: Una de las ventajas de este esquema es que cada
      administrador de sistema puede ampliar la lista con las huellas
@@ -393,13 +393,13 @@ reconozca al tipo de un archivo:
      empleando como /intérprete/ al comando indicado inmediatamente
      después del /hashbang/. Es por esto que se pueden ejecutar
      directamente, por ejemplo, los archivos que inician con
-     =#!/usr/bin/bash=: El sistema operativo invoca al programa
+     =#!/usr/bin/bash=: el sistema operativo invoca al programa
      =/usr/bin/bash=, y le especifica como argumento al archivo en
      cuestión.
 
 - Metadatos externos :: Los sistemas de archivos empleado por las
      Apple Macintosh desde 1984 separan en dos /divisiones/ (/forks/)
-     la información de un archivo: Los datos que propiamente
+     la información de un archivo: los datos que propiamente
      constituyen al archivo en cuestión son la /división de datos/
      (/data fork/), y la información /acerca del archivo/ se guardan
      en una estructura independiente llamada /división de recursos/
@@ -407,7 +407,7 @@ reconozca al tipo de un archivo:
 
      Esta idea resultó fundamental para varias de las características
      /amigables al usuario/ que presentó Macintosh desde su
-     introducción — Particularmente, para presentar un entorno gráfico
+     introducción — particularmente, para presentar un entorno gráfico
      que respondiera ágilmente, sin tener que buscar los datos base de
      una aplicación dentro de un archivo de mucho mayor tamaño. La
      /división de recursos/ cabe en pocos sectores de disco, y si
@@ -442,7 +442,7 @@ archivos/. Un archivo almacena información de /algún tipo/,
 estructurado o no estructurado.
 
 La mayor parte de los sistemas operativos maneja únicamente archivos
-/sin estructura/ — Cada aplicación es responsable de preparar la
+/sin estructura/ — cada aplicación es responsable de preparar la
 información de forma congruente, y la responsabilidad del sistema
 operativo es únicamente entregarlo como un conjunto de
 bytes. Históricamente, hubo sistemas operativos, como IBM CICS (1968), IBM MVS
@@ -453,7 +453,7 @@ El hecho de que el sistema operativo no imponga estructura a un archivo no
 significa, claro está, que la aplicación que lo genera no lo haga. La
 razón por la que los sistemas creados en los últimos 30 años no han
 implementado este esquema de base de datos es que le /resta/
-flexibilidad al sistema: El que una aplicación tuviera que ceñirse a
+flexibilidad al sistema: el que una aplicación tuviera que ceñirse a
 los tipos de datos y alineación de campos del sistema operativo
 impedía su adecuación, y el que la funcionalidad de un archivo tipo
 base de datos dependiera de la versión del sistema operativo creaba
@@ -469,7 +469,7 @@ de bajo nivel como /systemtap/ como por herramientas tan de escritorio
 como el gestor de fotografías /shotwell/ o el navegador /Firefox/).
 
 En los sistemas derivados de MS-DOS puede verse aún un remanente de
-los archivos estructurados: En estos sistemas, un archivo puede ser
+los archivos estructurados: en estos sistemas, un archivo puede ser
 /de texto/ o /binario/. Un archivo de texto está compuesto por una
 serie de caracteres que forman /líneas/, y la separación entre una
 línea y otra constituye de un /retorno de carro/ (=CR=, caracter
@@ -491,7 +491,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      harían las unidades de cinta mencionadas en la sección
      \ref{DIR_operaciones_con_archivos}, y como lo ilustra la figura
      \ref{DIR_acceso_secuencial}:
-     El mecanismo principal para leer o escribir es ir avanzando
+     el mecanismo principal para leer o escribir es ir avanzando
      consecutivamente por los bytes que conforman al archivo hasta
      llegar a su final.
 
@@ -542,7 +542,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
      Para implementar este acceso, se divide al conjunto de datos en
      dos secciones (incluso, posiblemente, en dos archivos
-     independientes): La primer sección es una lista corta de
+     independientes): la primer sección es una lista corta de
      identificadores, cada uno con el punto de inicio y término de
      los datos a los que apunta. Para leer un registro, se emplea
      acceso aleatorio sobre el índice, y el apuntador se avanza a la
@@ -556,7 +556,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
      La principal desventaja de este modelo de indexación sobre
      registros de longitud variable es que sólo resulta eficiente
-     para contenido /mayormente de lectura/: Cada vez que se produce
+     para contenido /mayormente de lectura/: cada vez que se produce
      una escritura y cambia la longitud de los datos almacenados, se
      va generando fragmentación en el archivo, y para resolverla
      probablemente se hace necesario suspender un tiempo la ejecución
@@ -572,12 +572,12 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
      Es importante recalcar que la escritura en ambas partes de la
      base de datos (índice y datos) debe mantenerse con garantías de
-     atomicidad — Si se pierde la sincronía entre ellas, el resultado
+     atomicidad — si se pierde la sincronía entre ellas, el resultado
      será una muy probable corrupción de datos.
 
 #+attr_latex: width=\textwidth
 #+label: DIR_acceso_relativo_a_indice
-#+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
+#+caption: Acceso relativo a índice: un índice apuntando al punto justo de un archivo sin estructura
 [[./img/ditaa/acceso_relativo_a_indice.png]]
 
 ** Transferencias orientadas a bloques
@@ -627,7 +627,7 @@ Cada sistema de archivos puede determinar cuántos y qué caracteres
 son válidos para designar a uno de sus elementos, y cuáles son
 separadores válidos. El caracter que se emplea para separar los
 elementos de un directorio no es un estándar a través de todos los
-sistemas operativos — Los más comunes en uso hoy en día
+sistemas operativos — los más comunes en uso hoy en día
 son la diagonal (=/=), empleada en sistemas tipo Unix y derivados
 (incluyendo MacOS X y Android), y la diagonal invertida ($\backslash$),
 empleada en CP/M y derivados, incluyendo MS-DOS y Windows.
@@ -655,13 +655,13 @@ separación, permisos y privilegios como el que poco después
 aparecería.
 
 En las computadoras personales los sistemas de archivos eran también
-planos en un primer momento, pero por otra razón: En los sistemas
+planos en un primer momento, pero por otra razón: en los sistemas
 /profesionales/ ya se había desarrollado el concepto; al aparecer la
 primer computadora personal en 1975, ya existían incluso las primeras
 versiones de Unix diseñadas para trabajo en red. La prioridad en los
 sistemas personales era mantener el código del sistema operativo
 simple, mínimo. Con unidades de disco capaces de manejar entre 80 y
-160KB, no tenía mucho sentido implementar directorios — Si un usuario
+160KB, no tenía mucho sentido implementar directorios — si un usuario
 quisiera llevar a cabo una división temática de su trabajo, lo
 colocaría en distintos /discos flexibles/. El sistema operativo CP/M
 nunca soportó jerarquías de directorios, como tampoco lo hizo la
@@ -671,14 +671,14 @@ duros de 10MB, acompañando al lanzamiento de la IBM PC modelo XT.]
 
 El sistema de archivos original de la Apple Macintosh, MFS, estaba
 construido sobre un modelo plano, pero presentando la /ilusión/ de
-directorios de una forma comparable a las etiquetas: Existían bajo
+directorios de una forma comparable a las etiquetas: existían bajo
 /ciertas/ vistas (pero notoriamente no en los diálogos de abrir y
 grabar archivos), pero el nombre de cada uno de los archivos tenía que
 ser único, dado que el direcorio al que pertenecía era básicamente
 sólo un atributo del archivo.
 
 Y contrario a lo que dicta la intuición, el modelo de directorio plano
-no ha desaparecido: El sistema de /almacenamiento en la nube/ ofrecido
+no ha desaparecido: el sistema de /almacenamiento en la nube/ ofrecido
 por el servicio /Amazon S3/ (/Simple Storage Service/, /Servicio
 Simple de Almacenamiento/) maneja únicamente /objetos/ (comparable con
 la definición de /archivos/ que se ha venido manejando) y /cubetas/ (de cierto modo
@@ -694,7 +694,7 @@ con mucho, siendo el dominante.
 *** Directorios de profundidad fija
 
 Las primeras implementaciones de directorios eran /de un sólo nivel/:
-El total de archivos en un sistema podía estar dividido en
+el total de archivos en un sistema podía estar dividido en
 directorios, fuera por tipo de archivo (separando, por ejemplo,
 programas de sistema, programas de usuario y textos del correo), por
 usuario (facilitando una separación lógica de los archivos de un
@@ -711,19 +711,19 @@ de Archivos de Usuario/).
 [[./img/dot/directorio_simple.png]]
 
 Este esquema resuelve el problema principal del nombre global único:
-Antes de los directorios, cada usuario tenía que cuidar que los
+antes de los directorios, cada usuario tenía que cuidar que los
 nombres de sus archivos fueran únicos en el sistema, y ya teniendo
 cada uno su propio espacio, se volvió una tarea mucho más simple. La
 desventaja es que, si el sistema restringe a cada usuario a escribir
 en su UFD, se vuelve fundamentalmente imposible trabajar en algún
-proyecto conjunto: No puede haber un directorio que esté tanto dentro
+proyecto conjunto: no puede haber un directorio que esté tanto dentro
 de =usr1= como de =usr2=, y los usuarios encontrarán más dificil
 llevar un proyecto conjunto.
 
 *** Directorios estructurados en árbol
 
 El siguiente paso natural para este esquema es permitir una /jerarquía
-ilimitada/: En vez de exigir que exista una capa de directorios, se le
+ilimitada/: en vez de exigir que exista una capa de directorios, se le
 puede /dar la vuelta/ al argumento, y permitir que cada directorio
 pueda contener a otros archivos o directorios a niveles
 arbitrarios. Esto permite que cada usuario (y que el administrador del
@@ -736,16 +736,16 @@ piense en el espacio de almacenamiento como un espacio a largo plazo.
 [[./img/dot/directorio_arbol.png]]
 
 Junto con esta estructura nacen las /rutas de búsqueda/ (/search
-path/): Tanto los programas como las bibliotecas de sistema ahora
+path/): tanto los programas como las bibliotecas de sistema ahora
 pueden estar en cualquier lugar del sistema de archivos. Al definirle
 al sistema una /ruta de búsqueda/, el usuario operador puede
 desentenderse del lugar exacto en el que está determinado programa —
-El sistema se encargará de buscar en todos los directorios mencionados
+el sistema se encargará de buscar en todos los directorios mencionados
 los programas o bibliotecas que éste requiera.[fn:: La /ruta de
 búsqueda/ refleja la organización del sistema de archivos en el
 contexto de la instalación específica. Es común que la ruta de
 búsqueda de un usuario estándar en Unix sea similar a
-=/usr/local/bin:/usr/bin:/bin:~/bin= — Esto significa que cualquier
+=/usr/local/bin:/usr/bin:/bin:~/bin= — esto significa que cualquier
 comando que sea presentado es buscado, en el orden indicado, en los
 cuatro directorios presentados (separados por el caracter =:=, la
 notación =~= indica el directorio personal del usuario activo). En
@@ -759,7 +759,7 @@ Si bien parecería que muchos de los sistemas de archivos empleados
 hoy en día pueden modelarse suficientemente con un árbol, donde hay un
 sólo nodo raiz, y donde cada uno de los nodos tiene un sólo nodo
 padre, la semántica que ofrecen es en realidad un /superconjunto
-estricto/ de esta: La de un grafo dirigido.
+estricto/ de esta: la de un grafo dirigido.
 
 En un grafo dirigido como el presentado en la figura \ref{DIR_directorio_DAG}, un mismo nodo puede tener varios directorios
 /padre/, permitiendo por ejemplo que un directorio de trabajo común
@@ -768,14 +768,14 @@ objeto/ está presente en más de un punto del árbol.
 
 #+attr_latex: width=0.5\textwidth
 #+label: DIR_directorio_DAG
-#+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
+#+caption: Directorio como un /grafo dirigido acíclico/: el directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
 [[./img/dot/directorio_DAG.png]]
 
 Un sistema de archivos puede permitir la organización como un /grafo
 dirigido/, aunque es común que la interfaz que presenta al
 usuario[fn:: Esta simplificación es simplemente una abstracción, y
 contiene una pequeña mentira, que será desmentida en breve.] se
-restrinja a un /grafo dirigido acíclico/: Las ligas múltiples son
+restrinja a un /grafo dirigido acíclico/: las ligas múltiples son
 permitidas, siempre y cuando no generen un ciclo.
 
 La semántica de los sistemas Unix implementa directorios como grafos
@@ -789,7 +789,7 @@ dirigidos por medio de dos mecanismos:
                existente se crea una /liga dura/ a él, ésta es
                sencillamente otra entrada en el directorio apuntando
                al mismo /i-nodo/. Ambas entradas, pues, son el mismo
-               archivo — No hay uno /maestro/ y uno /dependiente/.
+               archivo — no hay uno /maestro/ y uno /dependiente/.
 
 	       En un sistema Unix, este mecanismo tiene sólo dos
                restricciones:
@@ -827,24 +827,24 @@ Windows[fn:: Únicamente en aquellos que emplean el sistema de archivos
 de /FAT/ ], en dichos sistemas sigue siendo más común emplear los
 /accesos directos/. Se denomina así a un archivo (identificado por su
 extensión, =.lnk=), principalmente creado para poder /apuntar/ a los
-archivos desde el escritorio y los menúes — Si un proceso solicita al
+archivos desde el escritorio y los menúes — si un proceso solicita al
 sistema abrir el /acceso directo/, no obtendrá al archivo destino,
 sino que al acceso directo mismo.
 
 Ahora, si bien tanto las ligas duras como las ligas simbólicas existen
 también en Windows, su uso es muy poco frecuente. El API de Win32
 ofrece las funciones necesarias, pero éstas no están reflejadas desde
-la interfaz usuario del sistema — Y son sistemas donde el usuario
+la interfaz usuario del sistema — y son sistemas donde el usuario
 promedio no emplea una interfaz programador, sino que una interfaz
 gráfica. Las ligas, pues, no son más empleadas por
-/cuestión cultural/: En sus comunidades de usuarios, nunca fueron
+/cuestión cultural/: en sus comunidades de usuarios, nunca fueron
 frecuentes, por lo cual se mantienen como conceptos empleados sólo por
 los /usuarios avanzados/.
 
 Ya con el conocimiento de las ligas, y reelaborando la figura
-\ref{DIR_directorio_DAG} con mayor apego a la realidad: En los
+\ref{DIR_directorio_DAG} con mayor apego a la realidad: en los
 sistemas operativos (tanto Unix como Windows), todo directorio tiene
-dos entradas especiales: Los directorios =.= y =..=, que aparecen tan
+dos entradas especiales: los directorios =.= y =..=, que aparecen tan
 pronto como el directorio es creado, y resultan fundamentales para
 mantener la /navegabilidad/ del árbol.
 
@@ -863,12 +863,12 @@ su enlace =..=; en este caso, el directorio común =proyecto= está
 dentro del directorio =/home/usr2=. La figura representa la /liga
 simbólica/ desde =/home/usr1= como una línea punteada.
 
-Hay una excepción a esta regla: El directorio raiz. En este caso,
+Hay una excepción a esta regla: el directorio raiz. En este caso,
 tanto =.= como =..= apuntan al mismo directorio.
 
 Esta es la razón por la cual no se puede tomar rigurosamente a un
 árbol de archivos como a un /grafo dirigido acíclico/, ni en Windows
-ni en Unix: Tanto las entradas =.= (al apuntar al mismo directorio
+ni en Unix: tanto las entradas =.= (al apuntar al mismo directorio
 donde están contentidas) como las entradas =..= (al apuntar al
 directorio padre) crean ciclos.
 
@@ -939,14 +939,14 @@ básicas a presentar son:
 
 - Crear, eliminar o renombrar un elemento :: Si bien estas operaciones
      se llevan a cabo sobre el directorio, son invocadas a través de
-     la semántica orientada a archivos: Un archivo es creado con
+     la semántica orientada a archivos: un archivo es creado con
      =fopen()=, eliminado con =remove()=, y renombrado con =rename()=.
 
 *** Recorriendo los directorios
 # <<DIR_dir_traversal>>
 
 Es frecuente tener que aplicar una operación a todos los archivos
-dentro de cierto directorio — Por ejemplo, para agrupar a un
+dentro de cierto directorio — por ejemplo, para agrupar a un
 directorio completo en un archivo comprimido, o para copiar
 todos sus contenidos a otro medio. Procesar todas las entradas de un
 directorio, incluyendo las de sus subdirectorios, se denomina
@@ -977,7 +977,7 @@ se corre el peligro de entrar en un bucle infinito.
 
 Para recorrer al directorio ilustrado como ejemplo en la figura
 \ref{DIR_arbol_para_recorrer}, no bastaría tomar nota de las rutas de
-los archivos conforme son recorridas — Cada vez que los sean
+los archivos conforme son recorridas — cada vez que los sean
 procesados, su ruta será distinta.  Al intentar respaldar al
 directorio =/home/jose/proyecto=, por ejemplo, el recorrido resultante
 podría ser:
@@ -1008,7 +1008,7 @@ vez más casos de uso que apuntan a que se pueda estar por dar la
 bienvenida a una nueva metáfora de organización de archivos.
 
 Hay distintas propuestas, y claro está, es imposible aún saber cuál
-dirección obtendrá el favor del mercado — O, dado que no
+dirección obtendrá el favor del mercado — o, dado que no
 necesariamente siga existiendo un modelo apto para todos los usos, de
 /qué/ segmento del mercado.
 
@@ -1017,7 +1017,7 @@ necesariamente siga existiendo un modelo apto para todos los usos, de
 #<<DIR_montaje_directorios>>
 
 Para trabajar con el contenido de un sistema de archivos, el sistema
-operativo tiene que /montarlo/: Ubicarlo en algún punto del árbol de
+operativo tiene que /montarlo/: ubicarlo en algún punto del árbol de
 archivos visible al sistema y al usuario.
 
 Es muy común, especialmente en los entornos derivados de Unix, que un
@@ -1048,7 +1048,7 @@ encuentran:
 
 - Razones administrativas :: El administrador del sistema puede
      emplear sistemas de archivos distintos para aislar espacios de
-     usuarios entre sí: Por ejemplo, para evitar que un exceso de
+     usuarios entre sí: por ejemplo, para evitar que un exceso de
      mensajes enviados en la bitácora (típicamente bajo =/var/log=)
      saturen al sistema de archivos principal, o para determinar
      patrones de uso máximo por grupos de usuarios.
@@ -1085,7 +1085,7 @@ para el API del sistema) como /Mi PC/.
 
 Para especificar la /ruta completa/ a determinado archivo, se inicia
 con el identificador del volumen. De este modo, la especificación absoluta de un archivo es
-una cadena como =VOL:\Dir1\Dir2\Archivo.ext= — El caracter =:= separa
+una cadena como =VOL:\Dir1\Dir2\Archivo.ext= — el caracter =:= separa
 al volumen del árbol del sistema de archivos, y el caracter
 $\backslash$ separa uno de otro a los directorios. Por convención, si
 no se especifica la unidad, el sistema asumirá que se está haciendo
@@ -1093,7 +1093,7 @@ referencia a la /unidad actual/ (a grandes rasgos, la última unidad en
 ser utilizada).
 
 Los identificadores de volumen están preasignados, muchos de ellos
-según a un esquema heredado desde la época de las primeras PC: Los
+según a un esquema heredado desde la época de las primeras PC: los
 volúmenes =A= y =B= están reservados para las unidades de disco
 flexible; =C= se refiere al disco duro de arranque, y las unidades
 posteriores que va detectando el sistema son =D=, =E=, =F=, etc.
@@ -1120,7 +1120,7 @@ transferencias de forma /implícita/ y /automática/, empleando
 /sistemas de archivos sobre la red/ (o lo que es lo mismo, /sistemas
 de archivos remotos/).  Éstos se presentan como caso particular de
 la /abstracción de sistemas no-físicos/ que fueron mencionados en la sección
-anterior: Si bien el sistema operativo no tiene acceso /directo/ a los
+anterior: si bien el sistema operativo no tiene acceso /directo/ a los
 archivos y directorios que le solicitará el usuario, a través de los
 módulos de red, sabe cómo obtenerlos y presentarlos /como si fueran
 locales/.
@@ -1128,7 +1128,7 @@ locales/.
 Al hablar de sistemas de archivos en red, casi siempre se hará
 siguiendo un /modelo cliente-servidor/. Estos términos no se refieren
 a las prestaciones relativas de una computadora, sino al rol que ésta
-juega /dentro de cada conexión/ — Esto es, se designa como /cliente/ a
+juega /dentro de cada conexión/ — esto es, se designa como /cliente/ a
 la computadora que solicita un servicio, y como /servidor/ a la que lo
 provee; es frecuente que dos computadoras sean tanto servidor como
 cliente la una de la otra en distintos servicios.
@@ -1137,7 +1137,7 @@ cliente la una de la otra en distintos servicios.
 
 El /Sistema de Archivos en Red/ (/Network File System/, mejor conocido
 por sus siglas, /NFS/) fue creado por Sun Microsystems, y desde 1984
-forma parte de su sistema operativo — Resultó una implementación tan
+forma parte de su sistema operativo — resultó una implementación tan
 exitosa que a los pocos años formaba parte de todos los sistemas tipo
 Unix.
 
@@ -1154,7 +1154,7 @@ a una /conexión virtual establecida/.
 
 La motivación de origen para la creación de NFS fue presentar una
 solución que aprovechara el hardware existente y centralizara la
-administración: Ofrecer las facilidades para contar con redes donde
+administración: ofrecer las facilidades para contar con redes donde
 hubiera un /servidor de archivos/, y donde las estaciones de trabajo
 tuvieran únicamente una instalación básica,[fn:: Incluso manejando
 estaciones de trabajo /diskless/, esto es, computadoras sin disco
@@ -1164,7 +1164,7 @@ ejecutará] y el entorno de usuario completo estuviera disponible en
 cualquiera de las estaciones.
 
 NFS ofrece sobre la red un sistema de archivos con la semántica Unix
-completa — Para montar un sistema remoto, basta montarlo[fn:: Para
+completa — para montar un sistema remoto, basta montarlo[fn:: Para
 montar un sistema remoto, se emplea un comando como =mount
 archivos.unam.mx:/ext/home /home=, con lo cual el directorio
 =/ext/home= ubicado en el servidor =archivos.unam.mx= aparecerá
@@ -1172,9 +1172,9 @@ montado como directorio =/home= local.] y usarlo como si fuera local. El
 manejo de permisos, usuarios, e incluso las ligas duras y simbólicas
 se manejan exactamente como se haría localmente.
 
-NFS es un protocolo muy ligero — No implementa cifrado ni
+NFS es un protocolo muy ligero — no implementa cifrado ni
 verificaciones adicionales, pero al día de hoy, es uno de los mejores
-mecanismos para el envío de grandes cantidades de información — Pero
+mecanismos para el envío de grandes cantidades de información — pero
 siempre en redes que sean /completamente confiables/.
 
 Ahora, NFS se presenta como uno de los componentes de una solución
@@ -1243,7 +1243,7 @@ volumen asignado de =W:=.
 Cuando LAN Manager fue introducido al mercado, los sistemas Microsoft no manejaban
 aún el concepto de usuarios, por lo que la única medida de seguridad
 que implementaba SMB era el manejo de hasta dos contraseñas por
-directorio compartido: Con una, el usuario obtenía acceso de sólo
+directorio compartido: con una, el usuario obtenía acceso de sólo
 lectura, y con la otra, de lectura y escritura. Tras la aparición de
 Windows NT, se agregó un esquema de identificación por
 usuaro/contraseña, que posibilita el otorgamiento de permisos con una
@@ -1274,7 +1274,7 @@ tan robusto que es hoy por hoy tomado como implementación refrencia.
 # esquemas como CEPH, Gluster?
 
 Los dos ejemplos de sistema de archivos en red presentados hasta ahora
-comparten una visión /tradicional/ del modelo cliente-servidor: Al ver
+comparten una visión /tradicional/ del modelo cliente-servidor: al ver
 el comando que inicializa una conexión, e incluso a ver la
 información que guarda el núcleo del cliente respecto a cualquiera de
 los archivos, resulta claro cuál es el servidor para cada uno de
@@ -1320,7 +1320,7 @@ esto significa que:
   archivo abierto fue modificado (esto es, a /hacer una llamada/ o
   /callback/). Los clientes pueden entonces intentar incorporar los
   cambios a su versión de trabajo, o continuar con la copia ya
-  obtenida — Es /esperable/ que si un segundo cliente realiza alguna
+  obtenida — es /esperable/ que si un segundo cliente realiza alguna
   modificación, incorpore los cambios hechos por el primero, pero esta
   responsabilidad se deja a la implementación del programa en
   cuestión.
@@ -1342,7 +1342,7 @@ transferirse el archivo completo.
 
 Hay aplicaciones que verdaderamente sufrirían si
 tuvieran que implementarse sobre un sistema de archivos distribuído —
-Por ejemplo, si una base de datos se distribuyera sobre AFS, la
+por ejemplo, si una base de datos se distribuyera sobre AFS, la
 carencia de mecanismos de bloqueo sobre /secciones/ del archivo, y el
 requisito de operar sobre /archivos completos/ harían impracticable
 compartir un archivo de uso intensivo y aleatorio.

@@ -313,6 +313,7 @@ candado exclusivo sobre dos archivos pueden caer en un bloqueo mutuo
 tal como ocurre con cualquier otro recurso.
 
 ** Tipos de archivo
+# <<DIR_tipos_archivo>>
 
 Si los archivos son la /unidad lógica mínima/ con la
 que se puede guardar información en almacenamiento secundario,
@@ -1012,7 +1013,6 @@ dirección obtendrá el favor del mercado — o, dado que no
 necesariamente siga existiendo un modelo apto para todos los usos, de
 /qué/ segmento del mercado.
 
-
 ** /Montaje/ de directorios
 #<<DIR_montaje_directorios>>
 
@@ -1106,6 +1106,115 @@ comportamiento y configuración específica.
 #+label: DIR_montaje_windows
 #+caption: Vista de un sistema de archivos Windows
 [[./img/dot/montaje_windows.png]]
+
+* Permisos
+
+Parte importante de la información que se almacena respecto a cada uno
+de los archivos, directorios u otros objetos son sus permisos de
+acceso. Los permisos indican al sistema qué puede hacerse y qué no con
+cada uno de los objetos, posiblemente diferenciando el acceso
+dependiendo del usuario o clase de usuarios de que se trate.
+
+Hay muchos esquemas de permisos; a continuación se presentan tres
+esquemas, de más simple a más complejo, de permisos en sistemas de
+archivos.
+
+** Sistemas FAT
+
+El sistema de archivos FAT[fn:: Recibe su nombre de las siglas de su
+estructura fundamental, la /Tabla de Asignación de Archivos/, o /File
+Allocation Table/.] fue diseñado a fines de los 1970, y al día de hoy
+es muy probablemente el sistema de archivos más ampliamente utilizado
+del mundo. Su diseño es suficientemente simple para ser incluído en
+dispositivos muy limitados; esta simplicidad se demostrará al analizar
+sus principales estructuras son analizadas en el capítulo \ref{FS}. Y
+por otro lado, con sólo modificaciones relativamente menores a su
+diseño original, ha logrado extenderse de un sistema pensado para
+volúmenes de 150K hasta llegar a las decenas de gigabytes.
+
+En cada una de las entradas del directorio en un sistema de archivos
+FAT, el byte número 12 almacena los siguientes /atributos/:
+
+- Oculto :: Si está en cendido, el archivo no se deberá mostrar al
+            usuario en listados de directorio.
+
+- Sólo lectura :: El sistema operativo debe evitar toda modificación
+                  al archivo, esto es, rechazar las llamadas al
+                  sistema que soliciten esta modificación.
+
+- Sistema :: Como se explicará en la sección \ref{FS_tabla_fat}, un
+             sistema de archivos FAT tiende conforme se va utilizando
+             a /fragmentar/ los archivos que almacena. La carga del
+             sistema operativo tiene que realizarse empleando código
+             lo más compacto y sencillo posible: sin siquiera tener
+             conocimiento del sistema de archivos. Este atributo
+             indica que el sistema operativo debe cuidar no mover ni
+             fragmentar al archivo en cuestión.
+
+- Archivado :: MS-DOS incluía herramientas bastante sencillas para
+               realizar respaldos; estas basaban su operación en este
+               atributo: Conforme se realizaba un respaldo, todos los
+               archivos iban siendo marcados como /archivados/. Y
+               cuando un archivo era modificado, el sistema operativo
+               retiraba este atributo. De esta manera, el siguiente
+               respaldo contendría únicamente los archivos que habían
+               sido modificados desde el respaldo anterior.
+
+Estos atributos eran suficientes para las necesidades de un sistema de
+uso personal de hace más de tres décadas. Sin embargo, y dado que está
+reservado todo un byte para los atributos, algunos sistemas
+extendieron los atributos cubriendo distintas necesidades. Estos
+cuatro atributos son, sin embargo, la base del sistema.
+
+Puede verse que, bajo MS-DOS, no se hace diferencia entre /lectura/ y
+/ejecución/. Como se presentó en la sección \ref{DIR_tipos_archivo},
+MS-DOS basa la identificación de archivos en su /extensión/. Y, claro,
+siendo un sistema concebido como /monousuario/, no tiene sentido
+condicionar la /lectura/ de un archivo: El sistema operativo siempre
+permitirá la lectura de cualquier archivo.
+
+** Modelo Unix
+
+El sistema Unix precede a MS-DOS por una década. Sin embargo, su
+concepción es de origen para un esquema multiusuario, con las
+provisiones necesarias para que cada uno de ellos indique qué usuarios
+pueden o no tener diferentes tipos de acceso a los archivos.
+
+En Unix, cada uno de los usuarios pertenece a uno o más
+/grupos/. Estos grupos son gestionados por el administrador del
+sistema.
+
+Cada objeto en el sistema de archivos describe sus permisos de acceso
+por nueve bits, y con el identificador de su usuario y grupo
+propietarios.
+
+Estos bits están dispuestos en tres grupos de tres; uno para el
+/usuario/, uno para el /grupo/, y uno para los /otros/.  Por último,
+los tres grupos de tres bits indican si se otorga permiso de
+/lectura/, /eescritura/ y /ejecución/. Estos permisos son los mismos
+que fueron presentados en la sección \ref{MEM_permisos}, relativos al
+manejo de memoria.
+
+Estos tres grupos de tres permiten suficiente /granularidad/ en el
+control de acceso para expresar casi cualquier combinación requerida.
+
+En este punto, cabe recordar que, en un sistema Unix, los dispositivos
+del sistema así como varios objetos virtuales (como las /tuberías/ de
+comunicación entre procesos) son representados en el sistema de
+archivos. Esto significa que, por medio de estos permisos, el
+administrador del sistema puede indicar qué usuarios pueden tener
+permisos de lectura o modificación sobre los diferentes componentes
+hardware del sistema.
+
+El esquema de persmisos de Unix presenta algunas características
+adicionales, como los /bits SUID/SGID/ o los /atributos extendidos/
+que presentan ciertas implementaciones; se sugiere al lector
+interesado referirse a las /páginas de manual/ de Linux para los
+comandos =chmod= y =chattr= respectivamente.
+
+** RBAC
+
+
 
 * Sistemas de archivos remotos
 

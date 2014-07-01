@@ -351,31 +351,31 @@ algunos de estos objetivos pueden ser mutuamente contradictorios):
 
 - Minimizar la sobrecarga :: El tiempo que el algoritmo pierda en
      /burocracia/ debe mantenerse al mínimo, dado que éste es tiempo
-     de procesamiento útil perdido
+     de procesamiento útil perdido.
 
 - Equilibrar el uso de recursos :: Favorecer a los procesos que
      empleen recursos subutilizados, penalizar a los que peleen por
-     un recurso sobreutilizado causando contención en el sistema
+     un recurso sobreutilizado causando contención en el sistema.
 
 - Evitar la postergación indefinida :: Aumentar la prioridad de los
      procesos más /viejos/, para favorecer que alcancen a obtener
-     algún recurso por el cual estén esperando
+     algún recurso por el cual estén esperando.
 
 - Favorecer el /uso esperado/ del sistema :: En un sistema con
      usuarios interactivos, maximizar la prioridad de los procesos
      que sirvan a solicitudes iniciadas por éste (aún a cambio de
-     penalizar a los procesos /de sistema)
+     penalizar a los procesos de sistema).
 
 - Dar preferencia a los procesos que /podrían causar bloqueo/ :: Si
      un proceso de baja prioridad está empleando un recurso del
      sistema por el cual más procesos están esperando, favorecer que
-     éste termine de emplearlo más rápido
+     éste termine de emplearlo más rápido.
 
 - Favorecer a los procesos con un /comportamiento deseable/ :: Si un
      proceso causa muchas demoras (por ejemplo, atraviesa una ráfaga
      de entrada/salida que le requiere hacer muchas llamadas a
-     sistema o interrupciones), se le puede penaliza porque degrada
-     el rendimiento global del sistema
+     sistema o interrupciones), se le puede penalizar porque degrada
+     el rendimiento global del sistema.
 
 - Degradarse suavemente :: Si bien el nivel ideal de utilización del
      procesador es al 100%, es imposible mantenerse siempre a este
@@ -606,7 +606,8 @@ penalización.
 En un sistema que no cuenta con multitarea apropiativa, las alternativas
 presentadas hasta ahora resultan invariablmente injustas: FCFS
 favorece a los procesos largos, y SPN a los cortos. Un intento de
-llegar a un algoritmo más balanceado es HPRN.
+llegar a un algoritmo más balanceado es HPRN (también conocido como 
+/Highest Response Ratio Next/).
 
 Todo proceso inicia su paso por la cola de procesos listos con un
 valor de penalización $P = 1$. Cada vez que es obligado a esperar
@@ -956,7 +957,7 @@ externos al despachador. Algunas ideas al respecto son:
   procesos implicados, puede impactar en el tiempo global de
   ejecución. Es posible acudir a WSN periódicamente (y no cada vez que
   el despachador es invocado) para que reordene las colas según
-  criterios generales, y abanzar sobre dichas colas con algoritmos más
+  criterios generales, y avanzar sobre dichas colas con algoritmos más
   simples, aunque esto reduce la velocidad de reacción ante cambios de
   comportamiento.
 

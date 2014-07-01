@@ -42,7 +42,7 @@ Cada dispositivo empleado para almacenar archivos tiene un directorio.
 Cuando un sistema opera con más de un dispositivo físico, existen
 principalmente dos mecanismos para integrar a dichos dispositivos en
 un /sistema de archivos virtual/,[fn:: Esto será abordado en la
-sección \ref{DIR_montaje_directorios}] brindnado al usuario una
+sección \ref{DIR_montaje_directorios}] brindando al usuario una
 interfaz uniforme. Por último, los archivos son una estructura
 meramente lógica; deben ser convertidos para ser representados en un
 /dispositivo de bloques/ como los diversos tipos de unidades –aunque
@@ -90,7 +90,7 @@ de saber que está /potencialmente/ disponible.
 Dentro de cada /volúmen/ (cada medio de almacenamiento), los archivos
 disponibles conforman a un /directorio/, y son típicamente
 identificados por un /nombre/ o una /ruta/. Más adelante se
-presentarán de las diferentes construcciones semánticas que pueden
+presentarán las diferentes construcciones semánticas que pueden
 conformar a los directorios.
 
 ** Operaciones con archivos
@@ -587,7 +587,7 @@ archivos y directorios sobre un /dispositivo de bloques/, esto es, un
 dispositivo que, para cualquier transferencia solicitada desde o hacia
 él, responderá con un bloque de tamaño predefinido.[fn:: La sección
 \ref{HW_sist_unix} define los dispositivos /de caracteres/ y /de
-bloques.]
+bloques/.]
 
 Esto es, si bien el sistema operativo presenta una abstracción por
 medio de la cual la lectura (=read()=) puede ser de un tamaño
@@ -696,7 +696,7 @@ con mucho, siendo el dominante.
 Las primeras implementaciones de directorios eran /de un sólo nivel/:
 el total de archivos en un sistema podía estar dividido en
 directorios, fuera por tipo de archivo (separando, por ejemplo,
-programas de sistema, programas de usuario y textos del correo), por
+programas de sistema, programas de usuario y textos del correo) o por
 usuario (facilitando una separación lógica de los archivos de un
 usuario de pertenecientes a los demás usuarios del sistema)
 
@@ -835,7 +835,7 @@ Ahora, si bien tanto las ligas duras como las ligas simbólicas existen
 también en Windows, su uso es muy poco frecuente. El API de Win32
 ofrece las funciones necesarias, pero éstas no están reflejadas desde
 la interfaz usuario del sistema — y son sistemas donde el usuario
-promedio no emplea una interfaz programador, sino que una interfaz
+promedio no emplea una interfaz programador, sino una interfaz
 gráfica. Las ligas, pues, no son más empleadas por
 /cuestión cultural/: en sus comunidades de usuarios, nunca fueron
 frecuentes, por lo cual se mantienen como conceptos empleados sólo por
@@ -895,7 +895,7 @@ básicas a presentar son:
      directorio, el directorio se /abre/ (tal como se haría con un
      archivo, pero empleando la función =opendir()= en vez de
      =open()=), y va /leyendo/ (con =readdir()=) cada una de sus entradas.
-     Cada uno de los resultados es una estrcutura =dirent=
+     Cada uno de los resultados es una estructura =dirent=
      (/directory entry/, esto es, /entrada de directorio/), que
      contiene su nombre en =d_name=, un apuntador a su /i-nodo/ en
      =d_ino=, y algunos datos adicionales del arcihvo en cuestión.
@@ -992,7 +992,7 @@ podría ser:
 Para resolver esta situación, los programas que recorren directorios
 en los sistemas de archivos /reales/ deben emplear un indexado basado
 en /i-nodo/[fn:: Que si bien no ha sido definido aún formalmente, para
-esta discusión bastará saber que es un númeo único por volumen.]
+esta discusión bastará saber que es un númeo único por volumen.] que
 identifica sin lugar a dudas a cada uno de los archivos. En el caso
 presentado, si el i-nodo de =jose= fuera 10543, al consultar a los
 miembros de =miembros= el sistema encontrará que su primer entrada
@@ -1246,7 +1246,7 @@ que implementaba SMB era el manejo de hasta dos contraseñas por
 directorio compartido: con una, el usuario obtenía acceso de sólo
 lectura, y con la otra, de lectura y escritura. Tras la aparición de
 Windows NT, se agregó un esquema de identificación por
-usuaro/contraseña, que posibilita el otorgamiento de permisos con una
+usuario/contraseña, que posibilita el otorgamiento de permisos con una
 /granularidad/ mucho menor.[fn:: Esto significa, que puede
 controlarse el acceso permitido más finamente, a nivel archivo
 individual y usuario individual.]
@@ -1265,7 +1265,7 @@ para su uso en un sólo tipo de sistema operativo; al día de hoy, estos
 puntos han todos mejorado fuertemente. En sistemas Unix, la principal
 implementación, /Samba/, fue creada haciendo ingeniería inversa sobre
 el protocolo; a lo largo de los años, se ha convertido en un esquema
-tan robusto que es hoy por hoy tomado como implementación refrencia.
+tan robusto que es hoy por hoy tomado como implementación referencia.
 
 ** Sistemas de archivos distribuídos: Andrew File System (AFS)
 
@@ -1296,7 +1296,7 @@ forma transparente.
 Ante la complejidad e inestabilidad adicional que presentan con
 tanta frecuencia las redes grandes[fn:: El uso típico de AFS se
 planteaba para organizaciones grandes, del orden de decenas de miles
-de estaciones] (y lo hacían mucho más hace 30 años): AFS debe operar
+de estaciones] (y lo hacían mucho más hace 30 años), AFS debe operar
 tan confiablemente como sea posible, /incluso sin la certeza de que la
 red opera correctamente/.
 

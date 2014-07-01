@@ -92,7 +92,7 @@ ubicar los programas en la memoria física disponible.
 
 Luego ha sido necesario emplear más memoria de la que está directamente disponible, 
 con el propósito de ofrecer a los procesos más espacio de lo que puede 
-direccionar /la arquitectura (hardware) empleada. Por otro lado, 
+direccionar la arquitectura (hardware) empleada. Por otro lado, 
 la abstracción de un espacio virtualmente ilimitado para realizar sus
 operaciones incluso cuando la memoria /real/ es mucho menor a la
 solicitada, y por último, la ilusión de tener un bloque contiguo e
@@ -535,7 +535,7 @@ La traducción de una dirección lógica a una dirección lineal puede fallar
 por diferentes razones: si el segmento no se encuentra en memoria, ocurrirá
 una /excepción/ del tipo /segmento no presente/. Por otro lado, si el 
 desplazamiento especificado es mayor al tamaño definido para el segmento, 
-ocurrirá una excepción del tipo /violación de segmento/ 
+ocurrirá una excepción del tipo /violación de segmento/.
 
 ** Permisos
 
@@ -590,7 +590,7 @@ solicitud del proceso o por iniciativa del sistema operativo.
 
 En la sección \ref{MEM_swap}, donde se presenta el concepto de
 intercambio, se explicó que intercambiar un proceso completo
-resultaba demasaido caro. Cuando se tiene de un espacio de memoria
+resultaba demasiado caro. Cuando se tiene de un espacio de memoria
 segmentado, y muy particularmente cuando se usan bibliotecas de
 carga dinámica, la sobrecarga es mucho menor:
 
@@ -653,7 +653,7 @@ tipos de acceso:
 |   lógica  | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
 |     0-100 | R       | 15310                                   |
-|      2-82 | X       | 1533                                    |
+|      2-82 | X       | 1047                                    |
 |      2-82 | W       | Atrapada: Violación de seguridad        |
 |     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
 |      3-15 | W       | Atrapada: Segmento faltante             |
@@ -812,7 +812,7 @@ del tipo de información que se declare que almacenarán.
 Algunos de los primeros equipos en manejar memoria paginada empleaban
 un conjunto especial de registros para representar la tabla de
 páginas. Esto era posible dado que eran sistemas de 16 bits, con
-páginas de 8KB ($2^{13}). Esto significa que en el sistema había
+páginas de 8KB ($2^{13}$). Esto significa que en el sistema había
 únicamente 8 páginas posibles ($2^3$), por lo que resultaba sensato
 dedicar un registro a cada una.
 
@@ -841,13 +841,13 @@ Register/),[fn:: ¿Por qué es necesario el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del /PTLR/ se evita desperdiciar grandes cantidades
-de memoria indicando todo el espacio no utiilzado.] De esta manera, en
+de memoria indicando todo el espacio no utilizado.] De esta manera, en
 el cambio de contexto sólo hay que cambiar estos dos registros, y además
 se cuenta con un espacio muy amplio para guardar las tablas de páginas
 que se necesiten. El problema con este mecanismo es la velocidad:
 Se estaría penalizando a /cada acceso a memoria/ con un acceso de
 memoria adicional — si para resolver una dirección lógica a su
-correspondiente dirección física hace fala consultar la tabla de
+correspondiente dirección física hace falta consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
 *** El buffer de traducción adelantada (/TLB/)
@@ -899,7 +899,7 @@ Incluso empleando un TLB, el espacio empleado por las páginas sigue
 siendo demasiado grande. Si se considera un escenario más frecuente que
 el propuesto anteriormente: empleando un procesador con espacio de
 direccionamiento de 32 bits, y un tamaño de página estándar (4KB,
-$2^{12}), se tendría  1,048,576 ($2^{20}$) páginas. Si cada entrada
+$2^{12}), se tendrían 1.048.576 ($2^{20}$) páginas. Si cada entrada
 de la página ocupa 40 bits[fn:: 20 bits identificando a la página y
 otros 20 bits identificando al marco; omitiendo aquí la necesidad de
 alinear los accesos a memoria a /bytes/ individuales, que lo
@@ -978,7 +978,7 @@ diversos programas que están en un momento dado en ejecución en la
 computadora, este mecanismo es todavía más útil cuando se usan
 /bibliotecas del sistema/: hay bibliotecas que son empleadas por una
 gran cantidad de programas[fn:: Algunos ejemplos sobresalientes
-podrían ser la =libc= o =glibc=, que proporciona las funcinoes
+podrían ser la =libc= o =glibc=, que proporciona las funciones
 estándar del lenguaje C y es, por tanto, requerida por casi todos los
 programas del sistema; los diferentes entornos gráficos (en los Unixes
 modernos, los principales son =Qt= y =Gtk=); bibliotecas para el
@@ -1284,7 +1284,7 @@ la página víctima y una para traer la página de reemplazo), y por
 tanto, a una doble demora.
 
 Se puede, con un mínimo de /burocracia/ adicional (aunque requiere de
-apoyo de la MMU): implementar un mecanismo que disminuya la probabilidad
+apoyo de la MMU), implementar un mecanismo que disminuya la probabilidad
 de tener que realizar esta doble transferencia: agregar un /bit
 de modificación/ o /bit de página sucia/ (/dirty bit/) a la tabla de
 páginas. Este bit se marca como apagado siempre que se carga una
@@ -1326,7 +1326,7 @@ Para analizar a un algoritmo de reemplazo, si se busca la
 cantidad de fallos de página producidos, además de la cadena de
 referencia, es necesario conocer la cantidad de páginas y marcos
 del sistema que se está modelando. Por ejemplo, si para
-la sigiuente cadena:
+la siguiente cadena:
 
 #+begin_quote
 1, 4, 3, 4, 1, 2, 4, 2, 1, 3, 1, 4
@@ -2347,8 +2347,8 @@ más, hace que la depuración del fallo sea muy difícil. Por otro lado, si no s
 tienen los controles suficientes, al desinstalar un programa se puede borrar 
 una biblioteca compartida, lo cual puede llevar a que otros programas dejen de funcionar.
 
-El /infiero de las DLL/ puede ser prevenido mediante estrategias como
-el /versionamiento/ de las biblioteca de ligado dinámico (esto es,
+El /infierno de las DLL/ puede ser prevenido mediante estrategias como
+el /versionamiento/ de las bibliotecas de ligado dinámico (esto es,
 hacer que cada componente de las bibliotecas lleve la versión que
 implementa o /nivel de compatibilidad/ que implementa),[fn:: Este
 nivel de compatibilidad incluye no sólo a la /interfaz de aplicación
@@ -2362,7 +2362,7 @@ dependencias/ que verifican si existe en el sistema una versión
 compatible de la biblioteca. Teniendo esta información, la biblioteca
 en cuestión se instalará únicamente en caso necesario.
 
-El ligado dinámico puede presentar problemas o vulerabilidades debido
+El ligado dinámico puede presentar problemas o vulnerabilidades debido
 a que el programa usa un código proporcionado por terceros, y /confía/
 en que la biblioteca funciona tal como se espera sin incluir código
 malicioso. Por tal razón, desde el punto de vista teórico bastaría que

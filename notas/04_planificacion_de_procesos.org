@@ -242,7 +242,7 @@ Por ejemplo, si llegan a la cola de procesos listos:
 
 Si el tiempo que toma al sistema efectuar un cambio de contexto es de
 un /tick/, y la duración de cada /quantum/ es de 5 ticks, en un
-ordenamiento de ronda,[fn:: Este mecanismo se presentará en breve, en
+ordenamiento de ronda,[fn:: Esta política se presentará en breve, en
 la sección \ref{PLAN_RoundRobin}.] se observaría un resultado como el
 que ilustra la figura \ref{PLAN_planificador}.
 
@@ -386,8 +386,9 @@ algunos de estos objetivos pueden ser mutuamente contradictorios):
 ** Primero llegado, primero servido (/FCFS/)
 
 El esquema más simple de planificación es el /Primero llegado, primero
-servido/ (/First come, first serve/, /FCFS/). Este es un mecanismo
-cooperativo, con la mínima lógica posible: cada proceso se ejecuta en
+servido/ (/First come, first serve/, /FCFS/). Esta es una política 
+para sistemas 
+cooperativos, con la mínima lógica posible: cada proceso se ejecuta en
 el orden en que fue llegando, y hasta que /suelta el control/. El
 despachador es muy simple, básicamente una cola FIFO.
 
@@ -479,7 +480,7 @@ histéresis/: /hay que resistirse al cambio/. Como ya lo se mencionó,
 FCFS mantiene al mínimo posible la sobrecarga administrativa, y
 –aunque sea marginalmente– resulta en mejor rendimiento global.
 
-Si se repite el análisis anterior bajo este mismo mecanismo, pero con
+Si se repite el análisis anterior bajo esta misma política, pero con
 un /quantum/ de 4 /ticks/, el resultado es:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
@@ -518,7 +519,7 @@ presentes.
 Ahora bien, es muy difícil contar con esta información antes de
 ejecutar el proceso. Es más frecuente buscar /caracterizar/ las
 necesidades del proceso: ver si durante su historia de ejecución[fn::
-Cabe recordar que todos estos mecanismos se aplican al
+Cabe recordar que todas estas políticas se aplican al
 /planificador a corto plazo/. Cuando un proceso se bloquea esperando
 una operación de E/S, sigue en ejecución, y la información de
 contabilidad del mismo sigue alimentándose. SPN se ``nutre''
@@ -679,10 +680,10 @@ por tanto, su prioridad es muy alta).
 
 (/Multilevel Feedback/)
 
-El mecanismo descrito en la sección anterior, la /ronda egoísta/,
+La política descripta en la sección anterior, la /ronda egoísta/,
 introdujo el concepto de tener no una sino que varias colas de
-procesos, que recibirán diferente tratamiento. Este mecanismo es muy
-poderoso, y se emplea en prácticamente todos los planificadores en uso
+procesos, que recibirán diferente tratamiento. Esta política es muy
+poderosa, y se emplea en prácticamente todos los planificadores en uso
 hoy en día. Antes de abordar al esquema de retroalimentación
 multinivel, conviene presentar cómo opera un sistema con múltiples
 colas de prioridad.
@@ -710,7 +711,7 @@ frente de la cola de mayor prioridad que tenga algún proceso esperando
 $C_i$, y tras un número predeterminado de ejecuciones, lo /degrada/ a
 la cola de prioridad inmediata inferior $C_{i+1}$.
 
-El mecanismo de retroalimentación multinivel favorece a los procesos
+La política de retroalimentación multinivel favorece a los procesos
 cortos, dado que terminarán sus tareas sin haber sido marcados como
 de prioridades inferiores.
 
@@ -816,7 +817,7 @@ con hasta decenas de colas.
 
 ** Lotería
 
-Los mecanismos hasta aquí descritos vienen con largas décadas de
+Las políticas hasta aquí descriptas vienen con largas décadas de
 desarrollo. Uno de los últimos algoritmos que ha sido ampliamente
 difundido en unirse a esta lista es el de /planificación por lotería/,
 publicado por [[http://www.waldspurger.org/carl/papers/lottery-osdi94.pdf][Carl Waldspurger y William Weihl (1994)]].
@@ -828,8 +829,8 @@ siguiente proceso a poner en ejecución, elige un número al azar[fn::
 Si bien operar un generador de números aleatorios en estricto sentido
 sería demasiado caro para un proceso que se ejecuta decenas o cientos
 de veces por segundo, para /jugar/ a la lotería es suficiente emplear
-un generador débil pseudoaleatorio. El artículo en que este mecanismo
-fue presentado presenta la implementación del algoritmo Park-Miller,
+un generador débil pseudoaleatorio. El artículo en que esta política 
+fue introducida presenta la implementación del algoritmo Park-Miller,
 $S' = (A \times S) mod (2^{31} - 1)$ con $A = 16807$, implementado en
 12 instrucciones de procesador RISC.], y otorga el siguiente quantum
 al proceso que tenga el boleto ganador. El boleto ganador /no es
@@ -852,7 +853,7 @@ A pesar de su simplicidad, el esquema de planificación por lotería
 resulta justo tanto a procesos cortos como a largos, y presenta una
 degradación muy suave incluso en entornos de saturación. Claro, al
 derivar de un proceso aleatorio, resulta imposible presentar una
-comparación de este mecanismo abordados previamente.
+comparación de este algoritmo con los abordados previamente.
 
 ** Esquemas híbridos
 
@@ -863,7 +864,7 @@ información /intrínseca/ a los procesos evaluados o no lo hacen, esto
 es, si un proceso es tratado de distinta forma dependiendo de su
 historial de ejecución.
 
-#+caption: Caracterización de los mecanismos de planificación a corto plazo
+#+caption: Caracterización de los algoritmos de planificación a corto plazo
 |---------------+-----------------+-------------------------|
 |               | *No considera*  | *Considera*             |
 |               | *intrínseca*    | *intrínseca*            |
@@ -914,7 +915,7 @@ externos al despachador. Algunas ideas al respecto son:
   evitar los peligros de la multitarea cooperativa, un RR con un
   /quantum/ muy largo). Si el despachador observa que la longitud de
   la cola excede un valor determinado (o /muestra una tendencia/ en
-  ese sentido, al incrementarse $\rho$), cambiar a un mecanismo que
+  ese sentido, al incrementarse $\rho$), cambiar a una política que
   garantice una mejor distribución de la atención, como un RR con
   /quantum/ corto o PSPN.
 
@@ -939,7 +940,7 @@ externos al despachador. Algunas ideas al respecto son:
   más largos.
 
 - /Peor servicio a continuación/ (/WSN/, /Worst Service Next/). Es
-  una generalización sobre varios de los mecanismos mencionados; su
+  una generalización sobre varios de los algoritmos; su
   principal diferencia respecto a /HPRN/ es que no sólo se considera
   /penalización/ el tiempo que ha pasado esperando en la cola, sino
   que se considera el número de veces que ha sido interrumpido por el
@@ -986,10 +987,10 @@ externos al despachador. Algunas ideas al respecto son:
 ** Resumiendo
 # <<PLAN_resumen_algoritmos>>
 
-En esta sección se presentan algunos mecanismos básicos de
+En esta sección se presentan algunos algoritmos básicos de
 planificación a corto plazo. Como se indica en la parte final, es muy
-poco común encontrar a ninguno de estos mecanismos en un /estado puro/
-— normalmente se encuentra combinación de ellos, con diferentes
+poco común encontrar uno de estos algoritmos en un /estado puro/
+— normalmente se encuentra una combinación de ellos, con diferentes
 parámetros según el nivel en el cual se está ejecutando.
 
 *** Rendimiento ante diferentes cargas de procesos
@@ -1016,7 +1017,7 @@ por un SPN o PSPN) que uno en el cual predominen los procesos largos.
 
 Raphael Finkel realizó estudios bajo diversas cargas de trabajo,
 buscando comparar de forma /significativa/ estos distintos
-mecanismos. Finkel simuló el comportamiento que estos algoritmos
+algorimos. Finkel simuló el comportamiento que estos algoritmos
 tendrían ante 50,000 procesos generados de forma aleatoria, siguiendo
 una distribución exponencial tanto en sus tiempos de llegada como
 duraciones en ejecución, y manteniendo como parámetro de equilibrio un
@@ -1140,7 +1141,7 @@ mapeo:
 No se detalla en el presente texto respecto a los primeros — cada marco de
 desarrollo o máquina virtual que emplee /hilos de usuario/
 actuará cual sistema operativo ante ellos, probablemente con alguno
-de los mecanismos ilustrados anteriormente.
+de los algoritmos ilustrados anteriormente.
 
 ** Los hilos POSIX (=pthreads=)
 

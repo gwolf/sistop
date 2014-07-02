@@ -9,7 +9,7 @@ años de estar relegado a un segundo plano, en la actualidad se torna
 fundamental en referencia a los sistemas operativos, particularmente en
 rol de servidores. Este tema se abordará de momento desde una
 óptica más bien descriptiva, y posteriormente se profundizará en
-algunos de sus asepectos.
+algunos de sus aspectos.
 
 En primer término, es importante aclarar que el concepto de /virtualización/ 
 no se refiere a una única tecnología o metodología, es un término que
@@ -27,7 +27,7 @@ otro.
 A nivel general, /virtualizar/ consiste en proveer algo que no está ahí,
 aunque parece estarlo. Más específicamente, presentar a un sistema elementos
 que se comporten de la misma forma que un componente físico (hardware), sin que 
-exista en realidad — un acto de ilusionismo o de magia, en cual se busca
+exista en realidad — un acto de ilusionismo o de magia, en el cual se busca
 presentar el elemento de forma tan convincente que la ilusión se mantenga tanto
 como sea posible.[fn:: Una aproximación inicial a este concepto puede ser
 un archivo con la imagen de un disco en formato ISO: mediante determinados mecanismos, es posible
@@ -55,7 +55,7 @@ distinta a la del anfitrión (la arquitectura /nativa/).[fn:: A lo largo de esta
 referencia a la /arquitectura hardware/ como al juego de
 instrucciones que puede ejecutar /nativamente/ un procesador. Por
 ejemplo, un procesador x86 moderno puede ejecutar nativamente código
-i386 y x86_64, pero no ARM.] El emulador puede ser visto (de una forma
+i386 y x86\_64, pero no ARM.] El emulador puede ser visto (de una forma
 tremendamente simplificada) como una lista de equivalencias, de cada
 una de las instrucciones en la arquitectura /huésped/ a la
 arquitectura del sistema /anfitrión/.
@@ -75,18 +75,18 @@ rendimiento cientos o miles de veces menor al del anfitrión.
 
 Ahora bien, ¿qué pasa cuando hay dos arquitecturas de cómputo que
 emplean al mismo procesador? Este caso fue relativamente común en la
-década de los 80 y 90; si bien en general las computadoras de 8 bits no tenían
+década de los 1980 y 1990: si bien en general las computadoras de 8 bits
+ no tenían
 el poder de cómputo necesario para implementar la emulación de
-arquitecturas similares, al aparecer tres líneas de computadoras
+arquitecturas similares, aparecieron tres líneas de computadoras
 basadas en el CPU Motorola 68000 (Apple Macintosh, Atari ST y
-Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
-aparecieron emuladores que permitían ejecutar programas de una línea
-en la otra, prácticamente a la misma velocidad que en el sistema nativo.
+Commodore Amiga) diferenciadas principalmente por sus /chipsets/. 
+Para estas CPUs Surgieron emuladores que permitían ejecutar programas de una línea en la otra, prácticamente a la misma velocidad que en el sistema nativo.
 
 Hoy en día, la emulación se emplea para hacer /desarrollos cruzados/,
 más que para emplear software /ya escrito y compilado/.  La mayor
-parte de la emulación tradicional hoy se emplea para el /desarrollo de
-software/. Hoy en día, la mayor parte de las computadoras vendidas son
+parte de la emulación tradicional se emplea para el /desarrollo de
+software/. Actualmente la mayoría de las computadoras vendidas son
 sistemas /embebidos/[fn:: Computadoras pequeñas, limitadas en
 recursos, y típicamente carentes de una interfaz usuario — desde
 puntos de acceso y ruteadores hasta los controladores de cámaras,
@@ -179,7 +179,7 @@ hardware nativa).
 [[./img/maquina_virtual_dotnet.png]]
 
 En los años 90, una de las principales críticas a Java (y esta crítica
-podría ampliarse hacia cualqueir otra plataforma comparable) era el
+podría ampliarse hacia cualquier otra plataforma comparable) era el
 desperdicio de recursos de procesamiento al tener que traducir, una y
 otra vez, el código intermedio para su ejecución en el
 procesador. Hacia el 2010, el panorama había ya cambiado
@@ -306,7 +306,7 @@ comprender mejor cómo opera y cómo se implementa.
 En 1964, IBM creó la primer /familia de computadoras/, la
 serie 360. Presentaron la entonces novedosa idea de que una
 organización podía adquirir un modelo sencillo y, si sus necesidades
-se ajustaban al modelo de cómputo, podrían migrar facilmente hacia
+se ajustaban al modelo de cómputo, podrían migrar fácilmente hacia
 modelos más poderosos dado que tendrían /compatibilidad binaria/.
 
 Uno de los modelos de esta familia fue la /S-360-67/, con la

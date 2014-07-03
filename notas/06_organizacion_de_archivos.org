@@ -993,7 +993,7 @@ podría ser:
 Para resolver esta situación, los programas que recorren directorios
 en los sistemas de archivos /reales/ deben emplear un indexado basado
 en /i-nodo/[fn:: Que si bien no ha sido definido aún formalmente, para
-esta discusión bastará saber que es un númeo único por volumen.]
+esta discusión bastará saber que es un número único por volumen.]
 identifica sin lugar a dudas a cada uno de los archivos. En el caso
 presentado, si el i-nodo de =jose= fuera 10543, al consultar a los
 miembros de =miembros= el sistema encontrará que su primer entrada
@@ -1107,7 +1107,7 @@ comportamiento y configuración específica.
 #+caption: Vista de un sistema de archivos Windows
 [[./img/dot/montaje_windows.png]]
 
-* Permisos
+* Control de acceso
 
 Parte importante de la información que se almacena respecto a cada uno
 de los archivos, directorios u otros objetos son sus permisos de
@@ -1115,9 +1115,9 @@ acceso. Los permisos indican al sistema qué puede hacerse y qué no con
 cada uno de los objetos, posiblemente diferenciando el acceso
 dependiendo del usuario o clase de usuarios de que se trate.
 
-Hay muchos esquemas de permisos; a continuación se presentan tres
-esquemas, de más simple a más complejo, de permisos en sistemas de
-archivos.
+Hay muchos esquemas de control de acceso; a continuación se presentan
+tres esquemas, comenzando por el más simple, y avanzando hacia los más
+complejos.
 
 ** Sistemas FAT
 
@@ -1173,7 +1173,7 @@ siendo un sistema concebido como /monousuario/, no tiene sentido
 condicionar la /lectura/ de un archivo: El sistema operativo siempre
 permitirá la lectura de cualquier archivo.
 
-** Modelo Unix
+** Modelo tradicional Unix
 
 El sistema Unix precede a MS-DOS por una década. Sin embargo, su
 concepción es de origen para un esquema multiusuario, con las
@@ -1198,6 +1198,58 @@ manejo de memoria.
 Estos tres grupos de tres permiten suficiente /granularidad/ en el
 control de acceso para expresar casi cualquier combinación requerida.
 
+Por poner un ejemplo, si los usuarios =jose=, =pedro= y =teresa= están
+colaborando en el desarrollo de un sistema de facturación, pueden
+solicitar al administrador del sistema la creación de un grupo,
+=factura=. Una vez creado el sistema, y suponiendo que el desarrollo
+se efectúa en el directorio =/usr/local/factura/=, podrían tener
+los siguientes archivos:
+
+#+begin_example
+$ ls -la /usr/local/factura/
+drwxrwxr-x root   factura   4096 .
+drwxr-xr-x root   root      4096 ..
+-rw-r----- root   factura  12055 compilacion.log
+-rwxrwxr-x pedro  factura 114500 factura
+-rw-rw-r-- teresa factura  23505 factura.c
+-rw-rw-r-- jose   factura   1855 factura.h
+-rw-rw---- teresa factura  36504 factura.o
+-rw-rw---- teresa factura  40420 lineamientos.txt
+-rw-rw-r-- pedro  factura   3505 Makefile
+#+end_example
+
+Este ejemplo muestra que cada archivo puede pertenecer a otro de los
+miembros del grupo.[fn:: Los archivos pertenecen al usuario que los
+creó, a menos que su propiedad sea /cedida/ por el administrador a
+otro usuario.] Para el ejemplo aquí mostrado, el usuario propietario
+es menos importante que el grupo al que pertenece.
+
+La ejecución sólo está permitida, para los miembros del grupo
+=factura=, en el archivo =factura=: Los demás archivos son ya sea el
+código fuente que se emplea para /generar/ dicho archivo ejecutable, o
+la información de desarrollo y compilación.
+
+Respecto al acceso del resto de los usuarios (esto es, aquellos no
+pertenecientes al grupo =factura=), todos tienen permiso de lectura
+sobre todos los archivos a excepción del archivo intermedio de
+compilación, =factura.o=, el documento de diseño, =lineamientos.txt=,
+y la bitácora de compilación, =compilacion.log=
+
+Este ejemplo muestra los directorios =.= y =..=, que fueron
+presentados en la sección \ref{DIR_grafo_dirigido}. Para los
+directorios, se emplea el mismo sistema de permisos; el permiso de
+escritura indica quién puede crear o eliminar archivos dentro de él,
+el permiso de lectura indica qué usuarios pueden averiguar la lista de
+archivos contenidos en dicho directorio, y el de ejecución indica qué
+usuarios pueden /entrar/ al directorio. En este caso, todos los
+usuarios pueden listar (leer) y ejecutar (entrar) al directorio, pero
+únicamente el administrador =root= y los miembros del grupo =factura=
+pueden modificar los archivos que contiene.
+
+Claro está, el directorio =..= (que apunta de vuelta al directorio
+padre, =/usr/local/=) es del sistema, y permite sólo la lectura y
+ejecución a todos los usuarios (incluyendo al grupo =factura=).
+
 En este punto, cabe recordar que, en un sistema Unix, los dispositivos
 del sistema así como varios objetos virtuales (como las /tuberías/ de
 comunicación entre procesos) son representados en el sistema de
@@ -1212,9 +1264,52 @@ que presentan ciertas implementaciones; se sugiere al lector
 interesado referirse a las /páginas de manual/ de Linux para los
 comandos =chmod= y =chattr= respectivamente.
 
-** RBAC
+** Listas de control de acceso
 
+Una de las desventajas del modelo tradicional de usuarios Unix es que
+requiere de la intervención del administrador del sistema para cada
+nuevo proyecto: El administrador del sistema tuvo que crear al grupo
+=factura= antes de que pudiera realizarse ningún trabajo de forma
+colaborativa. Además, encontrar la representación justa para indicar
+un conjunto específico de permisos puede ser complicado. Dado que un
+archivo no puede pertenecer a más de un grupo, puede hacerse necesario
+necesario crear conjuntos de grupos adicionales que intersectan
+aspectos específicos: una salida muy poco elegante.
 
+#+caption: Lista de control de acceso a un archivo en Windows 7: En esta vista, muestra que el grupo =SYSTEM= tiene permiso para todo tipo de acceso a excepción del definido por /Permisos especiales/.
+#+label: DIR_ACLs_Win7
+#+attr_latex: width=0.7\textwidth
+[[./img/acl_win7.png]]
+
+Varios sistemas operativos, incluyendo particularmente a las versiones
+de Windows derivadas del NT, han agregado /listas de control de
+acceso/ (o /ACLs/, del inglés, /Access Control Lists/): Cada uno de
+los archivos tiene asociada una lista donde se indican los permisos
+particulares que tendrá sobre éste cada usuario o grupo particular. La
+figura \ref{DIR_ACLs_Win7} muestra un ejemplo de la definición del
+control de acceso a un archivo en el sistema operativo /Windows 7/.
+
+Si bien el modelo de listas de control de acceso brinda un control
+mucho más fino sobre cada uno de los archivos, no está exento de
+desventajas: En primer término, todos los permisos particulares que
+tenga un archivo tienen que almacenarse junto con su /i-nodo/. Dado
+que su longitud es variable, se representan como una estructura
+adicional adjunta a los datos del archivo, y esto se traduce en un
+tiempo de acceso ligeramente mayor.
+
+En segundo término, resulta más dificil presentar un listado compacto
+y completo de los permisos para todos los archivos en determinado
+directorio. Realizar una evaluación /al vuelo/ de los controles de
+acceso se vuelve más complejo para el administrador.
+
+En tercer lugar, este esquema da lugar a ambigüedades, cuya política
+de resolución debe establecerse /a priori/. Por ejemplo, si un usuario
+pertenece a dos grupos distintos, uno de ellos con /aprobación
+explícita/ para la escritura a cierto archivo, y otro de ellos con
+/denegación explícita/ para la escritura al mismo, debe haber una
+política global para resolver si el permiso será otorgado o
+rechazado. Estas políticas no siempre resultan fáciles de comprender
+por los usuarios del sistema.
 
 * Sistemas de archivos remotos
 

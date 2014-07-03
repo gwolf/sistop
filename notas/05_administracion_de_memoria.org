@@ -1042,20 +1042,48 @@ Cuesta trabajo comprender el por qué de esta lógica si no es por el
 empleo de la memoria compartida: el costo de =fork()= en un sistema
 Unix es muy bajo, se limita a crear las estructuras necesarias en la
 memoria del núcleo. Tanto el proceso padre como el proceso hijo
-comparten /todas/ sus páginas de memoria — sin embargo, siendo dos
+comparten /todas/ sus páginas de memoria, como lo ilustra la figura
+\ref{MEM_cow_recien_hecho} — sin embargo, siendo dos
 procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
 
-#+attr_latex: width=\textwidth
-#+label: MEM_cow_recien_hecho
-#+caption: Memoria de dos procesos inmediatamente después de la creación del proceso hijo por =fork()=
-[[./img/ditaa/cow_recien_hecho.png]]
+#+begin_latex
+\begin{figure}
+\centering
+\subfigure[Inmediatamente después de la creación del proceso hijo por \texttt{fork()} \label{MEM_cow_recien_hecho}]{\includegraphics[width=\textwidth]{img/ditaa/cow_recien_hecho.png}}
+\subfigure[Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva. \label{MEM_cow_pagina_modificada}]{\includegraphics[width=\textwidth]{img/ditaa/cow_pagina_modificada.png}}
+\caption {Memoria de dos procesos en un sistema que implementa \emph{copiar al escribir}.}
+\label{MEM_modelos_de_hilos}
+\end{figure}
+#+end_latex
+
+#+begin_html
+<table class="figure" style="margin-right:auto; margin-left:auto;" >
+  <tr>
+    <td style="padding: 1em">
+      <span id="MEM_cow_recien_hecho">
+        <p><img src="./img/ditaa/cow_recien_hecho.png" alt="./img/ditaa/cow_recien_hecho.png" /></p>
+        <p>Inmediatamente después de la creación del proceso hijo por <tt>fork()</tt></p>
+      </span>
+    </td>
+  </tr><tr>
+    <td style="padding: 1em">
+      <span id="MEM_cow_pagina_modificada">
+        <p><img src="./img/ditaa/cow_pagina_modificada.png" alt="./img/ditaa/cow_pagina_modificada.png" /></p>
+        <p>Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.</p>
+      </span>
+    </td>
+  </tr>
+  <caption style="caption-side: bottom">Tres modelos de mapeo de hilos a procesos. (Imágenes: Beth Plale; ver <em>Otros recursos</em>)</caption>
+</table>
+#+end_html
 
 Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
 (/Copy on Write/ o /CoW/). Las páginas de memoria de ambos procesos
 son las mismas /mientras sean sólo leídas/. Sin embargo, si uno de los
 procesos modifica a cualquier dato en una de estas páginas, ésta se
-copia a un nuevo marco, y deja de ser una página compartida. El resto
+copia a un nuevo marco, y deja de ser una página compartida, como se
+puede ver en la figura \ref{MEM_cow_pagina_modificada}. El resto
 de las páginas seguirá siendo compartido. Esto se puede lograr
 marcando /todas/ las páginas compartidas como /sólo lectura/, con lo
 cual cuando uno de los dos procesos intente modificar la información
@@ -1064,11 +1092,6 @@ que esto ocurre sobre un espacio CoW, en vez de responder al fallo
 terminando al proceso, copiará sólo la página en la cual se encuentra
 la dirección de memoria que causó el fallo, y esta vez marcará la
 página como /lectura y escritura/.
-
-#+attr_latex: width=\textwidth
-#+label: MEM_cow_pagina_modificada
-#+caption: Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva.
-[[./img/ditaa/cow_pagina_modificada.png]]
 
 Incluso cuando se ejecutan nuevos programas a través de =execve()=,
 es posible que una buena parte de la memoria se mantenga compartida,
@@ -1325,14 +1348,14 @@ consecutivas) a una misma página.
 Para analizar a un algoritmo de reemplazo, si se busca la
 cantidad de fallos de página producidos, además de la cadena de
 referencia, es necesario conocer la cantidad de páginas y marcos
-del sistema que se está modelando. Por ejemplo, si para
-la siguiente cadena:
+del sistema que se está modelando. Por ejemplo, considérese la cadena
+de doce solicitudes:
 
 #+begin_quote
 1, 4, 3, 4, 1, 2, 4, 2, 1, 3, 1, 4
 #+end_quote
 
-Al recorrer esta cadena en un sistema con cuatro o más marcos,
+Al recorrerla en un sistema con cuatro o más marcos,
 sólo se presentarían cuatro fallos (el fallo inicial que hace
 que se cargue por primera vez cada una de las páginas). Si, en el otro
 extremo, se cuenta con sólo un marco, se presentarían 12 fallos,
@@ -1340,11 +1363,36 @@ dado que a cada solicitud se debería reemplazar el único marco
 disponible. El rendimiento evaluado sería en los casos de que se cuenta
 con dos o tres marcos.
 
-#+attr_latex: width=0.6\textwidth
-#+attr_html: height=320
-#+label: MEM_expectativa_fallas_marcos
-#+caption: Relación ideal entre el número de marcos y fallos de página
-[[../img/gnuplot/expectativa_fallas_contra_marcos.png]]
+#+begin_latex
+\begin{figure}
+\centering
+\subfigure[Relación ideal entre el número de marcos y fallos de página. \label{MEM_expectativa_fallas_marcos}]{\includegraphics[width=0.6\textwidth]{img/gnuplot/expectativa_fallas_contra_marcos.png}}
+\subfigure[Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos. \label{MEM_anomalia_belady}]{\includegraphics[width=0.6\textwidth]{img/gnuplot/anomalia_belady.png}}
+\caption {Anomalía de Belady, empleando la cadena de referencia \emph{1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5} (Belady, 1969).}
+\label{MEM_expectativas_y_belady}
+\end{figure}
+#+end_latex
+
+#+begin_html
+<table class="figure" style="margin-right:auto; margin-left:auto;" >
+  <tr>
+    <td style="padding: 1em">
+      <span id="MEM_expectativa_fallas_marcos">
+        <p><img src="./img/gnuplot/expectativa_fallas_marcos.png" alt="./img/gnuplot/expectativa_fallas_marcos.png" /></p>
+        <p>Relación ideal entre el número de marcos y fallos de página.</p>
+      </span>
+    </td>
+  </tr><tr>
+    <td style="padding: 1em">
+      <span id="MEM_anomalia_belady">
+        <p><img src="./img/gnuplot/anomalia_belady.png" alt="./img/gnuplot/anomalia_belady.png" /></p>
+        <p>Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos.</p>
+      </span>
+    </td>
+  </tr>
+  <caption style="caption-side: bottom">Anomalía de Belady, empleando la cadena de referencia <em>1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5</em> (Belady, 1969).</caption>
+</table>
+#+end_html
 
 Un fenómeno interesante que se presenta con algunos algoritmos es la
 /anomalía de Belady/, publicada en 1969: si bien la lógica indica que
@@ -2024,6 +2072,10 @@ func:
         subl $20,%esp
 #+end_src
 
+La figura \ref{MEM_stackframe} ilustra cómo queda la región inferior
+del stack (el espacio de trabajo de la función actual) una vez que
+tuvieron lugar estos cuatro pasos.
+
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_stackframe
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
@@ -2107,7 +2159,8 @@ En el ejemplo recién presentado, parecería que el sistema /atrapó/ al
 error exitosamente y detuvo la ejecución — pero no lo hizo: el
 =Segmentation fault= no fue generado al sobreescribir el buffer ni al
 intentar procesarlo, sino después de terminar de hacerlo: al llegar
-la ejecución del código al =return 0=.
+la ejecución del código al =return 0=. En este punto, el stack del
+código ejemplo luce como lo presenta la figura \ref{MEM_overflow_500}.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_500
@@ -2198,7 +2251,8 @@ retorno con la dirección de su código /dentro del buffer/, tendría
 256 bytes de espacio para especificar código arbitrario. Este código
 típicamente se llama /shellcode/, pues se emplea para obtener un
 /shell/ (un intérprete de comandos) que ejecuta con los privilegios
-del proceso explotado.
+del proceso explotado. Este escenario se ilustra en la figura
+\ref{MEM_overflow_jump}.
 
 *** Mecanismos de mitigación
 
@@ -2273,7 +2327,8 @@ suerte.], insertado entre los buffers y la dirección de retorno, que
 es verificado antes de regresar de una función. Si se presentó un
 desbordamiento de buffer, el valor del /canario/ será reemplazado por
 basura, y el sistema podrá detener la ejecución del proceso
-comprometido antes de que brinde privilegios elevados al atacante.
+comprometido antes de que brinde privilegios elevados al atacante. La
+figura \ref{MEM_overflow_canary} ilustra este mecanismo.
 
 #+attr_latex: width=0.9\textwidth
 #+label: MEM_overflow_canary
@@ -2324,8 +2379,9 @@ al sistema operativo, en el momento  de crear el proceso, ubicar las
 bibliotecas que este requerirá para su ejecución. En cualquier caso, el ligado 
 dinámico busca que las bibliotecas sólo sean cargadas cuando sean requeridas.
 
-La figura \ref{MEM_tipo_resol_direcc}, presentada al principio de este
-capítulo, ilustra el momento en que ocurre cada uno de estos ligados:
+La figura \ref{MEM_tipo_resol_direcc}
+(pág. \pageref{MEM_tipo_resol_direcc}, ilustra el momento en que
+ocurre cada uno de estos ligados:
 el ligado estático es realizado por el /editor de ligado/, uniendo en
 un sólo /módulo cargable/ al programa compilado (/módulo objeto/) con
 las bibliotecas (/otros objetos/); el ligado dinámico es realizado
@@ -2399,7 +2455,7 @@ de las correcciones.
 Y si bien este proceso resulta manual y tedioso para un administrador
 de sistemas con acceso a las fuentes de los programas que tiene
 instalados, resulta mucho más oneroso aún para quienes emplean
-software /propietario/ (En la sección \ref{sec-8-1-3} se aborda
+software /propietario/ (En la sección \ref{SL_propietario} se aborda
 con mayor detenimiento lo que significa el software propietario en
 contraposición al software libre).
 

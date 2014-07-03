@@ -1018,7 +1018,7 @@ por un SPN o PSPN) que uno en el cual predominen los procesos largos.
 
 Raphael Finkel realizó estudios bajo diversas cargas de trabajo,
 buscando comparar de forma /significativa/ estos distintos
-algorimos. Finkel simuló el comportamiento que estos algoritmos
+algoritmos. Finkel simuló el comportamiento que estos algoritmos
 tendrían ante 50,000 procesos generados de forma aleatoria, siguiendo
 una distribución exponencial tanto en sus tiempos de llegada como
 duraciones en ejecución, y manteniendo como parámetro de equilibrio un
@@ -1080,17 +1080,48 @@ son gestionados por el sistema operativo como si fueran
 procesos. Partiendo de esto, existen tres modelos principales de
 mapeo:
 
+#+begin_latex
+\begin{figure}
+\centering
+\subfigure[Muchos a uno \label{PLAN_hilos_muchos_a_uno}]{ \includegraphics[width=0.25\textwidth]{img/hilos_muchos_a_uno.png}}
+\hfill
+\subfigure[Uno a uno \label{PLAN_hilos_uno_a_uno}]{\includegraphics[width=0.25\textwidth]{img/hilos_uno_a_uno.png}}
+\hfill
+\subfigure[Muchos a muchos \label{PLAN_hilos_muchos_a_muchos}]{\includegraphics[width=0.25\textwidth]{img/hilos_muchos_a_muchos.png}}
+\caption {Tres modelos de mapeo de hilos a procesos. (Imágenes: Beth Plale; ver \emph{Otros recursos})}
+\label{PLAN_modelos_de_hilos}
+\end{figure}
+#+end_latex
+
+#+begin_html
+<table class="figure" style="margin-right:auto; margin-left:auto;" >
+  <tr>
+    <td style="padding: 1em">
+      <span id="PLAN_hilos_muchos_a_uno">
+        <p><img src="./img/hilos_muchos_a_uno.png" alt="./img/hilos_muchos_a_uno.png" /></p>
+        <p>Muchos a uno</p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="PLAN_hilos_uno_a_uno">
+        <p><img src="./img/hilos_uno_a_uno.png" alt="./img/hilos_uno_a_uno.png" /></p>
+        <p>Uno a uno</p>
+      </span>
+    </td><td style="padding: 1em">
+      <span id="PLAN_hilos_muchos_a_muchos">
+        <p><img src="./img/hilos_muchos_a_muchos.png" alt="./img/hilos_muchos_a_muchos.png" /></p>
+        <p>Muchos a muchos</p>
+      </span>
+    </td>
+  </tr>
+  <caption style="caption-side: bottom">Tres modelos de mapeo de hilos a procesos. (Imágenes: Beth Plale; ver <em>Otros recursos</em>)</caption>
+</table>
+#+end_html
+
 - Muchos a uno :: Muchos hilos son agrupados en un sólo proceso. Los
                   /hilos verdes/ entran en este supuesto: para el
                   sistema operativo, hay un sólo proceso; mientras
                   tiene la ejecución, éste se encarga de repartir el
                   tiempo entre sus hilos.
-
-		  #+label: PLAN_hilos_muchos_a_uno
-		  #+caption: Mapeo de hilos /muchos a uno/ (Imagen: Beth Plale; ver /otros recursos/)
-		  #+attr_html: height="160"
-		  #+attr_latex: width=0.3\textwidth
-		  [[./img/hilos_muchos_a_uno.png]]
 
 		  Bajo este modelo, si bien el código escrito es más
                   portable entre diferentes sistemas operativos, los
@@ -1098,6 +1129,9 @@ mapeo:
                   todos los hilos pueden tener que bloquearse cuando
                   uno sólo de ellos realiza una llamada /bloqueante/
                   al sistema.
+
+		  La figura \ref{PLAN_hilos_muchos_a_uno} ilustra este
+                  modelo.
 
 - Uno a uno :: Cada hilo es ejecutado como un /proceso ligero/
                (/lightweight process/ o /LWP/); podría dar la
@@ -1110,17 +1144,14 @@ mapeo:
                compartiendo su memoria, descriptores de archivos y
                demás estructuras.
 
-	       #+label: PLAN_hilos_uno_a_uno
-	       #+caption: Mapeo de hilos /uno a uno/ (Imagen: Beth Plale; ver /otros recursos/)
-	       #+attr_html: height="161"
-	       #+attr_latex: width=0.3\textwidth
-	       [[./img/hilos_uno_a_uno.png]]
-
 	       Este mecanismo permite a los hilos aprovechar las
                ventajas del paralelismo, pudiendo ejecutarse cada hilo
                en un procesador distinto, y como única condición para
                su existencia, el sistema operativo debe poder
                implementar los LWP.
+
+	       La esquematización de este modelo puede apreciarse en
+               la figura \ref{PLAN_hilos_uno_a_uno}.
 
 - Muchos a muchos :: Este mecanismo permite que existan hilos de ambos
      modelos: permite la existencia de /hilos unidos/ (/bound
@@ -1128,19 +1159,16 @@ mapeo:
      de /hilos no unidos/ (/unbound threads/), de los cuales /uno o
      más/ estarán mapeados a cada LWP.
 
-     #+label: PLAN_hilos_muchos_a_muchos
-     #+caption: Mapeo de hilos /muchos a muchos/ (Imagen: Beth Plale; ver /otros recursos/)
-     #+attr_html: height="161"
-     #+attr_latex: width=0.3\textwidth
-     [[./img/hilos_muchos_a_muchos.png]]
-
      El esquema /muchos a muchos/ proporciona las principales
      características de ambos esquemas; en caso de ejecutarse en un
      sistema que no soporte más que el modelo /uno a muchos/, el
      sistema puede caer en éste como /modo degradado/.
 
+     Este modelo se presenta en la figura
+     \ref{PLAN_hilos_muchos_a_muchos}.
 No se detalla en el presente texto respecto a los primeros — cada marco de
-desarrollo o máquina virtual que emplee /hilos de usuario/
+desarrollo o máquina virtual (ver sección
+\ref{VIRT_arq_inexistentes}) que emplee /hilos de usuario/
 actuará cual sistema operativo ante ellos, probablemente con alguno
 de los algoritmos ilustrados anteriormente.
 

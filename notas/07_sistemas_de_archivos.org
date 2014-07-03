@@ -330,7 +330,7 @@ disco, tiene una longitud límite máxima: en un disco flexible (que
 hasta el día de hoy, por su limitada capacidad, se formatea bajo
 FAT12), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
 tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
-= 7168$ bytes, esto es, $7168 \over 32 = 224$ entradas como máximo. Y
+= 7168$ bytes, esto es, $\frac{7168}{32} = 224$ entradas como máximo. Y
 si bien esto puede no parecer muy limitado, ocupar cuatro entradas por
 archivo cuando, empleando VFAT, se tiene un nombre medianamente largo
 reduce fuertemente el panorama.
@@ -341,7 +341,7 @@ como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
 #+label: FS_directorio_vfat
-#+caption: Entradas representando archivo con nombre largo bajo VFAT
+#+caption: Entradas representando archivos con (y sin) nombre largo bajo VFAT
 #+attr_html: width="843" height="724"
 #+attr_latex: width=\textwidth
 [[./img/directorio_vfat.png]]
@@ -359,7 +359,7 @@ esta posición privilegiada, manejando a todos los directorios que
 derivaran de éste como si fueran archivos, repartidos por el disco.
 
 #+caption: Significado de cada uno de los bits del byte de /atributos del archivo/ en el directorio FAT. La semántica que se presenta es la empleada por los sistemas MS-DOS y Windows; otros sistemas pueden presentar comportamientos adicionales.
-#+label: FS_artributos_fat
+#+label: FS_atributos_fat
 | Bit | Nombre        | Descripción                                  |
 |-----+---------------+----------------------------------------------|
 |   0 | Sólo lectura  | El sistema no permitirá que sea modificado.  |
@@ -393,7 +393,7 @@ pero los subdirectorios pueden crecer arbitrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
 archivo — si el doceavo byte de una entrada de directorio, que indica
 los /atributos del archivo/ (ver figura
-\ref{FS_entrada_directorio_fat} y cuadro 7.2) tiene
+\ref{FS_entrada_directorio_fat} y cuadro \ref{FS_atributos_fat}) tiene
 al bit 4 activado, la región de datos correspondientes a dicho archivo
 será interpretada como un subdirectorio.
 
@@ -623,6 +623,7 @@ ventajas, sin embargo, por las desventajas que implica, no puede
 tomarse como el modo de operación por omisión.
 
 *** Desduplicación
+# <<FS_desduplicacion>>
 
 Hay una estrategia fundamentalmente distinta para optimizar el uso del
 espacio de almacenamiento, logrando muy altos niveles de /sobreuso/:
@@ -952,10 +953,10 @@ adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
 #+label: FS_tabla_fat
-#+caption: Ejemplo de entradas en la tabla de asignación de archivos
-#+attr_html: width="616" height="296"
+#+caption: Ejemplo de entradas en la tabla de asignación de archivos en FAT32
 #+attr_latex: width=\textwidth
-[[../img/tabla_fat.png]]
+#+attr_html: width="628" height="284"
+[[./img/tabla_fat.png]]
 
 En la sección \ref{FS_el_directorio}, al presentar el formato del
 directorio de FAT, se mencionó que los subdirectorios son en realidad
@@ -965,7 +966,7 @@ sistema operativo. Lo único que distingue a un directorio de un
 archivo normal es que, en la entrada que lo describe en su directorio
 padre, el doceavo byte de la entrada (que indica los /atributos del
 archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
-7.1) tiene activado el bit 4.
+\ref{FS_atributos_fat}) tiene activado el bit 4.
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del

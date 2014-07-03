@@ -142,7 +142,8 @@ involucrar al sistema operativo). Estos hilos se llaman /hilos de
 usuario/ (/user threads/), y muchos lenguajes de programación los
 denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
 es en sistemas operativos mínimos (p. ej. para dispositivos embebidos)
-capaces de ejecutar una máquina virtual de alguno de esos lenguajes:
+capaces de ejecutar una máquina virtual (ver sección
+\ref{VIRT_arq_inexistentes}) de alguno de esos lenguajes:
 si bien el sistema operativo no maneja multiprocesamiento, a través de
 los hilos de usuario se crean procesos con multitarea interna.
 
@@ -768,7 +769,7 @@ detecta que el otro proceso fue el primero en actualizar el turno,
 entonces lo deja pasar:
 
 #+begin_src C
-int b2, b2;
+int b1, b2;
 int quien;
 
 /* Proceso 1: */
@@ -1151,7 +1152,8 @@ cuales se mencionarán los siguientes:
 	      El apagador usa, como uno de sus componentes, a un
 	      torniquete. Para ver una implementación ejemplo de un
 	      apagador, referirse a la solución presentado a
-	      continuación para el problema lectores-escritores.
+	      continuación para el problema de los lectores y los
+              escritores (sección \ref{PROC_lectores_escritores}).
 
 - Barrera :: Una barrera es una generalización de /rendezvous/ que
              permite la sincronización entre varios hilos (no sólo
@@ -1452,7 +1454,8 @@ El que se presenten estos conceptos aquí no significa que están
 se enfrentan una y otra vez al hablar de asignación exclusiva de
 recursos — temática recurrente en el campo de los sistemas operativos.
 
-** Problema lectores-escritores
+** Problema de los lectores y los escritores
+# <<PROC_lectores_escritores>>
 *** Planteamiento
      Una estructura de datos puede ser accedida simultáneamente por
      muchos procesos /lectores/, pero si algún proceso está

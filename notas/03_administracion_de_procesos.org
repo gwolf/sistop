@@ -2889,6 +2889,92 @@ haya opción /razonable/.
 
 ** Preguntas de autoevaluación
 
+1. ¿Qué diferencias y similitudes hay entre un programa y un proceso?
+   ¿Y entre un proceso y un hilo?
+
+2. Un proceso puede estar en uno de cinco /estados/. Indique cuáles
+   son estos estados (describiendo brevemente sus características) y
+   cuáles las transiciones definidas entre ellos.
+
+3. Presente un ejemplo de cada uno de los tres patrones de trabajo
+   para la /paralelización de la ejecución/ en varios hilos: los
+   patrones /jefe / trabajador/, /equipo de trabajo/ y /línea de
+   ensamblado/.
+
+4. Defina los siguientes conceptos, e ilustre las relaciones entre
+   ellos:
+   - Concurrencia:
+   - Operación atómica:
+   - Condición de carrera:
+   - Sección crítica:
+   - Espera activa:
+
+5. Resuelva el siguiente planteamiento, empleando múltiples hilos que
+   se sincronicen exclusivamente por medio de las herramientas
+   presentadas a lo largo de este capítulo:
+
+   En un restaurante de comida rápida, en un afán de reducir las
+   distracciones causadas por las pláticas entre los empleados, el
+   dueño decide que cada uno de ellos estará en un cubículo aislado y
+   no pueden comunicarse entre sí (o con el cliente) más que a través
+   de primitivas de sincronización. Tenemos los siguientes procesos y
+   roles:
+
+   - /n/ Clientes :: Cada cliente que llega pide la comida y
+                     especifica cualquier particularidad para su órden
+                     (doble carne, sin picante, con/sin lechuga,
+                     tomate y cebolla, etc.)  Paga lo que le indique
+                     el cajero. Espera a que le entreguen su pedido,
+                     se lo come, y deja un comentario en el libro de
+                     visitas.
+
+   - 1 Cajero :: Recibe la órden del cliente. Cobra el dinero /antes/
+                 de que comience a procesarse la órden.
+
+   - 3 Cocineros :: Saca la carne del refrigerador. Pone a la carne
+                    sobre la plancha. Le da la vuelta a cada carne
+                    para que quede bien cocida. Pone a la carne sobre
+                    una base de pan. Sólo puede sacar la carne de la
+                    plancha si ya tiene una base de pan lista.
+
+		    Puede haber más de un cocinero, pero la estufa
+                    sólo tiene espacio para dos carnes. ¡Recuerda
+                    evitar que los cocineros pongan más de las que
+                    caben!
+
+   - 1 Armador :: Mantiene suficientes panes (y no demasiados, porque
+                  se secan) aderezados y listos para que el cocinero
+                  deposite la carne. Una vez que un pan con carne está
+                  listo, le agrega los ingredientes que hagan falta,
+                  lo cierra y entrega al cliente.
+
+   Implemente en pseudocódigo la solución para este
+   sistema. Identifique qué patrones de sincronización fueron
+   empleados.
+
+6. Los /bloqueos mutuos/ no sólo ocurren en el campo del
+   cómputo. Identifique, basándose en las /condiciones de Coffman/,
+   situaciones de la vida real que (de no ser por el ingenio o la
+   impredictibilidad humana) constituirían bloqueos mutuos. Describa
+   por qué considera que se cumple cada una de las condiciones.
+
+7. Suponga un sistema con 14 dispositivos del mismo tipo, que
+   requieren acceso exclusivo. En este sistema se ejecutarán de forma
+   simultánea cinco procesos de larga duración, cada uno de los cuales
+   requerirá el uso de cinco de estos dispositivos — Tres de ellos
+   desde temprano en la ejecución del proceso, y los dos restantes,
+   apenas por unos segundos y cerca del fin de su ejecución.
+
+   - Si el sistema implementa una política muy conservadora de
+     asignación de recursos (/Serialización/), ¿cuántos dispositivos
+     estarán ociosos como mínimo y como máximo mientras se mantengan
+     los cinco procesos en ejecución?
+
+   - Si el sistema implementa una política basada en el /Algoritmo del
+     banquero/, ¿cuál será el máximo de procesos que puedan avanzar al
+     mismo tiempo? ¿Cuántos dispositivos estarán ociosos como mínimo y
+     como máximo mientras se mantengan los cinco procesos en ejecución?
+
 ** Temas de investigación sugeridos
 
 - Sistemas de arranque modernos en sistemas tipo Unix ::

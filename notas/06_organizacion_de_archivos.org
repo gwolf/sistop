@@ -1555,6 +1555,61 @@ compartir un archivo de uso intensivo y aleatorio.
 
 ** Preguntas de autoevaluación
 
+1. Identifique diferentes sistemas de cómputo (computadoras,
+   teléfonos, dispositivos móviles, dispositivos de función específica
+   como cámaras digitales o reproductores de medios, etc.) a los que
+   tiene acceso. ¿Cómo identifica cada uno de ellos el tipo de
+   archivos? ¿Implementan alguna abstracción ocultando o traduciendo
+   la presentación de determinados archivos de forma transparente al
+   usuario?
+
+2. Hay diferentes modos en que un programa puede accesar a la
+   información contenida en un archivo; siendo los principales
+   /secuencial/, /aleatorio/ y /relativo a índice/. Indique qué casos
+   de uso resuelve mejor cada uno de estos modos de acceso.
+
+3. ¿Qué tipo de optimización podría llevar a cabo el sistema operativo
+   si requiriera que todo programa declarara al momento de abrir un
+   archivo si va a utilizarlo de forma mayormente secuencial o
+   aleatoria?
+
+4. De las siguientes afirmaciones, identifique cuáles se refieren a
+   /ligas duras/, cuáles a /ligas simbólicas/, y cuáles a /enlaces
+   directos/. Hay una sóla respuesta correcta para cada afirmación.
+
+   1. Son dos (o más) entradas en el directorio apuntando al mismo
+      i-nodo
+   2. Es un archivo normal e independiente en el sistema de archivos,
+      que podría ser abierto directamente por los programas
+   3. Pueden apuntar a directorios, incluso creando ciclos
+   4. Su tipo de archivo en el directorio está indicado por la
+      extensión =.LNK=
+   5. El sistema operativo /resuelve directamente/ todas las
+      operaciones /como si fueran/ al archivo referido
+   6. No pueden referirse a archivos en sistemas de archivos distintos
+      del propio
+   7. Pueden existir en un sistema de archivos tipo FAT
+   8. Si un usuario elimina cualquiera de las referencias a un archivo
+      empleando este esquema, el archivo sigue existiendo en las demás
+
+5. Cuando se habla acerca de los sistemas de archivos remotos o en
+   red, ¿qué significa la /semántica de manejo de errores/? Presente
+   un ejemplo de cómo se refleja una distinta semántica entre un
+   sistema de archivos local y uno en red.
+
+6. Suponga que existe un archivo =file0= en un sistema de archivos con
+   semántica tipo UNIX. Explique qué ocurre en cada situación (con su
+   inodo, con sus sectores de contenido, entradas de directorio, etc):
+
+   - Copiado: =cp file0 file1=
+   - Liga dura: =ln file0 file1=
+   - Liga simbólica: =ln -s file0 file1=
+   - Eliminación: =rm file0=
+
+7. La estructura i-nodo tiene, en casi todos los sistemas de archivos,
+   un campo de /conteo de ligas/. Explique qué es. ¿Qué operaciones
+   llevan a que se modifique? ¿Qué ocurre si llega a cero?
+
 ** Temas de investigación sugeridos
 - Sistemas de archivos distribuídos ::
 

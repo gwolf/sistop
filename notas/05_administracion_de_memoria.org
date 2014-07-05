@@ -2502,6 +2502,92 @@ seguirán ejecutando la versión de la biblioteca con el error.
 * Ejercicios
 
 ** Preguntas de autoevaluación
+1. Diagrame el acomodo del espacio en memoria de un proceso. ¿Qué
+   diferencias principales y qué similitudes tienen la /sección de
+   datos/ con el /espacio de libres/ (/heap/)? ¿Y el /espacio de
+   libres/ con la /pila/ (/stack/)?
+
+2. Un proceso en un sistema con arquitectura de memoria basada en la
+   /segmentación/ tiene la siguiente tabla de segmentos:
+
+    | Segmento | Inicio | Tamaño | Permisos |
+    |----------+--------+--------+----------|
+    |        0 |    240 |    600 | RX       |
+    |        1 |   2300 |     16 | R        |
+    |        2 |     90 |    100 | RW       |
+    |        3 |   1320 |    950 | RW       |
+    |        4 |      - |     96 | RX       |
+
+   Para cada una de las siguientes solicitudes, indique qué dirección
+   física correspondería, y –de ser el caso– qué excepción se genera.
+
+   1. Lectura, 0-430
+   2. Escritura, 0-150
+   3. Lectura, 1,15
+   4. Escritura, 2-130
+   5. Ejecución, 4-25
+
+3. El buffer de traducción adelantada (TLB) de un sistema en
+   particular presenta una efectividad del 95%. Obtener un valor del
+   TLB toma 10ns. La memoria principal tarda 120ns en recuperar un
+   valor. ¿Cuál es el tiempo promedio para completar una operación a
+   memoria?
+
+4. Con la siguiente cadena de referencia, y empleando cuatro marcos de
+   memoria física, desarrolle la asignación bajo los esquemas FIFO,
+   OPT y LRU:
+   #+BEGIN_QUOTE
+   1, 3, 2, 1, 5, 3, 4, 1, 5, 2, 6, 7, 5, 7, 2, 5, 3, 5, 3, 1
+   #+END_QUOTE
+   Asumiendo que cada fallo de página toma 8 milisegundos en ser
+   atendido, ¿qué diferencia en rendimiento puede observarse?
+
+5. Suponga que un sistema paginado con un rango de direcciones de 4GB
+   (4294967296 direcciones).
+   - ¿Cuántas páginas tendrá el sistema si se utilizan páginas de 4096 bytes?
+   - ¿Qué tamaño (en bits) tendrá una entrada de la tabla de
+     traducción ? Suponga que sólo se guarda el número de marco
+     físico.
+   - ¿Qué tamaño tendrá la tabla de paginación si se desea cubrir todo el rango?
+   - Suponga que el tamaño de la tabla de paginación fuera demasiado
+     grande. Proponga dos soluciones explicando ventajas y desventajas
+     de cada una.
+
+6. Explique la relación que hay entre direcciones virtuales y
+   direcciones físicas. Indique cómo se realiza la traducción en los
+   siguientes casos:
+   - Una computadora con TLB y tabla de paginación de un nivel, con la
+     entrada cargada en la TLB.
+   - Una computadora con TLB y tabla de paginación de un nivel y sin
+     la entrada cargada.
+   - Una computadora sin TLB y con tabla de paginación de dos niveles.
+   - Una computadora sin paginación ni TLB pero con segmentación.
+
+7. Un equipo presenta rendimiento muy deficiente. Ante un análisis de
+   utilización a lo largo de un día, se encuentra que el promedio de
+   uso de CPU está al 20% y el uso de la interfaz al disco duro que
+   aloja a la memoria virtual al 95%. ¿En qué condición está el sistema?
+
+   Elija de la siguiente lista las dos respuestas que /mayor
+   efectividad/ tendrían para mejorar el rendimiento del
+   sistema. Fundamente con una breve explicación.
+
+   1. Reemplazar al CPU por uno 20% más rápido (pasar de 1GHz a 1.2GHz)
+   2. Destinar un área del disco 25% más grande para la memoria
+      virtual (pasar de 4 a 5GB)
+   3. Aumentar el grado de multiprogramación en 10% (aumentar de 20 a
+      22 los procesos en la cola de ejecución)
+   4. Reducir el grado de multiprogramación en 10% (reducir de 20 a
+      18 los procesos en la cola de ejecución)
+   5. Instalar un 25% más de memoria principal (pasar de 2 a 2.5GB)
+   6. Instalar un disco duro un 33% más rápido (cambiar un disco de
+      5400 RPM por uno de 7200 RPM)
+
+8. Describa en qué consiste un ataque de /desbordamiento de pila/
+   (/stack overflow/), y un mecanismo de protección del sistema para
+   contrarrestarlos. ¿Puede sugerir una manera en que un atacante
+   podría burlar dicha protección?
+
 
 ** Temas de investigación sugeridos
 

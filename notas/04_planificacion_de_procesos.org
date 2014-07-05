@@ -827,6 +827,7 @@ diferentes versiones de retroalimentación multinivel, y típicamente
 con hasta decenas de colas.
 
 ** Lotería
+# <<PLAN_loteria>
 
 Los mecanismos hasta aquí descritos vienen con largas décadas de
 desarrollo. Uno de los últimos algoritmos que ha sido ampliamente
@@ -1565,6 +1566,50 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 * Ejercicios
 
 ** Preguntas de autoevaluación
+1. En un sistema interactivo, los procesos típicamente están en
+   ejecución un largo periodo de tiempo (entre minutos y días), sin
+   embargo, en el transcurso del capítulo estos fueron casi siempre
+   tratados como /procesos cortos/. ¿Qué significa esto? ¿Cuál sería
+   un ejemplo de /proceso largo/?
+
+2. Asumiendo los siguientes procesos:
+   | Proceso | Llegada | $t$ |
+   |---------+---------+-----|
+   | A       | 0       | 8   |
+   | B       | 2       | 13  |
+   | C       | 4       | 3   |
+   | D       | 4       | 6   |
+   | E       | 6       | 8   |
+   | F       | 6       | 3   |
+   Desarrolle la representación gráfica de cómo el despachador les
+   asignaría el CPU, y la tabla de análisis, bajo:
+   - Ronda con $q=1$
+   - Ronda con $q=3$
+   - Proceso más corto a continuación
+   - Retroalimentación multinivel con $q=1$, $n=1$ y $Q=nq$
+
+   Compare el rendimiento bajo cada uno de estos esquemas. ¿Qué
+   ventajas presenta cada uno?
+
+3. ¿Cuáles de los algoritmos estudiados son más susceptibles a la
+   inanición que se presenta cuando $\rho > 1$? ¿Cuáles menos?
+   Identifique por lo a menos dos en cada caso.
+
+4. Evalúe al planificador /por lotería/ (sección \ref{PLAN_loteria}).
+
+   - ¿Cómo se compararía este método con los otros abordados?
+   - ¿Para qué tipo de carga es más apto? ¿Y menos apto?
+   - ¿Qué tan susceptible resulta a producir inanición?
+   - ¿Qué tan /justa/ sería su ejecución?
+   - ¿Qué modificaciones requeriría para planificar procesos con
+     necesidades de tiempo real?
+
+5. Tanto la afinidad a procesador como el balanceo de cargas son
+   elementos importantes y deseables en todo planificador que se
+   ejecute en un entorno multiprocesador. Sin embargo, afinidad y
+   balanceo de cargas trabajan uno en contra del otro. ¿Por qué?
+   ¿Cuándo debe predominar cada uno?
+
 
 ** Temas de investigación sugeridos
 

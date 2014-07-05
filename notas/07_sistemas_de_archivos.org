@@ -1341,6 +1341,37 @@ de archivos resurja.
 
 ** Preguntas de autoevaluación
 
+1. Está diseñando un sistema de archivos basado en /asignación
+   indexada/. Cada /cluster/ mide 4096 bytes, y el apuntador a un
+   bloque requiere 32 bits (4 bytes). Dados los metadatos que van a
+   almacenarse en el i-nodo del archivo, dentro del i-nodo principal
+   puede guardar 24 apuntadores directos, y está considerando permitir
+   indirección sencilla y doble.
+
+   ¿Cuál es el tamaño máximo de archivo que podrá manejar este sistema
+   de archivos?
+
+2. El sistema de archivos /ReiserFS/ está basado en la /asignación
+   indexada/, pero introduce un nuevo concepto: Las /colitas/
+   (/tails/). Estas permiten que archivos muy pequeños, de hasta 4KB,
+   puedan ser almacenados /en el mismo i-nodo/. Esto permite a
+   ReiserFS ahorrar espacio en disco (se estima que logra una
+   eficiencia hasta 5% mayor que sistemas que no emplean esta
+   técnica), y además reduce el tiempo requerido para recuperar estos
+   archivos, dado que los datos pueden almacenarse en el mismo i-nodo
+   que alguna de sus bibliotecas, sin requerir leer ningún bloque
+   adicional.
+
+   ReiserFS se popularizó alrededor del 2001, pero su desarrollo se ha
+   detenido, y esta característica en particular no ha sido adoptada
+   más que por unos pocos sistemas de archivos (UFS2 y BTRFS). ¿Qué
+   problemas encuentra con el planteaiento de las /colitas/?
+
+3. Describa el funcionamiento de un /sistema de archivos con bitácora/
+   (/journaling file system/). ¿Cómo nos asegura que el sistema se
+   mantendrá consistente después de una interrupción abrupta del
+   suministro eléctrico?
+
 ** Temas de investigación sugeridos
 
 - Desduplicación ::

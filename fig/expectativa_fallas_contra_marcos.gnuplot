@@ -1,6 +1,6 @@
 clear
 reset
-set term pngcairo  size 640,320
+set term pngcairo fontscale 1.5 size 640,320
 unset key
 
 set xrange [0:8]

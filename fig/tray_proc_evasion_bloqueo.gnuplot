@@ -1,5 +1,5 @@
 reset
-set term pngcairo dashed 
+set term pngcairo dashed fontscale 1.4
 unset key
 set xlabel "Proceso A"
 set xrange [0:11]

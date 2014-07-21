@@ -1,0 +1,414 @@
+%%
+%% This is file `aip-6s.clo',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% aipparms.dtx  (with options: `aip6x9single')
+%% 
+%% Layout file for class aipproc to use with LaTeX2e
+%% (C) 2000 American Institute of Physics and Frank Mittelbach
+%% All rights reserved
+%% 
+%% $Id: aipparms.dtx,v 1.20 2005/12/01 16:16:27 frank Exp $
+\setlength\bodytextsize         {12pt}
+\setlength\bodytextbaselineskip {13.6pt}
+\setlength\bodytextenspace      {5pt}
+\setlength\bodytextparindent    {12pt}
+\SetInternalRegister\@lowpenalty   {51}
+\SetInternalRegister\@medpenalty  {151}
+\SetInternalRegister\@highpenalty {301}
+\renewcommand\normalsize{
+  \@setfontsize\normalsize{\bodytextsize}{\bodytextbaselineskip}
+  \setlength\abovedisplayskip   {\bodytextsize plus 2pt minus 5pt}
+  \setlength\belowdisplayskip   {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {.6\bodytextsize plus 3pt minus 3pt}
+  \let\@listi\@listI
+}
+\renewcommand\small{\@setfontsize\small{11pt}{12.8pt}
+  \setlength\abovedisplayskip {11pt plus 3pt minus 6pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {6.5pt plus 3.5pt minus 3pt}
+   \let\@listi\@listIsmall
+}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{10}{11}
+  \setlength\abovedisplayskip {10pt plus 2pt minus 5pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {6pt plus 3pt minus 3pt}
+  \let\@listi\@listIfootnotesize
+}
+\renewcommand\tiny{\@setfontsize\tiny{5}{6}}
+\AIP@cmdnotsupported\scriptsize
+\AIP@cmdnotsupported\large
+\AIP@cmdnotsupported\Large
+\AIP@cmdnotsupported\LARGE
+\AIP@cmdnotsupported\huge
+\AIP@cmdnotsupported\Huge
+\ifthenelse{\boolean{@cmrfonts}}{}
+  {
+   \renewcommand\sfdefault{phv}
+   \renewcommand\rmdefault{ptm}
+   \renewcommand\ttdefault{pcr}
+   \renewcommand\bfdefault{b}
+  }
+\SetInternalRegister\thinmuskip {2mu}
+\SetInternalRegister\medmuskip  {2.5mu plus 1mu minus 1mu}
+\SetInternalRegister\thickmuskip{4mu plus 1.5mu minus 1mu}
+\DeclareParagraphLayout{AIPbodytext}
+  {\bodytextsize}{\bodytextbaselineskip}
+  {\bodytextparindent}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {}
+\SetInternalRegister\tolerance{500}
+\SetInternalRegister\pretolerance{300}
+\setlength\emergencystretch{2pc}
+\frenchspacing
+\setlength\textwidth {35pc}
+\setlength\columnsep {0pt}
+
+\setlength\topskip   {12pt}
+\setlength\textheight{\bodytextbaselineskip * 45 + \topskip}
+\setlength\headheight   {\bodytextbaselineskip}
+\setlength\headsep      {2pc}
+\setlength\footskip     {2pc}
+\setlength\topmargin    {(\paperheight - \textheight ) / 2
+                         - 1in - \headheight - \headsep }
+\setlength\oddsidemargin   { (\paperwidth - \textwidth)/2 -1in }
+\setlength\evensidemargin
+               { \paperwidth -2in - \textwidth - \oddsidemargin}
+\SetInternalRegister\clubpenalty         {9999}
+\SetInternalRegister\widowpenalty        {3000}
+\SetInternalRegister\displaywidowpenalty {50}
+\SetInternalRegister\brokenpenalty       {100}
+\SetInternalRegister\predisplaypenalty   {10000}
+\SetInternalRegister\postdisplaypenalty  {0}
+ \raggedbottom
+\newcommand\XFMtitleblock{
+  \XFMtitle
+  \XFMauthors
+  \XFMaddresses
+  \XFMabstract
+  \vspace{5pt}
+  \XFMkeywords
+  \XFMclassification
+}
+\newcommand\XFMtitleformat[1] {#1}
+\DeclareParagraphLayout{XFMtitle}
+  {20pt}{21pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \bfseries
+   \let\\\@centercr
+  }
+\setlength\XFMtitleBBskip      {0.5in}
+\DeclareParagraphLayout{XFMauthors}
+  {14pt}{15pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \normalfont
+   \let\\\@centercr
+  }
+\newcommand\XFMauthorscommatext {,~}
+\newcommand\XFMauthorsandtext    {~ and~}
+\newcommand\XFMauthorsandtwotext {~ and~}
+\newcommand\XFMauthorsaddressmarkfont  {\fontsize{9}{9}\selectfont}
+\newcommand\XFMauthorsaddressmarkformat[1]
+                                       {\textsuperscript{#1}}
+\setlength\XFMauthorsBBskip       {34pt - 6pt}
+\DeclareParagraphLayout{XFMaddress}
+  {10pt}{11pt}
+  {0pt}{\bodytextparindent plus 1fil}
+       {\bodytextparindent plus 1fil}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \itshape
+   \let\\\@centercr
+  }
+\newcommand\XFMaddressmarkstyle     {\fnsymbol}
+\newcommand\XFMaddressmarkfont      {\fontsize{7}{7}\selectfont}
+\newcommand\XFMaddressmarkformat[1] {\textsuperscript{#1}}
+\newcommand\XFMauthorsaltaddressmarkseparator{,}
+\newcommand\XFMaddressseparator     {\par}
+\setlength\XFMaddressBBskip         {28pt - 4pt}
+
+\renewcommand\abstractname               {Abstract}
+\newcommand\XFMabstractheadingfont       {\fontsize{10}{11}\bfseries}
+\newcommand\XFMabstractheadingformat[1]  {#1.\hspace{.5em}}
+\DeclareParagraphLayout{XFMabstracttext}
+  {10pt}{11pt}
+  {1pc}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMabstractBBskip    {28pt}
+\setlength\XFMabstractwidth     {\textwidth -2\bodytextparindent}
+\setlength\XFMabstractleftindent{\bodytextparindent}
+\DeclareParagraphLayout{XFMclassificationtext}
+  {10pt}{11pt}
+  {0pt}{\bodytextparindent}{\bodytextparindent}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMclassificationBBskip       {11pt}
+\newcommand\classificationname           {PACS}
+\newcommand\XFMclassificationheadingfont {\bfseries}
+\newcommand\XFMclassificationheadingformat[1]  {#1:\hspace{.5em}}
+\classification{\AIP@error{Missing~ \noexpand\classification
+          declaration}{Specify~ PACS~ number(s)~ choosing~
+          from~ http://www.aip.org/pacs/index.html}
+     <Missing~ classification>}
+\newcommand\keywordsname           {Keywords}
+\newcommand\XFMkeywordsheadingfont {\bfseries}
+\newcommand\XFMkeywordsheadingformat[1]  {#1:\hspace{.5em}}
+
+\DeclareParagraphLayoutAlias{XFMkeywordstext}{XFMclassificationtext}
+\keywords{\AIP@error{Missing~ \noexpand\keywords declaration}
+          {Specify~ a~ list~ of~ keywords}
+          <Missing~ keywords>}
+\setlength\XFMkeywordsBBskip       {11pt}
+\newcommand\XFMtitleblockpostcode{}
+\newcommand\XFMtitleblockmarkstyle{\arabic}
+\setlength\XFMtitleblockpostskip{2pc - 6pt}
+\renewcommand\thesection       {\arabic{section}}
+\renewcommand\thesubsection    {\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection {\thesubsection .\arabic{subsubsection}}
+\renewcommand\theparagraph     {\thesubsubsection.\arabic{paragraph}}
+\renewcommand\@seccntformat[1]{
+   {\csname the#1\endcsname.\enspace}
+}
+\newcommand\AIPsectionpenalty  {-1000}
+\newcommand\AIPsectionindent   {0pt}
+\newcommand\AIPsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+%% actually we use 2pts less than the above:
+\renewcommand\AIPsectionpreskip
+             {21.4pt plus 3pt minus 1pt}
+\newcommand\AIPsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsectionafterindent {false}
+\newcommand\AIPsectionrunin       {false}
+\newcommand\AIPsectionformat[1]   {\centering\MakeTextUppercase{#1}}
+\newcommand\AIPsectionfont     {\normalfont\fontsize{14}{16}\bfseries}
+\newcommand\AIPsubsectionpenalty  {-300}
+\newcommand\AIPsubsectionindent   {0pt}
+\newcommand\AIPsubsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsubsectionafterindent {true}
+\newcommand\AIPsubsectionrunin       {false}
+\newcommand\AIPsubsectionformat[1]   {\centering#1}
+\newcommand\AIPsubsectionfont     {\normalfont\fontsize{14}{16}\bfseries}
+\newcommand\AIPsubsubsectionpenalty  {-300}
+\newcommand\AIPsubsubsectionindent   {0pt}
+\newcommand\AIPsubsubsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsubsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsubsubsectionafterindent {true}
+\newcommand\AIPsubsubsectionrunin       {false}
+\newcommand\AIPsubsubsectionformat[1]   {\centering#1}
+\newcommand\AIPsubsubsectionfont     {\normalfont\fontsize{14}{16}\itshape}
+\newcommand\AIPparagraphpenalty  {-300}
+\newcommand\AIPparagraphindent   {\bodytextparindent}
+\newcommand\AIPparagraphpreskip  {\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPparagraphpostskip {1em}
+\newcommand\AIPparagraphafterindent {true}
+\newcommand\AIPparagraphrunin       {true}
+\newcommand\AIPparagraphfont        {\normalfont\normalsize\itshape}
+\newcommand\AIPparagraphformat[1]   {#1.}
+\newcommand\AIPsubparagraphpenalty  {-300}
+\newcommand\AIPsubparagraphindent   {\bodytextparindent}
+\newcommand\AIPsubparagraphpreskip  {\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubparagraphpostskip {1em}
+\newcommand\AIPsubparagraphafterindent {true}
+\newcommand\AIPsubparagraphrunin       {true}
+\newcommand\AIPsubparagraphfont        {\normalfont\normalsize}
+\newcommand\AIPsubparagraphformat[1]   {#1.}
+\AIP@cmdnotsupported\subparagraph
+\setlength\leftmargini    {2\bodytextparindent}
+\setlength\leftmarginii   {2\bodytextparindent}
+\setlength\leftmarginiii  {2\bodytextparindent}
+\setlength\leftmarginiv   {2\bodytextparindent}
+\SetInternalRegister\@beginparpenalty {10000}
+\SetInternalRegister\@endparpenalty   {-\@lowpenalty}
+\SetInternalRegister\@itempenalty     {-\@lowpenalty}
+\renewcommand\@listi{
+  \setlength\leftmargin {\leftmargini}
+  \setlength\labelsep   {\bodytextenspace}
+  \setlength\labelwidth {\leftmargin - \labelsep}
+  \setlength\topsep     {.5\bodytextbaselineskip plus 1pt}
+  \setlength\partopsep  {0pt}
+  \setlength\parsep       {0pt}
+  \setlength\listparindent{0pt}
+  \setlength\itemsep      {2pt plus 1pt}
+}
+\renewcommand\@listii{
+   \setlength\leftmargin {\leftmarginii}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+   \setlength\topsep     {0pt plus 1pt}
+}
+\renewcommand\@listiii{
+   \setlength\leftmargin{\leftmarginiii}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+}
+\renewcommand\@listiv{
+   \setlength\leftmargin{\leftmarginiv}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+}
+\renewcommand\@listI{}
+\let\@listI\@listi
+\newcommand\@listIsmall{}
+\let\@listIsmall\@listi
+\newcommand\@listIfootnotesize{}
+\let\@listIsmall\@listi
+\renewcommand\labelitemi  {\footnotesize\textbullet}
+\renewcommand\labelitemii {\bfseries --}
+\renewcommand\labelitemiii{\fontsize{8}{8}\selectfont
+                           \raisebox{1.5pt}\textasteriskcentered}
+\renewcommand\labelitemiv {\textperiodcentered}
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{(\theenumii)}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand{\labelenumiv}{\theenumiv.}
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\p@enumi {}
+\renewcommand\theenumii{\alph{enumii}}
+\renewcommand\p@enumii {\theenumi}
+\renewcommand\theenumiii{\roman{enumiii}}
+\renewcommand\p@enumiii {\theenumi(\theenumii)}
+\renewcommand{\theenumiv}{\Alph{enumiv}}
+\renewcommand{\p@enumiv} {\p@enumiii\theenumiii}
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep
+                                   \normalfont\bfseries #1}
+\newcommand\AIPeqformat [1] {(#1)}
+\newcommand\AIPeqfont       {\normalfont \normalcolor}
+\newcommand\AIPeqrefformat [1] {(#1)}
+\newcommand\AIPeqreffont       {}
+\newcommand\AIPfootnoterulewidth    {2in}
+\newcommand\AIPfootnoteruleheight   {0.5pt}
+\newcommand\AIPfootnoteruleindent   {0pt}
+\newcommand\AIPfootnoterulepreskip  {0.25in}
+\newcommand\AIPfootnoterulepostskip {0.125in}
+\renewcommand\thefootnote{\arabic{footnote}}
+\newcommand\AIPfootnotemarkerformat[1] {\textsuperscript{#1}}
+\newcommand\AIPfootnotemarkerfont      {\fontsize{8}{8}\normalfont}
+\newcommand\AIPfootnotetextmarkerformat[1] {\textsuperscript{#1}\hspace{3pt}}
+\newcommand\AIPfootnotetextmarkerfont      {\fontsize{8}{8}\normalfont}
+\setlength\footnotesep                     {8.4pt}
+\DeclareParagraphLayout{AIPfootnote}
+  {10pt}{11pt}
+  {1em}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+\newcommand\AIPcitefont      {}
+\newcommand\AIPciteformat[1] {[#1]}
+\setlength\arrayrulewidth {.4pt}
+\setlength\AIPhlinesep    {1pt}
+\setlength{\skip\@mpfootins}{12pt plus 4pt minus 4pt}
+\setcounter{totalnumber} {3}
+\setcounter{topnumber}   {2}
+\setcounter{bottomnumber}{1}
+\setcounter{dbltopnumber}{2}
+\renewcommand\topfraction      {.9}
+\renewcommand\bottomfraction   {.4}
+\renewcommand\textfraction    {.08}
+\renewcommand\floatpagefraction{.9}
+\renewcommand\dbltopfraction      {.6}
+\renewcommand\dblfloatpagefraction{.6}
+
+\setlength\floatsep     {1.5\bodytextbaselineskip plus 4pt}
+\setlength\intextsep    {.5\bodytextbaselineskip plus 2pt minus 1pt}
+\setlength\textfloatsep {2\bodytextbaselineskip plus 4pt}
+\setlength\@fptop {0pt plus 100pt}
+\setlength\@fpsep {20pt plus 6pt}
+\setlength\@fpbot {0pt plus 100pt}
+\setlength\@dblfptop {0pt plus 100pt}
+\setlength\@dblfpsep {20pt plus 6pt}
+\setlength\@dblfpbot {0pt plus 100pt}
+\renewcommand\figurename                  {FIGURE}
+\renewcommand{\thefigure}                 {\arabic{figure}}
+\newcommand\AIPfigurecaptionheadformat[1] {\figurename\ #1.\hspace{1em}}
+\setlength\AIPfigurecaptionBBskip         {0.25in}
+
+\DeclareParagraphLayout{AIPfigure-singlelinecaption}
+  {10pt}{11.5pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {}
+\DeclareParagraphLayout{AIPfigure-multilinecaption}
+  {10pt}{11.5pt}
+  {12pt}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+\newcommand\AIPfigurecaptionheadfont  {\fontsize{10}{11.5}\bfseries}
+\newcommand\AIPfigurecaptiontextfont  {\fontsize{10}{11.5}\selectfont}
+\newcommand\AIPfiguresourceheadtext  {Source:~ }
+\newcommand\AIPfiguresourceskip      {1mm}
+\newcommand\AIPfiguresourceheadfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPfiguresourcetextfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPtablefont {\fontsize{10}{11.5}\normalfont}
+\renewcommand\tablename                  {TABLE}
+\renewcommand{\thetable}                 {\arabic{table}}
+\newcommand\AIPtablecaptionheadformat[1] {\tablename\ #1.\hspace{1em}}
+\newcommand\AIPtablecaptionheadfont      {\AIPtablefont\bfseries}
+\newcommand\AIPtablecaptiontextfont      {\AIPtablefont}
+\setlength\AIPtablecaptionminwidth       {12pc}
+\DeclareParagraphLayout{AIPtable-singlelinecaption}
+  {10pt}{11.5pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+\setlength\AIPtablecaptionskip {2pt}
+\DeclareParagraphLayoutAlias{AIPtable-multilinecaption}
+                            {AIPtable-singlelinecaption}
+\newcommand\AIPtableheadfont {\AIPtablefont\bfseries}
+\setlength\AIPtablenoteskip  {2mm}
+\DeclareParagraphLayout{AIPtablenote}
+  {9pt}{10pt}
+  {1em}{0pt}{0pt plus 3em}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+\newcommand\AIPtablesourceheadtext  {Source:~ } % include spacing!
+\newcommand\AIPtablesourceskip      {1mm}
+\newcommand\AIPtablesourceheadfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPtablesourcetextfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPfolioformat[3] {#1\hfil#2\hfil#3}
+\newcommand\AIPfoliofont      {\fontsize{10}{10}\selectfont}
+\newcommand\AIPacknowledgmentsheadtype {\section*}
+\newcommand\AIPacknowledgmentsheadtext {ACKNOWLEDGMENTS}
+\DeclareParagraphLayoutAlias{AIPacknowledgments}{AIPbodytext}
+\newcommand\AIPindexheadtype {\section*}
+\renewcommand\indexname      {INDEX}
+\newcommand\AIPbibliographyheadtype {\section*}
+\renewcommand\refname               {REFERENCES}
+\renewcommand\AIPcitestyleselect    {num}
+\newcommand\AIPnumcitestyle         {aipproc}
+\newcommand\AIPbibliographymarkerformat [1] {\hfill#1.}
+\newcommand\AIPbibliographylabelsep         {5pt}
+\newcommand\AIPbibliographyitemsep          {0pt}
+\newcommand\AIPbibliographylabelwidth       {\maxdimen}
+\newcommand\AIPbibliographyleftmargin       {0pt}
+\newcommand\AIPbibliographyleftmarginextra  {8pt}
+\DeclareParagraphLayout{AIPbibliography}
+  {10pt}{11pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+   \sloppy
+   \frenchspacing
+   \SetInternalRegister\clubpenalty {8000}
+   \SetInternalRegister\widowpenalty{8000}
+   }
+\xfm@ignored@key{homepage}
+\xfm@ignored@key{thanks}
+\xfm@ignored@key{email}
+\pagenumbering{arabic}
+\endinput
+%%
+%% End of file `aip-6s.clo'.

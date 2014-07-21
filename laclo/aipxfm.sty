@@ -1,0 +1,479 @@
+%%
+%% This is file `aipxfm.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% aipxfm.dtx  (with options: `package')
+%% 
+%% Package aipxfm to use with LaTeX2e
+%% (C) 2000-2005 David Carlisle, Frank Mittelbach
+%% All rights reserved.
+%% 
+%% This package is currently distributed without documentation.
+%% It is a sort of temporary version on the way towards a general xfm
+%% package for LaTeX.
+%% 
+%% $Id: aipxfm.dtx,v 1.10 2005/11/11 15:45:11 frank Exp $
+
+\RequirePackage{keyval,calc}
+\newcount\xfm@authors
+\newcount\xfm@addresses
+\renewcommand*\title{\@dblarg\@xtitle}
+\def\@xtitle[#1]#2{
+  \def\@shorttitle{#1}
+  \def\@title{#2}
+}
+\newcommand*\subtitle[1]{
+  \def\@subtitle{#1}
+}
+\renewcommand\author[2]{
+  \advance\xfm@authors\@ne
+  \xfm@def{author}{#1}
+  \xfm@use\let{altaddressnum}\@empty
+  \xfm@use\let{thanks}\@empty
+  \setkeys{xfm}{#2}}
+\def\xfm@def#1#2{
+  \expandafter\def\csname#1-\the\xfm@authors\endcsname{#2}}
+\def\xfm@use#1#2{
+  \expandafter#1\csname#2-\the\xfm@authors\endcsname}
+\def\XFMthe#1{
+  \csname#1-\the\xfm@authors\endcsname}
+\def\xfm@ignored@key#1{\define@key{xfm}
+  {#1}{\PackageWarning{xfm}{Key~'#1'~for~\noexpand\author command~is~not~
+                            supported\MessageBreak
+                            together~with~
+                            \string\layoutstyle{\AIP@layoutstylename}~
+                            declaration!\MessageBreak
+                            Value~'##1'~is~ignored}}}
+\define@key{xfm}{address}{
+  \def\xfm@address{#1}
+  \def\xfm@updat@addressnum{addressnum}
+  \xfm@address@code\xfm@addresslist
+}
+\def\xfm@address@code#1{
+  \let\@elt\xfm@address@check
+  \count@\@ne
+  \xfm@addresslist\xfm@altaddresslist
+  \ifx\@elt\xfm@address@check
+    \def\@elt{\noexpand\@elt\noexpand}
+    \edef#1{#1\expandafter\@elt
+       \csname address-\the\count@\endcsname}
+    \expandafter\let\csname address-\the\count@\endcsname\xfm@address
+    \xfm@use\edef{\xfm@updat@addressnum}{\the\count@}
+    \advance\xfm@addresses\@ne
+  \fi
+  \let\@elt\relax
+}
+\let\xfm@addresslist\@empty
+\let\xfm@altaddresslist\@empty
+\def\xfm@address@check#1{
+  \ifx\xfm@address#1
+    \xfm@use\edef{\xfm@updat@addressnum}{\the\count@}
+    \let\@elt\@gobble
+  \else
+    \advance\count@\@ne
+  \fi
+}
+\define@key{xfm}{email}{
+  \xfm@def{email}{#1}}
+\define@key{xfm}{homepage}{
+  \xfm@def{homepage}{#1}}
+\iffalse
+\define@key{xfm}{altaddress}{
+  \expandafter\def\expandafter\xfm@address\expandafter{\@secondoftwo#1}
+  \xfm@address@code\xfm@altaddresslist
+  \toks@\expandafter\expandafter\expandafter
+    \expandafter\expandafter\expandafter\expandafter
+          {\XFMthe{altaddressnum}}
+  \@temptokena\expandafter{\@firstoftwo#1}
+ \xfm@use\edef{altaddressnum}{
+    \the\toks@\noexpand\@elt{\the\count@}{\the\@temptokena}}
+}
+\fi
+\define@key{xfm}{altaddress}{
+  \def\xfm@address{#1}
+  \def\xfm@updat@addressnum{altaddressnum}
+  \xfm@address@code\xfm@addresslist
+}
+
+\define@key{xfm}{thanks}{
+  \toks@\expandafter\expandafter\expandafter
+     \expandafter\expandafter\expandafter\expandafter
+      {\XFMthe{thanks}\@elt#1}
+  \xfm@use\edef{thanks}{\the\toks@}
+}
+
+\def\XFMauthorsbyaddress#1{
+  \let\XFMaddressmark\relax
+  \edef\xfm@author@count{\the\xfm@authors}
+  \def\@elt##1{
+   \let\xfm@address##1
+   #1
+}
+  \count@\z@
+  \xfm@addresslist
+  }
+\def\XFMaddresses{
+  \let\XFMaddressmark\relax
+  \par
+  \begingroup
+   \UseParagraphLayout{XFMaddress}
+   \UseBBskip\XFMaddressBBskip
+   \edef\xfm@author@count{\the\xfm@authors}
+   \let\@elt\xfm@address@elt
+   \count@\z@
+   \xfm@addresslist
+   \par
+  \endgroup
+  }
+\def\xfm@address@elt#1{
+  \advance\count@\@ne
+  \ifnum\xfm@authors>\@ne      % no mark for a single author
+   \ifnum\xfm@addresses>\@ne   % or a single address for all authors
+    \begingroup
+      \c@xfm\count@
+      \XFMaddressmarkformat{
+\XFMaddressmarkfont
+\XFMaddressmarkstyle{xfm}
+      }
+    \endgroup
+   \fi
+  \fi
+  #1\XFMaddressseparator}
+\def\XFMauthorsoneaddress{
+  \def\xfm@address@test\ifx{
+   \expandafter\ifx\csname address-\XFMthe{addressnum}\endcsname\xfm@address}
+  \xfm@address@loop}
+\def\XFMauthors{
+  \edef\xfm@author@count{\the\xfm@authors}
+  \def\xfm@address@test\ifx{\iftrue}
+  \xfm@address@loop}
+\def\xfm@address@loop{
+   \par
+   \begingroup
+   \ifnum\xfm@authors = \@ne % no marks for single author
+    \let\XFMaddressmark\relax
+    \let\XFMaltaddressmark\relax
+   \else
+     \ifnum\xfm@addresses=\@ne % no mark if all authors have the same address
+      \let\XFMaddressmark\relax
+      \let\XFMaltaddressmark\relax
+     \fi
+   \fi
+   \UseParagraphLayout{XFMauthors}
+   \UseBBskip\XFMauthorsBBskip
+   \xfm@authors\z@
+   \let\xfm@last@author\z@
+   \count@\z@
+   \loop
+   \advance\xfm@authors\@ne
+   \xfm@address@test\ifx
+     \ifnum\count@>\@ne\XFMauthorscommatext\fi
+     \ifnum\xfm@last@author>\z@  %FMi
+       \xfm@typeset@author
+     \fi
+     \advance\count@\@ne
+     \mathchardef\xfm@last@author\xfm@authors
+   \fi
+   \ifnum\xfm@author@count>\xfm@authors
+   \repeat
+   \ifcase\count@
+     \or
+     \or
+       \XFMauthorsandtwotext
+     \else
+       \XFMauthorsandtext
+   \fi
+   \xfm@typeset@author
+   \par
+   \endgroup
+}
+\def\xfm@typeset@author{
+  \begingroup
+  \xfm@authors\xfm@last@author
+  \XFMauthor
+  \endgroup}
+\def\XFMauthor{
+  \XFMthe{author}
+  \XFMaddressmark
+  \XFMaltaddressmark
+}
+\def\XFMaddressmark{
+  \begingroup
+    \xfm@use\c@xfm{addressnum}\relax
+    \XFMauthorsaddressmarkformat{
+      \XFMauthorsaddressmarkfont
+      \XFMaddressmarkstyle{xfm}
+    }
+  \endgroup
+}
+\newcounter{xfm}
+\def\XFMaltaddressmark{
+  \begingroup
+   \xfm@use{\ifx\expandafter\@empty}{altaddressnum}
+   \else
+    \xfm@use\c@xfm{altaddressnum}\relax
+    \XFMauthorsaddressmarkformat{
+      \XFMauthorsaddressmarkfont
+      \XFMauthorsaltaddressmarkseparator
+      \XFMaddressmarkstyle{xfm}
+    }
+   \fi
+  \endgroup}
+\newskip\XFMauthorsBBskip
+
+\def\XFMoneaddress{
+  \par
+   \UseParagraphLayout{XFMaddress}
+   \UseBBskip\XFMaddressBBskip
+   \begingroup
+   \xfm@address
+   \par
+   \endgroup}
+\newskip\XFMaddressBBskip
+\setlength\XFMaddressBBskip{12pt}
+\def\XFMemailoneaddress{
+  \par
+  \begingroup
+   \UseParagraphLayout{XFMemailaddress}
+   \UseBBskip\XFMemailaddressBBskip
+   \xfm@authors\z@
+   \let\xfm@last@email\@empty
+   \count@\z@
+   \loop
+   \advance\xfm@authors\@ne
+   \expandafter\ifx\csname address-\XFMthe{addressnum}\endcsname\xfm@address
+     \ifnum\count@>\@ne\XFMemailcommatext\fi
+     \ifx\xfm@last@email\relax\else
+       \xfm@last@email
+       \advance\count@\@ne
+     \fi
+     \xfm@use{\let\expandafter\xfm@last@email}{email}
+   \fi
+   \ifnum\xfm@author@count>\xfm@authors
+   \repeat
+   \ifcase\count@
+     \or
+     \or
+       \XFMemailandtwotext
+     \else
+       \XFMemailandtext
+   \fi
+   \xfm@last@email
+   \par
+  \endgroup
+}
+\newlength\XFMemailaddressBBskip
+
+
+
+\def\xfm@aftermaketitle#1{
+  \ifx\maketitle\relax
+    \xfm@err{\protect#1 must be used before \protect\maketitle}
+  \fi}
+\def\xfm@err#1{\PackageError{xfm}{#1}\@eha}
+\let\DesignerError\xfm@err
+\def\xfm@warn#1{\PackageWarningNoLine{xfm}{#1}}
+\def\abstract{%
+  \xfm@aftermaketitle{\begin{abstract}}
+  \lrbox\xfm@box\minipage[b]{\XFMabstractwidth}  % <--- b for b/b skips
+   \let \footnote \thanks
+   \prevdepth\z@
+   \UseParagraphLayout{XFMabstracttext}
+   \UseBBskip\XFMabstractBBskip
+   \begingroup
+     \XFMabstractheadingfont
+     \noindent
+     \XFMabstractheadingformat{\abstractname}
+   \endgroup
+   \ignorespaces}
+\newbox\xfm@box
+\let\xfm@abstract@thanks\@empty
+\def\endabstract{
+  \global\let\xfm@abstract@thanks\@thanks
+  \endminipage\endlrbox}
+\def\keywords#1{%
+  \gdef\xfm@keywords{#1}}
+\keywords{}
+\def\classification#1{%
+  \gdef\xfm@classification{#1}}
+\let\pacs\classification
+\classification{}
+\def\received#1{
+  \gdef\xfm@received{#1}}
+\def\revised#1{
+  \gdef\xfm@revised{#1}}
+\def\accepted#1{
+  \gdef\xfm@accepted{#1}}
+\def\draftdate#1{
+  \gdef\xfm@draft{#1}}
+\def\maketitle{
+  \par
+  \begingroup
+    \global\let\@thanks\@empty
+    \def\thefootnote{\XFMtitleblockmarkstyle{footnote}}
+    \def\@makefnmark
+        {\rlap{\AIPfootnotemarkerformat{\AIPfootnotemarkerfont\@thefnmark}}}
+    \if@twocolumn
+      \twocolumn[\@maketitle
+                 \vskip\XFMtitleblockpostskip \relax
+                ]
+    \else
+      \@maketitle
+    \fi
+    \@thanks
+    \xfm@abstract@thanks
+    \if@twocolumn
+    \else
+      \vskip\XFMtitleblockpostskip \relax
+    \fi
+  \endgroup
+  \XFMtitleblockpostcode
+}
+\newlength\XFMabstractwidth
+\renewcommand\@maketitle{
+  \null
+  \let \footnote \thanks
+  \XFMtitleblock
+}
+\newskip\XFMtitleblockpostskip
+\newskip\XFMabstractBBskip
+\def\XFMabstract{
+ \begingroup
+  \vskip -\prevdepth
+  \offinterlineskip
+  \prevdepth\dp\xfm@box
+  \moveright\XFMabstractleftindent
+    \box\xfm@box % while testing, don't clear box use \copy
+ \endgroup
+}
+\newlength\XFMabstractleftindent
+\newskip\XFMtitleBBskip
+\def\XFMtitle{
+  \begingroup
+   \UseParagraphLayout{XFMtitle}
+   \UseBBskip\XFMtitleBBskip
+   \XFMtitleformat{\ignorespaces\@title \par}
+  \endgroup
+}
+\newskip\XFMsubtitleBBskip
+\def\XFMsubtitle{
+  \ifx\@subtitle\@empty
+  \else
+  \begingroup
+   \UseParagraphLayout{XFMsubtitle}
+   \UseBBskip\XFMsubtitleBBskip
+   \XFMsubtitleformat{\ignorespaces\@subtitle \par}
+  \endgroup
+  \fi
+}
+\newcommand\XFMsubtitleformat[1] {#1}
+\DeclareParagraphLayout{XFMsubtitle}
+  {14pt}{16pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \normalfont
+  }
+\setlength\XFMsubtitleBBskip      {14pt}
+
+\def\XFMcopyright{
+ \par
+ \begingroup
+   \UseParagraphLayout{XFMcopyrighttext}
+   \UseBBskip\XFMcopyrightBBskip
+   \noindent
+   \XFMcopyrightformat\xfm@copyrightyear\xfm@copyrightholder
+   \par
+ \endgroup}
+\newskip\XFMcopyrightBBskip
+\def\copyrightholder#1{\def\xfm@copyrightholder{#1}}
+\def\copyrightyear#1{\def\xfm@copyrightyear{#1}}
+\copyrightyear{\the\year}
+%%%%%%%%%%%%%%%%%%%%
+\def\XFMkeywords{
+ \ifx\xfm@keywords\@empty
+ \else
+   \par
+   \begingroup
+     \UseParagraphLayout{XFMkeywordstext}
+     \UseBBskip\XFMkeywordsBBskip
+     \begingroup
+       \XFMkeywordsheadingfont
+       \noindent
+       \XFMkeywordsheadingformat{\keywordsname}
+     \endgroup
+     \xfm@keywords
+     \par
+   \endgroup
+ \fi}
+\newskip\XFMkeywordsBBskip
+%%%%%%%%%%%%%%%%%%%%
+\def\XFMclassification{
+ \ifx\xfm@classification\@empty
+ \else
+   \par
+   \begingroup
+     \UseParagraphLayout{XFMclassificationtext}
+     \UseBBskip\XFMclassificationBBskip
+     \begingroup
+       \XFMclassificationheadingfont
+       \noindent
+       \XFMclassificationheadingformat{\classificationname}
+     \endgroup
+     \xfm@classification
+     \par
+   \endgroup
+ \fi}
+\newskip\XFMclassificationBBskip
+%%%%%%%%%%%%%%%%%%%%
+\def\XFMdates#1{
+ \par
+ \begingroup
+ \UseParagraphLayout{XFMdates}
+ \UseBBskip\XFMdatesBBskip
+ \let\xfm@tempb\relax
+ \@for\xfm@temp:=#1\do{
+  \expandafter\ifx\csname xfm@\xfm@temp\endcsname\relax
+  \else
+   \xfm@tempb
+   \let\xfm@tempb\XFMdatesep
+   \expandafter\XFMdateheading\expandafter{\xfm@temp}
+   \csname xfm@\xfm@temp\endcsname
+  \fi}
+ \par
+ \endgroup}
+\newskip\XFMdatesBBskip
+\def\XFMdateheading#1{
+  \noindent\textbf{Date~\MakeUppercase #1:~}}
+\def\XFMdatesep{\hspace{1em}}
+\DeclareParagraphLayout{XFMdates}
+  {9pt}{10pt}
+  {0pt}{\bodytextparindent}{\bodytextparindent}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+\def\XFMdates#1{
+ \par
+ \begingroup
+ \UseParagraphLayout{XFMdatestext}
+ \UseBBskip\XFMdatesBBskip
+ \let\xfm@tempb\relax
+ \@for\xfm@temp:=#1\do{
+  \expandafter\ifx\csname xfm@\xfm@temp\endcsname\relax
+  \else
+   \xfm@tempb
+   \let\xfm@tempb\XFMdatesep
+   \expandafter\XFMdateheading\expandafter{\xfm@temp}
+   \csname xfm@\xfm@temp\endcsname
+  \fi}
+ \par
+ \endgroup}
+\MakeSpaceNormal
+
+\endinput
+%%
+%% End of file `aipxfm.sty'.

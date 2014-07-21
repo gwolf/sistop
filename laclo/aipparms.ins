@@ -1,0 +1,29 @@
+%
+% $Id: aipparms.ins,v 1.2 2005/12/01 16:16:27 frank Exp $
+%
+% This file requires docstrip version 2.4 or higher available from
+% any CTAN archive, e.g.:
+% ftp.dante.de tex-archive/macros/latex/unpacked/docstrip.tex
+
+\input docstrip
+
+\preamble
+
+Layout file for class aipproc to use with LaTeX2e
+(C) 2000 American Institute of Physics and Frank Mittelbach
+All rights reserved
+
+\endpreamble
+
+\keepsilent
+\askforoverwritefalse
+
+\generate{
+  \file{aip-8d.clo}{\from{aipparms.dtx}{aip8x11double}}
+  \file{aip-8s.clo}{\from{aipparms.dtx}{aip8x11single}}
+  \file{aip-6s.clo}{\from{aipparms.dtx}{aip6x9single}}
+%  \file{aip-arlo.clo}{\from{aipparms.dtx}{aiparlo}}
+  }
+
+
+\endbatchfile

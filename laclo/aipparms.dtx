@@ -1,0 +1,3389 @@
+% \iffalse
+%
+%% $Id: aipparms.dtx,v 1.20 2005/12/01 16:16:27 frank Exp $
+%
+% File aipparms.dtx
+% Copyright (C) 2000,2001,2004,2005 Frank Mittelbach
+% All rights reserved.
+%
+%
+%    \begin{macrocode}
+%<*driver>
+\documentclass{aipdoc}
+\usepackage{times}
+\usepackage{hyperref}
+\title{A Class File for AIP\\
+       The parameter section}
+\date{\today}
+\author{Frank Mittelbach}
+\begin{document}
+\maketitle
+  \tableofcontents
+  \newpage
+  \DocInput{\jobname.dtx}
+  \PrintIndex
+\end{document}
+%</driver>
+%    \end{macrocode}
+% \fi
+%
+%
+%
+%
+% \section{Overview}
+%
+% This document contains the parameter section for the class file, ie
+% the part that a designer might want to change if she is designing a
+% new class using this class as a starting point. 
+%
+% \subsection{Setting parameters}
+%
+% ^^A GENDOCstart
+%
+% Each section contains boxes in which the parameters are described.
+% To the left of each parameter one finds a single character possibly
+% followed by a `*'. The star means that this parameter is not part of
+% standard \LaTeX{} or part of the article class but instead is
+% provided by the lower-level code written for this class. The
+% character is one of the following:
+% \begin{description}
+% \item[M] The parameter is a macro and therefore will be set with
+% |\newcommand| or |\renewcommand|, the latter being used if the macro
+% is already part of base \LaTeX{} or of the article class. If the
+% macro has arguments they are given after the macro name. In this
+% case one must decide whether empty lines (or |\par| commands) should
+% be allowed in the argument. If not, one should use the *-form of
+% |\newcommand| or |\renewcommand| to set the macro.
+%
+% \item[E] The parameter is an environment and will therefore be set
+% with |\newenvironment| or |\renewenvironment| depending.
+%
+% \item[R] The parameter is a register. Additional information about
+% the type of register is given after the parameter name. Skips and
+% dimens (stretchable and rigid length) are set using |\setlength|,
+% internal counters, penalties, etc.\ are set using
+% |\SetInternalRegister|. Note that in the current implementation the
+% latter command does not support \texttt{calc} style input.
+%
+% \item[L] The parameter is a named layout collection, for example a
+% paragraph layout that can be referred to by name (declared with
+% |\DeclareParagraphLayout|) or a page style (declared with
+% |\DeclarePagestyle|).
+%
+% \item[C] The parameter is a \LaTeX{} counter, thus it will be set
+% using |\setcounter|.
+%
+% \end{description}
+%
+%
+%
+% ^^A GENDOCend
+%
+%
+%
+% \subsection{Conventions}
+%
+%    Missing percents in code can be pretty disastrous in \TeX{} and
+%    often produces stray spaces in the output which are very difficult
+%    to track down. For this reason I prefer coding with all spaces
+%    ignored. The disadvantage is that one has to have to think of
+%    adding explicit spaces (denoted by |~|) in fixed strings ---
+%    forgetting them also produce strange results but is very very
+%    simple to correct.
+%
+%    The macro |\MakeSpaceIgnore| and |\MakeSpaceNormal| switch
+%    between the two states. Their definition will be placed by
+%    \texttt{docstrip} in front of the class file when it is built
+%    from the source files.
+%
+%    If parameters are set inside other macros one can save \TeX{}
+%    memory by using |\@plus| and |\@minus| instead of the string
+%    |plus| and |minus|. Another way to save space is to use
+%    |\@p| instead of the unit |pt|. However, I haven't made much use
+%    of the latter because I personally find it less readable.
+% 
+%
+%
+%
+%
+%
+%
+% \section{General generic dimensions, penalties, etc.}
+%
+% %%%%%%%%%%%%%
+%
+% Many designers express vertical and horizontal dimensions in terms
+% of some standard values, eg the normal lengths from one baseline to
+% the next, etc. To allow easy customisation of the class we set up a
+% few of such all purpose values and use them when expressing other
+% values later on.
+%
+% \begin{decl}
+%  \describeregister[*]{\bodytextsize}{dimen}
+%      {Nominal size of the body font.}
+%  \describeregister[*]{\bodytextbaselineskip}{dimen}
+%      {Vertical space of a normal baseline skip.}
+%  \describeregister[*]{\bodytextenspace}{dimen}
+%      {Horizontal space of a normal en-space.}
+%  \describeregister[*]{\bodytextparindent}{dimen}
+%      {Indentation of a paragraph in body text.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\setlength\bodytextsize         {10pt}
+\setlength\bodytextbaselineskip {11.6pt}
+\setlength\bodytextenspace      {4pt}
+\setlength\bodytextparindent    {10pt}
+%</aip8x11double,aip8x11single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip6x9single>
+\setlength\bodytextsize         {12pt}
+\setlength\bodytextbaselineskip {13.6pt}
+\setlength\bodytextenspace      {5pt}
+\setlength\bodytextparindent    {12pt}
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\bodytextsize         {10pt}
+\setlength\bodytextbaselineskip {11.6pt}
+\setlength\bodytextenspace      {4pt}
+\setlength\bodytextparindent    {0.5in}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% \begin{decl}
+%  \describeregister{\@lowpenalty}{penalty}
+%      {Penalty used by \cs{nopagebreak}\texttt{[1]}, etc. The
+%      negation of this value is used in commands like
+%      \cs{pagebreak}\texttt{[1]}, etc.}
+%  \describeregister{\@medpenalty}{penalty}
+%      {Ditto, but stronger.}
+%  \describeregister{\@highpenalty}{penalty}
+%      {Ditto, but even stronger.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\SetInternalRegister\@lowpenalty   {51}
+\SetInternalRegister\@medpenalty  {151}
+\SetInternalRegister\@highpenalty {301}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Fonts}
+%
+% %%%%%%%%%%%%%
+%
+%
+% \subsection{Font sizes}
+%
+% A lot of parameters depend on the current font size. For this reason
+% the standard \LaTeX{} font size commands not only change the current
+% font but in addition set up a large number of those parameters.
+% However, to save space classes normally do not set all parameters in
+% all sizes instead the heading sizes are normally only setting the
+% font size. Thus, if it is possible that those parameters are needed
+% in |\Large| etc one should give them values as well.
+%
+% By convention they set up the following display-math related
+% parameters.
+%
+% \begin{decl}
+%  \describeregister{\abovedisplayskip}{skip}
+%      {Vertical space before a display math environment.}
+%  \describeregister{\belowdisplayskip}{skip}
+%      {Vertical space after the display.}
+%  \describeregister{\abovedisplayshortskip}{skip}
+%      {Vertical space before a display math environment if last line
+%    of text before it is shorter than free space in the centred
+%    display.}
+%  \describeregister{\belowdisplayshortskip}{skip}
+%      {Vertical space after the display in this case.}
+% \end{decl}
+%
+% In sizes where it is likely that lists are used one should also
+% change the list parameters. This is done by redefining |\@listi| to
+% contain the appropriate parameter settings.
+% \LaTeX{} assumes that nested lists
+% appear only in the normal text size. So there is no support for
+% changing list values for other levels except the first one.
+%
+%
+% \begin{decl}
+%  \describemacro{\normalsize}{}
+%    {Normal font size in the document.}
+%  \describemacro{\small}{}
+%    {Slightly smaller font size. Often used in example displays, etc.}
+%  \describemacro{\footnotesize}{}
+%    {Font size for footnotes (at least by convention).}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\normalsize{
+  \@setfontsize\normalsize{\bodytextsize}{\bodytextbaselineskip}
+  \setlength\abovedisplayskip   {\bodytextsize plus 2pt minus 5pt}
+  \setlength\belowdisplayskip   {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {.6\bodytextsize plus 3pt minus 3pt}
+  \let\@listi\@listI
+}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aiparlo>
+\renewcommand\small{\@setfontsize\small{9pt}{11pt}
+  \setlength\abovedisplayskip {8.5pt plus 3pt minus 4pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 2pt}
+  \setlength\belowdisplayshortskip {4pt plus 2pt minus 2pt}
+   \let\@listi\@listIsmall
+}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{8}{9.5}
+  \setlength\abovedisplayskip {6pt plus 2pt minus 4pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 1pt}
+  \setlength\belowdisplayshortskip {3pt plus 1pt minus 2pt}
+  \let\@listi\@listIfootnotesize
+}
+%</aip8x11double,aip8x11single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip6x9single>
+\renewcommand\small{\@setfontsize\small{11pt}{12.8pt}
+  \setlength\abovedisplayskip {11pt plus 3pt minus 6pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {6.5pt plus 3.5pt minus 3pt}
+   \let\@listi\@listIsmall
+}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{10}{11}
+  \setlength\abovedisplayskip {10pt plus 2pt minus 5pt}
+  \setlength\belowdisplayskip {\abovedisplayskip}
+  \setlength\abovedisplayshortskip {0pt plus 3pt}
+  \setlength\belowdisplayshortskip {6pt plus 3pt minus 3pt}
+  \let\@listi\@listIfootnotesize
+}
+%</aip6x9single>
+%    \end{macrocode}
+%
+% \begin{note}
+%  As seen above the list parameter macro |\@listi| is defined
+%  indirectly by letting it to some other macro. Normally this is only
+%  done for |\normalsize| but using this approach generally makes it
+%  easier to maintain consistent values (at the cost of a number of
+%  macro names).
+% \end{note}
+%
+%
+%
+%  The remaining font-size commands only define the font-size. They
+%  are not really necessary. If one wants to prevent the user from
+%  defining his own layout markup they could be omitted.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\tiny{\@setfontsize\tiny{5}{6}}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\AIP@cmdnotsupported\scriptsize
+\AIP@cmdnotsupported\large
+\AIP@cmdnotsupported\Large
+\AIP@cmdnotsupported\LARGE
+\AIP@cmdnotsupported\huge
+\AIP@cmdnotsupported\Huge
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsection{Text fonts}
+%
+% The default text fonts are customized by setting the following
+% parameters. There are many additional parameters of that kind which
+% might be needed for special applications, see \cite[p173]{tc}.
+%
+% \begin{decl}
+%  \describemacro{\rmdefault}{}
+%    {Default (serif) family selected by \cs{textrm}.}
+%  \describemacro{\sfdefault}{}
+%    {Default (sans serif) family selected by \cs{textsf}.}
+%  \describemacro{\ttdefault}{}
+%    {Default (typewriter) family selected by \cs{texttt}.}
+%  \describemacro{\bfdefault}{}
+%    {Default  (bold) font series selected by \cs{textbf}.}
+% \end{decl}
+%
+% Fonts are set only if the user hasn't specified the |cmrfonts| option.
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\ifthenelse{\boolean{@cmrfonts}}{}
+  {
+   \renewcommand\sfdefault{phv}
+   \renewcommand\rmdefault{ptm}
+   \renewcommand\ttdefault{pcr}
+   \renewcommand\bfdefault{b}
+  }
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+% The above sets up Times, Helvetica, and Courier.
+%
+% For PostScript fonts one usually has to change |\bfdefault| from
+% |bx| to |b| because normally such fonts to do not have bold extended
+% font series.
+% \end{note}
+%
+%
+%
+%
+% \subsection{Math fonts}
+%
+% Math font set up is quite complicated and involves a lot of
+% low-level declarations (see \cite[pp205]{tc}). For this reason it is
+% not considered something to be changeable directly on the designer
+% level and most of the declarations are hidden elsewhere. We hope
+% that this will change in future releases of \LaTeX.
+%
+% The following declarations define the size of symbols in a formula,
+% in subscripts and second order subscripts given a current text size.
+%
+% Math sizes are set only changed if the user hasn't specified the
+% |cmrfonts| option.
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aiparlo>
+\ifthenelse{\boolean{@cmrfonts}}  {}
+  {
+   \DeclareMathSizes{5}{5}{5}{5}
+   \DeclareMathSizes{8}{8}{6}{5}
+   \DeclareMathSizes{9}{9}{7}{5}
+   \DeclareMathSizes{10}{10}{7.4}{6}
+   \DeclareMathSizes{12}{12}{9}{7}
+   \DeclareMathSizes{14}{14}{11}{8}
+  }
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+%FMi check all used font sizes!
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+% 
+% The following three parameters define the spacing between elements
+% in a math formula. Due to loading calc one can't use |\setlength|
+% with registers that only accept |mu| units (math units).
+%
+%
+% \begin{decl}
+%  \describeregister{\thinmuskip}{math skip}
+%      {Small space inserted by \TeX{} for example between 
+%       an opening symbol, eg a `('
+%       and an ordinary character like `x'.}
+%  \describeregister{\medmuskip}{math skip}
+%      {Medium space inserted by \TeX{} for example between an
+%      ordinary character  followed by a binary symbol like `+'}
+%  \describeregister{\thickmuskip}{math skip}
+%      {Large space inserted by \TeX{} for example between an
+%      ordinary character followed by a relational symbol like `='.}
+% \end{decl}
+%
+% For a complete discussion of \TeX's math typesetting see 
+% \cite[App.\ G]{tex}.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\SetInternalRegister\thinmuskip {2mu}
+\SetInternalRegister\medmuskip  {2.5mu plus 1mu minus 1mu}
+\SetInternalRegister\thickmuskip{4mu plus 1.5mu minus 1mu}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  Here we do use slightly tighter setting than usual.
+% \end{note}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Paragraph Layouts}
+%
+% %%%%%%%%%%%%%
+%
+% \TeX{} has more than twenty parameters to influence the paragraph
+% builder, ie the module that turns text into lines. For most of them
+% their default values can be used throughout the job, indeed it is
+% still a research topic to understand the subtle interactions between
+% some of them. 
+%
+% However, a small number needs changes quite often. 
+%
+%
+% \subsection{Paragraph shapes}
+%
+% \begin{decl}
+%  \describeregister{\baselineskip}{skip}
+%      {Normal distance from one baseline of a paragraph to the next.}
+%  \describeregister{\parindent}{dimen}
+%      {Width of indentation at beginning of paragraph.}
+%  \describeregister{\leftskip}{skip}
+%      {Indentation of all lines at the left.}
+%  \describeregister{\rightskip}{skip}
+%      {Indentation of all lines at the right.}
+%  \describeregister{\parfillskip}{skip}
+%      {Indentation at the right of last line.}
+%  \describeregister{\parskip}{skip}
+%      {Vertical space between paragraphs.}
+% \end{decl}
+%
+% To make such changes easy one can make use of the
+% |\DeclareParagraphLayout| macro. It associates a \meta{name} with
+% the a value for the font size and values for the above
+% parameters. For example
+%\begin{verbatim}
+%  \DeclareParagraphlayout{Square}
+%     {10pt}{11pt}
+%     {0pt}{0pt}{0pt}{0pt}
+%     {22pt}
+%     {\sffamily}
+%\end{verbatim}
+% defines a strange paragraph layout called |Square| which will
+% produce paragraphs that are boxes: all lines are fully filled. It is
+% set tightly, |\baselineskip| is just a little larger than the font
+% size (|10pt|) and two such paragraphs are separated by two empty
+% lines (|22pt|). The last argument can contain arbitrary additional
+% setting: in this example we declare that the sans serif family is to
+% be used.
+%
+% Such a layout can be conveniently be used in other places by calling
+% up its name and in fact this is what is done in a lot of lower-level
+% code for this class so that the designers task is to set up such
+% paragraph layouts for several \meta{name}s.
+%
+%
+% Here is the one for the main text.
+%    
+%
+% \begin{decl}
+%  \describeplayout[*]{AIPbodytext}
+%    {The paragraph parameters for the main text.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\DeclareParagraphLayout{AIPbodytext}
+  {\bodytextsize}{\bodytextbaselineskip}
+  {\bodytextparindent}{0pt}{0pt}{0pt plus  1fil}
+%  {0pt plus  1pt}
+  {0pt}
+  {}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  Actually the font size and the baselineskip should be the same as
+%  the values used in the definition of |\normalsize|. From this entry
+%  we use only the later parameters this time.
+% \end{note}
+%
+%
+% \subsection{Line breaking considerations}
+%
+% A few more important paragraph values, others might be needed as well.
+%
+% \begin{decl}
+%  \describeregister{\pretolerance}{integer}
+%      {Badness value up to which \TeX{} considers a line in a
+%      paragraph still acceptable without trying to hyphenate the
+%      paragraph.}
+%  \describeregister{\tolerance}{integer}
+%      {Ditto but after \TeX{} has tried to hyphenate the words in the
+%      paragraph.}
+%  \describeregister{\emergencystretch}{dimen}
+%      {If positive, extra stretch added virtually to every possible
+%      line in a  trial breaking if \TeX{}
+%      cannot find a solution that is lower than \cs{tolerance}. This
+%      will make the whole paragraph very loose and produce a lot of
+%      ``underfull hbox'' message but will produce better results than
+%      making the \cs{tolerance} infinite (10000).}
+% \end{decl}
+%
+% For a discussion of |\tolerance| and |\emergencystretch| see
+% \cite[p51]{tc}.
+%
+%    \begin{macrocode}
+%<*aip8x11single,aip6x9single,aiparlo>
+\SetInternalRegister\tolerance{500}
+\SetInternalRegister\pretolerance{300}
+\setlength\emergencystretch{2pc}
+%</aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double>
+\SetInternalRegister\tolerance{2000}
+\SetInternalRegister\pretolerance{500}
+\setlength\emergencystretch{2pc}
+%</aip8x11double>
+%    \end{macrocode}
+%
+%
+% \begin{note}
+%  Two-column layout need looser setting otherwise \TeX{} gets too
+%  unhappy. Especially with the standard \texttt{tfm}-files from CTAN
+%  for Times which do not allow for a lot of inter-word space variation
+%  this the badness of lines get ``bad'' fast.
+%
+%  The value for |\emergencystretch| might need experiments.
+% \end{note}
+%
+%
+%
+%
+% \subsection{Spacing after punctuation characters}
+%
+% \TeX{} is able to change the widths of the inter-word space after
+% punctuation characters.
+%
+% \begin{decl}
+%  \describemacro{\frenchspacing}{}
+%    {Spaces after punctuation characters have a normal inter-word width.}
+%  \describemacro{\nonfrenchspacing}{}
+%    {Spaces after punctuation characters are larger.}
+% \end{decl}
+%
+% Only one of the above can be active at a time. It is also possible
+% on a lower level to set the values for every punctuation character
+% individually.
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\frenchspacing
+%\nonfrenchspacing
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Page Layout}
+%
+% %%%%%%%%%%%%%
+%
+% Setting up the general page layout means setting up the horizontal
+% and vertical dimensions of the text page and placing the text page
+% within the physical page.
+%
+% \subsection{The dimensions of the trim page}
+%
+% \begin{decl}
+%  \describeregister{\paperheight}{dimen}
+%      {Nominal height of the physical page.}
+%  \describeregister{\paperwidth}{dimen}
+%      {Nominal width of the physical page.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aiparlo>
+%\setlength\paperheight {11in}
+%\setlength\paperwidth  {8.5in}
+%</aip8x11double,aip8x11single,aiparlo>
+%    \end{macrocode}
+%    \begin{macrocode}
+%<*aip6x9single>
+%\setlength\paperheight {9.25in}
+%\setlength\paperwidth  {6.375in}
+%</aip6x9single>
+%    \end{macrocode}
+%
+% \begin{note}
+%    Since the articles for this class are prepared camera ready copy
+%    it seems wrong to use |\paperheight| and |\paperwidth| matching
+%    the trim page of the final product. Instead they should match the
+%    physical dimensions of the paper used by the authors.
+%    For this reason the class supports the options \texttt{a4paper}
+%    and \texttt{letterpaper} with the latter being the default.
+% \end{note}
+%
+%
+%
+%
+% \subsection{Horizontal dimensions of the text page}
+%
+% This class supports one and two column layout.
+%
+% \begin{decl}
+%  \describeregister{\textwidth}{dimen}
+%      {Nominal width of the text page (eg both columns).}
+%  \describeregister{\columnsep}{dimen}
+%      {Separation between columns; if set to 0pt one-column layout is
+%       produced.}
+%  \describeregister{\columnseprule}{dimen}
+%      {Width of rule to be inserted between columns (0pt means no rule).}
+% \end{decl}
+%
+% The width of the individual column (|\columnwidth|) is internally
+% calculated by \LaTeX{} from |\textwidth| and |\columnsep| and can't
+% be specified directly.
+%
+%    \begin{macrocode}
+%<*aip8x11double>
+\setlength\textwidth {6.5in}
+\setlength\columnsep {0.25in}
+%</aip8x11double>
+%    \end{macrocode}
+%
+% \begin{note}
+%    Alternate value for |\columnsep| is trhe one specified but that
+%    conflicts with the spec for the column width!
+% \end{note}
+%   
+%    \begin{macrocode}
+%<*aip8x11single>
+\setlength\textwidth {6.5in}
+\setlength\columnsep {0pt}
+%</aip8x11single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip6x9single>
+\setlength\textwidth {35pc}
+\setlength\columnsep {0pt}
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\textwidth {5.25in}
+\setlength\columnsep {0pt}
+%</aiparlo>
+%    \end{macrocode}
+%    
+%
+%
+% \subsection{Vertical dimensions of the text page}
+%
+% In \LaTeX{} the running head is \emph{not} considered to be part of
+% the text page.
+%
+% \begin{decl}
+%  \describeregister{\topskip}{skip}
+%      {Baselineskip for the first line of text}
+%  \describeregister{\textheight}{dimen}
+%      {Vertical length of the text page including floats and footnotes}
+% \end{decl}
+
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\setlength\topskip   {10pt}
+\setlength\textheight{\bodytextbaselineskip * 54 + \topskip}
+%</aip8x11double,aip8x11single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip6x9single>
+\setlength\topskip   {12pt}
+\setlength\textheight{\bodytextbaselineskip * 45 + \topskip}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\topskip   {10pt}
+\setlength\textheight{\bodytextbaselineskip * 52 + \topskip}
+%</aiparlo>
+%    \end{macrocode}
+%    
+% \begin{note}
+%    The |\textheight| is calculated b/b value for normal text, i.e.,
+%    the above formulas need adjustment if |\bodytextbaselineskip| is
+%    modified.
+% \end{note}
+%
+% \subsection{Placing the text page}
+%
+% \begin{decl}
+%  \describeregister{\topmargin}{dimen}
+%      {Vertical space from origin of the page (one inch from top) to the
+%       top of the running head.}
+%  \describeregister{\headheight}{dimen}
+%      {Height of the running head.}
+%  \describeregister{\headsep}{dimen}
+%      {Space from the baseline of running head to the top of the
+%       text page.}
+%  \describeregister{\footskip}{dimen}
+%      {Space from the last baseline of the text page (could be the
+%      last line of a footnote) to the first baseline (!) of the
+%      running foot.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\setlength\headheight   {\bodytextbaselineskip}
+\setlength\headsep      {2pc}
+\setlength\footskip     {2pc}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%    Since this class doesn't have runnning headers the values for the
+%    above parameters are essentially arbitrary (except that they
+%    shouldn't be too large).
+% \end{note}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\setlength\topmargin    {(\paperheight - \textheight ) / 2
+                         - 1in - \headheight - \headsep }
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+% \begin{note}
+%    The above formula will place the text page vertically centered onto
+%    the trim page.
+% \end{note}
+%
+% \begin{note}
+%  If the |\headsep| is expressed as a B/B value in the spec one would
+%  have to take |\topskip| into account.
+% \end{note}
+%
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\topmargin    {1in  - \headheight - \headsep -1in}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+% \begin{decl}
+%  \describeregister{\oddsidemargin}{dimen}
+%      {On odd numbered pages (ie right hand pages) horizontal space
+%    from origin of the page (one inch from the left) to the left of
+%    the text page.}
+%  \describeregister{\evensidemargin}{dimen}
+%      {Ditto for even-numbered pages.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\setlength\oddsidemargin   { (\paperwidth - \textwidth)/2 -1in }
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+% \begin{note}
+%  |\oddsidemargin| is calculated so that the text page is centred on
+%  the physical page.
+% \end{note}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\setlength\evensidemargin
+               { \paperwidth -2in - \textwidth - \oddsidemargin}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  |\evensidemargin| normally shouldn't be set but calculated using
+%    the above formula.
+% \end{note}
+%
+%
+%
+%
+% \subsection{Breaking the galley into pages}
+%
+% \TeX{} attaches a number of penalties to the individual lines in the
+% galley (depending on the type of line and its content) which later
+% on guide the page breaking algorithm if it tries turn the galley
+% into pages.
+%
+% Normally all such parameters can stay fixed throughout the document.
+%
+% \begin{decl}
+%  \describeregister{\clubpenalty}{penalty}
+%      {Penalty to break after the first line of a paragraph (except
+%      after headings).}
+%  \describeregister{\widowpenalty}{penalty}
+%      {Penalty to break before the last line of a paragraph.}
+%  \describeregister{\displaywidowpenalty}{penalty}
+%      {Penalty to break before the last line of a paragraph if it is
+%      immediately followed by a math-display.}
+%  \describeregister{\brokenpenalty}{penalty}
+%      {Penalty to break after a hyphenated line in a paragraph.}
+%  \describeregister{\predisplaypenalty}{penalty}
+%      {Penalty to break immediately before a math-display.}
+%  \describeregister{\postdisplaypenalty}{penalty}
+%      {Penalty to break immediately after a math-display.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\SetInternalRegister\clubpenalty         {9999}
+\SetInternalRegister\widowpenalty        {3000}
+\SetInternalRegister\displaywidowpenalty {50}
+\SetInternalRegister\brokenpenalty       {100}
+\SetInternalRegister\predisplaypenalty   {10000}
+\SetInternalRegister\postdisplaypenalty  {0}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+% \begin{note}
+%    Except for |\clubpenalty| and |\widowpenalty| the above values are
+%    default values of \LaTeX{}.
+% \end{note}
+%
+%
+% \subsection{Placing text into the columns}
+%
+% \begin{decl}
+%  \describemacro{\flushbottom}{}
+%    {Normally stretch text on text column to the full height.}
+%  \describemacro{\raggedbottom}{}
+%    {Put any surplus space on the bottom of the text column.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+ \raggedbottom
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    \begin{macrocode}
+%<*aiparlo>
+ \raggedbottom
+%</aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  Only one of the above commands can be active.
+% \end{note}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Title material}
+%
+% %%%%%%%%%%%%%
+%
+% The title is made up from several small parts that need to be
+% defined. This isn't completely general and doesn't cover a wide
+% variety of possible layouts. If something very different is desired
+% lower-level code needs to be changed. More exactly it assumes that
+% the title material is made of the title text, authors' information
+% (names and addresses), an abstract and a number of key words for the
+% article.
+%
+% \subsection{The high-level layout}
+%
+%
+% \begin{decl}
+%  \describemacro[*]{\XFMtitleblock}{}
+%    {Command that is executed by \cs{maketitle} to typeset all title
+%    information it knows about.}
+% \end{decl}
+%
+% This macro will need seldom any changes. However, if the order of
+% elements changes or some elements are added or removed then this is
+% the place to modify.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\XFMtitleblock{
+  \XFMtitle
+  \XFMauthors
+  \XFMaddresses
+  \XFMabstract
+  \vspace{5pt}
+  \XFMkeywords
+  \XFMclassification
+}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\XFMtitleblock{
+  \XFMtitle
+  \XFMauthorsbyaddress{
+        \XFMauthorsoneaddress\XFMoneaddress\XFMemailoneaddress}
+  \XFMabstract
+  \XFMcopyright
+  \XFMkeywords
+  \XFMclassification
+  \XFMdates{received,accepted,draft}
+}
+%</aiparlo>
+%    \end{macrocode}
+%
+% Finer control over the placement is given below.
+%
+%
+%
+% \subsection{Title text}
+%
+%
+% \begin{decl}
+%  \describemacro[*]{\XFMtitleformat}{\arg{title}}
+%    {Code to format the title text if necessary.}
+%  \describeplayout[*]{XFMtitle}
+%    {Paragraph parameters for typesetting the title text.}
+%  \describeregister[*]{\XFMtitleBBskip}{skip}
+%      {Vertical space from preceding text up to first baseline of title.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\XFMtitleformat[1] {#1}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%<*aip8x11double,aip8x11single,aiparlo>
+\DeclareParagraphLayout{XFMtitle}
+  {18pt}{19pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \bfseries
+   \let\\\@centercr
+  }
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip8x11double>
+\setlength\XFMtitleBBskip      {0.75in - 16pt}
+%</aip8x11double>
+%<*aip8x11single>
+\setlength\XFMtitleBBskip      {0.75in - 16pt}
+%</aip8x11single>
+%<*aiparlo>
+\setlength\XFMtitleBBskip      {0pt}
+%</aiparlo>
+%<*aip6x9single>
+\DeclareParagraphLayout{XFMtitle}
+  {20pt}{21pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \bfseries
+   \let\\\@centercr
+  }
+\setlength\XFMtitleBBskip      {0.5in}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+%\begin{verbatim}
+%FMi old, use this method?
+%\setlength\titleBBskip{4pc 
+%                       - 5pt     % approx cap height of rhead
+%                       + 10pt    % approx cap height of title text
+%                       - \headsep% space between rhead and text page
+%                      }
+%\end{verbatim}
+%
+% \begin{note}
+%  The coding for |\titleBBskip| might look complicated but it is
+%  simply due to the way the spec was given: the only measurement in
+%  the whole spec that went from cap-top to cap-top.
+% \end{note}
+%
+%
+% \subsection{List of author names followed by list of addresses}
+%
+% \subsubsection{Authors block}
+%
+% \begin{decl}
+%  \describeplayout[*]{XFMauthors}
+%    {Paragraph parameters for placing a list of author names}
+%  \describeregister[*]{\XFMauthorsBBskip}{skip}
+%      {Vertical space in front of author list (measured
+%      baseline to baseline).}
+%  \describemacro[*]{\XFMauthorscommatext}{}
+%      {Text to place between two authors in a list ($>2$) of authors.}
+%  \describemacro[*]{\XFMauthorsandtext}{}
+%      {Text to place between the last two authors in a list ($>2$) of
+%    authors.}
+%  \describemacro[*]{\XFMauthorsandtwotext}{}
+%      {Text to pleace between author names if there are exactly two.}
+%  \describemacro[*]{\XFMauthorsaddressmarkfont}{}
+%    {.}
+%  \describemacro[*]{\XFMauthorsaddressmarkformat}{}
+%    {.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\DeclareParagraphLayout{XFMauthors}
+  {14pt}{15pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \normalfont
+   \let\\\@centercr
+  }
+\newcommand\XFMauthorscommatext {,~}
+\newcommand\XFMauthorsandtext    {~ and~}
+\newcommand\XFMauthorsandtwotext {~ and~}
+\newcommand\XFMauthorsaddressmarkfont  {\fontsize{9}{9}\selectfont}
+\newcommand\XFMauthorsaddressmarkformat[1] 
+                                       {\textsuperscript{#1}}
+\setlength\XFMauthorsBBskip       {34pt - 6pt}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsubsection{Address block}
+%
+% \begin{decl}
+%  \describeplayout[*]{XFMaddress}
+%    {Paragraph parameters for placing a list of affiliations.}
+%  \describeregister[*]{\XFMaddressBBskip}{skip}
+%      {Vertical space in front of affiliation list (measured
+%      baseline to baseline).}
+%  \describemacro[*]{\XFMaddressmarkstyle}{}
+%    {Numbering style for the marks, e.g., \texttt{\string\alph}.}
+%  \describemacro[*]{\XFMaddressmarkfont}{}
+%      {Font used for the address mark in the address list.}
+%  \describemacro[*]{\XFMaddressmarkformat}{\arg{marker}}
+%      {Format of the address mark.}
+%  \describemacro[*]{\XFMaddressseparator}{}
+%      {Code separating addresses in the address list.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\DeclareParagraphLayout{XFMaddress}
+  {10pt}{11pt}
+  {0pt}{\bodytextparindent plus 1fil}
+       {\bodytextparindent plus 1fil}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \itshape
+   \let\\\@centercr
+  }
+\newcommand\XFMaddressmarkstyle     {\fnsymbol}
+\newcommand\XFMaddressmarkfont      {\fontsize{7}{7}\selectfont}
+\newcommand\XFMaddressmarkformat[1] {\textsuperscript{#1}}
+\newcommand\XFMauthorsaltaddressmarkseparator{,}
+\newcommand\XFMaddressseparator     {\par}
+\setlength\XFMaddressBBskip         {28pt - 4pt} 
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%
+% \subsection{Author followed by address}
+%
+% \subsubsection{Authors block}
+%
+% \begin{decl}
+%  \describeplayout[*]{XFMauthors}
+%    {Paragraph parameters for placing a list of author names}
+%  \describeplayout[*]{XFMaddress}
+%    {Paragraph parameters for placing a list of affiliations.}
+%  \describemacro[*]{\XFMauthorscommatext}{}
+%      {Text to place between two authors in a list ($>2$) of authors.}
+%  \describemacro[*]{\XFMauthorsandtext}{}
+%      {Text to place between the last two authors in a list ($>2$) of
+%    authors.}
+%  \describemacro[*]{\XFMauthorsandtwotext}{}
+%      {Text to place between author names if there are exactly two.}
+
+%  \describemacro[*]{\XFMemailcommatext}{}
+%      {Text to place between two emails in a list ($>2$) of emails.}
+%  \describemacro[*]{\XFMemailandtext}{}
+%      {Text to place between the last two emails in a list ($>2$) of
+%    emails.}
+%  \describemacro[*]{\XFMemailandtwotext}{}
+%      {Text to place between emails if there are exactly two.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\XFMauthorscommatext {,~}
+\newcommand\XFMauthorsandtext    {~ and~}
+\newcommand\XFMauthorsandtwotext {~ and~}
+\newcommand\XFMemailcommatext{,~}
+\newcommand\XFMemailandtext{~ and~}
+\newcommand\XFMemailandtwotext{~ and~}
+\DeclareParagraphLayout{XFMauthors}
+  {10pt}{11pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \bfseries
+   \let\\\@centercr
+  }
+\DeclareParagraphLayout{XFMaddress}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \normalfont
+   \let\\\@centercr
+  }
+\DeclareParagraphLayout{XFMemailaddress}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \itshape
+   \let\\\@centercr
+  }
+\setlength\XFMauthorsBBskip     {22pt}
+\setlength\XFMaddressBBskip     {14pt}
+\setlength\XFMemailaddressBBskip{9pt}
+%</aiparlo>
+%    \end{macrocode}
+%    
+% FMi: whole section below was for specifying a setup where each
+%    author was followed by its address block. Once David has written
+%    up the code this need folding back
+%
+%
+% \begin{decl}
+%  \describeplayout[*]{author-name}
+%    {Paragraph parameters for placing a single author name.}
+%  \describemacro[*]{\authornameformat}{\arg{name}}
+%    {Code to format the author name if necessary.}
+%  \describeplayout[*]{author-address}
+%    {Paragraph parameters for placing an author address.}
+%  \describemacro[*]{\authoraddressformat}{\arg{address}}
+%    {Code to format the author address if necessary.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*unused>
+\DeclareParagraphLayout{author-name}
+  {7pt}{9pt}                             % original 10/12
+  {0pt}{\fill}{\fill}{0pt}
+  {1pt}
+  {\SetInternalRegister\hyphenpenalty{2000}
+   \SetInternalRegister\finalhyphendemerits{20000}
+   \normalfont\scshape
+   \let\\\@centercr
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareParagraphLayout{author-address}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {1pt}
+  {\SetInternalRegister\hyphenpenalty{100}
+   \SetInternalRegister\finalhyphendemerits{3000}
+   \normalfont\itshape
+   \let\\\@centercr
+  }
+\newcommand*\authornameformat[1]{\MakeUppercase{#1}}
+\newcommand*\authoraddressformat[1]{#1}
+%    \end{macrocode}
+%
+%
+% \begin{decl}
+%  \describeregister[*]{\firstauthorBBskip}{skip}
+%      {Vertical space in front of first author name (measured
+%      baseline to baseline).}
+%  \describeregister[*]{\middleauthorBBskip}{skip}
+%      {Ditto, but in front of all author names except the first and
+%      the last.}
+%  \describeregister[*]{\lastauthorBBskip}{skip}
+%      {Ditto but in front of the last author name.}
+%  \describeregister[*]{\authoraddressBBskip}{skip}
+%      {Vertical space between author name and author address (measured
+%      baseline to baseline).}
+%  \describemacro[*]{\lastauthorsep}{}
+%    {Code to be executed between the second last and the last author
+%    block.  Should  take care
+%    of any vertical space in front of text. It is called within a
+%    group and can this contain special parameter settings if necessary.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+\setlength\firstauthorBBskip   {2pc}
+\setlength\middleauthorBBskip  {1.5pc}
+\setlength\lastauthorBBskip    {1.5pc}
+\setlength\authoraddressBBskip {1pc}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newcommand\lastauthorsep{
+     \UseParagraphLayout{author-name}
+     \UseBBskip{1.5pc}
+     \MakeUppercase\andname
+     \par
+}
+%</unused>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \subsection{Abstract}
+%
+%
+% \begin{decl}
+%  \describemacro{\abstractname}{}
+%     {Generated text of the abstract heading.}
+%  \describemacro[*]{\XFMabstractheadingfont}{}
+%    {Font used for the heading}
+%  \describemacro[*]{\XFMabstractheadingformat}{\arg{head-text}}
+%    {Format applied to the heading text including spacing on the left
+%    and right.}
+%  \describeplayout[*]{XFMabstracttext}
+%    {Paragraph layout parameters for abstract text.}
+%  \describeregister[*]{\XFMabstractBBskip}{skip}
+%      {Vertical space before abstract block.}
+%  \describeregister[*]{\XFMabstractwidth}{dimen}
+%      {Width of the abstract block.}
+%  \describeregister[*]{\XFMabstractleftindent}{dimen}
+%      {Indentaion of the abstract block with respect to left margin.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip6x9single>
+\renewcommand\abstractname               {Abstract}
+\newcommand\XFMabstractheadingfont       {\fontsize{10}{11}\bfseries}
+\newcommand\XFMabstractheadingformat[1]  {#1.\hspace{.5em}}
+\DeclareParagraphLayout{XFMabstracttext}
+  {10pt}{11pt}
+  {1pc}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMabstractBBskip    {28pt}
+\setlength\XFMabstractwidth     {\textwidth -2\bodytextparindent}
+\setlength\XFMabstractleftindent{\bodytextparindent}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\renewcommand\abstractname               {Abstract}
+\newcommand\XFMabstractheadingfont       {\fontsize{9}{10}\bfseries}
+\newcommand\XFMabstractheadingformat[1]  {#1.\hspace{.5em}}
+\DeclareParagraphLayout{XFMabstracttext}
+  {9pt}{10pt}
+  {1pc}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMabstractwidth     {\textwidth -2\bodytextparindent}
+\setlength\XFMabstractleftindent{\bodytextparindent}
+\setlength\XFMabstractBBskip    {28pt - 4pt}
+%</aip8x11double,aip8x11single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\renewcommand\abstractname               {Abstract}
+\newcommand\XFMabstractheadingfont       {\fontsize{\bodytextsize}
+                                           {\bodytextbaselineskip}\bfseries}
+\newcommand\XFMabstractheadingformat[1]  {#1:\hspace{.5em}}
+\DeclareParagraphLayout{XFMabstracttext}
+  {\bodytextsize}{\bodytextbaselineskip}
+  {1pc}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMabstractBBskip    {22pt}
+\setlength\XFMabstractwidth     {\textwidth -2\bodytextparindent}
+\setlength\XFMabstractleftindent{\bodytextparindent}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+% \subsection{Dates}
+%
+%
+% \begin{decl}
+%  \describeplayout[*]{XFMdatestext}
+%    {Paragraph layout parameters for the dates text.}
+%  \describemacro[*]{\XFMdatesep}{}
+%    {Code to separate two dates.}
+%  \describemacro[*]{\XFMdateheadingformat}{\arg{name}\arg{date}}
+%    {Format applied to the date of type \arg{name} (e.g., received).}
+%  \describeregister[*]{\XFMdatesBBskip}{skip}
+%      {Vertical space before dates block.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\DeclareParagraphLayout{XFMdatestext}
+  {8pt}{9pt}
+  {0pt}{\bodytextparindent}{\bodytextparindent}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\newcommand\XFMdateheadingformat[2]{\noindent
+      \textbf{Date\ \MakeUppercase #1:} #2}
+\setlength\XFMdatesBBskip      {9pt}
+
+\received{\hspace{75pt}}
+\accepted{\hspace{75pt}}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \subsection{Copyright}
+%
+%
+% \begin{decl}
+%  \describeplayout[*]{XFMcopyrighttext}
+%    {Paragraph layout parameters for copyright text.}
+%  \describemacro[*]{\XFMcopyrightformat}{\arg{year}\arg{holder}}
+%    {Format applied to the copyright year and copyright holder.}
+%  \describeregister[*]{\XFMcopyrightBBskip}{skip}
+%      {Vertical space before copyright block.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\DeclareParagraphLayoutAlias{XFMcopyrighttext}{XFMdatestext}
+\newcommand\XFMcopyrightformat[2]{\textcopyright\ #1\ #2}
+\setlength{\XFMcopyrightBBskip}  {10pt}
+
+\copyrightholder{Acoustical~Society~of~America}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsection{Classification}
+%
+% \begin{decl}
+%  \describemacro{\classificationname}{}
+%     {Generated text of the classification heading.}
+%  \describemacro[*]{\XFMclassificationheadingfont}{}
+%    {Font used for the heading}
+%  \describemacro[*]{\XFMclassificationheadingformat}{\arg{head-text}}
+%    {Format applied to the heading text including spacing on the left
+%    and right.}
+%  \describeplayout[*]{XFMclassificationtext}
+%    {Paragraph layout parameters for classification text.}
+%  \describeregister[*]{\XFMclassificationBBskip}{skip}
+%      {Vertical space before classification block.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\DeclareParagraphLayout{XFMclassificationtext}
+  {8pt}{9pt}
+  {0pt}{\bodytextparindent}{\bodytextparindent}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMclassificationBBskip       {9pt}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\DeclareParagraphLayout{XFMclassificationtext}
+  {10pt}{11pt}
+  {0pt}{\bodytextparindent}{\bodytextparindent}{0pt plus  1fil}
+  {0pt}
+  {\normalfont}
+\setlength\XFMclassificationBBskip       {11pt}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\classificationname           {PACS}
+\newcommand\XFMclassificationheadingfont {\bfseries}
+\newcommand\XFMclassificationheadingformat[1]  {#1:\hspace{.5em}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\classification{\AIP@error{Missing~ \noexpand\classification
+          declaration}{Specify~ PACS~ number(s)~ choosing~ 
+          from~ http://www.aip.org/pacs/index.html}
+     <Missing~ classification>}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\classificationname           {PACS~numbers}
+\newcommand\XFMclassificationheadingfont {\bfseries}
+\newcommand\XFMclassificationheadingformat[1]  {#1:\hspace{.5em}}
+\DeclareParagraphLayoutAlias{XFMclassificationtext}{XFMcopyrighttext}
+
+\setlength\XFMclassificationBBskip       {9pt}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Keywords}
+%
+% \begin{decl}
+%  \describemacro{\keywordsname}{}
+%     {Generated text of the keywords heading.}
+%  \describemacro[*]{\XFMkeywordsheadingfont}{}
+%    {Font used for the heading}
+%  \describemacro[*]{\XFMkeywordsheadingformat}{\arg{head-text}}
+%    {Format applied to the heading text including spacing on the left
+%    and right.}
+%  \describeplayout[*]{XFMkeywordstext}
+%    {Paragraph layout parameters for keywords text.}
+%  \describeregister[*]{\XFMkeywordsBBskip}{skip}
+%      {Vertical space before keywords block.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\keywordsname           {Keywords}
+\newcommand\XFMkeywordsheadingfont {\bfseries}
+\newcommand\XFMkeywordsheadingformat[1]  {#1:\hspace{.5em}}
+
+\DeclareParagraphLayoutAlias{XFMkeywordstext}{XFMclassificationtext}
+%    \end{macrocode}
+%    Keywords are required:
+%    \begin{macrocode}
+\keywords{\AIP@error{Missing~ \noexpand\keywords declaration}
+          {Specify~ a~ list~ of~ keywords}
+          <Missing~ keywords>}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aip8x11double,aip8x11single>
+\setlength\XFMkeywordsBBskip       {9pt}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\setlength\XFMkeywordsBBskip       {11pt}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\keywordsname           {Key words}
+\newcommand\XFMkeywordsheadingfont {\bfseries}
+\newcommand\XFMkeywordsheadingformat[1]  {#1:\hspace{.5em}}
+\DeclareParagraphLayoutAlias{XFMkeywordstext}{XFMcopyrighttext}
+
+\setlength\XFMkeywordsBBskip       {9pt}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \subsection{Miscellaneous}
+%
+%
+% \begin{decl}
+%  \describeregister[*]{\XFMtitleblockpostskip}{skip}
+%      {Vertical space separating the whole title block (stuff
+%      generated by \cs{maketitle}) from the following text.}
+%  \describemacro[*]{\XFMtitleblockmarkstyle}{}
+%    {Numbering style for the footnote marks, e.g., \texttt{\string\alph}.}
+%  \describemacro[*]{\XFMtitleblockpostcode}{}
+%    {Code for resetting footnotes etc.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\XFMtitleblockpostcode{}
+\newcommand\XFMtitleblockmarkstyle{\arabic}
+\setlength\XFMtitleblockpostskip{2pc - 6pt}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\XFMtitleblockpostskip{14pt}
+\newcommand\XFMtitleblockpostcode{ \setcounter{footnote}{0} }
+\newcommand\XFMtitleblockmarkstyle{\fnsymbol}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Table of contents, etc.}
+%
+% %%%%%%%%%%%%%
+%
+%
+% \begin{decl}
+%  \describemacro{\l@section}{\arg{head-text}\arg{page-number}}
+%    {Macro that will be called within \cs{tableofcontents} for every
+%    \cs{section} within the document.}
+%  \describemacro{\l@subsection}{\arg{head-text}\arg{page-number}}
+%    {Ditto, but for \cs{subsection} headings.}
+%  \describemacro{\l@subsubsection}{\arg{head-text}\arg{page-number}}
+%    {Ditto, but for \cs{subsubsection} headings.}
+%  \describecounter{tocnumdepth}
+%      {Last level of headings that will be still shown in the table
+%      of contents, eg setting it to 1 will show only \cs{section}
+%      headings.}
+% \end{decl}
+%
+% Table of contents lists are produced by declaring for each heading
+% named `|\foo|' a special macro `|\l@foo| that is supposed to format
+% the heading information.  An extensive discussion how to define such
+% commands can be found in \cite[pp32]{tc}.
+%
+%
+% \begin{note}
+%    Defaults used from the \texttt{article} class since such tables
+%    are only allowed in draft mode.
+% \end{note}
+%
+% 
+%
+% \begin{decl}
+%  \describemacro{\l@figure}{\arg{head-text}\arg{page-number}}
+%    {Macro that will be called within \cs{listoffigures} for every
+%    \Lenv{figure} or \Lenv{figure*} environment within the document.}
+%  \describemacro{\l@table}{\arg{head-text}\arg{page-number}}
+%     {Ditto but for tables in \cs{listoftables}}
+% \end{decl}
+%
+%    
+%
+% \begin{note}
+%    Defaults used from the \texttt{article} class since such tables
+%    are only allowed in draft mode.
+% \end{note}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Headings}
+%
+% %%%%%%%%%%%%%
+%
+% \subsection{Numbering}
+%
+% \begin{decl}
+%  \describemacro{\thesection}{}
+%    {Representation of the number \cs{section} heading.}
+%  \describemacro{\thesubsection}{}
+%    {Ditto, but for the \cs{subsection} heading.}
+%  \describemacro{\thesubsubsection}{}
+%    {Ditto, but for the \cs{subsubsection} heading.}
+%  \describemacro{\theparagraph}{}
+%    {Ditto, but for the \cs{paragraph} heading.}
+%  \describecounter{secnumdepth}
+%      {Level of headings up to which the headings are numbered.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\renewcommand\thesection       {\arabic{section}}
+\renewcommand\thesubsection    {\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection {\thesubsection .\arabic{subsubsection}}
+\renewcommand\theparagraph     {\thesubsubsection.\arabic{paragraph}}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+% Originally always unnumbered (but numbering is now allowed):
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    Numbering depends on class options.
+%    \begin{macrocode}
+%<*aiparlo>
+%</aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%   Since sections do not carry numbers in the AIP proceeding styles
+%    the values for |\thesection| etc.\ are irrelevant. 
+%    But not so for ``arlo''!
+% \end{note}
+%
+%
+%
+% \begin{decl}
+%  \describemacro{\@seccntformat}{\arg{counter-name}}
+%    {Macro used by \cs{@startsection} to format the heading counter
+%    number. Thus it will influence all heading commands defined via
+%    \cs{@startsection}.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\@seccntformat[1]{
+   {\csname the#1\endcsname.\enspace}
+}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%    Again the above setting serves only as an example since it is not
+%    going to be use. It will force the number to come out in the
+%    normal font regardless of surrounding conditions. Note the extra
+%    set of brace to keep the font change local.
+%
+%    The full point after the number is only placed in the heading not
+%    in the reference to a heading (if |\ref| is used). If this is not
+%    desired dont place the `|.|' into |\@seccntformat| but into the
+%    the counter representation macros, ie |\the...| above, see
+%    \cite[p23]{tc}.
+% \end{note}
+%
+%
+%
+%
+%
+%
+% \subsection{Heading layout}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPsectionpenalty}{counter}
+%      {Penalty for breaking before the section.}
+%  \describemacro[*]{\AIPsectionindent}{\type{dimen}}
+%      {Indentation of the heading.}
+%  \describemacro[*]{\AIPsectionpreskip}{skip}
+%      {Vertical space before section heading.}
+%  \describemacro[*]{\AIPsectionpostskip}{skip}
+%      {Vertical space after section heading.}
+%  \describemacro[*]{\AIPsectionafterindent}{}
+%    {If \texttt{true} then indent first paragraph after \cs{section},
+%    if \texttt{false} then do not indent first paragraph. No other
+%    values allowed.}
+%  \describemacro[*]{\AIPsectionrunin}{}
+%    {If \texttt{true} then the heading is a runin-heading and the
+%    \texttt{\string\AIPsectionpostskip} denotes the horizontal space
+%    after the heading text;
+%    if \texttt{false} then it is a vertical heading. No other
+%    values allowed.}
+%  \describemacro[*]{\AIPsectionfont}{}
+%    {Font specification for the heading.}
+%  \describemacro[*]{\AIPsectionformat}{\arg{heading}}
+%    {Code to format the heading, e.g., adding a period after it,
+%    making it \texttt{\string\MakeTextUppercase}, etc.}
+% \end{decl}
+%
+% To save on registers the heading parameters are all implemented as
+% macros.
+%
+% \subsubsection{A-head}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPsectionpenalty  {-1000}
+\newcommand\AIPsectionindent   {0pt}
+\newcommand\AIPsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+%% actually we use 2pts less than the above:
+\renewcommand\AIPsectionpreskip
+             {21.4pt plus 3pt minus 1pt}
+\newcommand\AIPsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsectionafterindent {false}
+\newcommand\AIPsectionrunin       {false}
+\newcommand\AIPsectionformat[1]   {\centering\MakeTextUppercase{#1}}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aip8x11double,aip8x11single>
+\newcommand\AIPsectionfont     {\normalfont\fontsize{12}{14}\bfseries}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\newcommand\AIPsectionfont     {\normalfont\fontsize{14}{16}\bfseries}
+%</aip6x9single>
+%<*aiparlo>
+\newcommand\AIPsectionpenalty  {-1000}
+\newcommand\AIPsectionindent   {0pt}
+\newcommand\AIPsectionpreskip  {.5\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsectionpostskip {.5\bodytextbaselineskip}
+\newcommand\AIPsectionafterindent {false}
+\newcommand\AIPsectionrunin       {false}
+\newcommand\AIPsectionformat[1]   {#1}
+\newcommand\AIPsectionfont     {\normalfont\bfseries}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsubsection{B-head}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPsubsectionpenalty  {-300}
+\newcommand\AIPsubsectionindent   {0pt}
+\newcommand\AIPsubsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsubsectionafterindent {true}
+\newcommand\AIPsubsectionrunin       {false}
+\newcommand\AIPsubsectionformat[1]   {\centering#1}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aip8x11double,aip8x11single>
+\newcommand\AIPsubsectionfont     {\normalfont\fontsize{12}{14}\bfseries}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\newcommand\AIPsubsectionfont     {\normalfont\fontsize{14}{16}\bfseries}
+%</aip6x9single>
+%<*aiparlo>
+\newcommand\AIPsubsectionpenalty  {-300}
+\newcommand\AIPsubsectionindent   {0pt}
+\newcommand\AIPsubsectionpreskip  {0.5\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsectionpostskip {0.5\bodytextbaselineskip}
+\newcommand\AIPsubsectionafterindent {false}
+\newcommand\AIPsubsectionrunin       {false}
+\newcommand\AIPsubsectionformat[1]   {#1}
+\newcommand\AIPsubsectionfont     {\normalfont\itshape}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsubsection{C-head}
+%
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPsubsubsectionpenalty  {-300}
+\newcommand\AIPsubsubsectionindent   {0pt}
+\newcommand\AIPsubsubsectionpreskip  {2\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsubsectionpostskip {\bodytextbaselineskip}
+\newcommand\AIPsubsubsectionafterindent {true}
+\newcommand\AIPsubsubsectionrunin       {false}
+\newcommand\AIPsubsubsectionformat[1]   {\centering#1}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aip8x11double,aip8x11single>
+\newcommand\AIPsubsubsectionfont     {\normalfont\fontsize{10}{12}\itshape}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\newcommand\AIPsubsubsectionfont     {\normalfont\fontsize{14}{16}\itshape}
+%</aip6x9single>
+%<*aiparlo>
+\newcommand\AIPsubsubsectionpenalty  {-300}
+\newcommand\AIPsubsubsectionindent   {0pt}
+\newcommand\AIPsubsubsectionpreskip  {.5\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubsubsectionpostskip {.5\bodytextbaselineskip}
+\newcommand\AIPsubsubsectionafterindent {false}
+\newcommand\AIPsubsubsectionrunin       {false}
+\newcommand\AIPsubsubsectionformat[1]   {#1}
+\newcommand\AIPsubsubsectionfont     {\normalfont}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% \subsubsection{D-head}
+%
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPparagraphpenalty  {-300}
+\newcommand\AIPparagraphindent   {\bodytextparindent}
+\newcommand\AIPparagraphpreskip  {\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPparagraphpostskip {1em}
+\newcommand\AIPparagraphafterindent {true}
+\newcommand\AIPparagraphrunin       {true}
+\newcommand\AIPparagraphfont        {\normalfont\normalsize\itshape}
+\newcommand\AIPparagraphformat[1]   {#1.}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aiparlo>
+\newcommand\AIPparagraphpenalty  {-300}
+\newcommand\AIPparagraphindent   {\bodytextparindent}
+\newcommand\AIPparagraphpreskip  {.5\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPparagraphpostskip {1em}
+\newcommand\AIPparagraphafterindent {true}
+\newcommand\AIPparagraphrunin       {true}
+\newcommand\AIPparagraphfont        {\normalfont\normalsize\bfseries}
+\newcommand\AIPparagraphformat[1]   {#1.}
+%</aiparlo>
+%    \end{macrocode}
+%
+% \subsubsection{E-head}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPsubparagraphpenalty  {-300}
+\newcommand\AIPsubparagraphindent   {\bodytextparindent}
+\newcommand\AIPsubparagraphpreskip  {\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubparagraphpostskip {1em}
+\newcommand\AIPsubparagraphafterindent {true}
+\newcommand\AIPsubparagraphrunin       {true}
+\newcommand\AIPsubparagraphfont        {\normalfont\normalsize}
+\newcommand\AIPsubparagraphformat[1]   {#1.}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\AIP@cmdnotsupported\subparagraph
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aiparlo>
+\newcommand\AIPsubparagraphpenalty  {-300}
+\newcommand\AIPsubparagraphindent   {\bodytextparindent}
+\newcommand\AIPsubparagraphpreskip  {.5\bodytextbaselineskip plus 3pt minus 1pt}
+\newcommand\AIPsubparagraphpostskip {1em}
+\newcommand\AIPsubparagraphafterindent {false}
+\newcommand\AIPsubparagraphrunin       {true}
+\newcommand\AIPsubparagraphfont        {\normalfont\normalsize\itshape}
+\newcommand\AIPsubparagraphformat[1]   {#1.}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{General list layout}
+%
+% %%%%%%%%%%%%%
+%
+% \subsection{List indentation}
+%
+% Defaults for the list indentation at various levels are stored in
+% the following registers.
+%
+% \begin{decl}
+%  \describeregister{\leftmargini}{dimen}
+%      {Default indentation for text in first level lists.}
+%  \describeregister{\leftmarginii}{dimen}
+%      {Ditto for second level.}
+%  \describeregister{\leftmarginiii}{dimen}
+%      {Ditto for third level.}
+%  \describeregister{\leftmarginiv}{dimen}
+%      {Ditto for forth level.}
+% \end{decl}
+%
+% These parameters are used in the list parameter macros below.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\setlength\leftmargini    {2\bodytextparindent}
+\setlength\leftmarginii   {2\bodytextparindent}
+\setlength\leftmarginiii  {2\bodytextparindent}
+\setlength\leftmarginiv   {2\bodytextparindent}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\setlength\leftmargini    {\bodytextparindent}
+\setlength\leftmarginii   {.5\bodytextparindent}
+\setlength\leftmarginiii  {.5\bodytextparindent}
+\setlength\leftmarginiv   {.5\bodytextparindent}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsection{Page breaking within lists}
+%
+% \LaTeX-lists add a number of penalty items to the galley to guide
+% the page builder in it s decisions.
+%
+% \begin{decl}
+%  \describeregister{\@beginparpenalty}{penalty}
+%      {Penalty if page break occurs immediately before list}
+%  \describeregister{\@endparpenalty}{penalty}
+%      {Penalty if page break occurs immediately after list}
+%  \describeregister{\@itempenalty}{penalty}
+%      {Penalty if page break occurs between items of list}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\SetInternalRegister\@beginparpenalty {10000}
+\SetInternalRegister\@endparpenalty   {-\@lowpenalty}
+\SetInternalRegister\@itempenalty     {-\@lowpenalty}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  The above settings disallow a break before a list (unless
+%  explicitly allowed using |\pagebreak|) and encourages breaks after
+%  the list and between items.
+%
+%  In \LaTeX{} environments like \Lenv{center}, \Lenv{flushleft},
+%  etc.\ are implemented internally as lists, thus the above values
+%  apply to them as well.
+% \end{note}
+%
+%
+% \subsection{General list parameters}
+%
+% The generic \Lenv{list} environment, which is used to implement all
+% kind of lists in \LaTeX{}, has a large number of parameters that can
+% be used to modify the lists behavior, see \cite[pp60]{tc} for a lot
+% of examples.
+%
+% The default values for these parameters are set by the class.
+%
+% \begin{decl}
+%  \describeregister{\leftmargin}{dimen}
+%      {Horizontal indentation of item text for the current list
+%      level. By convention initialised to \cs{leftmargini} etc.}
+%  \describeregister{\labelsep}{dimen}
+%      {Separation between item label and item text.}
+%  \describeregister{\labelwidth}{dimen}
+%      {Nominal width of the item label. If the label is larger than
+%      this it will move item text to the right.}
+%  \describeregister{\topsep}{skip}
+%      {Vertical space above and below (!) list.}
+%  \describeregister{\partopsep}{skip}
+%      {Additional vertical space added to \cs{topsep} if list is its
+%      own paragraph.}
+%  \describeregister{\listparindent}{dimen}
+%      {Paragraph indentation for paragraphs within items.}
+%  \describeregister{\parsep}{skip}
+%      {Paragraph separation for paragraphs within items.}
+%  \describeregister{\itemsep}{skip}
+%      {Vertical space between items of list.}
+% \end{decl}
+%
+% The above parameters are not globally set. Instead their settings
+% are stored in the following list parameter macros which are called
+% by the list-environments depending on the current size and the
+% current level of nesting.
+%
+% \begin{decl}
+%  \describemacro{\@listi}{}
+%    {List parameters for lists on top-level}
+%  \describemacro{\@listii}{}
+%    {Ditto, but for lists on the second level, eg \Lenv{itemize}
+%    within \Lenv{itemize}.}
+%  \describemacro{\@listiii}{}
+%    {Ditto, but for third-level lists.}
+%  \describemacro{\@listiv}{}
+%    {Ditto, but for fourth-level lists.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\@listi{
+  \setlength\leftmargin {\leftmargini}
+  \setlength\labelsep   {\bodytextenspace}
+  \setlength\labelwidth {\leftmargin - \labelsep}
+  \setlength\topsep     {.5\bodytextbaselineskip plus 1pt}
+  \setlength\partopsep  {0pt}
+  \setlength\parsep       {0pt}  
+  \setlength\listparindent{0pt}
+  \setlength\itemsep      {2pt plus 1pt}
+}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%  Normally macros for the deeper nested lists do not contain many
+% settings.  They only need those values that can't be inherited from
+% the previous level.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\@listii{
+   \setlength\leftmargin {\leftmarginii}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+   \setlength\topsep     {0pt plus 1pt}
+}
+\renewcommand\@listiii{
+   \setlength\leftmargin{\leftmarginiii}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+}
+\renewcommand\@listiv{
+   \setlength\leftmargin{\leftmarginiv}
+   \setlength\labelwidth {\leftmargin - \labelsep}
+}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  Some classes do define even more nesting levels. 
+% \end{note}
+%
+%
+%
+% \begin{decl}
+%  \describemacro{\@listI}{}
+%    {Saved value of \cs{@listi} for the \cs{normalsize}, ie the main
+%    text size.}
+%  \describemacro[*]{\@listIsmall}{}
+%    {Ditto, but for \cs{small}.}
+%  \describemacro[*]{\@listIfootnotesize}{}
+%    {Ditto, but for \cs{footnotesize}.}
+% \end{decl}
+%
+%  As already noted before, \LaTeX{} normally does not try to handle
+%  nested lists in sizes other than |\normalsize|.
+%  In principle this is possible but its value is questionable except
+%  perhaps in special applications like critical editions.
+%  But setting up the three macros above is important to get at least
+%  top-level lists in footnotes etc.\ correct.
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\renewcommand\@listI{}
+\let\@listI\@listi
+\newcommand\@listIsmall{}
+\let\@listIsmall\@listi
+\newcommand\@listIfootnotesize{}
+\let\@listIsmall\@listi
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+% \begin{note}
+%  We do use in all cases the same values as for top-level lists in
+%  |\normalsize|. That might need adjustment.
+% \end{note}
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Standard List Environments}
+%
+% %%%%%%%%%%%%%
+%
+% Most of the standard list environments are inherited from the
+% underlying article class. Here we set up \Lenv{itemize},
+% \Lenv{enumerate} and \Lenv{description} (even if we use mostly the
+% default values) because those three environments are the those that are
+% most likely to change.
+%
+% \subsection{The \Lenv{itemize} environment}
+%
+%
+% \begin{decl}
+%  \describemacro{\labelitemi}{}
+%    {Default label for first-level lists.}
+%  \describemacro{\labelitemii}{}
+%    {Ditto, for second-level lists.}
+%  \describemacro{\labelitemiii}{}
+%    {Ditto, for third-level lists.}
+%  \describemacro{\labelitemiv}{}
+%    {Ditto, for forth-level lists.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\labelitemi  {\footnotesize\textbullet}
+\renewcommand\labelitemii {\bfseries --}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aiparlo>
+\renewcommand\labelitemiii{\fontsize{7}{7}\selectfont
+                           \raisebox{1pt}\textasteriskcentered}
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+\renewcommand\labelitemiii{\fontsize{8}{8}\selectfont
+                           \raisebox{1.5pt}\textasteriskcentered}
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\labelitemiv {\textperiodcentered}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% \subsection{The \Lenv{enumerate} environment}
+%
+%
+% The following five macros define the appearance of the labels at
+% various levels. Their definitions make use of the four counters
+% associated with the four levels of nested \Lenv{enumerate}
+% environments.
+%
+% \begin{decl}
+%  \describemacro{\labelenumi}{}
+%    {Default label for first-level lists.}
+%  \describemacro{\labelenumii}{}
+%    {Ditto, for second-level lists.}
+%  \describemacro{\labelenumiii}{}
+%    {Ditto, for third-level lists.}
+%  \describemacro{\labelenumiv}{}
+%    {Ditto, for forth-level lists.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{(\theenumii)}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand{\labelenumiv}{\theenumiv.}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+% \begin{decl}
+%  \describemacro{\theenumi}{}
+%    {Representation of the  value of the counter associated with
+%    \Lenv{enumerate} at first list-level.}
+%  \describemacro{\p@enumi}{}
+%    {Prefix used in front of \cs{theenumi} when referencing an item
+%     of an \Lenv{enumerate} environment at first list-level.}
+%  \describemacro{\theenumii}{}
+%    {Ditto, for the second level.}
+%  \describemacro{\p@enumii}{}
+%    {Ditto, for the second level.}
+%  \describemacro{\theenumiii}{}
+%    {Ditto, for the third level.}
+%  \describemacro{\p@enumiii}{}
+%    {Ditto, for the third level.}
+%  \describemacro{\theenumiv}{}
+%    {Ditto, for the fourth level.}
+%  \describemacro{\p@enumiv}{}
+%    {Ditto, for the fourth level.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\p@enumi {}
+\renewcommand\theenumii{\alph{enumii}}
+\renewcommand\p@enumii {\theenumi}
+\renewcommand\theenumiii{\roman{enumiii}}
+\renewcommand\p@enumiii {\theenumi(\theenumii)}
+\renewcommand{\theenumiv}{\Alph{enumiv}}
+\renewcommand{\p@enumiv} {\p@enumiii\theenumiii}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsection{The \Lenv{description} environment}
+%
+% \begin{decl}
+%  \describemacro{\descriptionlabel}{\arg{label}}
+%    {Code to format of the description label \Lenv{description}.
+%     Due to the way \LaTeX's description environment is set up one
+%     needs to start with a space of \texttt{\string\labelsep} to
+%     make the label come out flush left with the text margin.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep
+                                   \normalfont\bfseries #1}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Math}
+%
+% %%%%%%%%%%%%%
+%
+% \subsubsection{Display math}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPeqformat}{\arg{eqref}}
+%    {Formatting of the equation number in a display.}
+%  \describemacro[*]{\AIPeqfont}{}
+%    {Font used for the equation number.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPeqformat [1] {(#1)}
+\newcommand\AIPeqfont       {\normalfont \normalcolor}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsubsection{Referencing equations}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPeqrefformat}{\arg{eqref}}
+%    {Formatting of the equation number if referenced in text.}
+%  \describemacro[*]{\AIPeqreffont}{}
+%    {Font used for the equation reference.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPeqrefformat [1] {(#1)}
+\newcommand\AIPeqreffont       {}
+%</aip8x11double,aip8x11single,aip6x9single>
+%<*aiparlo>
+\newcommand\AIPeqrefformat [1] {Eq.\UnbreakableSpace(#1)}
+\newcommand\AIPeqreffont       {\normalfont \normalcolor}
+%</aiparlo>
+%    \end{macrocode}
+% 
+%
+% %%%%%%%%%%%%%
+%
+% \section{Other document elements}
+%
+% %%%%%%%%%%%%%
+%
+% \subsection{Footnotes}
+%
+% \subsubsection{Placement}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPfootnoterulewidth}{\type{dimen}}
+%    {Width of the footnote rule, if any.}
+%  \describemacro[*]{\AIPfootnoteruleheight}{\type{dimen}}
+%    {Height of the footnote rule.}
+%  \describemacro[*]{\AIPfootnoteruleindent}{\type{dimen}}
+%    {Indentation of the the footnote rule.}
+%  \describemacro[*]{\AIPfootnoterulepreskip}{\type{dimen}}
+%    {Space above the rule.}
+%  \describemacro[*]{\AIPfootnoterulepostskip}{\type{dimen}}
+%    {Space below the rule.}
+% \end{decl}
+%
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPfootnoterulewidth    {2in}
+\newcommand\AIPfootnoteruleheight   {0.5pt}
+\newcommand\AIPfootnoteruleindent   {0pt}
+\newcommand\AIPfootnoterulepreskip  {0.25in}
+\newcommand\AIPfootnoterulepostskip {0.125in}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsubsection{Marker}
+%
+% \begin{decl}
+%  \describemacro{\thefootnote}{}
+%    {Representation of the footnote marker value, i.e. its style.}
+%  \describemacro[*]{\AIPfootnotemarkerformat}{\arg{marker}}
+%    {Formatting of the marker in text.}
+%  \describemacro[*]{\AIPfootnotemarkerfont}{}
+%    {Font to be used for the marker in text.}
+% \end{decl}
+%
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\renewcommand\thefootnote{\arabic{footnote}}
+\newcommand\AIPfootnotemarkerformat[1] {\textsuperscript{#1}}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%<*aip8x11double,aip8x11single,aiparlo>
+\newcommand\AIPfootnotemarkerfont      {\fontsize{7}{7}\normalfont}
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+\newcommand\AIPfootnotemarkerfont      {\fontsize{8}{8}\normalfont}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+%
+% \subsubsection{Footnote text}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPfootnotetextmarkerformat}{\arg{marker}}
+%    {Format of the footnote text marker including spacing to the left
+%    and right.}
+%  \describemacro[*]{\AIPfootnotetextmarkerfont}{}
+%    {Font for the footnote marker in front of the text.}
+%  \describeplayout[*]{AIPfootnote}
+%    {Paragraph parameters for the footnote text.}
+%  \describeregister{\footnotesep}{dimen}
+%      {Height of a strut placed at the beginning of each footnote to
+%       separate them from each other. It value should be chosen
+%       depending on the size used for the footnote text.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPfootnotetextmarkerformat[1] {\textsuperscript{#1}\hspace{3pt}}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%<*aip8x11double,aip8x11single,aiparlo>
+\newcommand\AIPfootnotetextmarkerfont      {\fontsize{6}{6}\normalfont}
+\setlength\footnotesep                     {6.65pt}
+\DeclareParagraphLayout{AIPfootnote}
+  {8pt}{9pt}
+  {1em}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+\newcommand\AIPfootnotetextmarkerfont      {\fontsize{8}{8}\normalfont}
+\setlength\footnotesep                     {8.4pt}
+\DeclareParagraphLayout{AIPfootnote}
+  {10pt}{11pt}
+  {1em}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \subsection{The citation in the document}
+%
+% This is only used if natbib is not loaded.
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPcitefont}{}
+%    {Font used for the citation in text.}
+%  \describemacro[*]{\AIPciteformat}{\arg{citation-label(s)}}
+%    {Format of the citation label(s).}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPcitefont      {}
+\newcommand\AIPciteformat[1] {[#1]}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\IfFileExists{natbib.sty}
+  {}
+  {\AIP@error{This~ layoutstyle~ requires~ the~ nabib~ package}
+	     {Without~ the~ natbib~ system~ it~ is~ impossible~
+	      to~ typeset~ the~ document\MessageBreak
+              according~ to~ the~ layout~ specification~ of~ 
+              the~ journal.\MessageBreak\MessageBreak
+	      See~ the~ documentation~ for~ downloading~ 
+              information.\MessageBreak\MessageBreak
+              You~ may~ carry~ on~ but~ the~ formatting~ will~ be~
+              incorrect.}
+  }
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \subsection{Marginpars}
+%
+%
+% Defaults used.
+%
+%
+%
+%
+% 
+%
+% \subsection{Tabulars}
+%
+%
+% \begin{decl}
+%  \describeregister{\arrayrulewidth}{dimen}
+%      {Width of rules used by \cs{hline}, \cs{vline} etc.\ inside a
+%      \Lenv{tabular} or \Lenv{array} environment.}
+%  \describeregister[*]{\AIPhlinesep}{dimen}
+%      {Extra space added above and three times below an
+%    \texttt{\string\hline} command.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\setlength\arrayrulewidth {.4pt}
+\setlength\AIPhlinesep    {1pt}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%
+% Default values used. See, for example, \cite[p110]{tc} for other
+% parameters that might be important.
+%
+%
+%
+%
+%
+%
+%
+% \subsection{Boxes}
+%
+%
+% \begin{decl}
+%  \describeregister{\skip\string\@mpfootins}{skip}
+%      {Vertical space between baseline of last line of text in a
+%      \Lenv{minipage} and the first baseline of footnotes for this
+%      \Lenv{minipage}.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\setlength{\skip\@mpfootins}{12pt plus 4pt minus 4pt}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Float placement}
+%
+% %%%%%%%%%%%%%
+%
+% \subsection{Float placement parameters}
+%
+% In \LaTeX{} it is possible to describe how many floats are allowed
+% to go into certain areas on the page, how large such areas are
+% allowed to become, etc.
+%
+% \begin{decl}
+%  \describecounter{totalnumber}
+%      {Maximum number of column floats within one column.}
+%  \describecounter{topnumber}
+%      {Maximum number of column floats on top of a column.}
+%  \describecounter{bottomnumber}
+%      {Maximum number of column floats at the bottom of a column.}
+%  \describecounter{dbltopnumber}
+%      {Maximum number of pagewide floats on top of the page. Only
+%      relevant in two-column layout.}
+% \end{decl}
+%
+%    \begin{macrocode}
+\setcounter{totalnumber} {3}
+\setcounter{topnumber}   {2}
+\setcounter{bottomnumber}{1}
+\setcounter{dbltopnumber}{2}
+%    \end{macrocode}
+%
+%
+%
+% \begin{decl}
+%  \describemacro{\topfraction}{}
+%    {Fraction of column that can be devoted to top-floats.}
+%  \describemacro{\bottomfraction}{}
+%    {Fraction of column that can be devoted to bottom-floats.}
+%  \describemacro{\textfraction}{}
+%    {Fraction of column that must contain text.}
+%  \describemacro{\floatpagefraction}{}
+%    {Fraction of column that must be occupied by floats that form a
+%    float-column, ie a column without text.}
+% \end{decl}
+%
+%    \begin{macrocode}
+\renewcommand\topfraction      {.9}
+\renewcommand\bottomfraction   {.4}
+\renewcommand\textfraction    {.08}
+\renewcommand\floatpagefraction{.9}
+%    \end{macrocode}
+%
+% The next two are only relevant in two-column layout.
+% \begin{decl}
+%  \describemacro{\dbltopfraction}{}
+%    {Fraction of text page that can be occupied by page-wide floats.}
+%  \describemacro{\dblfloatpagefraction}{}
+%    {Fraction of text page that must be occupied by page-wide floats 
+%     that form a float-page, ie a page without text.}
+% \end{decl}
+%
+%    \begin{macrocode}
+\renewcommand\dbltopfraction      {.6}
+\renewcommand\dblfloatpagefraction{.6}
+%    \end{macrocode}
+
+
+% \subsection{Spaces between floats and other objects}
+%
+% \LaTeX{} also describes the spatial relationships between individual
+% floats and between floats and text.
+%
+% \begin{decl}
+%  \describeregister{\floatsep}{skip}
+%      {Separation between to consecutive floats.}
+%  \describeregister{\intextsep}{skip}
+%      {Separation between in-text floats and surrounding text.}
+%  \describeregister{\textfloatsep}{skip}
+%      {Separation between floats and column text.}
+% \end{decl}
+%
+%    \begin{macrocode}
+\setlength\floatsep     {1.5\bodytextbaselineskip plus 4pt}
+\setlength\intextsep    {.5\bodytextbaselineskip plus 2pt minus 1pt}
+\setlength\textfloatsep {2\bodytextbaselineskip plus 4pt}
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Float-page and float-column parameters}
+%
+% Float column (columns consisting only of floats and no text) and
+% float pages are described by the following parameters.
+%
+% \begin{decl}
+%  \describeregister{\@fptop}{skip}
+%      {Stretchable space on top of a float column.}
+%  \describeregister{\@fpsep}{skip}
+%      {Stretchable or rigid space between floats on a float column.}
+%  \describeregister{\@fpbot}{skip}
+%      {Stretchable space at the bottom of a float column.}
+%  \describeregister{\@dblfptop}{skip}
+%      {Stretchable space on top of a float page (page-wide floats in
+%      twocolumn mode).}
+%  \describeregister{\@dblfpsep}{skip}
+%      {Stretchable or rigid space  between such floats.}
+%  \describeregister{\@dblfpbot}{skip}
+%      {Stretchable space at the bottom of a float page.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+\setlength\@fptop {0pt plus 100pt}
+\setlength\@fpsep {20pt plus 6pt}
+\setlength\@fpbot {0pt plus 100pt}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\setlength\@dblfptop {0pt plus 100pt}
+\setlength\@dblfpsep {20pt plus 6pt}
+\setlength\@dblfpbot {0pt plus 100pt}
+%    \end{macrocode}
+%
+% \begin{note}
+%  The above are just some suggested values. No spec was given.
+% \end{note}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Float Layout}
+%
+% %%%%%%%%%%%%%
+%
+% The layout for float objects is relatively general. One has to
+% describe the relative placement of objects (float body, caption,
+% frills) to each other which is done by defining commands like
+% |\typesetfigurefloat| in relative high-level terms. This layout as
+% well as paragraph layout for captions can be controlled individually
+% for all float types distinguishing also column and page-wide floats.
+%
+% \subsection{Figure floats}
+%
+%
+%
+% \subsubsection{Figure caption}
+%
+% \begin{decl}
+%  \describemacro{\figurename}{}
+%     {Generated text of a figure float caption.}
+%  \describemacro{\thefigure}{}
+%    {Representation of the figure float counter.}
+%  \describemacro[*]{\AIPfigurecaptionheadformat}{\arg{caption-head}}
+%    {Format of the caption head (fixed) and caption number including
+%     spacing on the left and right.}
+%  \describeplayout[*]{AIPfigure-singlelinecaption}
+%    {Paragraph parameters for the figure caption if it fits a single
+%     line.}
+%  \describeplayout[*]{AIPfigure-multilinecaption}
+%    {Paragraph parameters for the figure caption if more than one
+%     line long. The font size and baselineskip should match those of
+%     the \texttt{AIPfigure-singlelinecaption}.}
+%  \describemacro[*]{\AIPfigurecaptionheadfont}{}
+%    {Font specification for the caption head.}
+%  \describemacro[*]{\AIPfigurecaptiontextfont}{}
+%    {Font specification for the caption text.}
+% \end{decl}
+%
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\renewcommand\figurename                  {FIGURE}
+\renewcommand{\thefigure}                 {\arabic{figure}}
+\newcommand\AIPfigurecaptionheadformat[1] {\figurename\ #1.\hspace{1em}}
+\setlength\AIPfigurecaptionBBskip         {0.25in}
+%</aip8x11double,aip8x11single,aip6x9single>
+
+%<*aip8x11double,aip8x11single>
+\DeclareParagraphLayout{AIPfigure-singlelinecaption}
+  {9pt}{10pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {}
+\DeclareParagraphLayout{AIPfigure-multilinecaption}
+  {9pt}{10pt}
+  {10pt}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+\newcommand\AIPfigurecaptionheadfont  {\fontsize{9}{10}\bfseries}
+\newcommand\AIPfigurecaptiontextfont  {\fontsize{9}{10}\selectfont}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\DeclareParagraphLayout{AIPfigure-singlelinecaption}
+  {10pt}{11.5pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {}
+\DeclareParagraphLayout{AIPfigure-multilinecaption}
+  {10pt}{11.5pt}
+  {12pt}{0pt}{0pt}{0pt plus  1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+\newcommand\AIPfigurecaptionheadfont  {\fontsize{10}{11.5}\bfseries}
+\newcommand\AIPfigurecaptiontextfont  {\fontsize{10}{11.5}\selectfont}
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\renewcommand\figurename                  {Fig.}
+\renewcommand{\thefigure}                 {\arabic{figure}}
+\newcommand\AIPfigurecaptionheadformat[1] {\figurename\ #1.\ }
+\setlength\AIPfigurecaptionBBskip         {0.25in}
+\DeclareParagraphLayout{AIPfigure-singlelinecaption}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {}
+\DeclareParagraphLayout{AIPfigure-multilinecaption}
+  {8pt}{9pt}
+  {10pt}{0.5in}{0.5in}{0pt plus  1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+\newcommand\AIPfigurecaptionheadfont  {\fontsize{8}{9}\selectfont}
+\newcommand\AIPfigurecaptiontextfont  {\fontsize{8}{9}\selectfont}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+% \subsubsection{Source}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPfiguresourceheadfont}{}
+%    {Font specification for the source head}
+%  \describemacro[*]{\AIPfiguresourceheadtext}{}
+%    {Text and spacing of the source head}
+%  \describemacro[*]{\AIPfiguresourcetextfont}{}
+%    {font specification for the source text}
+%  \describemacro[*]{\AIPfiguresourceskip}{}
+%    {Vertical space before the source block.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPfiguresourceheadtext  {Source:~ }
+\newcommand\AIPfiguresourceskip      {1mm}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%<*aip8x11double,aip8x11single,aiparlo>
+\newcommand\AIPfiguresourceheadfont  {\fontsize{7}{7}\itshape}
+\newcommand\AIPfiguresourcetextfont  {\fontsize{7}{7}\itshape}
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+\newcommand\AIPfiguresourceheadfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPfiguresourcetextfont  {\fontsize{8}{8}\itshape}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Table floats}
+%
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPtablefont}{}
+%    {Font specification for the table body.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\newcommand\AIPtablefont {\fontsize{9}{10}\normalfont}
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\newcommand\AIPtablefont {\fontsize{10}{11.5}\normalfont}
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\AIPtablefont {\fontsize{9}{10}\normalfont}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsubsection{Table caption}
+%
+% \begin{decl}
+%  \describemacro{\tablename}{}
+%     {Generated text of a table float caption.}
+%  \describemacro{\thetable}{}
+%    {Representation of the table float counter.}
+%  \describemacro[*]{\AIPtablecaptionheadformat}{\arg{caption-head}}
+%    {Format of the caption head (fixed) and caption number including
+%     spacing to the left and right.}
+%  \describemacro[*]{\AIPtablecaptionheadfont}{}
+%    {Font specification for the caption head.}
+%  \describemacro[*]{\AIPtablecaptiontextfont}{}
+%    {Font specification for the caption text.}
+%  \describeregister[*]{\AIPtablecaptionminwidth}{dimen}
+%    {Minimum width for the table caption. If the table is short it
+%    will be used instead of the table width.}
+%  \describeplayout[*]{AIPtable-singlelinecaption}
+%    {Paragraph parameters for the table caption if it fits a single
+%     line.}
+%  \describeplayout[*]{AIPtable-multilinecaption}
+%    {Paragraph parameters for the table caption if more than one
+%     line long. The font size and baselineskip should match those of
+%     the \texttt{AIPtable-singlelinecaption}.}
+%  \describeregister[*]{\AIPtablecaptionskip}{skip}
+%    {Separation between caption and table body.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\renewcommand\tablename                  {TABLE}
+\renewcommand{\thetable}                 {\arabic{table}}
+\newcommand\AIPtablecaptionheadformat[1] {\tablename\ #1.\hspace{1em}}
+\newcommand\AIPtablecaptionheadfont      {\AIPtablefont\bfseries}
+\newcommand\AIPtablecaptiontextfont      {\AIPtablefont}
+\setlength\AIPtablecaptionminwidth       {12pc}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\DeclareParagraphLayout{AIPtable-singlelinecaption}
+  {9pt}{10pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+\setlength\AIPtablecaptionskip {2pt}
+%</aip8x11double,aip8x11single>
+%
+% \begin{note}
+%    We take off two extra points below the caption as there we
+%    typically have a rule which comes with some extra space above.
+% \end{note}
+%    
+%<*aip6x9single>
+\DeclareParagraphLayout{AIPtable-singlelinecaption}
+  {10pt}{11.5pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+\setlength\AIPtablecaptionskip {2pt}
+%</aip6x9single>
+%<*aip8x11double,aip8x11single,aip6x9single>
+\DeclareParagraphLayoutAlias{AIPtable-multilinecaption}
+                            {AIPtable-singlelinecaption}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\renewcommand\tablename                  {Table}
+\renewcommand{\thetable}                 {\arabic{table}}
+\newcommand\AIPtablecaptionheadformat[1] {\tablename\ #1.\ }
+\newcommand\AIPtablecaptionheadfont      {\fontsize{8}{9}\selectfont}
+\newcommand\AIPtablecaptiontextfont      {\fontsize{8}{9}\selectfont}
+\setlength\AIPtablecaptionminwidth       {12pc}
+\setlength\AIPtablecaptionskip           {2pt}
+\DeclareParagraphLayout{AIPtable-singlelinecaption}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {\normalfont}
+\DeclareParagraphLayout{AIPtable-multilinecaption}
+  {8pt}{9pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\normalfont}
+%</aiparlo>
+%    \end{macrocode}
+%
+% \subsubsection{Table header and table notes}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPtableheadfont}{}
+%    {Font to be used in the \texttt{\string\tablehead} command.}
+%  \describeplayout[*]{AIPtablenote}
+%    {Paragraph parameters for the text of a tablenote.}
+%  \describeregister[*]{\AIPtablenoteskip}{skip}
+%    {Separation between table and table notes.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPtableheadfont {\AIPtablefont\bfseries}
+\setlength\AIPtablenoteskip  {2mm}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\DeclareParagraphLayout{AIPtablenote}
+  {8pt}{9pt}
+  {1em}{0pt}{0pt plus 3em}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+%</aip8x11double,aip8x11single>
+%<*aip6x9single>
+\DeclareParagraphLayout{AIPtablenote}
+  {9pt}{10pt}
+  {1em}{0pt}{0pt plus 3em}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+%</aip6x9single>
+%<*aiparlo>
+\DeclareParagraphLayout{AIPtablenote}
+  {8pt}{9pt}
+  {1em}{0pt}{0pt plus 3em}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+  }
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsubsection{Source}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPtablesourceheadfont}{}
+%    {Font specification for the source head}
+%  \describemacro[*]{\AIPtablesourceheadtext}{}
+%    {Text and spacing of the source head}
+%  \describemacro[*]{\AIPtablesourcetextfont}{}
+%    {font specification for the source text}
+%  \describemacro[*]{\AIPtablesourceskip}{}
+%    {Vertical space before the source block.}
+% \end{decl}
+%
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPtablesourceheadtext  {Source:~ } % include spacing!
+\newcommand\AIPtablesourceskip      {1mm}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%<*aip8x11double,aip8x11single,aiparlo>
+\newcommand\AIPtablesourceheadfont  {\fontsize{7}{7}\itshape}
+\newcommand\AIPtablesourcetextfont  {\fontsize{7}{7}\itshape}
+%</aip8x11double,aip8x11single,aiparlo>
+%<*aip6x9single>
+\newcommand\AIPtablesourceheadfont  {\fontsize{8}{8}\itshape}
+\newcommand\AIPtablesourcetextfont  {\fontsize{8}{8}\itshape}
+%</aip6x9single>
+%    \end{macrocode}
+%
+%
+% \subsubsection{Multimedia}
+%
+% Special stuff for ARLO only:
+%    \begin{macrocode}
+%<*aiparlo>
+\newenvironment{multimedia}
+   {\gdef\mm@type{??}
+    \gdef\mm@size{??}
+    \gdef\mm@url{??}
+    \gdef\mm@caption{??}
+    \gdef\mm@uid{??}
+    \global\let\AIP@save@label\@undefined
+    \setbox\z@\hbox\bgroup
+      \def\mmtype##1{\gdef\mm@type{##1}}
+      \def\mmsize##1{\gdef\mm@size{##1}}
+      \def\mmurl##1{\gdef\mm@url{##1}}
+      \def\mmcaption##1{\gdef\mm@caption{##1}}
+      \def\mmuid##1{\gdef\mm@uid{##1}}
+      \def\label##1{\gdef\AIP@save@label{##1}}%
+   }
+   {
+    \egroup
+    \begin{center}
+    \UseParagraphLayout{multimediatext}
+    \refstepcounter{multimedia}
+    Mm.\,\themultimedia.\ \mm@caption\ (\mm@size)
+    \ifx\AIP@save@label\@undefined\else
+	 \label\AIP@save@label
+    \fi
+    \if@draft
+      \space [\mm@uid.\ifnum\value{multimedia}<10\relax 0\fi
+                      \arabic{multimedia}.\mm@type]
+      \space \expandafter\url\expandafter{\mm@url}
+    \fi
+    \end{center}
+   }
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\DeclareParagraphLayout{multimediatext}
+  {8pt}{9pt}
+  {0pt}{\fill}{\fill}{0pt}
+  {0pt}
+  {}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\newcounter{multimedia}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\newcommand\mmref{Mm.\nobreak\,\ref}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% \section{Page styles}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPfolioformat}{\arg{short-title}\arg{date}\arg{page}}
+%    {Formatting of a footer line in draft mode receiving the article's
+%    title, the current date, and the current page number as arguments.}
+%  \describemacro[*]{\AIPfoliofont}{}
+%    {Font used for the folio line}
+% \end{decl}
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single,aiparlo>
+\newcommand\AIPfolioformat[3] {#1\hfil#2\hfil#3}
+\newcommand\AIPfoliofont      {\fontsize{10}{10}\selectfont}
+%</aip8x11double,aip8x11single,aip6x9single,aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+% %%%%%%%%%%%%%%
+%
+% \section{Backmatter}
+%
+% %%%%%%%%%%%%%
+%
+%  The backmatter in this class consists of an environment to typeset
+%  acknowledgments, an environment to typeset the bibliography (which
+%  is already provided by \LaTeX{} and an environment to typeset
+%  biographies of the authors.
+%
+% \subsection{Acknowledgments}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPacknowledgmentsheadtype}{}
+%      {Command that produces the heading.}
+%  \describemacro[*]{\AIPacknowledgmentsheadtext}{}
+%      {Fixed heading text}
+%  \describeplayout[*]{AIPacknowledgments}
+%    {Paragraph parameters for the text.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPacknowledgmentsheadtype {\section*}
+\newcommand\AIPacknowledgmentsheadtext {ACKNOWLEDGMENTS}
+\DeclareParagraphLayoutAlias{AIPacknowledgments}{AIPbodytext}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\AIPacknowledgmentsheadtype {\section*}
+\newcommand\AIPacknowledgmentsheadtext {Acknowledgments}
+\DeclareParagraphLayoutAlias{AIPacknowledgments}{AIPbodytext}
+%</aiparlo>
+%    \end{macrocode}
+%
+%    
+%    
+%
+% \subsection{Index}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPindexheadtype}{}
+%      {Command that produces the heading.}
+%  \describemacro{\indexname}{}
+%      {Fixed heading text}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPindexheadtype {\section*}
+\renewcommand\indexname      {INDEX}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\AIPindexheadtype {\section*}
+\renewcommand\indexname      {Index}
+%</aiparlo>
+%    \end{macrocode}
+%    
+%    
+%    
+% \subsection{URLs}
+%
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\MakeSpaceNormal
+\RequirePackage{color}
+\MakeSpaceIgnore
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+\newcommand\urlprefix{} % for natbib
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%    
+% \subsection{Bibliography}
+%
+%
+% \subsubsection{The bibliography heading}
+%
+% The parameters are modeled after those for |\section|.
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPbibliographyheadtype}{}
+%      {Command that produces the heading.}
+%  \describemacro{\refname}{}
+%      {Fixed heading text.}
+%  \describemacro[*]{\AIPcitestyleselect}{}
+%      {Defines which citation style should be used. Possible values
+%       are ``num'' or ``biblio''. It should be given a value only if
+%       the user is not allowed to decide the citation style via an
+%       option.} 
+%  \describemacro[*]{\AIPnumcitestyle}{}
+%      {Name of the natbib citestyle to use for numerical citation style}
+%  \describemacro[*]{\AIPbibliocitestyle}{}
+%      {Name of the natbib citestyle to use for author/year citation style}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPbibliographyheadtype {\section*}
+\renewcommand\refname               {REFERENCES}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\renewcommand\AIPcitestyleselect    {num}
+\newcommand\AIPnumcitestyle         {aipproc}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\AIPbibliographyheadtype {\section*}
+\renewcommand\refname               {References~ and~ links}
+\newcommand\AIPnumcitestyle         {arlonum}
+\newcommand\AIPbibliocitestyle      {agu}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+% \subsubsection{The bibliography list}
+%
+% \begin{decl}
+%  \describemacro[*]{\AIPbibliographymarkerformat}{\arg{label}}
+%    {Code to produce the label for the \cs{bibitem} command. As with
+%    most list-labels it should contain some stretchable space.}
+%  \describeplayout[*]{AIPbibliography}
+%    {Paragraph layout parameters for the bibliography list.}
+%  \describemacro[*]{\AIPbibliographylabelsep}{skip}
+%    {Horzontal space between label and text in the bibliography list
+%     (only relevant if not in numerical style).}
+%  \describemacro[*]{\AIPbibliographyitemsep}{skip}
+%    {Vertical space added between items in the bibliography list.}
+% \describemacro[*]{\AIPbibliographylabelwidth}{skip}
+%   {With numerical citation styles width of the bibliography label or
+%    \texttt{\string\maxdimen}. In the latter case the width is
+%    determined from the argument of the \texttt{thebibliography}
+%    environment. If set to any value other than
+%    \texttt{\string\maxdimen}, then
+%    \texttt{\string\AIPbibliographyleftmargin} and
+%    \texttt{\string\AIPbibliographyleftmarginextra} have to be set as
+%    well!}
+%  \describemacro[*]{\AIPbibliographylabelsep}{skip}
+%    {Separation between bib label and bib text.}
+%  \describemacro[*]{\AIPbibliographyleftmargin}{skip}
+%    {Indentation of the bib items excluding the label. With numerical
+%    citation styles only relevant
+%    if \texttt{\string\AIPbibliographylabelwidth} differs from
+%    \texttt{\string\maxdimen}. With bibliographic citation styles
+%    always relevant.}
+%  \describemacro[*]{\AIPbibliographyleftmarginextra}{skip}
+%    {Extra indentation if bib item has more than one line. Relevant
+%    only if \texttt{\string\AIPbibliographyleftmargin} is also used.}
+% \end{decl}
+%
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\newcommand\AIPbibliographymarkerformat [1] {\hfill#1.}
+\newcommand\AIPbibliographylabelsep         {5pt}
+\newcommand\AIPbibliographyitemsep          {0pt}
+\newcommand\AIPbibliographylabelwidth       {\maxdimen}
+\newcommand\AIPbibliographyleftmargin       {0pt}
+\newcommand\AIPbibliographyleftmarginextra  {8pt}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single>
+\DeclareParagraphLayout{AIPbibliography}
+  {9pt}{10pt}
+  {0pt}{0pt}{0pt plus 3em}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+   \sloppy
+   \frenchspacing
+   \SetInternalRegister\clubpenalty {8000}
+   \SetInternalRegister\widowpenalty{8000}
+   }
+%</aip8x11double,aip8x11single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aip6x9single>
+\DeclareParagraphLayout{AIPbibliography}
+  {10pt}{11pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+   \sloppy
+   \frenchspacing
+   \SetInternalRegister\clubpenalty {8000}
+   \SetInternalRegister\widowpenalty{8000}
+   }
+%</aip6x9single>
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+%<*aiparlo>
+\newcommand\AIPbibliographymarkerformat [1] {\hfill#1.}
+\newcommand\AIPbibliographyitemsep          {2pt plus 1pt}
+\newcommand\AIPbibliographylabelsep         {0pt}
+\newcommand\AIPbibliographylabelwidth       {0pt}
+\newcommand\AIPbibliographyleftmargin       {.2in}
+\ifthenelse{\equal\AIPcitestyleselect{num}}
+  {
+   \newcommand\AIPbibliographyleftmarginextra  {0pt}
+  }
+  {
+   \newcommand\AIPbibliographyleftmarginextra  {8pt}
+  }
+\DeclareParagraphLayout{AIPbibliography}
+  {8pt}{9pt}
+  {0pt}{0pt}{0pt}{0pt plus 1fil}
+  {0pt}
+  {\SetInternalRegister\hyphenpenalty{200}
+   \SetInternalRegister\finalhyphendemerits{10000}
+   \sloppy
+   \frenchspacing
+   \SetInternalRegister\clubpenalty {8000}
+   \SetInternalRegister\widowpenalty{8000}
+   }
+%</aiparlo>
+%    \end{macrocode}
+%
+% \begin{note}
+%  This paragraph layout also contains new values for |\tolerance| (in
+%  |\sloppy|) and for |\clubpenalty| etc.
+% \end{note}
+%
+%
+% \subsection{\texttt{\string\author} command keywords}
+%
+%    Neither homepage nor thanks is currently supported in any layoutstyle
+%    \begin{macrocode}
+\xfm@ignored@key{homepage}
+\xfm@ignored@key{thanks}
+%    \end{macrocode}
+%
+%    The AIP proceedings do not show emails (but allow alternate addresses).
+%    \begin{macrocode}
+%<*aip8x11double,aip8x11single,aip6x9single>
+\xfm@ignored@key{email}
+%</aip8x11double,aip8x11single,aip6x9single>
+%    \end{macrocode}
+%    
+%    Arlo doesn't support alternate addresses (could be added as
+%    footnotes perhaps, but aren't)
+%    \begin{macrocode}
+%<*aiparlo>
+\xfm@ignored@key{altaddress}
+%</aiparlo>
+%    \end{macrocode}
+%
+%
+%
+%
+%
+% %%%%%%%%%%%%%
+%
+% \section{Initialisation}
+%
+% %%%%%%%%%%%%%
+%
+%
+%    \begin{macrocode}
+\pagenumbering{arabic}
+%    \end{macrocode}
+%
+% \begin{note}
+%   \ldots in case we do any page numbering
+% \end{note}
+%
+%
+% \begin{thebibliography} {1}
+% \bibitem{tc} Frank Mittelbach and Michel Goossens
+% \newblock
+% The {\LaTeX} Companion, 2nd edition. 
+% \newblock
+% Addison-Wesley, Reading, Massachusetts, 2004.
+% \bibitem{tex} Donald E. Knuth.
+% \newblock
+% The {\TeX} Book. 
+% \newblock
+% Addison-Wesley, Reading, Massachusetts, 1986.
+% \end{thebibliography}
+%
+\endinput
+
+
+% $Log: aipparms.dtx,v $
+% Revision 1.20  2005/12/01 16:16:27  frank
+% removed ARLO
+% added aipparms.dtx to distrib
+% use \MakeTextUppercase in \section
+%
+% Revision 1.19  2004/11/01 16:55:27  frank
+% *** empty log message ***
+%
+% Revision 1.18  2004/10/31 08:47:15  frank
+% fixed typo
+%
+% Revision 1.17  2004/10/31 08:28:45  frank
+% 	* aipparms.dtx: added classification and keywords to AIP classes
+% 	introduced XFMclassificationtext layout etc. for AIP classes
+% 	introduced XFMkeywordstext layout etc. for AIP classes
+%
+% 	introduced \XFMauthorsaltaddressmarkseparator {,}
+%
+% 	shortened space above title for 8s and 8d by 16pt
+% 	shortened space above authors for 6s, 8s, and 8d by 6pt
+% 	shortened space above addresses for 6s, 8s, and 8d by 4pt
+% 	shortened space above abstract for 8s and 8d by 4pt
+% 	shortened space below title block for 6s, 8s, and 8d by 6pt
+% 	shortened space above headings for 6s, 8s, and 8d by 2pt
+%
+% Revision 1.16  2002/06/02 15:36:49  frank
+% ignore keys not used
+%
+% Revision 1.15  2002/04/13 10:20:10  frank
+% 	* template.raw: corrected typo.
+% 	* aipparms.dtx: set abstract in 9/10 for 8s and 8d layout
+%
+% Revision 1.14  2002/03/11 15:41:50  frank
+% corrected typo in \copyrightholder
+%
+% Revision 1.13  2002/01/25 12:29:00  frank
+% allow heading numbers as an option
+%
+% Revision 1.12  2002/01/11 16:07:26  frank
+% preserve centering in address field
+%
+% Revision 1.11  2001/12/22 13:56:51  frank
+% moved \XFMemail... from aipxfm to this file
+% renamed \XFMauthorand... to \XFMauthorsand... for consistency
+%
+% Revision 1.10  2001/02/13 07:10:11  latex3
+% readded pageposition parameters for 6x9 that got lost
+%
+% Revision 1.9  2001/01/31 20:18:59  latex3
+% *** empty log message ***
+%
+% Revision 1.8  2000/12/05 21:23:33  latex3
+% *** empty log message ***
+%
+% Revision 1.7  2000/11/24 12:04:32  latex3
+% allow longer top floats
+%
+% Revision 1.6  2000/11/17 16:32:22  latex3
+% *** empty log message ***
+%
+% Revision 1.5  2000/11/10 11:39:31  latex3
+% added multimedia stuff
+%
+% Revision 1.4  2000/11/05 21:31:35  latex3
+% frontmatter stuff etc etc etc
+%
+% Revision 1.3  2000/09/29 12:37:37  latex3
+% back to aip
+%
+% Revision 1.2  2000/09/24 21:47:37  latex3
+% basically okay
+%
+% Revision 1.1  2000/09/17 19:17:04  latex3
+% Initial revision
+%
+% Revision 1.11  1995/04/02  12:19:42  latex3
+% fixed log
+%
+% Revision 1.10  1995/04/02  11:12:55  latex3
+% changed placement of enumerate and itemize label's
+% small other cosmetic changes
+%

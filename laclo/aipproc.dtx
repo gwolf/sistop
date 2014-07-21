@@ -1,0 +1,1930 @@
+% \iffalse
+%% Class aipproc to use with LaTeX2e
+%%
+%% Copyright (C) 1998, 2000, 2001, 2002, 2004, 2005 Frank Mittelbach
+%% Copyright (C) 1998, 2000, 2001, 2002, 2004, 2005 American Institute of Physics 
+%% All rights reserved.
+%%
+%% Development of this class was commissioned by American Institute of Physics.
+%%
+%
+%<class>\NeedsTeXFormat{LaTeX2e}[1999/06/01]
+%<class>\ProvidesClass{aipproc}
+%<class>       [2005/11/11 v1.5a AIP Proceedings (FMi)]
+% \fi
+% \def\filedate{2005/11/11}
+% \def\fileversion        {v1.5a}
+% \iffalse
+%
+% \subsection{The documentation driver file}
+%
+%    The next bit of code contains the documentation driver file for
+%    \TeX{}, i.e., the file that will produce the documentation you are
+%    currently reading. It will be extracted from this file by the 
+%    \texttt{docstrip} program.
+%    \begin{macrocode}
+%<*driver>
+\documentclass{aipdoc}
+\usepackage{array,tabularx}
+\usepackage{color}
+\usepackage{hyperref}
+\setlength\MacroIndent{24pt}
+\setlength\parindent{0pt}
+\setlength\hfuzz{1pt}    % ignore slight overfulls
+\CodelineIndex
+\EnableCrossrefs         
+%\DisableCrossrefs   % Say \DisableCrossrefs if index is ready
+
+\RecordChanges       % Gather update information
+%\OnlyDescription    % comment out for implementation details
+\begin{document}
+   \DocInput{aipproc.dtx}
+\end{document}
+%</driver>
+%    \end{macrocode}
+%
+% \fi
+%
+%
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+%
+%
+%
+% \MakeShortVerb\|
+%
+% \title{The \texttt{aipproc} class\thanks{This file
+%        has version number \fileversion, last
+%        revised \filedate.}}
+% \author{Frank Mittelbach}
+% \date{\filedate}
+%
+% \maketitle
+%
+%
+% \tableofcontents
+%
+% \section{Introduction}
+%
+% The \texttt{aipproc} class is a \LaTeXe{} document class for
+% conference proceedings of the American Institute of Physics. It is
+% intended to produce camera-ready copy for direct photo-offset
+% use. The only modification done by the AIP is adding appropriate
+% page numbers.
+% 
+% The class provides the underlying layer that allows implementation
+% of the layouts as specified in \emph{Author Instruction for
+% Preparation of Camera Ready Manuscripts, Conference Proceedings}.
+% With the exception of the frontmatter
+% handling it provides essentially the same markup as
+% implemented by \LaTeX's standard \texttt{article} class.  In
+% addition to this it implements the following:
+% \begin{itemize}
+% \item extended set of front matter commands,
+% \item automatic placement of floats into column or page areas
+%   including turning of table floats by 90$^\circ$ if necessary,
+% \item allows mixing column and page-wide floats without getting the
+%   numbering out of sync,
+% \item footnotes will appear below bottom floats,
+% \item support for table notes,
+% \item support for textual page references like ``on the next page''.
+% \end{itemize}
+% 
+%
+%
+% \StopEventually{\PrintChanges}
+%
+%
+%
+% \section{The Implementation}
+%
+%
+%
+% \subsection{Preliminaries}
+%
+% Two-column mode in \LaTeX{} does have some (known and
+% documented\footnote{Called features in such a case.}) defects: For
+% example floats could get out of order if one is mixing single column
+% and double column floats. The package \texttt{fix2col} attempts to
+% fix this and other problems.  This package was integrated into the
+% package \texttt{fixltx2e} which is part of the standard distribution
+% of \LaTeX{} these days.
+% 
+% So we check if this package is available and if so load it,
+% otherwise we try loading \texttt{fix2col}.
+%
+%    \begin{macrocode}
+%<*class>
+\IfFileExists{fixltx2e.sty}
+  {\RequirePackage{fixltx2e}}
+  {\RequirePackage{fix2col}[1998/08/17]}
+%    \end{macrocode}
+%
+%    Unfortunately the first versions of \texttt{fixltx2e} contained
+%    some major bugs, so we have to check if we have the very recent
+%    version available. If not we fix the package manually. The
+%    internally available interfaces in the kernel are a bit flacky
+%    for this, so we first have to test if the package was loaded at
+%    all (otherwise |\@ifpackagelater| would die) then have to check
+%    the date of the package (again slightly strange, we can't use the
+%    date of the last known bad version since the test it is in fact
+%    not for ``later'' but ``not earlier''). And, by the way, we can't
+%    move the code into the branch of |\IfFileExists| since that would
+%    die due to |#| in the argument.
+%    \begin{macrocode}
+\@ifpackageloaded{fixltx2e}{%
+\@ifpackagelater{fixltx2e}{1999/12/02}{}{%
+%    \end{macrocode}
+%    Here is the code that was incorrect in the version of 1999/12/01:    
+%    \begin{macrocode}
+\def\addpenalty#1{%
+  \ifvmode
+    \if@minipage
+    \else
+      \if@nobreak
+      \else
+        \ifdim\lastskip=\z@
+          \penalty#1\relax
+        \else
+          \@tempskipb\lastskip
+          \advance \@tempskipb
+               \ifdim\prevdepth>\maxdepth\maxdepth\else
+                 \ifdim \prevdepth = -\@m\p@ \z@ \else \prevdepth \fi
+               \fi
+          \vskip -\@tempskipb
+          \penalty#1%
+          \vskip\@tempskipb
+        \fi
+      \fi
+    \fi
+  \else
+    \@noitemerr
+  \fi}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\def \@doclearpage {%
+     \ifvoid\footins
+       \setbox\@tempboxa\vsplit\@cclv to\z@ \unvbox\@tempboxa
+       \setbox\@tempboxa\box\@cclv
+       \xdef\@deferlist{\@toplist\@botlist\@deferlist}%
+       \global \let \@toplist \@empty
+       \global \let \@botlist \@empty
+       \global \@colroom \@colht
+       \ifx \@currlist\@empty
+       \else
+          \@latexerr{Float(s) lost}\@ehb
+          \global \let \@currlist \@empty
+       \fi
+       \@makefcolumn\@deferlist
+       \@whilesw\if@fcolmade \fi{\@opcol\@makefcolumn\@deferlist}%
+       \if@twocolumn
+         \if@firstcolumn
+           \xdef\@deferlist{\@dbltoplist\@deferlist}%
+           \global \let \@dbltoplist \@empty
+           \global \@colht \textheight
+           \begingroup
+              \@dblfloatplacement
+              \@makefcolumn\@deferlist
+              \@whilesw\if@fcolmade \fi{\@outputpage
+                                        \@makefcolumn\@deferlist}%
+           \endgroup
+         \else
+           \vbox{}\clearpage
+         \fi
+       \fi
+       \ifx\@deferlist\@empty \else\clearpage \fi
+     \else
+       \setbox\@cclv\vbox{\box\@cclv\vfil}%
+       \@makecol\@opcol
+       \clearpage
+     \fi
+}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\def \@addtocurcol {%
+   \@insertfalse
+   \@setfloattypecounts
+   \ifnum \@fpstype=8
+   \else
+     \ifnum \@fpstype=24
+     \else
+       \@flsettextmin
+       \advance \@textmin \@textfloatsheight
+       \@reqcolroom \@pageht
+       \ifdim \@textmin>\@reqcolroom
+         \@reqcolroom \@textmin
+       \fi
+       \advance \@reqcolroom \ht\@currbox
+       \ifdim \@colroom>\@reqcolroom
+         \@flsetnum \@colnum
+         \ifnum \@colnum>\z@
+           \@bitor\@currtype\@deferlist
+          \@testwrongwidth\@currbox
+           \if@test
+           \else
+             \@bitor\@currtype\@botlist
+             \if@test
+               \@addtobot
+             \else
+               \ifodd \count\@currbox
+                 \advance \@reqcolroom \intextsep
+                 \ifdim \@colroom>\@reqcolroom
+                   \global \advance \@colnum \m@ne
+                   \global \advance \@textfloatsheight \ht\@currbox
+                   \global \advance \@textfloatsheight 2\intextsep
+                   \@cons \@midlist \@currbox
+                   \if@nobreak
+                     \nobreak
+                     \@nobreakfalse
+                     \everypar{}%
+                   \else
+                     \addpenalty \interlinepenalty
+                   \fi
+                   \vskip \intextsep
+                   \box\@currbox
+                   \penalty\interlinepenalty
+                   \vskip\intextsep
+                   \ifnum\outputpenalty <-\@Mii \vskip -\parskip\fi
+                   \outputpenalty \z@
+                   \@inserttrue
+                 \fi
+               \fi
+               \if@insert
+               \else
+                 \@addtotoporbot
+               \fi
+             \fi
+           \fi
+         \fi
+       \fi
+     \fi
+   \fi
+   \if@insert
+   \else
+     \@resethfps
+     \@cons\@deferlist\@currbox
+   \fi
+}}}
+%    \end{macrocode}
+%    If \texttt{fixltx2e} wasn't loaded there is nothing to do.
+%    \begin{macrocode}
+{}
+%    \end{macrocode}
+%
+%
+%
+% Before handling options we need to load some packages used later on:
+%    \begin{macrocode}
+\RequirePackage{calc}
+\RequirePackage{ifthen}
+\RequirePackage[final]{graphicx}
+%    \end{macrocode}
+%
+% By default natbib is load if possible.
+%    \begin{macrocode}
+\newif\if@load@natbib \@load@natbibtrue
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\IfFileExists{url.sty}
+  {\RequirePackage{url}%
+  }
+  {\def\url##1{\texttt{##1}}%
+   \ClassWarningNoLine{aipproc}
+      {\noexpand\url command might fail with
+        this LaTeX \MessageBreak installation since url.sty 
+        is missing}%
+  }
+%    \end{macrocode}
+%    \begin{macrocode}
+\IfFileExists{textcase.sty}
+  {\RequirePackage{textcase}%
+  }
+  {\global\let\MakeTextUppercase\MakeUppercase
+   \ClassWarningNoLine{aipproc}
+      {\noexpand\section commands should not contain math
+        as this on LaTeX \MessageBreak installation the textcase
+        package is missing}%
+  }
+%    \end{macrocode}
+%
+%
+% And some commands to signal errors and warnings:
+%    \begin{macrocode}
+\newcommand\AIP@optionnotsupported[1]
+    {\ClassWarningNoLine{aipproc}%
+                {Option~ `#1'~ not~ supported~ ---~ request~ ignored}}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand\AIP@error{\ClassError{aipproc}}
+\newcommand\AIP@cmdnotsupported[1]
+    {\def#1{\AIP@error{Command \noexpand#1not supported by
+                       class}\@eha}}
+\newcommand\AIP@natbibnotavailable[1]
+    {\def#1{\AIP@error{Command \noexpand#1not supported if natbib
+                       not installed}\@eha}}
+%    \end{macrocode}
+%
+%  \begin{macro}{\DesignerError}
+%  \begin{macro}{\InformationError}
+%    The following three functions can be used to generate certain
+%    type of error messages and warning messages for this class.
+%    \begin{macrocode}
+\newcommand*\DesignerError[1]{%
+  \AIP@error{#1}{Probably bug in class file.}}
+\newcommand*\InformationError[1]{%
+  \AIP@error{#1}%
+    {Add the necessary information to the document.}}
+%    \end{macrocode}
+%  \end{macro}
+%  \end{macro}
+%
+%
+%  \begin{macro}{\MakeSpaceIgnore}
+%    Change |~| to produce a space and ignore normal spaces and
+%    newlines.
+%    \begin{macrocode}
+\newcommand\MakeSpaceIgnore{%
+    \catcode`\~=10\relax
+    \catcode`\ = 9\relax
+    \catcode`\^^M = 9\relax
+}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\MakeSpaceNormal}
+%    Undo the effects of |\MakeSpaceIgnore|.
+%    \begin{macrocode}
+\newcommand\MakeSpaceNormal{%
+    \catcode`\~= 13\relax
+    \catcode`\ = 10\relax
+    \catcode`\^^M = 5\relax
+}
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%  \begin{macro}{\UnbreakableSpace}
+%    Keep a copy of the normal meaning of |~| around so that it can be
+%    used in strings.
+%    \begin{macrocode}
+\let\UnbreakableSpace~
+%    \end{macrocode}
+%  \end{macro}
+%
+%    And activate this code for the rest of the file.
+%    \begin{macrocode}
+\MakeSpaceIgnore
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Option handling}
+%
+% First we disable article options that are not appropriate for this
+% class:
+%    \begin{macrocode}
+\DeclareOption{a5paper}       {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{b5paper}       {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{legalpaper}    {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{executivepaper}{\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{landscape}     {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{10pt}          {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{11pt}          {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{12pt}          {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{titlepage}     {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{notitlepage}   {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{oneside}       {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{twoside}       {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{onecolumn}     {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{twocolumn}     {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{leqno}         {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{fleqn}         {\AIP@optionnotsupported\CurrentOption}
+\DeclareOption{openbib}       {\AIP@optionnotsupported\CurrentOption}
+%    \end{macrocode}
+%
+% Next two options define the numbering scheme for table notes:
+%    \begin{macrocode}
+\DeclareOption{tnotealph}  {\def\AIP@tnote@representation{\@alph}}
+\DeclareOption{tnotesymbol}{\def\AIP@tnote@representation{\@fnsymbol}}
+%    \end{macrocode}
+%
+% Handling math fonts:
+%    \begin{macrocode}
+\newboolean{@cmrfonts}
+\DeclareOption{cmfonts}    {\setboolean{@cmrfonts}{true}
+                            \def\AIP@mathfontsused{0}}
+\DeclareOption{mathptm}    {\def\AIP@mathfontsused{1}}
+\DeclareOption{mathtime}   {\def\AIP@mathfontsused{2}}
+\DeclareOption{nomathfonts}{\def\AIP@mathfontsused{3}}
+\DeclareOption{mathptmx}   {\def\AIP@mathfontsused{4}}
+\DeclareOption{mtpro}      {\def\AIP@mathfontsused{5}}
+%    \end{macrocode}
+%
+% Page references will either use varioref or get disabled, so we can
+% hijack |\pageref| as a signal:
+%    \begin{macrocode}
+\def\pageref{0}
+\DeclareOption{varioref}      {\def\pageref{1}}
+\DeclareOption{nonvarioref}   {\def\pageref{2}}
+%    \end{macrocode}
+%
+% Citations will either be in numerical style or ``author-year''
+% (bibliographic) style.
+%    \begin{macrocode}
+\DeclareOption{numcites}      {\def\AIPcitestyleselect{num}}
+\DeclareOption{bibliocites}   {\def\AIPcitestyleselect{biblio}}
+%    \end{macrocode}
+%    If the site as only a very old natbib installation that doesn't
+%    work with this class we can prevent it from loading if really necessary.
+%    \begin{macrocode}
+\DeclareOption{nonatbib}      {\dont@load@natbibfalse}
+%    \end{macrocode}
+%
+% Headings will be either numbered or unnumbered (the particular value
+%    of |-3| might get overwritten by the layout file later on).
+%    \begin{macrocode}
+\DeclareOption{numberedheadings}    
+    {\AtEndOfClass{\setcounter{secnumdepth}{3}}}
+\DeclareOption{unnumberedheadings}
+    {\AtEndOfClass{\setcounter{secnumdepth}{-\maxdimen}}}
+%    \end{macrocode}
+%
+% The draft option does whatever draft does in the article class and
+% in addition will allow page references and places a footer line on
+% every page.
+%    \begin{macrocode}
+\DeclareOption{draft}{\PassOptionsToClass{\CurrentOption}{article}%
+    \@drafttrue
+    \AtEndOfPackage{
+          \let\AIP@pagenumerror\@gobble
+          \def\@oddfoot{\reset@font
+            \AIPfoliofont
+            \AIPfolioformat\@shorttitle\@date\thepage
+            }}}
+\newif\if@draft
+\DeclareOption{final}{\PassOptionsToClass{\CurrentOption}{article}}
+%    \end{macrocode}
+%
+%    All other options are passed to the article class for further
+%    processing
+%    \begin{macrocode}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+%    \end{macrocode}
+% Execute the defaults and
+% then process the document options.
+%    \begin{macrocode}
+\ExecuteOptions{mathptmx,tnotesymbol,numcites,unnumberedheadings,letterpaper}
+\ProcessOptions\relax
+%    \end{macrocode}
+% Then load the article class as the base class.
+%    \begin{macrocode}
+\MakeSpaceNormal
+\LoadClass{article}
+\MakeSpaceIgnore
+%    \end{macrocode}
+%
+% \begin{macro}{\layoutstyle}
+%    Parameter settings for a particular layout are not done in class
+%    file itself. Instead it is done by calling |\layoutstyle|.
+%    \begin{macrocode}
+\def\layoutstyle#1{%
+    \expandafter\let\expandafter
+       \AIP@layoutstylename
+       \csname AIP@layout@style@#1 \endcsname
+%    \end{macrocode}
+%    If no mapping for the layout style name is defined we try the
+%    name directly.
+%    \begin{macrocode}
+    \ifx\AIP@layoutstylename\relax
+       \def\AIP@layoutstylename{#1}
+    \fi
+    \MakeSpaceIgnore
+    \makeatletter
+    \InputIfFileExists{aip-\AIP@layoutstylename.clo}
+        {\let\AIP@check@layoutstyle\relax}
+        {\AIP@error{The~ layout~ style~ `#1'~ is~ not~
+                    known\MessageBreak  or~ its~
+                    support~ file~ can~ not~ be~ found}
+         {The~ \noexpand \layoutstyle command~ tried~ to~ load~ the~ file~
+          aip-\AIP@layoutstylename.clo~ without~ success!\MessageBreak
+          This~ might~ be~ due~ to~ misspelling~ the~ style~ 
+          name.\MessageBreak
+          Standard~ styles~ are~ `6x9',~ `8x11single',~ 
+          `8x11double',~ and~ `arlo',~ but\MessageBreak there~
+           might~ be~ others~ (see~ the~ class~
+          documentation).\MessageBreak
+          It~ could~ also~ be~ due~ to~ an~ incomplete~ installation~
+          of~ the~ class.
+         }
+        }
+    \MakeSpaceNormal
+    \makeatother
+    \ifdim\columnsep>\z@
+       \@twocolumntrue
+    \else
+       \@twocolumnfalse
+    \fi
+}
+\@onlypreamble\layoutstyle
+%    \end{macrocode}
+%    Define some mappings for the layout styles so that short file
+%    names are loaded.
+%    \begin{macrocode}
+\def\declare@layoutstyle#1#2{
+  \@namedef{AIP@layout@style@#1}{#2}
+}
+\@onlypreamble\declare@layoutstyle
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\declare@layoutstyle{6x9}{6s}
+\declare@layoutstyle{8x11single}{8s}
+\declare@layoutstyle{8x11double}{8d}
+%    \end{macrocode}
+%    
+%    We need to see a |\layoutstyle| declaration in the preamble so we
+%    better check for it. |\layoutstyle| will redefine the next
+%    command if it was able to load a style.
+%    \begin{macrocode}
+\def\AIP@check@layoutstyle{
+  \AIP@error{No~ \noexpand\layoutstyle command~ seen}
+    {The~ class~ requires~ a~ \noexpand\layoutstyle{<name>}~ 
+     declaration~ in~ the~ preamble!\MessageBreak
+     Standard~ styles~ are~ `6x9',~ `8x11single',~ 
+    `8x11double',~ and~ `arlo',~ but\MessageBreak there~
+     might~ be~ others~ (see~ the~ class~
+     documentation).\MessageBreak
+     To~ be~ able~ to~ proceed~ the~ 6x9~ style~ is~ assumed.  
+    }
+    \layoutstyle{6x9}
+%    \end{macrocode}
+%    But we are a little late so some of the work done in |\document|
+%    needs to be repeated.
+%    \begin{macrocode}
+  \@colht\textheight
+  \@colroom\textheight \vsize\textheight
+  \columnwidth\textwidth
+  \@clubpenalty\clubpenalty
+  \if@twocolumn
+    \advance\columnwidth -\columnsep
+    \divide\columnwidth\tw@ \hsize\columnwidth \@firstcolumntrue
+  \fi
+  \hsize\columnwidth \linewidth\hsize
+}
+\AtBeginDocument{\AIP@check@layoutstyle}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \subsection{General support commands}
+%
+% \subsubsection{Setting registers}
+%
+%  \begin{macro}{\SetInternalRegister}
+%    A way to set internal registers of all kind. With \texttt{calc}
+%    in use one can also define special versions for `counters' etc
+%    that can handle arithmetic. See below.
+%    \begin{macrocode}
+\newcommand*\SetInternalRegister[2]{#1=#2\relax}
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%  \begin{macro}{\SetInternalCounter}
+%    This macro would allow arguments like |5+\value{totalauthors}| etc.
+%    Actually it isn't used in the parameter section since there was
+%    no need for it but that might change with a different layout.
+%    \begin{macrocode}
+\let\SetInternalCounter\count@assign
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+% \subsubsection{Paragraph layout support}
+%
+% The paragraph layouts are internally stored in macros named in the
+% following way: |\|\meta{para-name}|Para|. However this is hidden
+% from the user who is supposed to use |\UseParagraphLayout| to access
+% a named layout. 
+%
+% The implementation isn't too effective and could be improved with
+% some more thought. Due to a clean interface that can transparently
+% happen anytime.
+%
+%  \begin{macro}{\DeclareParagraphLayout}
+%    \begin{macrocode}
+\newcommand*\DeclareParagraphLayout[9]{%
+    \@namedef{#1Para}{
+	  \fontsize{#2}{#3}\selectfont
+          #9
+	  \setlength\parindent  {#4}
+	  \setlength\leftskip   {#5}
+	  \setlength\rightskip  {#6}
+	  \@rightskip\rightskip
+	  \setlength\parfillskip{#7}
+	  \setlength\parskip    {#8}
+	}
+}
+%    \end{macrocode}
+%    This command should be only used before |\begin{document}|.
+%    \begin{macrocode}
+\@onlypreamble\DeclareParagraphLayout
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%  \begin{macro}{\UseParagraphLayout}
+%    Check if the paragraph layout was defined, if not complain
+%    otherwise use it.
+%    \begin{macrocode}
+\newcommand*\UseParagraphLayout[1]{
+    \@ifundefined{#1Para}
+       {\DesignerError{Paragraph~ layout~ '#1'~ undefined}}
+       {\@nameuse{#1Para}}
+}
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%  \begin{macro}{\DeclareParagraphLayoutAlias}
+%    Check that the second name is defined as a paragraph layout. If
+%    so produce an alias using |\let|.
+%    \begin{macrocode}
+\newcommand*\DeclareParagraphLayoutAlias[2]{%
+      \@ifundefined{#2Para}
+           {\DesignerError{Paragraph~ layout~ '#2'~ undefined}}
+           {\expandafter\let
+              \csname#1Para\expandafter\endcsname
+              \csname#2Para\endcsname
+           }
+}
+\@onlypreamble\DeclareParagraphLayoutAlias
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+% \subsubsection{Baseline to baseline skips}
+%
+%  \begin{macro}{\UseBBskip}
+%    This command is only allowed in vertical mode, so the usual
+%    sequence in a macro definition is:
+%\begin{verbatim}
+%   ...
+%   \par                              % end para if necessary
+%   \DeclareParagraphLayout{...}      % define new para values
+%   \UseBBskip{...}                   % skip from previous para
+%\end{verbatim}
+%    possibly surrounded by groups to keep changes local. It is
+%    important to change the paragraph values first (if they should
+%    change) otherwise the skip will not be correct.
+%    \begin{macrocode}
+\newcommand*\UseBBskip[1]
+  {\ifvmode
+%    \end{macrocode}
+%    Calculate the skip necessary then issue it.
+%    \begin{macrocode}
+    \setlength\@tempskipa{#1 - \parskip - \baselineskip}
+    \vskip\@tempskipa
+   \else
+    \DesignerError{\protect\UseBBskip\space outside~ vmode}
+   \fi
+  }
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%
+%
+%
+% \subsubsection{Page Style Support}
+%
+%
+%  \begin{macro}{\DeclarePagestyle}
+%    This declaration is just doing a little housekeeping and could be
+%    improved by adding checks etc. --- actually not used right now.
+%    \begin{macrocode}
+\newcommand*\DeclarePagestyle[5]
+  {
+   \@namedef{ps@#1}
+     {
+      \def\@oddhead {#2}
+      \def\@oddfoot {#3}
+      \def\@evenhead{#4}
+      \def\@evenfoot{#5}
+     }
+   }
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+% \subsubsection{General layout registers}
+%
+%    To help structuring layout files a number of registers are
+%    available.
+%    \begin{macrocode}
+\newdimen\bodytextsize
+\newdimen\bodytextbaselineskip
+\newdimen\bodytextenspace     
+\newdimen\bodytextparindent   
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Page styles}
+%
+%    No running header or footer; so select empty page style and
+%    disable the |\pagestyle| command altogether. The draft option
+%    overwrites this with a low-level call.
+%    \begin{macrocode}
+\pagestyle{empty}
+\AIP@cmdnotsupported\pagestyle
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Front matter}
+%
+%
+% |\tableofcontents| and the like are disabled, or rather produce an 
+% error message before doing their work, except in draft mode:
+%    \begin{macrocode}
+\newcommand\AIP@pagenumerror[1]{%
+  \AIP@error{Command~ \string#1~ can't~ be~ used~ 
+       in~ production}%
+      {This~ command~ will~ produce~ page~ numbers~ which~ will~
+       be~ incorrect~ in~ the\MessageBreak final~ production.
+       It~ should~ therefore~ only~ be~ used~ while~ producing~
+       drafts.}}
+\let\@@tableofcontents\tableofcontents
+\let\@@listoffigures\listoffigures
+\let\@@listoftables\listoftables
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\renewcommand\tableofcontents{%
+   \AIP@pagenumerror\tableofcontents\@@tableofcontents}
+\renewcommand\listoffigures{%
+   \AIP@pagenumerror\listoffigures\@@listoffigures}
+\renewcommand\listoftables{%
+   \AIP@pagenumerror\listoftables\@@listoftables}
+%    \end{macrocode}
+%
+%    Main code for frontmatter is handled in the package \texttt{aipxfm}.
+%    \begin{macrocode}
+\RequirePackage{aipxfm}
+\MakeSpaceIgnore
+%    \end{macrocode}
+%
+%    
+%
+% \subsection{Headings}
+%
+%    Headings are constructed viy |\AIP@startsection| which is a
+%    variant of the standard |\@startsection| command.
+%    \begin{macrocode}
+\def\AIP@startsection#1#2#3#4#5{
+    \@tempskipa#2\relax 
+    \advance\@tempskipa-\parskip
+    \ifdim\@tempskipa<\z@
+      \DesignerError{#2~ -~ \protect\parskip needs~ to~ be~
+                     non-negative}
+    \fi
+    \ifthenelse{\equal#1{true}}
+      \relax
+      {\@tempskipa-\@tempskipa}
+    \edef\AIP@preskip{\the\@tempskipa}
+    \@tempskipa#4\relax
+    \advance\@tempskipa-\parskip
+    \ifdim\@tempskipa<\z@
+      \DesignerError{#2~ -~ \protect\parskip needs~ to~ be~
+                     non-negative}
+    \fi
+    \ifthenelse{\equal#3{true}}
+      {\@tempskipa-\@tempskipa}
+      \relax
+    \edef\AIP@postskip{\the\@tempskipa}
+    \@secpenalty#5\relax
+    \@startsection
+}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\renewcommand\section
+   {\AIP@startsection
+      \AIPsectionafterindent\AIPsectionpreskip
+      \AIPsectionrunin\AIPsectionpostskip
+      \AIPsectionpenalty
+       {section}{1}{\AIPsectionindent}%
+                   {\AIP@preskip}%
+                   {\AIP@postskip}%
+                   {\AIPsectionfont\AIPsectionformat}}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\renewcommand\subsection
+   {\AIP@startsection
+      \AIPsubsectionafterindent\AIPsubsectionpreskip
+      \AIPsubsectionrunin\AIPsubsectionpostskip
+      \AIPsubsectionpenalty
+    {subsection}{2}{\AIPsubsectionindent}%
+                   {\AIP@preskip}%
+                   {\AIP@postskip}%
+                   {\AIPsubsectionfont\AIPsubsectionformat}}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\renewcommand\subsubsection
+   {\AIP@startsection
+      \AIPsubsubsectionafterindent\AIPsubsubsectionpreskip
+      \AIPsubsubsectionrunin\AIPsubsubsectionpostskip
+      \AIPsubsubsectionpenalty
+    {subsubsection}{3}{\AIPsubsubsectionindent}%
+                   {\AIP@preskip}%
+                   {\AIP@postskip}%
+                   {\AIPsubsubsectionfont\AIPsubsubsectionformat}}
+%    \end{macrocode}
+%
+% Next two are not defined in the spec but why not provide them
+%    \begin{macrocode}
+\renewcommand\paragraph
+   {\AIP@startsection
+      \AIPparagraphafterindent\AIPparagraphpreskip
+      \AIPparagraphrunin\AIPparagraphpostskip
+      \AIPparagraphpenalty
+     {paragraph}{4}{\AIPparagraphindent}%
+                   {\AIP@preskip}%
+                   {\AIP@postskip}%
+                   {\AIPparagraphfont\AIPparagraphformat}}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\renewcommand\subparagraph
+   {\AIP@startsection
+      \AIPsubparagraphafterindent\AIPsubparagraphpreskip
+      \AIPsubparagraphrunin\AIPsubparagraphpostskip
+      \AIPsubparagraphpenalty
+  {subparagraph}{5}{\AIPsubparagraphindent}%
+                   {\AIP@preskip}%
+                   {\AIP@postskip}%
+                   {\AIPsubparagraphfont\AIPsubparagraphformat}}
+%    \end{macrocode}
+%    
+%
+%
+%  \begin{macro}{\UseNoHyphens}
+%    This macro will turn off any hyphenation.
+%    \begin{macrocode}
+\newcommand\UseNoHyphens{\hyphenpenalty\@M\exhyphenpenalty\@M}
+%    \end{macrocode}
+%  \end{macro}
+%
+%
+%
+%
+% \subsection{Fonts}
+%
+% Depending on the value of |\AIP@mathfontsused| we 
+% load different math fonts: 0 means
+% use Computer Modern for everything; 1 means use the \texttt{mathptm}
+% package; 2 means use the commercial MathTime fonts; and 3 means use
+% Computer Modern for math but Times Roman for text.
+%    \begin{macrocode}
+\ifcase \AIP@mathfontsused
+                                 % 0 use cm for everything
+\or
+\MakeSpaceNormal
+  \RequirePackage{mathptm}       % 1
+\MakeSpaceIgnore
+\or
+\MakeSpaceNormal
+  \RequirePackage{mathtime}      % 2
+\MakeSpaceIgnore
+\or
+                                 % 3 use cm for math
+\or
+\MakeSpaceNormal
+  \RequirePackage{mathptmx}      % 4
+\MakeSpaceIgnore
+\or
+\MakeSpaceNormal
+  \RequirePackage{mtpro}         % 5
+\MakeSpaceIgnore
+\fi
+%    \end{macrocode}
+% As said above Times is used for text unless |\AIP@mathfontsused| is
+% 0 in which case we don't do any font setup whatsoever, i.e., leave
+% everything to user specification in the preamble.
+% \changes{1998/11/12}{v1.0b}{Load fontenc only after the times package
+%     to avoid that people running into problems if they don't have the
+%     EC fonts installed}
+%    \begin{macrocode}
+\ifnum \AIP@mathfontsused > 0
+  \RequirePackage{times}
+  \normalfont
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage{textcomp}
+\fi
+%    \end{macrocode}
+%
+% \subsection{Body text}
+%
+%    We install the main paragraph layout once we have seen
+%    |\begin{document}|.
+%    \begin{macrocode}
+\AtBeginDocument{\UseParagraphLayout{AIPbodytext}}
+%    \end{macrocode}
+%
+%
+% \subsection{Footnotes}
+%
+%    The |\footnoterule| command needs a special definition to get the
+%    rule in the right place---lazy coding.
+%    \begin{macrocode}
+\renewcommand\footnoterule{
+  \setlength\skip@{\AIPfootnoteruleheight+\AIPfootnoterulepostskip}
+  \vskip-\skip@
+  \moveright \AIPfootnoteruleindent\vbox{%
+    \hrule \@width \AIPfootnoterulewidth 
+           \@height \AIPfootnoteruleheight}%
+  \vskip \AIPfootnoterulepostskip \relax}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\AtBeginDocument{
+  \setlength{\skip\footins}{\AIPfootnoterulepreskip
+                            +\AIPfootnoterulepostskip}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\renewcommand\@makefntext[1]{
+    \UseParagraphLayout{AIPfootnote}
+    \noindent
+    \hbox{\AIPfootnotetextmarkerformat
+             {\AIPfootnotetextmarkerfont\@thefnmark}}%
+    \ignorespaces
+    #1}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\def\@makefnmark{\hbox{%
+  \AIPfootnotemarkerformat{\AIPfootnotemarkerfont\@thefnmark}}}
+%    \end{macrocode}
+%    
+% \subsubsection{Output routine changes}
+%
+% The following redefinition of the output routine makes footnotes 
+% come out below of bottom floats.
+%    \begin{macrocode}
+\def \@makecol {%
+   \setbox\@outputbox \box\@cclv
+   \@combinefloats
+   \ifvoid\footins
+   \else
+     \setbox\@outputbox \vbox {%
+       \boxmaxdepth \@maxdepth
+       \unvbox \@outputbox
+       \vskip \skip\footins
+       \color@begingroup
+         \normalcolor
+         \footnoterule
+         \unvbox \footins
+       \color@endgroup
+       }%
+   \fi
+   \xdef\@freelist{\@freelist\@midlist}%
+   \global \let \@midlist \@empty
+   \ifvbox\@kludgeins
+     \@makespecialcolbox
+   \else
+     \setbox\@outputbox \vbox to\@colht {%
+       \@texttop
+       \dimen@ \dp\@outputbox
+       \unvbox \@outputbox
+       \vskip -\dimen@
+       \@textbottom
+       }%
+   \fi
+   \global \maxdepth \@maxdepth
+}
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Counters}
+%
+% The counter representation commands |\@alph| and |\@fnsymbol| are
+% extended to support more possibilities.
+%
+%    \begin{macrocode}
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or *\or \dagger\or **\or 
+   \ddagger\or \mathsection\or \mathparagraph\or \|\or \dagger\dagger
+   \or \ddagger\ddagger \or\mathsection\mathsection
+   \or \mathparagraph\mathparagraph \or *{*}*\or
+   \dagger{\dagger}\dagger \or\ddagger{\ddagger}\ddagger\or
+   \mathsection{\mathsection}\mathsection 
+   \or \mathparagraph{\mathparagraph}\mathparagraph \else\@ctrerr\fi}}
+%    \end{macrocode}
+%    \begin{macrocode}
+\def\@alph#1{\ifcase#1\or a\or b\or c\or d\or e\or f\or g\or h\or i\or
+  j\or k\or l\or m\or n\or o\or p\or q\or r\or s\or t\or u\or v\or
+  w\or x\or y\or z\or aa\or bb\or cc\or dd\or ee\or ff\or gg\or hh\or
+  ii\or jj\or kk\or ll\or mm\or nn\or oo\or pp\or qq\or rr\or ss\or
+  tt\or uu\or vv\or ww\or xx\or yy\or zz\else\@ctrerr\fi}
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Math}
+%
+%    The support for the |\eqref| command needs to be deferred until
+%    start of the document since the user might have added the
+%    \texttt{amsmath} package.
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \ifx\tagform@\@undefined
+    \def\eqref#1{\mbox{\AIPeqreffont\AIPeqrefformat{\ref{#1}}}}%
+  \else
+    \def\tagform@#1{\mbox{\AIPeqreffont
+      \AIPeqrefformat{\ignorespaces
+                      #1\unskip\@@italiccorr}}}%
+%    \end{macrocode}
+%    In case switching tags to the left more work would be necessary
+%    at this point
+%    \begin{macrocode}
+  \fi
+  \def\@eqnnum{{\AIPeqfont\AIPeqformat\theequation}}
+}
+%    \end{macrocode}
+%    
+%
+%
+%
+%
+% \subsection{Minipages}
+%
+% No changes
+%    \begin{macrocode}
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Lists}
+%
+% Defaults are used.
+%
+%
+%
+% \subsection{References}
+%
+% Page references are either disabled (if |\pageref| is 0 at this
+% point) or the |\varioref| package is used to allow for textual page
+% references.
+%    \begin{macrocode}
+\ifnum\pageref>0
+ \MakeSpaceNormal
+  \RequirePackage{varioref}
+ \MakeSpaceIgnore
+%    \end{macrocode}
+% Customize varioref strings so that they don't talk about ``facing''
+% pages as in this class the final page numbers are not known.
+%    \begin{macrocode}
+ \renewcommand\reftextfaceafter {on~ the~ next~ page}
+ \renewcommand\reftextfacebefore{on~ the~ \reftextvario{previous}
+                                                     {preceding}~ page}
+ \renewcommand\reftextafter     {on~ the~ \reftextvario{following}
+                                                     {next}~ page}
+ \renewcommand\reftextbefore    {on~ the~ \reftextvario{preceding~ page}
+                                                     {page~ before}}
+ \renewcommand\reftextcurrent   {on~ \reftextvario{this}%
+                                                 {the~ current}~ page}
+%    \end{macrocode}
+% |\reftextfaraway| needs a more drastic redefinition since we have to
+% find out if we reference earlier or later pages.
+%    \begin{macrocode}
+ \renewcommand\reftextfaraway[1]{%
+%    \end{macrocode}
+%
+% We know that page numbers are always numbers in this class
+% (so we either have a number or \texttt{??}) and we know that they are
+% stored in |\@tempa| and |\@tempb| so we can test if we refer back or
+% forward:
+%    \begin{macrocode}
+   \is@pos@number\@tempb
+    {\ifnum\@tempb<0\@tempa\relax
+       \reftextearlier
+     \else
+       \reftextlater
+     \fi}%
+%    \end{macrocode}
+% if |\@tempb| does not contain number we produce a warning using
+% the command also used by |\ref| for this.
+%    \begin{macrocode}
+   {\@setref\relax\relax{#1}}}
+%    \end{macrocode}
+%
+% With the above redefinition we have two new strings that need
+% textual definitions:
+%    \begin{macrocode}
+ \newcommand\reftextearlier{\reftextvario{on~ an~ earlier~ page}
+                                         {earlier~ on}}
+ \newcommand\reftextlater  {\reftextvario{later~ on}{further~ down}}
+%    \end{macrocode}
+% If |\pageref| is 2 the user has requested to omit variations in the
+% generated strings. We implement this by choosing always the first variant:
+%    \begin{macrocode}
+ \ifnum\pageref=2
+   \def\reftextvario#1#2{#1}
+ \fi
+%    \end{macrocode}
+% After all this prelims we finally give a sensible meaning to |\pageref|:
+%    \begin{macrocode}
+ \let\pageref\vpageref
+%    \end{macrocode}
+%
+% So now for the case that |\pageref| was 0, i.e., no page references.
+%    \begin{macrocode}
+\else
+  \renewcommand\pageref[1]
+    {\AIP@error{Page~ references~ not~ supported}
+      {This~ class~ does~ not~ support~ references~ to~ page~
+       numbers~ unless~ the~ varioref~ or~ the~ nonvarioref~ option~ 
+       is~ used,~ since~ it~ doesn't~ print~ page~ numbers.}}
+\fi
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Floats}
+%
+%
+% \subsubsection{Caption handling}
+%
+% We have different caption formatting for tables and figures.
+%    \begin{macrocode}
+\newcommand\AIP@maketablecaption[2]{%
+  \UseParagraphLayout{AIPtable-singlelinecaption}
+  \settowidth\@tempdima{%
+      \noindent
+      {\AIPtablecaptionheadfont\AIPtablecaptionheadformat{#1}}
+      \AIPtablecaptiontextfont\ignorespaces#2}
+  \ifdim\@tempdima>\hsize
+     \UseParagraphLayout{AIPtable-multilinecaption}
+  \fi
+  \noindent
+  {\AIPtablecaptionheadfont\AIPtablecaptionheadformat{#1}}
+  \AIPtablecaptiontextfont\ignorespaces#2\par
+  \vskip\AIPtablecaptionskip}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\newskip\AIPtablecaptionskip
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newcommand\AIP@makefigurecaption[2]{%
+  \UseParagraphLayout{AIPfigure-singlelinecaption}
+  \UseBBskip\AIPfigurecaptionBBskip
+  \settowidth\@tempdima{%
+      \noindent
+      {\AIPfigurecaptionheadfont\AIPfigurecaptionheadformat{#1}}
+      \AIPfigurecaptiontextfont\ignorespaces#2}
+  \ifdim\@tempdima>\hsize
+     \UseParagraphLayout{AIPfigure-multilinecaption}
+  \fi
+  \noindent
+  {\AIPfigurecaptionheadfont\AIPfigurecaptionheadformat{#1}}
+  \AIPfigurecaptiontextfont\ignorespaces#2\par
+}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\newskip\AIPfigurecaptionBBskip
+%    \end{macrocode}
+%
+%
+%
+% \subsubsection{The source command}
+%
+% The |\source| command is supported within the table and the figure
+% environment but not elsewhere.
+%    \begin{macrocode}
+\newcommand\AIP@sourceerror{\AIP@error
+  {\noexpand\source is only supported with `table' or `figure' 
+   environment}\@ehd}
+\let\source\AIP@sourceerror
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\newcommand\AIP@fsource@setup{%
+    \def\source##1{\gdef\AIP@typeset@source
+      {\addvspace\AIPfiguresourceskip
+       \rightline{\AIPfiguresourceheadfont \AIPfiguresourceheadtext
+                  \AIPfiguresourcetextfont ##1}
+      }}
+    \global\let\AIP@typeset@source\@empty}
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\newcommand\AIP@tsource@setup{%
+    \def\source##1{\gdef\AIP@typeset@source
+      {\addvspace\AIPtablesourceskip
+       \rightline{\AIPtablesourceheadfont \AIPtablesourceheadtext
+                  \AIPtablesourcetextfont ##1}
+      }}
+    \global\let\AIP@typeset@source\@empty}
+%    \end{macrocode}
+%
+%
+% \subsubsection{Table notes and column headers}
+%
+% Table notes are only supported within the table environment.
+%    \begin{macrocode}
+\newcommand\AIP@tablenoteerror{\AIP@error
+  {\noexpand\tablenote is only supported inside `table' 
+   environment\MessageBreak and not allowed inside
+   the \noexpand\caption or \noexpand\source command}\@ehd}
+\let\tablenote\AIP@tablenoteerror
+%    \end{macrocode}
+%
+% The internal definition takes two arguments, the first defines
+% whether the note marker occupies any space (by supplying |\rlap| 
+% or |\relax|).
+%    \begin{macrocode}
+\newcommand\AIP@tablenote[2]{%
+       \leavevmode
+       \stepcounter\@mpfn
+       \protected@xdef\@thefnmark{\thempfn}%
+       #1\@footnotemark
+       \protected@xdef\AIP@tnote@process
+            {\AIP@tnote@process
+             \protect\footnotetext
+               [\the\c@mpfootnote]
+               {\protect\UseParagraphLayout{AIPtablenote}#2}}%
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newcommand\AIP@tnote@setup{%
+    \def\@mpfn{mpfootnote}%
+    \def\thempfn{\thempfootnote}%
+    \def\thempfootnote{\AIP@tnote@representation\c@mpfootnote}%
+    \global\c@mpfootnote\z@
+    \def\tablenote{\@ifstar{\AIP@tablenote\relax}
+                           {\AIP@tablenote\rlap}}
+    \gdef\AIP@tnote@process{}%
+    \setlength{\skip\@mpfootins}{\AIPtablenoteskip}
+    \let\footnoterule\relax
+    \let\@footnotetext\@mpfootnotetext
+}
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\newskip\AIPtablenoteskip
+%    \end{macrocode}
+%
+% This is the internal definition for the |\tablehead| command. It is
+% essentially a tabular environment within a |\multicolumn|
+% command. The strange |\vrule| commands add some space above and
+% below (not the most sophisticated definition possible :-).
+%    \begin{macrocode}
+\newcommand\AIP@tablehead[4]{\multicolumn{#1}{#2}%
+   {\AIPtableheadfont\begin{tabular}[#3]{@{}#2@{}}%
+    \vrule \@height \bodytextsize\@width \z@\relax
+    \ignorespaces#4\unskip
+    \vrule \@depth .5\bodytextsize\@width \z@\end{tabular}}}
+%    \end{macrocode}
+%
+% We redefine |\hline| slightly by allowing for some additional space
+% above and below the rule. As typically more space is needed below
+% this is not distributed evenly.
+%    \begin{macrocode}
+\def\hline{%
+  \noalign{\ifnum0=`}\fi\vskip\AIPhlinesep
+      \hrule \@height \arrayrulewidth\vskip3\AIPhlinesep
+      \futurelet \reserved@a\@xhline}
+\newdimen\AIPhlinesep
+%    \end{macrocode}
+%
+%
+% \subsubsection{Tables}
+%
+% The \texttt{ltxtable} and \texttt{ltxtable*} environment implement,
+% except for font setup, the original \LaTeX{} table environments.
+%    \begin{macrocode}
+\newenvironment{ltxtable}[1][tbp]
+               {\@float{table}[#1]
+                \let\tablehead\AIP@tablehead
+                \let\@makecaption\AIP@maketablecaption
+                \AIPtablefont}
+               {\end@float}
+\newenvironment{ltxtable*}[1][tbp]
+               {\@dblfloat{table}[#1]
+                \let\tablehead\AIP@tablehead
+                \let\@makecaption\AIP@maketablecaption
+                \AIPtablefont}
+               {\end@dblfloat}
+%    \end{macrocode}
+%
+% \texttt{table*} environment is not supported by this class.
+%    \begin{macrocode}
+\renewenvironment{table*}[1][tbp]
+   {\AIP@error{Environment `table*' not supported\MessageBreak
+                         --- environment `table' used instead}%
+    {The class automatically determines the position of the float 
+     according\MessageBreak
+     to its size.}%
+    \begin{table}}
+   {\end{table}}
+%    \end{macrocode}
+%
+% And here the new definition for the table environment. It captures
+% the body into and horizontal box, storing any |\label| or |\caption|
+% command in some save place.
+%    \begin{macrocode}
+\renewenvironment{table}[1][tbp]
+   {\def\AIP@floatspec{#1}%
+    \let\tablehead\AIP@tablehead
+    \let\@makecaption\AIP@maketablecaption
+    \AIP@tsource@setup
+    \AIP@tnote@setup
+    \global \setbox\AIP@box
+    \color@hbox
+      \hbox \bgroup
+      \@floatboxreset
+         \def\caption##1{\gdef\AIP@save@caption{##1}\let\caption\AIP@caption@error}%
+         \def\label##1{\gdef\AIP@save@label{##1}}%
+         \global\let\AIP@save@caption\@undefined
+         \global\let\AIP@save@label\@undefined
+       \normalcolor
+       \AIPtablefont
+       \ignorespaces
+   }
+   {%
+       \AIP@remove@any@previous@space
+       \outer@nobreak
+      \egroup
+    \color@endbox
+%    \end{macrocode}
+% At this place the float body is in |\AIP@box|, caption text in
+% |\AIP@save@caption|, any source info in |\AIP@typeset@source|,
+% etc. We now have to determine how to typeset all this.
+%
+% The following code distinguishes between the width of |\AIP@box| being
+% \begin{itemize}
+% \item less or equal than |\columnwidth|,
+% \item bigger than |\columnwidth| but less or
+% equal than |\textwidth|, and
+% \item bigger than |\textwidth|.
+% \end{itemize}
+%
+% Actually the tests are for |\columnwidth+1pt|, etc.\ because it
+% turned out that commands like |\resizebox| are not completely
+% accurate so that 
+%\begin{verbatim}
+%   \resizebox{\columnwidth}{!}...
+%\end{verbatim}
+%  may end up being a
+% tiny bit bigger than |\columnwidth|. This is in fact mainly a
+% problem with the \texttt{figure} environment but we allow some
+% rounding errors here as well.
+%    \begin{macrocode}
+    \setlength\dimen@{\columnwidth+1pt}%
+    \ifdim\wd\AIP@box >\dimen@
+      \setlength\dimen@{\textwidth+1pt}%
+      \ifdim\wd\AIP@box >\dimen@
+        \def\@captype{table}%
+        \sbox\@tempboxa{\AIP@make@table@body}%
+        \setlength\dimen@{\ht\@tempboxa+\dp\@tempboxa}%
+%    \end{macrocode}
+% If the width is bigger than |\textwidth| we test if the height is
+% small enough to fit into a column. If so we turn the float and make
+% it a column float.
+%    \begin{macrocode}
+        \ifdim\dimen@ <\columnwidth
+          \def\@tempa{\@float{table}}%
+          \expandafter\@tempa\expandafter[\AIP@floatspec]%
+            \centerline{\rotatebox{90}{\box\@tempboxa}}%
+          \end@float
+%\typeout{single chosen}%
+%    \end{macrocode}
+% Otherwise we turn it but make it a double column float. If even after
+% turning the width is wider than |\textwidth| the user will have a problem
+% since this means that the table is both to wide and to high. In that case
+% the code will turn and \LaTeX{} will produce some overfull box (inclusive
+% a warning).
+%    \begin{macrocode}
+        \else
+           \def\@tempa{\@dblfloat{table}}%
+           \expandafter\@tempa\expandafter[\AIP@floatspec]%
+%           \centerline{\rotatebox{90}{\box\@tempboxa}}%
+           \setbox\@tempboxa\hbox{\rotatebox{90}{\box\@tempboxa}}
+%    \end{macrocode}
+%    Test if table is still too wide (allowing 5pt grace):
+%    \begin{macrocode}
+           \dimen@\wd\@tempboxa
+           \advance\dimen@ -5\p@   % grace
+           \ifdim \dimen@ >\textwidth
+             \AIP@error{Table~ too~ wide~ (\the\wd\@tempboxa\space 
+                        >~\the\textwidth)}
+                {Table~ doesn't~ fit~ even~ after~ turning~ it~ 
+                 by~ 90~ degrees.~ You~ probably\MessageBreak
+                 have~ to~ change~ it~ somewhat.}
+           \fi
+           \centerline{\unhbox \@tempboxa}
+          \end@dblfloat
+%\typeout{double chosen}%
+        \fi
+%    \end{macrocode}
+% Here we have something which is suitable for a double column float\ldots
+%    \begin{macrocode}
+      \else
+        \def\@tempa{\@dblfloat{table}}%
+        \expandafter\@tempa\expandafter[\AIP@floatspec]%
+          \AIP@make@table@body
+        \end@dblfloat
+      \fi
+%    \end{macrocode}
+% \ldots and finally this branch is taken if the width is not bigger than
+% |\columnwidth|; so make it a column float.
+%    \begin{macrocode}
+    \else
+      \def\@tempa{\@float{table}}%
+      \expandafter\@tempa\expandafter[\AIP@floatspec]%
+        \AIP@make@table@body
+      \end@float
+    \fi
+} 
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newcommand\AIP@caption@error{\AIP@error{Only~ one~
+           \noexpand\caption command~ per~ float~ supported}
+    {If~ you~ need~ more~ than~ one~ \noexpand\caption~ command~ try~ the~
+     ltxfigure~ or~ ltxtable\MessageBreak
+     environment~ as~ explained~ in~ the~ aipguide.}}
+%    \end{macrocode}
+%
+% The next macro implements the formatting of body and caption:
+%    \begin{macrocode}
+\newcommand\AIP@make@table@body{%
+      \centering
+      \@tempdima\wd\AIP@box
+%    \end{macrocode}
+%
+% By default the caption is typeset to the width of the table, however
+% if the table is too small we typeset it wider:
+%    \begin{macrocode}
+      \ifdim\@tempdima<\AIPtablecaptionminwidth 
+        \@tempdima\AIPtablecaptionminwidth
+      \fi
+      \begin{minipage}\@tempdima
+        \ifx\AIP@save@caption\@undefined\else
+          \let\tablenote\AIP@tablenoteerror
+          \caption{\AIP@save@caption
+                   \ifx\AIP@save@label\@undefined\else
+                     \label\AIP@save@label
+                   \fi}%
+        \fi
+        \par
+        \offinterlineskip                % or we get \lineskip
+        \vbox{\hsize\wd\AIP@box
+                          \box\AIP@box
+                          \AIP@typeset@source}%
+        \AIP@tnote@process
+     \end{minipage}%
+}
+\newdimen\AIPtablecaptionminwidth
+%    \end{macrocode}
+%
+% Some helper macro used above that removes stray spaces 
+% as long as they are  positive (the name is not quite right).
+%    \begin{macrocode}
+\newcommand\AIP@remove@any@previous@space
+  {\unskip\loop\unskip\ifdim\lastskip>\z@\repeat}
+%    \end{macrocode}
+%
+%
+%    
+%    \begin{macrocode}
+\newbox\AIP@box
+%    \end{macrocode}
+%
+%
+%
+% \subsubsection{Figures}
+%
+% Implementation of figures is more or less the same as for tables,
+% except there we don't have the complication of turning the body if
+% it gets too wide (it just better doesn't get too wide).
+%    \begin{macrocode}
+\newenvironment{ltxfigure}[1][tbp]
+               {\@float{figure}[#1]
+                \let\@makecaption\AIP@makefigurecaption}
+               {\end@float}
+\newenvironment{ltxfigure*}[1][tbp]
+               {\@dblfloat{figure}[#1]
+                \let\@makecaption\AIP@makefigurecaption}
+               {\end@dblfloat}
+%    \end{macrocode}
+%    \begin{macrocode}
+\renewenvironment{figure}[1][tbp]
+   {\def\AIP@floatspec{#1}%
+    \AIP@fsource@setup
+    \global \setbox\AIP@box
+    \color@hbox
+      \hbox \bgroup
+      \@floatboxreset
+         \def\caption##1{\let\caption\AIP@caption@error\gdef\AIP@save@caption{##1}}%
+         \def\label##1{\gdef\AIP@save@label{##1}}%
+         \global\let\AIP@save@caption\@undefined
+         \global\let\AIP@save@label\@undefined
+       \normalcolor
+       \normalfont
+       \normalsize
+       \ignorespaces
+   }
+   {%
+       \AIP@remove@any@previous@space
+       \outer@nobreak
+      \egroup
+    \color@endbox
+    \def\@tempa{\@dblfloat{figure}}%
+    \setlength\dimen@{\columnwidth+1pt}%
+    \ifdim\wd\AIP@box >\dimen@
+      \expandafter\@tempa\expandafter[\AIP@floatspec]%
+        \AIP@make@figure@body
+      \end@dblfloat
+    \else
+      \def\@tempa{\@float{figure}}%
+      \expandafter\@tempa\expandafter[\AIP@floatspec]%
+        \AIP@make@figure@body
+      \end@float
+    \fi
+} 
+%    \end{macrocode}
+%    \begin{macrocode}
+\renewenvironment{figure*}{\figure}{\endfigure}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand\AIP@make@figure@body{%
+      \centering
+%    \end{macrocode}
+% The need to account for rounding errors from the graphics package
+% was explained above. Though this may get fixed one day\ldots
+%    \begin{macrocode}
+      \setlength\@tempdima{\wd\AIP@box-1pt}%
+%    \end{macrocode}
+%
+% The next bit would center the caption as a block depending on size
+% of the figure\ldots
+%    \begin{macrocode}
+%      \ifdim\@tempdima<.7\columnwidth \@tempdima.7\columnwidth
+%      \else
+%        \ifdim\@tempdima<\columnwidth \@tempdima\columnwidth \fi
+%      \fi
+%    \end{macrocode}
+% \ldots while the code below always justifies to column or page width.
+% The command to typeset the figure caption then as some additional
+% logic for centering the caption text if it fits on a single line
+%    \begin{macrocode}
+      \ifdim\@tempdima>\columnwidth 
+         \@tempdima\textwidth
+      \else
+         \@tempdima\columnwidth
+      \fi
+      \begin{minipage}\@tempdima
+        \centerline{\vbox{\hsize\wd\AIP@box
+                          \box\AIP@box
+                          \AIP@typeset@source}}%
+        \ifx\AIP@save@caption\@undefined\else
+          \let\@makecaption\AIP@makefigurecaption
+          \caption{\AIP@save@caption
+                   \ifx\AIP@save@label\@undefined\else
+                     \label\AIP@save@label
+                   \fi}%
+        \fi
+        \par
+     \end{minipage}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\renewcommand\fnum@figure{\thefigure}
+\renewcommand\fnum@table{\thetable}
+%    \end{macrocode}
+%
+%
+% The next commands makes an empty box of the right size to leave 
+% room for an illustion that will get pasted in manually later.
+% \changes{1998/11/12}{v1.0b}{Define command cs{spaceforfigure}}
+%    \begin{macrocode}
+\newcommand\spaceforfigure[2]{\parbox{#1}{\mbox{}\vspace*{#2}}}
+%    \end{macrocode}
+%
+%
+%
+% 
+% \subsubsection{Long table support}
+%
+% The user has to load the longtable package manually in the
+% preamble. What we do here is to overwrite some of its commands and
+% make sure that our redefinitions are executed only after the package
+% got loaded.
+%    \begin{macrocode}
+\AtBeginDocument{%
+\newcommand\@@longtable{}%
+\let\@@longtable\longtable
+%
+\def\longtable{%
+%    \end{macrocode}
+% Better don't look too closely into that code, it calculates the
+% width of the table if known and assigns it to |\LTcapwidth|.
+%    \begin{macrocode}
+  \begingroup
+    \LTcapwidth\z@
+    \advance\c@LT@tables\@ne   % local as stepcounter comes later
+    \let\LT@entry\AIP@get@longtable@width
+    \csname LT@\romannumeral\c@LT@tables\endcsname
+    \ifdim \LTcapwidth=\z@ \global \LTcapwidth2in
+    \else \global\LTcapwidth\LTcapwidth
+    \fi
+  \endgroup
+  \AIPtablefont
+%    \end{macrocode}
+% We support |\tablehead| command and that's it.
+%    \begin{macrocode}
+  \let\tablehead\AIP@tablehead
+  \@@longtable
+}%
+%    \end{macrocode}
+% |\LT@makecaption| is used to typeset the caption so we better make
+% this look like other captions for this class.
+%    \begin{macrocode}
+\def\LT@makecaption#1#2#3{%
+  \LT@mcol\LT@cols {@{}l@{}}{\rlap{\parbox[t]\LTcapwidth{%
+  \UseParagraphLayout{AIPtable-multilinecaption}
+  \noindent
+  {\AIPtablecaptionheadfont\AIPtablecaptionheadformat{#1#2}}
+  \AIPtablecaptiontextfont\ignorespaces#3\endgraf
+  \vspace*\AIPtablecaptionskip
+  }}}}%
+%    \end{macrocode}
+%    
+%    \begin{macrocode}
+\def\LT@hline{%
+  \noalign{\ifnum0=`}\fi
+    \penalty\@M\vskip\AIPhlinesep
+    \futurelet\@let@token\LT@@hline}
+\def\LT@@hline{%
+  \ifx\@let@token\hline
+    \global\let\@gtempa\@gobble
+    \gdef\LT@sep{\penalty-\@medpenalty\vskip\doublerulesep}%
+  \else
+    \global\let\@gtempa\@empty
+    \gdef\LT@sep{\penalty-\@lowpenalty\vskip-\arrayrulewidth}%
+  \fi
+  \ifnum0=`{\fi}%
+  \multispan\LT@cols
+     \unskip\leaders\hrule\@height\arrayrulewidth\hfill\cr
+  \noalign{\LT@sep}%
+  \multispan\LT@cols
+     \unskip\leaders\hrule\@height\arrayrulewidth\hfill\cr
+  \noalign{\penalty\@M\vskip3\AIPhlinesep}%
+  \@gtempa}
+}
+%    \end{macrocode}
+% And here a helper to get to the right caption width.
+%    \begin{macrocode}
+\newcommand\AIP@get@longtable@width[2]{\advance\LTcapwidth#2\relax }
+%    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Acknowledgments}
+%
+% \begin{environment}{theacknowledgements}
+%    That's a simple one.
+%    \begin{macrocode}
+\newenvironment{theacknowledgments}
+     {\AIPacknowledgmentsheadtype\AIPacknowledgmentsheadtext
+      \UseParagraphLayout{AIPacknowledgments}}
+     {\par}
+%    \end{macrocode}
+% \end{environment}
+%      
+%
+%
+%
+% \subsection{Index}
+%
+% \begin{environment}{theindex}
+%     Nothing very fancy here.
+%    \begin{macrocode}
+\renewenvironment{theindex}
+               {
+                \if@twocolumn
+                  \@restonecolfalse
+                  \AIPindexheadtype\indexname
+                \else
+                  \columnseprule \z@
+                  \columnsep 35\p@
+                  \@restonecoltrue
+                  \twocolumn[\AIPindexheadtype\indexname]
+                \fi
+                \parindent\z@
+                \parskip\z@ \@plus .3\p@\relax
+                \let\item\@idxitem}
+               {\if@restonecol\onecolumn\fi}
+%    \end{macrocode}
+% \end{environment}
+%
+%
+% \subsection{Bibliography}
+%
+%    The bibliography handling for this class assumes that the
+%    \texttt{natbib} system is available. If not, we have to give up
+%    for some journal styles.
+%    \begin{macrocode}
+\IfFileExists{natbib.sty}
+  {
+   \if@load@natbib
+%    \end{macrocode}
+%    If \texttt{natbib} is around we use its |\citestyle| command at
+%    |\begin{document}| to select the right citation style for the
+%    journal. But we have to do this before loading \texttt{natbib}
+%    itself since that puts stuff into the document hook and we need
+%    to execute |\citestyle| prior to this point (messy).
+%    \begin{macrocode}
+     \AtBeginDocument{
+        \citestyle
+           {\csname AIP \AIPcitestyleselect citestyle\endcsname}
+     }
+%    \end{macrocode}
+%    Now load \texttt{natbib} with normal spacing rules.
+%    \begin{macrocode}
+    \MakeSpaceNormal
+    \RequirePackage{natbib}
+    \MakeSpaceIgnore
+   \fi
+   }{}
+%    \end{macrocode}
+%    Now we check if |\citet| is defined. If not, we haven't been able
+%    to load \texttt{natbib} (the code below can't be placed into
+%    |\IfFileExists| since that command doesn't like |#| marks in its
+%    arguments, sigh.)
+%    \begin{macrocode}
+\ifx\citet\@undefined
+   \def\citet{\AIP@natbibnotavailable\citet}
+   \def\citep{\AIP@natbibnotavailable\citep}
+   \def\citealt{\AIP@natbibnotavailable\citealt}
+   \def\citealp{\AIP@natbibnotavailable\citealp}
+   \def\citetext{\AIP@natbibnotavailable\citetext}
+   \def\citeauthor{\AIP@natbibnotavailable\citeauthor}
+   \def\citeyear{\AIP@natbibnotavailable\citeyear}
+   \def\citeyearpar{\AIP@natbibnotavailable\citeyearpar}
+   \def\Citet{\AIP@natbibnotavailable\Citet}
+   \def\Citep{\AIP@natbibnotavailable\Citep}
+   \def\Citealt{\AIP@natbibnotavailable\Citealt}
+   \def\Citealp{\AIP@natbibnotavailable\Citealp}
+   \def\Citetext{\AIP@natbibnotavailable\Citetext}
+   \def\Citeauthor{\AIP@natbibnotavailable\Citeauthor}
+   \def\Citeyear{\AIP@natbibnotavailable\Citeyear}
+   \def\Citeyearpar{\AIP@natbibnotavailable\Citeyearpar}
+%    \end{macrocode}
+% 
+%
+%    This code is close to the original \LaTeX{} one with the modifications
+%    necessary to implement the class layout (as far as possible
+%    without \texttt{natbib}).
+%    \begin{macrocode}
+   \renewenvironment{thebibliography}[1]
+     {\AIPbibliographyheadtype\refname
+      \list{\AIPbibliographymarkerformat{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\AIPbibliographymarkerformat{#1}}%
+            \UseParagraphLayout{AIPbibliography}
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \setlength\itemsep\AIPbibliographyitemsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+%    \end{macrocode}
+%    
+%
+%    The citations in text are formatted according to |\AIPcitelayout|
+%    using the |\AIPcitefont|.
+%    \begin{macrocode}
+  \renewcommand*\@cite[2]{{\AIPcitefont
+     \AIPciteformat{#1\if@tempswa , #2\fi}}}
+%    \end{macrocode}
+%    We definitely can't do author/year citation styles. But even
+%    numerical ones might be wrong, e.g., the arlo one wants
+%    superscripts.
+%    \begin{macrocode}
+  \AtBeginDocument{
+        \ifthenelse{\equal\AIPcitestyleselect{num}}
+           {}
+           {\AIP@error{Author/year~ citation~ style~ impossible}
+              {Without~ the~ natbib~ system~ only~ numerical~ citations~ are~
+               possible.~ But~ you~ (or~ the~ journal~ \string\layoutstyle)~
+               requested~ a~ diffferent~ citation~ style.}
+           }
+    }
+%    \end{macrocode}
+%    But if |\citet| was defined, we have \texttt{natbib} available so
+%    now it is only a matter of changing a few dozen lines of that
+%    system to get what we want :-)
+%    \begin{macrocode}
+\else
+   \renewcommand\bibsection{\AIPbibliographyheadtype\refname}
+   \renewcommand\NAT@bibsetnum[1]{
+      \ifdim\AIPbibliographylabelwidth=\maxdimen
+	\settowidth\labelwidth{\@biblabel{#1}}
+        \setlength\leftmargin\labelwidth
+      \else
+        \setlength\labelwidth\AIPbibliographylabelwidth
+        \setlength\leftmargin
+          {\AIPbibliographyleftmargin+\AIPbibliographyleftmarginextra}
+        \setlength\itemindent{-\AIPbibliographyleftmarginextra}
+      \fi
+      \addtolength\leftmargin\AIPbibliographylabelsep
+      \setlength\labelsep\AIPbibliographylabelsep
+      \setlength\itemsep\AIPbibliographyitemsep
+      \UseParagraphLayout{AIPbibliography}
+      \setlength\parsep{\parskip}
+   }
+  \renewcommand\NAT@bibsetup[1]{
+       \setlength\leftmargin
+          {\AIPbibliographyleftmargin+\AIPbibliographyleftmarginextra}
+       \setlength\itemindent{-\AIPbibliographyleftmarginextra}
+       \setlength\itemsep\AIPbibliographyitemsep
+       \UseParagraphLayout{AIPbibliography}
+       \setlength\parsep{\parskip}
+      }
+%    \end{macrocode}
+%    The above is a bit crude; it is especialy tailored to the needs
+%    of the journal styles so far implemented, but\ldots
+%
+%    A few citation styles that we might want to use in the parms sections.
+%    \begin{macrocode}
+  \newcommand\bibstyle@arlonum{\bibpunct{}{}{,}{s}{}{\textsuperscript{,}}%
+     \gdef\NAT@biblabelnum##1{\textsuperscript{##1}}
+     \gdef\thefootnote{\alph{footnote}}
+  }
+  \newcommand\bibstyle@aipproc{\bibpunct{[}{]}{,}{n}{}{,}
+     \gdef\NAT@biblabelnum##1{##1.\hfill}}
+\fi
+%    \end{macrocode}
+%
+%
+% We finish with making the space being a space again.
+%    \begin{macrocode}
+\MakeSpaceNormal
+%</class>
+%    \end{macrocode}
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%
+%
+%
+% \PrintIndex
+% \Finale
+%
+\endinput
+
+

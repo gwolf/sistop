@@ -1,44 +1,9 @@
-%%
-%% This is file `template-8s.tex',
-%% generated with the docstrip utility.
-%%
-%% The original source files were:
-%%
-%% template.raw  (with options: `8s')
-%% 
-%% Template for the LaTeX class aipproc.
-%% 
-%% (C) 1998,2000,2001 American Institute of Physics and Frank Mittelbach
-%% All rights reserved
-%% 
-%%
-%% $Id: template.raw,v 1.12 2005/07/06 19:22:14 frank Exp $
-%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Please remove the next line of code if you
-%% are satisfied that your installation is
-%% complete and working.
-%%
-%% It is only there to help you in detecting
-%% potential problems.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{aipcheck}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% SELECT THE LAYOUT
-%%
-%% The class supports further options.
-%% See aipguide.pdf for details.
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[
     ,final            % use final for the camera ready runs
-%%  ,draft            % use draft while you are working on the paper
-%%  ,numberedheadings % uncomment this option for numbered sections
-%%  ,                 % add further options here if necessary
   ]
   {aipproc}
 \usepackage{todonotes}
@@ -74,11 +39,11 @@
 % }
 
 \begin{abstract}
-Este artículo resume el trabajo realizado durante el proceso de escritura del libro ``Fundamentos de Sistemas Operativos'' enmarcado dentro del proyecto LATIn.
-El objetivo del proyecto es la creación colaborativa de material de estudio para cursos universitarios. En nuestro caso el grupo fue conformado
+Este artículo resume el trabajo realizado durante el proceso de escritura del libro ``Sistemas Operativos'' \cite{libro} enmarcado dentro del proyecto LATIn.
+El objetivo del proyecto es la creación colaborativa de material de estudio para cursos universitarios. En este caso el grupo fue conformado
 con docentes de México, Argentina y Colombia, por lo cual la colaboración es inevitablemente a través de internet. 
 
-Otro objetivo del proyecto LATIn es la generación de textos abiertos, es decir de libre disposición y sin costo. Siguiendo esta idea, nuestro grupo 
+Otro objetivo del proyecto LATIn es la generación de textos abiertos, es decir de libre disposición y sin costo. Siguiendo esta idea, el grupo 
 de trabajo utilizó herramientas de software libre, de código abierto, también sin costo. 
 
 En este artículo se describe la organización del grupo a la hora de desarrollar el material (formas de comunicación, revisión, coordinación) junto con las herramientas
@@ -99,7 +64,7 @@ Paralelamente a eso se recibió una propuesta del profesor Gunnar Wolf de la Univ
 El resto de este artículo está conformado como sigue: una primera sección describe el contexto académico en el que se recibió la propuesta del libro abierto. Posteriormente se describen las distintas etapas del proceso (contacto con otros docentes, elaboración de la propuesta, proceso de escritura). Finalmente se dan detalles particulares sobre las plataformas tecnológicas utilizadas, observaciones sobre el proceso de escritura y conclusiones generales sobre todo el proyecto.
 
 \subsection{Contexto Académico}
-Los autores son docentes en la carrera Licenciatura en Ciencias de la Computación en la Universidad Nacional de Rosario (Argentina) y han participado en el dictado de clases prácticas y teóricas de la materia cuatrimestral Sistemas Operativos desde hace más de 6 años. Además han participado en diversas materias relacionadas con la temática: Arquitectura del Computador, Comunicaciones y Teoría de Bases de Datos. Desde el año 2010 comenzó a regir un nuevo plan de estudios en el cual la materia Sistemas Operativos se desdobla, llamándose Sistemas Operativos I y Sistemas Operativos II, ambas de dictado cuatrimestral. 
+Los autores del presente artículo son docentes en la carrera Licenciatura en Ciencias de la Computación en la Universidad Nacional de Rosario (Argentina) y han participado en el dictado de clases prácticas y teóricas de la materia cuatrimestral Sistemas Operativos desde hace más de 6 años. Además han participado en diversas materias relacionadas con la temática: Arquitectura del Computador, Comunicaciones y Teoría de Bases de Datos. Desde el año 2010 comenzó a regir un nuevo plan de estudios en el cual la materia Sistemas Operativos se desdobla, llamándose Sistemas Operativos I y Sistemas Operativos II, ambas de dictado cuatrimestral. 
 
 Los docentes quedaron a cargo de la materia Sistemas Operativos II que fue dictada por primera vez en 2013. Debido al cambio de plan de estudio, nuevos temas fueron incluídos en la materia Sistemas Operativos II y se acudió a publicaciones diversas en idioma inglés y a nueva bibliografía. Esta situación provocó que la bibliografía de la materia involucre varios libros de texto clásicos y diversos 
 artículos adicionales, mucho de los cuales no eran obtenidos de forma impresa por los alumnos y otros resultaban excesivamente costosos dada la situación económica del país sumándose a eso la dificultad en la comprensión de textos en idioma inglés. La bibliografía disponible en las bibliotecas de la facultad suplía a medias esa faltante.
@@ -152,19 +117,19 @@ Dentro de estas herramientas se destacan las siguientes:
 \begin{itemize}
  \item Se utilizó el repositorio git \cite{git} para mantner los archivos fuentes del libro. Este entorno permite también
  la colaboración concurrente y a distancia (a través de internet), permite revisar cambios,  tener distintas
- versiones del mismo material y obtener estadísticas de uso. Como se verá más adelante esto fue utilizado por el grupo de escritura.
+ versiones del mismo material y obtener estadísticas de uso. 
  \item Como medio de comunicación se creó una lista de correo de Google donde estaban todos los autores incluidos. 
  Junto con esto se utilizó también la herramienta de chat GoogleTalk, ambas sin costo asociado.
  \item Para la escritura en sí se utilizó la herramienta emacs \cite{emacs} junto con el entorno org-mode \cite{orgmode}. Esta forma
  permite separar el proceso de escritura de el proceso de edición. El resultado de la escritura permite ser exportado a varios formatos
  como PDF, Latex y HTML. Tanto emacs como org-mode poseen licencia de software libre.
- \item Para la generación de imágenes se utilizaron varias herramientas:
+ \item Para la generación de imágenes se utilizaron varias herramientas también de software libre:
  \begin{description}
   
   \item  [Graphviz] \cite{graphviz} es un lenguaje textual de descripción de grafos (dígrafos, árboles, etc). Estos grafos pueden ser
   exportados a distintos formatos libres (en este caso Postscript). Por ejemplo la Figura 5.14 del libro ha sido generada utilizando graphviz.
-  \item [Ditaa] \cite{ditaa} es otro lenguaje que permite realizar gráficos con caracteres ASCII. Fue utilizado para realizar graficos tipo 
-  La figura 6.2 del libro es un ejemplo de uso de Ditaa.
+  \item [Ditaa] \cite{ditaa} es otro lenguaje que permite realizar gráficos con caracteres ASCII. Fue utilizado para realizar graficos como la 
+  figura 6.2 del libro.
   \item [Gnuplot] \cite{gnuplot} Esta herramienta permite graficar trayectorias de funciones matemáticas a partir de su descripción o a partir de puntos de la misma.
   La figura 5.21 del libro es un ejemplo del uso de Gnuplot.
 
@@ -187,11 +152,11 @@ Durante el primer cuatrimestre de 2014 se utilizó el libro en el dictado de la m
 
 En ese período se detectaron errores de redacción menores y contenidos que merecen mejor redacción e incluso algunos alumnos han contribuído correcciones que ya fueron incorporadas a la plataforma 
 
-\todo[inline]{Resultado de las encuestas}
+Al momento de escritura del presente artículo todavía no se han obtenido los resultados de las encuestas de los alumnos, pero éstas arrojarán resultados más concretos sobre el uso del libro en el dictado de la materia Sistemas Operativos II.
 
 \section{Modificaciones y ediciones posteriores y Mejoras futuras}
 
-Aunque el libro fue aceptado para su publicación en su versión de Febrero de 2014, los autores siguieron mejorando el material corrigiendo errores y incluyendo sugerencias realizadas por los alumnos. 
+Aunque el libro fue aceptado para su publicación en su versión de Febrero de 2014, los autores siguieron mejorando el material corrigiendo errores e incluyendo sugerencias realizadas por los alumnos. 
 Entre estas modificaciones la más importante es la inclusión de ejercitación en cada capítulo. Este punto consume mucho tiempo de producción ya que los ejercicios deben ser claros 
 y al nivel de la audiencia esperada. También como el libro es utilizado por diversas universidades la coordinación de la selección de ejercicios es compleja.
 

@@ -41,7 +41,7 @@
 %%  ,                 % add further options here if necessary
   ]
   {aipproc}
-
+\usepackage{todonotes}
 \layoutstyle{8x11single}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@
 \classification{
 %<Replace this text with PACS numbers; choose from this list:                 \texttt{http://www.aip..org/pacs/index.html}>
 }
-\keywords{Escritura Colaborativa, Proyecto LATIn, }
+\keywords{Escritura Colaborativa, Proyecto LATIn, Software Libre}
 
 % \author{Gunnar Wolf}{
 %   address={Universidad Nacional Autonoma de México, México}
@@ -92,16 +92,20 @@ de software utilizadas para su producción y de su uso posterior en el dictado de
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introducción}
-El Proyecto LATIN (Latin American Open Textbook Initiative - Iniciativa Latinoamericana de Libros de Texto Abiertos) realizó una convocatoria en 2013 para la creación de libros de texto abiertos universitarios.
+El Proyecto LATIN (LATIn American Open Textbook Initiative - Iniciativa LATInoamericana de Libros de Texto Abiertos) realizó una convocatoria en 2013 para la creación de libros de texto abiertos universitarios.
+
 Paralelamente a eso se recibió una propuesta del profesor Gunnar Wolf de la Universidad Nacional Autónoma de México para editar un libro abierto utilizando material de su autoría. Se decidió por tanto enmarcar la  propuesta del profesor Gunnar Wolf dentro del proyecto LATIN, que brindó la posibilidad de obtener un libro de mejor calidad y con contenidos revisados y corregidos por varios docentes con basta experiencia en la materia.
 
 El resto de este artículo está conformado como sigue: una primera sección describe el contexto académico en el que se recibió la propuesta del libro abierto. Posteriormente se describen las distintas etapas del proceso (contacto con otros docentes, elaboración de la propuesta, proceso de escritura). Finalmente se dan detalles particulares sobre las plataformas tecnológicas utilizadas, observaciones sobre el proceso de escritura y conclusiones generales sobre todo el proyecto.
 
 \subsection{Contexto Académico}
-Los autores son docentes en la carrera Licenciatura en Ciencias de la Computación en la Universidad Nacional de Rosario (Argentina) y han participado en el dictado de clases prácticas y teóricas de la materia cuatrimestral Sistemas Operativos desde hace más de 6 años. Además han participado en diversas materias relacionadas con la temática: Arquitectura del Computador, Comunicaciones y Teoría de Bases de Datos. Desde el año 2010 comenzó a regir un nuevo plan de estudios en el cual la materia Sistemas Operativos se desdobla, llamándose Sistemas Operativos I y Sistemas Operativos II, ambas de dictado cuatrimestral. Los docentes quedaron a cargo de la materia Sistemas Operativos II que fue dictada por primera vez en 2013. Debido al cambio de plan de estudio, nuevos temas fueron incluídos en la materia Sistemas Operativos II y se acudió a publicaciones diversas en idioma inglés y a nueva bibliografía. Esta situación provocó que la bibliografía de la materia involucre varios libros de texto clásicos y diversos artículos adicionales, mucho de los cuales no eran obtenidos de forma impresa por los alumnos y otros resultaban excesivamente costosos dada la situación económica del país sumándose a eso la dificultad en la comprensión de textos en idioma inglés. La bibliografía disponible en las bibliotecas de la facultad suplía a medias esa faltante.
+Los autores son docentes en la carrera Licenciatura en Ciencias de la Computación en la Universidad Nacional de Rosario (Argentina) y han participado en el dictado de clases prácticas y teóricas de la materia cuatrimestral Sistemas Operativos desde hace más de 6 años. Además han participado en diversas materias relacionadas con la temática: Arquitectura del Computador, Comunicaciones y Teoría de Bases de Datos. Desde el año 2010 comenzó a regir un nuevo plan de estudios en el cual la materia Sistemas Operativos se desdobla, llamándose Sistemas Operativos I y Sistemas Operativos II, ambas de dictado cuatrimestral. 
+
+Los docentes quedaron a cargo de la materia Sistemas Operativos II que fue dictada por primera vez en 2013. Debido al cambio de plan de estudio, nuevos temas fueron incluídos en la materia Sistemas Operativos II y se acudió a publicaciones diversas en idioma inglés y a nueva bibliografía. Esta situación provocó que la bibliografía de la materia involucre varios libros de texto clásicos y diversos 
+artículos adicionales, mucho de los cuales no eran obtenidos de forma impresa por los alumnos y otros resultaban excesivamente costosos dada la situación económica del país sumándose a eso la dificultad en la comprensión de textos en idioma inglés. La bibliografía disponible en las bibliotecas de la facultad suplía a medias esa faltante.
   
 \section{Organización del Grupo de Escritura}
-El primer contacto con un docente relativo a la producción del libro fue anterior a la propuesta del proyecto Latin: el profesor Gunnar Wolf de la Universidad Nacional Autónoma de México había manifestado unos meses antes la intención de obtener ayuda para publicar material de su autoría. Comunicaciones posteriores revelaron que había producido mucho material de apoyo para el dictado de la materia Sistemas Operativos en su universidad y se necesitaba una revisión, ampliación de contenidos y reorganización para obtener un libro útil para la materia Sistemas Operativos II. En este contexto y una vez validada su voluntad de participar en el proyecto Latin se intentó contactar con otros docentes. Inmediatamente Federico Bergero de la UNR se ofreció a participar también como autor.
+El primer contacto con un docente relativo a la producción del libro fue anterior a la propuesta del proyecto LATIn: el profesor Gunnar Wolf de la Universidad Nacional Autónoma de México había manifestado unos meses antes la intención de obtener ayuda para publicar material de su autoría. Comunicaciones posteriores revelaron que había producido mucho material de apoyo para el dictado de la materia Sistemas Operativos en su universidad y se necesitaba una revisión, ampliación de contenidos y reorganización para obtener un libro útil para la materia Sistemas Operativos II. En este contexto y una vez validada su voluntad de participar en el proyecto LATIn se intentó contactar con otros docentes. Inmediatamente Federico Bergero de la UNR se ofreció a participar también como autor.
 
 El contacto con otros docentes no fue tarea sencilla, pues no había ninguna relación preexistente entre los docentes ya mencionados y los docentes de las otras universidades participantes del proyecto LATIN. Además no había mucho tiempo disponible antes de la fecha de presentación de la propuesta. El camino seguido fue escribir correos electrónicos a las direcciones que aparecían publicadas en las páginas web de las correspondientes universidades (utilizando algunas veces formularios, nombres de departamento, etc.). 
 
@@ -136,60 +140,46 @@ Durante esta etapa se notó que la participación de los docentes autores era muy 
 Luego se comenzó con la etapa de revisión y reescritura, debido a la escasa participación inicialmente se asignaron capítulos a cada autor. Posteriormente se consultó con la coordinadora local para decidir el camino a seguir. Se decidió continuar con la elaboración de capítulos en forma independiente, restringiendo las tareas a la revisión básica y reorganización. En función de los avances se fue readaptando el plan, logrando editarse dos capítulos íntegramente y además con la participación adicional de Gunnar Wolf se fueron realizando más ampliaciones y correcciones al resto de los capítulos. Durante la extensión del plazo de entrega se editaron más capítulos y comenzó a prestar sus servicios el profesor Erwin Meza Vega, editando dos capítulos más. De esta forma, con un esfuerzo adicional del resto de los participantes activos se pudo obtener una versión inicial del libro completa.
   
 \subsection{Comunicación}
-Si bien la interacción con los docentes del resto de las univ. participantes fue muy escasa, se estableció una fuerte relación con Gunnar Wolf de la UNAM quien participó en el proyecto mucho más allá de las expectativas y responsabilidades asignadas (contribuyendo y corrigiendo material, resolviendo proactivamente problemas de las herramientas utilizadas y realizando discusiones sobre el contenido). Además de eso, realizó una visita a la ciudad de Rosario (como parte de un viaje por motivos familiares) lo que posibilitó un encuentro con los docentes de la UNR y la coordinadora local del proyecto Latin. Durante esos días (a fines de diciembre del 2013) se pudieron intercambiar directamente las visiones sobre el proyecto, la materia y la docencia en sí, propiciandose una relación de amistad entre los docentes de la UNR y Gunnar Wolf que se mantiene hasta ahora.
+Si bien la interacción con los docentes del resto de las univ. participantes fue muy escasa, se estableció una fuerte relación con Gunnar Wolf de la UNAM quien participó en el proyecto mucho más allá de las expectativas y responsabilidades asignadas (contribuyendo y corrigiendo material, resolviendo proactivamente problemas de las herramientas utilizadas y realizando discusiones sobre el contenido). Además de eso, realizó una visita a la ciudad de Rosario (como parte de un viaje por motivos familiares) lo que posibilitó un encuentro con los docentes de la UNR y la coordinadora local del proyecto LATIn. Durante esos días (a fines de diciembre del 2013) se pudieron intercambiar directamente las visiones sobre el proyecto, la materia y la docencia en sí, propiciandose una relación de amistad entre los docentes de la UNR y Gunnar Wolf que se mantiene hasta ahora.
 
 
 \section{Herramientas Utilizadas}
+Como se mencionó antes y debido a que los integrantes del grupo de escritura son usuarios de software libre, se decidió 
+realizar la escritura del material utilizando herramientas de software libre. Por esta razón no se utilizó la plataforma 
+provista por el proyecto LATIn. 
 
-El entorno que se utilizó para realizar el proceso de escritura involucra:
-* Repositorio git: todas las modificaciones al material se realizan sobre
-un repositorio git configurado por Gunnar Wolf y accesible en la siguiente
-dirección: gitgw\@git.gwolf.org:sistemas\_operativos (más información más
-abajo).
-* Un grupo de google (que se puede acceder directamente aquí:
-https://groups.google.com/forum/\#!forum/sistopaldia) para comunicaciones
-"oficiales" entre los miembros del grupo.
-* Chats grupales o individuales (es casi imposible obtener un historial
-sencillo, pero de cualquier manera todas las conversaciones están
-disponibles)
-* Contacto directo con miembros del grupo (Gunnar Wolf estuvo de visita
-por Rosario y se reunió con Guido Macchi, Federico Bergero y Esteban Ruiz
--quienes trabajan en la UNR-).
-* Correo electrónico: muy ocasionalmente
+Dentro de estas herramientas se destacan las siguientes:
+\begin{itemize}
+ \item Se utilizó el repositorio git \cite{git} para mantner los archivos fuentes del libro. Este entorno permite también
+ la colaboración concurrente y a distancia (a través de internet), permite revisar cambios,  tener distintas
+ versiones del mismo material y obtener estadísticas de uso. Como se verá más adelante esto fue utilizado por el grupo de escritura.
+ \item Como medio de comunicación se creó una lista de correo de Google donde estaban todos los autores incluidos. 
+ Junto con esto se utilizó también la herramienta de chat GoogleTalk, ambas sin costo asociado.
+ \item Para la escritura en sí se utilizó la herramienta emacs \cite{emacs} junto con el entorno org-mode \cite{orgmode}. Esta forma
+ permite separar el proceso de escritura de el proceso de edición. El resultado de la escritura permite ser exportado a varios formatos
+ como PDF, Latex y HTML. Tanto emacs como org-mode poseen licencia de software libre.
+ \item Para la generación de imágenes se utilizaron varias herramientas:
+ \begin{description}
+  
+  \item  [Graphviz] \cite{graphviz} es un lenguaje textual de descripción de grafos (dígrafos, árboles, etc). Estos grafos pueden ser
+  exportados a distintos formatos libres (en este caso Postscript). Por ejemplo la Figura 5.14 del libro ha sido generada utilizando graphviz.
+  \item [Ditaa] \cite{ditaa} es otro lenguaje que permite realizar gráficos con caracteres ASCII. Fue utilizado para realizar graficos tipo 
+  La figura 6.2 del libro es un ejemplo de uso de Ditaa.
+  \item [Gnuplot] \cite{gnuplot} Esta herramienta permite graficar trayectorias de funciones matemáticas a partir de su descripción o a partir de puntos de la misma.
+  La figura 5.21 del libro es un ejemplo del uso de Gnuplot.
 
-Conexión al repositorio git:
+   \end{description}
 
-El repositorio git permite obtener el material y un historial tan
-detallado como se quiera de todos los cambios realizados. 
-
-% Para tener
-% acceso al mismo, debido a la configuración actual, se necesita que el
-% interesado en accederlo le provea al administrador (gwolf@debian.org) su
-% clave pública RSA de ssh (/.ssh/id\_rsa.pub). Una vez habilitada la clave,
-% para obtener una copia local del repositorio se puede hacer:
-% 
-% git clone gitgw\@git.gwolf.org:sistemas\_operativos
-
-%Otra posibilidad de distribuir el contenido es realizar una copia comprimida del repositorio
-%(actualmente ocupa algo menos de 200 Mb)
-
-Se pueden generar fácilmente distintos reportes de la utilización del git (herramienta gitstatus)
-
-Más detalles del entorno de escritura:
-
-La utilización de latex en la escritura es indirecta: se utiliza el
-org-mode de emacs (http://orgmode.org/) para luego generar código latex.
-
-De forma que en realidad la edición se realiza en org-mode y luego se
-genera código látex. Además de eso, se utilizaron otras herramientas para
-realizar gráficas, figuras, etc. como ser: gnuplot, ditaa, graphviz, etc.
-
-Una descripción detallada del entorno se puede encontrar aquí:
-
-https://groups.google.com/forum/\#!topic/sistopaldia/4xeOd9RKNh4	
+\end{itemize}
 
 \section{Evaluación del libro}
-El libro fue aceptado y publicado por el proyecto Latin.
+
+Una vez finalizado el proceso de escritura, el material fue revisado de forma cruzada, es decir, los contenidos de un capítulo fueron revisados por el autor de otro capítulo obteniendo así una mirada nueva y contemplando también la coherencia entre los distintos capítulos. 
+Este proceso duró de dos a tres semanas corrigiendo errores tipográficos, de redacción, de estilo e unificando conceptos.
+
+Luego el libro fue entregado para que lo revisen los jurados del proyecto los cuales lo encontraron apropiado para su publicación.
+
+En paralelo el libro también fue entregado a la editorial de la UNAM para su publicación. El proceso de revisión de esta institución también arrojó buenos resultados.
 
 \section{Utilización del libro en el dictado}
 
@@ -197,42 +187,61 @@ Durante el primer cuatrimestre de 2014 se utilizó el libro en el dictado de la m
 
 En ese período se detectaron errores de redacción menores y contenidos que merecen mejor redacción e incluso algunos alumnos han contribuído correcciones que ya fueron incorporadas a la plataforma 
 
-Resultado de las encuestas???
+\todo[inline]{Resultado de las encuestas}
 
-\section{Modificaciones y ediciones posteriores}
-* Seguimos editandolo
-* La UNAM sacará una versión impresa
-* Edición de figuras con problemas de copyright
-* Gunnar está agregando ejercitación
+\section{Modificaciones y ediciones posteriores y Mejoras futuras}
 
-\section{Mejoras futuras}
-* Ejercitación
-* Resúmen de fin de capítulo
-* Apéndices con prácticas completas
-* Apéndices de software libre
-* Multimedios y material didáctico: software libre, videos educativos, transparencias
-* Mejoras y ampliar contenidos (particularmente filesystems, sistemas distribuídos, microkernels, señales, virtualización -mezclar con contenido de Leo-)
+Aunque el libro fue aceptado para su publicación en su versión de Febrero de 2014, los autores siguieron mejorando el material corrigiendo errores y incluyendo sugerencias realizadas por los alumnos. 
+Entre estas modificaciones la más importante es la inclusión de ejercitación en cada capítulo. Este punto consume mucho tiempo de producción ya que los ejercicios deben ser claros 
+y al nivel de la audiencia esperada. También como el libro es utilizado por diversas universidades la coordinación de la selección de ejercicios es compleja.
+
+El material todavía incluye imágenes y figuras con problemas de derecho de autor. Otro punto sobre el cual se sigue trabajando es en producir figuras e imágenes propias para sortear este problema,
+
+Los autores también seguiran trabajando sobre los siguientes puntos:
+\begin{itemize}
+ \item Agregar un resúmen de fin de capítulo reviendo los temas allí introducidos.
+ \item Apéndice con los resultados de los ejercicios (que están siendo inlcuidos).
+ \item Generación de material multimedia para el dictado de clase (videos educativos, transparencias)
+ \item Extender e inlcuir tópicos nuevos en el libro (particularmente sistemas de archivos, sistemas distribuídos, microkernels, señales, virtualización)
+\end {itemize}
+
 
 \section{Conclusiones}
 
 * Poner fotos de Gunnar
+
 * Poner gráficos de uso de git
+
 * Poner git log
+
 * Poner un log de las conversaciones hechas en el grupo de google
+
 * Informar sobre la evolución post-entrega y las correcciones enviadas por alumnos.
+
 * Lecciones aprendidas: coordinar un equipo, lenguajes y convenciones.
+
 * Informar sobre el uso del libro en la materia (dictado, resultado del parcial, problemas encontrados)
+
 * Informar contacto con colaboradores y coordinadores.
+
 * Hablar sobre el archivo de convenciones
+
 * Hablar sobre las dudas de copyright
+
 * Hablar sobre el seguimiento de los pagos a Gunnar
+
 * Recalcar que siempre hubo muy buena predisposición de parte de los coordinadores (incluso los coordinadores de otras univ.) para solucionar los inconveniente y aclarar dudas.
 
-Sugerencias:
-* Mejorar las herramientas de edición y colaboración
-* Mejorar el apoyo con temas legales (copyright)
-* Mejorar la etapa de revisión (el libro salió publicado con muchos errores)
-* Mejorar el pago o incentivo a los autores
+\subsection{Sugerencias al proyecto LATIn}
+Como antes se mencionó la experiencia del desarrollo de material libre de forma colaborativa dentro del marco del proyecto LATIn fue muy satisfactoria y reconfortante.
+Los autores del presente artículo observaron algunos detalles que pueden ser mejorados para futuras ediciones del proyecto:
+\begin{description}
+ \item [Mejora de las herramientas] tanto de edición como colaboración. Aunque en el caso del libro de ``Sistemas Operativos'' no se utilizó la plataforma provista por el proyecto
+ para la producción del material, se observa que todavía faltan características útiles en la misma (como desarrollar el libro en lenguaje Latex).
+ \item [Cuestiones de derecho de autor] durante el proceso de escritura se utilizaron recursos de otras obras (como imágenes, fórmulas, ejemplos) siempre citando la fuente. 
+ Como el libro fue publicado bajo la licencia Creative Commons había conflicto entre estos recursos. Gunnar Wolf contactó a los autores de dichos recursos pidiendo permiso para su publicación. Quizás el agregado de un referente en cuestiones de derecho de autor y estos temas al grupo organizador del proyecto sería beneficioso.
+ \item [Mejorar la instancia de revisión.] Aunque los autores realizaron una extensa revisión del texto, una segunda pasada por parte de un tercero es siempre útil, inlcuso más si el revisor es alguien idoneo en el tema. La primera versión de el libro ``Sistemas Operativos'' salió publicado con muchos errores tipográficos que hubieran sido detectados con una revisión más profunda.
+\end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% BACKMATTER
@@ -271,7 +280,7 @@ Sugerencias:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% You probably want to use your own bibtex database here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliography{sample}
+\bibliography{articulo}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Just a reminder that you may have to run bibtex

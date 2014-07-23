@@ -6,6 +6,11 @@
   ]
   {aipproc}
 \usepackage{todonotes}
+\usepackage[spanish]{babel}
+
+
+\usepackage{caption}
+\usepackage{subcaption}
 \layoutstyle{8x11single}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +75,7 @@ Los docentes quedaron a cargo de la materia \textit{Sistemas Operativos II} que 
 Esta situación provocó que la bibliografía de la materia involucre varios libros de texto clásicos y diversos 
 artículos adicionales, muchos de los cuales no eran obtenidos de forma impresa por los alumnos y otros resultaban excesivamente costosos dada la situación económica del país sumándose a eso la dificultad en la comprensión de textos en idioma inglés. La bibliografía disponible en las bibliotecas de la facultad suplía a medias esa faltante.
 
-El autor por parte de la Universidad Nacional Autónoma de México es docente en la carrera de \textit{Ingeniería en Computación}, y ha impartido en tres ocasiones la materia semestral \textit{Sistemas Operativos}, además de haberse desempeñado por diez años como técnico académico. Si bien en dicha universidad el proceso de reestructuración del plan de estudios está apenas en proceso de ser aprobado, se enfrentó a la misma situación: A referencias bibliográficas recomendadas hostiles al alumnado por su idioma de escritura y su costo económico, y una práctica generalizada de fotocopias que si bien puede argumentarse que son inocuas en sí mismas, no contribuyen a la creación de una cultura del respeto a las disposiciones legales.
+El autor por parte de la Universidad Nacional Autónoma de México es docente en la carrera de \textit{Ingeniería en Computación}, y ha impartido en tres ocasiones la materia semestral \textit{Sistemas Operativos}, además de haberse desempeñado por diez años como técnico académico. Si bien en dicha universidad el proceso de reestructuración del plan de estudios está apenas en proceso de ser aprobado, se enfrentó a la misma situación: a referencias bibliográficas recomendadas hostiles al alumnado por su idioma de escritura y su costo económico, y una práctica generalizada de fotocopias que si bien puede argumentarse que son inocuas en sí mismas, no contribuyen a la creación de una cultura del respeto a las disposiciones legales.
 
 \section{Organización del Grupo de Escritura}
 El primer contacto con un docente relativo a la producción del libro fue anterior a la propuesta del proyecto LATIn: el profesor Gunnar Wolf de la Universidad Nacional Autónoma de México había manifestado unos meses antes la intención de obtener ayuda para publicar material de su autoría. Comunicaciones posteriores revelaron que había producido mucho material de apoyo para el dictado de la materia Sistemas Operativos en su universidad en forma de apuntes de clase y se necesitaba una revisión, ampliación de contenidos y reorganización para obtener un libro útil para la materia Sistemas Operativos II. En este contexto y una vez validada su voluntad de participar en el proyecto LATIn se intentó contactar con otros docentes. Inmediatamente Federico Bergero de la UNR se ofreció a participar también como autor.
@@ -84,10 +89,7 @@ Finalmente se pudieron contactar a los siguientes docentes:
 \item Carlos Acosta, Universidad Central de Venezuela (autor)
 \end{itemize}
 
-Además se incorporó  a un reconocido profesor de la casa para tareas de asesoría:\\
-Guido Macchi, Univ. Nac. de Rosario, Argentina (asesor)
-
-El resto de los docentes, ya mencionados son:
+Además se incorporó  al reconocido profesor de la casa Guido Maccgi para tareas de asesoría. El resto de los docentes, ya mencionados son:
 \begin{itemize}
 \item Gunnar Wolf, Universidad Nacional Autónoma de México (asesor y autor)
 \item Federico Bergero, Universidad Nacional de Rosario (autor)
@@ -113,37 +115,59 @@ Si bien la interacción con los docentes del resto de las univ. participantes fue
 
 \section{Herramientas Utilizadas}
 Como se mencionó antes y debido a que los integrantes del grupo de escritura son usuarios de software libre, se decidió 
-realizar la escritura del material utilizando herramientas de software libre. Por esta razón no se utilizó la plataforma 
-provista por el proyecto LATIn. 
+realizar la escritura del material utilizando herramientas de software libre.
+
+Como los autores disponían del conocimiento de las mismas herramientas de software libre y buena parte del material en formato ORG, se deicidió utilizar ese software en lugar de utilizar directamente la plataforma LATIn.
 
 Dentro de estas herramientas se destacan las siguientes:
 \begin{itemize}
  \item Se utilizó el repositorio git \cite{git} para mantener los archivos fuentes del libro. Este entorno permite también
  la colaboración concurrente y a distancia (a través de internet), permite revisar cambios,  tener distintas
- versiones del mismo material y obtener estadísticas de uso. 
+ versiones del mismo material y obtener estadísticas de uso. Por ejemplo en las figuras \ref{fig:stats} y \ref{fig:stats2} vemos dos gráficas estadísticas de modificaciones.
+ \begin{figure}[ht]
+  \centerline{\includegraphics[width=9cm]{figs/actividad.eps}}
+  \caption {Modificaciones en las últimas 32 semanas}
+  \label{fig:stats}
+\end{figure}
+\begin{figure}[ht]
+  \centerline{\includegraphics[width=6cm]{figs/commits_by_author.eps}}
+  \caption {Modificaciones realizadas por cada autor}
+  \label{fig:stats2}
+\end{figure}
+
+ 
  \item Como medio de comunicación se creó una lista de correo de Google donde estaban todos los autores incluidos. 
  Junto con esto se utilizó también la herramienta de chat GoogleTalk, ambas sin costo asociado.
  \item Para la escritura en sí se utilizó la herramienta emacs \cite{emacs} junto con el entorno org-mode \cite{orgmode}. Esta forma
- permite separar el proceso de escritura de el proceso de edición. El resultado de la escritura permite ser exportado a varios formatos
+ permite separar el proceso de escritura del proceso de edición. El resultado de la escritura permite ser exportado a varios formatos
  como PDF, Latex y HTML. Tanto emacs como org-mode poseen licencia de software libre.
  \item Para la generación de imágenes se utilizaron varias herramientas también de software libre:
  \begin{description}
   
   \item  [Graphviz] \cite{graphviz} es un lenguaje textual de descripción de grafos (dígrafos, árboles, etc). Estos grafos pueden ser
-  exportados a distintos formatos libres (en este caso Postscript). Por ejemplo la Figura 5.14 del libro ha sido generada utilizando graphviz.
-  \item [Ditaa] \cite{ditaa} es otro lenguaje que permite realizar gráficos con caracteres ASCII. Fue utilizado para realizar graficos como la 
-  figura 6.2 del libro.
+  exportados a distintos formatos libres (en este caso Postscript). 
+
+  \item [Ditaa] \cite{ditaa} es otro lenguaje que permite realizar gráficos con caracteres ASCII. 
+  
+  
+  
   \item [Gnuplot] \cite{gnuplot} Esta herramienta permite graficar trayectorias de funciones matemáticas a partir de su descripción o a partir de puntos de la misma.
-  La figura 5.21 del libro es un ejemplo del uso de Gnuplot.
 
    \end{description}
+
+   En la figura \ref{fig:ditaa} vemos ejemplo de imágenes creadas con las herramientas de software libre mencionadas.
+     \begin{figure}[ht]
+  \centerline{\includegraphics[width=10cm]{figs/graficos.eps}}
+  \caption {Imagen del libro creada con las herramientas de software libre}
+  \label{fig:ditaa}
+\end{figure}
 
 \end{itemize}
 
 \section{Evaluación del libro}
 
 Una vez finalizado el proceso de escritura, el material fue revisado de forma cruzada, es decir, los contenidos de un capítulo fueron revisados por el autor de otro capítulo obteniendo así una mirada nueva y contemplando también la coherencia entre los distintos capítulos. 
-Este proceso duró de dos a tres semanas corrigiendo errores tipográficos, de redacción, de estilo e unificando conceptos.
+Este proceso duró de dos a tres semanas corrigiendo errores tipográficos, de redacción, de estilo y unificando conceptos.
 
 Luego el libro fue entregado para que lo revisen los jurados del proyecto los cuales lo encontraron apropiado para su publicación.
 
@@ -164,24 +188,22 @@ En ese período se detectaron errores de redacción menores y contenidos que merec
 Aunque el libro fue aceptado para su publicación en su versión de Febrero de 2014, los autores han continuado trabajando para mejorar el material, corrigiendo errores e incluyendo sugerencias realizadas por los alumnos y por otros docentes.
 Entre estas modificaciones la más importante es la inclusión de ejercitación en cada capítulo. Este punto consume mucho tiempo de producción ya que los ejercicios deben ser claros 
 y dirigidos a la audiencia esperada. Además, dado que el libro es utilizado por diversas universidades, la coordinación de la selección de ejercicios es compleja.
-
 Un punto que tomó especial atención fue el limpiar completamente al material de imágenes, figuras y ejemplos con problemas de derecho de autor; todos los casos relevantes que fueron detectados resultaron en la reelaboración del material en cuestión.
-
-Los autores también seguiran trabajando sobre los siguientes puntos:
+Los autores también seguirán trabajando sobre los siguientes puntos:
 \begin{itemize}
  \item Agregar un resúmen de fin de capítulo reviendo los temas allí introducidos.
- \item Apéndice con los resultados de los ejercicios (que están siendo inlcuidos).
- \item Creación de un índice analítico de términos empleados a lo largo del material
- \item Generación de material multimedia para el dictado de clase (videos educativos, transparencias)
- \item Extender e inlcuir tópicos nuevos en el libro (particularmente sistemas de archivos, sistemas distribuídos, microkernels, señales, virtualización)
+ \item Apéndice con los resultados de los ejercicios (que están siendo inlcuídos).
+ \item Creación de un índice analítico de términos empleados a lo largo del material.
+ \item Generación de material multimedia para el dictado de clase (videos educativos, transparencias).
+ \item Extender e inlcuir tópicos nuevos en el libro (particularmente sistemas de archivos, sistemas distribuídos, microkernels, señales, virtualización).
 \end {itemize}
 
 
 \section{Conclusiones}
 
-Este artículo relata la experiencia de escritura de un libro de forma colaborativa dentro del marco del proyecto LATIn. El grupo fue conformado por docentes de distntas universidades de toda latinoamérica. La colaboración y comunicación fue toda a través de internet pero por suerte se pudo realizar una reunión presencial con gran parte del grupo de escritura (ver foto). La reunión presencial permitió compartir ideas y opniones de una forma más ágil y dio la posibilidad de amalgamar el grupo en el ámbito personal.
+Este artículo relata la experiencia de escritura de un libro de forma colaborativa dentro del marco del proyecto LATIn. El grupo fue conformado por docentes de distntas universidades de toda latinoamérica. La colaboración y comunicación fue toda a través de internet pero por suerte se pudo realizar una reunión presencial con gran parte del grupo de escritura (ver foto). La reunión presencial permitió compartir ideas y opiniones de una forma más ágil y dio la posibilidad de amalgamar el grupo en el ámbito personal.
 \begin{figure}[ht]
-  \centerline{\includegraphics[width=9cm]{figs/grupo.eps}}
+  \centerline{\includegraphics[width=6cm]{figs/grupo.eps}}
   \caption {Parte del grupo de escritura}
   \label{fig:grupo}
 \end{figure}
@@ -200,66 +222,15 @@ Como antes se mencionó la experiencia del desarrollo de material libre de forma 
 Los autores del presente artículo observaron algunos detalles que pueden ser mejorados para futuras ediciones del proyecto:
 \begin{description}
  \item [Mejora de las herramientas] tanto de edición como colaboración. Aunque en el caso del libro de ``Sistemas Operativos'' no se utilizó la plataforma provista por el proyecto
- para la producción del material, se observa que todavía faltan características útiles en la misma (como desarrollar el libro en lenguaje Latex).
+ para la producción del material, se observa que todavía faltan características útiles en la misma (como desarrollar el libro en lenguaje Latex). Por otro lado como se mostró antes el uso de herramientas de control de versiones permite visualizar fácilmente el progreso del proceso de escritura.
  \item [Cuestiones de derecho de autor] durante el proceso de escritura se utilizaron recursos de otras obras (como imágenes, fórmulas, ejemplos) siempre citando la fuente. 
  Como el libro fue publicado bajo la licencia Creative Commons había conflicto entre estos recursos. Gunnar Wolf contactó a los autores de dichos recursos pidiendo permiso para su publicación. Quizás el agregado de un referente en cuestiones de derecho de autor y estos temas al grupo organizador del proyecto sería beneficioso.
- \item [Mejorar la instancia de revisión.] Aunque los autores realizaron una extensa revisión del texto, una segunda pasada por parte de un tercero es siempre útil, incluso más si el revisor es alguien idoneo en el tema. La primera versión de el libro ``Sistemas Operativos'' salió publicado con muchos errores tipográficos que hubieran sido detectados con una revisión más profunda.
- \item [Incentivo a los autores] El trabajo de produccióel del libro involucróchímas actividades y tiempo de desarrollo.  Posiblemente el esfuerzo y tiempo invertido, teniendo en cuenta la labor de profesionales con basta experiencia en el áa , no puede considerarse suficientemente retribuí.
+ \item [Mejorar la instancia de revisión.] Aunque los autores realizaron una extensa revisión del texto, una segunda pasada por parte de un tercero es siempre útil, incluso más si el revisor es alguien idoneo en el tema. La primera versión del libro ``Sistemas Operativos'' salió publicado con muchos errores tipográficos que hubieran sido detectados con una revisión más profunda.
+ \item [Incentivo a los autores] El trabajo de producción del libro involucró muchisímas actividades y tiempo de desarrollo. Posiblemente el esfuerzo y tiempo invertido, teniendo en cuenta la labor de profesionales con vasta experiencia en el área, no puede considerarse suficientemente retribuída.
 \end{description}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% BACKMATTER
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \begin{theacknowledgments}
-%   Infandum, regina, iubes renovare dolorem, Troianas ut opes et
-%   lamentabile regnum cruerint Danai; quaeque ipse miserrima vidi, et
-%   quorum pars magna fui. Quis talia fando Myrmidonum Dolopumve aut duri
-%   miles Ulixi temperet a lacrimis?
-% \end{theacknowledgments}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% The bibliography can be prepared using the BibTeX program or
-%% manually.
-%%
-%% The code below assumes that BibTeX is used.  If the bibliography is
-%% produced without BibTeX comment out the following lines and see the
-%% aipguide.pdf for further information.
-%%
-%% For your convenience a manually coded example is appended
-%% after the \end{document}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% You may have to change the BibTeX style below, depending on your
-%% setup or preferences.
-%%
-%%
-%% For The AIP proceedings layouts use either
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \bibliographystyle{aipproc}   % if natbib is available
-%\bibliographystyle{aipprocl} % if natbib is missing
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% You probably want to use your own bibtex database here
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliography{articulo}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Just a reminder that you may have to run bibtex
-%% All of it up to \end{document} can be removed
-%% if you don't like the warning.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\IfFileExists{\jobname.bbl}{}
- {\typeout{}
-  \typeout{******************************************}
-  \typeout{** Please run "bibtex \jobname" to optain}
-  \typeout{** the bibliography and then re-run LaTeX}
-  \typeout{** twice to fix the references!}
-  \typeout{******************************************}
-  \typeout{}
- }
 
 \end{document}
 

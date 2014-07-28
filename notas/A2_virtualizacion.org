@@ -682,6 +682,67 @@ disco.
 1. Explique ventajas y desventajas de los diferentes tipos de
    virtualización (hipervisores y emuladores).
 
+2. La emulación implica naturalmente el implementar un intérprete del
+   código que fue originado para una arquitectura distinta. Este
+   proceso necesariamente tiene un alto costo en tiempo de cómputo, y
+   una infraestructura basada en emulación siempre será por lo menos
+   un órden de magnitud más lenta que lo que resultaría de su
+   ejecución nativa. La popularización de la emulación deriva por un
+   lado de la diferencia de poder de cómputo entre las arquitecturas
+   de escritorio y las embebidas, y por el otro de la conveniencia de
+   contar con código que pueda ser transportado fácilmente (/write
+   once, run anywhere/).
+
+   ¿Verdadero /falso?
+
+3. *Agregar conceptos*
+
+   Los contenedores son un enfoque muy distinto que, sin embargo,
+   logra un resultado bastante similar al de las otras tecnologías de
+   virtualización. Para los conceptos, /chroot/ y /contenedores o
+   contextos de seguridad/, elija de la siguiente lista cuál
+   definición corresponde a cada uno.
+
+   - Al ejecutarse todos los huéspedes sobre del mismo núcleo (sistema
+     operativo), éste tiene que efectuar una restricción de las
+     máquinas virtuales para que no interfieran entre sí. ¿Cómo se
+     denomina típicamente cada una de las máquinas virtuales desde el
+     punto de vista del sistema operativo?
+   - Llamada al sistema que restringe la vista que tiene un proceso
+     sobre del sistema de archivos, a partir de la cual se desarrolla
+     la idea de contenedores
+
+4. La principal diferencia entre la virtualización asistida por
+   hardware (HVM) y la paravirtualización es que...
+
+   1. La virtualización asistida por hardware requiere de hardware
+      específico para ser empleada, la paravirtualización intercepta
+      por software las instrucciones "peligrosas", a cambio de un
+      rendimiento un poco menor (~30%)
+
+   2. La virtualización permite ejecutar al sistema huésped sin
+      modificaciones, mientras que la paravirtualización requiere que
+      éste esté preparado para ser virtualizado
+
+   3. Se efectúa únicamente a nivel de dispositivos, mientras que la
+      virtualización plena se aplica sobre del sistema completo
+
+5. En el corazón de las arquitecturas de virtualización por hardware
+   encontraremos un programa llamado hipervisor. Indique cuáles de las
+   siguientes afirmaciones respecto a éste son verdaderas, y cuáles
+   falsas.
+
+   1. Monitorea la actividad de los sistemas operativos
+
+   2. Se mantiene completamente invisible ante la perspectiva del
+      sistema huésped
+
+   3. Es completamente transparente: Un hipervisor debe poder correr
+      otros hipervisores dentro de sí
+
+   4. Cubre algunas de las tareas que realiza normalmente el sistema
+      operativo
+
 ** Temas de investigación sugeridos
 
 - Sistemas operativos mínimos para la nube ::

@@ -943,9 +943,10 @@ Un área de exclusion mutua debe:
      interrumpiera entre las líneas 7 y 8, la condición del =if= se
      podría evaluar incorrectamente.
 
-Como comparación, una rutina equivalente en Bash (entre procesos
-independientes y usando los archivos =/tmp/proximo_asiento= y
-=/etc/capacidad/= como un mecanismo para compartir datos) sería:
+Como comparación, una rutina equivalente escrita en Bash (entre
+procesos independientes y utilizando a los archivos
+=/tmp/proximo_asiento= y =/etc/capacidad= como un mecanismo para
+compartir datos) sería:
 
 #+begin_src sh
 asigna_asiento() {
@@ -1350,8 +1351,8 @@ requisitos, como:
   productor y un sólo hilo consumidor, se puede extender el programa
   para que haya varios hilos en cualquiera de estos roles.
 
-  =evento= no requiere de protección, dado que es una variable local a
-  cada hilo.
+  En este caso, la variable =event= no requiere de protección, dado
+  que es local a cada hilo.
 
 *** Solución
   Para resolver este problema se usarán dos semáforos: =mutex=, que

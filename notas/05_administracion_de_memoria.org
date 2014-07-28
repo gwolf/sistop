@@ -82,7 +82,7 @@ chips actuales están limitados a entre $2^{40}$ y $2^{48}$ bits — 1 y
 256 terabytes. Esta restricción debe seguir teniendo sentido económico
 por muchos años aún.
 
-** Hardware: de la unidad de manejo de memoria (MMU)
+** Hardware: la unidad de manejo de memoria (MMU)
 
 Con la introducción de sistemas multitarea, es decir, dos o más 
 programas ejecutandose, se vio la necesidad de tener más de un
@@ -1043,20 +1043,31 @@ Cuesta trabajo comprender el por qué de esta lógica si no es por el
 empleo de la memoria compartida: el costo de =fork()= en un sistema
 Unix es muy bajo, se limita a crear las estructuras necesarias en la
 memoria del núcleo. Tanto el proceso padre como el proceso hijo
-<<<<<<< HEAD
 comparten /todas/ sus páginas de memoria, como lo ilustra la figura
-\ref{MEM_cow_recien_hecho} — Sin embargo, siendo dos
-=======
-comparten /todas/ sus páginas de memoria — sin embargo, siendo dos
->>>>>>> latin
+\ref{MEM_cow_recien_hecho} — sin embargo, siendo dos
 procesos independientes, no deben poder modificarse más que por los
 canales explícitos de comunicación entre procesos.
+
+Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
+(/Copy on Write/ o /CoW/). Las páginas de memoria de ambos procesos
+son las mismas /mientras sean sólo leídas/. Sin embargo, si uno de los
+procesos modifica a cualquier dato en una de estas páginas, ésta se
+copia a un nuevo marco, y deja de ser una página compartida, como se
+puede ver en la figura \ref{MEM_cow_pagina_modificada}. El resto
+de las páginas seguirá siendo compartido. Esto se puede lograr
+marcando /todas/ las páginas compartidas como /sólo lectura/, con lo
+cual cuando uno de los dos procesos intente modificar la información
+de alguna página se generará un fallo. El sistema operativo, al notar
+que esto ocurre sobre un espacio CoW, en vez de responder al fallo
+terminando al proceso, copiará sólo la página en la cual se encuentra
+la dirección de memoria que causó el fallo, y esta vez marcará la
+página como /lectura y escritura/.
 
 #+begin_latex
 \begin{figure}
 \centering
-\subfigure[Inmediatamente después de la creación del proceso hijo por \texttt{fork()} \label{MEM_cow_recien_hecho}]{\includegraphics[width=\textwidth]{img/ditaa/cow_recien_hecho.png}}
-\subfigure[Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva. \label{MEM_cow_pagina_modificada}]{\includegraphics[width=\textwidth]{img/ditaa/cow_pagina_modificada.png}}
+\subfigure[Inmediatamente después de la creación del proceso hijo por \texttt{fork()} \label{MEM_cow_recien_hecho}]{\includegraphics[width=0.9\textwidth]{img/ditaa/cow_recien_hecho.png}}
+\subfigure[Cuando el proceso hijo modifica información en la primer página de su memoria, se crea como una página nueva. \label{MEM_cow_pagina_modificada}]{\includegraphics[width=0.9\textwidth]{img/ditaa/cow_pagina_modificada.png}}
 \caption {Memoria de dos procesos en un sistema que implementa \emph{copiar al escribir}.}
 \label{MEM_modelos_de_hilos}
 \end{figure}
@@ -1082,21 +1093,6 @@ canales explícitos de comunicación entre procesos.
   <caption style="caption-side: bottom">Tres modelos de mapeo de hilos a procesos. (Imágenes: Beth Plale; ver <em>Otros recursos</em>)</caption>
 </table>
 #+end_html
-
-Esto ocurre así gracias a un mecanismo llamado /Copiar al escribir/
-(/Copy on Write/ o /CoW/). Las páginas de memoria de ambos procesos
-son las mismas /mientras sean sólo leídas/. Sin embargo, si uno de los
-procesos modifica a cualquier dato en una de estas páginas, ésta se
-copia a un nuevo marco, y deja de ser una página compartida, como se
-puede ver en la figura \ref{MEM_cow_pagina_modificada}. El resto
-de las páginas seguirá siendo compartido. Esto se puede lograr
-marcando /todas/ las páginas compartidas como /sólo lectura/, con lo
-cual cuando uno de los dos procesos intente modificar la información
-de alguna página se generará un fallo. El sistema operativo, al notar
-que esto ocurre sobre un espacio CoW, en vez de responder al fallo
-terminando al proceso, copiará sólo la página en la cual se encuentra
-la dirección de memoria que causó el fallo, y esta vez marcará la
-página como /lectura y escritura/.
 
 Incluso cuando se ejecutan nuevos programas a través de =execve()=,
 es posible que una buena parte de la memoria se mantenga compartida,
@@ -1369,11 +1365,34 @@ dado que a cada solicitud se debería reemplazar el único marco
 disponible. El rendimiento evaluado sería en los casos de que se cuenta
 con dos o tres marcos.
 
+Un fenómeno interesante que se presenta con algunos algoritmos es la
+/anomalía de Belady/, publicada en 1969: si bien la lógica indica que
+a mayor número de marcos disponibles se tendrá una menor cantidad de
+fallos de página, como lo ilustra la figura
+\ref{MEM_expectativa_fallas_marcos}, con algunas de cadenas de
+referencia y bajo ciertos algoritmos puede haber una /regresión/ o degradación, en
+la cual la cantidad de fallos aumenta aún con una mayor cantidad de
+marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
+
+Es importante recalcar que si bien la anomalía de Belady se
+presenta como un problema importante ante la evaluación de los
+algoritmos, en el texto de Luis La Red (p.559-569) se puede observar
+que en simulaciones con características más cercanas a las de los
+patrones reales de los programas, su efecto observado es
+prácticamente nulo.
+
+Para los algoritmos que se presentan a continuación, se asumirá una memoria
+con tres marcos, y con la siguiente cadena de referencia:
+
+#+begin_quote
+7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
+#+end_quote
+
 #+begin_latex
 \begin{figure}
 \centering
-\subfigure[Relación ideal entre el número de marcos y fallos de página. \label{MEM_expectativa_fallas_marcos}]{\includegraphics[width=0.6\textwidth]{img/gnuplot/expectativa_fallas_contra_marcos.png}}
-\subfigure[Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos. \label{MEM_anomalia_belady}]{\includegraphics[width=0.6\textwidth]{img/gnuplot/anomalia_belady.png}}
+\subfigure[Relación ideal entre el número de marcos y fallos de página. \label{MEM_expectativa_fallas_marcos}]{\includegraphics[width=0.7\textwidth]{img/gnuplot/expectativa_fallas_contra_marcos.png}}
+\subfigure[Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos. \label{MEM_anomalia_belady}]{\includegraphics[width=0.7\textwidth]{img/gnuplot/anomalia_belady.png}}
 \caption {Anomalía de Belady, empleando la cadena de referencia \emph{1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5} (Belady, 1969).}
 \label{MEM_expectativas_y_belady}
 \end{figure}
@@ -1399,29 +1418,6 @@ con dos o tres marcos.
   <caption style="caption-side: bottom">Anomalía de Belady, empleando la cadena de referencia <em>1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5</em> (Belady, 1969).</caption>
 </table>
 #+end_html
-
-Un fenómeno interesante que se presenta con algunos algoritmos es la
-/anomalía de Belady/, publicada en 1969: si bien la lógica indica que
-a mayor número de marcos disponibles se tendrá una menor cantidad de
-fallos de página, como lo ilustra la figura
-\ref{MEM_expectativa_fallas_marcos}, con algunas de cadenas de
-referencia y bajo ciertos algoritmos puede haber una /regresión/ o degradación, en
-la cual la cantidad de fallos aumenta aún con una mayor cantidad de
-marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
-
-Es importante recalcar que si bien la anomalía de Belady se
-presenta como un problema importante ante la evaluación de los
-algoritmos, en el texto de Luis La Red (p.559-569) se puede observar
-que en simulaciones con características más cercanas a las de los
-patrones reales de los programas, su efecto observado es
-prácticamente nulo.
-
-Para los algoritmos que se presentan a continuación, se asumirá una memoria
-con tres marcos, y con la siguiente cadena de referencia:
-
-#+begin_quote
-7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1
-#+end_quote
 
 *** Primero en entrar, primero en salir (FIFO)
 # <<MEM_FIFO>>

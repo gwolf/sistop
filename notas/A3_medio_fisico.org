@@ -313,12 +313,12 @@ reemplazando a la ST-506, se introdujo LBA.
 Este mecanismo convierte la dirección C-H-S a una dirección /lineal/,
 presentando el disco al sistema operativo ya no como un espacio
 /tridimensional/, sino que como un gran arreglo de bloques. En este
-primer momento, partiendo de que $CPP$ denota el número de cabezas por
-cilindro y $SPP$ el número de sectores por pista, la equivalencia de
-una dirección C-H-S a una LBA era:
+primer momento, partiendo de que $CPC$ denota el número de cabezas por
+cilindro y $SPC$ el número de sectores por cilindro, la equivalencia
+de una dirección C-H-S a una LBA era:
 
 #+BEGIN_QUOTE
-$LBA = ((C \times CPC) + H) \times SPP + S - 1$
+$LBA = ((Cilindro \times CPC) + Cabeza) \times SPC + Sector - 1$
 #+END_QUOTE
 
 LBA significó mucho más que una nueva notación: marcó el inicio de
@@ -728,7 +728,7 @@ esperar a la intervención del administrador, desactiva al disco
 afectado y activa al /hot spare/, reconstruyendo de inmediato la
 información a partir de los datos en los discos /sanos/.
 
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.9\textwidth
 #+label: FS_FIS_franjas_raid_5
 #+caption: División de datos en /franjas/, con paridad, para RAID 5
 [[./img/ditaa/franjas_raid_5.png]]
@@ -751,7 +751,7 @@ en la figura \ref{FS_FIS_redundancia_xor}. La operación booleana XOR
 columna. Si es un número par, almacena un 0, si es impar, almacena
 un 1. Esta operación es muy eficiente computacionalmente.
 
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_redundancia_xor
 #+caption: Para cada franja, el disco de paridad guarda la suma XOR de los bits de las franjas correspondientes de los otros discos; no importa cuál disco falle, sus datos pueden recuperarse haciendo un XOR de los datos de los demás.
 [[./img/ditaa/redundancia_xor.png]]
@@ -769,9 +769,9 @@ mode/, también conocido como /modo degradado/), en el que todas las lecturas in
 que tienen que estar recalculando y /rellenando/ la información que
 provendría del disco dañado.
 
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: width=0.8\textwidth
 #+label: FS_FIS_raid_5
-#+caption: Cinco discos organizados en RAID 5
+#+caption: Cinco discos organizados en RAID 5. La franja de paridad se va alternando, repartiéndose entre todos los discos.
 [[./img/dot/raid_5.png]]
 
 Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
@@ -801,7 +801,7 @@ implementar mayor complejidad, en caso de ser hardware dedicado.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_raid_6
-#+caption: Cinco discos organizados en RAID 6
+#+caption: Cinco discos organizados en RAID 6. Al igual que bajo RAID 5, las franjas de paridad se van alternando entre todos los discos.
 [[./img/dot/raid_6.png]]
 
 El nivel 6 de RAID puede implementarse con 4 o más unidades, y si

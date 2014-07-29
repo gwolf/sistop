@@ -581,6 +581,55 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 #+caption: Acceso relativo a índice: un índice apuntando al punto justo de un archivo sin estructura
 [[./img/ditaa/acceso_relativo_a_indice.png]]
 
+** Archivos especiales
+# <<DIR_arch_especiales>>
+
+Los sistemas de archivos son estructuras de tan fácil manejo y
+comprensión que resulta natural que los diseñadores de sistemas
+operativos buscaran aprovecharlos para presentar todo tipo de
+estructuras, no sólo archivos. En este sentido, la máxima Unix, /Todo
+es un archivo/, resulta el ejemplo natural.
+
+Este concepto fue brevemente presentado en la sección
+\ref{HW_refiriendo}; complementando dicha sección, en un sistema Unix
+estándar, un archivo puede pertenecer a las siguientes categorías:
+
+- Archivo estándar :: Aunque suene obvio, el tipo básico de archivo
+     es, precisamente, el archivo. Representa directamente a la
+     información que lo conforma. Su semántica de uso es la presentada
+     en el transcurso de este capítulo.
+
+- Objetos del sistema de archivos :: La información acerca del sistema
+     de archivos se almacena también como archivos, aunque su
+     tratamiento es especial (con una reminiscencia de los sistemas
+     históricos mencionados en la sección
+     \ref{DIR_archivos_estructurados}). Este tipo de archivos puede
+     referirse a directorios o a ligas simbólicas. Ambos se detallan
+     en la sección \ref{DIR_concepto_directorio}.
+
+- Dispositivos :: Permiten el acceso directo a un dispositivo
+                  externo. Como fue presentado en la sección
+                  \ref{HW_referido}, pueden ser /de bloques/ o /de
+                  caracteres/. El contenido del archivo son dos
+                  números, el /número mayor/ y el /número menor/;
+                  tradicionalmente, el mayor indica de qué clase de
+                  dispositivo se trata, y el menor, la instancia de
+                  que se trata.
+
+		  Por ejemplo, todos los discos duros llevan por
+                  número mayor el 8; los números menores para los
+                  duros son 0, 16, 32, 48. Cada uno de los discos
+                  puede tener hasta 15 particiones: 1 a 15, 17 a 31,
+                  etc.
+
+- Comunicación entre procesos :: Los archivos pueden representar
+     /tuberías nombradas/ y /sockets/. Ambos son mecanismos que
+     permiten intercambiar información entre distintos procesos; la
+     tubería nombrada es más sencilla de emplear, pero permite
+     únicamente la comunicación unidireccional, en tanto que el socket
+     permite comunicación bidireccional como si se tratara de una
+     conexión por red.
+
 ** Transferencias orientadas a bloques
 
 Un sistema de archivos es la representación que se da a un conjunto de
@@ -616,6 +665,7 @@ de lugar tener cientos o miles de veces tanto. Por tanto, se tiene que
 ver también cómo organizar una gran cantidad de archivos.
 
 ** Evolución del concepto de /directorio/
+# <<DIR_concepto_directorio>>
 
 El concepto dominante en almacenaimiento hoy en día es el de /directorios
 jerárquicos/. Esto no siempre fue así; conviene revisar brevemente su

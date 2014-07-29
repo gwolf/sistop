@@ -736,15 +736,16 @@ estado del sistema (memoria libre, número de procesos, consumo de
 procesador, etc.), e incluso modificar la configuración del sistema en
 ejecución.
 
-Por ejemplo, en un sistema Linux, leer el archivo
-=/proc/sys/vm/swappiness= dará (por omisión) un valor de 60. Escribir
-el valor 100 a este archivo tendrá por resultado que el sistema sea
-más agresivo con la paginación de memoria virtual (ver sección
-\ref{MEM_virtual}) de lo que normalmente sería. Por otro lado,
-escribir el valor 1 tendrá por efecto que el sistema operativo realice
-la paginación prácticamente sólo si no tiene otra alternativa. Un
-valor de 0 tendrá como efecto inmediato el deshabilitar la paginación
-por completo.
+Por ejemplo, en Linux, leer de =/proc/sys/vm/swappiness= dará (por
+omisión) un valor de 60. Escribir el valor 100 a este archivo tendrá
+por resultado inmediato que el sistema sea más agresivo con la
+paginación de memoria virtual (ver sección \ref{MEM_virtual}) de lo
+que normalmente sería. Por otro lado, escribir el valor 1 tendrá por
+efecto que el sistema operativo realice la paginación sólo si no tiene
+otra alternativa. Un valor de 0 tendrá como efecto el deshabilitar la
+paginación por completo. Este archivo, al igual que todos los que
+conforman =/proc=, se presenta como un archivo de tipo normal — La
+particularidad radica en el sistema de archivos en que se ubica.
 
 Claro está, por más que parezca una simple lectura de un archivo, el
 leer o modificar un valor dentro de =/proc= cruza también por una
@@ -1472,6 +1473,11 @@ de archivos resurja.
   novedosas, y hoy forman parte de casi todos los sistemas de archivos
   con uso amplio, e incluso algunas que no se han logrado implementar
   y que BeFS sí ofrecía.
+
+- /Processes as Files/
+  #+latex: \otrorec{http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf}
+  #+html: <br/><a href="http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf">http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf</a><br/>
+  T. J. Killian (1984)
 
 - /A method for the construction of Minimum-Redundancy Codes/
   #+latex: \otrorec{http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf}

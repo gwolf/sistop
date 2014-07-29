@@ -1,0 +1,97 @@
+#+TITLE: Fundamentos de sistemas operativos
+#+AUTHOR: Gunnar Wolf — IIEc-UNAM \and Esteban Ruiz — CIFASIS-UNR \and Federico Bergero — CIFASIS-UNR \and Erwin Meza — UNICAUCA
+#+LANGUAGE: es
+
+* ¿Qué es?
+
+Este proyecto busca crear (y mantener al día) un libro de texto para
+la enseñanza de la materia de /Sistemas Operativos/ a nivel
+universitario, para las carreras de /Ingeniería en Computación/,
+/Informática/, /Ciencias de la Computación/ y similares. El libro está
+disponible en la siguiente dirección:
+
+  http://sistop.org/
+
+La presentación completa (incluyendo la justificación, público
+objetivo, estructura temática y datos de licenciamiento) está
+disponible en el archivo [[./notas/00_presentacion.org]], o en la
+/Presentación/ del libro.
+
+* Los autores
+
+El libro fue escrito por:
+
+- Gunnar Wolf, del [[http://www.iiec.unam.mx][Instituto de Investigaciones Económicas]] y la
+  [[http://www.ingenieria.unam.mx][Facultad de Ingeniería]] de la [[Universidad Nacional Autónoma de México]]
+- Esteban Ruiz, del [[http://www.cifasis-conicet.gov.ar/index.php?func=memorias&anio=2012][Centro Internacional Franco Argentino de Ciencias
+  de la Información y Sistemas]] de la [[http://www.unr.edu.ar/][Universidad Nacional de Rosario]],
+  Argentina
+- Federico Bergero, del [[http://www.cifasis-conicet.gov.ar/index.php?func=memorias&anio=2012][Centro Internacional Franco Argentino de
+  Ciencias de la Información y Sistemas]] de la [[http://www.unr.edu.ar/][Universidad Nacional de
+  Rosario]], Argentina
+- Erwin Meza, de Facultad de Ingeniería Electrónica y
+  Telecomunicaciones de la [[http://www.unicauca.edu.co/][Universidad del Cauca]], Colombia
+
+* Herramientas requeridas
+
+El texto y los diagramas del libro están construidos con las
+siguientes herramientas:
+
+- Org-mode (Emacs) :: Org-mode es uno de esos bichos que creció más
+     allá de los sueños más locos de sus autores originales. Yo sólo
+     uso una fracción de sus facilidades, pero me ha resultado
+     fundamental para el libro: Org-mode ofrece una sintaxis de
+     marcado *muy* simple, y un conjunto de filtros de exportación
+     suficientemente completo. Entonces, el texto escrito en Org-mode
+     puede ser enviado a LaTeX para convertirse a PDF, puede ser
+     exportado directamente a HTML, e incluso (aunque esto no lo he
+     probado, supongo que tengo que instalar algunos paquetes
+     adicionales) a DocBook o a ODF.
+
+- Graphviz :: Buena parte de las figuras que presento son grafos
+              dirigidos (y unos cuantos no dirigidos). Otras muchas no
+              lo son, pero caben bastante bien dentro de la lógica de
+              funcionamiento de Graphviz. El lenguaje es simple,
+              aunque tiene sus sutilezas, y puede que vean alguno de
+              mis archivos fuente y se burlen de las vueltas que le
+              doy a algo tan simple. Pero en general, me gusta mucho.
+
+- Ditaa :: Para las figuras que no caben en la lógica de Graphviz,
+           Ditaa es un proyecto bastante loco: Dibujando con los
+           caracteres '-', '+', '|' y un par de ayuditas adicionales,
+           me genera imágenes de mejor calidad de lo que yo podría
+           hacer en herramientas más gráficas, como Inkscape.
+
+- Gnuplot :: Por último, hay unas pocas gráficas que obedecen más a
+             una descripción matemática — O que parecerían obedecer,
+             para serles franco, porque en realidad le he jugado
+             bastante chueco a la herramienta.
+
+- Beamer ::  Si bien no es parte del libro, va bastante de
+             cerquita. Beamer es un marco que, basado en LaTeX,
+             permite hacer presentaciones para proyectar en clase.
+
+Todas estas herramientas, las manejo "amarradas" lo mejor posible
+desde el Makefile a la raiz del proyecto.
+
+** Versiones
+
+Varios programas cambian su comportamiento de una versión a
+otra. Org-mode, muy en particular, cambió su comportamiento de forma
+fuerte de la versión 7.x a la 8.x.
+
+Estoy usando, para todo, las versiones que están disponibles dentro de
+Debian GNU/Linux 7. No recuerdo todas las versiones, pero en
+particular es Emacs 23.4 (podría ser que funcione con cualquier
+sub-versión de Emacs 23) y Org-mode 7.8.11.
+
+* Licenciamiento
+
+Los autores de este libro buscaron contribuir con material de calidad
+libremente apropiable y reutilizable para la enseñanza superior en
+países hispanoparlantes. Para lograr este fin, todo el material
+contenido en el libro (texto, código fuente e imágenes) está
+licenciado bajo /Creative Commons Atribución 4.0 Internacional/ (CC BY
+4.0)[fn:: https://creativecommons.org/licenses/by/4.0/deed.es], salvo
+si se menciona explícitamente de otra manera.
+

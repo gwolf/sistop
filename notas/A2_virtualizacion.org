@@ -604,8 +604,8 @@ ruta absoluta, el archivo que se abrirá será =/usr/local/boot.img=
 
 Ahora bien, =chroot()= no es (ni busca ser) un verdadero aislamiento,
 sólo proporciona un inicio[fn:: Como referencia a por qué no es un
-verdadero aislamiento, puede referirse al artículo /How to break out
-of a =chroot()= jail/ (Simes, 2002)] — pero conforme más usuarios
+verdadero aislamiento, puede referirse al artículo /[[http://www.bpfh.net/computing/docs/chroot-break.html][How to break out
+of a chroot() jail]]/ (Simes, 2002)] — pero conforme más usuarios
 comenzaban a utilizarlo para servicios en producción, se hizo claro
 que resultaría útil ampliar la conveniencia de =chroot()= a un
 verdadero aislamiento.
@@ -682,20 +682,44 @@ disco.
 1. Explique ventajas y desventajas de los diferentes tipos de
    virtualización (hipervisores y emuladores).
 
-2. La emulación implica naturalmente el implementar un intérprete del
-   código que fue originado para una arquitectura distinta. Este
-   proceso necesariamente tiene un alto costo en tiempo de cómputo, y
-   una infraestructura basada en emulación siempre será por lo menos
-   un órden de magnitud más lenta que lo que resultaría de su
-   ejecución nativa. La popularización de la emulación deriva por un
-   lado de la diferencia de poder de cómputo entre las arquitecturas
-   de escritorio y las embebidas, y por el otro de la conveniencia de
-   contar con código que pueda ser transportado fácilmente (/write
-   once, run anywhere/).
+2. A continuación se presentan varias afirmaciones. Evalúe si cada una
+   de ellas es verdadera o falsa, sustentando con argumentos su
+   conclusión.
 
-   ¿Verdadero /falso?
+   - La emulación implica naturalmente el implementar un intérprete
+     del código que fue originado para una arquitectura distinta. Este
+     proceso necesariamente tiene un alto costo en tiempo de cómputo,
+     y una infraestructura basada en emulación siempre será por lo
+     menos un órden de magnitud más lenta que lo que resultaría de su
+     ejecución nativa. La popularización de la emulación deriva por un
+     lado de la diferencia de poder de cómputo entre las arquitecturas
+     de escritorio y las embebidas, y por el otro de la conveniencia
+     de contar con código que pueda ser transportado fácilmente
+     (/write once, run anywhere/).
 
-3. *Agregar conceptos*
+   - La /Ley de Moore/ (presentada en la sección
+     \ref{HW_multiprocesamiento}) ha llevado a una cada vez mayor
+     integración y ha llevado a que el desarrollo del cómputo por fin
+     cruzara obligadamente por el multiprocesamiento, el desarrollo de
+     código paralelizable es mucho más complejo para los
+     desarrolladores de software; casi todo el material de la presente
+     obra deriva del cuestionamiento de cómo compartir recursos entre
+     procesos rivales.
+
+     En este sentido, una de las grandes ventajas que ofrece la
+     virtualización es que, al separar las aplicaciones en máquinas
+     virtuales distintas, mantener una separación de recursos se
+     simplifica. Cada máquina virtual puede correr en un entorno
+     monotarea, con la ilusión de recursos dedicados.
+
+3. De los recursos que administra un sistema operativo, algunos pueden
+   ser fácilmente compartidos, en tanto que otros requieren un uso
+   exclusivo para cada una de las máquinas virtuales. ¿Cuáles
+   entrarían en cada una de estas clases? ¿Qué estrategia podría
+   sugerir para compartir un dispositivo cuya naturaleza fuera de uso
+   exclusivo?
+
+4. *Agregar conceptos*
 
    Los contenedores son un enfoque muy distinto que, sin embargo,
    logra un resultado bastante similar al de las otras tecnologías de
@@ -712,7 +736,7 @@ disco.
      sobre del sistema de archivos, a partir de la cual se desarrolla
      la idea de contenedores
 
-4. La principal diferencia entre la virtualización asistida por
+5. La principal diferencia entre la virtualización asistida por
    hardware (HVM) y la paravirtualización es que...
 
    1. La virtualización asistida por hardware requiere de hardware
@@ -727,7 +751,7 @@ disco.
    3. Se efectúa únicamente a nivel de dispositivos, mientras que la
       virtualización plena se aplica sobre del sistema completo
 
-5. En el corazón de las arquitecturas de virtualización por hardware
+6. En el corazón de las arquitecturas de virtualización por hardware
    encontraremos un programa llamado hipervisor. Indique cuáles de las
    siguientes afirmaciones respecto a éste son verdaderas, y cuáles
    falsas.
@@ -773,9 +797,6 @@ disco.
   - ¿Cómo ha avanzado la adopción de estas ideas?
   - ¿Qué le agrega o quita a la complejidad de la administración de
     sistemas?
-  - ¿Qué significa esto para nuestra carrera/futuro profesional? ¿Hay
-    espacio para desarrollar sistemas operativos novedosos, o
-    serán unos pocos los que llenarán el nicho?
 
 ** Lecturas relacionadas
 - /Bringing Virtualization to the x86 Architecture with the Original

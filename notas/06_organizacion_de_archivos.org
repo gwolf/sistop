@@ -438,6 +438,7 @@ reconozca al tipo de un archivo:
 
 ** Estructura de los archivos y métodos de acceso
 # <<DIR_archivos_estructurados>>
+
 La razón principal de la existencia del sistema de archivos son /los
 archivos/. Un archivo almacena información de /algún tipo/,
 estructurado o no estructurado.
@@ -600,27 +601,29 @@ estándar, un archivo puede pertenecer a las siguientes categorías:
      en el transcurso de este capítulo.
 
 - Objetos del sistema de archivos :: La información acerca del sistema
-     de archivos se almacena también como archivos, aunque su
+     de archivos se almacena también dentro de archivos, aunque su
      tratamiento es especial (con una reminiscencia de los sistemas
      históricos mencionados en la sección
-     \ref{DIR_archivos_estructurados}). Este tipo de archivos puede
-     referirse a directorios o a ligas simbólicas. Ambos se detallan
-     en la sección \ref{DIR_concepto_directorio}.
+     \ref{DIR_archivos_estructurados}): El sistema operativo oculta al
+     archivo /real/, y gestiona su información procesada para que lo
+     emplee el usuario. Este tipo de archivos puede referirse a
+     directorios o a ligas simbólicas. Ambos se detallan en la sección
+     \ref{DIR_concepto_directorio}.
 
 - Dispositivos :: Permiten el acceso directo a un dispositivo
                   externo. Como fue presentado en la sección
-                  \ref{HW_referido}, pueden ser /de bloques/ o /de
+                  \ref{HW_refiriendo}, pueden ser /de bloques/ o /de
                   caracteres/. El contenido del archivo son dos
                   números, el /número mayor/ y el /número menor/;
                   tradicionalmente, el mayor indica de qué clase de
                   dispositivo se trata, y el menor, la instancia de
                   que se trata.
 
-		  Por ejemplo, todos los discos duros llevan por
-                  número mayor el 8; los números menores para los
-                  duros son 0, 16, 32, 48. Cada uno de los discos
-                  puede tener hasta 15 particiones: 1 a 15, 17 a 31,
-                  etc.
+		  Por ejemplo, tanto los discos duros como sus
+                  particiones llevan por número mayor el 8; los
+                  números menores para los duros son 0, 16,
+                  32, 48. Cada uno de los discos puede tener hasta 15
+                  particiones: 1 a 15, 17 a 31, etc.
 
 - Comunicación entre procesos :: Los archivos pueden representar
      /tuberías nombradas/ y /sockets/. Ambos son mecanismos que
@@ -635,9 +638,7 @@ estándar, un archivo puede pertenecer a las siguientes categorías:
 Un sistema de archivos es la representación que se da a un conjunto de
 archivos y directorios sobre un /dispositivo de bloques/, esto es, un
 dispositivo que, para cualquier transferencia solicitada desde o hacia
-él, responderá con un bloque de tamaño predefinido.[fn:: La sección
-\ref{HW_refiriendo} define los dispositivos /de caracteres/ y /de
-bloques/.]
+él, responderá con un bloque de tamaño predefinido.
 
 Esto es, si bien el sistema operativo presenta una abstracción por
 medio de la cual la lectura (=read()=) puede ser de un tamaño

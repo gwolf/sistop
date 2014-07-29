@@ -499,10 +499,14 @@ sistemas /no coherentes/ requieren que el subsistema de memoria del
 sistema operativo haga esta operación.
 
 Los procesadores actuales implementan normalmente varios niveles de
-caché, estando algunos dentro del mismo CPU, por lo que típicamente
-se encuentran sistemas híbridos, en los que los cachés de nivel 2 son
-coherentes, pero los de nivel 1 no, y deben ser manejados por
-software.
+caché, estando algunos dentro del mismo CPU, por lo que típicamente se
+encuentran sistemas híbridos, en los que los cachés de nivel
+superiores son coherentes, pero los de nivel 1 no, y las
+inconsistencias que éste podría producir deben ser esperadas y
+resueltas por el software.[fn:: El caché de nivel 1 puede estar dentro
+de cada uno de los núcleos, el de nivel 2 se comparten entre los
+núcleos de un mismo chip, y el de nivel 3 es externo y está en el bus
+de acceso a memoria.]
 
 
 
@@ -641,35 +645,12 @@ exit_group(0)                           = ?
 #+end_src
 #+latex: }
 
-* Abstracciones comunes
-# <<HW_abstracciones>>
+* Referencia a los componentes
+# <<HW_refiriendo>>
 
-Como se mencionó antes una de las funciones del sistema operativo es
-la de abstraer el hardware de la computador. Cuál es esa abstracción
-que ve efectivamente el usuario varía de un sistema operativo a otro.
-Se verán en esta sección algunas abstracciones utilizadas en varios
-sistemas dejando las correspondientes a sistemas de archivos para el 
-capítulo \ref{FS}.
-
-** Sistemas tipo Windows
-Los sistemas del tipo Windows presentan una abstracción diversa
-para cada uno de los componentes de la computadora.
-
-Por ejemplo los volúmenes de almacentamiento secundario (discos rígidos, 
-discos compactos, memorias flash, etc.) son relacionados 
-con una letra cada uno, así (en general) =C:= es el volúmen o partición
-del disco principal, =A:= y =B:= se utilizan para discos
-extraíbles.
-
-Una desventaja de esta abstracción es que no queda claro cuáles unidades
-pertenecen al mismo disco físico y cuáles no.
-
-A los puertos de entrada/salida más utilizados también se les asignan
-nombres alfanuméricos, por ejemplo el primer puerto paralelo se denomina
-=LPT1= y el segundo puerto serie =COM2=. 
-
-** Sistemas tipo Unix
-#<<HW_sist_unix>>
+Si bien el sistema operativo tiene por misión abstraer y ocultar los
+detalles de los dispositivos, también debe exponer una interfaz para
+poder emplearlos y administrarlos.
 
 Unix introdujo el concepto de que /todo es un archivo/: en el sistema
 Unix original, todos los dispositivos podían ser controlados a través
@@ -682,8 +663,11 @@ introduce los /espacios de nombres mutables/, que presenta con
 interfaz de archivo prácticamente cualquier objeto empleado
 por el sistema.
 
-Las principales estructuras relacionadas de este tipo que existen en un
-sistema tipo Unix son:
+Las principales estructuras relacionadas de este tipo[fn:: Hay varios
+otros tipos de archivo definidos en su semántica, como las /tuberías
+nombradas/, los /sockets/, e incluso los mismos directorios. Estos
+serán cubiertos en el capítulo \ref{DIR}.] que existen en un sistema
+tipo Unix son:
 
 - Dispositivos de caracteres :: Son aquellos en los cuales la
      información es leída o escrita de a un caracter a la vez y se
@@ -701,14 +685,33 @@ sistema tipo Unix son:
      El ejemplo más claro de este tipo de dispositivos es una unidad
      de disco o una de sus particiones.
 
-- Archivos especiales :: Los sistemas Unix actuales incluyen también
-  un gran número de archivos especiales, por medio de los cuales el usuario puede
-  monitorear el estado del sistema (memoria libre, número de procesos,
-  consumo de procesador, etc.), e incluso modificar la configuración
-  del sistema operativo a través de un archivo; por ejemplo, en un sistema Linux,
-  escribir el valor "100" al archivo "/proc/sys/vm/swappiness" hará
-  que el sistema envíe a espacio de intercambio una mayor cantidad de
-  programas de lo que normalmente haría.
+Por convención, ambos tipos de archivos de dispositivo están en el
+directorio =/dev= en los sistemas Unix y siguen una nomenclatura
+estándar, aunque pueden crearse en cualquier otro lugar.
+
+Además de esto, en los sistemas Unix existen los /sistemas de archivos
+virtuales/ con información de sistema, que se abordan en la sección
+\ref{FS_proc}. Estos son directorios cuyos contenidos, si bien se
+presentan al usuario cual si fueran archivos comunes, son más bien un
+mecanismo para consultar o manipular las estructuras internas del
+núcleo.
+
+En la familia de sistemas operativos derivados de CP/M (el más popular
+de los cuales hoy en día es Windows), el mecanismo es muy
+distinto. Los dispositivos de almacenamiento secundario (discos duros,
+discos compactos, memorias flash, etc.) son relacionados con una letra
+cada uno, así (en general) =C:= es el volúmen o partición del disco
+principal, =A:= y =B:= se utilizan para discos extraíbles. A los
+puertos de entrada/salida más utilizados también se les asignan
+nombres alfanuméricos, por ejemplo el primer puerto paralelo se
+denomina =LPT1= y el segundo puerto serie =COM2=. La sección
+\ref{DIR_montaje_directorios} detalla acerca de la vista lógica que se
+presenta en dicho sistema.
+
+Sin embargo, la mayor parte de los dispositivos e interfaces internas
+son alcanzables únicamente a través de llamadas a sistema, haciendo
+explícito al desarrollador (e inalcanzable para el usuario de a pie)
+que se está solicitando un servicio al sistema opeativo.
 
 * Cuando dos cabezas piensan mejor que una
 ** Multiprocesamiento
@@ -723,7 +726,7 @@ más que eso, al grado de que rara vez se emplea el término
 /multiprogramación/, mucho más acorde a los equipos que se emplean día
 a día.], es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que se abordará en esta sección, y la
-/multiprogramación/, de la cual se hablará en la sección
+/multiprogramación/, de la cual se habla en la sección
 \ref{INTRO_multiprogramados} (/Sistemas multiprogramados/). Un sistema
 multiprogramado da la /ilusión/ de que está ejecutando varios
 procesos al mismo tiempo, pero en realidad está alternando entre los

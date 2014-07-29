@@ -22,7 +22,7 @@ distintos tipos de discos magnéticos, y desde hace algunos años,
 estamos viendo una migración a /almacenamiento de estado sólido/, a
 dispositivos sin partes móviles que guardan la información en un tipo
 particular de memoria. Volviendo a las categorías presentadas en la
-sección \ref{HW_abstracciones}, los medios de acceso secuencial son
+sección \ref{HW_refiriendo}, los medios de acceso secuencial son
 /dispositivos de caracteres/, y tanto discos como unidades de estado
 sólido son /dispositivos de bloques/.
 
@@ -693,6 +693,66 @@ la implementación de ZFS en FreeBSD, [[http://www.freebsd.org/doc/en_US.ISO8859
 5GB de memoria por cada TB de almacenamiento (0.5% de la capacidad
 total)]].
 
+** Sistemas de archivos virtuales
+
+Los sistemas de archivos nacieron para facilitar el uso de
+dispositivos de almacenamiento para la información que debe persistir
+a largo plazo. Sin embargo, dado que la abstracción para su uso
+resulta tan natural para representar todo tipo de información, desde
+la década de 1980 aparecieron diversas implementaciones de /discos
+RAM/: Programas diseñados para tomar un espacio de memoria y darle la
+semántica de un disco, permitiendo manipular su contenido como si
+fuera un disco cualquiera. Esto es, presenta almacenamiento volátil,
+pero de muy alta velocidad.
+
+Estos esquemas gozaron de relativa popularidad a lo largo de los 1980
+y 1990; fue sin embargo con la popularización de los sistemas que
+implementan memoria virtual que este esquema se volvió verdaderamente
+popular. En los sistemas Linux modernos, la norma es el uso de
+sistemas de archivos virtuales para el espacio de almacenamiento
+temporal =/tmp=, e incluso otros espacios tradicionalmente
+persistentes (como el directorio con los archivos de dispositivos,
+=/dev=) se han convertido en virtuales.
+
+*** Una ventana al núcleo
+# <<FS_proc>>
+
+En junio 1984, en el congreso de desarrolladores de sistemas Unix
+/USENIX/, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
+files]]. Killian implementó un sistema de archivos virtual para ser
+montado en el directorio =/proc= del sistema que, en vez de
+representar un mapa de bloques, presentaba una ventana a la lista de
+procesos en ejecución en el sistema. Este sistema fue incorporado a
+prácticamente todos los sistemas tipo Unix.
+
+Esta idea ha avanzado y madurado, y al día de hoy es una herramienta
+fundamental para la administración de sistemas. Si bien la propuesta
+original de Killian estaba encaminada principalmente a facilitar la
+implementación de depuradores presentando el espacio de memoria de los
+procesos, =/proc= presenta hoy en día una suerte de ventana a
+estructuras internas del sistema: un árbol de directorios con una gran
+cantidad de archivos por medio de los cuales se puede monitorear el
+estado del sistema (memoria libre, número de procesos, consumo de
+procesador, etc.), e incluso modificar la configuración del sistema en
+ejecución.
+
+Por ejemplo, en un sistema Linux, leer el archivo
+=/proc/sys/vm/swappiness= dará (por omisión) un valor de 60. Escribir
+el valor 100 a este archivo tendrá por resultado que el sistema sea
+más agresivo con la paginación de memoria virtual (ver sección
+\ref{MEM_virtual}) de lo que normalmente sería. Por otro lado,
+escribir el valor 1 tendrá por efecto que el sistema operativo realice
+la paginación prácticamente sólo si no tiene otra alternativa. Un
+valor de 0 tendrá como efecto inmediato el deshabilitar la paginación
+por completo.
+
+Claro está, por más que parezca una simple lectura de un archivo, el
+leer o modificar un valor dentro de =/proc= cruza también por una
+serie de llamadas al sistema; el que la configuración de la memoria
+virtual esté disponible a través de algo que /parece ser/ un archivo
+(sin serlo) es precisamente un caso de abstracción hacia una interfaz
+consistente y conocida.
+
 * Esquemas de asignación de espacio
 
 Hasta este punto, la presentación de la /entrada de directorio/ se ha
@@ -1336,7 +1396,7 @@ de archivos resurja.
 
 ** Preguntas de autoevaluación
 
-1. Está diseñando un sistema de archivos basado en /asignación
+1. Asuma el siguiente sistema de archivos basado en /asignación
    indexada/. Cada /cluster/ mide 4096 bytes, y el apuntador a un
    bloque requiere 32 bits (4 bytes). Dados los metadatos que van a
    almacenarse en el i-nodo del archivo, dentro del i-nodo principal

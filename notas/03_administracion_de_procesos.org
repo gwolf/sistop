@@ -863,7 +863,7 @@ como si fuera atómica.
 #+attr_html: height="261"
 #+attr_latex: width=0.8\textwidth
 #+label: PROC_secc_crit
-#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/
+#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/. La figura ilustra a varios procesos que requieren de una misma sección crítica; las flechas punteadas representan el tiempo que un proceso está a la espera de que otro libere el paso para dicha sección, y las punteadas verticales indican la transferencia del /candado/.
 [[./img/gnuplot/secc_crit.png]]
 
 Hay que tener en cuenta que un mutex /no implica/ que el código no se

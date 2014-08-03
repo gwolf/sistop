@@ -1,5 +1,5 @@
 #+SETUPFILE: ../setup_laminas.org
-#+TITLE: Sistemas Operativos (FI 1554): Presentación del curso
+#+TITLE: Sistemas Operativos (FI-UNAM 1554): Presentación del curso
 #+DATE:
 
 * Punto de partida
@@ -24,7 +24,7 @@ Del curso
 ** Horario, calendario
 - Miércoles y viernes
 - 18:15 a 20:30
-- Salón B-405
+- Salón B-401
 - 72 horas clase en total… En teoría.
   - Este semestre no nos afectan días feriados
   - Unas 3 clases para exámenes parciales
@@ -114,12 +114,22 @@ Lectura en inglés
   metodologías y principales formas de interacción del /software
   libre/
 
+** ¿Qué espero que logremos?
+#+BEGIN_CENTER
+Desmitificar al uso del cómputo
+#+END_CENTER
+- ¿Por qué se /congela/ la computadora?
+- ¿Qué es eso de /expulsar con seguridad/ una unidad?
+- ¿Por qué una computadora con más memoria parece ser más rápida?
+- ¿Qué pasa si reinicias y lo vuelves a intentar?
+- ...
+
 * Estructura del curso
 ** Unidades
 1. Introducción a los sistemas operativos
 2. Relación con el hardware: Estructuras y funciones básicas
-3. Administración de procesos
-4. Administración de memoria
+3. Administración de memoria
+4. Administración de procesos
 5. Planificación de procesos
 6. Sistemas de archivos
 
@@ -145,6 +155,14 @@ pueden ser estudiados de forma aislada.
   - Detalles de implementación
   - Estado del arte
 * Bibliografía
+
+** Fundamentos de Sistemas Operativos
+- Libro en el que participé como autor y coordinador
+- [[http://sistop.org][Fundamentos de Sistemas Operativos]]
+- Libro con /licenciamiento libre/
+- En proceso editorial en la UNAM
+  - Espero tenerlo como libro impreso en el transcurso del semestre
+- Diseñado siguiendo el plan de estudios de la FI-UNAM
 
 ** Bibliografía oficial del curso
 #+latex: \vfill {\scriptsize
@@ -197,20 +215,22 @@ Oslo University College, 2001 \\
 [[http://www.iu.hio.no/~mark/os/os.pdf][Disponible en línea]] desde [[http://cfengine.com/markburgess/writing.html][el sitio Web del autor]] (y también
 con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_Mark_Burgess.pdf][copia local]] en la página del curso)
 
-** Notas de clase
-- Hay un sitio Web de la materia donde voy recopilando los apuntes de
-  clase: http://sistop.gwolf.org/
-- Estoy estructurando los apuntes buscando formar un libro de texto
-  - El contenido /no es aún definitivo/ pero ya debe servir como
-    bilbiografía adicional
-  - Subiré al sitio también las láminas que vaya presentando
-- Intento que sea un texto completo, seguible por derecho propio
-
 ** Pero... ¡Toma nota!
 - De todos modos, /sugiero fuertemente que cada quién tome notas/
   - Ayuda al proceso de aprendizaje
   - Siempre entenderás mejor las cosas en tus propias palabras
   - No está sujeto a que se /caiga/ mi servidor
+
+** Sitio Web de la materia
+#+BEGIN_CENTER
+http://sistop.gwolf.org/
+
+Encontrarás:
+#+END_CENTER
+- Listas de asistencia, calificaciones
+- Temas sugeridos para las exposiciones (las abordamos en breve)
+- Liga al material /formal/
+- Liga a la plataforma educativa
 
 ** Uso de EDUCAFI
 
@@ -221,12 +241,6 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
   suban una fotografía /que me permita identificarlos/
 - Siempre que no haya instrucción explícita en otro sentido, /las
   tareas se entregan vía EDUCAFI/.
-
-** Más allá...
-- Emplearemos más bibliografía a lo largo del curso respecto a temas
-  específicos
-- En todo momento que empleemos un texto en particular; subiré los
-  documentos y ligas pertinentes al sitio de la materia.
 
 * Normas del grupo
 ** Criterios de evaluación
@@ -239,14 +253,14 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
 |--------------------------+------|
 - Un /mínimo/ de 3 examenes parciales en el curso
   - Pueden ser más si son necesarios
-  - Puede haber exámenes sorpresa (aunque no acostumbro)
-- Exención de examen ordinario con calificación global de 8 y 100% de
-  tareas entregadas
+- Exención de examen ordinario con calificación global de 8.5 y 100%
+  de tareas entregadas
 - En caso de obtener más del 100%, la calificación se recorta al
   máximo definido
 
 ** Acerca de la evaluación
 - Mi compromiso: ¡Entregar los exámenes corregidos a la brevedad!
+  - Al miércoles inmediato siguiente a su aplicación
   - Los exámenes parciales son para aprender. /Debo entregarlos
     explicando cualquier error/.
 - Las tareas se consideran entregadas /el día indicado, o antes si les
@@ -254,6 +268,7 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
 - *Todo fraude causa baja* (en tareas, exámenes, ejercicios...)
   - ¿Trabajo de investigación? ¡Evítense problemas! Nada de /copiar y
     pegar/.
+  - Es /muy fácil/ detectar el copiado-y-pegado
 - ¡Recuerden traer sus hojas para la resolución!
 
 ** Tareas /obligatorias/
@@ -265,10 +280,7 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
 - Requisito para la exención: 100% de tareas
 - Requisito para presentar examen final en primera vuelta: 80% de tareas
 
-** Proyectos
-- A lo largo del curso (intentaré que sea al iniciar cada unidad) les
-  presentaré algunos temas y lecturas que pueden servir como puntos de
-  partida
+** Exposiciones / Proyectos de investigación
 - Los proyectos buscarán deben buscar anclar la teoría que estamos
   estudiando (o temas relacionados) con la actualidad en el campo
 - Pueden desarrollarse de forma individual o en equipo (de 2 o 3
@@ -277,6 +289,9 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
   minutos)
   - Los temas expuestos son también material a estudiar y evaluar
     /para el resto del grupo/ (en exámenes, tareas, etc.)
+- En el sitio Web de la materia hay una lista de temas /sugeridos/
+  - ¿Otros temas relacionados con la materia y no mencionados?
+    ¡Bienvenidos!
 
 ** Toma de asistencia
 - *Se tomará asistencia* cada sesión. La asistencia a clases *es
@@ -286,20 +301,27 @@ con [[http://sistop.gwolf.org/biblio/Short_introduction_to_operating_systems_-_M
   - Se permite la entrada y se puede participar
   - Salir a media clase por un tiempo prolongado /causa que se anule
     la asistencia/
-- Sólo tendrán derecho a calificación (exención o presentación de
-  examen ordinario) los alumnos con *80%* de asistencia.
+- Sólo tendrán derecho a exención o examen ordinario en primera vuelta
+  los alumnos con *80%* de asistencia.
 
 ** Normas de convivencia
 - Respeto mutuo ante todo — Incluyendo a uno mismo y al grupo
-  - No es lo mismo que trato /formal/. Podemos tutearnos sin problema.
-  - Lenguaje correcto, entrar y salir sin estorbar, etc.
-  - Comida en clase: No deseable, pero permitida a condición de que no
-    hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.
-  - Me reservo el derecho a amonestar faltas de respeto /entre
-    alumnos/ según amerite.
-- Teléfonos celulares apagados
+  - No es lo mismo que trato /formal/.
+  - Me parece perfecto que nos /tuteemos/k si se sienten cómodos (o no
+    si no ;-) )
+- Lenguaje correcto, entrar y salir sin estorbar, etc.
+- Comida en clase: No deseable, pero permitida a condición de que no
+  hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.
+- Me reservo el derecho a amonestar faltas de respeto /entre
+  alumnos/ según amerite.
+
+** Teléfonos celulares
+- Apagados
+- En serio, apagados. Por favor.
   - Sí, aunque sea muy importante o urgente… Es un factor de
     distracción. Para tí, para los compañeros, para el profesor.
+- Si hay una situación exceptional que requiere que estés al pendiente
+  de algún mensaje, /comunícalo al inicio de la clase/.
 
 ** Quedo a sus órdenes
 #+BEGIN_CENTER

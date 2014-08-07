@@ -1218,9 +1218,10 @@ necesidad de invocar a estos programas de verificación: las
 /actualizaciones suaves/, los /sistemas de archivos con bitácora/, y
 los /sistemas de archivos estructurados en bitácora/.
 
-** Actualizaciones suaves (/soft updates/)
+** Actualizaciones suaves
 
-Este esquema aparentemente es el más simple de los que presentaremos,
+El esquema de /actualizaciones suaves/ (en inglés, /soft updates/)
+aparentemente es el más simple de los que se presentan,
 pero su implementación resultó mucho más compleja de lo inicialmente
 estimado, y en buena medida por esta causa hoy en día no ha sido
 empleado más ampliamente. La idea básica detrás de este esquema es
@@ -1281,11 +1282,12 @@ esta decisión sea la cantidad de sistemas que emplean esta segunda
 estrategia que se abordará a continuación, y lo complejo de mantener
 dentro del núcleo dos estrategias tan distintas.
 
-** Sistemas de archivo con bitácora (/journaling file systems/)
+** Sistemas de archivo con bitácora
 
 Este esquema tiene su origen en el ámbito de las bases de datos
 distribuídas. Consiste en separar un área del volumen y dedicarla a
-llevar una bitácora con todas las /transacciones/ de metadatos.[fn::
+llevar una bitácora (/journal/) con todas las /transacciones/ de
+metadatos.[fn::
 Existen implementaciones que registran también los datos en la
 bitácora, pero tanto por el tamaño que ésta requiere como por el
 impacto en velocidad que significa, son poco utilizadas. La sección
@@ -1338,14 +1340,14 @@ La mayor parte de sistemas de archivos incluyen contadores de
 que el sistema operativo determine, de forma automática, si
 corresponde hacer una verificación preventiva.
 
-** Sistemas de archivos estructurados en bitácora (/log-structured file systems/)
+** Sistemas de archivos estructurados en bitácora
 # <<FS_log_structured>>
 Si se lleva el concepto del sistema de archivos con bitácora a su
 límite, y se designa a /la totalidad/ del espacio en el volumen como
 la bitácora, el resultado es un sistema de archivos /estructurado en
-bitácora/. Obviamente, este tipo de sistemas de archivos presenta una
-organización completa radicalmente diferente de los sistemas de
-archivo tradicionales.
+bitácora/ (/log-structured file systems/). Obviamente, este tipo de
+sistemas de archivos presenta una organización completa radicalmente
+diferente de los sistemas de archivo tradicionales.
 
 Las ideas básicas detrás de la primer implementación de un sistema de
 archivos de esta naturaleza (Ousterhut y Rosenblum, 1992) apuntan al

@@ -558,7 +558,7 @@ propietarios, como los de la familia Windows, con buena parte de las
 ventajas de la paravirtualización, sobre entornos de virtualización
 asistida por hardware.
 
-* Contenedores, o /virtualización a nivel sistema operativo/
+* Contenedores
 # <<VIRT_contenedores>>
 
 Una estrategia completamente distinta para la creación de máquinas
@@ -679,8 +679,12 @@ disco.
 
 ** Preguntas de autoevaluación
 
-1. Explique ventajas y desventajas de los diferentes tipos de
-   virtualización (hipervisores y emuladores).
+1. En este capítulo se presentaron diversas tecnologías para la
+   virtualización: emulación, virtualización asistida por hardware,
+   paravirtualización y contenedores. Las cuatro categorías tienen su
+   lugar y casos de uso recomendados. Elabore un cuadro comparativo,
+   presentando las ventajas y desventajas relativas de cada categoría
+   respecto a las demás.
 
 2. A continuación se presentan varias afirmaciones. Evalúe si cada una
    de ellas es verdadera o falsa, sustentando con argumentos su
@@ -719,53 +723,63 @@ disco.
    sugerir para compartir un dispositivo cuya naturaleza fuera de uso
    exclusivo?
 
-4. *Agregar conceptos*
+4. ¿Cuál de las siguientes afirmaciones describe a la principal
+   diferencia entre la virtualización asistida por hardware y la
+   paravirtualización?
 
-   Los contenedores son un enfoque muy distinto que, sin embargo,
-   logra un resultado bastante similar al de las otras tecnologías de
-   virtualización. Para los conceptos, /chroot/ y /contenedores o
-   contextos de seguridad/, elija de la siguiente lista cuál
-   definición corresponde a cada uno.
-
-   - Al ejecutarse todos los huéspedes sobre del mismo núcleo (sistema
-     operativo), éste tiene que efectuar una restricción de las
-     máquinas virtuales para que no interfieran entre sí. ¿Cómo se
-     denomina típicamente cada una de las máquinas virtuales desde el
-     punto de vista del sistema operativo?
-   - Llamada al sistema que restringe la vista que tiene un proceso
-     sobre del sistema de archivos, a partir de la cual se desarrolla
-     la idea de contenedores
-
-5. La principal diferencia entre la virtualización asistida por
-   hardware (HVM) y la paravirtualización es que...
-
-   1. La virtualización asistida por hardware requiere de hardware
-      específico para ser empleada, la paravirtualización intercepta
-      por software las instrucciones "peligrosas", a cambio de un
-      rendimiento un poco menor (~30%)
+   1. La virtualización asistida por hardware requiere de electrónica
+      específica para ser empleada, mientras que la paravirtualización
+      evalúa por software todas las instrucciones e intercepta las
+      instrucciones "peligrosas", a cambio de un menor rendimiento.
 
    2. La virtualización permite ejecutar al sistema huésped sin
-      modificaciones, mientras que la paravirtualización requiere que
-      éste esté preparado para ser virtualizado
+      modificaciones, como si fuera en una computadora real, mientras
+      que la paravirtualización requiere que éste esté preparado para
+      ser virtualizado.
 
    3. Se efectúa únicamente a nivel de dispositivos, mientras que la
-      virtualización plena se aplica sobre del sistema completo
+      virtualización plena se aplica sobre del sistema completo.
 
-6. En el corazón de las arquitecturas de virtualización por hardware
-   encontraremos un programa llamado hipervisor. Indique cuáles de las
-   siguientes afirmaciones respecto a éste son verdaderas, y cuáles
-   falsas.
+5. En el corazón de las arquitecturas de virtualización asistida por
+   hardware encontraremos un programa llamado hipervisor. Indique
+   cuáles de las siguientes afirmaciones respecto a esta tecnología
+   son verdaderas, y cuáles falsas. Busque sustentarlo con ejemplos de
+   sistemas existentes.
 
-   1. Monitorea la actividad de los sistemas operativos
+   1. Monitorea la actividad de los sistemas operativos.
 
    2. Se mantiene completamente invisible ante la perspectiva del
-      sistema huésped
+      sistema huésped.
 
    3. Es completamente transparente: Un hipervisor debe poder correr
-      otros hipervisores dentro de sí
+      otros hipervisores dentro de sí.
 
    4. Cubre algunas de las tareas que realiza normalmente el sistema
-      operativo
+      operativo.
+
+# La siguiente pregunta me gusta, pero hay que agregar conceptos para
+# que tenga un nivel apto de complejidad / interés.
+
+# 4. Los contenedores son un enfoque muy distinto al de las otras
+#    tecnologías de la virtualización y, sin embargo, logra un resultado
+#    bastante similar. Los contenedores existen dentro de un mismo
+#    sistema operativo, aprovechando algunas estructuras básicas.
+
+#    Para los conceptos, /chroot/ y /contenedores o contextos de
+#    seguridad/, elija de la siguiente lista cuál definición corresponde
+#    a cada uno.
+
+#    - Al ejecutarse todos los huéspedes sobre del mismo núcleo (sistema
+#      operativo), éste tiene que efectuar una restricción de las
+#      máquinas virtuales para que no interfieran entre sí. ¿Cómo se
+#      denomina típicamente cada una de las máquinas virtuales desde el
+#      punto de vista del sistema operativo?
+
+#    - Llamada al sistema que restringe la vista que tiene un proceso
+#      sobre del sistema de archivos, a partir de la cual se desarrolla
+#      la idea de contenedores.
+
+
 
 ** Temas de investigación sugeridos
 

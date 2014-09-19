@@ -239,7 +239,7 @@ variable, con /ámbito léxico/
 \pause
 - Ejemplo: La llave del baño en un entorno de oficina mediana
 ** Semáforos
-- Propuestos por Edsger Djikstra (1965)
+- Propuestos por Edsger Dijkstra (1965)
 - Estructuras de datos simples para la sincronización y (muy
   limitada) comunicación entre procesos
   - ¡Increíblemente versátiles para lo limitado de su interfaz!
@@ -247,8 +247,13 @@ variable, con /ámbito léxico/
   interacciones muy complejas
 #+BEGIN_CENTER
 *¡Ojo!* No piensen en semáforos viales, verde/amarillo/rojo (eso sería
-un /mutex/. Piensen en semáforos de tren.
+un simple /mutex/). Piensen en semáforos de tren.
 #+END_CENTER
+
+** Semáforos de tren
+#+attr_latex: height=0.7\textheight
+#+caption: Semáforo de tren (Fuente: Wikipedia, /Señalización ferroviaria argentina/)
+[[../img/semaforo_tren.jpg]]
 
 ** Las tres operaciones de los semáforos
 - Inicializar :: Puede inicializarse a cualquier valor entero. Una
@@ -277,7 +282,7 @@ int sem_trywait(sem_t *sem);
 
 - =pshared= indica si se compartirá entre procesos o sólo entre hilos
   (por optimización de estructuras)
-- =sem_trywait= extiende la interfaz de Djikstra: Verifica si el
+- =sem_trywait= extiende la interfaz de Dijkstra: Verifica si el
   semáforo puede ser decrementado, pero en vez de bloquearse, regresa
   al invocante un error
   - El proceso /debe tener la lógica/ para no proceder a la sección
@@ -385,7 +390,7 @@ sem_post(semaforo);
 
 ** La estupidez humana puede ser infinita
 #+BEGIN_SRC C
-/* Mecanismo de protección: Crucemos los dedos... */
+/* Crucemos los dedos... */
 /* A fin de cuentas, corremos con baja frecuencia! */
 seccion_critica();
 #+END_SRC

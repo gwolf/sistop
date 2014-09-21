@@ -278,9 +278,9 @@ respuesta del MMU a diversas solicitudes
 #+END_CENTER
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-|        0 |  15210 |    150 | RWX      | sí       |
-|        1 |   1401 |    100 | R        | sí       |
-|        2 |    965 |     96 | RX       | sí       |
+|        0 |  15208 |    160 | RWX      | sí       |
+|        1 |   1400 |    100 | R        | sí       |
+|        2 |    964 |     96 | RX       | sí       |
 |        3 |      - |    184 | W        | no       |
 |        4 |  10000 |    320 | RWX      | sí       |
 
@@ -309,15 +309,15 @@ presente=no).
 | Dirección | Tipo de | Dirección                               |
 |   virtual | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|     0-100 | R       | 15310                                   |
-|      2-82 | X       | 1533                                    |
-|      2-82 | W       | Atrapada: Violación de seguridad        |
+|     0-100 | R       | 15308                                   |
+|      2-84 | X       | 1048                                    |
+|      2-84 | W       | Atrapada: Violación de seguridad        |
 |     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-15 | W       | Atrapada: Segmento faltante             |
-|     3-130 | R       | Atrapada: Segmento faltante;            |
+|      3-16 | W       | Atrapada: Segmento faltante             |
+|     3-132 | R       | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|     4-130 | X       | 10130                                   |
-|      5-15 | X       | Atrapada: Segmento invalido             |
+|     4-128 | X       | 10130                                   |
+|      5-16 | X       | Atrapada: Segmento invalido             |
 
 ** Limitaciones de la segmentación
 - Número y semántica de segmentos disponible en la arquitectura

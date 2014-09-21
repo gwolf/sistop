@@ -15,10 +15,9 @@ digraph G {
 		seg2 -> seg4 [style=invis];
         }
 
-	tabla [shape=record, label="Tabla de segmentos\nID: Base + Límite|<0>0: 320 + 96|<1>1: 630 + 180|<2>2: 1300 + 64|<3>3: 860 + 128|<4>4: 1024 + 128"];
-	//tabla [shape=record, label="{ID|<0>0|<1>1|<2>2|<3>3|<4>4}|{Base|320|630|1300|860|1024}|{Límite|<l0>96|<l1>630|<l2>64|<l3>128|<l4>128}"];
+	tabla [shape=record, label="Tabla de segmentos\nID: Base, Límite|<0>0: 320, 96|<1>1: 630, 180|<2>2: 1300, 64|<3>3: 860, 128|<4>4: 1024, 128"];
 
-	fis [shape=record, label="Memoria física|0-319|<0>320-415|415-629|<1>630-809|810-859|<3>860-987|988-1023|<4>1024-1156|1156-1299|<2>1300-1364"];
+	fis [shape=record, label="Memoria física|0-319|<0>320-415|416-629|<1>630-809|810-859|<3>860-987|988-1023|<4>1024-1151|1152-1299|<2>1300-1363"];
 
 	seg0 -> tabla:0;
 	tabla:0 -> fis:0;

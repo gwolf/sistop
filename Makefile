@@ -36,7 +36,8 @@ pdf: fig
 
 libro_index:
 	[ ! -f $(libro) ] || rm -f $(libro)
-	echo '#+options: toc:4 H:4' > $(libro)
+	echo '#+title: Fundamentos de sistemas operativos' >> $(libro)
+	echo '#+options: toc:4 H:4' >> $(libro)
 	echo '#+setupfile: ../setup_notas.org' >> $(libro)
 	echo '#+latex_class: book' >> $(libro)
 	echo '#+latex_header: \usepackage[T1]{fontenc}' >> $(libro)
@@ -44,8 +45,10 @@ libro_index:
 	echo '#+latex_header: \linespread{1.05}' >> $(libro)
 	echo '#+latex_header: \usepackage[scaled]{helvet}' >> $(libro)
 	echo '#+latex_header: \usepackage{courier}' >> $(libro)
+	echo '#+latex_header: \usepackage{hyphenat}' >> $(libro)
+	echo '#+latex_header: \\tracingparagraphs=1' >> $(libro)
+	echo '#+latex_header: \widowpenalty=1000' >> $(libro)
 #	echo '#+latex_header: \\renewcommand{\href}[2]{#2\\footnote{\url{#1}}}' >> $(libro)
-	echo '#+title: Fundamentos de Sistemas Operativos' >> $(libro)
 
 	echo '' >> $(libro)
 #	echo '#+latex: \\frontmatter' >> $(libro)

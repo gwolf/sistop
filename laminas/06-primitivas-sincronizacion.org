@@ -641,18 +641,18 @@ mutex.release()
 - Para implementar un /multiplex/, basta inicializar el semáforo de
   nuestro mutex a un valor superior:
 #+begin_src python
-import threading; import time; import random
-multiplex = threading.Semaphore(5)
-
-def operacion(id, semaf):
-  semaf.acquire()
-  print "Id %d en la secc. crit." % id
-  time.sleep(random.random())
-  semaf.release()
-  print "Terminando el id %d" % id
-
-for hilo in range(10):
-  threading.Thread(target=operacion, args=[hilo,multiplex]).start()
+  import threading; import time; import random
+  multiplex = threading.Semaphore(5)
+  
+  def operacion(id, semaf):
+    semaf.acquire()
+    print "Id %d en la secc. crit." % id
+    time.sleep(random.random())
+    semaf.release()
+    print "Terminando el id %d" % id
+  
+  for hilo in range(10):
+    threading.Thread(target=operacion, args=[hilo,multiplex]).start()
 #+end_src
 ** Torniquete
 - Garantiza que un grupo de hilos o procesos pasan por un punto
@@ -694,25 +694,27 @@ for hilo in range(10):
 ** Barrera: Código ejemplo
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+begin_src python
-  require random
-  # n = Numero de hilos
-  n = random.randint(1,10)
-  cuenta = 0
-  mutex = Semaphore(1)
-  barrera = Semaphore(0)
+import random
+from time import sleep
+from threading import Semaphore
+# n = Numero de hilos
+n = random.randint(1,10)
+cuenta = 0
+mutex = Semaphore(1)
+barrera = Semaphore(0)
 #+end_src
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+begin_src python
+def vamos():
+  global cuenta
   inicializa_estado()
   mutex.acquire()
   cuenta = cuenta + 1
   mutex.release()
-  
   if cuenta == n:
     barrera.release()
   barrera.acquire()
   barrera.release()
-  
   procesamiento()
 #+end_src
 #+latex: \end{column}\end{columns}
@@ -765,6 +767,7 @@ for hilo in range(10):
     baila()
 #+end_src
 #+latex: \end{column}\end{columns}
+\pause
 - Nuevamente, estamos viendo un /rendezvous/
   - Pero es entre dos categorías, no entre dos hilos específicos
 - El patrón puede refinarse mucho, esta es la implementación básica
@@ -834,6 +837,11 @@ Vamos a emplear dos semáforos:
   mutex = threading.Semaphore(1)
   elementos = threading.Semaphore(0)
   buffer = []
+  class Evento:
+    def __init__(self):
+      print "Generando evento"
+    def process(self):
+      print "Procesando evento"
   threading.Thread(target=productor, args=[]).start()
   threading.Thread(target=consumidor, args=[]).start()
 #+END_SRC
@@ -841,7 +849,7 @@ Vamos a emplear dos semáforos:
 #+BEGIN_SRC python
   def productor():
     while True:
-      event = genera_evento()
+      event = Evento()
       mutex.acquire()
       buffer.append(event)
       mutex.release()
@@ -881,8 +889,9 @@ Vamos a emplear dos semáforos:
   lectores = 0
   mutex = threading.Semaphore(1)
   cuarto_vacio = threading.Semaphore(1)
-
+  
   def escritor():
+    global lectores
     cuarto_vacio.acquire()
     escribe()
     cuarto_vacio.release()
@@ -890,6 +899,7 @@ Vamos a emplear dos semáforos:
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+begin_src python
   def lector():
+    global lectores
     mutex.acquire()
     lectores = lectores + 1
     if lectores == 1:
@@ -901,6 +911,7 @@ Vamos a emplear dos semáforos:
     if lectores == 0:
       cuarto_vacio.release()
     mutex.release()
+  
 #+end_src
 #+latex: \end{column}\end{columns}
 
@@ -934,17 +945,18 @@ Vamos a emplear dos semáforos:
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+BEGIN_SRC python
   def lector():
+    global lectores
     torniquete.acquire()
     torniquete.release()
-  
+    
     mutex.acquire()
     lectores = lectores + 1
     if lectores == 1:
       cuarto_vacio.acquire()
     mutex.release()
-  
+    
     lee()
-  
+    
     mutex.acquire()
     lectores = lectores - 1
     if lectores == 0:
@@ -1276,6 +1288,42 @@ continúe.
 #+BEGIN_CENTER
 Tip: Intentar analizar el flujo en paralelo de los tres intermediarios
 #+END_CENTER
+
+** ... ¿Listos para resolver un ejercicio de tarea?
+#+BEGIN_CENTER
+Implementa hilos que controlen el siguiente sistema:
+#+END_CENTER
+
+- La cochera de casa es de portón de apertura automática
+- La puerta toma /algún tiempo/ en abrir y en cerrar
+- El coche toma /algún tiempo/ en entrar y salir.
+  - Si hay peatones o vehículos cruzando frente a la puerta, tienes
+    que esperar a que terminen de pasar.
+- La batería del control está muy débil
+  - Cuando llegas o te vas tienes que pedirle a otro actor que abra y
+    cierre por tí.
+- Si el coche es golpeado por la puerta, se abolla y hay que llevarlo
+  al taller. No quieres que eso ocurra.
+
+
+** ¿Listos para resolver un ejercicio de tarea?
+
+#+BEGIN_CENTER
+Implementa un sistema que tome en cuenta las restricciones en
+cuestión. Para su calificación, importa que:
+#+END_CENTER
+
+- El problema se resuelva correctamente
+- El código sea válido y legal en tu lenguaje favorito
+  - Puedes asumir que la semántica del control de hilos, señales y
+    primitivas de sincronización es similar a la expuesta en clase, no
+    hace falta implementar eso a detalle.
+
+Esta tarea pueden hacerla individualmente o en equipos de dos
+personas; en caso de que elijan hacerlo así, les pido que ambos suban
+el mismo archivo a EDUCAFI, y que ambos indiquen quiénes son los
+autores.
+
 * El problema de inicio
 ** Volviendo al problema de la concurrencia
 #+BEGIN_CENTER

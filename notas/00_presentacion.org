@@ -6,16 +6,16 @@
 #+html: <h2>Acerca del libro</h2>
 
 Este libro busca brindar a estudiantes y docentes de las carreras de
-/Ingeniería en Computación/, /Informática/, /Ciencias de la
-Computación/ y similares un material completo, general y autocontenido
-sobre la materia de /Sistemas Operativos/. No se asume conocimiento
+ingeniería en computación, informática, Ciencias de la
+Computación y similares un material completo, general y autocontenido
+sobre la materia de sistemas operativos. No se asume conocimiento
 previo sobre la temática, aunque se utilizarán conceptos de
 estructuras de datos y algoritmos básicos.
 
 #+latex: \section*{Justificación}
 #+html: <h2>Justificación</h2>
 
-Actualmente existe vasta bibliografía sobre Sistemas Operativos, sin
+Actualmente hay vasta bibliografía sobre sistemas operativos, sin
 embargo la gran mayoría está escrita en inglés, y cuando están
 disponibles en castellano, su traducción deja mucho que desear,
 llevando a conceptos confusos y difíciles de comprender. La intención
@@ -24,22 +24,22 @@ originalmente en castellano, revisado por docentes latinoamericanos
 utilizando la terminología más adecuada para los alumnos de la región
 y eliminando muchos de los errores de traducción.
 
-Generalmente el material de cursos de Sistemas Operativos está
+Generalmente el material de cursos de sistemas operativos está
 compuesto por partes de distintos libros, artículos de investigación,
-recursos en linea, software, ejercitación, etc. Por ello, el alumno
+recursos en línea, software, ejercitación, etc. Por ello, el alumno
 debe recurrir a distintas fuentes durante el curso. El presente
 libro pretende ser de utilidad tanto para alumnos como para
 docentes como una única publicación autocontenida. Cabe remarcar
 también que el material bibliográfico generalmente está protegido por
-derecho de autor, es costoso y en muchos casos de dificil acceso
+derecho de autor, es costoso y en muchos casos de difícil acceso
 (sobre todo las publicaciones en inglés).
 
-Los contenidos de la bibliografía clásica de Sistemas Operativos están
+Los contenidos de la bibliografía clásica de sistemas operativos están
 basadas en re-ediciones y compendio de libros de hace varias décadas
-que incluyen temas obsoletos o desactualizados. Existen también
-desarrollos y tendencias nuevas en el área que aun no han sido
+que incluyen temas obsoletos o desactualizados. Hay también
+desarrollos y tendencias nuevas en el área que aún no han sido
 integradas en la bibliografía clásica, y mucho menos a las
-traducciones. El presente libro pretende también revisar y actualizar
+traducciones. También se quiere revisar y actualizar
 los conceptos clásicos de sistemas operativos inlcuyendo material de
 publicación reciente.
 
@@ -55,7 +55,7 @@ multinacionales, para la región latinoamericana.
 Este libro está apuntado tanto a estudiantes de carreras de informática, 
 computación e ingenierías como a los aficionados de la computadora
 interesados en conocer un poco más de lo que realmente ocurre dentro 
-de un sistema de cómputo y el rol que cumple el sistema operativo.
+de un sistema de cómputo y el papel que cumple el sistema operativo.
 
 Al finalizar el libro se espera que el lector haya adquirido conocimientos
 y habilidades como:
@@ -70,7 +70,7 @@ y habilidades como:
  
 Se asume también que el lector está familiarizado 
 con algún lenguaje de programación
-de alto nivel, y –al menos a nivel básico– con C.
+de alto nivel, y –al menos en un nivel básico– con C.
 Aunque los ejemplos de código están dados en diversos lenguajes de programación
 (Bash, Perl, c, PascalFC, Python, Ruby, Ensamblador, entre otros), éstos
 son tan sencillos que pueden ser fácilmente escritos en el lenguaje 
@@ -84,19 +84,19 @@ sistema operativo Linux (GNU) u otro Unix libre.
 
 El texto comprende los siguientes capítulos:
 
-- 1. Introducción :: Para comenzar a hablar de sistemas operativos, es
-                  necesario en primer término enmarcar /qué es/ un
+- 1. Introducción. :: Para comenzar a hablar de sistemas operativos, es
+                  necesario, en primer término, enmarcar /qué es/ un
                   sistema operativo y cuáles son sus funciones
                   principales. También es importante detallar algunos
                   puntos que, contrario a la percepción común, /no
                   pueden/ considerarse parte de sus funciones.
 
-		  Este tema se presenta apoyado de la evolución
+		  Este tema se presenta apoyado en la evolución
                   histórica del cómputo, haciendo énfasis en por qué
                   este proceso evolutivo en particular desembocó en
-                  los sistemas operativos que existen hoy en día.
+                  los sistemas operativos que se tienen hoy en día.
 
-- 2. Relación con el hardware :: Partiendo de que una de las
+- 2. Relación con el hardware. :: Partiendo de que una de las
      principales tareas del sistema operativo es presentar una
      /abstracción regular/ del hardware a los procesos que se
      ejecuten, resulta importante presentar cómo éste está
@@ -105,38 +105,38 @@ El texto comprende los siguientes capítulos:
 
      Este capítulo aborda la /jerarquía de almacenamiento/, el
      mecanismo de /interrupciones/ y /excepciones/ y el papel que
-     juegan para las /llamadas al sistema/, las características base
+     desempeñan para las /llamadas al sistema/, las características base
      de diversos tipos de dispositivo del sistema, el concepto de
      /canales/ (o /buses/) de comunicación, el mecanismo de /acceso
-     directo a memoria/, y una introducción a lo que puede ser visto
-     como tema conductor a lo largo de todo el libro: La importancia
+     directo a memoria/, y una introducción a un tema que puede ser visto
+     como eje conductor a lo largo de todo el libro: La importancia
      y complejidad de la /concurrencia/, y su relación con el
      /paralelismo/ y /multiprocesamiento/.
 
-- 3. Administración de procesos :: La entidad principal con la que
-     interactúa un sistema operativo (sea para brindarle servicios o
+- 3. Administración de procesos. :: La entidad principal con la que
+     interactúa un sistema operativo (ya sea para brindarle servicios o
      para imponerle restricciones) es el proceso. Este capítulo inicia
      presentando los diferentes estados de los procesos y la relación
-     entre éstas y sus /hermanos menores/ (los /hilos/), y los
+     entre éstos y sus /hermanos menores/ (los /hilos/), y los
      principales modelos empleados para el multiprocesamiento.
 
      Todos los sistemas operativos modernos tienen que enfrentar a la
-     /concurrencia/: La incertidumbre del ordenamiento en el tiempo
+     /concurrencia/: la incertidumbre del ordenamiento en el tiempo
      entre eventos relativos a los diferentes procesos e hilos. La
      parte medular de este capítulo presenta a las /primitivas de
-     sincronización/: Mutexes, semáforos y monitores. Para
+     sincronización/: mutexes, semáforos y monitores. Para
      ilustrarlas, se emplean los patrones y problemas clásicos que se
      han seguido a lo largo de su desarrollo histórico.
 
-     Pero las primitivas pueden sólamente utilizarse entre procesos
+     Pero las primitivas pueden solamente utilizarse entre procesos
      que /cooperan deliberadamente/ entre sí. Un sistema operativo
-     debe implementar protección y separación incluso entre procesos
+     debe instrumentar protección y separación, incluso entre procesos
      que /compiten/ o que sencillamente no saben el uno acerca del
      otro. Por ello, la última sección de este capítulo aborda los
-     diferentes mecanismos que existen para evitar las situaciones de
+     diferentes mecanismos que hay para evitar las situaciones de
      /bloqueo mutuo/.
 
-- 4. Planificación de procesos :: Para que varios procesos coexistan
+- 4. Planificación de procesos. :: Para que varios procesos coexistan
      en un sistema de cómputo, el primer recurso que el sistema
      operativo debe /multiplexar/ o repartir entre todos ellos es el tiempo de
      cómputo: el uso del procesador. Este capítulo presenta los
@@ -146,24 +146,24 @@ El texto comprende los siguientes capítulos:
      principales algoritmos, y se ilustra cómo los sistemas operativos
      modernos van empleando técnicas mixtas de varios de ellos.
 
-     Por último, se abordan tres temas brevemente: nos diferentes
+     Por último, se abordan tres temas brevemente: los diferentes
      modelos de planificación de hilos y su relación
      con los procesos, las particularidades de la planificación en un
      entorno con multiprocesadores reales, y las necesidades de
      planificación de /tiempo real/.
 
-- 5. Administración de memoria :: Los /programas/ sólo se vuelven
+- 5. Administración de memoria. :: Los /programas/ sólo se vuelven
      procesos cuando se les asigna memoria y tiempo de cómputo: cuando dejan de ser el
      resultado de una compilación guardada estáticamente para
-     convertirse en una entidad dinámica. Este capítulo presenta en
-     primer lugar la visión /desde dentro/ de la memoria por parte de
+     convertirse en una entidad dinámica. Este capítulo presenta, en
+     primer lugar, la visión /desde dentro/ de la memoria por parte de
      cada uno de los procesos: el espacio de direccionamiento y el
      acomodo clásico de las regiones de un proceso en la memoria que
      le es asignada.
 
      Para que los distintos procesos compartan la memoria del sistema,
-     a lo largo de la historia se han presentado diferentes
-     esquemas. Se presentan someramente los esquemas de partición
+     vemos que a lo largo de la historia se han presentado diferentes
+     esquemas. Se explican someramente los esquemas de partición
      contigua fija y variable, para profundizar posteriormente en los
      que ofrecen mayor flexibilidad al sistema operativo y se
      mantienen en uso al día de hoy: la segmentación y la
@@ -179,8 +179,8 @@ El texto comprende los siguientes capítulos:
      estrategias de mitigación que se han implementado con el paso de
      los años para mitigar su peligrosidad.
 
-- 6. Organización de archivos :: De cara al usuario, probablemente la
-     principal abstracción implementada por el sistema operativo es la
+- 6. Organización de archivos. :: De cara al usuario, probablemente la
+     principal abstracción llevada a cabo por el sistema operativo es la
      organización de la información sobre un medio persistente. Hoy en
      día, la norma es que esta organización se realice en /archivos/
      estructurados sobre una estructura jerárquica llamada
@@ -188,29 +188,29 @@ El texto comprende los siguientes capítulos:
      abstracción, sin entrar aún en detalles respecto a cómo se llega
      a un respaldo físico de la misma.
 
-     Estos conceptos parecen tan pervasivos y universales que podría
+     Estos conceptos parecen tan omnipresentes y universales que podría
      pensarse que no requieren mayor análisis. Sin embargo, resulta
      importante abordar las diferencias semánticas derivadas del
      desarrollo histórico de distintos sistemas. En este capítulo se
-     presentan varios conceptos cuya implementación en un medio que
+     presentan varios conceptos cuya instrumentación en un medio que
      asegure la persistencia se describirá en el siguiente capítulo.
 
-     Por último, en este capítulo se incluye un breve repaso de
+     Por último, se incluye un breve repaso de
      distintos tipos de sistemas de archivos en red, enfatizando
      nuevamente en los cambios semánticos derivados de la distinta
-     historia de cada implementación.
+     historia de cada instrumentación.
 
-- 7. Sistemas de archivos :: Este capítulo presenta la contraparte
+- 7. Sistemas de archivos. :: Este capítulo presenta la contraparte
      obligada del anterior: ¿cómo se estructuran los dispositivos de
      almacenamiento a largo plazo, a los cuales se hace referencia
-     genéricamente como /discos/? ¿Cómo se van plasmando las
+     genéricamente como /discos/, cómo se van plasmando las
      estructuras mediante las cuales el usuario organiza la
-     información en bloques dentro de un dispositivo? ¿Qué problemas
+     información en bloques dentro de un dispositivo, qué problemas
      pueden derivar del uso de estos /sistemas de archivos/, y qué
      métodos para evitarlos o resolverlos se han implementado?
 
-     La parte central de este capítulo se centra en un sistema de
-     archivos bastante viejo y simple, pero aún en muy amplio uso en el cómputo
+     Este capítulo basa sus ejemplos en un sistema de archivos
+     bastante viejo y simple, pero aún en muy amplio uso en el cómputo
      moderno: la familia /FAT/.
 
 Los siguientes temas resultan muy importantes para la comprensión y
@@ -218,34 +218,34 @@ para el desarrollo futuro de la materia, pero dado que son /empleados/
 por el sistema operativo (y no necesariamente son /parte integral/ del
 mismo), se presentan como apéndices
 
-- A. Software libre y licenciamiento :: Estudiar sistemas operativos
+- A. Software libre y licenciamiento. :: Estudiar sistemas operativos
      cruza necesariamente la temática del /software libre/. Uno de los
      principios fundamentales del desarrollo histórico es la /libertad
      de aprender/, esto es, todo software que se diga /libre/ debe
      permitir a sus usuarios comprender sus estructuras básicas, la
      relación entre ellas, y la lógica general de su programación.
 
-     Hoy en día existe una gran cantidad de sistemas operativos
+     Hoy en día hay una gran cantidad de sistemas operativos
      libres, tanto de propósito general como enfocados a un nicho. El
      /movimiento ideológico/ del software libre, contrario a cualquier
      pronóstico que pudiera haberse hecho al iniciarse en 1984,
      claramente ha cambiado el desarrollo del cómputo. Todos los
      sistemas operativos que pueden ser estudiados /de primera mano/,
-     constatando la implementación de sus principios son
+     constatando la instrumentación de sus principios son
      necesariamente (aunque con una definición ligeramente laxa)
      software libre.
 
      Hacia el año 2000 se fue haciendo claro que estas ideas no pueden
      aplicarse únicamente al software. Poco a poco fue definiéndose
      una noción mucho más amplia, la de los /bienes culturales
-     libres/. El presente libro busca ser una contribución a esta
+     libres/. El presente libro busca brindar una contribución a esta
      última categoría.
 
      El primer apéndice aborda brevemente estos temas, así como los
      principales modelos de licenciamiento libre utilizados.
 
-- B. Virtualización :: La virtualización es una herramienta muy útil,
-     y cada vez más al alcance de todos, para el aprendizaje de los
+- B. Virtualización. :: La virtualización es una herramienta muy útil,
+     y está cada vez más al alcance de todos, para el aprendizaje de los
      sistemas operativos. Hay una gran cantidad de recursos para
      comprender desde los primeros momentos del arranque de la
      computadora. Empleando imágenes de máquinas virtuales, pueden
@@ -265,9 +265,9 @@ mismo), se presentan como apéndices
      igual que con los conceptos presentados a lo largo del libro, la
      virtualización es presentada a partir de su perspectiva
      histórica, y detallando hacia las distintas modalidades que se
-     han desarrollado al paso del tiempo.
+     han desarrollado con el paso del tiempo.
 
-- C. El medio físico y el almacenamiento :: En el capítulo \ref{FS} se
+- C. El medio físico y el almacenamiento. :: En el capítulo \ref{FS} se
      presenta cómo se /concretiza/ la abstracción de archivos y
      directorios para plasmarlo en un gran arreglo lineal de datos, en
      una entidad aún abstracta a la cual se sigue haciendo referencia
@@ -292,7 +292,7 @@ mismo), se presentan como apéndices
      Por último, un /volumen/ ya no necesariamente se refiere a un
      único medio físico. Este apéndice aborda tanto a /RAID/, el
      primer mecanismo que se popularizó para /agregar/ varias unidades
-     para mejorar tanto la capacidad máxima y la confiabilidad de un
+     para mejorar, tanto la capacidad máxima y la confiabilidad de un
      volumen, como al manejo avanzado de volúmenes, en que el sistema
      operativo incorpora la lógica de RAID con la del manejo de
      sistemas de archivos para lograr mucho mayor flexibilidad.
@@ -304,7 +304,7 @@ Este libro fue desarrollado como parte del [[http://www.latinproject.org/][Proye
 la creación de libros de texto /libres/ para nivel universitario, y
 enfocado a Latinoamérica.
 
-Cualquier porción de este libro puede ser reproducido y utilizado para
+Cualquier parte de este libro puede ser reproducido y utilizado para
 todo fin, bajo los términos de la licencia /[[https://creativecommons.org/licenses/by-sa/4.0/deed.es][Creative
 Commons-Atribución-CompartirIgual]]/ (/CC-BY-SA/) versión 4.0.
 

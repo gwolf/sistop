@@ -208,7 +208,7 @@ usuario fuera responsable con el uso de recursos, resultó necesario
 que apareciera la infraestructura de protección de recursos: un
 proceso no debe sobreescribir el espacio de memoria de otro (ni el
 código, ni los datos), mucho menos el espacio del monitor. Esta
-protección  se encuentra en la /Unidad de Manejo de Memoria/ (MMU),
+protección  se encuentra en la /Unidad de Manejo de Memoria/ (*mmu*),
 presente en todas las computadoras de uso genérico desde los años noventa.
 
 Ciertos dispositivos requieren bloqueo para ofrecer acceso
@@ -304,7 +304,7 @@ sistemas operativos o lenguajes de programación; la interfaz primaria
 para programarlas era mediante llaves (/switches/), y para recibir sus
 resultados, se utilizaban bancos de
 #+latex: \textsc{led}s.
-#+html: <span class="smallcaps">led</span>s.
+#+html: <b>led</b>s.
 Claro está, esto requería conocimientos
 especializados, y las computadoras personales eran aún vistas sólo
 como juguetes caros.
@@ -314,89 +314,65 @@ como juguetes caros.
 La verdadera revolución apareció cuando‚ poco tiempo más tarde,
 comenzaron a venderse computadoras personales con salida de video
 (típicamente por medio de una televisión) y entrada por un
-teclado. Estas computadoras popularizaron el lenguaje de programación
-#+latex: \textsc{basic},
-#+html: <span class="smallcaps">basic</span>,
- diseñado para usuarios novatos en los sesenta, y para permitir a
-los usuarios gestionar sus recursos (unidades de cinta, pantalla
-posicionable, unidades de disco, impresoras, modem, etc.) llevaban un
+teclado. Estas computadoras popularizaron el lenguaje *basic*,
+diseñado para usuarios novatos en los sesenta, y para permitir a los
+usuarios gestionar sus recursos (unidades de cinta, pantalla
+posicionable, unidades de disco, impresoras, modem, etc.)  llevaban un
 software mínimo de sistema —nuevamente, un proto-sistema operativo.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
 #+label: INTRO_commodore_pet
-#+caption: La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras con intérprete de BASIC (imagen de la Wikipedia: /Commodore PET/).
+#+caption: La /Commodore Pet 2001/, en el mercado desde 1977, una de las primeras con intérprete de *basic* (imagen de la Wikipedia: /Commodore PET/).
 [[./img/commodore_pet.jpg]]
 
-** La computadora para fines "serios": la familia PC
+** La computadora para fines "serios": la familia *pc*
 
 Al aparecer las computadoras personales "serias", orientadas a la
-oficina más que al /hobby/, a principios de los ochenta (particularmente
-representadas por la
-#+latex: \textsc{ibm pc},
-#+html: <span class="smallcaps">ibm pc</span>,
- 1981), sus sistemas operativos se
-comenzaron a diferenciar de los equipos previos al separar el /entorno
-de desarrollo/ en algún lenguaje de programación del /entorno de
-ejecución/. El papel principal del sistema operativo ante el usuario era
-administrar los archivos de las diversas aplicaciones mediante
-una sencilla interfaz de línea de comando, y lanzar las
-aplicaciones que el usuario seleccionaba.
+oficina más que al /hobby/, a principios de los ochenta
+(particularmente representadas por la *ibm pc*, 1981), sus sistemas
+operativos se comenzaron a diferenciar de los equipos previos al
+separar el /entorno de desarrollo/ en algún lenguaje de programación
+del /entorno de ejecución/. El papel principal del sistema operativo
+ante el usuario era administrar los archivos de las diversas
+aplicaciones mediante una sencilla interfaz de línea de comando, y
+lanzar las aplicaciones que el usuario seleccionaba.
 
-La
-#+latex: \textsc{pc} de \textsc{ibm}
-#+html: <span class="smallcaps">pc</span> de <span class="smallcaps">ibm</span>
-fue la primer arquitectura de computadoras personales en
-desarrollar una amplia familia de /clones/, computadoras compatibles
-diseñadas para trabajar con el mismo sistema operativo, y que
-eventualmente capturaron casi 100% del
-mercado. Prácticamente todas las computadoras de escritorio y
-portátiles en el mercado hoy derivan de la arquitectura de la
-#+latex: \textsc{ibm pc}.
-#+html: <span class="smallcaps">ibm pc</span>.
+La *pc* de *ibm* fue la primer arquitectura de computadoras personales
+en desarrollar una amplia familia de /clones/, computadoras
+compatibles diseñadas para trabajar con el mismo sistema operativo, y
+que eventualmente capturaron casi 100% del mercado. Prácticamente
+todas las computadoras de escritorio y portátiles en el mercado hoy
+derivan de la arquitectura de la *ibm pc*.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
 #+label: INTRO_ibmpc
-#+caption: La computadora IBM PC modelo 5150 (1981), iniciadora de la arquitectura predominantemente en uso hasta el día de hoy (imagen de la Wikipedia: /IBM Personal Computer/).
+#+caption: La computadora *ibm pc* modelo 5150 (1981), iniciadora de la arquitectura predominantemente en uso hasta el día de hoy (imagen de la Wikipedia: /IBM Personal Computer/).
 [[./img/ibmpc.jpg]]
 
-Ante las aplicaciones, el sistema operativo (
-#+latex: \textsc{pc-dos},
-#+html: <span class="smallcaps">pc-dos</span>,
-en las versiones
-distribuidas directamente por
-#+latex: \textsc{ibm},
-#+html: <span class="smallcaps">ibm</span>,
-o el que se popularizó más,
-#+latex: \textsc{ms-dos},
-#+html: <span class="smallcaps">ms-dos</span>,
-en los /clones/) ofrecía la ya conocida serie de interfaces y
-abstracciones para administrar los archivos y la entrada/salida a
-través de sus puertos. Cabe destacar que, particularmente en sus
-primeros años, muchos programas se ejecutaban directamente sobre el
-hardware, arrancando desde el
-#+latex: \textsc{bios}
-#+html: <span class="smallcaps">bios</span>
-y sin emplear el sistema operativo.
+Ante las aplicaciones, el sistema operativo (*pc-dos*, en las
+versiones distribuidas directamente por *ibm*, o el que se popularizó
+más, *ms-dos*, en los /clones/) ofrecía la ya conocida serie de
+interfaces y abstracciones para administrar los archivos y la
+entrada/salida a través de sus puertos. Cabe destacar que,
+particularmente en sus primeros años, muchos programas se ejecutaban
+directamente sobre el hardware, arrancando desde el *bios* y sin
+emplear el sistema operativo.
 
-** El impacto del entorno gráfico (WIMP)
+** El impacto del entorno gráfico (*wimp*)
 # <<INTRO_wimp>>
 
 Hacia mediados de los ochenta comenzaron a aparecer computadoras con
 interfaces usuario gráficas (/Graphical User Interfaces/,
 #+latex: \emph{textsc{gui}s})
-#+html: <em><span class="smallcaps">gui</span>s</em>)
-basadas en el paradigma
-#+latex: \textsc{wimp}
-#+html: <span class="smallcaps">wimp</span>
-(/Windows, Icons,
-Menus, Pointer/; Ventanas, Iconos, Menúes, Apuntador), que permitían
-la interacción con varios programas al mismo tiempo. Esto /no
-necesariamente/ significa que sean sistemas multitarea: por ejemplo,
-la primer interfaz de
+#+html: <em><b>gui</b>s</em>)
+basadas en el paradigma *wimp* (/Windows, Icons, Menus, Pointer/;
+Ventanas, Iconos, Menúes, Apuntador), que permitían la interacción con
+varios programas al mismo tiempo. Esto /no necesariamente/ significa
+que sean sistemas multitarea: por ejemplo, la primer interfaz de
 #+latex: Mac\textsc{os}
-#+html: Mac<span class="smallcaps">os</span>
+#+html: Mac<b>os</b>
 permitía ver varias ventanas
 abiertas simultáneamente, pero sólo el proceso activo se
 ejecutaba.
@@ -404,7 +380,7 @@ ejecutaba.
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
 #+label: INTRO_mac128
-#+caption: Apple Macintosh (1984), popularizó la interfaz usuario gráfica (GUI) (imagen de la Wikipedia: /Macintosh/).
+#+caption: Apple Macintosh (1984), popularizó la interfaz usuario gráfica (*gui*) (imagen de la Wikipedia: /Macintosh/).
 [[./img/mac128.png]]
 
 
@@ -422,19 +398,15 @@ ahora que programar con la conciencia de que compartirían recursos,
 con el limitante (que no tenían en las máquinas /profesionales/) de
 no contar con hardware especializado para esta protección. Los
 procesadores en uso comercial en los ochenta no manejaban /anillos/ o
-/niveles de ejecución/ ni /unidad de administración de memoria/
-#+latex: \textsc{(mmu}),
-#+html: <span class="smallcaps">(mmu</span>),
+/niveles de ejecución/ ni /unidad de administración de memoria/ *(mmu*),
 por lo que un programa fallado o dañino podía corromper la operación
 completa del equipo. Y si bien los entornos que más éxito tuvieron
 (Apple
 #+latex: Mac\textsc{os}
-#+html: Mac<span class="smallcaps">os</span>
- y Microsoft Windows) no implementaban multitarea real, sí
-hubo desde el principio sistemas como la Commodore Amiga o la Atari
-#+latex: \textsc{st}
-#+html: <span class="smallcaps">st</span>
-que hacían un multitasking /apropiativo/ verdadero.
+#+html: Mac<b>os</b>
+y Microsoft Windows) no implementaban multitarea real, sí hubo desde
+el principio sistemas como la Commodore Amiga o la Atari *st* que
+hacían un multitasking /apropiativo/ verdadero.
 
 #+attr_html: height="350"
 #+attr_latex: width=0.5\textwidth
@@ -448,10 +420,7 @@ operativo cayeron lentamente en el olvido.
 
 ** Convergencia de los dos grandes mercados
 
-Conforme fueron apareciendo los
-#+latex: \textsc{cpu}
-#+html: <span class="smallcaps">cpu</span>
-con características suficientes
+Conforme fueron apareciendo los *cpu* con características suficientes
 en el mercado para ofrecer la protección y aislamiento necesario
 (particularmente, Intel 80386 y Motorola 68030), la brecha de
 funcionalidad entre las computadoras personales y las /estaciones de
@@ -460,76 +429,55 @@ trabajo/ y /mainframes/ se fue cerrando.
 Hacia principios de los 1990, la mayor parte de las computadoras de
 arquitecturas /alternativas/ fueron cediendo a las presiones del
 mercado, y hacia mediados de la década sólo quedaban dos arquitecturas
-principales: la derivada de
-#+latex: \textsc{ibm}
-#+html: <span class="smallcaps">ibm</span>
-y la derivada de la Apple Macintosh.
+principales: la derivada de *ibm* y la derivada de la Apple Macintosh.
 
 Los sistemas operativos primarios para ambas plataformas fueron
-respondiendo a las nuevas características del hardware: en las
-#+latex: \textsc{ibm},
-#+html: <span class="smallcaps">ibm</span>,
-la presencia de Microsoft Windows (originalmente un /entorno operativo/
-desde su primera edición en 1985, evolucionando hacia un sistema
-operativo completo ejecutando sobre una base de
-#+latex: \textsc{ms-dos}
-#+html: <span class="smallcaps">ms-dos</span>
-en 1995) se fue
-haciendo prevalente hasta ser la norma. Windows pasó de ser un sistema
-meramente de aplicaciones propias y que operaba únicamente por reemplazo
-de aplicación activa a ser un sistema de multitarea cooperativa y,
-finalmente un sistema que requería protección en hardware (80386) e
-implementaba multitarea apropiativa.
+respondiendo a las nuevas características del hardware: en las *ibm*,
+la presencia de Microsoft Windows (originalmente un /entorno
+operativo/ desde su primera edición en 1985, evolucionando hacia un
+sistema operativo completo ejecutando sobre una base de *ms-dos*
+en 1995) se fue haciendo prevalente hasta ser la norma. Windows pasó
+de ser un sistema meramente de aplicaciones propias y que operaba
+únicamente por reemplazo de aplicación activa a ser un sistema de
+multitarea cooperativa y, finalmente un sistema que requería
+protección en hardware (80386) e implementaba multitarea apropiativa.
 
 A partir del 2003, el núcleo de Windows en más amplio uso fue
 reemplazado por un desarrollo hecho de inicio como un sistema
-operativo completo y ya no como una aplicación dependiente de
-#+latex: \textsc{ms-dos}:
-#+html: <span class="smallcaps">ms-dos</span>
-el núcleo de nueva tecnología (Windows
-#+latex: \textsc{nt}),
-#+html: <span class="smallcaps">nt</span>),
-que, sin romper
-compatibilidad con los
+operativo completo y ya no como un programa bajo *ms-dos*: el núcleo
+de nueva tecnología (Windows *nt*), que, sin romper compatibilidad con
+los
 #+latex: \textsc{api}s
-#+html: <span class="smallcaps">api</span>s
+#+html: <b>api</b>s
 históricos de Windows, ofreció mucho
 mayor estabilidad.
 
 Por el lado de Apple, la evolución fue muy en paralelo: ante un
 sistema ya agotado y obsoleto, el
 #+latex: Mac\textsc{os}
-#+html: Mac<span class="smallcaps">os</span>
+#+html: Mac<b>os</b>
 9, en 2001 anunció una
 nueva versión de su sistema operativo que fue en realidad un
 relanzamiento completo:
 #+latex: Mac\textsc{os x}
-#+html: Mac<span class="smallcaps">os x</span>
-es un sistema basado en un núcleo Unix
-#+latex: \textsc{bsd},
-#+html: <span class="smallcaps">bsd</span>,
-sobre el /microkernel/ Mach.
+#+html: Mac<b>os x</b>
+es un sistema basado en un núcleo Unix *bsd*, sobre el /microkernel/
+Mach.
 
 Y otro importante jugador que entró en escena durante los años noventa
 fue el
 software libre, por medio de varias implementaciones distintas de
 sistemas tipo Unix, principalmente, Linux y los
 #+latex: *\textsc{bsd} (Free\textsc{bsd}, Net\textsc{bsd}, Open\textsc{bsd}).
-#+html: *<span class="smallcaps">bsd</span> (Free<span class="smallcaps">bsd</span, Net<span class="smallcaps">bsd</span>, Open<span class="smallcaps">bsd</span>).
-Estos sistemas implementaron, colaborativamente y a
-escala mundial, software compatible tanto con las
-#+latex: \textsc{pc}
-#+html: <span class="smallcaps">pc</span>
-como con el que
-se ejecutaba en las estaciones de trabajo a gran escala, con alta
-confiabilidad, y cerrando por fin la divergencia del árbol del
-desarrollo de la computación en /fierros grandes/ y /fierros chicos/.
+#+html: *<b>bsd</b> (Free<b>bsd</b, Net<b>bsd</b>, Open<b>bsd</b>).
+Estos sistemas implementaron, colaborativamente y a escala mundial,
+software compatible tanto con las *pc* como con el que se ejecutaba en
+las estaciones de trabajo a gran escala, con alta confiabilidad, y
+cerrando por fin la divergencia del árbol del desarrollo de la
+computación en /fierros grandes/ y /fierros chicos/.
 
-Al día de hoy, la arquitectura derivada de Intel (y la
-#+latex: \textsc{pc})
-#+html: <span class="smallcaps">pc</span>)
-es el claro
-ganador de este proceso de 35 años, habiendo conquistado casi la
+Al día de hoy, la arquitectura derivada de Intel (y la *pc*) es el
+claro ganador de este proceso de 35 años, habiendo conquistado casi la
 totalidad de los casos de uso, incluso las máquinas Apple.  Hoy en
 día, la arquitectura Intel ejecuta desde subportátiles hasta
 supercomputadoras y centros de datos; el sistema operativo específico
@@ -538,9 +486,7 @@ diferentes Unixes concentrados en los equipos servidores.
 
 En el frente de los dispositivos /embebidos/ (las computadoras más
 pequeñas, desde microcontroladores hasta teléfonos y tabletas), la
-norma es la arquitectura
-#+latex: \textsc{arm},
-#+html: <span class="smallcaps">arm</span>,
+norma es la arquitectura *arm*,
 también bajo versiones específicas de
 sistemas operativos Unix y Windows (en ese orden).
 
@@ -569,11 +515,8 @@ interfaz es la misma de una computadora estándar.
 Claro, esta definición –indudablemente rápida e imperfecta– deja una
 gran área gris, y permite cierta ambigüedad. Por ejemplo, las más
 recientes versiones de algunos entornos de usuario (notablemente, la
-interfaz primaria de Windows 8, o los entornos
-#+latex: \textsc{gnome}
-#+html: <span class="smallcaps">gnome</span>
-y Unity de Linux)
-buscan /unificar la experiencia/, incorporando conceptos del
+interfaz primaria de Windows 8, o los entornos *gnome* y Unity de
+Linux) buscan /unificar la experiencia/, incorporando conceptos del
 /multitouch/ a los escritorios y acercando los casos de uso. Tómense,
 pues, estos lineamientos como meramente indicativos.
 
@@ -582,35 +525,24 @@ pues, estos lineamientos como meramente indicativos.
 Tener una plataforma de cómputo móvil ha sido uno de los anhelos más
 reiterados del cómputo; ya en 1975, antes de la aparición de todos los
 sistemas reseñados en la sección \ref{INTRO_computadoras_personales}
-(a excepción de la Altair 8800)
-#+latex: \textsc{ibm}
-#+html: <span class="smallcaps">ibm</span>
-lanzó al mercado su primer
-computadora portátil: La
-#+latex: \textsc{ibm}
-#+html: <span class="smallcaps">ibm</span>
-5100, de 25kg de peso y con una pantalla
-de 5 pulgadas (equivalente a un teléfono celular grande del día de
-hoy). Esta computadora tuvo un éxito muy limitado en buena medida por
-su precio: 9 000 dólares en su configuración más básica la dejaban
-claramente fuera del alcance del mercado de los entusiastas de la
-época, y la incomodidad de su pequeña pantalla llevó al entorno
+(a excepción de la Altair 8800) *ibm* lanzó al mercado su primer
+computadora portátil: La *ibm* 5100, de 25kg de peso y con una
+pantalla de 5 pulgadas (equivalente a un teléfono celular grande del
+día de hoy). Esta computadora tuvo un éxito muy limitado en buena
+medida por su precio: 9 000 dólares en su configuración más básica la
+dejaban claramente fuera del alcance del mercado de los entusiastas de
+la época, y la incomodidad de su pequeña pantalla llevó al entorno
 corporativo a preferir seguir usando las minicomputadoras con
 terminales estándar para la época.
 
 Este mercado también vio una importante convergencia, en este caso
 /desde abajo/: la miniautrización vivida en la década de los setenta
-fue, a fin de cuentas, iniciada por el
-#+latex: \textsc{cpu}
-#+html: <span class="smallcaps">cpu</span>
-Intel 4004, diseñado
-expresamente para las calculadoras Busicom. Durante esa época
-nacieron las calculadoras portátiles. Éstas comenzaron implementando
-únicamente las operaciones aritméticas básicas, pero con el paso del
-tiempo aparecieron las /calculadoras científicas/, incluyendo
-operaciones trigonométricas. En 1974, Hewlett-Packard lanzó al mercado la
-#+latex: \textsc{hp-65},
-#+html: <span class="smallcaps">hp-65</span>,
+fue, a fin de cuentas, iniciada por el *cpu* Intel 4004, diseñado
+expresamente para las calculadoras Busicom. Durante esa época nacieron
+las calculadoras portátiles. Éstas comenzaron implementando únicamente
+las operaciones aritméticas básicas, pero con el paso del tiempo
+aparecieron las /calculadoras científicas/, incluyendo operaciones
+trigonométricas. En 1974, Hewlett-Packard lanzó al mercado la *hp-65*
 la primer calculadora de bolsillo plenamente programable.
 
 Para 1984, ya ante la franca popularización de las aplicaciones
@@ -644,27 +576,22 @@ durante la mayor parte de la década del 2000.
 #+attr_html: width="350", height="297"
 #+attr_latex: width=0.35\textwidth
 #+label: INTRO_pda_casio
-#+caption: Sharp ZQ-770, diseño bajo uno de los formatos de /PDA/ (Asistente Personal Digital) más popularizados de la década de los noventa (imagen de la Wikipedia: /Sharp Wizard/).
+#+caption: Sharp *ZQ-770*, diseño bajo uno de los formatos de *pda* (Asistente Personal Digital) más popularizados de la década de los noventa (imagen de la Wikipedia: /Sharp Wizard/).
 [[./img/pda_sharp.jpg]]
 
 Siguiendo los pasos del /Organiser/, muchas otras empresas fueron
 creando pequeños equipos con aproximadamente la misma funcionalidad
 básica (lista de contactos, notas y agenda) e interfaz usuario,
 definiendo el término de /Asistente Digital Personal/ (/Personal
-Digital Assistant/,
-#+latex: \textsc{pda}).
-#+html: <span class="smallcaps">pda</span>).
-Hubo diferentes hitos durante la década de
-los noventa, aunque destaca particularmente la plataforma /Palm/. Esta fue
-la primera plataforma con éxito al incorporar una interfaz usuario táctil
-con escritura basada en reconocimiento de la letra (que era /trazada/
-por medio de una pluma especial, o /stylus/, en la pantalla).
+Digital Assistant/, *pda*).  Hubo diferentes hitos durante la década
+de los noventa, aunque destaca particularmente la plataforma
+/Palm/. Esta fue la primera plataforma con éxito al incorporar una
+interfaz usuario táctil con escritura basada en reconocimiento de la
+letra (que era /trazada/ por medio de una pluma especial, o /stylus/,
+en la pantalla).
 
 El siguiente paso natural fue unir la funcionalidad del cada vez más
-popular teléfono celular con la del
-#+latex: \textsc{pda}.
-#+html: <span class="smallcaps">pda</span>.
-Ya desde 1996 se
+popular teléfono celular con la del *pda*.  Ya desde 1996 se
 comercializaron equipos ofreciendo la funcionalidad integrada, y el
 término /smartphone/ (/teléfono inteligente/) se empleó por primera
 vez en 1998. Como se verá en la sección
@@ -696,18 +623,16 @@ todos los dispositivos mencionados en esta sección están hechos para
 caber en el bolsillo de una camisa. Sin embargo, a este segmento deben
 agregarse las /tabletas/. La historia de su desarrollo y adopción se
 parecen a la aquí presentada respecto a la interfaz de los teléfonos
-inteligentes (e incluso, llevada más al extremo): Es posible encontrar antecedentes
-desde 1915,[fn:: El registro de [[http://www.freepatentsonline.com/1117184.pdf][patente 1,117,184]] de los Estados
-Unidos se refiere a una máquina para reconocer los caracteres escritos
-en una hoja] numerosas descripciones literarias en la ciencia ficción
-a lo largo del siglo
-#+latex: \textsc{xx},
-#+html: <span class="smallcaps">xx</span>,
-y varias implementaciones funcionales desde
-inicios de la década de los noventa. Sin embargo, las tabletas parecieron
-por largos años estar destinadas a nunca conquistar al mercado, hasta
-el año 2010, en que Apple lanzó un equipo con la misma interfaz de su
-/iPhone/ pero del tamaño de una computadora portátil estándar.
+inteligentes (e incluso, llevada más al extremo): Es posible encontrar
+antecedentes desde 1915,[fn:: El registro de [[http://www.freepatentsonline.com/1117184.pdf][patente 1,117,184]] de los
+Estados Unidos se refiere a una máquina para reconocer los caracteres
+escritos en una hoja] numerosas descripciones literarias en la ciencia
+ficción a lo largo del siglo *xx*, y varias implementaciones
+funcionales desde inicios de la década de los noventa. Sin embargo,
+las tabletas parecieron por largos años estar destinadas a nunca
+conquistar al mercado, hasta el año 2010, en que Apple lanzó un equipo
+con la misma interfaz de su /iPhone/ pero del tamaño de una
+computadora portátil estándar.
 
 Todos los sistemas disponibles hoy en día, claro está, tienen
 muchísima mayor complejidad que la del /Psion Organizer/, y hay varias
@@ -725,11 +650,10 @@ sus características técnicas.
          que el sistema operativo que emplean para sus equipos de
          escritorio,
 	 #+latex: Mac\textsc{os x}, i\textsc{os}
-	 #+html: Mac<span class="smallcaps">OS X</span>, i<span class="smallcaps">os</span>
-	 está basado en el núcleo /Darwin/,
-         derivado de
+	 #+html: Mac<b>OS X</b>, i<b>os</b>
+	 está basado en el núcleo /Darwin/, derivado de
 	 #+latex: Free\textsc{bsd},
-	 #+html: Free<span class="smallcaps">bsd</span>,
+	 #+html: Free<b>bsd</b>,
 	 un sistema libre tipo Unix.
 
 - Android :: Diseñado por la compañía /Google/, basa la mayor parte de
@@ -745,14 +669,9 @@ sus características técnicas.
              Android.
 
 - Windows Phone :: Microsoft ofrece una versión de su sistema
-                   operativo, compatible a nivel
-		   #+latex: \textsc{api}
-		   #+html: <span class="smallcaps">api</span>
-		   con el Windows de escritorio, pero compilado para
-                   procesador
-                   #+latex: \textsc{arm}.
-		   #+html: <span class="smallcaps">arm</span>.
-		   Este sistema operativo no ha logrado
+                   operativo, compatible a nivel *api* con el Windows
+                   de escritorio, pero compilado para procesador
+                   *arm*. Este sistema operativo no ha logrado
                    conquistar gran popularidad, en claro contraste con
                    su dominación en el cómputo /tradicional/ de
                    escritorio; el principal fabricante que vende
@@ -769,15 +688,15 @@ sus características técnicas.
              operaban con Symbian han mudado su oferta a sistemas
              Android.
 
-- Firefox OS :: La fundación Mozilla, responsable del navegador
-                Firefox (y heredera del histórico Netscape) está
-                intentando entrar al mercado móbil con este sistema,
-                basado (al igual que Android) en el núcleo de Linux,
-                pero orientado a ofrecer una interfaz de programación
-                siguiendo completamente los estándares y lenguajes
-                para uso en la Web. Esta plataforma hace una apuesta
-                mucho más agresiva que las demás a un esquema de
-                conexión permanente a la red de datos.
+- Firefox *os* :: La fundación Mozilla, responsable del navegador
+                  Firefox (y heredera del histórico Netscape) está
+                  intentando entrar al mercado móbil con este sistema,
+                  basado (al igual que Android) en el núcleo de Linux,
+                  pero orientado a ofrecer una interfaz de
+                  programación siguiendo completamente los estándares
+                  y lenguajes para uso en la Web. Esta plataforma hace
+                  una apuesta mucho más agresiva que las demás a un
+                  esquema de conexión permanente a la red de datos.
 
 
 ** Características diferenciadoras
@@ -851,10 +770,7 @@ pulgadas. Una interfaz usuario diseñada para un tipo de pantalla no
 puede resultar satisfactoria en el otro.
 
 Las interfaces usuario empleadas por los sistemas móviles abandonan el
-modelo de interacción
-#+latex: \textsc{wimp}
-#+html: <span class="smallcaps">wimp</span>
-presentado en la sección
+modelo de interacción *wimp* presentado en la sección
 \ref{INTRO_wimp}, así como la /metáfora del escritorio/, para volver a
 la de un sólo programa visible en todo momento.
 
@@ -891,25 +807,16 @@ velocidad de ciertos componentes del equipo).
 
 El primer esquema de ahorro de energía con amplio soporte, tanto por
 parte de hardware de diversos fabricantes, como de prácticamente todos
-los sistemas operativos ampliamente utilizado, fue
-#+latex: \textsc{apm}
-#+html: <span class="smallcaps">apm</span>
-(/Advanced Power Management/, Gestión Avanzada de la Energía). Pasado
-cierto tiempo, fue reemplazado por
-#+latex: \textsc{acpi}
-#+html: <span class="smallcaps">acpi</span>
-(/Advanced Configuration and
-Power Interface/, Interfaz Avanzada de Configuración y Energía); la
-principal diferencia entre ambas es que, mientras que bajo
-#+latex: \textsc{apm}
-#+html: <span class="smallcaps">apm</span>
-los diferentes niveles de energía se implementaban en el /firmware/ de
-la computadora o cada uno de sus dispositivos, en
-#+latex: \textsc{acpi}
-#+html: <span class="smallcaps">acpi</span>
-la responsabilidad recae en el sistema operativo; esto brinda
-mucho mayor flexibilidad a la implementación, a cambio de una mayor
-complejidad para los desarrolladores.
+los sistemas operativos ampliamente utilizado, fue *apm* (/Advanced
+Power Management/, Gestión Avanzada de la Energía). Pasado cierto
+tiempo, fue reemplazado por *acpi* (/Advanced Configuration and Power
+Interface/, Interfaz Avanzada de Configuración y Energía); la
+principal diferencia entre ambas es que, mientras que bajo *apm* los
+diferentes niveles de energía se implementaban en el /firmware/ de la
+computadora o cada uno de sus dispositivos, en *acpi* la
+responsabilidad recae en el sistema operativo; esto brinda mucho mayor
+flexibilidad a la implementación, a cambio de una mayor complejidad
+para los desarrolladores.
 
 Pero la verdadera diferencia en el tema que esta sección aborda es la
 frecuencia de los cambios de estado: un servidor o computadora de
@@ -1185,10 +1092,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      sentido: sistemas que son mayormente monolíticos pero que manejan
      algunos procesos que parecerían centrales mediante de procesos de
      nivel usuario como los microkernel (por ejemplo, los sistemas de
-     archivos en espacio de usuario,
-     #+latex: \textsc{fuse},
-     #+html: <span class="smallcaps">fuse</span>,
-     en Linux).
+     archivos en espacio de usuario, *fuse*, en Linux).
 
      #+attr_html: height=471
      #+attr_latex: width=0.7\textwidth
@@ -1290,8 +1194,8 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
   #+latex: \otrorec{http://lwn.net/Articles/532771/}
   #+html: <br/><a href="http://lwn.net/Articles/532771/">http://lwn.net/Articles/532771/</a><br/>
   Michael Kerrisk (2013); Linux Weekly News: explica algunas de las
-  limitantes de la semántica POSIX como la falta de granularidad en el
-  reporte de mensajes de error (=EPERM=) y =errno= global por hilo.
+  limitantes de la semántica *posix* como la falta de granularidad en
+  el reporte de mensajes de error (=EPERM=) y =errno= global por hilo.
 - /Biculturalism/
   #+latex: \otrorec{http://www.joelonsoftware.com/articles/Biculturalism.html}
   #+html: <br/><a href="http://www.joelonsoftware.com/articles/Biculturalism.html">http://www.joelonsoftware.com/articles/Biculturalism.html</a><br/>

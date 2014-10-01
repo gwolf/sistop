@@ -1,42 +1,43 @@
 #+SETUPFILE: ../setup_notas.org
 #+TITLE: Relación con el hardware
 
-* Introducción 
+* Introducción
 # <<HW>>
 
-Todos los sistemas de cómputo están compuestos por al menos una unidad de proceso
-junto con dispositivos que permiten ingresar datos  (teclado, mouse, micrófono, 
-etc.) y otros que permiten obtener resultados (pantalla, impresora, parlantes, 
-etc.). Como se vio anteriormente, una de las funciones del sistema operativo es la de 
-abstraer el hardware de la computadora y presentar al usuario una 
-versión unificada y simplificada de los dispositivos.  
-En este capítulo se verá la relación que mantiene el sistema operativo 
-con el hardware, las funciones que cumplen y algunas abstracciones
-comunes utilizadas en sistemas operativos modernos.
+Todos los sistemas de cómputo están compuestos por al menos una unidad
+de proceso junto con dispositivos que permiten ingresar datos
+(teclado, mouse, micrófono, etc.) y otros que permiten obtener
+resultados (pantalla, impresora, parlantes, etc.). Como se vio
+anteriormente, una de las funciones del sistema operativo es la de
+abstraer el hardware de la computadora y presentar al usuario una
+versión unificada y simplificada de los dispositivos.  En este
+capítulo se verá la relación que mantiene el sistema operativo con el
+hardware, las funciones que cumplen y algunas abstracciones comunes
+utilizadas en sistemas operativos modernos.
 
-* Unidad de Procesamiento
+* Unidad de procesamiento
 
-La /unidad de procesamiento/ es la parte fundamental de todo sistema de cómputo.
-Es la encargada de ejecutar tanto los programas del usuario como el sistema 
-operativo en sí mismo.  La funciones del sistema operativo respecto a la
-unidad de procesamiento son: 
+Es la parte fundamental de todo sistema de cómputo. Esta es la
+encargada de ejecutar tanto los programas del usuario como el sistema
+operativo en sí mismo.  La funciones del sistema operativo respecto a
+la unidad de procesamiento son:
 
-- Inicialización :: Luego de ser cargado el sistema operativo debe realizar 
-                    varias tareas de inicialización como habilitar 
-                    las interrupciones de hardware y software 
-                    (excepciones y trampas), configurar el sistema de 
-                    memoria virtual (paginación, segmentación), etc.
-- Atender las interrupciones y excepciones :: Como se verá más adelante, 
-                     la unidad de procesamiento 
-                     puede encontrar una situación que no puede resolver
-                     por sí misma (una instrucción o dirección inválida, 
-                     una división por cero, etc.) ante lo cual le pasa el
-                     control al sistema operativo para que éste trate o
-                     resuelva la situación.
-- Multiplexación :: En un sistema multiproceso, el sistema operativo es el 
-                    encargado de administrar la unidad de procesamiento 
-                    dando la ilusión a los procesos que están ejecutando 
-                    de forma exclusiva. 
+- Inicialización :: Luego de ser cargado el sistema operativo debe
+                    realizar varias tareas de inicialización como
+                    habilitar las interrupciones de hardware y
+                    software (excepciones y trampas), configurar el
+                    sistema de memoria virtual (paginación,
+                    segmentación), etcétera.
+- Atender las interrupciones y excepciones :: Como se verá más
+     adelante, la unidad de procesamiento puede encontrar una
+     situación que no puede resolver por sí misma (una instrucción o
+     dirección inválida, una división por cero, etc.), ante lo cual le
+     pasa el control al sistema operativo para que éste trate o
+     resuelva la situación.
+- Multiplexación :: En un sistema multiproceso, el sistema operativo
+                    es el encargado de administrar la unidad de
+                    procesamiento dando la ilusión a los procesos que
+                    están ejecutando de forma exclusiva.
 
 
 ** Jerarquía de almacenamiento
@@ -50,7 +51,7 @@ caché, un procesador puede tanto referirse a la siguiente instrucción
 como iniciar una transferencia de memoria primaria. Esta distinción no
 tiene mayor relevancia para este tema, la referencia se incluye
 únicamente por no llevar a confusión.] podrían resumir su operación
-general a alimentar a una /unidad de proceso/ (CPU) con los datos e
+general a alimentar a una /unidad de proceso/ (*cpu*) con los datos e
 instrucciones almacenados en /memoria/, que pueden incluir llamadas a
 servicio (y respuestas a eventos) originados en medios externos.
 
@@ -58,11 +59,11 @@ Una computadora von Neumann significa básicamente que es una
 computadora de /programa almacenado en la memoria primaria/ — esto es,
 se usa el mismo almacenamiento para el programa que está siendo
 ejecutado y para sus datos, sirviéndose de un /registro/ especial para
-indicar al CPU cuál es la dirección en memoria de la siguiente
+indicar al *cpu* cuál es la dirección en memoria de la siguiente
 instrucción a ejecutar.
 
 La arquitectura von Neumann fue planteada, obviamente, sin considerar
-la posterior diferencia entre la velocidad que adquiriría el CPU y la
+la posterior diferencia entre la velocidad que adquiriría el *cpu* y la
 memoria. En 1977, John Backus presentó al recibir el premio Turing un
 artículo describiendo el /cuello de botella de von Neumann/. Los
 procesadores son cada vez más rápidos (se logró un aumento de 1000
@@ -92,8 +93,8 @@ programador.
 |------------------+--------------+-----------+-----------+-------------|
 | *Nombre*         | Registros    | Cache     | Memoria   | Disco       |
 | *Tamaño*         | <1KB         | <16MB     | <64GB     | >100GB      |
-| *Tecnología*     | Multipuerto, | CMOS      | CMOS      | Magnética   |
-|                  | CMOS         | SRAM      | DRAM      |             |
+| *Tecnología*     | Multipuerto, | *cmos*    | *cmos*    | Magnética   |
+|                  | *cmos*       | *sram*    | *dram*    |             |
 | *Acceso (ns)*    | 0.25-0.5     | 0.5-25    | 80-250    | 5,000,000   |
 | *Transferencia*  | 20-100 GB/s  | 5-10 GB/s | 1-5 GB/s  | 20-150 MB/s |
 | *Gestionado por* | Compilador   | Hardware  | Sistema   | Sistema     |
@@ -121,27 +122,27 @@ consistente, y de realizar las transferencias entre unas y otras.
 *** Registros
 
 La memoria más rápida de la computadora son los /registros/, ubicados
-dentro de cada /uno de los/ núcleos de cada uno de los CPU. Las
-arquitecturas tipo RISC (Reduced Instruction Set Computer) 
+dentro de cada uno de los núcleos de cada uno de los *cpu*. Las
+arquitecturas tipo *risc* (Reduced Instruction Set Computer)
 sólo contemplan la ejecución de instrucciones
 entre registros (excepto, claro, las de carga y almacenamiento a
 memoria primaria).
 
-Los primeros CPU trabajaban con pocos registros, muchos de ellos de
+Los primeros *cpu* trabajaban con pocos registros, muchos de ellos de
 propósito específico — trabajaban más bien con una lógica de /registro
-acumulador/. Por ejemplo, el MOS 6502 (en el cual se basaron las
+acumulador/. Por ejemplo, el *mos* 6502 (en el cual se basaron las
 principales computadoras de 8 bits) tenía un acumulador de 8 bits (A),
 dos registros índice de 8 bits (X e Y), un registro de estado del
 procesador de 8 bits (P), un apuntador al /stack/ de 8 bits (S), y un
-apuntador al programa de 16 bits (PC). El otro gran procesador de su
+apuntador al programa de 16 bits (*pc*). El otro gran procesador de su
 era, el Zilog Z80, tenía 14 registros (3 de 8 bits y el resto de 16),
 pero sólo uno era un acumulador de propósito general.
 
 El procesador Intel 8088, en el cual se basó la primer generación de
-la arquitectura PC, ofrecía cuatro registros de uso /casi/ general. En
-los ochenta comenzaron a producirse los primeros procesadores tipo RISC,
-muchos de los cuales ofrecían 32 registros, todos ellos de propósito
-general.
+la arquitectura *pc*, ofrecía cuatro registros de uso /casi/
+general. En los ochenta comenzaron a producirse los primeros
+procesadores tipo *risc*, muchos de los cuales ofrecían 32 registros,
+todos ellos de propósito general.
 
 #+attr_html: width=444px
 #+attr_latex: width=0.6\textwidth
@@ -153,10 +154,10 @@ El compilador [fn:: A veces asistido por instrucciones explíticas por
 parte del programador, pero muchas veces como resultado del análisis
 del código.] busca realizar muchas operaciones que deben ocurrir
 reiteradamente, donde la rapidez es fundamental, con sus operadores
-cargados en los registros. El estado del CPU en un momento dado está
+cargados en los registros. El estado del *cpu* en un momento dado está
 determinado por el contenido de los registros. El contenido de la
 memoria, obviamente, debe estar sincronizado con lo que ocurre dentro
-de éste — pero el estado actual del CPU, lo que está haciendo, las
+de éste — pero el estado actual del *cpu*, lo que está haciendo, las
 indicaciones respecto a las operaciones recién realizadas que se deben
 entregar al programa en ejecución están todos representados en los
 registros. Se debe mantener esto en mente cuando posteriormente se
@@ -184,7 +185,7 @@ una ubicación predeterminada de memoria la naturaleza de la solicitud
 interrupción, /detiene/ el proceso que estaba siendo
 ejecutado. El sistema operativo entonces ejecuta su /rutina de manejo
 de interrupciones/ (típicamente comienza grabando el estado de los
-registros del CPU y otra información relativa al estado del proceso
+registros del *cpu* y otra información relativa al estado del proceso
 desplazado) y posteriormente la atiende.
 
 Las interrupciones pueden organizarse por /prioridades/, de modo que
@@ -198,13 +199,14 @@ arquitectura, mucho más limitado que el número de dispositivos que
 tiene un equipo de cómputo actual. Las interrupciones son, por tanto,
 generadas /por el controlador del canal/ en que son producidas. Si
 bien esto resuelve la escasez de interrupciones, dificulta su
-priorización — con canales de uso tan variado como el USB[fn:: Algunas
-arquitecturas, particularmente de sistemas embebidos y por un criterio
-altamente económico, están estructuradas íntegramente alrededor de un
-bus USB.], una interrupción puede indicar que hay desde un /teclazo/
-para ser leído hasta un paquete de red esperando a ser procesado — y
-si bien demorar la atención al primero no llevaría a pérdida notable
-de información, no ateneder el paquete de red sí.
+priorización — con canales de uso tan variado como el *usb*
+(/Universal Serial Bus/, Canal Serial Universal)[fn:: Algunas
+arquitecturas, particularmente de sistemas embebidos y
+por un criterio altamente económico, están estructuradas íntegramente
+alrededor de un bus *usb*.], una interrupción puede indicar que hay
+desde un /teclazo/ para ser leído hasta un paquete de red esperando a
+ser procesado — y si bien demorar la atención al primero no llevaría a
+pérdida notable de información, no ateneder el paquete de red sí.
 
 El sistema operativo puede elegir ignorar (/enmascarar/) a ciertas
 interrupciones — pero hay interrupciones que son /no enmascarables/.
@@ -226,37 +228,30 @@ división sobre cero o un error leyendo de disco).
 
 Las funciones del sistema operativo respecto a las interrupciones son:
 
-- Administrar el hardware manejador de interrupciones ::
-                                  Esto incluye el enmascarado y desenmascarado 
-                                  de las interrupciones, configurar y asignar
-                                  interrupciones a cada dispositivo, 
-                                  notificar al manejador cuando la interrupción
-                                  ya ha sido atendida, etc.
-- Abstraer las interrupciones ::  El sistema operativo oculta a los programas de
-                                  usuario la existencia de interrupciones de
-                                  hardware ya que éstas son dependientes de la
-                                  arquitectura del procesador. En cambio el
-                                  sistema operativo lo comunica de una forma
-                                  unificada a través de distintos mecanismos,
-                                  por ejemplo mensajes o señales o deteniendo el
-                                  proceso que espera la acción relacionada con
-                                  una interrupción y continuando su ejecución
-                                  cuando ésta ocurre.
-- Punto de entrada al sistema operativo :: Como se verá más adelante en la 
-                                sección \ref{HW_SYSCALLS}, muchos procesadores y
-                                sistemas operativos utilizan las interrupciones
-                                como medio por el cual un proceso de usuario
-                                realiza una llamada al sistema.
-                                Por ejemplo, en Linux para arquitecturas x86
-                                el programa de usuario genera la interrupción
-                                0x80 para iniciar una llamada al sistema.
-                                En arquitecturas más recientes como x86_64,
-                                MIPS y ARM esto ha sido reemplazado por una
-                                instrucción especial =syscall=.
+- Administrar el hardware manejador de interrupciones :: Esto incluye
+     el enmascarado y desenmascarado de las interrupciones, configurar
+     y asignar interrupciones a cada dispositivo, notificar al
+     manejador cuando la interrupción ya ha sido atendida, etc.
+- Abstraer las interrupciones :: El sistema operativo oculta a los
+     programas de usuario la existencia de interrupciones de hardware
+     ya que éstas son dependientes de la arquitectura del
+     procesador. En cambio el sistema operativo lo comunica de una
+     forma unificada a través de distintos mecanismos, por ejemplo
+     mensajes o señales o deteniendo el proceso que espera la acción
+     relacionada con una interrupción y continuando su ejecución
+     cuando ésta ocurre.
+- Punto de entrada al sistema operativo :: Como se verá más adelante
+     en la sección \ref{HW_SYSCALLS}, muchos procesadores y sistemas
+     operativos utilizan las interrupciones como medio por el cual un
+     proceso de usuario realiza una llamada al sistema.  Por ejemplo,
+     en Linux para arquitecturas x86 el programa de usuario genera la
+     interrupción 0x80 para iniciar una llamada al sistema.  En
+     arquitecturas más recientes como x86\_64, *mips* y *arm*
+     esto ha sido reemplazado por una instrucción especial =syscall=.
 - Atender excepciones y fallas :: Como se discutió antes, durante la
-     ejecución de un programa pueden ocurrir situaciones anómalas, 
+     ejecución de un programa pueden ocurrir situaciones anómalas,
      como por ejemplo, una división sobre cero. Desde el punto de
-     vista del CPU, esto es similar a una interrupción de hardware y
+     vista del *cpu*, esto es similar a una interrupción de hardware y
      debe ser tratada por el sistema operativo. Dependiendo de la
      causa de la excepción, el sistema operativo tomará acción para
      resolver en lo posible esta situación. En muchos casos las
@@ -287,12 +282,11 @@ en general son tratadas con /secuencias de escape/, esto es, una serie
 de caracteres simples que tomados en conjunto representan una acción
 a realizar en la terminal. 
 
-Durante la década de los setenta también se desarrollaron terminales 
-gráficas las cuales podían representar imágenes junto 
-con texto. Con la inclusión del ratón o "mouse"
-estas terminales dieron lugar a lo que hoy se conoce
-como Interfaz Gráfica de Usuario (/Graphical User Interface/ o /GUI/)
-y a los sistemas de ventana.
+Durante la década de los setenta también se desarrollaron terminales
+gráficas las cuales podían representar imágenes junto con texto. Con
+la inclusión del ratón o "mouse" estas terminales dieron lugar a lo
+que hoy se conoce como Interfaz Gráfica de Usuario (/Graphical User
+Interface/ o *gui* y a los sistemas de ventana.
 
 En los sistemas operativos modernos es común referirse al /emulador de
 terminal/, un programa especializado ya sea para tener múltiples
@@ -330,7 +324,7 @@ como computadoras independientes de propósito limitado.
 
 El procesador no puede referirse directamente más información que la
 que forma parte del almacenamiento primario — esto es, de la memoria
-RAM. En las secciones \ref{HW_interrupciones}
+de acceso aleatorio (*ram*). En las secciones \ref{HW_interrupciones}
 (/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
 memoria/), se explica cómo es que se efectúan dichas referencias.
 
@@ -398,18 +392,21 @@ paso a procesadores que integren en un sólo paquete todos estos
 componentes. Sin embargo, el acomodo funcional electrónico, al menos
 hasta el momento, sigue basado en estos puntos.] de estos buses es a
 través de una separación en dos chips: el /puente norte/
-(/Northbridge/), conectado directamente al CPU, encargado de gestionar
+(/Northbridge/), conectado directamente al *cpu*, encargado de gestionar
 los buses de más alta velocidad y que, además, son fundamentales para
 el más básico inicio de la operación del sistema: la memoria y el
 reloj. La comunicación con algunas tarjetas de video se incorpora al
-puente norte a través del canal dedicado /AGP/ (/Advanced Graphics
-Port/, /Puerto Gráfico Avanzado/).
+puente norte a través del canal dedicado *agp* (/Advanced Graphics
+Port/, Puerto Gráfico Avanzado).
 
 Al puente norte se conecta el /puente sur/ (/Southbridge/), que
-controla el resto de los dispositivos del sistema — normalmente
-se ven aquí las interfaces de almacenamiento (SCSI, SATA, IDE), de
-expansión interna (PCI, PCIe) y de expansión externa (USB, Firewire,
-puertos /heredados/ seriales y paralelos).
+controla el resto de los dispositivos del sistema — normalmente se ven
+aquí las interfaces de almacenamiento (*scsi*, *sata*, *ide*), de
+expansión interna (*pci*,
+#+latex: \textsc{pci}e)
+#+html: <b>(pci, pci</b>e)
+y de expansión externa (*usb*, Firewire, puertos /heredados/ seriales
+y paralelos).
 
 ** Contención
 
@@ -441,11 +438,11 @@ demás dispositivos desocupen el canal.
 En la figura \ref{HW_chipset_857} se puede ver el diseño general del
 chipset Intel 875, introducido en el 2003, incluyendo el ancho de
 banda de cada uno de los canales del sistema. Hay que recordar que hay
-canales como el USB que permiten la conexión de múltiples
+canales como el *usb* que permiten la conexión de múltiples
 dispositivos, los cuales deberán compartir el ancho de banda total
 permitido por el canal: en la figura se presentan dos discos duros
-sobre el canal SATA y dos unidades ópticas en el ATA paralelo; el
-canal USB permite el uso de un máximo de 127 unidades por canal, por
+sobre el canal *sata* y dos unidades ópticas en el *ata* paralelo; el
+canal *usb* permite el uso de un máximo de 127 unidades por canal, por
 lo cual la contención puede ser muy alta.
 
 
@@ -462,22 +459,23 @@ también conocido como /entrada/salida programada/.], se crearía un
 cuello de botella por la cantidad y frecuencia de interrupciones. Hoy
 en día, para evitar que el sistema se demore cada vez que hay una
 transferencia grande de datos, todas las computadoras implementan
-controladores de /acceso directo a memoria/ (DMA) en uno o más de sus
-subsistemas.
+controladores de /acceso directo a memoria/ (*dma*) en uno o más de
+sus subsistemas.
 
-El DMA se emplea principalmente al tratar con dispositivos con un
+El *dma* se emplea principalmente al tratar con dispositivos con un
 gran ancho de banda, como unidades de disco, subsistemas multimedia,
 tarjetas de red, e incluso para transferir información entre niveles
 del caché.
 
-Las transferencias DMA se hacen en /bloques/ preestablecidos; en vez
-de que el procesador reciba una interrupción cada vez que hay una palabra
-lista para ser almacenada en la memoria, el procesador indica al
-controlador DMA la dirección física base de memoria en la cual
+Las transferencias *dma* se hacen en /bloques/ preestablecidos; en vez
+de que el procesador reciba una interrupción cada vez que hay una
+palabra lista para ser almacenada en la memoria, el procesador indica
+al controlador *dma* la dirección física base de memoria en la cual
 operará, la cantidad de datos a transferir, el /sentido/ en que se
 efectuará la operación (del dispositivo a memoria o de memoria al
 dispositivo), y el /puerto/ del dispositivo en cuestión; el
-controlador DMA efectuará la transferencia solicitada, y sólo una vez
+controlador *dma*
+efectuará la transferencia solicitada, y sólo una vez
 terminada ésta (o en caso de encontrar algún error en el proceso)
 lanzará una interrupción al sistema; el procesador queda libre para
 realizar otras tareas, sin más limitante que la posible /contención/
@@ -485,7 +483,7 @@ que tendrá que enfrentar en el bus de acceso a la memoria.
 
 *** Coherencia de cache
 
-Cuando se realiza una transferencia DMA de un dispositivo a la
+Cuando se realiza una transferencia *dma* de un dispositivo a la
 memoria, puede haber /páginas/ de la memoria en cuestión que estén en
 alguno de los niveles de la memoria caché; dado que el caché está uno
 o más niveles por encima de la memoria principal, es posible que la
@@ -499,8 +497,8 @@ sistemas /no coherentes/ requieren que el subsistema de memoria del
 sistema operativo haga esta operación.
 
 Los procesadores actuales implementan normalmente varios niveles de
-caché, estando algunos dentro del mismo CPU, por lo que típicamente se
-encuentran sistemas híbridos, en los que los cachés de nivel
+caché, estando algunos dentro del mismo *cpu*, por lo que típicamente
+se encuentran sistemas híbridos, en los que los cachés de nivel
 superiores son coherentes, pero los de nivel 1 no, y las
 inconsistencias que éste podría producir deben ser esperadas y
 resueltas por el software.[fn:: El caché de nivel 1 puede estar dentro
@@ -546,10 +544,10 @@ grandes rasgos, en:
 
 Cada sistema operativo /expone/ una serie de llamadas al
 sistema. Estas son, a su vez, expuestas al programador a través de las
-/interfaces de aplicación al programador/ (API), que se alínean de
+/interfaces de aplicación al programador/ (*api*), que se alínean de
 forma cercana (pero no exacta). Del mismo modo que cada sistema
 operativo ofrece un conjunto de llamadas al sistema distinto, cada
-implementación de un lenguaje de programación puede ofrecer un API
+implementación de un lenguaje de programación puede ofrecer un *api*
 ligeramente distinto de otros.
 
 #+attr_latex: width=\textwidth
@@ -560,38 +558,60 @@ ligeramente distinto de otros.
 ** Llamadas al sistema, arquitecturas y APIs
 # <<HW_syscall_arch_api>>
 
-Cada familia de sistemas operativos provee distintas llamadas al sistema, y
-sus lenguajes/bibliotecas implementan distintos APIs. Esto es el que
+Cada familia de sistemas operativos provee distintas llamadas al
+sistema, y sus lenguajes/bibliotecas implementan distintos
+#+latex: \textsc{api}s.
+#+html: <b>api</b>s.
+Esto es el que
 distingue principalmente a uno de otro. Por ejemplo, los sistemas
 Windows 95 en adelante implementan Win32, Win16 (compatibilidad con
-Windows previos) y MSDOS; MacOS implementa Cocoa (aplicaciones MacOS
-X) y Carbon (compatibilidad con aplicaciones de MacOS previos), y
-Linux y los *BSDs, POSIX (el estándar que define a Unix). El caso de
-MacOS X es interesante, porque también implementa POSIX, ofreciendo la
+Windows previos) y *ms-dos*;
+#+latex: Mac\textsc{os}
+#+html: Mac<b>os</b>
+implementa Cocoa (aplicaciones
+#+latex: Mac\textsc{os x})
+#+html: Mac<b>os x</b>)
+y Carbon (compatibilidad con aplicaciones de
+#+latex: Mac\textsc{macos}
+#+html: Mac<b>os</b>
+previos), y Linux, los
+#+latex: \textsc{*bsd}s,
+#+html: <b>*bsd</b>s
+y varios otros sistemas, *posix* (el estándar que define a Unix). El
+caso de
+#+latex: Mac\textsc{os x}
+#+html: Mac<b>os x</b>
+es interesante, porque también implementa *posix* ofreciendo la
 /semántica/ de dos sistemas muy distintos entre sí.
 
 Los lenguajes basados en /máquinas virtuales abstractas/, como Java o
-la familia .NET (ver sección \ref{VIRT_arq_inexistentes}), exponen un
-API con mucha mayor distancia respecto al
-sistema operativo; la máquina virtual se presenta como un
-pseudo-sistema operativo intermedio que se ejecuta dentro del real, y
-esta distinción se hace especialmente notoria cuando se busca conocer
-los detalles del sistema operativo. 
+la familia *.net* (ver sección \ref{VIRT_arq_inexistentes}), exponen
+un *api* con mucha mayor distancia respecto al sistema operativo; la
+máquina virtual se presenta como un pseudo-sistema operativo
+intermedio que se ejecuta dentro del real, y esta distinción se hace
+especialmente notoria cuando se busca conocer los detalles del sistema
+operativo.
 
 
 *** Depuración por /trazas/ (trace)
 
 La mayor parte de los sistemas operativos ofrecen programas que, para
-fines de depuración, /envuelven/ al API del sistema y permiten ver la
-/traza/ de las llamadas al sistema que va realizando un
-proceso. Algunos ejemplos de estas herramientas son =strace= en Linux,
-=truss= en la mayor parte de los Unixes históricos o =ktrace= y
-=kdump= en los *BSD. A partir de Solaris 10 (2005), Sun incluye una
-herramienta mucho más profunda y programable para esta tarea llamada
-=dtrace=, que al paso del tiempo ha sido /portada/[fn:: Se denomina
-/portar/ el hacer las adecuaciones necesarias para que una herramienta
-diseñada para determinado entorno pueda emplearse en otros distintos.]
-a otros Unixes (*BSD, MacOS).
+fines de depuración, /envuelven/ al *api*
+del sistema y permiten ver la /traza/ de las llamadas al sistema que
+va realizando un proceso. Algunos ejemplos de estas herramientas son
+=strace= en Linux, =truss= en la mayor parte de los Unixes históricos
+o =ktrace= y =kdump= en los
+#+latex: \textsc{*bsd.}
+#+html: <b>*bsd.</b>
+A partir de Solaris 10 (2005), Sun incluye una herramienta mucho más
+profunda y programable para esta tarea llamada =dtrace=, que al paso
+del tiempo ha sido /portada/[fn:: Se denomina /portar/ el hacer las
+adecuaciones necesarias para que una herramienta diseñada para
+determinado entorno pueda emplearse en otros distintos.]  a otros
+Unixes
+#+latex: (*\textsc{bsd}, Mac\textsc{os}).
+#+html: (*<b>(bsd</b>, Mac<b>os</b>).
+
 
 La salida de una traza brinda amplio detalle acerca de la
 actividad realizada por un proceso, y permite comprender a grandes
@@ -695,7 +715,7 @@ presentan al usuario cual si fueran archivos comunes, son más bien un
 mecanismo para consultar o manipular las estructuras internas del
 núcleo.
 
-En la familia de sistemas operativos derivados de CP/M (el más popular
+En la familia de sistemas operativos derivados de *cp/m* (el más popular
 de los cuales hoy en día es Windows), el mecanismo es muy
 distinto. Los dispositivos de almacenamiento secundario (discos duros,
 discos compactos, memorias flash, etc.) son relacionados con una letra
@@ -717,7 +737,7 @@ que se está solicitando un servicio al sistema opeativo.
 # <<HW_multiprocesamiento>>
 
 El /multiprocesamiento/ es todo entorno donde hay más de un procesador
-(CPU). En un entorno multiprocesado, el conjunto de procesadores se
+(*cpu*). En un entorno multiprocesado, el conjunto de procesadores se
 vuelve un recurso más a gestionar por el sistema operativo — y el que
 haya concurrencia /real/ tiene un fuerte impacto en su diseño.
 
@@ -777,10 +797,10 @@ sólo.
 Esto cambió hacia el 2005. Tras más de 40 años de cumplirse, el modelo
 conocido como la /Ley de Moore/, enunciando que cada dos años la
 densidad de transistores por circuito integrado se duplicaría,
-llevaba a velocidades de CPU que, en el ámbito comercial, excedían los
+llevaba a velocidades de *cpu* que, en el ámbito comercial, excedían los
 3GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
 el diferencial de velocidad con el acceso a memoria era cada vez más
-alto. Esto motivó a que las principales compañías productoras de los CPU
+alto. Esto motivó a que las principales compañías productoras de los *cpu*
 cambiaran de estrategia, introduciendo chips que son, para propósitos
 prácticos, /paquetes/ con 2 o más procesadores dentro.
 
@@ -796,7 +816,7 @@ aumentando. Sin embargo, los programadores de sistemas operativos y
 programas de aplicación ya no pueden ignorar esta complejidad
 adicional.
 
-Se denomina /multiprocesamiento simétrico/ (típicamente abreviado SMP)
+Se denomina /multiprocesamiento simétrico/ (típicamente abreviado *smp*)
 a la situación en la que todos los procesadores del sistema son
 iguales y pueden realizar en el mismo tiempo las mismas
 operaciones. Todos los procesadores del sistema tienen acceso a la
@@ -819,11 +839,11 @@ pero funcionando a diferente frecuencia. Esto conlleva una fuerte
 complejidad adicional, y no se utiliza hoy en día.
 
 Por último, existen los diseños de /Acceso No-Uniforme a Memoria/
-(/Non-Uniform Memory Access/, /NUMA/). En este esquema, cada
+(/Non-Uniform Memory Access/, *numa*).  En este esquema, cada
 procesador tiene /afinidad/ con bancos específicos de memoria — para
 evitar que los diferentes procesadores estén esperando al mismo tiempo
 al bus compartido de memoria, cada uno tiene acceso exclusivo a su
-área. Los sistemas NUMA pueden ubicarse como en un punto intermedio
+área. Los sistemas *numa* pueden ubicarse como en un punto intermedio
 entre el procesamiento simétrico y el cómputo distribuído, y puede ser
 visto como un /cómputo distribuído fuertemente acoplado/.
 
@@ -832,8 +852,8 @@ visto como un /cómputo distribuído fuertemente acoplado/.
 Se denomina cómputo distribuído a un proceso de cómputo realizado
 entre computadoras independientes, o, más formalmente, entre
 procesadores que /no comparten memoria/ (almacenamiento primario).
-Puede verse que un equipo de diseño NUMA está a medio camino entre una
-computadora multiprocesada y el cómputo distribuído.
+Puede verse que un equipo de diseño *numa* está a medio camino entre
+una computadora multiprocesada y el cómputo distribuído.
 
 Hay diferentes modelos para implementar el cómputo distribuído,
 siempre basados en la transmisión de datos sobre una /red/. Estos son
@@ -869,11 +889,11 @@ principalmente:
 
   - Servicios Web :: Mecanismo de descripción de funcionalidad, así
                      como de solicitud y recepción de resultados,
-                     basado en el estándar HTTP y contenido XML.
+                     basado en el estándar *http* y contenido *xml*.
 
   - Software como servicio :: El proveedor ofrece una /aplicación
        completa y cerrada/ sobre la red, /exponiendo/ únicamente su
-       interfaz (API) de consultas.
+       interfaz (*api*) de consultas.
 
   - Plataforma como servicio :: El proveedor ofrece la /abstracción/
        de un entorno específico de desarrollo de modo que un equipo de
@@ -1061,8 +1081,8 @@ de la utilidad misma del paralelismo masivo.
 1. De las siguientes opciones, ¿cuál responde a la definición de
    /almacenamiento primario/?
    1. Las unidades de almacenamiento no volátil de largo plazo
-      (discos, memoria Flash, USB, etc.)
-   2. La memoria RAM del sistema
+      (discos, memoria Flash, *usb*, etc.)
+   2. La memoria *ram* del sistema
    3. La capa de memoria que corre a mayor velocidad y está más cerca
       del procesador
    4. Los registros, espacio de memoria de extremadamente alta
@@ -1140,7 +1160,7 @@ de la utilidad misma del paralelismo masivo.
   del sistema operativo o incluso ejecute antes de éste y lo envuelva
   (por ejemplo, en un esquema de virtualización).
 
-  El esquema TPM, sin embargo, también puede evitar que el dueño de
+  El esquema *tpm*, sin embargo, también puede evitar que el dueño de
   una computadora la use /como él quiera/, forzándolo a ejecutar
   únicamente los sistemas operativos /aprobados/ o /firmados/ por el
   fabricante.
@@ -1149,14 +1169,14 @@ de la utilidad misma del paralelismo masivo.
   artículos en el [[http://mjg59.dreamwidth.org/][blog del desarrollador Matthew Garrett]],
   particularmente entre septiembre del 2011 y mayo del 2013. Garrett
   lidereó la alternativa que al día de hoy más se usa para poder
-  iniciar Linux en un sistema bajo TPM; tiene /decenas/ de artículos
+  iniciar Linux en un sistema bajo *tpm*; tiene /decenas/ de artículos
   desde muy descriptivos y generales hasta técnicos y específicos a
   puntos muy particulares.
 
   Otro artículo interesante al respecto es el de, de Jonathan Corbet
   (septiembre 2013): [[https://lwn.net/Articles/566169/][BSD-style securelevel comes to Linux —
   Again]]. Explica con bastante detalle cómo es que se plantea
-  implementar el nivel de protección que busca ofrecer TPM desde un
+  implementar el nivel de protección que busca ofrecer *tpm* desde un
   sistema Linux.
 
 ** Lecturas relacionadas

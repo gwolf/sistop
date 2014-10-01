@@ -434,7 +434,6 @@ completa del equipo. Y si bien los entornos que más éxito tuvieron
 hubo desde el principio sistemas como la Commodore Amiga o la Atari
 #+latex: \textsc{st}
 #+html: <span class="smallcaps">st</span>
-
 que hacían un multitasking /apropiativo/ verdadero.
 
 #+attr_html: height="350"
@@ -515,7 +514,7 @@ Y otro importante jugador que entró en escena durante los años noventa
 fue el
 software libre, por medio de varias implementaciones distintas de
 sistemas tipo Unix, principalmente, Linux y los
-#+latex: *\textsc{bsd} (Free\textsc{bsd}, Net\textsc{bsd}, open\textsc{bsd}).
+#+latex: *\textsc{bsd} (Free\textsc{bsd}, Net\textsc{bsd}, Open\textsc{bsd}).
 #+html: *<span class="smallcaps">bsd</span> (Free<span class="smallcaps">bsd</span, Net<span class="smallcaps">bsd</span>, Open<span class="smallcaps">bsd</span>).
 Estos sistemas implementaron, colaborativamente y a
 escala mundial, software compatible tanto con las
@@ -881,9 +880,9 @@ agregando algunos patrones particulares a estos dispositivos, la
 popularización del cómputo móvil ha llevado a una verdadera revolución
 en este aspecto.
 
-El ahorro del consumo eléctrico tiene dos principales vertientes: Por
-un lado, el desarrollo de hardware más eficiente energéticamente
-independientemente del modo en que opere, y por el otro, la creación
+El ahorro del consumo eléctrico tiene dos principales vertientes: por
+un lado, el desarrollo de hardware más eficiente energéticamente, con
+independencia del modo en que opere y, por el otro, la creación
 de mecanismos por medio de los cuales un equipo de cómputo pueda
 detectar cambios en el patrón de actividad (o el operador pueda
 indicarle un cambio en la respuesta esperada), y éste reaccione
@@ -891,25 +890,21 @@ reduciendo su demanda (lo cual típicamente se obtiene reduciendo la
 velocidad de ciertos componentes del equipo).
 
 El primer esquema de ahorro de energía con amplio soporte, tanto por
-parte de hardware de diversos fabricantes como de prácticamente todos
+parte de hardware de diversos fabricantes, como de prácticamente todos
 los sistemas operativos ampliamente utilizado, fue
 #+latex: \textsc{apm}
 #+html: <span class="smallcaps">apm</span>
-(/Advanced
-Power Management/, /Gestión Avanzada de la Energía/). Pasado cierto
-tiempo,
-#+latex: \textsc{apm}
-#+html: <span class="smallcaps">apm</span>
-fue reemplazado por
+(/Advanced Power Management/, Gestión Avanzada de la Energía). Pasado
+cierto tiempo, fue reemplazado por
 #+latex: \textsc{acpi}
 #+html: <span class="smallcaps">acpi</span>
 (/Advanced Configuration and
-Power Interface/, /Interfaz Avanzada de Configuración y Energía/); la
+Power Interface/, Interfaz Avanzada de Configuración y Energía); la
 principal diferencia entre ambas es que, mientras que bajo
 #+latex: \textsc{apm}
 #+html: <span class="smallcaps">apm</span>
-la implementación de los diferentes niveles de energía se implementaban
-en el /firmware/ de la computadora o cada uno de sus dispositivos, en
+los diferentes niveles de energía se implementaban en el /firmware/ de
+la computadora o cada uno de sus dispositivos, en
 #+latex: \textsc{acpi}
 #+html: <span class="smallcaps">acpi</span>
 la responsabilidad recae en el sistema operativo; esto brinda
@@ -917,28 +912,29 @@ mucho mayor flexibilidad a la implementación, a cambio de una mayor
 complejidad para los desarrolladores.
 
 Pero la verdadera diferencia en el tema que esta sección aborda es la
-frecuencia de los cambios de estado: Un servidor o computadora de
+frecuencia de los cambios de estado: un servidor o computadora de
 escritorio tiene sólo un /evento/ constante (el ajuste de frecuencia
 del procesador dependiendo de la carga, potencialmente hasta decenas
 de veces por segundo); una computadora portátil debe adoptar
 diferentes /perfiles/ dependiendo de si está conectada a la red
-eléctrica o está operando por batería, o si tiene la /tapa/ (pantalla)
+eléctrica u operando por batería, o si tiene la /tapa/ (pantalla)
 abierta o cerrada. Los usuarios de computadoras portátiles típicamente
 buscan trabajar conectados a la red eléctrica tanto como sea posible,
 dado que es /vox populi/ que esto mejorará la vida útil de su
-batería. Y si bien estos cambios de entorno existen (y guardan una
-innegable complejidad), su ocurrencia es muy baja.
+batería. Y si bien estos cambios de entorno se presentan (y guardan
+una innegable complejidad), su ocurrencia es muy baja.
 
 En el cómputo móvil, los eventos son muchos y muy distintos. En primer
 lugar, los dispositivos móviles operan bajo una filosofía de /siempre
 encendido/: A pesar de que el usuario no esté atento a su dispositivo,
-éste tiene que estar encendido y al pendiente del entorno — Algunos
+éste tiene que estar encendido y al pendiente del entorno —algunos
 ejemplos casi obvios:
 
 - En caso de entrar una llamada telefónica, tiene que responder
   inmediatamente alertando al usuario. La interfaz usuario del
-  teléfono puede parecer apagada, pero su lógica –y, muy importante,
-  su señalización a redes– se mantienen activas.
+  teléfono puede parecer apagada, pero su lógica (y en particular su
+  señalización a las distintas redes a las que está conectado) se
+  mantiene activa.
 - El equipo tiene que estar siempre alerta a las condiciones
   cambiantes de red (tanto telefónica como de datos), midiendo la
   señal de las antenas celulares más cercanas; mantenerse asociado a
@@ -947,7 +943,7 @@ ejemplos casi obvios:
   usuario, convirtiéndose en un asistente o una extensión para sus
   actividades diarias, optimizan su funcionamiento para operar como
   norma desde su batería, no conectados a la red eléctrica. Valga en
-  este caso la comparación: Un teléfono que brinde menos de un día de
+  este caso la comparación: un teléfono que brinde menos de un día de
   /operación autónoma/ sería sin duda evaluado como extremadamente
   incómodo e impráctico, en tanto una computadora portátil se
   considera muy eficiente si permite la operación autónoma por seis
@@ -962,11 +958,11 @@ desarrolladores explícitamente buscan patrones eficientes, fácil
 *** Entorno cambiante
 
 Los centros de datos, las computadoras de escritorio, e incluso las
-computadoras portátiles tienen una forma de operación bastante
-estable: Durante el transcurso de una sesión de trabajo (e incluso
+portátiles tienen una forma de operación bastante
+estable: durante el transcurso de una sesión de trabajo (e incluso
 durante la vida entera del equipo, en el caso de los servidores) su
 visión del mundo no está sujeta a mayores cambios. Un usuario puede
-mantener por largos periodos de tiempo su /configuración de consumo
+mantener por largos periodos su /configuración de consumo
 energético/. Las interfaces y direcciones de red son típicamente
 estables, y si hubiera un problema de señal, la reparación o
 reubicación se haría en la infraestructura de red, no en el equipo
@@ -974,16 +970,16 @@ cliente. El formato de la pantalla, claro está, es también estable.
 
 Uno de los cambios más difíciles de implementar en el software del
 sistema fue precisamente el de brindar la plasticidad necesaria en
-estos diferentes aspectos: El dispositivo móvil debe ser más agresivo
+estos diferentes aspectos: el dispositivo móvil debe ser más enérgico
 en sus cambios de perfil de energía, respondiendo a un entorno
 cambiante. Puede aumentar o disminuir la luminosidad de la pantalla
 dependiendo de la luminosidad circundante, o desactivar determinada
 funcionalidad si está ya en niveles críticos de carga. Con respecto a
 la red, debe poder aprovechar las conexiones fugaces mientras el
 usuario se desplaza, iniciando eventos como el de /sincronización/. Y
-encargándose de detener (tan limpiamente como sea posible) a los
-procesos que van dejando de responder. Y por último, claro, la
-interfaz usuario: Los dispositivos móviles no tienen una orientación
+encargándose de detener (tan limpiamente como sea posible) los
+procesos que van dejando de responder. Por último, claro, la
+interfaz usuario: los dispositivos móviles no tienen una orientación #
 única natural, como sí la tienen las computadoras. Las interfaces
 usuario deben pensarse para que se puedan /reconfigurar/ ágilmente
 ante la rotación de la pantalla.
@@ -996,19 +992,19 @@ de software conocido como /jardín amurallado/ o, lo que es lo mismo,
 una /plataforma cerrada/.
 
 Partiendo de que los teléfonos inteligentes, en un primer momento, y
-las tabletas y dispositivos similares posteriormente buscan satisfacer
-a un mercado mucho mayor al de los entusiastas del cómputo,[fn:: Y
+las tabletas y dispositivos similares posteriormente, buscan satisfacer
+un mercado mucho mayor al de los entusiastas del cómputo,[fn:: Y
 también como respuesta a que algunos usuarios encontraron cómo romper
 la protección y poder desarrollar e instalar aplicaciones
 extraoficiales en esta plataforma, diseñada originalmente para sólo
 correr software de Apple.] Apple anunció en julio del 2008 (un año
-después del lanzamiento del iPhone) su /tienda de aplicaciones/ o /app
-store/. La peculiaridad de esta tienda en relación al modelo de
+después del lanzamiento del iPhone) su tienda de aplicaciones o /app
+store/. La peculiaridad de ésta con relación al modelo de
 cómputo que ha imperado históricamente es que, si bien cualquier
 desarrollador puede crear una aplicación y enviarla, Apple se reserva
 el derecho de aprobarla, o eliminarla en cualquier momento. Esto es,
-este modelo le permite erigirse en juez, determinando qué puede
-ejecutar un usuario y qué no.
+este modelo le permite erigirse en juez, determinando qué puede o no
+ejecutar un usuario.
 
 Este mismo modelo fue adoptado por Google para su sistema Android, en
 un principio bajo el nombre /Mercado Android/, y desde el 2012 como
@@ -1023,20 +1019,20 @@ referencia obligada, y está disponible completo en línea.
 * Seguridad informática
 
 No puede perderse de vista la importancia de la /seguridad
-informática/. Puede verse el impacto de este concepto en prácticamente
+informática/. Puede verse el efecto de este concepto en prácticamente
 todos los componentes que conforman a un sistema operativo. Para no ir
 más lejos, las funciones principales presentadas en la sección
 \ref{INTRO_funciones} cruzan necesariamente por criterios de
-seguridad. Algunas consideraciones ejemplo podrían ser:
+seguridad. Algunas consideraciones podrían ser, por ejemplo:
 
 - Abstracción :: El sistema operativo debe asegurarse no sólo de
-                 proveer las abstracciones necesarias, sino que
-                 también debe asegurarse de que ninguno de sus
+                 proveer las abstracciones necesarias, sino
+                 también de que ninguno de sus
                  usuarios pueda /evadir/ dichas abstracciones. Por
-                 ejemplo, el que un usuario tenga derecho de modificar
+                 ejemplo, el que un usuario tenga derecho a modificar
                  un archivo que esté alojado en determinada unidad de
-                 disco, ese usuario no debe poder escribir
-                 /directamente/ al disco — Su acceso debe estar
+                 disco, no debe poder escribir
+                 /directamente/ al disco; su acceso debe estar
                  limitado a la interfaz que el sistema le ofrece.
 
 - Administración de recursos :: Si el sistema operativo definió
@@ -1053,7 +1049,7 @@ seguridad. Algunas consideraciones ejemplo podrían ser:
                  tener acceso a la información que otro haya marcado
                  como privada. Además, retomando el inciso anterior,
                  ninguno de los usuarios debe poder lograr que, por
-                 sus acciones, el sistema /penalice/ a otros usuarios
+                 sus acciones, el sistema /penalice/ a otros
                  más allá de lo que la política de asignación de
                  recursos estipule.
 
@@ -1063,27 +1059,27 @@ relacionados con los distintos temas que se abordan.
 
 Naturalmente, todo problema que se plantee relativo a la seguridad
 informática puede ser abordado (por lo menos) desde dos puntos de
-vista antagonistas: El la /protección/, que busca definir y proteger
+vista antagonistas: el de la /protección/, que busca definir y proteger
 los aspectos en que intervenga la seguridad para un problema dado, y
 el del /ataque/, que busca las debilidades o /vulnerabilidades/ en
-determinada implementación de un esquema de seguridad que permitan a
-quien las conozca violar los límites que el administrador del sistema
+determinada implementación de un esquema de seguridad que permitan, a
+quien las conozca, violar los límites que el administrador del sistema
 busca imponerle. Y claro, si bien el tipo de análisis para estos
-puntos es muy distinto, comprender ambos puntos de vista resulta no
-únicamente legítimos sino necesario para una formación profesional
+puntos de vista es muy distinto, comprender ambos resulta no
+únicamente legítimo sino necesario para una formación profesional
 completa.
 
 Todas las áreas que aborda la presente obra tienen aspectos que pueden
-analizarse desde el punto de vista de la seguridad informática, y más
+analizarse desde la seguridad informática, y más
 que dedicar un capítulo en particular a este tema, la apuesta es por
-abordar a la seguridad de forma transversal.
+abordar la seguridad de forma transversal.
 
 ** Código malicioso
 
 Los sistemas operativos, al igual que todo programa de cómputo,
 presentan imperfecciones, errores u omisiones, tanto en su diseño como
 en su implementación. El /código malicioso/ (también conocido como
-/malware/) consiste en programas diseñados para /aprovechar/ a dichas
+/malware/) consiste en programas diseñados para /aprovechar/ dichas
 /vulnerabilidades/ para adquirir privilegios de ejecución o acceso a
 datos que de otro modo no habrían logrado.
 
@@ -1094,54 +1090,54 @@ denominada /parche/) a disposición de los usuarios; en los sistemas
 operativos modernos, la instalación de estas correcciones se efectúa
 de forma automatizada. Por otro lado, si la vulnerabilidad es
 consecuencia de una debilidad en el /diseño/, su corrección puede ser
-mucho más compleja — Incluso puede ser imposible de resolver, como el
+mucho más compleja, incluso puede ser imposible de resolver, como el
 caso presentado en la sección \ref{MEM_buffer_overflow}.[fn:: El caso
 de los desbordamientos de buffer no se debe directamente al diseño de
 uno de los sistemas operativos en particular. Su existencia, así como
-su presencia generalizada más de 40 años después de haberse descrito,
+su presencia generalizada por más de 40 años después de haberse descrito,
 puede explicarse por la imposibilidad de resolverse este problema sin
 el consumo reiterado de recursos de cómputo con operaciones demasiado
 frecuentes. En este caso en particular, el desbordamiento puede
 evitarse únicamente usando lenguajes con gestión automática de
 memoria, mucho más lentos que los lenguajes de bajo nivel, o
-concienizando a los desarrolladores de las prácticas responsables de
+concientizando a los desarrolladores de las prácticas responsables de
 programación.]
 
-Cabe mencionar que una gran cantidad de código malicioso atacan a una
-capa particularmente débil de todo sistema de cómputo: Al usuario. Un
+Cabe mencionar que una gran cantidad de código malicioso ataca a una
+capa particularmente débil de todo sistema de cómputo: al usuario. Un
 aspecto frecuente (y de muy difícil solución) de estos programas es
 que /engañan/ al usuario presentándose como código legítimo, y si
 éste reacciona como el código malicioso busca, le permitirá la
 ejecución en el sistema con sus privilegios.
 
 El código malicioso tiende a agruparse y clasificarse de acuerdo a su
-comportamiento, particularmente de cara al usuario: /Virus/,
+comportamiento, particularmente de cara al usuario: /virus/,
 /gusanos/, /caballos de troya/, /exploits/, y muchos más. Sin embargo,
-y dado que sus diferencias radican particularmente en su diferente
-comportamiento /ante el usuario/ o /como programa en ejecución/ (y se
+y dado que sus diferencias radican particularmente en sus múltiples
+comportamientos /ante el usuario/ o /como programa en ejecución/ (y se
 comportan en líneas generales del mismo modo ante el sistema
 operativo), se determinó que entrar en detalles al respecto resultaría
 fuera del ámbito de la presente obra.
 
 * Organización de los sistemas operativos
 
-Para comenzar el estudio de los sistemas operativos, la complejidad
-del tema requiere que se haga de una forma modular. En este texto
-no se busca enseñar cómo se usa un determinado sistema operativo, ni
-siquiera comparar el uso de uno con otro (fuera de hacerlo con fines
-de explicar diferentes implementaciones).
+la complejidad del tema de los sistemas operativos requiere que se
+haga de una forma modular. En este texto no se busca enseñar cómo se
+usa un determinado sistema operativo, ni siquiera comparar el uso de
+uno con otro (fuera de hacerlo con fines de explicar diferentes
+implementaciones).
 
-Al nivel que se estudiará, un sistema operativo es más bien un
+En el nivel que se estudiará, un sistema operativo es más bien un
 gran programa, que ejecuta otros programas y les provee un
 conjunto de interfaces para que puedan aprovechar los recursos de
 cómputo. Hay dos formas primarias de organización /interna/ del
 sistema operativo: los sistemas monolíticos y los sistemas
 microkernel. Y si bien no se puede marcar una línea clara a rajatabla
-que indique en qué clasificiación cae cada sistema, no es dificil
+que indique en qué clasificiación cae cada sistema, no es difícil
 encontrar líneas bases.
 
 - Monolíticos :: La mayor parte de los sistemas operativos
-		 históricamente han sido /monolíticos/ — esto
+		 históricamente han sido /monolíticos/: esto
 		 significa que hay un sólo /proceso privilegiado/
 	  	 (justamente el sistema operativo) que
 		 opera en modo supervisor, y dentro del cual se
@@ -1151,7 +1147,7 @@ encontrar líneas bases.
 		 #+attr_html: height=481
 		 #+attr_latex: width=0.7\textwidth
                  #+label: INTRO_diseno_monolitico
-		 #+caption: Esquematización de los componentes en un sistema monolítico
+		 #+caption: Esquematización de los componentes en un sistema monolítico.
 		 [[./img/dot/diseno_monolitico.png]]
 
 - Microkernel :: El núcleo del sistema operativo se mantiene en el
@@ -1163,7 +1159,7 @@ encontrar líneas bases.
 		 #+attr_html: height=499
 		 #+attr_latex: width=0.7\textwidth
                  #+label: INTRO_microkernel
-		 #+caption: Esquematización de los componentes en un sistema microkernel
+		 #+caption: Esquematización de los componentes en un sistema microkernel.
 		 [[./img/dot/diseno_microkernel.png]]
 
 La principal ventaja de diseñar un sistema siguiendo un esquema
@@ -1183,12 +1179,12 @@ comprensión por separado de cada una de sus piezas. Pueden
 de los componentes (por más que parezca ser de muy bajo nivel), el
 núcleo puede reiniciarlo o incluso reemplazarlo.
 
-- Sistemas con concepciones híbridas :: No se puede  hablar de
+- Sistemas con concepciones híbridas :: No se puede hablar de
      concepciones únicas ni de verdades absolutas. A lo largo del
-     libro se verán ejemplos de /concepciones híbridas/ en este sentido
-     — sistemas que son mayormente monolíticos pero manejan algunos
-     procesos que parecerían centrales a través de procesos de nivel
-     usuario como los microkernel (por ejemplo, los sistemas de
+     libro se verán ejemplos de /concepciones híbridas/ en este
+     sentido: sistemas que son mayormente monolíticos pero que manejan
+     algunos procesos que parecerían centrales mediante de procesos de
+     nivel usuario como los microkernel (por ejemplo, los sistemas de
      archivos en espacio de usuario,
      #+latex: \textsc{fuse},
      #+html: <span class="smallcaps">fuse</span>,
@@ -1197,7 +1193,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      #+attr_html: height=471
      #+attr_latex: width=0.7\textwidth
      #+label: INTRO_diseno_hibrido
-     #+caption: Esquematización de los componentes en un sistema híbrido
+     #+caption: Esquematización de los componentes en un sistema híbrido.
      [[./img/dot/diseno_hibrido.png]]
 
 # Discusión interesante y reciente (diciembre 2012): [[http://tech.slashdot.org/story/12/12/02/1526240/multi-server-microkernel-os-genode-1211-can-build-itself?utm_source=rss1.0mainlinkanon&utm_medium=feed][Multi-server
@@ -1208,16 +1204,16 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 
 ** Preguntas de autoevaluación
 
-1. ¿En qué se diferencía la multitarea apropiativa de la cooperativa?
+1. ¿En qué se diferencia la multitarea apropiativa de la cooperativa?
    Para todas las opciones, léase: "A diferencia de la multitarea
    cooperativa, la apropiativa..."
    (Seleccione al menos una respuesta.)
    1. Es inmune a que un cálculo demasiado largo o un ciclo infinito
-      dejen a la computadora efectivamente congelada
-   2. Es la más utilizada hoy en día
-   3. Ocurre sólo cuando el proceso hace una llamada al sistema
-   4. Se emplea principalmente en sistemas multiusuario
-   5. Requiere apoyo de hardware
+      dejen a la computadora efectivamente congelada.
+   2. Es la más utilizada hoy en día.
+   3. Ocurre sólo cuando el proceso hace una llamada al sistema.
+   4. Se emplea principalmente en sistemas multiusuario.
+   5. Requiere apoyo de hardware.
 
 2. Un sistema operativo ofrece una serie de recursos o características
    principales, tanto a sus usuarios como a sus programadores. Estos
@@ -1225,9 +1221,10 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
    /abstracción/.
 
    De las siguientes afirmaciones, ¿cuál responde a cada uno de dichos
-   conceptos? ¿Cuál no corresponde a una función del sistema operativo?
+   conceptos, y cuál no corresponde a una función del sistema
+   operativo?
 
-   - Implementar políticas que repartan la atención del sistema de
+   - Instrumentar políticas que repartan la atención del sistema de
      forma efectiva y acorde a las necesidades establecidas entre los
      diferentes procesos o usuarios.
    - Cada proceso y cada usuario no tendrán que preocuparse por otros
@@ -1237,7 +1234,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
      del hardware.
    - Presentar una interfaz consistente al usuario (puede ser gráfica
      o textual), eliminando las diferencias que provendrían de manejar
-     distintos tipos de hardware
+     distintos tipos de hardware.
    - Los programadores no deben tener que preocuparse de los detalles
      del acceso a hardware, o de la configuración particular de una
      computadora. El programador debe poder enfocarse en resolver los
@@ -1246,20 +1243,19 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 3. Algunos dispositivos requieren de bloqueo para garantizar a un
    programa su acceso exclusivo. ¿Cuáles de los siguientes entrarían
    en ese supuesto?
-   1. Teclado
-   2. Unidad de cinta
-   3. Discos
-   4. Impresora
+   1. Teclado.
+   2. Unidad de cinta.
+   3. Discos.
+   4. Impresora.
 
 4. Un programa típicamente pasa por varias etapas en su ejecución,
    algunas de las cuales están limitadas por el procesador, mientras
-   que las otras están limitadas por la entrada/salida. Los
-   componentes del sistema que están ocupados en cada caso son
-   distintos.
+   que las otras lo están por la entrada/salida. Los componentes del
+   sistema que están ocupados en cada caso son distintos.
 
    ¿Qué tipo de sistemas nacieron para responder a esta necesidad?
 
-5. Se presentó que un sistema microkernel se basa en la simplificación
+5. Se presentó que los sistemas microkernel se basan en la simplificación
    de los mecanismos de comunicación y un esquema más claro de
    comunicación entre componentes. Sin embargo, los sistemas
    monolíticos siempre fueron más simples de implementar, razón por la
@@ -1267,14 +1263,14 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
    académicos. Explique esta tensión.
 
 6. De los sistemas operativos ampliamente utilizados que conozca,
-   ¿cuáles son microkernel? ¿cuáles son monolíticos?
+   averigüe cuáles son microkernel y cuáles son monolíticos.
 
-7. Si bien los sistemas operativos empleados para dispositivos móviles
+7. Los sistemas operativos empleados para dispositivos móviles
    son los mismos que los que utilizan las computadoras
-   personales. Sin embargo, hay áreas particulares, como la interfaz
+   personales, sin embargo, hay áreas particulares, como la interfaz
    al usuario o el manejo de la energía, que son claramente
-   distintos. ¿Cómo puede verse la influencia en el sentido inverso?
-   Esto es, ¿qué tanto ha influído la popularización de los
+   distintos: ¿cómo puede verse la influencia en el sentido inverso?
+   Esto es, ¿qué tanto ha influido la popularización de los
    dispositivos móviles en el camino de los sistemas operativos en
    general?
 

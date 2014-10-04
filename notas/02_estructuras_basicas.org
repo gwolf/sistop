@@ -44,10 +44,10 @@ la unidad de procesamiento son:
 
 
 Las computadoras que siguen la arquitectura /von Neumann/, esto es,
-prácticamente la totalidad hoy en día[fn:: Algunos argumentarán que
+prácticamente la totalidad hoy en día,[fn:: Algunos argumentarán que
 muchas de las computadoras en uso hoy en día siguen la arquitectura
 /Harvard modificada/, dado que empleando distintos bancos de memoria
-caché, un procesador puede tanto referirse a la siguiente instrucción
+caché, un procesador puede, tanto referirse a la siguiente instrucción,
 como iniciar una transferencia de memoria primaria. Esta distinción no
 tiene mayor relevancia para este tema, la referencia se incluye
 únicamente por no llevar a confusión.] podrían resumir su operación
@@ -63,12 +63,12 @@ indicar al *cpu* cuál es la dirección en memoria de la siguiente
 instrucción a ejecutar.
 
 La arquitectura von Neumann fue planteada, obviamente, sin considerar
-la posterior diferencia entre la velocidad que adquiriría el *cpu* y la
-memoria. En 1977, John Backus presentó al recibir el premio Turing un
-artículo describiendo el /cuello de botella de von Neumann/. Los
-procesadores son cada vez más rápidos (se logró un aumento de 1000
+la posterior diferencia entre la velocidad que adquiriría el *cpu* y
+la memoria. En 1977, John Backus presentó al recibir el premio Turing
+un artículo describiendo el /cuello de botella de von Neumann/. Los
+procesadores son cada vez más rápidos (se logró un aumento de $1~000$
 veces tanto entre 1975 y 2000 tan sólo en el reloj del sistema), pero
-la memoria aumentó su velocidad a un ritmo mucho menor —
+la memoria aumentó su velocidad a un ritmo mucho menor;
 aproximadamente un factor de 50 para la tecnología en un nivel
 costo-beneficio suficiente para usarse como memoria primaria.
 
@@ -100,17 +100,19 @@ programador.
 | *Gestionado por* | Compilador   | Hardware  | Sistema   | Sistema     |
 |                  |              |           | Operativo | Operativo   |
 | *Respaldado en*  | Cache        | Memoria   | Disco     | CD, cinta   |
+|------------------+--------------+-----------+-----------+-------------|
 
-Ahora bien, si bien la relación entre estos medios de almacenamiento
+Ahora bien, aunque la relación entre estos medios de almacenamiento
 puede parecer natural, para una computadora tiene una realidad
 completamente distinta: los registros son parte integral del
 procesador, y la memoria está a sólo un paso de distancia (el
 procesador puede referirse a ella directamente, de forma transparente,
-indicando la dirección desde un programa). El caché no existe para
-efectos prácticos: el procesador no hace referencia directa a él, sino
+indicando la dirección desde un programa). Para
+efectos prácticos, el caché no se maneja explícitcamente: el
+procesador no hace referencia directa a él, sino
 que es manejado por los controladores de acceso a memoria. Y por
 último, el acceso o modificación de cualquier dato almacenado en disco
-requiere en primer término de la transferencia a memoria, y sólamente
+requiere en primer término de la transferencia a la memoria, y sólamente
 cuando ésta haya finalizado, el llamado a las rutinas que son
 presentadas en la sección \ref{HW_disp_almacenamiento}, y analizadas
 en los capítulos \ref{DIR} y \ref{FS}.
@@ -122,20 +124,20 @@ consistente, y de realizar las transferencias entre unas y otras.
 *** Registros
 
 La memoria más rápida de la computadora son los /registros/, ubicados
-dentro de cada uno de los núcleos de cada uno de los *cpu*. Las
+en cada uno de los núcleos de cada *cpu*. Las
 arquitecturas tipo *risc* (Reduced Instruction Set Computer)
-sólo contemplan la ejecución de instrucciones
+sólo permiten la ejecución de instrucciones
 entre registros (excepto, claro, las de carga y almacenamiento a
 memoria primaria).
 
 Los primeros *cpu* trabajaban con pocos registros, muchos de ellos de
-propósito específico — trabajaban más bien con una lógica de /registro
+propósito específico, se regían más bien con una lógica de /registro
 acumulador/. Por ejemplo, el *mos* 6502 (en el cual se basaron las
-principales computadoras de 8 bits) tenía un acumulador de 8 bits (A),
-dos registros índice de 8 bits (X e Y), un registro de estado del
-procesador de 8 bits (P), un apuntador al /stack/ de 8 bits (S), y un
+principales computadoras de ocho bits) tenía un acumulador de ocho bits (*a*),
+dos registros índice de ocho bits (*x* e *y*), un registro de estado del
+procesador de ocho bits (*p*), un apuntador al /stack/ de ocho bits (*s*), y un
 apuntador al programa de 16 bits (*pc*). El otro gran procesador de su
-era, el Zilog Z80, tenía 14 registros (3 de 8 bits y el resto de 16),
+era, el Zilog Z80, tenía 14 registros (tres de ocho bits y el resto de 16),
 pero sólo uno era un acumulador de propósito general.
 
 El procesador Intel 8088, en el cual se basó la primer generación de
@@ -147,19 +149,19 @@ todos ellos de propósito general.
 #+attr_html: width=444px
 #+attr_latex: width=0.6\textwidth
 #+label: HW_registros_8086
-#+caption: Ejemplo de registros: Intel 8086/8088 (Imagen de la Wikipedia: /Intel 8086 y 8088/)
+#+caption: Ejemplo de registros: Intel 8086/8088 (imagen de la Wikipedia: /Intel 8086 y 8088/).
 [[./img/registros_8086.png]]
 
-El compilador [fn:: A veces asistido por instrucciones explíticas por
+El compilador[fn:: A veces asistido por instrucciones explíticas por
 parte del programador, pero muchas veces como resultado del análisis
 del código.] busca realizar muchas operaciones que deben ocurrir
 reiteradamente, donde la rapidez es fundamental, con sus operadores
-cargados en los registros. El estado del *cpu* en un momento dado está
+cargados en los registros. El estado del *cpu* a cada momento está
 determinado por el contenido de los registros. El contenido de la
 memoria, obviamente, debe estar sincronizado con lo que ocurre dentro
 de éste — pero el estado actual del *cpu*, lo que está haciendo, las
 indicaciones respecto a las operaciones recién realizadas que se deben
-entregar al programa en ejecución están todos representados en los
+entregar al programa en ejecución, están todas representadas en los
 registros. Se debe mantener esto en mente cuando posteriormente se
 habla de todas las situaciones en que el flujo de ejecución debe ser
 quitado de un proceso y entregado a otro.
@@ -175,7 +177,7 @@ atendiendo a las instrucciones de los programas tal como fueron escritas,
 pero en el modelo de uso de cómputo actual, eso no serviría de
 mucho: para que un proceso acepte interacción, su ejecución debe poder
 responder a los /eventos/ que ocurran alrededor del sistema. Y los
-eventos son manejados a través de las /interrupciones/ y /excepciones/
+eventos son manejados mediante las /interrupciones/ y /excepciones/
 (o /trampas/).
 
 Cuando ocurre algún evento que requiera la atención del sistema
@@ -190,7 +192,7 @@ desplazado) y posteriormente la atiende.
 
 Las interrupciones pueden organizarse por /prioridades/, de modo que
 una interrupción de menor jerarquía no interrumpa a una más
-importante — dado que las interrupciones muchas veces indican que hay
+importante, dado que las interrupciones muchas veces indican que hay
 datos disponibles en algún buffer, el no atenderlas a tiempo podría
 llevar a la pérdida de datos.
 
@@ -199,25 +201,25 @@ arquitectura, mucho más limitado que el número de dispositivos que
 tiene un equipo de cómputo actual. Las interrupciones son, por tanto,
 generadas /por el controlador del canal/ en que son producidas. Si
 bien esto resuelve la escasez de interrupciones, dificulta su
-priorización — con canales de uso tan variado como el *usb*
-(/Universal Serial Bus/, Canal Serial Universal)[fn:: Algunas
+priorización –con canales de uso tan variado como el *usb*
+(/Universal Serial Bus/, Canal Serial Universal),[fn:: Algunas
 arquitecturas, particularmente de sistemas embebidos y
 por un criterio altamente económico, están estructuradas íntegramente
-alrededor de un bus *usb*.], una interrupción puede indicar que hay
+alrededor de un bus *usb*.] una interrupción puede indicar que hay
 desde un /teclazo/ para ser leído hasta un paquete de red esperando a
-ser procesado — y si bien demorar la atención al primero no llevaría a
-pérdida notable de información, no ateneder el paquete de red sí.
+ser procesado– y si bien demorar la atención al primero no llevaría a
+una pérdida notable de información, no atender el paquete de red sí.
 
-El sistema operativo puede elegir ignorar (/enmascarar/) a ciertas
-interrupciones — pero hay interrupciones que son /no enmascarables/.
+El sistema operativo puede elegir ignorar (/enmascarar/) ciertas
+interrupciones, pero hay algunas que son /no enmascarables/.
 
 Se hace la distinción entre interrupciones y excepciones según su
 origen: una interrupción es generada por causas externas al sistema
-(un dispositivo requiere atención), mientras que una excepción es una
+(un dispositivo requiere atención), mientras que una excepción es un
 evento generado por un proceso (una condición en el proceso que
 requiere la intervención del sistema operativo). Si bien hay
-distinciones sutiles entre interrupciones, trampas y excepciones, al
-nivel de discusión que se abordará basta con esta distinción.
+distinciones sutiles entre interrupciones, trampas y excepciones, en
+el nivel de discusión que se abordará basta con esta distinción.
 
 Los eventos pueden ser, como ya se mencionó, indicadores de que hay algún
 dispositivo requiriendo atención, pero pueden también provenir del
@@ -229,19 +231,19 @@ división sobre cero o un error leyendo de disco).
 Las funciones del sistema operativo respecto a las interrupciones son:
 
 - Administrar el hardware manejador de interrupciones :: Esto incluye
-     el enmascarado y desenmascarado de las interrupciones, configurar
-     y asignar interrupciones a cada dispositivo, notificar al
-     manejador cuando la interrupción ya ha sido atendida, etc.
+     el enmascarado y desenmascarado de las interrupciones, asignar
+     y configurar interrupciones a cada dispositivo, notificar al
+     manejador cuando la interrupción ya ha sido atendida, etcétera.
 - Abstraer las interrupciones :: El sistema operativo oculta a los
-     programas de usuario la existencia de interrupciones de hardware
+     programas de usuario que ocurren interrupciones de hardware
      ya que éstas son dependientes de la arquitectura del
      procesador. En cambio el sistema operativo lo comunica de una
-     forma unificada a través de distintos mecanismos, por ejemplo
+     forma unificada por medio de distintos mecanismos, por ejemplo
      mensajes o señales o deteniendo el proceso que espera la acción
      relacionada con una interrupción y continuando su ejecución
      cuando ésta ocurre.
 - Punto de entrada al sistema operativo :: Como se verá más adelante
-     en la sección \ref{HW_SYSCALLS}, muchos procesadores y sistemas
+     (sección \ref{HW_SYSCALLS}), muchos procesadores y sistemas
      operativos utilizan las interrupciones como medio por el cual un
      proceso de usuario realiza una llamada al sistema.  Por ejemplo,
      en Linux para arquitecturas x86 el programa de usuario genera la
@@ -264,37 +266,37 @@ Las funciones del sistema operativo respecto a las interrupciones son:
      el sistema operativo: el fallo de paginación.
 
 
-
-
-* Terminales
-Las terminales son dispositivos electrónicos utilizados para ingresar datos
-y emitir resultados dentro de un sistema de cómputo. 
-Las primeras terminales utilizaban tarjetas
+* Las terminales
+Son dispositivos electrónicos utilizados para ingresar datos
+y emitir resultados dentro de un sistema de cómputo. Las primeras
+terminales, también llamadas /teletipos/, utilizaban tarjetas
 perforadas e impresiones en papel. Debido a su limitada velocidad e
-imposibilidad de "editar" el papel ya impreso, este tipo de terminales
-fue cediendo terreno ante la aparición sobre principios de los setenta 
+imposibilidad de "editar" el papel ya impreso, éstas fueron
+cediendo terreno ante la entrada, a principios de los setenta,
 de las terminales de texto con pantalla de video y teclado.
 
-Conceptualmente una terminal de texto es un dispositivo mediante el cual
-la computadora recibe y envía un flujo de caracteres desde y hacia el usuario respectivamente.
+Conceptualmente, una terminal de texto es un dispositivo mediante el cual
+la computadora recibe y envía un flujo de caracteres desde y hacia el
+usuario, respectivamente.
 Las operaciones más complejas, como edición, borrado y movimiento,
 en general son tratadas con /secuencias de escape/, esto es, una serie
 de caracteres simples que tomados en conjunto representan una acción
-a realizar en la terminal. 
+a realizar en la terminal.
 
 Durante la década de los setenta también se desarrollaron terminales
-gráficas las cuales podían representar imágenes junto con texto. Con
-la inclusión del ratón o "mouse" estas terminales dieron lugar a lo
+gráficas, las cuales podían representar imágenes junto con el texto. Con
+la inclusión del ratón o /mouse/ estas terminales dieron lugar a lo
 que hoy se conoce como Interfaz Gráfica de Usuario (/Graphical User
 Interface/ o *gui* y a los sistemas de ventana.
 
 En los sistemas operativos modernos es común referirse al /emulador de
-terminal/, un programa especializado ya sea para tener múltiples
-instancias de una terminal o para ejectuar una terminal de texto dentro de una
+terminal/, un programa especializado, ya sea para tener múltiples
+instancias de una terminal, o para ejectuar una terminal de texto
+dentro de una
 interfaz gráfica. Estos programas se denominan de esta forma dado que
 sólo replican el comportamiento de las terminales (que eran
 originalmente equipos independientes), siendo únicamente un programa
-que recibe la entrada del usuario a través del teclado enviándola al
+que recibe la entrada del usuario por medio del teclado enviándola al
 sistema operativo como un flujo de datos, y recibe otro flujo de datos
 del sistema operativo, presentándolo de forma adecuada al
 usuario.
@@ -314,26 +316,26 @@ expectativas razonables de permanencia.
 
 De las muchas tecnologías de almacenamiento, la que ha dominado
 fuertemente durante los últimos 40 años ha sido la de los discos
-magnéticos[fn:: Se verán en la sección \ref{FS_FIS_estado_solido} detalles
+magnéticos.[fn:: Se verán en la sección \ref{FS_FIS_estado_solido} detalles
 acerca de las tecnologías de almacenamiento /en estado sólido/, que
-pueden poner fin a esta larga dominación.]. El acceso a disco (miles
+pueden poner fin a esta larga dominación.] El acceso a disco (miles
 de veces más lento que el acceso a memoria) no es realizado
 directamente por el procesador, sino que requiere de la comunicación
 con controladores externos, con lógica propia, que podrían ser vistos
 como computadoras independientes de propósito limitado.
 
-El procesador no puede referirse directamente más información que la
-que forma parte del almacenamiento primario — esto es, de la memoria
+El procesador no puede referirse directamente a más información que la
+que forma parte del almacenamiento primario, esto es, de la memoria
 de acceso aleatorio (*ram*). En las secciones \ref{HW_interrupciones}
 (/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
 memoria/), se explica cómo es que se efectúan dichas referencias.
 
 Los dispositivos de almacenamiento (discos, memorias flash, cintas)
 pueden ser vistos como una región donde la computadora lee y escribe
-una serie de bytes que preservarán su valor incluso luego de apagada
+una serie de bytes que preservarán su valor, incluso luego de apagada
 la computadora.
 
-A nivel de hardware el sistema operativo no accede al dispositivo de
+Para el hardware el sistema operativo no accede al dispositivo de
 almacenamiento byte por byte, sino que éstos se agrupan en /bloques/
 de tamaño fijo.  El manejo de estos bloques (adminstración de bloques
 libres, lectura y escritura) es una tarea fundamental del sistema
@@ -347,15 +349,15 @@ temporizadores que son utilizados para funciones varias como
 mantener la hora del sistema actualizada, implementar alarmas tanto para los
 programas de usuario como para el sistema operativo, ejecutar
 tareas de mantenimiento periódicas, cumplir con requisitos
-temporales de aplicaciones de tiempo real, etc.
+temporales de aplicaciones de tiempo real, etcétera.
 
 Mantener el tiempo correctamente dentro del sistema operativo
 es algo crucial. Permite establecer un orden cronológico 
-entre los eventos que ocurren dentro del sistema, por ejemplo
+entre los eventos que ocurren dentro del sistema, por ejemplo,
 la creación de un archivo y de otro o el tiempo consumido
 en la ejecución de un proceso. 
 
-Por otro lado si el sistema operativo utiliza una política de 
+Por otro lado, si el sistema operativo utiliza una política de 
 planificación de procesos apropiativa (capítulo \ref{PLAN}), 
 como la /Ronda/ (/Round Robin/),  éste debe interrumpir al proceso
 en ejecución luego de cierta cantidad de unidades de tiempo. Esto
@@ -365,14 +367,14 @@ de procesos.
 
 * Canales y puentes
 
-Los distintos componentes de un sistema de cómputo se comunican a
-través de los diferentes /canales/ (generalmente se hace referencia a
-ellos por su nombre en inglés: /buses/). Al nivel más
+Los distintos componentes de un sistema de cómputo se comunican
+mediante los diferentes /canales/ (generalmente se hace referencia a
+ellos por su nombre en inglés: /buses/). En el nivel más
 básico, los canales son líneas de comunicación entre el procesador
-y los demás componentes del chipset[fn:: Los chips que forman parte de
+y los demás componentes del chipset,[fn:: Los chips que forman parte de
 un equipo, casi siempre provistos por el mismo fabricante que el
-procesador mismo.], a los cuales a su vez se conectan los diferentes
-dispositivos del sistema — desde aquellos que requieren mayor
+procesador mismo.] a los cuales a su vez se conectan los diferentes
+dispositivos del sistema, desde aquellos que requieren mayor
 velocidad, como la misma memoria, hasta los puertos más sencillos.
 
 Un chipset provee distintos buses, con un agrupamiento lógico
@@ -380,9 +382,9 @@ según la velocidad requerida por sus componentes y otras
 características que determinan su topología.
 
 #+attr_html: height=618px
-#+attr_latex: width=0.65\textwidth
+#+attr_latex: width=0.6\textwidth
 #+label: HW_northbridge_southbridge
-#+caption: Diagrama de la comunicación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/. Imagen de la Wikipedia: /Puente Norte/
+#+caption: Diagrama de la comunicación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/ (imagen de la Wikipedia: /Puente Norte/).
 [[./img/northbridge_southbridge.png]]
 
 Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
@@ -390,8 +392,8 @@ ha sido característica de las computadoras x86 de los últimos 20 años,
 aunque la tendencia apunta a que se abandone paulatinamente para dar
 paso a procesadores que integren en un sólo paquete todos estos
 componentes. Sin embargo, el acomodo funcional electrónico, al menos
-hasta el momento, sigue basado en estos puntos.] de estos buses es a
-través de una separación en dos chips: el /puente norte/
+hasta el momento, sigue basado en estos puntos.] de estos buses es
+por medio de una separación en dos chips: el /puente norte/
 (/Northbridge/), conectado directamente al *cpu*, encargado de gestionar
 los buses de más alta velocidad y que, además, son fundamentales para
 el más básico inicio de la operación del sistema: la memoria y el
@@ -400,7 +402,7 @@ puente norte a través del canal dedicado *agp* (/Advanced Graphics
 Port/, Puerto Gráfico Avanzado).
 
 Al puente norte se conecta el /puente sur/ (/Southbridge/), que
-controla el resto de los dispositivos del sistema — normalmente se ven
+controla el resto de los dispositivos del sistema. Normalmente se ven
 aquí las interfaces de almacenamiento (*scsi*, *sata*, *ide*), de
 expansión interna (*pci*,
 #+latex: \textsc{pci}e)
@@ -410,13 +412,13 @@ y paralelos).
 
 ** Contención
 
-Una de las principales razones de la existencia de tantos /canales/
-(buses) distintos en un mismo sistema es a la frecuencia acorde a los
+Una de las principales razones de que haya de tantos /canales/
+(buses) distintos en un mismo sistema se debe a la frecuencia acorde a los
 dispositivos para los cuales está diseñado: la cantidad de datos que
-tiene que viajar entre el procesador y la memoria a lo largo de la
-operación del sistema es muy superior que la que tiene que
-transferirse desde los discos, y a su vez, esta es mucho mayor que la
-que enviarse a la impresora, o la que se recibe del teclado. Claro
+tienen que viajar entre el procesador y la memoria a lo largo de la
+operación del sistema es muy superior a la que tienen que
+transferirse desde los discos, y a su vez, ésta es mucho mayor que la
+que se envía a la impresora, o la que se recibe del teclado. Claro
 está, los demás dispositivos podrían incrementar su frecuencia para
 participar en un canal más rápido, aunque su costo se incrementaría,
 dado que harían falta componentes capaces de sostener un reloj varios
@@ -425,14 +427,14 @@ dado que harían falta componentes capaces de sostener un reloj varios
 Pero incluso obviando la diferencia económica: cuando el sistema
 requiere transferir datos de o hacia varios dispositivos de la misma
 categoría, es frecuente que ocurra /contención/: puede saturarse el
-ancho de banda máximo que alcanza uno de los canales y, aún si los
+ancho de banda máximo que alcanza uno de los canales y, aun si los
 dispositivos tienen información lista, tendrán que esperar a que los
 demás dispositivos desocupen el canal.
 
 #+attr_html: height=490px
 #+attr_latex: width=\textwidth
 #+label: HW_chipset_857
-#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales
+#+caption: Esquema simplificado del chipset Intel 875 (para el procesador Pentium 4) ilustrando la velocidad de cada uno de los canales.
 [[./img/dot/chipset_857.png]]
 
 En la figura \ref{HW_chipset_857} se puede ver el diseño general del
@@ -446,7 +448,7 @@ canal *usb* permite el uso de un máximo de 127 unidades por canal, por
 lo cual la contención puede ser muy alta.
 
 
-** Acceso directo a memoria (DMA)
+** Acceso directo a memoria (*dma*)
 # <<HW_dma>>
 
 La operación de dispositivos de entrada/salida puede ser altamente
@@ -459,8 +461,8 @@ también conocido como /entrada/salida programada/.], se crearía un
 cuello de botella por la cantidad y frecuencia de interrupciones. Hoy
 en día, para evitar que el sistema se demore cada vez que hay una
 transferencia grande de datos, todas las computadoras implementan
-controladores de /acceso directo a memoria/ (*dma*) en uno o más de
-sus subsistemas.
+controladores de /acceso directo a memoria/ (*dma*, por sus siglas en
+inglés) en uno o más de sus subsistemas.
 
 El *dma* se emplea principalmente al tratar con dispositivos con un
 gran ancho de banda, como unidades de disco, subsistemas multimedia,
@@ -507,23 +509,22 @@ núcleos de un mismo chip, y el de nivel 3 es externo y está en el bus
 de acceso a memoria.]
 
 
-* Interfaz del Sistema Operativo: llamadas al sistema
+* Interfaz del sistema operativo: llamadas al sistema
 # <<HW_SYSCALLS>>
 De forma análoga a las interrupciones, se puede hablar
 de las llamadas al sistema. El sistema operativo protege a un proceso
 de otro, y previene que un proceso ejecutándose en espacio no
 privilegiado tenga acceso directo a los dispositivos. Cuando un
-proceso requiere de alguna acción privilegiada, acede a ellas realizando 
-una /llamada al sistema/. Las llamadas al sistema pueden agruparse, a
-grandes rasgos, en:
+proceso requiere de alguna acción privilegiada, accede a ellas realizando 
+una /llamada al sistema/. Éstas pueden agruparse, a grandes rasgos, en:
 
 - Control de procesos :: Crear o finalizar un proceso, obtener
      atributos del proceso, esperar la finalización de un proceso o cierto tiempo, 
-	asignar o liberar memoria, etc.
+	asignar o liberar memoria, etcétera.
 
 - Manipulación de archivos :: Crear, borrar o renombrar un archivo;
      abrir o cerrar un archivo existente; modificar sus /metadatos/;
-     leer o escribir de un /descriptor de archivo/ abierto, etc.
+     leer o escribir de un /descriptor de archivo/ abierto, etcétera.
 
 - Manipulación de dispositivos :: Solicitar o liberar un dispositivo;
      leer, escribir o reposicionarlo, y otras varias. Muchas de estas
@@ -531,7 +532,7 @@ grandes rasgos, en:
      sistemas operativos las ofrecen como una sola.
 
 - Mantenimiento de la información :: Obtener o modificar la hora del
-     sistema; pedir detalles acerca de procesos o archivos, etc.
+     sistema; pedir detalles acerca de procesos o archivos, etcétera.
 
 - Comunicaciones :: Establecer una comunicación con determinado
                     proceso (local o remoto), aceptar una solicitud de
@@ -543,7 +544,7 @@ grandes rasgos, en:
                 misma sesión de usuario.
 
 Cada sistema operativo /expone/ una serie de llamadas al
-sistema. Estas son, a su vez, expuestas al programador a través de las
+sistema. Éstas son, a su vez, expuestas al programador mediante de las
 /interfaces de aplicación al programador/ (*api*), que se alínean de
 forma cercana (pero no exacta). Del mismo modo que cada sistema
 operativo ofrece un conjunto de llamadas al sistema distinto, cada
@@ -552,16 +553,14 @@ ligeramente distinto de otros.
 
 #+attr_latex: width=\textwidth
 #+label: HW_llamada_al_sistema
-#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
+#+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema.
 [[./img/dot/llamada_al_sistema.png]]
 
-** Llamadas al sistema, arquitecturas y APIs
+** Llamadas al sistema, arquitecturas y *api*
 # <<HW_syscall_arch_api>>
 
 Cada familia de sistemas operativos provee distintas llamadas al
-sistema, y sus lenguajes/bibliotecas implementan distintos
-#+latex: \textsc{api}s.
-#+html: <b>api</b>s.
+sistema, y sus lenguajes/bibliotecas implementan distintos *api*.
 Esto es el que
 distingue principalmente a uno de otro. Por ejemplo, los sistemas
 Windows 95 en adelante implementan Win32, Win16 (compatibilidad con
@@ -585,7 +584,7 @@ es interesante, porque también implementa *posix* ofreciendo la
 /semántica/ de dos sistemas muy distintos entre sí.
 
 Los lenguajes basados en /máquinas virtuales abstractas/, como Java o
-la familia *.net* (ver sección \ref{VIRT_arq_inexistentes}), exponen
+la familia *.net* (véase la sección \ref{VIRT_arq_inexistentes}), exponen
 un *api* con mucha mayor distancia respecto al sistema operativo; la
 máquina virtual se presenta como un pseudo-sistema operativo
 intermedio que se ejecuta dentro del real, y esta distinción se hace
@@ -616,7 +615,7 @@ Unixes
 La salida de una traza brinda amplio detalle acerca de la
 actividad realizada por un proceso, y permite comprender a grandes
 rasgos su interacción con el sistema. El nivel de información que da
-es, sin embargo, a veces demasiado — eso se puede ver si se considera
+es, sin embargo, a veces demasiado; eso se puede ver si se considera
 la siguiente traza, ante uno de los comandos más sencillos: =pwd=
 (obtener el directorio actual)
 
@@ -634,7 +633,7 @@ mmap2(NULL, 78233, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7729000
 close(3)                                = 0
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
 open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY) = 3
-read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0po\1\0004\0\0\0"..., 512) = 512
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0p"..., 512) = 512
 fstat64(3, {st_mode=S_IFREG|0755, st_size=1351816, ...}) = 0
 mmap2(NULL, 1366328, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb75db000
 mprotect(0xb7722000, 4096, PROT_NONE)   = 0
@@ -672,7 +671,7 @@ detalles de los dispositivos, también debe exponer una interfaz para
 poder emplearlos y administrarlos.
 
 Unix introdujo el concepto de que /todo es un archivo/: en el sistema
-Unix original, todos los dispositivos podían ser controlados a través
+Unix original, todos los dispositivos podían ser controlados por medio
 de un /archivo especial/ que, en vez de almacenar información, apunta
 a estructuras en el sistema que controlan a cada dispositivo. Este
 concepto sobrevive en los sistemas derivados de Unix al día de hoy,
@@ -685,30 +684,28 @@ por el sistema.
 Las principales estructuras relacionadas de este tipo[fn:: Hay varios
 otros tipos de archivo definidos en su semántica, como las /tuberías
 nombradas/, los /sockets/, e incluso los mismos directorios. Estos
-serán cubiertos en la sección \ref{DIR_arch_especiales}.] que existen
+serán cubiertos en la sección \ref{DIR_arch_especiales}.] que hay
 en un sistema tipo Unix son:
 
 - Dispositivos de caracteres :: Son aquellos en los cuales la
      información es leída o escrita de a un caracter a la vez y se
      presentan como /streams/ (flujos) de información, ya sea
-     entrante, saliente o mixta. Algunos pueden permitir operaciones
+     entrantes, salientes os mixto. Algunos pueden permitir operaciones
      adicionales (por ejemplo, rebobinado), pero la manipulación de la
-     información se efectúa de forma secuencial.
+     información se efectúa de forma secuencial. Algunos ejemplos de
+     estos dispositivos serían la impresora, la unidad de cinta, o el
+     modem.
 
-     Ejemplos: impresora, unidad de cinta, modem.
-
-- Dispositivos de bloques :: Presentan una interfaz
-     de /acceso aleatorio/ y entregan o reciben la información en
-     /bloques/ de tamaño predeterminado.
-
-     El ejemplo más claro de este tipo de dispositivos es una unidad
-     de disco o una de sus particiones.
+- Dispositivos de bloques :: Presentan una interfaz de /acceso
+     aleatorio/ y entregan o reciben la información en /bloques/ de
+     tamaño predeterminado. El ejemplo más claro de este tipo de
+     dispositivos es una unidad de disco o una de sus particiones.
 
 Por convención, ambos tipos de archivos de dispositivo están en el
 directorio =/dev= en los sistemas Unix y siguen una nomenclatura
 estándar, aunque pueden crearse en cualquier otro lugar.
 
-Además de esto, en los sistemas Unix existen los /sistemas de archivos
+Además de esto, en los sistemas Unix hay /sistemas de archivos
 virtuales/ con información de sistema, que se abordan en la sección
 \ref{FS_proc}. Estos son directorios cuyos contenidos, si bien se
 presentan al usuario cual si fueran archivos comunes, son más bien un
@@ -722,13 +719,13 @@ discos compactos, memorias flash, etc.) son relacionados con una letra
 cada uno, así (en general) =C:= es el volúmen o partición del disco
 principal, =A:= y =B:= se utilizan para discos extraíbles. A los
 puertos de entrada/salida más utilizados también se les asignan
-nombres alfanuméricos, por ejemplo el primer puerto paralelo se
+nombres alfanuméricos, por ejemplo, el primer puerto paralelo se
 denomina =LPT1= y el segundo puerto serie =COM2=. La sección
 \ref{DIR_montaje_directorios} detalla acerca de la vista lógica que se
 presenta en dicho sistema.
 
 Sin embargo, la mayor parte de los dispositivos e interfaces internas
-son alcanzables únicamente a través de llamadas a sistema, haciendo
+son alcanzables únicamente mediante llamadas a sistema, haciendo
 explícito al desarrollador (e inalcanzable para el usuario de a pie)
 que se está solicitando un servicio al sistema opeativo.
 
@@ -741,10 +738,10 @@ El /multiprocesamiento/ es todo entorno donde hay más de un procesador
 vuelve un recurso más a gestionar por el sistema operativo — y el que
 haya concurrencia /real/ tiene un fuerte impacto en su diseño.
 
-Si bien en el día a día se usan de forma intercambiable[fn:: O poco
+Si bien en el día a día se usan de forma intercambiable,[fn:: O poco
 más que eso, al grado de que rara vez se emplea el término
-/multiprogramación/, mucho más acorde a los equipos que se emplean día
-a día.], es importante enfatizar en la diferencia fundamental entre el
+/multiprogramación/, mucho más acorde con los equipos que se emplean día
+a día.] es importante enfatizar en la diferencia fundamental entre el
 /multiprocesamiento/, que se abordará en esta sección, y la
 /multiprogramación/, de la cual se habla en la sección
 \ref{INTRO_multiprogramados} (/Sistemas multiprogramados/). Un sistema
@@ -757,7 +754,7 @@ multiprocesador tiene la capacidad de estar atendiendo
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=210
 #+label: HW_multiproceso_y_multiprogramacion
-#+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
+#+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido.
 [[./img/ditaa/multiproceso_y_multiprogramacion.png]]
 
 En la figura \ref{HW_multiproceso_y_multiprogramacion}, el primer diagrama ilustra una ejecución
@@ -776,22 +773,22 @@ comunmente se encuentra en equipos de uso general hoy en día.
 Probablemente el tema que se aborda más recurrentemente a lo largo de este texto
 será precisamente la complejidad que proviene de la multiprogramación;
 se la desarrollará particularmente en los capítulos \ref{PROC} y
-\ref{PLAN}. Valga la nota en este momento únicamente para aclarar la 
+\ref{PLAN}. Valga la nota en este momento únicamente para aclarar la
 diferencia entre los dos conceptos.
 
 El multiprocesamiento se emplea ampliamente desde los sesenta en los
 entornos de cómputo de alto rendimiento, pero por muchos años se vio
-como el área de especialización de muy pocos — las computadoras con
+como el área de especialización de muy pocos; las computadoras con
 más de un procesador eran prohibitivamente caras, y para muchos
 sistemas, ignorar el problema resultaba una opción válida. Muchos
-sistemas operativos ni siquiera detectaban la existencia de
+sistemas operativos ni siquiera detectaban la presencia de
 procesadores adicionales, y en presencia de éstos, ejecutaban en uno
 sólo.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=415
 #+label: HW_moore_orig
-#+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
+#+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por 10 años.
 [[./img/moore_orig.png]]
 
 Esto cambió hacia el 2005. Tras más de 40 años de cumplirse, el modelo
@@ -802,7 +799,7 @@ llevaba a velocidades de *cpu* que, en el ámbito comercial, excedían los
 el diferencial de velocidad con el acceso a memoria era cada vez más
 alto. Esto motivó a que las principales compañías productoras de los *cpu*
 cambiaran de estrategia, introduciendo chips que son, para propósitos
-prácticos, /paquetes/ con 2 o más procesadores dentro.
+prácticos, /paquetes/ con dos o más procesadores dentro.
 
 #+attr_latex: width=0.7\textwidth
 #+attr_html: height="512"
@@ -824,10 +821,11 @@ misma memoria (aunque cada uno puede tener su propio /caché/, lo cual
 obliga a mantener en mente los puntos relacionados con la /coherencia
 de caché/ abordados en la sección anterior).
 
-Existe también el /multiprocesamiento asimétrico/; dependiendo de la
+En contraposición, puede hablarse también del /multiprocesamiento
+asimétrico/; dependiendo de la
 implementación, la asimetría puede residir en diferentes puntos. Puede
 ir desde que los procesadores tengan una /arquitectura/ distinta
-(típicamente dedicada a una tarea específica), en cuyo caso 
+(típicamente dedicada a una tarea específica), en cuyo caso
 pueden verse como /coprocesadores/ o /procesadores coadyuvantes/, casi
 computadoras independientes contribuyendo sus resultados a un mismo
 cómputo. Hoy en día, este sería el caso de las tarjetas gráficas 3D,
@@ -838,36 +836,36 @@ Es posible tener diferentes procesadores con la misma arquitectura
 pero funcionando a diferente frecuencia. Esto conlleva una fuerte
 complejidad adicional, y no se utiliza hoy en día.
 
-Por último, existen los diseños de /Acceso No-Uniforme a Memoria/
+Por último, se tienen los diseños de /Acceso No-Uniforme a Memoria/
 (/Non-Uniform Memory Access/, *numa*).  En este esquema, cada
-procesador tiene /afinidad/ con bancos específicos de memoria — para
+procesador tiene /afinidad/ con bancos específicos de memoria: para
 evitar que los diferentes procesadores estén esperando al mismo tiempo
 al bus compartido de memoria, cada uno tiene acceso exclusivo a su
 área. Los sistemas *numa* pueden ubicarse como en un punto intermedio
-entre el procesamiento simétrico y el cómputo distribuído, y puede ser
-visto como un /cómputo distribuído fuertemente acoplado/.
+entre el procesamiento simétrico y el cómputo distribuido, y puede ser
+visto como un /cómputo distribuido fuertemente acoplado/.
 
-** Cómputo distribuído
+** Cómputo distribuido
 
-Se denomina cómputo distribuído a un proceso de cómputo realizado
+Se denomina cómputo distribuido a un proceso de cómputo realizado
 entre computadoras independientes, o, más formalmente, entre
 procesadores que /no comparten memoria/ (almacenamiento primario).
 Puede verse que un equipo de diseño *numa* está a medio camino entre
-una computadora multiprocesada y el cómputo distribuído.
+una computadora multiprocesada y el cómputo distribuido.
 
-Hay diferentes modelos para implementar el cómputo distribuído,
-siempre basados en la transmisión de datos sobre una /red/. Estos son
+Hay diferentes modelos para implementar el cómputo distribuido,
+siempre basados en la transmisión de datos sobre una /red/. Éstos son
 principalmente:
 
 - /Cúmulos/ (clusters) :: Computadoras conectadas por una red local
      (de alta velocidad), ejecutando cada una su propia instancia de
      sistema operativo. Pueden estar orientadas al /alto rendimiento/,
      /alta disponibilidad/ o al /balanceo de cargas/ (o a una 
-     combinación de estas). Típicamente son equipos homogéneos, y 
+     combinación de éstas). Típicamente son equipos homogéneos, y 
      dedicados a la tarea en cuestión.
 
-- /Mallas/ (Grids) :: Computadoras distribuídas geográficamente y
-     conectadas a través de una red de comunicaciones. Las
+- /Mallas/ (Grids) :: Computadoras distribuidas geográficamente y
+     conectadas mediante una red de comunicaciones. Las
      computadoras participantes pueden ser heterogéneas (en
      capacidades y hasta en arquitectura); la comunicación tiene que
      adecuarse a enlaces de mucha menor velocidad que en el caso de un
@@ -875,7 +873,7 @@ principalmente:
      conexiones y desconexiones de nodos en el transcurso del
      cómputo.
 
-- Cómputo /en la nube/ :: Un caso específico de cómputo distribuído
+- Cómputo /en la nube/ :: Un caso específico de cómputo distribuido
      con partición de recursos (al estilo del modelo
      cliente-servidor); este modelo de servicio está fuertemente
      orientado a la /tercerización/ de servicios específicos. A
@@ -907,7 +905,7 @@ principalmente:
        ventaja de esta modalidad es que los usuarios, si bien retienen
        la capacidad plena de administración sobre sus /granjas/,
        tienen mucho mayor flexibilidad para aumentar o reducir el
-       consumo de recursos (y por tanto, el pago) según la demanda que
+       consumo de recursos (y, por tanto, el pago) según la demanda que
        alcancen.
 
   El tema del cómputo en la nube va muy de la mano de la
@@ -920,38 +918,38 @@ Al programar una aplicación de forma que aproveche al paralelismo
 sus /porciones paralelizables/) ¿cuál es el incremento al rendimiento
 que se puede esperar?
 
-En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Validity of the Single
-Processor Approach to Achieving Large Scale Computing Capabilities]],
-Amdahl, 1967] en que indica los límites máximos en que resultará la
-programación multiprocesada ante determinado programa: parte de la
-observación de que aproximadamente 40% del tiempo de ejecución de un
-programa se dedicaba a administración y mantenimiento de los datos,
-esto es, a tareas secuenciales.
+En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf]["Validity of the Single
+Processor Approach to Achieving Large Scale Computing Capabilities"]],
+Amdahl, 1967] en el que indica los límites máximos en que resultará la
+programación multiprocesada ante un determinado programa: parte de la
+observación de que aproximadamente 40 % del tiempo de ejecución de
+un programa se dedicaba a la administración y el mantenimiento de los
+datos, esto es, a tareas secuenciales.
 
-Si únicamente el 60% del tiempo de procesamiento es susceptible, pues,
-de ser paralelizado, el rendimiento general del sistema no se
+Si únicamente el 60 % del tiempo de procesamiento es susceptible,
+pues, de ser paralelizado, el rendimiento general del sistema no se
 incrementará en una proporción directa con el número de procesadores,
 sino que debe sumársele la porción estrictamente secuencial. Puesto en
 términos más formales: la ganancia en la velocidad de ejecución de un
 programa al ejecutarse en un entorno paralelo estará limitado por el
 tiempo requerido por su fracción secuencial. Esto significa que, si
-$T(1)$ representa al tiempo de ejecución del programa con un sólo
-procesador y $T(P)$ al tiempo de ejecución con $P$ procesadores, y si
-$t_s$ es el tiempo requerido para ejecutar la porción secuencial del
-programa, y $t_p(P)$ el tiempo que requiere la ejecución de la porción
-paralelizable, repartida entre $P$ procesadores, se puede hablar de una
-ganancia $g$ en términos de:
+$T(1)$ representa al tiempo de ejecución del programa con un solo
+procesador, $T(P)$ al tiempo de ejecución con $P$ procesadores,
+$t_s$ al tiempo requerido para ejecutar la porción secuencial del
+programa, y $t_p(P)$ el tiempo que necesita la ejecución de la porción
+paralelizable, repartida entre $P$ procesadores, se puede hablar de
+una ganancia $g$ en términos de:
 
 $$g = \frac{T(1)}{T(P)} = \frac{t_s + t_p(1)}{t_s + \frac{t_p(1)}{P}}$$
 
 #+begin_latex
 \begin{figure}
 \centering
-\subfigure[Procesadores: 1, $t=500$ \label{HW_amdahl_1}]{\hskip 2em \includegraphics[height=0.33\textheight]{img/dot/amdahl_1.png} \hskip 2em}
+\subfigure[Procesadores:~1, $t=500$ \label{HW_amdahl_1}]{\hskip 2em \includegraphics[height=0.33\textheight]{img/dot/amdahl_1.png} \hskip 2em}
 \hfill
-\subfigure[Procesadores: 2, $t=400$, ganancia: 1.25x \label{HW_amdahl_2}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_2.png} \hskip 1em}
+\subfigure[Procesadores:~2, $t=400$, ganancia:~1.25x \label{HW_amdahl_2}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_2.png} \hskip 1em}
 \hfill
-\subfigure[Procesadores: 4, $t=350$, ganancia: 1.4x \label{HW_amdahl_4}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_4.png}}
+\subfigure[Procesadores:~4, $t=350$, ganancia:~1.4x \label{HW_amdahl_4}]{\includegraphics[height=0.33\textheight]{img/dot/amdahl_4.png}}
 \caption {Ley de Amdahl: ejecución de un programa con 500 unidades de tiempo total de trabajo con uno, dos y cuatro procesadores.}
 \label{HW_amdahl}
 \end{figure}
@@ -998,12 +996,12 @@ ganancia de 1.25x — la ejecución se completa en $T=400$ (con
 $g=1.25$). Las secciones paralelizables sólo toman un tiempo /externo/
 de 50 cada una, dado que la carga fue repartida entre dos unidades de
 ejecución. Al ejecutar con cuatro procesadores (\ref{HW_amdahl_4}), si
-bien se sigue notando mejoría, esta apenas lleva a $T=350$,
+bien se sigue notando mejoría, ésta apenas lleva a $T=350$,
 con $g=1.4$.
 
 Si el código fuera infinitamente paralelizable, y se ejecutase este
 programa en una computadora con un número infinito de procesadores,
-este programa no podría ejecutarse en menos de $T=300$, lo cual 
+este programa no podría ejecutarse en menos de $T=300$, lo cual
 presentaría una ganancia de apenas $g=1.66$. Esto es, al agregar
 procesadores adicionales, rápidamente se llegaría a un crecimiento
 asintótico — el comportamiento descrito por la Ley de Amdahl es
@@ -1013,7 +1011,7 @@ sistemas masivamente paralelos presenta /rendimientos decrecientes/.
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="480"
 #+label: HW_amdahl_porcentajes
-#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl
+#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl.
 [[./img/gnuplot/amdahl.png]]
 
 Si bien el ejemplo que se acaba de presentar resulta poco optimizado, con sólo
@@ -1022,26 +1020,26 @@ un 40% de código paralelizable, se puede ver en la gráfica
 con cargas típicas. Un programa relativamente bien optimizado, con 80%
 de ejecución paralela, presenta un crecimiento atractivo en la región
 de hasta 20 procesadores, y se estaciona apenas arriba de una ganancia
-de 4.5 a partir de los 40.[fn:: De un máximo de 5 al que puede
-alcanzar con un número infinito de procesadores] Incluso el hipotético
+de 4.5 a partir de los 40.[fn:: De un máximo de cinco al que puede
+alcanzar con un número infinito de procesadores.] Incluso el hipotético
 95% llega a un tope en su crecimiento, imposibilitado de alcanzar una
 ganancia superior a 20.
 
 Dado que el factor económico resulta muy importante para construir
 computadoras masivamente paralelas,[fn:: Dado que los componentes más
-caros son necesariamente los procesadores] y que se ve claramente que
+caros son necesariamente los procesadores.] y que se ve claramente que
 el poder adicional que da cada procesador es cada vez menor, la
 Ley de Amdahl resultó (como ya se mencionó) en varias décadas de mucho
 mayor atención a la miniaturización y aumento de reloj, y no al
 multiprocesamiento.
 
 Fue hasta 1988 que John Gustafson publicó una observación a esta
-ley[fn:: [[http://www.johngustafson.net/pubs/pub13/amdahl.htm][Reevaluating Amdahl's Law]], John L. Gustafson, Communications
-of the ACM, vol. 31, mayo de 1988] que, si bien no la invalida,
+ley[fn:: [[http://www.johngustafson.net/pubs/pub13/amdahl.htm]["Reevaluating Amdahl's Law"]], John L. Gustafson, "Communications
+of the *ACM*", vol. 31, mayo de 1988] que, si bien no la invalida,
 permite verla bajo una luz completamente diferente y mucho más
 optimista. Gustafson publicó este artículo corto tras haber obtenido
-ganancias superiores a 1020 en una supercomputadora con 1024
-procesadores — un incremento casi perfectamente lineal al número de
+ganancias superiores a $1~020$ en una supercomputadora con $1~024$
+procesadores: un incremento casi perfectamente lineal al número de
 procesadores. Sí, respondiendo a una carga altamente optimizada, pero
 no por eso menos digna de análisis.
 
@@ -1050,8 +1048,8 @@ procesadores, típicamente se verá una modificación /al problema
 mismo/. Citando de su artículo (traducción propia),
 
 #+begin_quote
-(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
-independiente del número de procesadores, /lo cual virtualmente nunca
+(...)Asumen implícitamente que el tiempo en el que se ejecuta en paralelo es
+independiente del número de procesadores, /lo que virtualmente nunca
 ocurre de este modo/. Uno no toma un problema de tamaño fijo para
 ejecutarlo en varios procesadores como no sea para hacer un
 ejercicio académico; en la práctica, /el tamaño del problema crece con
@@ -1081,12 +1079,12 @@ de la utilidad misma del paralelismo masivo.
 1. De las siguientes opciones, ¿cuál responde a la definición de
    /almacenamiento primario/?
    1. Las unidades de almacenamiento no volátil de largo plazo
-      (discos, memoria Flash, *usb*, etc.)
-   2. La memoria *ram* del sistema
+      (discos, memoria Flash, *usb*, etcétera)
+   2. La memoria *ram* del sistema.
    3. La capa de memoria que corre a mayor velocidad y está más cerca
-      del procesador
+      del procesador.
    4. Los registros, espacio de memoria de extremadamente alta
-      velocidad ubicados dentro del mismo procesador
+      velocidad ubicados dentro del mismo procesador.
 
 2. Los primeros procesadores tenían un único registro de propósito
    general, llamado también /acumulador/. Los procesadores actuales
@@ -1099,16 +1097,16 @@ de la utilidad misma del paralelismo masivo.
 
 4. De la siguiente lista de eventos, indique cuáles que corresponden
    a interrupciones y cuáles a excepciones
-   1. El usuario accionó alguna tecla en el teclado
+   1. El usuario accionó alguna tecla.
    2. Se produjo un acceso ilegal a memoria fuera del segmento
-      (/segmentation fault/)
-   3. El proceso en ejecución lanzó una llamada al sistema
-   4. Llegó un paquete a la interfaz de red
-   5. Se produjo una división sobre cero
+      (/segmentation fault/).
+   3. El proceso en ejecución lanzó una llamada al sistema.
+   4. Llegó un paquete a la interfaz de red.
+   5. Se produjo una división sobre cero.
    6. El proceso en ejecución estuvo activo ya demasiado tiempo, es
-      hora de un cambio de contexto
+      hora de un cambio de contexto.
    7. Los datos solicitados al controlador de disco duro ya están
-      disponibles
+      disponibles.
 
 5. Si el procesador de un sistema corre a 1GHz, la latencia de la
    memoria es de 130ns, y el bus de memoria puede sostener un ancho
@@ -1128,20 +1126,18 @@ de la utilidad misma del paralelismo masivo.
 
   Si bien a estas alturas del texto aún no se ha profundizado en
   muchos de estos temas, un enfoque podría comenzazr con enumerar las
-  amenazas: Una vez que un atacante logró /romper/ a un programa al
+  amenazas: Una vez que un atacante logró /romper/ un programa al
   que tenía acceso, engañando al sistema operativo para que le dé
   acceso privilegiado, buscará para esconder sus rastros del
   administrador y, además, asegurarse de tener un mecanismo fácil para
-  entrar posteriormente.
-
-  ¿Cómo lo hace? ¿Cómo se puede detectar?
+  entrar posteriormente. ¿Cómo lo hace, cómo se puede detectar?
 
 - Sistemas basados en /malla/ o /grid/ ::
 
-  El modelo de cómputo distribuído basado en una /malla/ o /grid/ es
+  El modelo de cómputo distribuido basado en una /malla/ o /grid/ es
   muy flexible, y lo han adoptado proyectos de todo tipo. ¿Qué es lo
-  que se distribuye? ¿Cómo se /paquetiza/ la información? ¿Cómo se
-  re-agrega? ¿Qué tanto costo computacional adicional significa el
+  que se distribuye, cómo se /paquetiza/ la información, cómo se
+  re-agrega, qué tanto costo computacional adicional significa el
   separar en estos paquetes a la información?
 
   Se puede emplear un modelo /grid/ con /participantes/ conocidos, con
@@ -1149,9 +1145,9 @@ de la utilidad misma del paralelismo masivo.
   participación pública. ¿Hay consideraciones de seguridad a tomar en
   cuenta?
 
-- El Módulo de Plataforma Confiable (TPM o /SecureBoot/) ::
+- El Módulo de Plataforma Confiable (*tpm* o /SecureBoot/) ::
 
-  Tras muchos años de encontrar gran resistencia por parte de la
+  Tras largos años de encontrar gran resistencia por parte de la
   industria, al día de hoy buena parte de las computadoras nuevas
   vienen con un /módulo de plataforma confiable/ (/Trusted Platform
   Module/) activo. Este polémico módulo implementa verificación de la
@@ -1165,7 +1161,7 @@ de la utilidad misma del paralelismo masivo.
   únicamente los sistemas operativos /aprobados/ o /firmados/ por el
   fabricante.
 
-  Como lectura para este tema resultan referencia obligada los varios
+  Como lectura para este tema resultan referencia obligada los diversos
   artículos en el [[http://mjg59.dreamwidth.org/][blog del desarrollador Matthew Garrett]],
   particularmente entre septiembre del 2011 y mayo del 2013. Garrett
   lidereó la alternativa que al día de hoy más se usa para poder
@@ -1173,8 +1169,8 @@ de la utilidad misma del paralelismo masivo.
   desde muy descriptivos y generales hasta técnicos y específicos a
   puntos muy particulares.
 
-  Otro artículo interesante al respecto es el de, de Jonathan Corbet
-  (septiembre 2013): [[https://lwn.net/Articles/566169/][BSD-style securelevel comes to Linux —
+  Otro artículo interesante al respecto es el de Jonathan Corbet
+  (septiembre 2013): [[https://lwn.net/Articles/566169/][ *bsd*-style securelevel comes to Linux —
   Again]]. Explica con bastante detalle cómo es que se plantea
   implementar el nivel de protección que busca ofrecer *tpm* desde un
   sistema Linux.
@@ -1184,12 +1180,12 @@ de la utilidad misma del paralelismo masivo.
   functional style and its algebra of programs/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=359576.359579}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=359576.359579">https://dl.acm.org/citation.cfm?doid=359576.359579</a><br/>
-  John Backus, 1978; Communications of the ACM
+  John Backus, 1978; Communications of the *acm*
 
 - /Cramming more components onto integrated circuits/
   #+latex: \otrorec{http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf}
   #+html: <br/><a href="http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf">http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf</a><br/>
-  Gordon E. Moore, 1965; Proceedings of the IEEE
+  Gordon E. Moore, 1965; Proceedings of the *ieee*
 
 - /An Introduction to the Intel® QuickPath Interconnect/
   #+latex: \otrorec{http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html}

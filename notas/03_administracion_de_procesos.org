@@ -72,15 +72,15 @@ de ejecución. Estos son:
 
 La información que debe manipular el sistema operativo relativa a cada
 uno de los procesos actuales se suele almacenar en una estructura llamada
-/bloque de control de proceso/ (/PCB/ - /Process Control Block/). El 
-PCB incluye campos como:
+/bloque de control de proceso/ (*pcb* - /Process Control Block/). El 
+*pcb* incluye campos como:
 
 - Estado del proceso :: El estado actual del proceso.
 
 - Contador de programa :: Cuál es la siguiente instrucción a ser
      ejecutada por el proceso.
 
-- Registros del CPU :: La información específica del estado del CPU
+- Registros del *cpu* :: La información específica del estado del *cpu*
      mientras el proceso está en ejecución (debe ser respaldada y
      restaurada cuando se registra un cambio de estado).
 
@@ -117,7 +117,7 @@ que el tiempo que consume el sistema operativo en administración es
 tiempo perdido para el uso real, productivo del equipo.] de
 recursos. Una respuesta a esta problemática fue la de utilizar los
 /hilos de ejecución/, a veces conocidos como /procesos ligeros/
-(/LWP/, /Lightweight processes/).
+(*lwp*, /Lightweight processes/).
 
 Cuando se consideran procesos basados en un modelo de hilos, se puede
 proyectar en sentido inverso que todo proceso es como un sólo hilo de
@@ -131,7 +131,7 @@ de un proceso comparten un sólo espacio de direccionamiento en memoria
 y los archivos y dispositivos abiertos. Cada uno
 de los hilos se ejecuta de forma (aparentemente) secuencial y maneja
 su propio contador de programa y pila (y algunas estructuras adicionales,
-aunque mucho más ligeras que el PCB).
+aunque mucho más ligeras que el *pcb*).
 
 ** Los hilos y el sistema operativo
 # <<PROC_tipos_de_hilos>>
@@ -148,11 +148,11 @@ si bien el sistema operativo no maneja multiprocesamiento, a través de
 los hilos de usuario se crean procesos con multitarea interna.
 
 Los procesos que implementan hilos ganan un poco en el rendimiento
-gracias a no tener que reemplazar al PCB activo cuando intercalan la 
+gracias a no tener que reemplazar al *pcb* activo cuando intercalan la 
 ejecución de sus diferentes hilos; pero además de esto, ganan mucho
 más por la ventaja de compartir espacio de memoria sin tener que
 establecerlo explícitamente a través de /mecanismos de comunicación
-entre procesos/ (/IPC/ — /Inter Process Communications/). Dependiendo
+entre procesos/ (*ipc* — /Inter Process Communications/). Dependiendo
 de la plataforma, a veces los hilos de usuario inclusive utilizan
 multitarea cooperativa para pasar el control dentro de un mismo
 proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
@@ -168,7 +168,7 @@ siguiente paso fue la creación de hilos /informando/ al sistema
 operativo, típicamente denominados /hilos de kernel/ (/kernel
 threads/). Esto se hace a través de bibliotecas de sistema que los
 implementan de forma estándar para los diferentes sistemas operativos
-o arquitecturas  (p. ej. =pthreads= para POSIX o =Win32_Thread= para
+o arquitecturas  (p. ej. =pthreads= para *posix* o =Win32_Thread= para
 Windows). Estas bibliotecas aprovechan la comunicación con el
 sistema operativo tanto para solicitudes de recursos (p. ej. un proceso
 basado en hilos puede beneficiarse de una ejecución verdaderamente
@@ -189,7 +189,7 @@ un /equipo de trabajo/):
 
      Este modelo es el más común para procesos que implementan
      servidores (es el modelo clásico del servidor Web /Apache/) y
-     para aplicaciones gráficas (GUIs), en que hay una porción del
+     para aplicaciones gráficas (*gui*), en que hay una porción del
      programa (el hilo /jefe/) esperando a que ocurran eventos
      externos. El jefe realiza poco trabajo, se limita a /invocar/ a
      los trabajadores para que hagan el trabajo /de verdad/; como mucho,
@@ -635,7 +635,7 @@ presentan a continuación, pues, los sucesivos /intentos/.
 - Intento 4: Manejar la bandera con instrucciones atómicas ::
   Algunas arquitecturas de computadoras permiten realizar determinadas
   operaciones sencillas (como actualizar una bandera) de forma atómica
-  (p. ej.: VAX tiene la instrucción =test_and_set= y el i386 tiene la
+  (p. ej.: *vax* tiene la instrucción =test_and_set= y el i386 tiene la
   instrucción =INC=.
 
   Usando esto, la solución es:
@@ -1011,7 +1011,7 @@ siguiente interfaz:
                  =release=, =post= o =V= (de /verhogen/,
                  /incrementar/).
 
-La interfaz de hilos =POSIX= (=pthreads=) presenta esas primitivas
+La interfaz de hilos *posix* (=pthreads=) presenta esas primitivas
 con la siguiente definición:
 
 #+begin_src C
@@ -1065,11 +1065,11 @@ cuales se mencionarán los siguientes:
                   inglés) a quedar en una /cita/. Este patrón busca
                   que dos hilos se esperen mutuamente en cierto punto
                   para continuar en conjunto — por ejemplo, en una
-                  aplicación GUI, un hilo prepara la interfaz gráfica
+                  aplicación *gui*, un hilo prepara la interfaz gráfica
                   y actualiza sus eventos mientras otro efectúa
                   cálculos para mostrar. Se desea presentar al usuario
                   la simulación desde el principio, así que no debe
-                  empezar a calcular antes de que el GUI esté listo,
+                  empezar a calcular antes de que el *gui* esté listo,
                   pero preparar los datos del cálculo toma tiempo, y
                   no se quiere esperar doblemente. Para esto, se
                   implementan dos semáforos señalizándose mutuamente:
@@ -1204,7 +1204,7 @@ cuales se mencionarán los siguientes:
 
 	     Las barreras son una construcción suficientemente útil
              como para que sea común encontrarlas "prefabricadas". En
-             los hilos =POSIX= (=pthreads=), por ejemplo, la interfaz
+             los hilos *posix* (=pthreads=), por ejemplo, la interfaz
              básica es:
 
 	     #+begin_src C
@@ -1288,7 +1288,7 @@ Una variable de condición presenta las siguientes operaciones:
 - Señaliza a todos :: Indica a /todos los hilos/ que estén esperando a
      esta condición.
 
-La interfaz de hilos =POSIX= (=pthreads=) presenta la siguiente
+La interfaz de hilos *posix* (=pthreads=) presenta la siguiente
 definición:
 
 #+BEGIN_SRC C
@@ -1883,9 +1883,9 @@ Los /monitores/ son estructuras provistas por el lenguaje o entorno de
 desarrollo que /encapsulan/ tanto a los datos /como a las funciones
 que los pueden manipular/, e impiden el acceso directo a las funciones
 potencialmente peligrosas — en otras palabras, son /tipos de datos
-abstractos/ (ADTs), /clases/ de /objetos/, y /exponen/ una serie de
-/métodos públicos/, además de poseer /métodos privados/ que emplean
-internamente.
+abstractos/ (en inglés, /Abstract Data Types/, *adt*), /clases/ de
+/objetos/, y /exponen/ una serie de /métodos públicos/, además de
+poseer /métodos privados/ que emplean internamente.
 
 Al no presentar al usuario/programador una interfaz que puedan
 /subvertir/, el monitor mantiene todo el código necesario para
@@ -1900,7 +1900,7 @@ la /reutilización de código/.
 
 Como ejemplo, el lenguaje de programación /Java/ implementa
 sincronización vía monitores entre hilos como una propiedad de la
-declaración de método, y lo implementa directamente en la JVM. Si
+declaración de método, y lo implementa directamente en la *jvm*. Si
 se declara un método de la siguiente manera:
 
 #+begin_src java
@@ -1922,7 +1922,7 @@ es, la propiedad =synchronized= hace que todo acceso al método en
 cuestión sea protegido por una mutex.
 
 El modelo de sincronización basado en monitores no sólo provee la
-exclusión mutua. A través de /variables de condición/ (VCs) se puede
+exclusión mutua. Mediante /variables de condición/ se puede
 también emplear una semántica parecida (aunque no igual) a la de los
 semáforos, con los métodos =var.wait()= y =var.signal()=. En el caso
 de los monitores, =var.wait()= suspende al hilo hasta que otro hilo
@@ -2086,7 +2086,7 @@ haga mal uso del mecanismo de sincronización.
      crítica.
 
      Hay numerosas implementaciones en software de este principio
-     (Software Transactional Memory, STM) para los principales
+     (Software Transactional Memory, *stm*) para los principales
      lenguajes, aunque el planteamiento ideal sigue apuntando a una
      implementación en hardware. Hay casos en que, sin embargo, esta
      técnica puede aún llevar a resultados inconsistentes
@@ -2765,7 +2765,7 @@ verificación de bloqueos. Podría hacerse:
 - Con una periodicidad fija, pero esto arriesga a que los procesos
   pasen más tiempo bloqueados.
 
-- Cuando el nivel del uso del CPU baje de cierto porcentaje. Esto
+- Cuando el nivel del uso del *cpu* baje de cierto porcentaje. Esto
   indicaría que hay un nivel elevado de procesos en espera.
 
 - Una estrategia combinada.
@@ -2990,13 +2990,13 @@ haya opción /razonable/.
 
   Tradicionalmente, los sistemas Unix se dividían entre dos
   filosofías de arranque (los sistemas /SysV/ y los sistemas
-  /BSD/). Pero la realidad del cómputo ha cambiado con el
+  *bsd*). Pero la realidad del cómputo ha cambiado con el
   tiempo. Tras una etapa de largas discusiones al respecto, la mayor
   parte de las distribuciones están migrando a /systemd/, desarrollado
   originalmente por RedHat.
 
   ¿Cuáles son los planteamientos básicos de los arranques tipo /SysV/
-  y tipo /BSD/? ¿A qué tipo de cambios en /la realidad/ es que se hace
+  y tipo *bsd*? ¿A qué tipo de cambios en /la realidad/ es que se hace
   referenciarefiero?  ¿Por qué los esquemas tradicionales ya no son
   suficientes para los sistemas actuales? ¿En qué se parecen y en qué
   se diferencian los sistemas clásicos y /systemd/? ¿Qué ventajas y
@@ -3033,7 +3033,7 @@ haya opción /razonable/.
 - /Dining philosophers revisited/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=101091}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=101091">https://dl.acm.org/citation.cfm?id=101091</a><br/>
-  Armando R. Gingras (1990), ACM SIGCSE Bulletin
+  Armando R. Gingras (1990), *acm sigcse* Bulletin
 
 # Me queda pendiente:
 # 

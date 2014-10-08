@@ -21,8 +21,8 @@ procesos la compartan — esta tarea debe preverse desde el proceso de
 compilación de los programas (en particular, la fase de
 /ligado/). Hoy en día, además, casi todos los sistemas operativos
 emplean implementaciones que requieren de hardware especializado — la
-/Unidad de Manejo de Memoria/ (MMU). Se describirá cómo se manejaban
-los sistemas multitarea antes de la universalización de las MMU, y qué
+/Unidad de Manejo de Memoria/ (*mmu*). Se describirá cómo se manejaban
+los sistemas multitarea antes de la universalización de las *mmu*, y qué
 rol juegan hoy en día.
 
 En esta primer sección se presentarán algunos conceptos base que 
@@ -45,30 +45,30 @@ Un procesador que soporta un /espacio de direccionamiento/ de 16 bits
 puede referirse /directamente/ a hasta $2^{16}$ bytes, esto es, a
 hasta 65,536 bytes (64KB). Estos procesadores fueron comunes en las
 décadas de 1970 y 1980 — los más conocidos incluyen al Intel 8080 y
-8085, Zilog Z80, MOS 6502 y 6510, y Motorola 6800. Hay que recalcar
+8085, Zilog Z80, *mos* 6502 y 6510, y Motorola 6800. Hay que recalcar
 que estos procesadores son reconocidos como procesadores de /8 bits/,
 pero con /espacio de direccionamiento/ de 16 bits. El procesador
-empleado en las primeras PC, el Intel 8086, manejaba un
+empleado en las primeras *pc*, el Intel 8086, manejaba un
 direccionamiento de 20 bits (hasta 1024KB), pero al ser una
 arquitectura /real/ de 16 bits requería del empleo de /segmentación/
 para alcanzar toda su memoria.
 
 Con la llegada de la era de las /computadoras personales/, diversos
 fabricantes introdujeron a mediados de los años 1980 los procesadores
-con arquitectura de 32 bits. Por ejemplo, la arquitectura IA-32 de Intel tiene su 
+con arquitectura de 32 bits. Por ejemplo, la arquitectura *ia-32* de Intel tiene su 
 inicio oficial con el procesador 80386 (o simplemente 386). 
 Este procesador podía referenciar desde el punto de vista teórico 
-hasta $2^{32}$ bytes (4GB) de RAM. No obstante, debido a las 
+hasta $2^{32}$ bytes (4GB) de *ram*. No obstante, debido a las 
 limitaciones tecnológicas (y tal vez estratégicas) para producir 
 memorias con esta capacidad, tomó más de veinte años para que las 
 memorias ampliamente disponibles alcanzaran dicha capacidad.
 
 Hoy en día, los procesadores dominantes son de 32 o 64 bits. En el caso de
 los procesadores de 32 bits, sus registros pueden referenciar hasta
-4,294,967,296 bytes (4GB) de RAM, que está ya dentro de los 
+4,294,967,296 bytes (4GB) de *ram*, que está ya dentro de los 
 parámetros de lo esperable hoy en día. Una arquitectura de 
 32 bits sin extensiones adicionales no puede emplear una memoria 
-de mayor capacidad. No obstante, a través de un mecanismo llamado /PAE/
+de mayor capacidad. No obstante, a través de un mecanismo llamado *pae*
 (Extensión de Direcciónes Físicas, /Physical Address Extension/)
 permite extender esto a rangos de hasta $2^{52}$ bytes a cambio de 
 un nivel más de indirección.
@@ -82,7 +82,7 @@ chips actuales están limitados a entre $2^{40}$ y $2^{48}$ bits — 1 y
 256 terabytes. Esta restricción debe seguir teniendo sentido económico
 por muchos años aún.
 
-** Hardware: la unidad de manejo de memoria (MMU)
+** Hardware: la unidad de manejo de memoria (*mmu*)
 
 Con la introducción de sistemas multitarea, es decir, dos o más 
 programas ejecutandose, se vio la necesidad de tener más de un
@@ -99,14 +99,14 @@ solicitada, y por último, la ilusión de tener un bloque contiguo e
 ininterrumpido de memoria, cuando en realidad puede haber alta
 /fragmentación/.
 
-Se explicará cómo la MMU cubre estas necesidades, y qué mecanismos
+Se explicará cómo la *mmu* cubre estas necesidades, y qué mecanismos
 emplea para lograrlo — y qué cuidados se deben conservar, incluso como
 programadores de aplicaciones en lenguajes de alto nivel, para aprovechar de la
 mejor manera estas funciones (y evitar, por el contrario, que los
 programas se vuelvan lentos por no manejar la memoria
 correctamente).
 
-La MMU es también la encargada de verificar que un proceso no tenga
+La *mmu* es también la encargada de verificar que un proceso no tenga
 acceso a leer o modificar los datos de otro — si el sistema operativo
 tuviera que verificar cada una de las instrucciones ejecutadas por
 un programa para evitar errores en el acceso a la memoria, la 
@@ -119,14 +119,14 @@ un /registro base/ y un /registro límite/: si la arquitectura ofrece dos
 registros del procesador que sólo pueden ser modificados por el
 sistema operativo (Esto es, el hardware define la modificación de
 dichos registros como una operación privilegiada que requiere estar
-ejecutando en /modo supervisor/), la MMU puede comparar sin penalidad /cada 
+ejecutando en /modo supervisor/), la *mmu* puede comparar sin penalidad /cada 
 acceso a memoria/ para verificar que esté en el rango permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
 64K (65535 bytes) a partir de la dirección 504214 (492K), el /registro
 base/ contendría 504214, y el /registro límite/ 65535. Si hubiera una
 instrucción por parte de dicho proceso que solicitara una dirección
-menor a 504214 o mayor a 569749 (556K), la MMU lanzaría una excepción
+menor a 504214 o mayor a 569749 (556K), la *mmu* lanzaría una excepción
 o /trampa/ interrumpiendo el procesamiento, e indicando al sistema
 operativo que ocurrió una /violación de segmento/ (/segmentation
 fault/)[fn:: ¿Por qué /de segmento/? Ver la sección \ref{MEM_segmentacion}]. El sistema operativo entonces
@@ -164,7 +164,7 @@ electrones viajando por pistas conductoras.
 
 Cuando el procesador solicita el contenido de una dirección de memoria
 y esta no está aún disponible, /tiene que detener su ejecución/
-(/stall/) hasta que los datos estén disponibles. El CPU no puede, a
+(/stall/) hasta que los datos estén disponibles. El *cpu* no puede, a
 diferencia del sistema operativo, "congelar" todo y guardar el estado
 para atender a otro proceso: para el procesador, la lista de
 instrucciones a ejecutar es estrictamente secuencial, y todo tiempo
@@ -274,7 +274,7 @@ http://www.iecc.com/linker/ ] en:
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de las variables y funciones. Esto era muy común en las
      computadoras previas al multiprocesamiento. En la arquitectura
-     compatible con PC, el formato ejecutable =.COM= es un volcado de
+     compatible con *pc*, el formato ejecutable =.COM= es un volcado de
      memoria directo de un archivo objeto con las direcciones
      indicadas de forma absoluta. Esto puede verse hoy
      principalmente en sistemas embebidos o de función específica.
@@ -291,7 +291,7 @@ http://www.iecc.com/linker/ ] en:
      a una /base/ y un /desplazamiento/ (offset). Esto permite que el
      proceso sea incluso reubicado en la memoria mientras está siendo
      ejecutado sin tener que sufrir cambios, pero requiere de hardware
-     específico (como una MMU).
+     específico (como una *mmu*).
 
 Esto es, los nombres simbólicos (por ejemplo, una variable llamada
 =contador=) para ser traducidos ya sea a ubicaciones en la memoria,
@@ -524,7 +524,7 @@ Un código compilado para procesadores que implementen segmentación
 siempre generará referencias a la memoria en un espacio /segmentado/. Este 
 tipo de referencias se denominan /direcciones lógicas/ y están formadas por un
 /selector/ de segmento y un /desplazamiento/ dentro del segmento. 
-Para interpretar esta dirección, la MMU debe tomar el selector, y usando 
+Para interpretar esta dirección, la *mmu* debe tomar el selector, y usando 
 alguna estructura de datos, 
 obtiene la dirección base, el tamaño del segmento y sus atributos
 de protección. Luego, aplicando el mecanismo explicado en secciones
@@ -604,7 +604,7 @@ lo juzgue necesario. Podría /sacar/ de memoria a alguno de los segmentos,
 eligiendo no necesariamente al que más /estorbe/ (esto es, el más grande), 
 sino el que más probablemente no esté siendo utilizado: emplear el principio
 de localidad de referencia para intercambiar al segmento /menos
-recientemente utilizado/ (/LRU/, /Least Recently Used/).
+recientemente utilizado/ (*lru*, /Least Recently Used/).
 
 Además de esto, si se tiene  un segmento de texto (sea el código
 programa base o alguna de las bibliotecas) y su acceso es de sólo
@@ -634,11 +634,11 @@ sección, si un proceso tuviera la siguiente tabla de segmentos:
 
 | Segmento | Inicio | Tamaño | Permisos | Presente |
 |----------+--------+--------+----------+----------|
-|        0 |  15208 |    160 | RWX      | sí       |
-|        1 |   1400 |    100 | R        | sí       |
-|        2 |    964 |     96 | RX       | sí       |
-|        3 |      - |    184 | W        | no       |
-|        4 |  10000 |    320 | RWX      | sí       |
+|        0 |  15208 |    160 | *rwx*    | sí       |
+|        1 |   1400 |    100 | *r*      | sí       |
+|        2 |    964 |     96 | *rx*     | sí       |
+|        3 |      - |    184 | *w*      | no       |
+|        4 |  10000 |    320 | *rwx*    | sí       |
 
 En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
 /X/ a ejecución.
@@ -651,17 +651,17 @@ El resultado de hacer referencia a las siguientes direcciones y
 tipos de acceso:
 
 | Dirección | Tipo de | Dirección                               |
-|   lógica  | acceso  | física                                  |
+|    lógica | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|     0-100 | R       | 15308                                   |
-|      2-84 | X       | 1048                                |
-|      2-84 | W       | Atrapada: Violación de seguridad        |
-|     2-132 | R       | Atrapada: Desplazamiento fuera de rango |
-|      3-16 | W       | Atrapada: Segmento faltante             |
-|     3-132 | R       | Atrapada: Segmento faltante;            |
+|     0-100 | *r*     | 15308                                   |
+|      2-84 | *x*     | 1048                                    |
+|      2-84 | *w*     | Atrapada: Violación de seguridad        |
+|     2-132 | *r*     | Atrapada: Desplazamiento fuera de rango |
+|      3-16 | *w*     | Atrapada: Segmento faltante             |
+|     3-132 | *r*     | Atrapada: Segmento faltante;            |
 |           |         | violación de seguridad                  |
-|     4-128 | X       | 10128                                   |
-|      5-16 | X       | Atrapada: Segmento invalido             |
+|     4-128 | *x*     | 10128                                   |
+|      5-16 | *x*     | Atrapada: Segmento invalido             |
 
 Cuando se atrapa una situación de excepción, el sistema operativo debe
 intervenir. Por ejemplo, la solicitud de un segmento inválido, de un
@@ -697,12 +697,12 @@ fuera de su uso exclusivo.
 
 La memoria física se divide en una serie de /marcos/ (/frames/), todos
 ellos del mismo tamaño, y el espacio cada proceso se divide en una
-serie de páginas (/pages/), del mismo tamaño que los marcos. La MMU se
+serie de páginas (/pages/), del mismo tamaño que los marcos. La *mmu* se
 se encarga del mapeo entre páginas y marcos a través de /tablas de
 páginas/.
 
 Cuando se trabaja bajo una arquitectura que maneja paginación, las
-direcciones que maneja el CPU ya no son presentadas de forma absoluta.
+direcciones que maneja el *cpu* ya no son presentadas de forma absoluta.
 Los bits de cada dirección se separan en un /identificador de página/ y un
 /desplazamiento/, de forma similar a lo presentado al hablar de
 resolución de instrucciones en tiempo de ejecución. La principal
@@ -710,10 +710,10 @@ diferencia con lo entonces abordado es que cada proceso tendrá ya no
 un único espacio en memoria, sino una multitud de páginas.
 
 El tamaño de los marcos (y, por tanto, las páginas) debe ser una
-/potencia de 2/, de modo que la MMU pueda discernir fácilmente la
+/potencia de 2/, de modo que la *mmu* pueda discernir fácilmente la
 porción de una dirección de memoria que se refiere a la /página/ del
 /desplazamiento/. El rango varía, según el hardware, entre los 512
-bytes ($2^9$) y 16MB ($2^{24}$); al ser una potencia de 2, la MMU puede
+bytes ($2^9$) y 16MB ($2^{24}$); al ser una potencia de 2, la *mmu* puede
 separar la dirección en memoria entre los primeros $m$ bits
 (referentes a la página) y los últimos $n$ bits (referentes al
 desplazamiento).
@@ -723,7 +723,7 @@ desplazamiento).
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 [[./img/ditaa/direccion_a_pag_y_despl.png]]
 
-Para poder realizar este mapeo, la MMU requiere de una  estructura
+Para poder realizar este mapeo, la *mmu* requiere de una  estructura
 de datos denominada /tabla de páginas/ (/page table/), que /resuelve/ 
 la relación entre páginas y marcos, convirtiendo una /dirección lógica/ 
 (en el espacio del proceso) en la /dirección física/ (la ubicación 
@@ -731,7 +731,7 @@ en que /realmente/ se encuentra en la memoria del sistema).
 
 #+attr_latex: width=\textwidth
 #+label: MEM_hardware_de_paginacion
-#+caption: Esquema del proceso de paginación, ilustrando el rol de la MMU
+#+caption: Esquema del proceso de paginación, ilustrando el rol de la *mmu*
 [[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
@@ -761,7 +761,7 @@ significativos (001, 1 — y para la computadora, lo
 número 1, y los dos bits menos significativos (01, 1) indican al
 /desplazamiento/ dentro de ésta.
 
-La MMU verifica en la tabla de páginas, y encuentra que la página 1
+La *mmu* verifica en la tabla de páginas, y encuentra que la página 1
 corresponde al marco número 6 (110), por lo que traduce la dirección
 lógica 00101 (5) a la física 11001 (26).
 
@@ -789,13 +789,13 @@ sentido opuesto:
 - Las transferencias entre unidades de disco y memoria son mucho más
   eficientes si pueden mantenerse como recorridos continuos. El
   controlador de disco puede responder a solicitudes de acceso directo
-  a memoria (DMA) siempre que tanto los fragmentos en disco como en
+  a memoria (*dma*) siempre que tanto los fragmentos en disco como en
   memoria sean continuos; fragmentar la memoria demasiado jugaría en
   contra de la eficiencia de estas solicitudes.
 
-- El bloque de control de proceso (PCB) incluye la información de
+- El bloque de control de proceso (*pcb*) incluye la información de
   memoria. Entre más páginas tenga un proceso (aunque estas fueran muy
-  pequeñas), más grande es su PCB, y más información requerirá
+  pequeñas), más grande es su *pcb*, y más información requerirá
   intercambiar en un cambio de contexto.
 
 Estas consideraciones opuestas apuntan a que se debe mantener el
@@ -836,12 +836,12 @@ transferencia de información muy grande en cada cambio de contexto.
 Otra estrategia para enfrentar esta situación es almacenar la propia
 tabla de páginas en memoria, y apuntar al inicio de la tabla con un
 juego de registros especiales: el /registro de base de la tabla de
-páginas/ (/PTBR/, /Page Table Base Register/) y el /registro de
-longitud de la tabla de páginas/ (/PTLR/, /Page Table Length
+páginas/ (*ptbr*, /Page Table Base Register/) y el /registro de
+longitud de la tabla de páginas/ (*ptlr*, /Page Table Length
 Register/),[fn:: ¿Por qué es necesario el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
-páginas por medio del /PTLR/ se evita desperdiciar grandes cantidades
+páginas por medio del *ptlr* se evita desperdiciar grandes cantidades
 de memoria indicando todo el espacio no utiilzado.] De esta manera, en
 el cambio de contexto sólo hay que cambiar estos dos registros, y además
 se cuenta con un espacio muy amplio para guardar las tablas de páginas
@@ -851,44 +851,44 @@ memoria adicional — si para resolver una dirección lógica a su
 correspondiente dirección física hace fala consultar la tabla de
 páginas en memoria, el tiempo efectivo de acceso a memoria se duplica.
 
-*** El buffer de traducción adelantada (/TLB/)
+*** El buffer de traducción adelantada (*tlb*)
 # <<MEM_tlb>>
 
 La salida obvia a este dilema es el uso de un caché. Sin embargo, más
-que un caché genérico, la MMU utiliza un caché especializado en el
+que un caché genérico, la *mmu* utiliza un caché especializado en el
 tipo de información que maneja: el /buffer de traducción adelantada/ o
-/anticipada/ (/Translation Lookaside Buffer/, /TLB/). El TLB es una
+/anticipada/ (/Translation Lookaside Buffer/, *tlb*). El *tlb* es una
 tabla asociativa (un /hash/) en memoria de alta velocidad, una suerte
-de registros residentes dentro de la MMU, donde las /llaves/ son las
+de registros residentes dentro de la *mmu*, donde las /llaves/ son las
 páginas y los /valores/ son los marcos correspondientes. De este modo,
 las búsquedas se efectúan en tiempo constante.
 
-El TLB típicamente tiene entre 64 y 1024 entradas. Cuando el
+El *tlb* típicamente tiene entre 64 y 1024 entradas. Cuando el
 procesador efectúa un acceso a memoria, si la página solicitada está
-en el TLB, la MMU tiene la dirección física de inmediato.[fn:: Indica
+en el *tlb*, la *mmu* tiene la dirección física de inmediato.[fn:: Indica
 Silberschatz (p.295) que el tiempo efectivo de acceso puede ser 10%
 superior al que tomaría sin emplear paginación.] En caso de no
-encontrarse la página en el TLB, la MMU lanza un /fallo de página/
+encontrarse la página en el *tlb*, la *mmu* lanza un /fallo de página/
 (/page fault/), con lo cual consulta de la memoria principal cuál es
-el marco correspondiente. Esta nueva entrada es agregada al TLB; por
+el marco correspondiente. Esta nueva entrada es agregada al *tlb*; por
 las propiedades de /localidad de referencia/ que se presentaron anteriormente,
 la probabilidad de que las regiones más empleadas de la memoria
 durante un área específica de ejecución del programa sean cubiertas
-por relativamente pocas entradas del TLB son muy altas.
+por relativamente pocas entradas del *tlb* son muy altas.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_paginacion_con_tlb
-#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (*tlb*)
 [[./img/dot/paginacion_con_tlb.png]]
 
-Como sea, dado que el TLB es limitado en tamaño, es necesario explicitar una
+Como sea, dado que el *tlb* es limitado en tamaño, es necesario explicitar una
 política que indique dónde guardar las nuevas entradas (esto es, qué 
 entrada reemplazar) una vez que el
-TLB está lleno y se produce un fallo de página. Uno de los esquemas
+*tlb* está lleno y se produce un fallo de página. Uno de los esquemas
 más comunes es emplear la entrada /menos recientemente utilizada/
-(/LRU/, /Least Recently Used/), nuevamente apelando a la localidad de
+(*lru*, /Least Recently Used/), nuevamente apelando a la localidad de
 referencia. Esto tiene como consecuencia necesaria que debe haber un
-mecanismo que contabilice los accesos dentro del TLB (lo cual agrega
+mecanismo que contabilice los accesos dentro del *tlb* (lo cual agrega
 tanto latencia como costo). Otro mecanismo (con obvias desventajas) es
 el reemplazar una página al azar. Se explicará con mayor detalle más
 adelante algunos de los mecanismos más empleados para este fin,
@@ -896,7 +896,7 @@ comparando sus puntos a favor y en contra.
 
 *** Subdividiendo la tabla de páginas
 
-Incluso empleando un TLB, el espacio empleado por las páginas sigue
+Incluso empleando un *tlb*, el espacio empleado por las páginas sigue
 siendo demasiado grande. Si se considera un escenario más frecuente que
 el propuesto anteriormente: empleando un procesador con espacio de
 direccionamiento de 32 bits, y un tamaño de página estándar (4KB,
@@ -961,7 +961,7 @@ resulte significativo frente a las alternativas.
 
 Hay muchos escenarios en que diferentes procesos pueden beneficiarse
 de compartir áreas de su memoria. Uno de ellos es como mecanismo de
-comunicación entre procesos (/IPC/, /Inter Process Communication/),
+comunicación entre procesos (*ipc*, /Inter Process Communication/),
 en que dos o más procesos pueden intercambiar estructuras de datos
 complejas sin incurrir en el costo de copiado que implicaría copiarlas
 a través del sistema operativo. 
@@ -1010,7 +1010,7 @@ a un nuevo proceso /idéntico/ al que lo llamó, diferenciándose
 ocurre algún error, el sistema entrega un número negativo (indicando
 la causa del error). En caso de ser exitoso, el proceso nuevo (o
 proceso /hijo/) recibe el valor =0=, mientras que el proceso
-preexistente (o proceso padre) recibe el PID (número identificador de
+preexistente (o proceso padre) recibe el *pid* (número identificador de
 proceso) del hijo. Es frecuente encontrar el siguiente código:
 
 #+begin_src c
@@ -1177,7 +1177,7 @@ a memoria las páginas cuando van a ser utilizadas. Al emplear un
 paginador /flojo/, las páginas que no sean requeridas nunca serán
 siquiera cargadas a memoria.
 
-La estructura empleada por la MMU para implementar un paginador flojo
+La estructura empleada por la *mmu* para implementar un paginador flojo
 es muy parecida a la descrita al hablar del buffer de tradución
 adelantada (sección \ref{MEM_tlb}): la /tabla de páginas/ incluirá un
 /bit de validez/, indicando para cada página del proceso si está
@@ -1191,7 +1191,7 @@ solicitada para luego continuar con su ejecución:
 #+attr_latex: width=0.6\textwidth
 [[./img/dot/respuesta_a_fallo_de_pagina.png]]
 
-1. Verifica en el PCB si esta solicitud corresponde a una página que
+1. Verifica en el *pcb* si esta solicitud corresponde a una página que
    ya ha sido asignada a este proceso.
 
 2. En caso de que la referencia sea inválida, se termina el proceso.
@@ -1203,8 +1203,8 @@ solicitada para luego continuar con su ejecución:
 4. Solicita al disco la lectura de la página en cuestión hacia el
    marco especificado.
 
-5. Una vez que finaliza la lectura de disco, modifica tanto al PCB
-   como al TLB para indicar que la tabla está en memoria.
+5. Una vez que finaliza la lectura de disco, modifica tanto al *pcb*
+   como al *tlb* para indicar que la tabla está en memoria.
 
 6. Termina la suspensión del proceso, continuando con la instrucción
    que desencadenó al fallo. El proceso puede continuar sin notar 
@@ -1308,7 +1308,7 @@ la página víctima y una para traer la página de reemplazo), y por
 tanto, a una doble demora.
 
 Se puede, con un mínimo de /burocracia/ adicional (aunque requiere de
-apoyo de la MMU): implementar un mecanismo que disminuya la probabilidad
+apoyo de la *mmu*): implementar un mecanismo que disminuya la probabilidad
 de tener que realizar esta doble transferencia: agregar un /bit
 de modificación/ o /bit de página sucia/ (/dirty bit/) a la tabla de
 páginas. Este bit se marca como apagado siempre que se carga una
@@ -1391,7 +1391,7 @@ con tres marcos, y con la siguiente cadena de referencia:
 \begin{figure}
 \centering
 \subfigure[Relación ideal entre el número de marcos y fallos de página. \label{MEM_expectativa_fallas_marcos}]{\includegraphics[width=0.7\textwidth]{img/gnuplot/expectativa_fallas_contra_marcos.png}}
-\subfigure[Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos. \label{MEM_anomalia_belady}]{\includegraphics[width=0.7\textwidth]{img/gnuplot/anomalia_belady.png}}
+\subfigure[Comportamiento del algoritmo *fifo* exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos. \label{MEM_anomalia_belady}]{\includegraphics[width=0.7\textwidth]{img/gnuplot/anomalia_belady.png}}
 \caption {Anomalía de Belady, empleando la cadena de referencia \emph{1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5} (Belady, 1969).}
 \label{MEM_expectativas_y_belady}
 \end{figure}
@@ -1410,7 +1410,7 @@ con tres marcos, y con la siguiente cadena de referencia:
     <td style="padding: 1em">
       <span id="MEM_anomalia_belady">
         <p><img src="./img/gnuplot/anomalia_belady.png" alt="./img/gnuplot/anomalia_belady.png" /></p>
-        <p>Comportamiento del algoritmo FIFO exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos.</p>
+        <p>Comportamiento del algoritmo <b>fifo</b> exhibiendo la anomalía de Belady al pasar de 3 a 4 marcos.</p>
       </span>
     </td>
   </tr>
@@ -1418,11 +1418,11 @@ con tres marcos, y con la siguiente cadena de referencia:
 </table>
 #+end_html
 
-*** Primero en entrar, primero en salir (FIFO)
+*** Primero en entrar, primero en salir (*fifo*)
 # <<MEM_FIFO>>
 
 El algoritmo de más simple y de obvia implementación es, nuevamente, el
-FIFO: al cargar una página en memoria, se toma nota de en qué momento
+*fifo*: al cargar una página en memoria, se toma nota de en qué momento
 fue cargada, y cuando llegue el momento de reemplazar una página
 vieja, se elige la que haya sido cargada hace más tiempo.
 
@@ -1434,7 +1434,7 @@ sin requerir una nueva transferencia.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_fifo
-#+caption: Algoritmo FIFO de reemplazo de páginas
+#+caption: Algoritmo *fifo* de reemplazo de páginas
 [[./img/ditaa/reemplazo_pag_fifo.png]]
 
 La principal ventaja de este algoritmo es, como ya se ha
@@ -1447,10 +1447,10 @@ en cuenta a la historia de las últimas solicitudes, por lo que puede
 causar un bajo rendimiento. Todas las páginas tienen la misma
 probabilidad de ser reemplazadas, sin importar su frecuencia de uso.
 
-Con las condiciones aquí presentadas, un esquema FIFO causará 15
+Con las condiciones aquí presentadas, un esquema *fifo* causará 15
 fallos de página en un total de 20 accesos requeridos.
 
-El algoritmo FIFO es vulnerable a la anomalía de Belady. La figura
+El algoritmo *fifo* es vulnerable a la anomalía de Belady. La figura
 \ref{MEM_anomalia_belady} ilustra este fenómeno al pasar de 3 a 4
 marcos.
 
@@ -1458,17 +1458,17 @@ La prevalencia de cadenas que desencadenan la anomalía de Belady fue
 uno de los factores principales que llevaron al diseño de nuevos
 algoritmos de reemplazo de páginas.
 
-*** Reemplazo de páginas óptimo (OPT, MIN)
+*** Reemplazo de páginas óptimo (*opt*, *min*)
 
 Un segundo algoritmo, de interés puramente teórico, fue
-propuesto, y es típicamente conocido como OPT o MIN. Bajo este
+propuesto, y es típicamente conocido como *opt* o *min*. Bajo este
 algoritmo, el enunciado será elegir como página víctima a aquella
 página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
 
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_opt
-#+caption: Algoritmo óptimo de reemplazo de páginas (OPT)
+#+caption: Algoritmo óptimo de reemplazo de páginas (*opt*)
 [[./img/ditaa/reemplazo_pag_opt.png]]
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
@@ -1478,38 +1478,38 @@ algoritmos de despachadores, lo será mucho más con un
 recurso de reemplazo tan dinámico como la memoria.
 
 Su principal utilidad reside en que ofrece una cota mínima:
-calculando el número de fallos que se presentan al seguir OPT,
+calculando el número de fallos que se presentan al seguir *opt*,
 es posible ver qué tan cercano resulta otro algoritmo respecto al caso
 óptimo. Para esta cadena de referencia, y con tres páginas, se tiene
 un total de nueve fallos.
 
-*** Menos recientemente utilizado (LRU)
+*** Menos recientemente utilizado (*lru*)
 Este esquema se ha revisado en diversos mecanismos relacionados con la
-administración de memoria. Busca acercarse a OPT /prediciendo/ cuándo
+administración de memoria. Busca acercarse a *opt* /prediciendo/ cuándo
 será la próxima vez en que se emplee cada una de las páginas que
 tiene en memoria basado en la /historia reciente/ de su
 ejecución.
 
-Cuando necesita elegir una página víctima, LRU elige la página que no
+Cuando necesita elegir una página víctima, *lru* elige la página que no
 ha sido empleada hace más tiempo.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_lru
-#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU)
+#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (*lru*)
 [[./img/ditaa/reemplazo_pag_lru.png]]
 
-Para la cadena de referencia, LRU genera 12 fallos, en el punto
-medio entre OPT y FIFO.
+Para la cadena de referencia, *lru* genera 12 fallos, en el punto
+medio entre *opt* y *fifo*.
 
 Una observación interesante puede ser que para una cadena $S$ y su
 /cadena espejo/ (invertida) $R^S$, el resultado de evaluar $S$ por
-LRU es igual al de evaluar $R^S$ por OPT, y viceversa.
+*lru* es igual al de evaluar $R^S$ por *opt*, y viceversa.
 
-La principal debilidad de LRU es que para su implementación requiere
+La principal debilidad de *lru* es que para su implementación requiere
 apoyo en hardware[fn:: Dada la frecuencia con que se efectúan
 referencias a memoria, emplear un mecanismo puramente en software para
 actualizar las entradas de los marcos resultaría inaceptablemente
-lento] sensiblemente más complejo que FIFO. Una implementación podría
+lento] sensiblemente más complejo que *fifo*. Una implementación podría
 ser agregar un contador a cada uno de los marcos, actualizarlo siempre
 al hacer una referenciar a dicha página, y elegir como víctima a la
 página con un menor conteo. Este mecanismo tiene la desventaja de que,
@@ -1524,28 +1524,28 @@ una página víctima, se selecciona a aquella que esté en el extremo
 actualización (pueden requerirse hasta seis modificaciones), pero
 encuentra a la página víctima en tiempo constante.
 
-Se ha demostrado que LRU y OPT están libres de la anomalía de Belady,
+Se ha demostrado que *lru* y *opt* están libres de la anomalía de Belady,
 dado que, para $n$ marcos, las páginas que estarían en memoria son un
 subconjunto estricto de las que estarían con $n+1$ marcos.
 
-*** Más frecuentemente utilizada (MFU) / Menos frecuentemente utilizada (LFU)
+*** Más frecuentemente utilizada (*mfu*) / Menos frecuentemente utilizada (*lfu*)
 
 Estos dos algoritmos se basan en mantener un contador, como lo hace
-LRU, pero en vez de medir el tiempo, miden la /cantidad/ de
+*lru*, pero en vez de medir el tiempo, miden la /cantidad/ de
 referencias que se han hecho a cada página.
 
-MFU parte de la lógica que, si una página fue empleada muchas veces,
-probablemente vuelva a ser empleada muchas veces más; LFU parte de
+*mfu* parte de la lógica que, si una página fue empleada muchas veces,
+probablemente vuelva a ser empleada muchas veces más; *lfu* parte de
 que una página que ha sido empleada pocas veces es probablemente una
 página recién cargada, y va a ser empleada en el futuro cercano.
 
-Estos dos algoritmos son tan caros de implementar como LRU, y su
-rendimiento respecto a OPT no es tan cercana, por lo cual casi no son
+Estos dos algoritmos son tan caros de implementar como *lru*, y su
+rendimiento respecto a *opt* no es tan cercana, por lo cual casi no son
 empleados.
 
-*** Aproximaciones a LRU
+*** Aproximaciones a *lru*
 
-Dada la complejidad que presenta la implementación de LRU en
+Dada la complejidad que presenta la implementación de *lru* en
 hardware, algunos sistemas implementan una /aproximación/ a éste.
 
 - Bit de referencia :: Esta es una aproximación bastante
@@ -1557,7 +1557,7 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
 
      El sistema operativo invoca periódicamente a que se apaguen
      nuevamente todos los bits de referencia. En caso de presentarse
-     un fallo de página, se elige por FIFO sobre el subconjunto de
+     un fallo de página, se elige por *fifo* sobre el subconjunto de
      marcos que no hayan sido referenciados en el periodo actual (esto
      es, entre todos aquellos para los cuales el bit de referencia sea
      0).
@@ -1581,11 +1581,11 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      La parte de mantenimiento de este algoritmo es muy simple;
      recorrer una serie de bits es una operación muy
      sencilla. Seleccionar el número más pequeño requiere una pequeña
-     búsqueda, pero sigue resultando mucho más sencillo que LRU.
+     búsqueda, pero sigue resultando mucho más sencillo que *lru*.
 
 - Segunda oportunidad (o /reloj/) :: El algoritmo de la segunda
      oportunidad trabaja también basado en un bit de referencia y un
-     recorrido tipo FIFO. La diferencia en este caso es que, al igual
+     recorrido tipo *fifo*. La diferencia en este caso es que, al igual
      que hay eventos que /encienden/ a este bit (efectuar una
      referencia al marco), también hay eventos que lo /apagan/:
 
@@ -1605,7 +1605,7 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      apagando a todos a su paso.
 
      En el peor caso, el algoritmo de /segunda oportunidad/ degenera
-     en FIFO.
+     en *fifo*.
 
 - Segunda oportunidad mejorada :: El bit de referencia puede
      amplairse con un /bit de modificación/, dándonos las siguientes
@@ -1715,7 +1715,7 @@ diseñadas antes de que la velocidad del procesador se distanciara
 tanto del tiempo de acceso a memoria], permiten que tanto los
 operandos de algunas instrucciones aritméticas como su resultado sean
 direcciones de memoria (y no operan estrictamente sobre los registros,
-como las arquitecturas RISC). En dichas arquitecturas, el mínimo debe
+como las arquitecturas *risc*). En dichas arquitecturas, el mínimo debe
 también tener este factor en cuenta: si en una sola instrucción
 es posible sumar dos direcciones de memoria y guardar el resultado en
 una adicional, el mínimo a reservar es de cuatro marcos: uno para el
@@ -1897,7 +1897,7 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+label: MEM_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349)
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349)
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -1972,7 +1972,7 @@ procesado (sean instrucciones o datos) debe pasar por la memoria, por
 el /almacenamiento primario/. Sólo desde ahí puede el procesador
 leer la información directamente.
 
-A lo largo del presente capítulo se ha mencionado que la MMU incluye ya
+A lo largo del presente capítulo se ha mencionado que la *mmu* incluye ya
 desde el hardware el concepto de /permisos/, separando claramente las
 regiones de memoria donde se ubica el código del programa (y son, por
 tanto, ejecutables y de sólo lectura) de aquellas donde se encuentran
@@ -1980,8 +1980,10 @@ los datos (de lectura y escritura). Esto, sin embargo, no los pone a
 salvo de los /desbordamientos de buffer/ (/buffer overflows/),
 errores de programación (típicamente, la falta de verificación de
 límites) que pueden convertirse en vulnerabilidades[fn:: Citando a
-Theo de Raadt, autor principal del sistema operativo OpenBSD, todo
-error es una vulnerabilidad esperando a ser descubierta].
+Theo de Raadt, autor principal del sistema operativo
+#+latex: Open\textbf{bsd},
+#+html: Open<b>bsd</b>,
+todo error es una vulnerabilidad esperando a ser descubierta].
 
 *** La /pila de llamadas/ (stack)
 
@@ -1998,12 +2000,12 @@ virtual); durante el periodo en que es el marco /activo/ (esto es,
 cuando no se ha transferido el control a ninguna otra función), está
 delimitado por dos valores, almacenados en registros:
 
-- Apuntador a la pila :: (/Stack pointer/, /SP/) Apunta al /final
+- Apuntador a la pila :: (/Stack pointer/, *sp*) Apunta al /final
      actual/ (dirección inferior) de la pila. En arquitecturas x86,
      emplea el registro =ESP=; cuando se pide al procesador que actúe sobre
      /el stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
      este registro
-- Apuntador del marco :: (/Frame pointer/, =FP=, o /Base local/, =LB=)
+- Apuntador del marco :: (/Frame pointer/, *fp*, o /Base local/, *lb*)
      Apunta al /inicio/ del marco actual, o lo que es lo mismo, al
      final del marco anterior. En arquitecturas x86, emplea el
      registro =EBP=.
@@ -2095,7 +2097,7 @@ implementación estándar de C. Las familias principales son =strcat=,
 siguen la siguiente estructura:
 
 - Son arreglos de 1 o más caracteres (=char=, 8 bits)
-- /Deben/ terminar con el byte de terminación =NUL= (=\0=)
+- /Deben/ terminar con el byte de terminación *nul* (=\0=)
 
 El problema con estas funciones es que sólo algunas de las funciones
 derivadas implementan verificaciones de límites, y algunas son incluso
@@ -2197,7 +2199,7 @@ Ahora, ¿qué más pasa cuando desbordas a un contenedor? El líquido
 sobrante va a mojar la botana, los papeles, la mesa, etc. En el caso
 de los papeles, destruirá cualquier cosa que hubieras apuntado (como
 el teléfono que acabas de anotar de esa linda chica). Cuando tu
-variable se desborde, ¿qué va a sobrescribir? Al EBP, al EIP, y lo
+variable se desborde, ¿qué va a sobrescribir? Al =EBP=, al =EIP=, y lo
 que les siga, dependiendo de la función, y si es la última función,
 las variables de ambiente. Puede que el programa aborte y tu shell
 resulte inutilizado a causa de las variables sobreescritas.
@@ -2276,7 +2278,7 @@ los atacantes menos persistentes o habilidosos.
 *** Secciones de datos no ejecutables
 
 En secciones anteriores se describió la protección que puede imponer la
-MMU por regiones, evitando la modificación de código ejecutable.
+*mmu* por regiones, evitando la modificación de código ejecutable.
 
 En la arquitectura x86, dominante en el mercado de computadoras
 personales desde hace muchos años, esta característica existía en
@@ -2285,9 +2287,9 @@ pero desapareció al cambiarse el modelo predominante por uno de
 memoria plana paginada, y fue hasta alrededor del 2001 en que fue
 introducida de vuelta, bajo los nombres /bit NX/ (/Never eXecute/,
 Nunca ejecutar) o /bit XD/ (/eXecute Disable/, Deshabilitar
-ejecución), como una característica particular de las extensiones PAE.
+ejecución), como una característica particular de las extensiones *pae*.
 
-Empleando este mecanismo, la MMU puede evitar la ejecución de código
+Empleando este mecanismo, la *mmu* puede evitar la ejecución de código
 en el área de stack, lo cual anula la posibilidad de /saltar al
 stack/. Esta protección desafortunadamente no es muy efectiva: una vez
 que tiene acceso a un buffer vulnerable, el atacante puede /saltar a
@@ -2404,9 +2406,9 @@ el /versionamiento/ de las biblioteca de ligado dinámico (esto es,
 hacer que cada componente de las bibliotecas lleve la versión que
 implementa o /nivel de compatibilidad/ que implementa),[fn:: Este
 nivel de compatibilidad incluye no sólo a la /interfaz de aplicación
-al programador/ (API, definida en las secciones \ref{HW_SYSCALLS} y
+al programador/ (*api*, definida en las secciones \ref{HW_SYSCALLS} y
 \ref{HW_syscall_arch_api}), sino también la /interfaz de aplicación
-binaria/ (ABI), esto es, no sólo la información de el nombre de las
+binaria/ (*abi*), esto es, no sólo la información de el nombre de las
 funciones que expone y los tipos de argumentos que reciben, sino
 también la ubicación en memoria de su definición en un archivo ya
 compilado.] y mediante el uso de scripts de instalación o /gestores de
@@ -2507,11 +2509,11 @@ seguirán ejecutando la versión de la biblioteca con el error.
 
     | Segmento | Inicio | Tamaño | Permisos |
     |----------+--------+--------+----------|
-    |        0 |    240 |    600 | RX       |
-    |        1 |   2300 |     16 | R        |
-    |        2 |     90 |    100 | RW       |
-    |        3 |   1320 |    950 | RW       |
-    |        4 |      - |     96 | RX       |
+    |        0 |    240 |    600 | *rx*     |
+    |        1 |   2300 |     16 | *r*      |
+    |        2 |     90 |    100 | *rw*     |
+    |        3 |   1320 |    950 | *rw*     |
+    |        4 |      - |     96 | *rx*     |
 
    Para cada una de las siguientes solicitudes, indique qué dirección
    física correspondería, y –de ser el caso– qué excepción se genera.
@@ -2522,15 +2524,15 @@ seguirán ejecutando la versión de la biblioteca con el error.
    4. Escritura, 2-130
    5. Ejecución, 4-25
 
-3. El buffer de traducción adelantada (TLB) de un sistema en
+3. El buffer de traducción adelantada (*tlb*) de un sistema en
    particular presenta una efectividad del 95%. Obtener un valor del
-   TLB toma 10ns. La memoria principal tarda 120ns en recuperar un
+   *tlb* toma 10ns. La memoria principal tarda 120ns en recuperar un
    valor. ¿Cuál es el tiempo promedio para completar una operación a
    memoria?
 
 4. Con la siguiente cadena de referencia, y empleando cuatro marcos de
-   memoria física, desarrolle la asignación bajo los esquemas FIFO,
-   OPT y LRU:
+   memoria física, desarrolle la asignación bajo los esquemas *fifo*,
+   *opt* y *lru*:
    #+BEGIN_QUOTE
    1, 3, 2, 1, 5, 3, 4, 1, 5, 2, 6, 7, 5, 7, 2, 5, 3, 5, 3, 1
    #+END_QUOTE
@@ -2551,23 +2553,23 @@ seguirán ejecutando la versión de la biblioteca con el error.
 6. Explique la relación que hay entre direcciones virtuales y
    direcciones físicas. Indique cómo se realiza la traducción en los
    siguientes casos:
-   - Una computadora con TLB y tabla de paginación de un nivel, con la
-     entrada cargada en la TLB.
-   - Una computadora con TLB y tabla de paginación de un nivel y sin
+   - Una computadora con *tlb* y tabla de paginación de un nivel, con la
+     entrada cargada en la *tlb*.
+   - Una computadora con *tlb* y tabla de paginación de un nivel y sin
      la entrada cargada.
-   - Una computadora sin TLB y con tabla de paginación de dos niveles.
-   - Una computadora sin paginación ni TLB pero con segmentación.
+   - Una computadora sin *tlb* y con tabla de paginación de dos niveles.
+   - Una computadora sin paginación ni *tlb* pero con segmentación.
 
 7. Un equipo presenta rendimiento muy deficiente. Ante un análisis de
    utilización a lo largo de un día, se encuentra que el promedio de
-   uso de CPU está al 20% y el uso de la interfaz al disco duro que
+   uso de *cpu* está al 20% y el uso de la interfaz al disco duro que
    aloja a la memoria virtual al 95%. ¿En qué condición está el sistema?
 
    Elija de la siguiente lista las dos respuestas que /mayor
    efectividad/ tendrían para mejorar el rendimiento del
    sistema. Fundamente con una breve explicación.
 
-   1. Reemplazar al CPU por uno 20% más rápido (pasar de 1GHz a 1.2GHz)
+   1. Reemplazar al *cpu* por uno 20% más rápido (pasar de 1GHz a 1.2GHz)
    2. Destinar un área del disco 25% más grande para la memoria
       virtual (pasar de 4 a 5GB)
    3. Aumentar el grado de multiprogramación en 10% (aumentar de 20 a
@@ -2586,22 +2588,22 @@ seguirán ejecutando la versión de la biblioteca con el error.
 
 ** Temas de investigación sugeridos
 
-- Esquemas de asignación de memoria en una realidad NUMA ::
+- Esquemas de asignación de memoria en una realidad *numa* ::
 
   La realidad que se expuso en el capítulo respecto al
   multiprocesamiento simétrico como fuertemente dominante en relación
-  a los sistemas NUMA se mantiene cierta... Pero va cambiando
-  rápidamente, y los sistemas NUMA son cada vez más comunes.
+  a los sistemas *numa* se mantiene cierta... Pero va cambiando
+  rápidamente, y los sistemas *numa* son cada vez más comunes.
 
-  Claro está, la popularización de los sistemas NUMA tiene un alto
+  Claro está, la popularización de los sistemas *numa* tiene un alto
   impacto en cómo se manejan los esquemas de administración de
-  memoria. Al entrar en juego la /afinidad/ de cada proceso a un CPU
+  memoria. Al entrar en juego la /afinidad/ de cada proceso a un *cpu*
   dado, la administración de la memoria y el planificador
   (despachador) de procesos quedan fuertemente interrelacionados.
 
-  En el número de septiembre del 2013 de la revista /Communications of
-  the ACM/ aparece un artículo corto, conciso y bastante interesante,
-  de Cristoph Lameter: [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory
+  En el número de septiembre del 2013 de la revista "Communications of
+  the *acm*" aparece un artículo corto, conciso y bastante
+  interesante, de Cristoph Lameter: [[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory
   access]]. Sugiero emplearlo como punto de partida.
 
 - Cargado y ligado de programas ::
@@ -2640,8 +2642,8 @@ seguirán ejecutando la versión de la biblioteca con el error.
   invalidación y de actualización, y para equipos más grandes, los
   mecanismos por hardware de /directorio/; los protocolos /fisgones/
   son tambíén conocidos por sus siglas, o por las universidades donde
-  fueron diseñados: MSI, MESI (Illinois), MOSI (Berkeley), MOESI y
-  MESIF.
+  fueron diseñados: *msi*, *mesi* (Illinois), *mosi* (Berkeley),
+  *moesi* y *mesif*.
 
 - Relación con sistemas operativos en uso ::
 
@@ -2689,11 +2691,16 @@ seguirán ejecutando la versión de la biblioteca con el error.
     http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/
 
   - En abril de 2014 se dio a conocer un fallo en la biblioteca
-    criptográfica /OpenSSL/, particularmente en la rutina que
-    implementa el /Heartbeat/. Dada la gran base instalada de usuarios
-    de OpenSSL, y lo sensible de la información que expone al
-    atacante, desde su descubrimiento se dio por hecho que esta es una
-    de las vulnerabilidades con mayor impacto a nivel mundial. Dado el
+    criptográfica
+    #+latex: Open\textbf{ssl},
+    #+html: Open<b>ssl</b>,
+    particularmente en la rutina que implementa el /Heartbeat/. Dada
+    la gran base instalada de usuarios de
+    #+latex: Open\textbf{ssl},
+    #+html: Open<b>ssl</b>,
+    y lo sensible de la información que expone al atacante, desde su
+    descubrimiento se dio por hecho que esta es una de las
+    vulnerabilidades con mayor impacto a nivel mundial. Dado el
     renombre que implica descubrir una vulnerabilidad de este tamaño,
     los descubridores de este fallo montaron el sitio
     http://heartbleed.com/ donde hay todo tipo de ligas describiendo
@@ -2723,7 +2730,7 @@ seguirán ejecutando la versión de la biblioteca con el error.
 # - /Less swap/ (http://ghostbar.ath.cx/2013/01/27/less-swap/), Jose
 #   Luis Rivas (2013). Entrada  Controlando el "swappiness" de Linux vía
 #   =vm.swappiness=
-# My old X61 has 2G in RAM and 3G in Swap. It seems my using-habit for
+# My old X61 has 2G in *ram* and 3G in Swap. It seems my using-habit for
 # Google Chrome is heavy (more than 20 tabs open most of the time) so
 # my swap is normally being used above the 1.8G-mark. That means, my
 # disk is constantly being written and read, and since this is the
@@ -2777,7 +2784,7 @@ seguirán ejecutando la versión de la biblioteca con el error.
   #+latex: \otrorec{http://dl.acm.org/citation.cfm?doid=363011.363155}
   #+html: <br/><a href="http://dl.acm.org/citation.cfm?doid=363011.363155">http://dl.acm.org/citation.cfm?doid=363011.363155</a><br/>
   Belady, Nelson,
-  Shedler (1969); Communications of the ACM
+  Shedler (1969); Communications of the *acm*
 
 - /Understanding the Linux Virtual Memory Manager/
   #+latex:  \otrorec{http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf}
@@ -2811,12 +2818,12 @@ seguirán ejecutando la versión de la biblioteca con el error.
   #+latex: \otrorec{http://kingcope.wordpress.com/2013/01/24/}
   #+html: <br/><a href="http://kingcope.wordpress.com/2013/01/24/">http://kingcope.wordpress.com/2013/01/24/</a><br/>
   /Kingcopes/ (2013):
-  Explica cómo puede burlarse la protección ALSR (aleatorización de
+  Explica cómo puede burlarse la protección *alsr* (aleatorización de
   direcciones) en Windows 7 y 8, logrando una dirección predecible de
   memoria hacia la cual saltar.
 
 - /An overview of Non-Uniform Memory Access/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2500468.2500477}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2500468.2500477">https://dl.acm.org/citation.cfm?doid=2500468.2500477</a><br/>
-  Cristoph Lameter (2013); /Communications of the ACM/
+  Cristoph Lameter (2013); Communications of the *acm*
 

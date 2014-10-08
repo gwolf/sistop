@@ -65,7 +65,7 @@ conceptos para almacenar, ubicar o recuperar la información:
 	     El volumen se /describe/ ante el sistema operativo en el
              /bloque de control de volumen/, también conocido como
              /superbloque/ en Unix, o /Tabla Maestra de Archivos/
-             (/Master File Table/) en NTFS.
+             (/Master File Table/) en *ntfs*.
 
 - Sistema de archivos :: Esquema de organización que sigue un
      determinado /volumen/. Dependiendo del sistema de archivos
@@ -96,7 +96,7 @@ conceptos para almacenar, ubicar o recuperar la información:
 
 - I-nodo :: Del inglés /i-node/, /information node/ (nodo de
             información); en los sistemas tipo Windows, normalmente se
-            le denomina /bloque de control de archivo/ (/FCB/). Es la
+            le denomina /bloque de control de archivo/ (*fcb*). Es la
             estructura en disco que guarda los /metadatos/ de cada uno
             de los archivos, proporcionando un vínculo entre la
             /entrada en el directorio/ y los datos que lo conforman.
@@ -151,13 +151,13 @@ A lo largo de esta sección se revisará cómo los principales
 conceptos a abordar se han implementado en distintos sistemas de
 archivos; se hará referencia principalmente a una familia de sistema de
 archivos simple de comprender, aunque muestra claramente su edad: el
-sistema FAT. La razón de elegir al sistema de archivos FAT es la
+sistema *fat*. La razón de elegir al sistema de archivos *fat* es la
 simplicidad de sus estructuras, que permiten comprender la
 organización general de la información. Donde sea pertinente, se
 mencionará en qué puntos principales estiba la diferencia con los
 principales sistemas de la actualidad.
 
-El sistema FAT fue creado hacia fines de los 1970, y su diseño muestra
+El sistema *fat* fue creado hacia fines de los 1970, y su diseño muestra
 claras evidencias de haber sido concebido para discos flexibles. Sin
 embargo, a través de varias extensiones que se han presentado con el
 paso de los años (algunas con compatibilidad hacia atrás,[fn:: Se
@@ -167,8 +167,8 @@ no), sigue siendo uno de los sistemas más empleados al día de hoy, a
 pesar de que ya no es recomendado como sistema primario por ningún
 sistema operativo de escritorio.
 
-Si bien FAT tuvo su mayor difusión con los sistemas operativos de la
-familia MS-DOS, es un sistema de archivos nativo para una gran
+Si bien *fat* tuvo su mayor difusión con los sistemas operativos de la
+familia *ms-dos*, es un sistema de archivos nativo para una gran
 cantidad de otras plataformas (muchas de ellas dentro del mercado
 /embebido/), lo cual se hace obvio al revisar el soporte a atributos
 extendidos que maneja.
@@ -206,8 +206,8 @@ mantienen /copias adicionales/ del superbloque, a veces dispersas a
 lo largo del sistema de archivos, para poder recuperarlo en caso de
 que se corrompa.
 
-En el caso de FAT, el volumen indica no sólo la /generación/ del
-sistema de archivos que se está empleando (FAT12, FAT16 o FAT32, en
+En el caso de *fat*, el volumen indica no sólo la /generación/ del
+sistema de archivos que se está empleando (*fat12*, *fat16* o *fat32*, en
 los tres casos denominados así por la cantidad de bits para
 referenciar a cada uno de los bloques lógicos o /clusters/), sino el
 tamaño de los /clusters/, que puede ir desde los 2 y hasta los 32 Kb.
@@ -238,10 +238,13 @@ abstracción de los sistemas de archivos:
 - Bases de datos :: Las bases de datos relacionales pueden incluir
                     volúmenes muy grandes de datos estrictamente
                     estructurados. Algunos gestores de bases de
-                    datos, como Oracle, MaxDB o DB2, recomiendan a
-                    sus usuarios el uso de volúmenes crudos, para
-                    optimizar los accesos a disco sin tener que cruzar
-                    por tantas capas del sistema operativo.
+                    datos, como Oracle,
+		    #+latex: Max\textbf{db}
+		    #+html: Max<b>db</b>
+		    o *db2*, recomiendan a sus usuarios el uso de
+                    volúmenes crudos, para optimizar los accesos a
+                    disco sin tener que cruzar por tantas capas del
+                    sistema operativo.
 
 		    La mayor parte de los gestores de bases de datos
                     desde hace varios años no manejan esta modalidad,
@@ -262,7 +265,7 @@ las estructuras que los describen ante el sistema operativo — los
 A lo largo de la historia de los sistemas de archivos, se han
 implementado muy distintos esquemas de organización. Se presenta a
 continuación la estructura básica de la popular familia de sistemas de
-archivos FAT.
+archivos *fat*.
 
 *** El directorio raiz
 
@@ -272,15 +275,17 @@ dentro de éste deben pasar a través del directorio. El directorio raiz
 está siempre en una ubicación /bien conocida/ dentro del sistema de
 archivos — típicamente al inicio del volumen, en los primeros
 sectores[fn:: Una excepción a esta lógica se presentó en la década de
-los 1980, cuando los diseñadores del sistema AmigaOS decidieron ubicar
-al directorio en el sector /central/ de los volúmenes, para reducir a
-la mitad el tiempo promedio de acceso a la parte más frecuentemente
-referida del disco]. Un disco flexible tenía 80 /pistas/ (típicamente
-denominadas /cilindros/ al hablar de discos duros), con lo que,
-al ubicar al directorio en la pista 40, el tiempo promedio de
-movimiento de cabezas para llegar a él se reducía a la mitad. Si todas
-las operaciones de abrir un archivo tienen que pasar por el
-directorio, esto resultaba en una mejoría muy significativa.
+los 1980, cuando los diseñadores del sistema
+#+latex: Amiga\textbf{os},
+#+html: Amiga<b>os</b>,
+decidieron ubicar al directorio en el sector /central/ de los
+volúmenes, para reducir a la mitad el tiempo promedio de acceso a la
+parte más frecuentemente referida del disco]. Un disco flexible tenía
+80 /pistas/ (típicamente denominadas /cilindros/ al hablar de discos
+duros), con lo que, al ubicar al directorio en la pista 40, el tiempo
+promedio de movimiento de cabezas para llegar a él se reducía a la
+mitad. Si todas las operaciones de abrir un archivo tienen que pasar
+por el directorio, esto resultaba en una mejoría muy significativa.
 
 El directorio es la estructura que determina el formato que debe
 seguir el nombre de cada uno de los archivos y directorios: es común
@@ -288,11 +293,11 @@ que en un sistema moderno, el nombre de un archivo pueda tener hasta
 256 caracteres, incluyendo espacios, caracteres internacionales, etc. Algunos
 sistemas de archivos son /sensibles a mayúsculas/, como es el caso de
 los sistemas nativos a Unix (el archivo =ejemplo.txt= es distinto de
-=Ejemplo.TXT=), mientras que otros no lo son, como es el caso de NTFS
-y VFAT (=ejemplo.txt= y =Ejemplo.TXT= son idénticos ante el sistema
+=Ejemplo.TXT=), mientras que otros no lo son, como es el caso de *ntfs*
+y *vfat* (=ejemplo.txt= y =Ejemplo.TXT= son idénticos ante el sistema
 operativo).
 
-Todas las versiones de FAT siguen para los nombres de archivos un
+Todas las versiones de *fat* siguen para los nombres de archivos un
 esquema claramente arcáico: los nombres de archivo pueden medir hasta
 8 caracteres, con una extensión opcional de 3 caracteres más, dando un
 total de 11. El sistema no sólo no es sensible a mayúsculas y
@@ -302,25 +307,25 @@ alfanuméricos. Este sistema de archivos no implementa la separación
 entre directorio e i-nodo, que hoy es la norma, por lo que cada una de
 las entradas en el directorio mide exactamente 32 bytes. Como es de
 esperarse en un formato que ha vivido tanto tiempo y ha pasado por
-tantas generaciones como FAT, algunos de estos campos han cambiado
+tantas generaciones como *fat*, algunos de estos campos han cambiado
 substancialmente sus significados. La figura
 \ref{FS_entrada_directorio_fat} muestra los campos de una entrada del
-directorio bajo FAT32.
+directorio bajo *fat32*.
 
 #+attr_latex: width=\textwidth
 #+label: FS_entrada_directorio_fat
-#+caption: Formato de la entrada del directorio bajo FAT (Mohammed, 2007)
+#+caption: Formato de la entrada del directorio bajo *fat* (Mohammed, 2007)
 [[./img/ditaa/entrada_directorio_fat.png]]
 
-La extensión VFAT fue agregada con el lanzamiento de Windows 95. Esta
+La extensión *vfat* fue agregada con el lanzamiento de Windows 95. Esta
 extensión permitía que, si bien el nombre /real/ de un archivo
 seguiría estando limitada al formato presentado, pudieran agregarse
 entradas adicionales al directorio utilizando el atributo de /etiqueta
-de volumen/ de maneras que un sistema MS-DOS debiera ignorar.[fn:: La
+de volumen/ de maneras que un sistema *ms-dos* debiera ignorar.[fn:: La
 /etiqueta de volumen/ estaba definida para ser empleada exclusivamente
 /a la cabeza/ del directorio, dando una etiqueta global al sistema de
 archivos completo; el significado de una entrada de directorio con
-este atributo hasta antes de la incorporación de VFAT /no estaba
+este atributo hasta antes de la incorporación de *vfat* /no estaba
 definida/.]
 
 Esto presenta una complicación adicional al hablar del directorio
@@ -328,20 +333,20 @@ Esto presenta una complicación adicional al hablar del directorio
 límite, al estar el directorio raiz ubicado en una sección fija del
 disco, tiene una longitud límite máxima: en un disco flexible (que
 hasta el día de hoy, por su limitada capacidad, se formatea bajo
-FAT12), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
+*fat12*), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
 tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
 = 7168$ bytes, esto es, $\frac{7168}{32} = 224$ entradas como máximo. Y
 si bien esto puede no parecer muy limitado, ocupar cuatro entradas por
-archivo cuando, empleando VFAT, se tiene un nombre medianamente largo
+archivo cuando, empleando *vfat*, se tiene un nombre medianamente largo
 reduce fuertemente el panorama.
 
-El problema no resulta tan severo como podría parecer: para FAT32, el
+El problema no resulta tan severo como podría parecer: para *fat32*, el
 directorio raiz ya no está ubicado en un espacio reservado, sino que
 como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
 #+label: FS_directorio_vfat
-#+caption: Entradas representando archivos con (y sin) nombre largo bajo VFAT
+#+caption: Entradas representando archivos con (y sin) nombre largo bajo *vfat*
 #+attr_html: width="843" height="724"
 #+attr_latex: width=\textwidth
 [[./img/directorio_vfat.png]]
@@ -358,7 +363,7 @@ continuación) siguieron almacenando únicamente al directorio raiz en
 esta posición privilegiada, manejando a todos los directorios que
 derivaran de éste como si fueran archivos, repartidos por el disco.
 
-#+caption: Significado de cada uno de los bits del byte de /atributos del archivo/ en el directorio FAT. La semántica que se presenta es la empleada por los sistemas MS-DOS y Windows; otros sistemas pueden presentar comportamientos adicionales.
+#+caption: Significado de cada uno de los bits del byte de /atributos del archivo/ en el directorio *fat*. La semántica que se presenta es la empleada por los sistemas *ms-dos* y Windows; otros sistemas pueden presentar comportamientos adicionales.
 #+label: FS_atributos_fat
 | Bit | Nombre        | Descripción                                  |
 |-----+---------------+----------------------------------------------|
@@ -369,7 +374,7 @@ derivaran de éste como si fueran archivos, repartidos por el disco.
 |     |               | ejemplo, para los componentes a cargar para  |
 |     |               | iniciar al sistema operativo)                |
 |   3 | Etiqueta      | Indica el nombre del volumen, no un archivo. |
-|     |               | En VFAT, expresa la /continuación/ de un     |
+|     |               | En *vfat*, expresa la /continuación/ de un   |
 |     |               | nombre largo.                                |
 |   4 | Subdirectorio | Los /clusters/ que componen a este archivo   |
 |     |               | son interpretados como un subdirectorio,     |
@@ -388,7 +393,7 @@ al directorio completo para encontrar a un archivo). Y las listas
 lineales presentan un segundo problema: cómo reaccionar cuando se
 /llena/ el espacio que tienen asignado.
 
-Como ya se presentó, FAT asigna un espacio fijo al directorio raiz,
+Como ya se presentó, *fat* asigna un espacio fijo al directorio raiz,
 pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
 archivo — si el doceavo byte de una entrada de directorio, que indica
@@ -400,35 +405,35 @@ será interpretada como un subdirectorio.
 *** La tabla de asignación de archivos
 # <<FS_tabla_fat>>
 
-Queda claro que FAT es un sistema heredado, y que exhibe muchas
+Queda claro que *fat* es un sistema heredado, y que exhibe muchas
 prácticas que ya se han abandonado en diseños modernos de sistemas de
 archivos. Se vio que dentro de la entrada de directorio de cada archivo
 está prácticamente su /i-nodo/ completo: la información de permisos,
 atributos, fechas de creación — y muy particularmente, el apuntador
-al /cluster/ de inicio (bytes 26-28, mas los 20-22 para FAT32). Esto
-resulta en una de las grandes debilidades de FAT: la tendencia a la
+al /cluster/ de inicio (bytes 26-28, mas los 20-22 para *fat32*). Esto
+resulta en una de las grandes debilidades de *fat*: la tendencia a la
 fragmentación.
 
-La familia FAT obtiene su nombre de la Tabla de Asignación de Archivos
+La familia *fat* obtiene su nombre de la Tabla de Asignación de Archivos
 (/File Allocation Table/), que aparece antes del directorio, en los
 primeros sectores del disco.[fn:: Esta tabla es tan importante que,
-dependiendo de la versión de FAT, se guarda por duplicado, o incluso
-por triplicado.] Cada byte de la FAT
+dependiendo de la versión de *fat*, se guarda por duplicado, o incluso
+por triplicado.] Cada byte de la *fat*
 representa a un /cluster/ en el área de datos; cada entrada en el
 directorio indica, en su campo /cluster/, cuál es el primer /cluster/
 que conforma al archivo. Ahora bien, conforme se usa un disco, y los
 archivos crecen y se eliminan, y van llenando los espacios vacíos que
-van dejando, FAT va asignando espacio /conforme encuentra nuevos
+van dejando, *fat* va asignando espacio /conforme encuentra nuevos
 clusters libres/, sin cuidar que sea espacio continuo. Los apuntadores al
 /siguiente cluster/ se van marcando en la tabla, /cluster/ por
 /cluster/, y el último /cluster/ de cada archivo recibe el valor
-especial (dependiendo de la versión de FAT) =0xFFF=, =0xFFFF= o
+especial (dependiendo de la versión de *fat*) =0xFFF=, =0xFFFF= o
 =0xFFFFFFFF=.
 
 Ahora bien, si los directorios son sencillamente archivos que reciben
 un tratamiento especial, estos son también susceptibles a la
 fragmentación. Dentro de un sistema Windows 95 o superior (empleando
-VFAT), con directorios anidados a cuatro o cinco niveles como lo
+*vfat*), con directorios anidados a cuatro o cinco niveles como lo
 establece su jerarquía estándar[fn:: Por ejemplo, =C:\Documents and
 Settings\Usuario\Menú Inicio\Programa Ejemplo\Programa Ejemplo.lnk=],
 la simple tarea de recorrerlos para encontrar determinado archivo puede
@@ -451,19 +456,19 @@ dispositivo, etc.) se presentara corrupción de la información llevando
 a pérdida de datos. Al almacenar las entradas del directorio sin
 ordenar, las escrituras que modifican esta crítica estructura se
 mantienen atómicas: un sólo sector de 512 bytes puede almacenar 16
-entradas básicas de FAT, de 32 bytes cada una.[fn:: Aunque en el caso
-de VFAT, las diferentes entradas que componen un sólo nombre de
+entradas básicas de *fat*, de 32 bytes cada una.[fn:: Aunque en el caso
+de *vfat*, las diferentes entradas que componen un sólo nombre de
 archivo pueden quedar separadas en diferentes sectores.]
 
 Ordenar las entradas del directorio teniendo sus contenidos ya en
 memoria y, en general, diferir las modificaciones al directorio
 resulta mucho más conveniente en el caso general. Esto vale también
 para la eliminación de archivos — a continuación se abordará la
-estrategia que sigue FAT. Cabe recordar que FAT fue diseñado cuando el
+estrategia que sigue *fat*. Cabe recordar que *fat* fue diseñado cuando el
 medio principal de almacenamiento era el disco flexible, decenas de
 veces más lento que el disco duro, y con mucha menor confiabilidad.
 
-Cuando se le solicita a un sistema de archivos FAT eliminar un
+Cuando se le solicita a un sistema de archivos *fat* eliminar un
 archivo, éste no se borra del directorio, ni su información se libera
 de la tabla de asignación de archivos, sino que se /marca/ para ser
 ignorado, reemplazando el primer caracter de su nombre por =0xE5=. Ni
@@ -478,7 +483,7 @@ entrada, o cuando otro archivo ocupa el espacio físico que ocupaba el
 que fue eliminado, que el sistema operativo marca /realmente/ como
 desocupados los /clusters/ en la tabla de asignación.
 
-Es por esto que desde los primeros días de las PC existen tantas
+Es por esto que desde los primeros días de las *pc* existen tantas
 herramientas de recuperación (o /des-borramiento/, /undeletion/) de
 archivos: siempre que no haya sido creado un archivo nuevo que ocupe
 la entrada de directorio en cuestión, recuperar un archivo es tan
@@ -533,7 +538,7 @@ empleada.
 
 El primer sistema de archivos que se popularizó fue /Stacker/,
 comercializado a partir de 1990 por /Stac Electronics/. Stacker
-operaba bajo MS-DOS, creando un dispositivo de bloques virtual alojado
+operaba bajo *ms-dos*, creando un dispositivo de bloques virtual alojado
 en un disco estándar[fn:: Esto significa que, al solicitarle la
 creación de una unidad comprimida de 30MB dentro del volumen =C=
 (disco duro primario), esta aparecería disponible como un volumen
@@ -569,15 +574,15 @@ fue declinando su utilización.
 *** Compresión archivo por archivo
 
 Dado el éxito del que gozó Stacker en sus primeros años, Microsoft
-anunció como parte de las características de la versión 6.0 de MS-DOS
+anunció como parte de las características de la versión 6.0 de *ms-dos*
 (publicada en 1993) que incluiría /DoubleSpace/, una tecnología muy
 similar a la de Stacker. Microsoft incluyó en sus sistemas operativos
 el soporte para DoubleSpace
-por siete años, cubriendo las últimas versiones de MS-DOS y las de
+por siete años, cubriendo las últimas versiones de *ms-dos* y las de
 Windows 95, 98 y Millenium, pero como ya se vio, la compresión de
 volumen completo presentaba importantes desventajas.
 
-Para el entonces nuevo sistemas de archivos NTFS, Microsoft decidió
+Para el entonces nuevo sistemas de archivos *ntfs*, Microsoft decidió
 incluir una característica distinta, más segura y más modular:
 mantener el sistema de archivos funcionando de forma normal, sin
 compresión, y habilitar la compresión /archivo por archivo/ de forma
@@ -586,7 +591,7 @@ transparente al usuario.
 Este esquema permite al administrador del sistema elegir, por archivos
 o carpetas, qué areas del sistema de archivos desea almacenar
 comprimidas; esta característica viene como parte de todos los
-sistemas operativos Windows a partir de la versión XP, liberada en el
+sistemas operativos Windows a partir de la versión *xp*, liberada en el
 año 2003.
 
 Si bien la compresión transparente a nivel archivo se muestra mucho
@@ -654,7 +659,7 @@ espacio empleado por uno de ellos de forma automática.
 
 Para identificar qué datos están duplicados, el mecanismo más
 utilizado es calcular el /hash criptográfico/ de los datos[fn:: Por
-ejemplo, empleando el algoritmo SHA-256, el cual brinda una
+ejemplo, empleando el algoritmo *sha-256*, el cual brinda una
 probabilidad de /colisión/ de 1 en $2^{256}$, suficientemente
 confiable para que la pérdida de datos sea mucho menos probable que la
 falla del disco.]; este mecanismo permite una búsqueda rápida y
@@ -671,10 +676,10 @@ hacerlo a nivel bloque, pero hacerlo a nivel bloque lleva típicamente
 a una optimización del uso de espacio mucho mayor.
 
 Al día de hoy, el principal sistema de archivos que implementa
-desduplicación es ZFS[fn:: Las características básicas de ZFS serán
+desduplicación es *zfs*[fn:: Las características básicas de *zfs* serán
 presentadas en la sección \ref{FS_FIS_zfs}], desarrollado por Sun
 Microsystems (hoy Oracle). En Linux, esta característica forma parte
-de BTRFS, aunque no ha alcanzado los niveles de estabilidad como para
+de *btrfs*, aunque no ha alcanzado los niveles de estabilidad como para
 recomendarse para su uso en entornos de producción.
 
 En Windows, esta funcionalidad se conoce como /Single Instance
@@ -682,16 +687,18 @@ Storage/ (/Almacenamiento de Instancia Única/). Esta característica
 apareció a nivel de archivo, implementada en espacio de usuario, como
 una de las características del servidor de correo /Exchange Server/
 entre los años 2000 y 2010. A partir de Windows Server 2003, la
-funcionalidad de desduplicación existe para NTFS, pero su uso es poco
+funcionalidad de desduplicación existe para *ntfs*, pero su uso es poco
 frecuente.
 
 El uso de desduplicación, particularmente cuando se efectúa a nivel
 bloques, tiene un alto costo en memoria: para mantener buenos niveles
 de rendimiento, la tabla que relaciona el hash de datos con el sector
 en el cual está almacenado debe mantenerse en memoria. En el caso de
-la implementación de ZFS en FreeBSD, [[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar
-5GB de memoria por cada TB de almacenamiento (0.5% de la capacidad
-total)]].
+la implementación de *zfs* en
+#+latex: Free\textbf{bsd},
+#+html: Free<b>bsd</b>,
+[[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar 5GB de memoria por cada TB de
+almacenamiento (0.5% de la capacidad total)]].
 
 ** Sistemas de archivos virtuales
 
@@ -699,8 +706,8 @@ Los sistemas de archivos nacieron para facilitar el uso de
 dispositivos de almacenamiento para la información que debe persistir
 a largo plazo. Sin embargo, dado que la abstracción para su uso
 resulta tan natural para representar todo tipo de información, desde
-la década de 1980 aparecieron diversas implementaciones de /discos
-RAM/: Programas diseñados para tomar un espacio de memoria y darle la
+la década de 1980 aparecieron diversas implementaciones de discos
+*RAM*: Programas diseñados para tomar un espacio de memoria y darle la
 semántica de un disco, permitiendo manipular su contenido como si
 fuera un disco cualquiera. Esto es, presenta almacenamiento volátil,
 pero de muy alta velocidad.
@@ -718,7 +725,7 @@ persistentes (como el directorio con los archivos de dispositivos,
 # <<FS_proc>>
 
 En junio 1984, en el congreso de desarrolladores de sistemas Unix
-/USENIX/, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
+*usenix*, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
 files]]. Killian implementó un sistema de archivos virtual para ser
 montado en el directorio =/proc= del sistema que, en vez de
 representar un mapa de bloques, presentaba una ventana a la lista de
@@ -761,7 +768,7 @@ limitado a indicar que ésta apunta al punto donde inicia el espacio
 empleado por el archivo. No se ha detallado en cómo se implementa la
 asignación y administración de dicho espacio. En esta sección se hará
 un breve repaso de los tres principales mecanismos, para después de
-ésta explicar cómo es la implementación de FAT, abordando sus
+ésta explicar cómo es la implementación de *fat*, abordando sus
 principales virtudes y debilidades.
 
 ** Asignación contigua
@@ -770,7 +777,7 @@ Los primeros sistemas de archivos en disco empleaban un esquema de
 /asignación contigua/. Para implementar un sistema de archivos de este
 tipo, no haría falta el contar con una /tabla de asignación de
 archivos/: bastaría con la información que forma parte del
-directorio de FAT — la extensión del archivo y la dirección de su
+directorio de *fat* — la extensión del archivo y la dirección de su
 primer /cluster/.
 
 #+attr_latex: width=0.7\textwidth
@@ -793,11 +800,11 @@ podamos asignar a un nuevo archivo.
 
 Los esquemas de asignación contigua se emplean hoy en día
 principalmente en sistemas de archivo de sólo lectura — por ejemplo,
-lo emplea el sistema principal que utilizan los CD-ROMs, el
-/ISO-9660/, pensado para aprovechar al máximo un espacio que, una vez
+lo emplea el sistema principal que utilizan los *cd-rom*, el
+*iso-9660*, pensado para aprovechar al máximo un espacio que, una vez
 grabado, sólo podrá abrirse en modo de sólo lectura. Esto explica por
 qué, a diferencia de como ocurre en cualquier otro medio de
-almacenamiento, al /quemar/ un CD-ROM es necesario preparar primero
+almacenamiento, al /quemar/ un *cd-rom* es necesario preparar primero
 una /imagen/ en la que los archivos ocupen sus posiciones definitivas,
 y esta imagen debe grabarse al disco en una sola operación.
 
@@ -832,7 +839,7 @@ previos para encontrar su ubicación.
 
 Particularmente por este segundo punto es mucho más común el empleo de
 una /tabla de asignación de archivos/ — y precisamente así es como
-opera FAT (de hecho, esta tabla es la que le da su nombre). La tabla
+opera *fat* (de hecho, esta tabla es la que le da su nombre). La tabla
 de asignación es un mapa de los /clusters/, representando a cada uno por
 el espacio necesario para guardar un apuntador.
 
@@ -865,7 +872,7 @@ bloque empleado por éste; el tema de fallos y recuperación bajo estos
 esquemas es abordado en la sección \ref{FS_fallos_recuperacion}).
 
 Hay dos mecanismos de mitigación para este problema: el empleado por
-FAT es guardar una (o, bajo FAT12, dos) copias adicionales de la tabla
+*fat* es guardar una (o, bajo *fat12*, dos) copias adicionales de la tabla
 de asignación, entre las cuales que el sistema puede verificar si se
 mantengan consistentes y buscar corregirlas en caso contrario. Por
 otro lado, puede manejarse una estructura de /lista doblemente ligada/
@@ -891,7 +898,7 @@ mayor: al asignar el i-nodo, éste se crea ocupando como mínimo un
 /cluster/ completo. En el caso de un archivo pequeño, que quepa en un
 sólo /cluster/, esto representa un desperdicio del 100% de espacio (un
 /cluster/ para el i-nodo y otro para los datos);[fn:: Algunos sistemas
-de archivos, como ReiserFS, BTRFS o UFS, presentan esquemas de
+de archivos, como Reiser, *btrfs* o *ufs*, presentan esquemas de
 asignación /sub-cluster/. Estos denominan /colas/ (/tails/) a los
 archivos muy pequeños, y pueden ubicarlos ya sea dentro de su mismo
 i-nodo o compartiendo un mismo cluster con un /desplazamiento/ dentro
@@ -972,11 +979,11 @@ apuntadores:
   todos los /clusters/ significarían hasta 16516 accesos a disco (en
   el peor de los casos).
 
-** Las tablas en FAT
+** Las tablas en *fat*
 # <<FS_tablas_fat>>
 
 Volviendo al caso que se presenta como ejemplo, el sistema de
-archivos FAT: en este sistema, cada entrada del directorio apunta al
+archivos *fat*: en este sistema, cada entrada del directorio apunta al
 primer /cluster/ que ocupa cada uno de los archivos, y se emplea un
 esquema de asignación ligada. El directorio tiene también un campo
 indicando la /longitud total/ del archivo, pero esto no es empleado
@@ -986,15 +993,15 @@ archivo/ al leer el último /cluster/ que compone a determinado archivo).
 
 La estructura fundamental de este sistema de archivos es la tabla de
 asignación de archivos (/File Allocation Table/) — tanto que de ella
-toma su nombre FAT.
+toma su nombre *fat*.
 
-Cada entrada de la FAT mide lo que la longitud correspondiente a su
+Cada entrada de la *fat* mide lo que la longitud correspondiente a su
 versión (12, 16 o 32 bits), y puede tener cualquiera de los valores
 descritos en el cuadro \ref{FS_valores_especiales_fat}.
 
-#+caption: Valores especiales que puede almacenar FAT; cualquier otro valor indica la dirección del siguiente /cluster/ que forma parte del archivo al cual pertenece el registro en cuestión.
+#+caption: Valores especiales que puede almacenar *fat*; cualquier otro valor indica la dirección del siguiente /cluster/ que forma parte del archivo al cual pertenece el registro en cuestión.
 #+label: FS_valores_especiales_fat
-| FAT12   | FAT16    | FAT32        | Significado                          |
+| *fat12* | *fat16*  | *fat32*      | Significado                          |
 |---------+----------+--------------+--------------------------------------|
 | =0x000= | =0x0000= | =0x00000000= | Disponible, puede ser asignado       |
 | =0xFF7= | =0xFFF7= | =0xFFFFFFF7= | /Cluster/ dañado, no debe utilizarse |
@@ -1002,11 +1009,11 @@ descritos en el cuadro \ref{FS_valores_especiales_fat}.
 
 Llama la atención que haya un valor especial para indicar que un
 /cluster/ tiene sectores dañados. Esto remite de vuelta al momento
-histórico de la creación de la familia FAT: siendo el medio
+histórico de la creación de la familia *fat*: siendo el medio
 predominante de almacenamiento el disco flexible, los errores en la
 superficie eran mucho más frecuentes de lo que lo son hoy en día.
 
-Una característica que puede llamar la atención de FAT es que
+Una característica que puede llamar la atención de *fat* es que
 parecería permitir la fragmentación de archivos /por diseño/: dado que
 el descriptor de cada /cluster/ /debe apuntar/ al siguiente, puede
 asumirse que el /caso común/ es que los /clusters/ no ocuparán contiguos
@@ -1015,13 +1022,13 @@ adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
 #+label: FS_tabla_fat
-#+caption: Ejemplo de entradas en la tabla de asignación de archivos en FAT32
+#+caption: Ejemplo de entradas en la tabla de asignación de archivos en *fat32*
 #+attr_latex: width=\textwidth
 #+attr_html: width="628" height="284"
 [[./img/tabla_fat.png]]
 
 En la sección \ref{FS_el_directorio}, al presentar el formato del
-directorio de FAT, se mencionó que los subdirectorios son en realidad
+directorio de *fat*, se mencionó que los subdirectorios son en realidad
 archivos de un tipo especial: una suerte de archivos estructurados
 (ver sección \ref{DIR_archivos_estructurados}), gestionados por el
 sistema operativo. Lo único que distingue a un directorio de un
@@ -1045,7 +1052,7 @@ suyo, el sistema tendrá que buscar todos sus fragmentos a lo largo del
 disco.
 
 Ante estos dos aspectos, no puede perderse de vista la edad que tiene
-FAT. Otros sistemas de archivos más modernos han resuelto este
+*fat*. Otros sistemas de archivos más modernos han resuelto este
 problema a través de los /grupos de asignación/: los directorios del
 sistema son /esparcidos/ a lo largo del volumen, y /se intenta/ ubicar
 a los archivos cerca de los directorios desde donde son referidos[fn::
@@ -1078,13 +1085,13 @@ de mantenimiento para volver a un rango operacional.
 * Fallos y recuperación
 # <<FS_fallos_recuperacion>>
 
-El sistema de archivos FAT es /relativamente frágil/: no es difícil que se
+El sistema de archivos *fat* es /relativamente frágil/: no es difícil que se
 presente una situación de /corrupción de metadatos/, y muy
 particularmente, de la estructura de las tablas de asignación. Los
-usuarios de sistemas basados en FAT en Windows sin duda conocen a los
+usuarios de sistemas basados en *fat* en Windows sin duda conocen a los
 programas =CHKDSK= y =SCANDISK=, dos programas que implementan la
 misma funcionalidad base, y difieren principalmente en su interfaz al
-usuario: =CHKDSK= existe desde los primeros años de MS-DOS, y está
+usuario: =CHKDSK= existe desde los primeros años de *ms-dos*, y está
 pensado para su uso interactivo en línea de comando; =SCANDISK= se
 ejecuta desde el entorno gráfico, y presenta la particularidad de que
 no requiere (aunque sí recomienda fuertemente) /acceso exclusivo/ al
@@ -1095,7 +1102,7 @@ sistema de archivos mientras se ejecuta.
 A lo largo de la vida de un sistema de archivos, conforme los archivos
 se van asignando y liberando, van cambiando su tamaño, y conforme el
 sistema de archivos se monta y des-monta, pueden ir apareciendo
-/inconsistencias/ en su estructura. En los sistemas tipo FAT, las
+/inconsistencias/ en su estructura. En los sistemas tipo *fat*, las
 principales inconsistencias[fn:: Que no las únicas. Estas y otras más
 están brevemente descritas en la página de manual de =dosfsck= (ver
 sección \ref{FS_otros_recursos}).] son:
@@ -1124,7 +1131,7 @@ sección \ref{FS_otros_recursos}).] son:
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_inconsistencias_fat
-#+caption: Inconsistencias en un sistema de archivos tipo FAT
+#+caption: Inconsistencias en un sistema de archivos tipo *fat*
 [[./img/dot/inconsistencias_fat.png]]
 
 Cada sistema de archivos podrá presentar un distinto conjunto de
@@ -1134,7 +1141,7 @@ básicas y de la manera en que cada sistema operativo las maneja.
 En la década de los 1980 comenzaron a entrar a mercado los
 /controladores de disco inteligentes/, y en menos de diez años
 dominaban ya el mercado. Estos controladores, con buses tan disímiles
-como SCSI, IDE, o los más modernos, SAS y SATA, introdujeron muchos
+como *scsi*, *ide*, o los más modernos, *sas* y *sata*, introdujeron muchos
 cambios que fueron disociando cada vez más al sistema operativo de la
 gestión física directa de los dispositivos; en el apéndice
 \ref{FS_FIS} se presenta a mayor profundidad lo que esto ha
@@ -1149,7 +1156,7 @@ información puede no haber sido escrita por completo al disco.
 
 Es importante recordar que las operaciones con los metadatos que conforman al
 sistema de archivos no son atómicas. Por poner un ejemplo, crear un
-archivo en un volumen FAT requiere:
+archivo en un volumen *fat* requiere:
 
 1. Encontrar una lista de /clusters/ disponibles suficiente para
    almacenar la información que conformará al archivo.
@@ -1189,7 +1196,7 @@ bien en el terreno de las aplicaciones del usuario.
 
 Cada sistema operativo incluye programas para realizar verificación
 (y, en su caso, corrección) de la integridad de sus sistemas de
-archivo. En el caso de MS-DOS y Windows, como ya se vio, estos
+archivo. En el caso de *ms-dos* y Windows, como ya se vio, estos
 programas son =CHKDSK= y =SCANDISK=; en los sistemas Unix, el programa
 general se llama =fsck=, y típicamente emplea a asistentes según el
 tipo de sistema a revisar — =fsck.vfat=, =fsck.ext2=, etc.
@@ -1274,13 +1281,19 @@ que se /forman/ en el caché propio del disco. Dado que las
 actualizaciones suaves dependen tan profundamente de confiar en el
 ordenamiento, esto rompe por completo la confiabilidad del proceso.
 
-Las actualizaciones suaves fueron implementadas hacia 2002 en el sistema operativo
-FreeBSD, y fueron adoptadas por los principales sistemas de la
-familia *BSD, aunque NetBSD lo retiró en 2012, prefiriendo el empleo
-de sistemas con bitácora — muy probablemente, la lógica destrás de
-esta decisión sea la cantidad de sistemas que emplean esta segunda
-estrategia que se abordará a continuación, y lo complejo de mantener
-dentro del núcleo dos estrategias tan distintas.
+Las actualizaciones suaves fueron implementadas hacia 2002 en el
+sistema operativo
+#+latex: Free\textbf{bsd},
+#+html: Free<b>bsd</b>,
+y fueron adoptadas por los principales sistemas de la familia *bsd*,
+aunque
+#+latex: Net\textbf{bsd}
+#+html: Net<b>bsd</b>
+lo retiró en 2012, prefiriendo el empleo de sistemas con bitácora —
+muy probablemente, la lógica destrás de esta decisión sea la cantidad
+de sistemas que emplean esta segunda estrategia que se abordará a
+continuación, y lo complejo de mantener dentro del núcleo dos
+estrategias tan distintas.
 
 ** Sistemas de archivo con bitácora
 
@@ -1374,7 +1387,7 @@ base de datos relacional, en que cada uno de los registros es
 típicamente actualizados de forma independiente de los demás, y ocupan
 apenas fracciones de un bloque, resultaría tremendamente
 ineficiente. La implementación referencia de Ousterhut y Rosenblum fue
-parte de los sistemas *BSD, pero dada su tendencia a la /extrema
+parte de los sistemas *bsd*, pero dada su tendencia a la /extrema
 fragmentación/, fue eliminado de ellos.
 
 Este tipo de sistemas de archivo ofrece características muy
@@ -1409,20 +1422,20 @@ de archivos resurja.
    ¿Cuál es el tamaño máximo de archivo que podrá manejar este sistema
    de archivos?
 
-2. El sistema de archivos /ReiserFS/ está basado en la /asignación
+2. El sistema de archivos /Reiser/ está basado en la /asignación
    indexada/, pero introduce un nuevo concepto: Las /colitas/
    (/tails/). Estas permiten que archivos muy pequeños, de hasta 4KB,
    puedan ser almacenados /en el mismo i-nodo/. Esto permite a
-   ReiserFS ahorrar espacio en disco (se estima que logra una
+   Reiser ahorrar espacio en disco (se estima que logra una
    eficiencia hasta 5% mayor que sistemas que no emplean esta
    técnica), y además reduce el tiempo requerido para recuperar estos
    archivos, dado que los datos pueden almacenarse en el mismo i-nodo
    que alguna de sus bibliotecas, sin requerir leer ningún bloque
    adicional.
 
-   ReiserFS se popularizó alrededor del 2001, pero su desarrollo se ha
+   Reiser se popularizó alrededor del 2001, pero su desarrollo se ha
    detenido, y esta característica en particular no ha sido adoptada
-   más que por unos pocos sistemas de archivos (UFS2 y BTRFS). ¿Qué
+   más que por unos pocos sistemas de archivos (*ufs2* y *btrfs*). ¿Qué
    problemas encuentra con el planteaiento de las /colitas/?
 
 3. Describa el funcionamiento de un /sistema de archivos con bitácora/
@@ -1465,16 +1478,20 @@ de archivos resurja.
   #+latex: \otrorec{http://www.nobius.org/~dbg/}
   #+html: <br/><a href="http://www.nobius.org/~dbg/">http://www.nobius.org/~dbg/</a><br/>
   Dominic Giampaolo (1999). El autor fue parte del equipo que
-  implementó el sistema operativo BeOS, un sistema de alto rendimiento
+  implementó el sistema operativo
+  #+latex: Be\textbf{os},
+  #+html: Be<b>os</b>,
+  un sistema de alto rendimiento
   pensado para ejecutar en estaciones de alto rendimiento,
   particularmente enfocado al video. El proyecto fracasó a la larga, y
-  BeOS (así como BeFS, el sistema que describe) ya no se
-  utilizan. Este libro, descargable desde el sitio Web del autor,
-  tiene una muy buena descripción de varios sistemas de archivos, y
-  aborda a profundidad técnicas que hace 15 años eran verdaderamente
-  novedosas, y hoy forman parte de casi todos los sistemas de archivos
-  con uso amplio, e incluso algunas que no se han logrado implementar
-  y que BeFS sí ofrecía.
+  #+latex: Be\textbf{os} (así como Be\textbf{fs},
+  #+html: Be<b>os</b> (así como Be<b>fs</b>,
+  el sistema que describe) ya no se utilizan. Este libro, descargable
+  desde el sitio Web del autor, tiene una muy buena descripción de
+  varios sistemas de archivos, y aborda a profundidad técnicas que
+  hace 15 años eran verdaderamente novedosas, y hoy forman parte de
+  casi todos los sistemas de archivos con uso amplio, e incluso
+  algunas que no se han logrado implementar y que BeFS sí ofrecía.
 
 - /Processes as Files/
   #+latex: \otrorec{http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf}
@@ -1501,16 +1518,16 @@ de archivos resurja.
   #+html: <br/><a href="http://www.linuxcommand.org/man_pages/dosfsck8.html">http://www.linuxcommand.org/man_pages/dosfsck8.html</a><br/>
   Werner Almesberger (1997)
 
-- /A Fast File System for UNIX/
+- /A Fast File System for Unix/
   #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)}
   #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)">http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)</a><br/>
   Marshall Kirk Mckusick, William N. Joy, Samuel J. Lefler, Robert
-  S. Fabry (1984); ACM Transactions on Computer Systems
+  S. Fabry (1984); *acm* Transactions on Computer Systems
 
 - /The Design and Implementation of a Log-Structured File System/
   #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf}
   #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf">http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf</a><br/>
-  Mendel Rosenblum, J. K. Ousterhout (1992); ACM Transactions on
+  Mendel Rosenblum, J. K. Ousterhout (1992); *acm* Transactions on
   Computer Systems
 
 - /The Second Extended File System: Internal Layout/
@@ -1526,7 +1543,7 @@ de archivos resurja.
 - /Disks from the Perspective of a File System/
   #+latex: \otrorec{http://queue.acm.org/detail.cfm?id=2367378}
   #+html: <br/><a href="http://queue.acm.org/detail.cfm?id=2367378">http://queue.acm.org/detail.cfm?id=2367378</a><br/>
-  Marshall Kirk McKusick (2012); ACM Queue
+  Marshall Kirk McKusick (2012); *acm* Queue
 
   - Traducción al español: /Los discos desde la perspectiva de un
     sistema de archivos/
@@ -1549,16 +1566,15 @@ de archivos resurja.
 - /File-system development with stackable layers/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=174613.174616}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=174613.174616">https://dl.acm.org/citation.cfm?id=174613.174616</a><br/>
-  Heidemann y Popek (1994); ACM Transactions on Computer Systems
+  Heidemann y Popek (1994); *acm* Transactions on Computer Systems
 
 - /Serverless network file systems/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=225535.225537}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=225535.225537">https://dl.acm.org/citation.cfm?id=225535.225537</a><br/>
-  Thomas E. Anderson et. al. (1996); ACM Transactions on Computer
+  Thomas E. Anderson et. al. (1996); *acm* Transactions on Computer
   Systems
 
 - /Log-structured file systems: There's one in every SSD/
   #+latex: \otrorec{https://lwn.net/Articles/353411/}
   #+html: <br/><a href="https://lwn.net/Articles/353411/">https://lwn.net/Articles/353411/</a><br/>
-  Valerie Aurora (2009); Linux
-  Weekly News
+  Valerie Aurora (2009); Linux Weekly News

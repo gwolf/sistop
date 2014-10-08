@@ -108,7 +108,7 @@ estarán disponibles con un archivo son:
            acceso para el /modo de acceso/ al archivo indicado y
            si el medio lo soporta (por ejemplo, a pesar de contar con
            todos los permisos necesarios, el sistema operativo no debe
-           permitir abrir para escritura un archivo en un CD-ROM u
+           permitir abrir para escritura un archivo en un *cd-rom* u
            otro medio de sólo lectura). En C, esto se hace con la
            función =fopen()=.
 
@@ -325,7 +325,7 @@ frustración al usuario porque el programa no responde como éste
 quiere, hasta en pérdidas económicas.[fn:: Por ejemplo, imprimir un
 archivo binario resulta en una gran cantidad de hojas inútiles,
 particularmente tomando en cuenta que hay caracteres de control como
-el ASCII 12 (avance de forma, /form feed/), que llevan a las
+el *ascii* 12 (avance de forma, /form feed/), que llevan a las
 impresoras que operan en modo texto a iniciar una nueva página; llevar
 a un usuario a ejecutar un archivo ejecutable /disfrazado/ de un
 documento inocuo, como se verá a continuación, fue un importante
@@ -334,7 +334,7 @@ vector de infección de muchos virus.]
 Hay tres estrategias principales para que el sistema operativo
 reconozca al tipo de un archivo:
 
-- Extensión :: En los sistemas CP/M de los 1970, el nombre de cada
+- Extensión :: En los sistemas *cp/m* de los 1970, el nombre de cada
                archivo se dividía en dos porciones, empleando como
                elemento separador al punto: el nombre del archivo y su
                extensión. El sistema mantenía una lista de extensiones
@@ -343,7 +343,7 @@ reconozca al tipo de un archivo:
                abrirían a aquellos archivos cuyas extensiones
                supieran manejar.
 
-	       Esta estrategia fue heredada por VMS y MS-DOS, de
+	       Esta estrategia fue heredada por *vms* y *ms-dos*, de
                donde la adoptó Windows; ya en el contexto de un
                entorno gráfico, Windows agrega, más allá de las
                extensiones directamente ejecutables, la relación de
@@ -379,11 +379,11 @@ reconozca al tipo de un archivo:
      se lleve a cabo este reconocimiento, y cuando no es posible
      hacerlo, se intenta por medio de ciertas reglas /heurísticas/.
      Por ejemplo, todos los archivos de imágen en /formato de
-     intercambio gráfico/ (GIF) inician con la cadena =GIF87a= o
+     intercambio gráfico/ (*gif*) inician con la cadena =GIF87a= o
      =GIF89a=, dependiendo de la versión; los archivos del lenguaje de
      descripción de páginas PostScript inician con la cadena =%!=, el
-     /Formato de Documentos Portátiles/ (PDF) con =%PDF=, etcétera. Un
-     documento en formatos definidos alrededor de XML inicia con
+     /Formato de Documentos Portátiles/ (*pdf*) con =%PDF=, etcétera. Un
+     documento en formatos definidos alrededor de *xml* inicia con
      =<!DOCTYPE=.  Algunos de estos formatos no están /anclados/ al
      inicio, sino que en un punto específico del primer bloque.
 
@@ -432,7 +432,10 @@ reconozca al tipo de un archivo:
      ejecutar un archivo de datos, el sistema operativo lanzaría al
      programa /creador/, indicándole que abra al archivo en cuestión.
 
-     Las versiones actuales de MacOS ya no emplean esta técnica, sino
+     Las versiones actuales de
+     #+latex: Mac\textbf{os}
+     #+html: Mac<b>os</b>
+     ya no emplean esta técnica, sino
      que una llamada /appDirectory/, para propósitos de esta
      discusión, la técnica base es la misma.
 
@@ -447,9 +450,9 @@ La mayor parte de los sistemas operativos maneja únicamente archivos
 /sin estructura/ — cada aplicación es responsable de preparar la
 información de forma congruente, y la responsabilidad del sistema
 operativo es únicamente entregarlo como un conjunto de
-bytes. Históricamente, hubo sistemas operativos, como IBM CICS (1968), IBM MVS
-(1974) o DEC VMS (1977), que administraban ciertos tipos de datos en
-un formato básico de /base de datos/.
+bytes. Históricamente, hubo sistemas operativos, como *ibm cics*
+(1968), *ibm mvs* (1974) o *dec vms* (1977), que administraban ciertos
+tipos de datos en un formato básico de /base de datos/.
 
 El hecho de que el sistema operativo no imponga estructura a un archivo no
 significa, claro está, que la aplicación que lo genera no lo haga. La
@@ -466,16 +469,19 @@ Esta práctica ha ido cediendo terreno a dejar esta responsabilidad en
 manos de procesos independientes en espacio de usuario (como sería un
 gestor de bases de datos tradicional), o de bibliotecas que ofrezcan
 la funcionalidad de manejo de archivos estructurados (como en el caso
-de /SQLite/, empleado tanto por herramientas de adquisición de datos
-de bajo nivel como /systemtap/ como por herramientas tan de escritorio
-como el gestor de fotografías /shotwell/ o el navegador /Firefox/).
+de
+#+latex: \emph{\textbf{sql}ite},
+#+html: <i><b>sql</b>ite</i>,
+empleado tanto por herramientas de adquisición de datos de bajo nivel
+como /systemtap/ como por herramientas tan de escritorio como el
+gestor de fotografías /shotwell/ o el navegador /Firefox/).
 
-En los sistemas derivados de MS-DOS puede verse aún un remanente de
+En los sistemas derivados de *ms-dos* puede verse aún un remanente de
 los archivos estructurados: en estos sistemas, un archivo puede ser
 /de texto/ o /binario/. Un archivo de texto está compuesto por una
 serie de caracteres que forman /líneas/, y la separación entre una
 línea y otra constituye de un /retorno de carro/ (=CR=, caracter
-ASCII 13) seguido de un /salto de línea/ (=LF=, caracter ASCII
+*ascii* 13) seguido de un /salto de línea/ (=LF=, caracter *ascii*
 10).[fn:: Esta lógica es herencia de las máquinas de escribir
 manuales, en que el /salto de línea/ (avanzar el rodillo a la línea
 siguiente) era una operación distinta a la del /retorno de carro/
@@ -535,12 +541,15 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 [[./img/ditaa/acceso_aleatorio.png]]
 
 - Acceso relativo a índice :: En los últimos años se han popularizado
-     los gestores de base de datos /débilmente estructurados/ u /orientados a
-     documentos/, llamados genéricamente /NoSQL/. Estos gestores pueden
-     guardar registros de tamaño variable en disco, por lo que, como
-     lo ilustra la figura \ref{DIR_acceso_relativo_a_indice}, no
-     pueden encontrar la ubicación correcta por medio de los
-     mecanismos de acceso aleatorio.
+     los gestores de base de datos /débilmente estructurados/ u
+     /orientados a documentos/, llamados genéricamente
+     #+latex: \emph{No\textbf{sql}}.
+     #+html: <i>No<b>sql</b></i>.
+     Estos gestores pueden guardar registros de tamaño variable en
+     disco, por lo que, como lo ilustra la figura
+     \ref{DIR_acceso_relativo_a_indice}, no pueden encontrar la
+     ubicación correcta por medio de los mecanismos de acceso
+     aleatorio.
 
      Para implementar este acceso, se divide al conjunto de datos en
      dos secciones (incluso, posiblemente, en dos archivos
@@ -675,16 +684,20 @@ implementación del esquema actualmente dominante.
 
 *** Convenciones de nomenclatura
 
-Cada sistema de archivos puede determinar cuántos y qué caracteres
-son válidos para designar a uno de sus elementos, y cuáles son
-separadores válidos. El caracter que se emplea para separar los
-elementos de un directorio no es un estándar a través de todos los
-sistemas operativos — los más comunes en uso hoy en día
-son la diagonal (=/=), empleada en sistemas tipo Unix y derivados
-(incluyendo MacOS X y Android), y la diagonal invertida ($\backslash$),
-empleada en CP/M y derivados, incluyendo MS-DOS y Windows.
+Cada sistema de archivos puede determinar cuántos y qué caracteres son
+válidos para designar a uno de sus elementos, y cuáles son separadores
+válidos. El caracter que se emplea para separar los elementos de un
+directorio no es un estándar a través de todos los sistemas operativos
+— los más comunes en uso hoy en día son la diagonal (=/=), empleada en
+sistemas tipo Unix y derivados (incluyendo
+#+latex: Mac\textbf{os x}
+#+html: Mac<b>os x</b>
+y Android), y la diagonal invertida ($\backslash$), empleada en *cp/m*
+y derivados, incluyendo *ms-dos* y Windows.
 
-Diversos sistemas han manejado otros caracteres (por ejemplo, el MacOS
+Diversos sistemas han manejado otros caracteres (por ejemplo, el
+#+latex: Mac\textbf{os}
+#+html: Mac<b>os</b>
 histórico empleaba los dos puntos, =:=), y aunque muchas veces los
 mantenían ocultos del usuario a través de una interfaz gráfica rica,
 los programadores siempre tuvieron que manejarlos explícitamente.
@@ -715,13 +728,13 @@ sistemas personales era mantener el código del sistema operativo
 simple, mínimo. Con unidades de disco capaces de manejar entre 80 y
 160KB, no tenía mucho sentido implementar directorios — si un usuario
 quisiera llevar a cabo una división temática de su trabajo, lo
-colocaría en distintos /discos flexibles/. El sistema operativo CP/M
+colocaría en distintos /discos flexibles/. El sistema operativo *cp/m*
 nunca soportó jerarquías de directorios, como tampoco lo hizo la
-primer versión de MS-DOS.[fn:: El soporte de jerarquías de directorios
+primer versión de *ms-dos*.[fn:: El soporte de jerarquías de directorios
 fue introducido apenas en la versión 2, junto con el soporte a discos
-duros de 10MB, acompañando al lanzamiento de la IBM PC modelo XT.]
+duros de 10MB, acompañando al lanzamiento de la *ibm pc* modelo *xt*.]
 
-El sistema de archivos original de la Apple Macintosh, MFS, estaba
+El sistema de archivos original de la Apple Macintosh, *mfs*, estaba
 construido sobre un modelo plano, pero presentando la /ilusión/ de
 directorios de una forma comparable a las etiquetas: existían bajo
 /ciertas/ vistas (pero notoriamente no en los diálogos de abrir y
@@ -752,9 +765,9 @@ programas de sistema, programas de usuario y textos del correo), por
 usuario (facilitando una separación lógica de los archivos de un
 usuario de pertenecientes a los demás usuarios del sistema)
 
-El directorio /raiz/ (base) se llama en este esquema /MFD/ (/Master
+El directorio /raiz/ (base) se llama en este esquema *mfd* (/Master
 File Directory/, /Directorio Maestro de Archivos/), y cada uno de los
-directorios derivados es un /UFD/ (/User File Directory/, /Directorio
+directorios derivados es un *ufd* (/User File Directory/, /Directorio
 de Archivos de Usuario/).
 
 #+attr_latex: width=\textwidth
@@ -767,7 +780,7 @@ antes de los directorios, cada usuario tenía que cuidar que los
 nombres de sus archivos fueran únicos en el sistema, y ya teniendo
 cada uno su propio espacio, se volvió una tarea mucho más simple. La
 desventaja es que, si el sistema restringe a cada usuario a escribir
-en su UFD, se vuelve fundamentalmente imposible trabajar en algún
+en su *ufd*, se vuelve fundamentalmente imposible trabajar en algún
 proyecto conjunto: no puede haber un directorio que esté tanto dentro
 de =usr1= como de =usr2=, y los usuarios encontrarán más dificil
 llevar un proyecto conjunto.
@@ -875,8 +888,8 @@ dirigidos por medio de dos mecanismos:
 
 Si bien estos dos tipos de liga existen también en los sistemas
 Windows[fn:: Únicamente en aquellos que emplean el sistema de archivos
-/NTFS/, no en los que utilizan alguna de las variantes
-de /FAT/ ], en dichos sistemas sigue siendo más común emplear los
+*ntfs*, no en los que utilizan alguna de las variantes
+de *fat* ], en dichos sistemas sigue siendo más común emplear los
 /accesos directos/. Se denomina así a un archivo (identificado por su
 extensión, =.lnk=), principalmente creado para poder /apuntar/ a los
 archivos desde el escritorio y los menúes — si un proceso solicita al
@@ -884,7 +897,7 @@ sistema abrir el /acceso directo/, no obtendrá al archivo destino,
 sino que al acceso directo mismo.
 
 Ahora, si bien tanto las ligas duras como las ligas simbólicas existen
-también en Windows, su uso es muy poco frecuente. El API de Win32
+también en Windows, su uso es muy poco frecuente. El *api* de Win32
 ofrece las funciones necesarias, pero éstas no están reflejadas desde
 la interfaz usuario del sistema — y son sistemas donde el usuario
 promedio no emplea una interfaz programador, sino que una interfaz
@@ -1080,7 +1093,7 @@ encuentran:
      unidad de almacenamiento, el espacio dentro de cada uno de los
      discos se maneja como un sistema de archivos indepentiente. Esto
      es especialmente cierto en la presencia de unidades removibles
-     (CDs, unidades USB, discos duros externos, etc.)
+     (CDs, unidades *usb*, discos duros externos, etc.)
 
 - Diferentes usos esperados :: Como se verá más adelante, distintos
      /esquemas de organización/ (esto es, distintos sistemas de
@@ -1132,7 +1145,7 @@ representando a los dispositivos del sistema.[fn:: En realidad, este
 los demás dispositivos del sistema, como los distintos puertos, pero
 los /oculta/ de la interfaz gráfica.] Este árbol es presentado a
 través de la interfaz gráfica (aunque este nombre no significa nada
-para el API del sistema) como /Mi PC/.
+para el *api* del sistema) como /Mi Computadora/.
 
 Para especificar la /ruta completa/ a determinado archivo, se inicia
 con el identificador del volumen. De este modo, la especificación absoluta de un archivo es
@@ -1144,7 +1157,7 @@ referencia a la /unidad actual/ (a grandes rasgos, la última unidad en
 ser utilizada).
 
 Los identificadores de volumen están preasignados, muchos de ellos
-según a un esquema heredado desde la época de las primeras PC: los
+según a un esquema heredado desde la época de las primeras *pc*: los
 volúmenes =A= y =B= están reservados para las unidades de disco
 flexible; =C= se refiere al disco duro de arranque, y las unidades
 posteriores que va detectando el sistema son =D=, =E=, =F=, etc.
@@ -1170,9 +1183,9 @@ Hay muchos esquemas de control de acceso; a continuación se presentan
 tres esquemas, comenzando por el más simple, y avanzando hacia los más
 complejos.
 
-** Sistemas FAT
+** Sistemas *fat*
 
-El sistema de archivos FAT[fn:: Recibe su nombre de las siglas de su
+El sistema de archivos *fat*[fn:: Recibe su nombre de las siglas de su
 estructura fundamental, la /Tabla de Asignación de Archivos/, o /File
 Allocation Table/.] fue diseñado a fines de los 1970, y al día de hoy
 es muy probablemente el sistema de archivos más ampliamente utilizado
@@ -1184,7 +1197,7 @@ diseño original, ha logrado extenderse de un sistema pensado para
 volúmenes de 150K hasta llegar a las decenas de gigabytes.
 
 En cada una de las entradas del directorio en un sistema de archivos
-FAT, el byte número 12 almacena los siguientes /atributos/:
+*fat*, el byte número 12 almacena los siguientes /atributos/:
 
 - Oculto :: Si está en cendido, el archivo no se deberá mostrar al
             usuario en listados de directorio.
@@ -1194,7 +1207,7 @@ FAT, el byte número 12 almacena los siguientes /atributos/:
                   sistema que soliciten esta modificación.
 
 - Sistema :: Como se explicará en la sección \ref{FS_tabla_fat}, un
-             sistema de archivos FAT tiende conforme se va utilizando
+             sistema de archivos *fat* tiende conforme se va utilizando
              a /fragmentar/ los archivos que almacena. La carga del
              sistema operativo tiene que realizarse empleando código
              lo más compacto y sencillo posible: sin siquiera tener
@@ -1202,7 +1215,7 @@ FAT, el byte número 12 almacena los siguientes /atributos/:
              indica que el sistema operativo debe cuidar no mover ni
              fragmentar al archivo en cuestión.
 
-- Archivado :: MS-DOS incluía herramientas bastante sencillas para
+- Archivado :: *ms-dos* incluía herramientas bastante sencillas para
                realizar respaldos; estas basaban su operación en este
                atributo: Conforme se realizaba un respaldo, todos los
                archivos iban siendo marcados como /archivados/. Y
@@ -1217,16 +1230,16 @@ reservado todo un byte para los atributos, algunos sistemas
 extendieron los atributos cubriendo distintas necesidades. Estos
 cuatro atributos son, sin embargo, la base del sistema.
 
-Puede verse que, bajo MS-DOS, no se hace diferencia entre /lectura/ y
+Puede verse que, bajo *ms-dos*, no se hace diferencia entre /lectura/ y
 /ejecución/. Como se presentó en la sección \ref{DIR_tipos_archivo},
-MS-DOS basa la identificación de archivos en su /extensión/. Y, claro,
+*ms-dos* basa la identificación de archivos en su /extensión/. Y, claro,
 siendo un sistema concebido como /monousuario/, no tiene sentido
 condicionar la /lectura/ de un archivo: El sistema operativo siempre
 permitirá la lectura de cualquier archivo.
 
 ** Modelo tradicional Unix
 
-El sistema Unix precede a MS-DOS por una década. Sin embargo, su
+El sistema Unix precede a *ms-dos* por una década. Sin embargo, su
 concepción es de origen para un esquema multiusuario, con las
 provisiones necesarias para que cada uno de ellos indique qué usuarios
 pueden o no tener diferentes tipos de acceso a los archivos.
@@ -1310,7 +1323,7 @@ permisos de lectura o modificación sobre los diferentes componentes
 hardware del sistema.
 
 El esquema de persmisos de Unix presenta algunas características
-adicionales, como los /bits SUID/SGID/ o los /atributos extendidos/
+adicionales, como los bits *suid/sgid* o los /atributos extendidos/
 que presentan ciertas implementaciones; se sugiere al lector
 interesado referirse a las /páginas de manual/ de Linux para los
 comandos =chmod= y =chattr= respectivamente.
@@ -1333,8 +1346,8 @@ aspectos específicos: una salida muy poco elegante.
 [[./img/acl_win7.png]]
 
 Varios sistemas operativos, incluyendo particularmente a las versiones
-de Windows derivadas del NT, han agregado /listas de control de
-acceso/ (o /ACLs/, del inglés, /Access Control Lists/): Cada uno de
+de Windows derivadas del *nt*, han agregado /listas de control de
+acceso/ (o *acl*, del inglés, /Access Control Lists/): Cada uno de
 los archivos tiene asociada una lista donde se indican los permisos
 particulares que tendrá sobre éste cada usuario o grupo particular. La
 figura \ref{DIR_ACLs_Win7} muestra un ejemplo de la definición del
@@ -1368,7 +1381,7 @@ Uno de los principales y primeros usos que se dio a la comunicación en
 red fue el de compartir archivos entre computadoras independientes. En
 un principio, esto se realizaba de forma /explícita/, con
 transferencias manuales a través de programas dedicados a ello, como
-sería hoy en día el FTP.
+sería hoy en día el *ftp*.
 
 Por otro lado, desde mediados de los 1980, es posible realizar estas
 transferencias de forma /implícita/ y /automática/, empleando
@@ -1388,26 +1401,26 @@ la computadora que solicita un servicio, y como /servidor/ a la que lo
 provee; es frecuente que dos computadoras sean tanto servidor como
 cliente la una de la otra en distintos servicios.
 
-** Network File System (NFS)
+** Network File System (*nfs*)
 
 El /Sistema de Archivos en Red/ (/Network File System/, mejor conocido
-por sus siglas, /NFS/) fue creado por Sun Microsystems, y desde 1984
+por sus siglas, *nfs*) fue creado por Sun Microsystems, y desde 1984
 forma parte de su sistema operativo — resultó una implementación tan
 exitosa que a los pocos años formaba parte de todos los sistemas tipo
 Unix.
 
-NFS está construido sobre el mecanismo /RPC/ (/Remote Procedure Call/,
+*nfs* está construido sobre el mecanismo *rpc* (/Remote Procedure Call/,
 /Llamada a Procedimientos Remotos/), un mecanismo de mensajes y manejo
-básico de sesión que actúa como una capa superior a TCP/IP, incluyendo
-facilidades de /descubrimiento de recursos/ y /abstracción/. RPC puede
-ser comparado con protocolos como /DCE/RPC/ de OSF, /DCOM/ de
-Microsoft, y hoy en día, /SOAP/ y /XML-RPC/. Estos mecanismos permiten
+básico de sesión que actúa como una capa superior a *tcp/ip*, incluyendo
+facilidades de /descubrimiento de recursos/ y /abstracción/. *rpc* puede
+ser comparado con protocolos como *dce/rpc* de *osf*, *dcom* de
+Microsoft, y hoy en día, *soap* y *xml-rpc*. Estos mecanismos permiten
 al programador delegar en un /servicio/ el manejo de las conexiones de
 red, particularmente (en el caso particular aquí descrito) la
 persistencia de sesiones en caso de desconexión, y limitar su atención
 a una /conexión virtual establecida/.
 
-La motivación de origen para la creación de NFS fue presentar una
+La motivación de origen para la creación de *nfs* fue presentar una
 solución que aprovechara el hardware existente y centralizara la
 administración: ofrecer las facilidades para contar con redes donde
 hubiera un /servidor de archivos/, y donde las estaciones de trabajo
@@ -1418,7 +1431,7 @@ servidor le envíe incluso el núcleo del sistema operativo que
 ejecutará] y el entorno de usuario completo estuviera disponible en
 cualquiera de las estaciones.
 
-NFS ofrece sobre la red un sistema de archivos con la semántica Unix
+*nfs* ofrece sobre la red un sistema de archivos con la semántica Unix
 completa — para montar un sistema remoto, basta montarlo[fn:: Para
 montar un sistema remoto, se emplea un comando como =mount
 archivos.unam.mx:/ext/home /home=, con lo cual el directorio
@@ -1427,30 +1440,30 @@ montado como directorio =/home= local.] y usarlo como si fuera local. El
 manejo de permisos, usuarios, e incluso las ligas duras y simbólicas
 se manejan exactamente como se haría localmente.
 
-NFS es un protocolo muy ligero — no implementa cifrado ni
+*nfs* es un protocolo muy ligero — no implementa cifrado ni
 verificaciones adicionales, pero al día de hoy, es uno de los mejores
 mecanismos para el envío de grandes cantidades de información — pero
 siempre en redes que sean /completamente confiables/.
 
-Ahora, NFS se presenta como uno de los componentes de una solución
+Ahora, *nfs* se presenta como uno de los componentes de una solución
 completa. Dado que se espera que la información de usuarios y permisos
 sea /consistente/ en todos los clientes; Sun ofrecía también un
-esquema llamado /Yellow Pages/ (posteriormente renombrado a NIS,
+esquema llamado /Yellow Pages/ (posteriormente renombrado a *nis*,
 /Network Information System/) para compartir la información de
 autenticación y listas de usuarios.
 
-La desventaja, en entornos sin NIS, es que los permisos se manejan
-según el ID numérico del usuario. Si en diferentes sistemas el mismo
-usuario tiene diferentes IDs, los permisos no coincidirán. Es más,
-dado que el control de acceso principal es únicamente por dirección
-IP, para tener acceso irrestricto a los archivos de otros usuarios en
-NFS basta con tener control pleno de una computadora cualquiera en la
-red para poder /asumir o usurpar la identidad/ de cualquier otro
-usuario.
+La desventaja, en entornos sin *nis*, es que los permisos se manejan
+según el identificador numérico del usuario. Si en diferentes sistemas
+el mismo usuario tiene diferentes identificadores, los permisos no
+coincidirán.  Es más, dado que el control de acceso principal es
+únicamente por dirección *ip*, para tener acceso irrestricto a los
+archivos de otros usuarios en *nfs* basta con tener control pleno de
+una computadora cualquiera en la red para poder /asumir o usurpar la
+identidad/ de cualquier otro usuario.
 
 Por último, para garantizar que las escrituras a archivos se llevaran
 a cabo cuando eran solicitadas (en contraposición a asumir éxito y
-continuar), todas las escrituras en un principio sobre NFS eran
+continuar), todas las escrituras en un principio sobre *nfs* eran
 manejadas de forma /síncrona/, esto es, tras grabar un archivo, el
 cliente no continuaba con la ejecución hasta no tener confirmación por
 parte del servidor de que los datos estaban ya guardados en
@@ -1460,60 +1473,65 @@ muchas veces son percibidas como excesivas.
 
 Versiones posteriores del protocolo mejoraron sobre los puntos débiles
 aquí mencionados. Al día de hoy, casi 30 años después de su
-presentación, NFS es aún un sistema de archivos en red muy ampliamente
+presentación, *nfs* es aún un sistema de archivos en red muy ampliamente
 empleado.
 
-** Common Internet File System (CIFS)
+** Common Internet File System (*cifs*)
 
-El equivalente a NFS en los entornos donde predominan los sistemas
-Windows es el protocolo CIFS (/Common Internet File System/, Sistema
+El equivalente a *nfs* en los entornos donde predominan los sistemas
+Windows es el protocolo *cifs* (/Common Internet File System/, Sistema
 de Archivos Común para Internet). Aparece en los sistemas primarios de
-Microsoft alrededor de 1990[fn:: El desarrollo de SMB nació como /LAN
-Manager/, originalmente para OS/2], originalmente bajo el nombre SMB
+Microsoft alrededor de 1990[fn:: El desarrollo de *smb* nació como *lan*
+Manager, originalmente para *os/2*], originalmente bajo el nombre *smb*
 (/Server Message Block/, /Bloque de Mensaje del Servidor/).
 
-Las primeras implementaciones estaban basadas en el protocolo /NBF/,
-frecuentemente conocido como /NetBEUI/, un protocolo no ruteable
-diseñado para redes pequeñas y entornos sencillos de oficina. A partir
-de Windows 2000 se ha reimplementado completamente para operar sobre
-TCP/IP. Es a partir de este momento que se le comienza a denominar
-/CIFS/, aunque el nombre /SMB/ sigue siendo ampliamente
-utilizado.[fn:: Es debido a este nombre que la implementación de CIFS
-para sistemas Unix, /Samba/, fue llamado de esta manera.]
+Las primeras implementaciones estaban basadas en el protocolo *nbf*,
+frecuentemente conocido como
+#+latex: \emph{Net\textbf{beui}},
+#+html: <i>Net<b>beui</b></i>,
+un protocolo no ruteable diseñado para redes pequeñas y entornos
+sencillos de oficina. A partir de Windows 2000 se ha reimplementado
+completamente para operar sobre *tcp/ip*. Es a partir de este momento
+que se le comienza a denominar *cifs*, aunque el nombre *smb* sigue
+siendo ampliamente utilizado.[fn:: Es debido a este nombre que la
+implementación de *cifs* para sistemas Unix, /Samba/, fue llamado de
+esta manera.]
 
-CIFS se ajusta mucho más a la semántica de los sistemas MS-DOS y
+*cifs* se ajusta mucho más a la semántica de los sistemas *ms-dos* y
 Windows, aunque dado el lapso de tiempo que ha existido, ha pasado por
 varios cambios fundamentales, que al día de hoy complican su uso.
 
-Para tener acceso a un volumen compartido por SMB se introdujo el
-comando =NET=;[fn:: Este comando es empleado en MS-DOS, pero está
+Para tener acceso a un volumen compartido por *smb* se introdujo el
+comando =NET=;[fn:: Este comando es empleado en *ms-dos*, pero está
 también disponible en Windows, y al día de hoy es una de las
 principales herramientas para administrar usuarios.] basta indicar a
-DOS o Windows (desde la línea de comando) =NET USE W: \\servidor\directorio= para que el recurso
+*dos* o Windows (desde la línea de comando) =NET USE W:
+\\servidor\directorio= para que el recurso
 compartido bajo el nombre =directorio= dentro del equipo conocido como
 =servidor= aparezca en el árbol /Mi PC/, y el usuario pueda emplear
 sus contenidos como si fuera un sistema de archivos local, con un
 volumen asignado de =W:=.
 
-Cuando LAN Manager fue introducido al mercado, los sistemas Microsoft no manejaban
+Cuando *lan* Manager fue introducido al mercado, los sistemas
+Microsoft no manejaban
 aún el concepto de usuarios, por lo que la única medida de seguridad
-que implementaba SMB era el manejo de hasta dos contraseñas por
+que implementaba *smb* era el manejo de hasta dos contraseñas por
 directorio compartido: con una, el usuario obtenía acceso de sólo
 lectura, y con la otra, de lectura y escritura. Tras la aparición de
-Windows NT, se agregó un esquema de identificación por
+Windows *nt*, se agregó un esquema de identificación por
 usuario/contraseña, que posibilita el otorgamiento de permisos con una
 /granularidad/ mucho menor.[fn:: Esto significa, que puede
 controlarse el acceso permitido más finamente, a nivel archivo
 individual y usuario individual.]
 
-SMB fue pensado originalmente para una red /pequeña/, con hasta un par
+*smb* fue pensado originalmente para una red /pequeña/, con hasta un par
 de decenas de equipos. La mayor parte de los paquetes eran enviados en
 modo /de difusión/ (/broadcast/), por lo que era fácil llegar a la
 saturación, y no existía un esquema centralizado de resolución de
 nombres, con lo que era frecuente /no encontrar/ a determinado
 equipo.
 
-Los cambios que CIFS presenta a lo largo de los años son muy
+Los cambios que *cifs* presenta a lo largo de los años son muy
 profundos. Las primeras implementaciones presentan fuertes problemas
 de confiabilidad, rendimiento y seguridad, además de estar planteadas
 para su uso en un sólo tipo de sistema operativo; al día de hoy, estos
@@ -1535,27 +1553,27 @@ información que guarda el núcleo del cliente respecto a cualquiera de
 los archivos, resulta claro cuál es el servidor para cada uno de
 ellos.
 
-/Andrew File System/, o /AFS/, desarrolaldo en la Carnegie Mellon
+/Andrew File System/, o *afs*, desarrolaldo en la Carnegie Mellon
 University[fn:: Como parte del /Proyecto Andrew/, denominado así por
 el nombre de los fundadores de esta universidad: Andrew Carnegie y
 Andrew Mellon] y publicado en 1989, plantea presentar un verdadero
 /sistema de archivos distribuído/, en el cual los /recursos
 compartidos/ no tengan que estar en un servidor en particular, sino
 que un conjunto de equipos se repartan la carga (esto es,
-/agnosticismo a la ubicación/). AFS busca también una /fácil
+/agnosticismo a la ubicación/). *afs* busca también una /fácil
 escalabilidad/, la capacidad de agregar tanto espacio de
-almacenamiento como equipos con rol de servidor. AFS permite inclusive
+almacenamiento como equipos con rol de servidor. *afs* permite inclusive
 migrar completamente un volumen mientras está siendo empleado, de
 forma transparente.
 
 Ante la complejidad e inestabilidad adicional que presentan con
-tanta frecuencia las redes grandes[fn:: El uso típico de AFS se
+tanta frecuencia las redes grandes[fn:: El uso típico de *afs* se
 planteaba para organizaciones grandes, del orden de decenas de miles
-de estaciones] (y lo hacían mucho más hace 30 años): AFS debe operar
+de estaciones] (y lo hacían mucho más hace 30 años): *afs* debe operar
 tan confiablemente como sea posible, /incluso sin la certeza de que la
 red opera correctamente/.
 
-AFS construye fuertemente sobre el modelo de /tickets/ y credenciales
+*afs* construye fuertemente sobre el modelo de /tickets/ y credenciales
 de /Kerberos/,[fn:: Un sistema de autenticación y autorización
 centralizado para entornos corporativos.] pero se aleja sensiblemente
 de la semántica de operación de archivos que hasta ahora se han
@@ -1586,10 +1604,10 @@ que se cierra un archivo, los cambios hechos a éste son puestos a
 disposición de las sesiones abiertas actuales, y sólo son enviados
 como /versión actual/ a las sesiones abiertas posteriormente.
 
-Con este cambio semántico, debe quedar claro que AFS no busca ser un
+Con este cambio semántico, debe quedar claro que *afs* no busca ser un
 sistema para todo uso ni un reemplazo universal de los sistemas de
 archivos locales, en contraposición de los sistemas de archivos
-centralizados. AFS no plantea en ningún momento una operación
+centralizados. *afs* no plantea en ningún momento una operación
 /diskless/. Bajo el esquema aquí descrito, las lecturas y escrituras
 resultan baratas, porque se realizan exclusivamente sobre el caché
 local, pero abrir y cerrar un archivo puede ser muy caro, porque debe
@@ -1597,7 +1615,7 @@ transferirse el archivo completo.
 
 Hay aplicaciones que verdaderamente sufrirían si
 tuvieran que implementarse sobre un sistema de archivos distribuído —
-por ejemplo, si una base de datos se distribuyera sobre AFS, la
+por ejemplo, si una base de datos se distribuyera sobre *afs*, la
 carencia de mecanismos de bloqueo sobre /secciones/ del archivo, y el
 requisito de operar sobre /archivos completos/ harían impracticable
 compartir un archivo de uso intensivo y aleatorio.
@@ -1639,7 +1657,7 @@ compartir un archivo de uso intensivo y aleatorio.
       operaciones /como si fueran/ al archivo referido
    6. No pueden referirse a archivos en sistemas de archivos distintos
       del propio
-   7. Pueden existir en un sistema de archivos tipo FAT
+   7. Pueden existir en un sistema de archivos tipo *fat*
    8. Si un usuario elimina cualquiera de las referencias a un archivo
       empleando este esquema, el archivo sigue existiendo en las demás
 
@@ -1649,7 +1667,7 @@ compartir un archivo de uso intensivo y aleatorio.
    sistema de archivos local y uno en red.
 
 6. Suponga que existe un archivo =file0= en un sistema de archivos con
-   semántica tipo UNIX. Explique qué ocurre en cada situación (con su
+   semántica tipo Unix. Explique qué ocurre en cada situación (con su
    inodo, con sus sectores de contenido, entradas de directorio, etc):
 
    - Copiado: =cp file0 file1=
@@ -1666,8 +1684,8 @@ compartir un archivo de uso intensivo y aleatorio.
 
   En este capítulo se abordaron tres sistemas de archivos /remotos/,
   de los cuales sólo el último puede verse como un sistema de archivos
-  /distribuído/: Bajo AFS, los datos almacenados no están en una única
-  computadora. Pero AFS tiene ya muchos años de haber sido
+  /distribuído/: Bajo *afs*, los datos almacenados no están en una única
+  computadora. Pero *afs* tiene ya muchos años de haber sido
   desarrollado, por lo cual su diseño no consideró muchos de los
   aspectos de las redes de datos globales actuales.
 
@@ -1676,7 +1694,7 @@ compartir un archivo de uso intensivo y aleatorio.
   implementación de /nubes/ de datos y de una distribución geográfica
   de la información; algunos ejemplos de estos sistemas de archivos
   son GlusterFS (desarrollado por RedHat), S3 (de Amazon), GoogleFS
-  (de Google), Windows Distributed File System (de Microsoft), y CEPH
+  (de Google), Windows Distributed File System (de Microsoft), y *ceph*
   (también de RedHat).
 
   ¿Qué semántica ofrecen estos sistemas de archivos? ¿Cómo se comparan
@@ -1690,13 +1708,13 @@ compartir un archivo de uso intensivo y aleatorio.
 - /File System Interface: Functions for manipulating files/
   #+latex:  \otrorec{https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html}
   #+html: <br/><a href="https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html">https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html</a><br/>
-  The GNU C Library manual (Free Software Foundation)
+  The *gnu* C Library manual (Free Software Foundation)
 
 - /Disks from the Perspective of a File System/
   #+latex: \otrorec{http://queue.acm.org/detail.cfm?id=2367378}
   #+html: <br/><a href="http://queue.acm.org/detail.cfm?id=2367378">http://queue.acm.org/detail.cfm?id=2367378</a><br/>
   Marshall Kirk McKusick
-  (2012); ACM Queue
+  (2012); *acm* Queue
 
   - Traducción al español: /Los discos desde la perspectiva de un
     sistema de archivos/
@@ -1708,13 +1726,13 @@ compartir un archivo de uso intensivo y aleatorio.
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=174613.174616}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=174613.174616">https://dl.acm.org/citation.cfm?id=174613.174616</a><br/>
   Heidemann y
-  Popek (1994); ACM Transactions on Computer Systems
+  Popek (1994); *acm* Transactions on Computer Systems
 
 - /Serverless network file systems/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=225535.225537}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=225535.225537">https://dl.acm.org/citation.cfm?doid=225535.225537</a><br/>
   Thomas
-  E. Anderson et. al. (1996); ACM Transactions on Computer Systems
+  E. Anderson et. al. (1996); *acm* Transactions on Computer Systems
 
 - /OpenPlanets Results Evaluation Framework/
   #+latex: \otrorec{http://data.openplanetsfoundation.org/ref/}
@@ -1726,4 +1744,4 @@ compartir un archivo de uso intensivo y aleatorio.
 - /Finding open files with lsof/
   #+latex: \otrorec{http://www.ibm.com/developerworks/aix/library/au-lsof.html)}
   #+html: <br/><a href="http://www.ibm.com/developerworks/aix/library/au-lsof.html)">http://www.ibm.com/developerworks/aix/library/au-lsof.html)</a><br/>
-  Sean A. Walberg (2006); IBM DeveloperWorks
+  Sean A. Walberg (2006); *ibm* DeveloperWorks

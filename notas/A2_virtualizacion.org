@@ -30,9 +30,9 @@ que se comporten de la misma forma que un componente físico (hardware), sin que
 exista en realidad — un acto de ilusionismo o de magia, en cual se busca
 presentar el elemento de forma tan convincente que la ilusión se mantenga tanto
 como sea posible.[fn:: Una aproximación inicial a este concepto puede ser
-un archivo con la imagen de un disco en formato ISO: mediante determinados mecanismos, es posible
-"engañar" a un sistema operativo de forma que "piense" que al acceder al archivo ISO
-está efectivamente leyendo un CD o DVD de una unidad que no existe físicamente.]
+un archivo con la imagen de un disco en formato *iso*: mediante determinados mecanismos, es posible
+"engañar" a un sistema operativo de forma que "piense" que al acceder al archivo *iso*
+está efectivamente leyendo un *cd* o *dvd* de una unidad que no existe físicamente.]
 
 La naturaleza de dichos elementos, y el cómo se implementan, dependen del
 tipo de virtualización.
@@ -55,7 +55,7 @@ distinta a la del anfitrión (la arquitectura /nativa/).[fn:: A lo largo de esta
 referencia a la /arquitectura hardware/ como al juego de
 instrucciones que puede ejecutar /nativamente/ un procesador. Por
 ejemplo, un procesador x86 moderno puede ejecutar nativamente código
-i386 y x86_64, pero no ARM.] El emulador puede ser visto (de una forma
+i386 y x86\_64, pero no *arm*.] El emulador puede ser visto (de una forma
 tremendamente simplificada) como una lista de equivalencias, de cada
 una de las instrucciones en la arquitectura /huésped/ a la
 arquitectura del sistema /anfitrión/.
@@ -78,7 +78,7 @@ emplean al mismo procesador? Este caso fue relativamente común en la
 década de los 80 y 90; si bien en general las computadoras de 8 bits no tenían
 el poder de cómputo necesario para implementar la emulación de
 arquitecturas similares, al aparecer tres líneas de computadoras
-basadas en el CPU Motorola 68000 (Apple Macintosh, Atari ST y
+basadas en el *cpu* Motorola 68000 (Apple Macintosh, Atari *st* y
 Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
 aparecieron emuladores que permitían ejecutar programas de una línea
 en la otra, prácticamente a la misma velocidad que en el sistema nativo.
@@ -122,7 +122,7 @@ implementara.
 
 Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
 1980, logrando implementaciones para las arquitecturas de
-microcomputadoras más populares — el MOS 6502, el Zilog Z80 y el Intel
+microcomputadoras más populares — el *mos* 6502, el Zilog Z80 y el Intel
 80x86.
 
 Hay una diferencia muy importante entre la emulación de una
@@ -147,14 +147,14 @@ largo de veinte años, y dado que el cómputo había dejado de ser un campo
 especializado y escaso para masificarse, invirtiendo fuertemente en
 publicidad para impulsar su adopción.
 
-Uno de los slogans que mejor describen la intención de Sun fue /WORA/:
+Uno de los slogans que mejor describen la intención de Sun fue *wora*:
 /Write Once, Run Anywhere/ (escribe una vez, ejecuta donde sea). El
-equivalente a una /máquina-p/ (rebautizada como /JVM/: /Máquina
+equivalente a una /máquina-p/ (rebautizada como *jvm*: /Máquina
 Virtual Java/) se implementaría para las arquitecturas hardware más
 limitadas y más poderosas. Sun creó también el lenguaje Java, diseñado
-para aprovechar la arquitectura de la JVM, enfatizando en la
+para aprovechar la arquitectura de la *jvm*, enfatizando en la
 orientación a objetos e incorporando facilidades multi-hilos. Al día
-de hoy existen distintas implementaciones de la JVM, de diferentes
+de hoy existen distintas implementaciones de la *jvm*, de diferentes
 empresas y grupos de desarrolladores y con diferentes focos de
 especialización, pero todas ellas deben poder ejecutar el /bytecode/
 de Java.
@@ -162,21 +162,21 @@ de Java.
 A principios de los años 2000, y como resultado del litigio con Sun
 que imposibilitó a Microsoft a desarrollar extensiones propietarias a
 Java (esto es, desarrollar máquinas virtuales que se salieran del
-estándar de la JVM), Microsoft desarrolló la arquitectura /.NET/. Su
+estándar de la *jvm*), Microsoft desarrolló la arquitectura *.net*. Su
 principal aporte en este campo es la separación definitiva entre
 lenguaje de desarrollo y código intermedio producido: la máquina
-virtual de /.NET/ está centrada en el /CLI/ (/Common Language
+virtual de *.net* está centrada en el *cli* (/Common Language
 Infrastructure/, Infraestructura de Lenguajes Comunes), compuesta a su
-vez por el /CIL/ (/Common Intermediate Language/, Lenguaje Intermedio
+vez por el *cil* (/Common Intermediate Language/, Lenguaje Intermedio
 Común, que es la especificación del /bytecode/ o código intermedio) y
-el /CLR/ (/Common Language Runtime/, Ejecutor del Lenguaje Común, que
+el *clr* (/Common Language Runtime/, Ejecutor del Lenguaje Común, que
 es la implementación de la máquina virtual sobre la arquitectura
 hardware nativa).
 
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="600"
 #+label: VIRT_maquina_virtual_dotnet
-#+caption: Arquitectura de la infraestructura de lenguajes comunes (CLI) de .NET (Imagen de la Wikipedia: /Common Language Infrastructure/)
+#+caption: Arquitectura de la infraestructura de lenguajes comunes (*cli*) de *.net* (Imagen de la Wikipedia: /Common Language Infrastructure/)
 [[./img/maquina_virtual_dotnet.png]]
 
 En los años 90, una de las principales críticas a Java (y esta crítica
@@ -194,7 +194,7 @@ técnicas para reducir el tiempo que se desperdicia emulando:
      secciones de código que tendrán que ser ejecutadas para,
      paralelamente al avance del programa,  traducirlas a código
      nativo de forma preventiva.
-- Compilación /justo a tiempo/ (JIT) :: Almacenar copia del código ya
+- Compilación /justo a tiempo/ (*jit*) :: Almacenar copia del código ya
      traducido de un programa, de modo que no tenga que traducirse ni
      siquiera a cada ejecución, sino que sólo una vez en la vida de
      la máquina virtual.
@@ -211,29 +211,29 @@ implementadas en hardware, el éxito comercial de la plataforma llevó
 a crear una línea de chips que ejecutara /nativamente/ código
 intermedio Java, con lo cual podrían ahorrarse pasos y obtener mejor
 rendimiento de los sistemas destino. Sun definió la arquitectura
-/MAJC/ (/Microprocessor Architecture for Java Computing/, Arquitectura
+*majc* (/Microprocessor Architecture for Java Computing/, Arquitectura
 de microprocesadores para el cómputo con Java) en la segunda mitad de
 los 1990, e incluso produjo un chip de esta arquitectura, el
-/MAJC 5200/.
+*majc 5200*.
 
-La arquitectura MAJC introdujo conceptos importantes que han sido
+La arquitectura *majc* introdujo conceptos importantes que han sido
 retomados para el diseño de procesadores posteriores, pero la
 complejidad llevó a un rendimiento deficiente, y el chip resultó un
 fracaso comercial.
 
 Es importante  mencionar otra aproximación. Transitando en el sentido 
-inverso al de Sun con MAJC, /Transmeta/, una empresa hasta entonces 
+inverso al de Sun con *majc*, /Transmeta/, una empresa hasta entonces 
 desconocida, anunció en el 2000 el procesador /Crusoe/, orientado al 
 mercado de bajo consumo energético. Este procesador, en vez de implementar 
 una arquitectura ya existente para entrar a un mercado ya muy competido 
 y dinámico, centró su oferta en que Crusoe trabajaría mano a mano con un módulo llamado
-CMS (/Code Morphing Software/, Software de Transformación de Código),
+*cms* (/Code Morphing Software/, Software de Transformación de Código),
 siendo así el primer procesador diseñado para /emular por hardware/ a
-otras arquitecturas. Crusoe fue lanzado al mercado con el CMS para la
+otras arquitecturas. Crusoe fue lanzado al mercado con el *cms* para la
 arquitectura x86 de Intel, y efectivamente, la emulación era
 completamente transparente al usuario.[fn:: Empleando Transmeta, se
 podían observar ciertos comportamientos curiosos: por ejemplo, dado el
-amplio espacio de caché que implementaba el CMS, el código ejecutable
+amplio espacio de caché que implementaba el *cms*, el código ejecutable
 se mantenía /ya traducido/ listo para el procesador, por lo cual la
 primera vez que se ejecutaba una función era notablemente más lenta
 que en ejecuciones posteriores. Sin embargo, si bien estas diferencias
@@ -242,14 +242,14 @@ conciencia estos procesadores, resultaban invisibles para el usuario
 final.] El procesador mismo, además, no implementaba algunas
 características que hoy en día se consideran fundamentales, como una
 unidad de manejo de memoria, dado que eso podía ser implementado por
-software en el CMS. Separando de esta manera las características
+software en el *cms*. Separando de esta manera las características
 complejas a una segunda capa, podían mantenerse más bajos tanto el
 número de transistores (y, por tanto, el gasto eneergético) y los
 costos de producción.
 
 La segunda generación de chips Transmeta (/Efficeon/) estaba basada
 en una arquitectura muy distinta, buscando un rendimiento mejorado.
-Pero, gracias al CMS, esto resulta imperceptible al usuario.
+Pero, gracias al *cms*, esto resulta imperceptible al usuario.
 
 A pesar de estas ideas interesantes y novedosas, Transmeta no pudo
 mantener el dinamismo necesario para despegar, y cesó sus operaciones
@@ -304,7 +304,7 @@ servidores a gran escala, fuera del alcance de la mayor parte de los
 usuarios. Es necesario estudiar la génesis de esta herramienta, para poder
 comprender mejor cómo opera y cómo se implementa.
 
-En 1964, IBM creó la primer /familia de computadoras/, la
+En 1964, *ibm* creó la primer /familia de computadoras/, la
 serie 360. Presentaron la entonces novedosa idea de que una
 organización podía adquirir un modelo sencillo y, si sus necesidades
 se ajustaban al modelo de cómputo, podrían migrar facilmente hacia
@@ -312,7 +312,7 @@ modelos más poderosos dado que tendrían /compatibilidad binaria/.
 
 Uno de los modelos de esta familia fue la /S-360-67/, con la
 característica distintiva en ser la única de la serie 360 en ofrecer
-una unidad de manejo de memoria (MMU), con lo cual permitía la
+una unidad de manejo de memoria (*mmu*), con lo cual permitía la
 reubicación de programas en memoria. Esto, sin embargo, creaba un
 problema: el software desarrollado para los equipos más pequeños de la
 familia estaba creado bajo un paradigma de usuario único, y si bien
@@ -320,41 +320,43 @@ podría ser ejecutado en este modelo, eso llevaría a un desperdicio de
 recursos (dado que el modelo 67 tenía todo lo necesario para operar en
 modo multitarea).
 
-La respuesta de IBM fue muy ingeniosa: desarrollar un sistema
-operativo mínimo, /CP/ (/Control Program/, Programa de Control) con el
+La respuesta de *ibm* fue muy ingeniosa: desarrollar un sistema
+operativo mínimo, *cp* (/Control Program/, Programa de Control) con el
 único propósito de crear y gestionar /máquinas virtuales/ dentro del
 hardware S/360-67, dentro de /cada una de las cuales/ pudiera
 ejecutarse /sin requerir modificaciones/ un sistema operativo estándar
 de la serie 360. De entre los varios sistemas operativos disponibles
-para la S/360, el que más frecuentemente se utilizó fue el /CMS/,[fn::
-Originalmente, las siglas CMS eran por el /Cambridge Monitor System/,
-por haber sido desarrollado en la división de investigación de IBM en
+para la S/360, el que más frecuentemente se utilizó fue el /*cms*/,[fn::
+Originalmente, las siglas *cms* eran por el /Cambridge Monitor System/,
+por haber sido desarrollado en la división de investigación de *ibm* en
 Cambridge, pero posteriormente fue renombrado a /Conversational
 Monitor System/, /Sistema de Monitoreo Conversacional/] un sistema
-sencillo, interactivo y monousuario. La combinación CP/CMS
+sencillo, interactivo y monousuario. La combinación *cp/cms*
 proporcionaba un sistema operativo multiusuario, con plena protección
 entre procesos, y con compatibilidad con los modelos más modestos de
 la serie 360.
 
-Aún después de la vida útil de la serie 360 original, IBM mantuvo
+Aún después de la vida útil de la serie 360 original, *ibm* mantuvo
 compatibilidad con este modelo hacia la serie 370, e incluso hoy, 50
-años más tarde, se encuentra aún como /z/VM/ en la línea de
-/Sistemas z/.
+años más tarde, se encuentra aún como
+#+latex: z/\textbf{vm}
+#+html: z/<b>vm</b>
+/z/VM/ en la línea de /Sistemas z/.
 
-Vale la pena mencionar que tanto CP como CMS fueron distribuídos desde
+Vale la pena mencionar que tanto *cp* como *cms* fueron distribuídos desde
 el principio de forma consistente con lo que en la actualidad se conoce como
-/software libre/: IBM los distribuía en fuentes, con permiso de
+/software libre/: *ibm* los distribuía en fuentes, con permiso de
 modificación y redistribución, y sus diferentes usuarios fueron
-enviando las mejoras que realizaban de vuelta a IBM, de modo que hoy
+enviando las mejoras que realizaban de vuelta a *ibm*, de modo que hoy
 en día incorpora el trabajo de 50 años de desarrolladores.
 
 ** El hipervisor
 
-El modelo CP/CMS lleva a una separación bastante limpia entre un
-/multiplexador de hardware/ (CP) y el sistema operativo propiamente
-dicho (CMS). Y si bien la dupla puede ser vista como un sólo sistema
+El modelo *cp/cms* lleva a una separación bastante limpia entre un
+/multiplexador de hardware/ (*cp*) y el sistema operativo propiamente
+dicho (*cms*). Y si bien la dupla puede ser vista como un sólo sistema
 operativo, conforme se fueron ejecutando en máquinas virtuales
-sistemas operativos más complejos se hizo claro que el CP tendría que
+sistemas operativos más complejos se hizo claro que el *cp* tendría que
 ser /otra cosa/. Partiendo del concepto de que el sistema operativo
 es el /supervisor/ de la actividad de los usuarios, yendo un paso más
 hacia arriba, se fue popularizando el nombre de /hipervisor/ para el
@@ -379,7 +381,7 @@ por ejemplo, muchos hipervisores entienden a los sistemas de archivos,
 permitiendo que los espacios de almacenamiento ofrecidos a sus
 sistemas operativos huésped sean simples archivos para el sistema
 anfitrión (y no particiones o dispositivos enteros). Algunos
-hipervisores, como /KVM/ bajo Linux se presentan integrados como un
+hipervisores, como *kvm* bajo Linux se presentan integrados como un
 componente más de un sistema operativo estándar.
 
 ** Virtualización asistida por hardware en x86
@@ -388,20 +390,22 @@ Hasta alrededor del año 2005, la virtualización no se mencionaba muy
 frecuentemente. Si bien había hardware virtualizable 40 años atrás,
 era hardware bastante especializado — y caro. Ese año, Intel sacó al
 mercado los procesadores con las extensiones necesarias para la
-virtualización, bajo el nombre /Vanderpool Technology/ (o /VT-x/). Al
-año siguiente, AMD hizo lo propio, denominándolas /extensiones
+virtualización, bajo el nombre /Vanderpool Technology/ (o
+#+latex: \textbf{vt}/x).
+#+html: Free<b>vt</b>/x).
+Al año siguiente, *amd* hizo lo propio, denominándolas /extensiones
 Pacifica/. Hoy en día, casi todas las computadoras de escritorio de
 rango medio-alto tienen el sopote necesario para llevar a cabo
 virtualización asistida por hardware. Y si bien en un principio el
 tema tardó en tomar tracción, llevó a un replanteamiento completo de
-la metodología de trabajo tanto de administradores de sistemas como
-de programadores.
+la metodología de trabajo tanto de administradores de sistemas como de
+programadores.
 
 En contraste con las arquitecturas diseñadas desde un principio para
 la virtualización, los usuarios de computadoras personales (inclusive
 cuando estas son servidores en centros de datos — siguen estando
-basadadas en la misma arquitectura básica) se enfrentan a una 
-mayor variedad de dispositivos para todo tipo de tareas.[fn:: Una
+basadadas en la misma arquitectura básica) se enfrentan a una mayor
+variedad de dispositivos para todo tipo de tareas.[fn:: Una
 descripción completa de la complejidad a la que debe enfrentarse un
 hipervisor bajo arquitectura x86 excede con mucho el ámbito del
 presente texto; se sugiere a los lectores interesados referirse al
@@ -415,12 +419,12 @@ una máquina virtual específica, pero hacerlo implica que éste
 dispositivo no será /multiplexado/ hacia las demás máquinas virtuales
 que se ejecuten paralelamente.] emulando hardware. Claro está, lo más
 frecuente es que el hipervisor ofrezca a los huéspedes la emulación de
-dispositivos relativamente viejos y simples.[fn:: Por ejemplo, KVM
-bajo Linux emula tarjetas de red tipo NE2000, tarjetas de sonido tipo
-Soundblaster16 y tarjetas de video Cirrus Logic, todos ellos de la
-década de los 1990.] Esto no significa que estén limitados a las
+dispositivos relativamente viejos y simples.[fn:: Por ejemplo, *kvm*
+bajo Linux emula tarjetas de red tipo *ne2000*, tarjetas de sonido
+tipo Soundblaster16 y tarjetas de video Cirrus Logic, todos ellos de
+la década de los 1990.] Esto no significa que estén limitados a las
 prestaciones del equipo emulado (por ejemplo, a los 10Mbps para los
-que estaba diseñada una tarjeta de red NE2000), sino que la interfaz
+que estaba diseñada una tarjeta de red *ne2000*), sino que la interfaz
 del núcleo para enviar datos a dicho dispositivo es una sencilla y que
 ha sido empleada tanto tiempo que presenta muy poca inestabilidad.
 
@@ -511,16 +515,19 @@ académico de la Universidad de Cambridge, presentando su versión 1.x a
 través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of
 Virtualization]]). Este artículo presenta su experiencia
 paravirtualizando a una versión entonces actual de Linux y de Windows
-XP. Sin embargo, Xen sólo pudo ser empleado por muchos años como
+*xp*. Sin embargo, Xen sólo pudo ser empleado por muchos años como
 plataforma de paravirtualización de Linux porque, dado que la
 adaptación de Windows se realizó bajo los términos del /Academic
 Licensing Program/, que permitía a los investigadores acceso y
 modificación al código fuente, pero no su redistribución — la versión
-paravirtualizable de Windows XP existe, pero no puede distribuirse
+paravirtualizable de Windows *xp* existe, pero no puede distribuirse
 fuera de los participantes de dicho programa de licenciamiento.
 
 En tanto, el trabajo necesario para lograr la paravirtualización de
-un sistema operativo libre, como Linux, FreeBSD u otros, puede ser
+un sistema operativo libre, como Linux,
+#+latex: Free\textbf{bsd}
+#+html: Free<b>bsd</b>
+u otros, puede ser
 libremente redistribuído. No sólo eso, sino que el esfuerzo de
 realizar la adaptación pudo compartirse entre desarrolladores de todo
 el mundo, dado que esta entonces novedosa tecnología resultaba de gran
@@ -549,7 +556,7 @@ emulación, aunque mucho más delgada.
 
 Según mediciones empíricas realizadas en 2007 por Qumranet (quienes
 liderearon el desarrollo del módulo de virtualización asistido por
-hardware /KVM/ en Linux), las clases de dispositivos =virtio= y =pv=
+hardware *kvm* en Linux), las clases de dispositivos =virtio= y =pv=
 resultaron entre 5 y 10 veces más rápidas que la emulación de
 dispositivos reales.
 
@@ -592,7 +599,7 @@ El desarrollo histórico de los contenedores puede rastrearse a la
 llamada al sistema =chroot()=, que restringe la visión del sistema de
 archivos de un proceso a sólo el directorio hacia el cual ésta fue
 invocada.[fn:: La llamada =chroot()= fue creada por Bill Joy en 1982
-para ayudarse en el desarrollo del sistema Unix 4.2BSD. Joy buscaba
+para ayudarse en el desarrollo del sistema Unix *4.2bsd*. Joy buscaba
 probar los cambios que iba haciendo en los componentes en espacio de
 usuario del sistema sin modificar su sistema /vivo/ y en producción,
 esto es, sin tener que reinstalar y reiniciar cada vez, y con esta
@@ -610,7 +617,9 @@ comenzaban a utilizarlo para servicios en producción, se hizo claro
 que resultaría útil ampliar la conveniencia de =chroot()= a un
 verdadero aislamiento.
 
-El primer sistema en incorporar esta funcionalidad fue /FreeBSD/,
+El primer sistema en incorporar esta funcionalidad fue
+#+latex: Free\textbf{bsd}
+#+html: Free<b>bsd</b>
 creando el subsistema /Jails/ a partir de su versión 4.0, del
 año 2000. No tardaron mucho en aparecer implementaciones comparables
 en los distintos sistemas Unix. Hay incluso un producto propietario,
@@ -640,12 +649,12 @@ menos en los siguientes áreas:
      de distintos grupos.
 - Interfaces de red :: Varía según cada sistema operativo e
      implementación, pero en líneas generales, cada contenedor tendrá
-     una interfaz de red con una /dirección de acceso a medio (MAC)/
-     distinta.[fn:: Es común referirse a las direcciones MAC como
+     una interfaz de red con una /dirección de acceso a medio (*mac*)/
+     distinta.[fn:: Es común referirse a las direcciones *mac* como
      direcciones físicas, sin embargo, todas las tarjetas de red
      permiten configurar su dirección, por lo cual la apelación
      /física/ resulta engañosa.] Claro está, cada una de ellas
-     recibirá una diferente dirección IP, y el núcleo ruteará e
+     recibirá una diferente dirección *ip*, y el núcleo ruteará e
      incluso aplicará reglas de firewall entre ellas.
 - Dispositivos de hardware :: Normalmente los sistemas huesped no tienen
      acceso directo a ningún dispositivo en hardware. En algunos
@@ -656,7 +665,7 @@ menos en los siguientes áreas:
      /planificación/, no resulta tan oneroso como la emulación.
 - Límites en consumo de recursos :: Casi todas las implementaciones
      permiten asignar cotas máximas para el consumo de recursos
-     compartidos, como espacio de memoria o disco o tiempo de CPU
+     compartidos, como espacio de memoria o disco o tiempo de *cpu*
      empleados por cada uno de los contenedores.
 - Nombre del equipo :: Aunque parezca trivial, el nombre con el que
      una computadora /se designa a sí misma/ debe también ser
@@ -789,13 +798,15 @@ disco.
   paravirtualización, varias voces se han levantado, indicando que
   ejecutar un sistema operativo completo dentro de una máquina virtual
   es un desperdicio de recursos. A fin de cuentas, si el sistema
-  operativo típico a correr dentro de una máquina virtual en el CP del
-  S/360 de IBM, hace más de 40 años, era un sistema /sencillo,
-  interactivo y monousuario/ (CMS), ¿por qué no repetir la
+  operativo típico a correr dentro de una máquina virtual en el *cp* del
+  S/360 de *ibm*, hace más de 40 años, era un sistema /sencillo,
+  interactivo y monousuario/ (*cms*), ¿por qué no repetir la
   experiencia?
 
   Un ejemplo de sistema mínimo fue presentado en septiembre de 2013:
-  OSv. Busca /no implementar/ los subsistemas innecesarios de un Linux
+  #+latex: \textbf{os}v.
+  #+html: <b>os</b>v.
+  Busca /no implementar/ los subsistemas innecesarios de un Linux
   tradicional, sino que únicamente permitir la ejecución de varios de
   los procesos más comunes en una máquina virtual. Pueden buscar al
   respecto:
@@ -804,10 +815,16 @@ disco.
     in the cloud]]
   - [[https://docs.google.com/presentation/d/11mxUl8PBDQ3C4QyeHBT8BcMPGzqk-C8bV1Fw8xLgwSI/edit?pli=1#slide=id.g104154dae_1138][Presentación del proyecto, del congreso CloudOpen]]
   - [[http://www.theregister.co.uk/2013/09/17/cloudius_systems_osv_cloud_software/][Artículo respecto al lanzamiento de OSv en The Register]]
-  - [[https://github.com/cloudius-systems/osv][Depósito Git del código de OSv en GitHub]]
+  - [[https://github.com/cloudius-systems/osv][Depósito Git del código de
+    #+latex: \textbf{os}v
+    #+html: <b>os</b>v
+    en GitHub]].
 
   Algunos puntos que podrían desarrollar:
-  - ¿Qué gana OSv y otros proyectos por el estilo? ¿Qué pierden?
+  - ¿Qué gana
+    #+latex: \textbf{os}v
+    #+html: <b>os</b>v
+    y otros proyectos por el estilo? ¿Qué pierden?
   - ¿Cómo ha avanzado la adopción de estas ideas?
   - ¿Qué le agrega o quita a la complejidad de la administración de
     sistemas?
@@ -817,7 +834,7 @@ disco.
   VMware Workstation/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2382553.2382554}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2382553.2382554">https://dl.acm.org/citation.cfm?doid=2382553.2382554</a><br/>
-  Bugnion et. al. (2012); ACM Transactions on Computer Systems
+  Bugnion et. al. (2012); *acm* Transactions on Computer Systems
 - /Performance Evaluation of Intel EPT Hardware Assist/
   #+latex: \otrorec{http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf}
   #+html: <br/><a href="http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf">http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf</a><br/>
@@ -834,7 +851,7 @@ disco.
   #+latex: \otrorec{http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf}
   #+html: <br/><a href="http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf">http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf</a><br/>
   Avi Kivity, Yaniv Kamay, Dor Laor, Uri Lublin, Anthony Liguori (2007)
-  Qumranet / IBM)
+  Qumranet / *ibm*)
 - /KVM PV devices/
   #+latex: \otrorec{http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007$kvm_pv_drv.pdf}
   #+html: <br/><a href="http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007$kvm_pv_drv.pdf">http://www.linux-kvm.org/wiki/images/d/dd/KvmForum2007$kvm_pv_drv.pdf</a><br/>

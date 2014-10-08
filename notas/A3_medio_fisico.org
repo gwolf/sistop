@@ -80,7 +80,7 @@ flexibles emplean una hoja plástica flexible, los
 discos duros son metálicos. Los discos están /permanentemente/
 montados sobre un eje, lo que permite que tengan una velocidad de giro
 entre 20 y 50 veces mayor que los discos flexibles — entre 4,200 y
-15,000 revoluciones por minuto (RPM), esto es, con una demora
+15,000 revoluciones por minuto (*rpm*), esto es, con una demora
 rotacional de entre 2 y 7.14 milisegundos.
 
 Además, a excepción de algunos modelos tempranos, los discos duros
@@ -167,12 +167,12 @@ ante la cadena de referencia dada.
 
 #+attr_latex: width=0.9\textwidth
 #+label: FS_FIS_mov_cabeza_por_algoritmo
-#+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 60. Para SCAN, LOOK y C-SCAN, se asume que la cabeza inicia avanzando en dirección decreciente.
+#+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 60. Para *scan*, *look* y *c-scan*, se asume que la cabeza inicia avanzando en dirección decreciente.
 [[./img/gnuplot/mov_cabeza_por_algoritmo.png]]
 
-- FIFO :: Del mismo modo que cuando fueron presentados los algoritmos
+- *fifo* :: Del mismo modo que cuando fueron presentados los algoritmos
           de asignación de procesador y de reemplazo de páginas, el
-          primero y más sencillo de implementar es el /FIFO/ —
+          primero y más sencillo de implementar es el *fifo* —
           /primero llegado, primero servido/.
 
           Este algoritmo puede verse como muy
@@ -189,25 +189,25 @@ ante la cadena de referencia dada.
           entre solicitudes para los cilindros contiguos 120 y 121,
           llegó una solicitud al 15.
 
-	  Atender esta solicitud en FIFO significa un desplazamiento
+	  Atender esta solicitud en *fifo* significa un desplazamiento
           de $(120-15) + (121-15) = 211$ cilindros, para volver a
           quedar prácticamente en el mismo lugar de inicio. Una sola
           solicitud resulta responsable de la tercera parte del tiempo
           total.
 
-- SSTF :: Ahora bien, si el factor que impone la principal demora es
+- *sstf* :: Ahora bien, si el factor que impone la principal demora es
           el movimiento de la cabeza, el segundo algoritmo busca
-          reducir al mínimo el movimiento de la cabeza: /SSTF/
+          reducir al mínimo el movimiento de la cabeza: *sstf*
           (/Shortest Seek Time First/, /Tiempo de búsqueda más corto a
           continuación/) es el equivalente en este ámbito del
           /Proceso más corto a continuación/, presentado en la sección
           \ref{PLAN_spn} — con la ventaja de no estar prediciendo
           comportamiento futuro, sino partir de una lista de
-          solicitudes pendientes. Empleando SSTF, el tiempo de
+          solicitudes pendientes. Empleando *sstf*, el tiempo de
           desplazamiento para este caso se reduce a tan sólo 207
           cilindros, muy cerca del mínimo absoluto posible.
 
-	  Una desventaja de SSTF es que puede llevar a la inanición:
+	  Una desventaja de *sstf* es que puede llevar a la inanición:
           si hay una gran densidad de solicitudes para cilindros en
           determinada zona del disco, una solicitud para un cilindro
           alejado puede quedar a la espera
@@ -216,32 +216,32 @@ ante la cadena de referencia dada.
 	  Ejemplificando esto con una serie de solicitudes distinta a
           la cadena referencia: si el sistema tuviera que atender
           solicitudes por los cilindros /15, 175, 13, 20, 14, 32, 40,
-          5, 6, 7/, SSTF /penalizaría/ a la segunda solicitud (175)
+          5, 6, 7/, *sstf* /penalizaría/ a la segunda solicitud (175)
           hasta terminar con los cilindros bajos. Si durante el tiempo
           que tome responder a estas solicitudes llegan otras
           adicionales, el proceso que está esperando el contenido del
           cilindro 175 puede quedar en espera indefinida.
 
-- Familia de algoritmos /de elevador/ (SCAN, LOOK, C-SCAN) :: En este
+- Familia de algoritmos /de elevador/ (*scan*, *look*, *c-scan*) :: En este
      tercer lugar se abordará ya no un sólo algoritmo, sino que una
      /familia/, dado que parten de la misma idea, pero con
      modificaciones menores llevan a que el patrón de atención
      resultante sea muy distinto.
 
-     El planteamiento base para el algoritmo básico de elevador (SCAN)
+     El planteamiento base para el algoritmo básico de elevador (*scan*)
      busca evitar la inanición, minimizando al mismo tiempo el
      movimiento de las cabezas. Su lógica indica que la cabeza debe
      recorrer el disco de extremo a extremo, como si fuera un elevador
      en un edificio alto, atendiendo a todas las solicitudes que haya
      pendientes en su camino. Si bien los recorridos para ciertos
      patrones pueden resultar en mayores desplazamientos a los que
-     daría SSTF, la garantía de que ningún proceso esperará
+     daría *sstf*, la garantía de que ningún proceso esperará
      indefinidamente lo hace muy atractivo.
 
-     Atender la cadena de referencia bajo SCAN, asumiendo un estado
+     Atender la cadena de referencia bajo *scan*, asumiendo un estado
      inicial /descendente/ (esto es, la cabeza está en el cilindro 60
      y va bajando) da un recorrido total de 235 cilindros; empleando
-     LOOK, se reduce a 205 cilindros, y evita el movimiento
+     *look*, se reduce a 205 cilindros, y evita el movimiento
      innecesario hasta el límite del disco.
 
      Una primer (y casi obvia) modificación a este algoritmo sería,
@@ -249,9 +249,9 @@ ante la cadena de referencia dada.
      verificar si hay alguna otra solicitud pendiente en la /dirección
      actual/, y de no ser así, emprender el camino de regreso sin
      llegar a la orilla del disco. Esta modificación es frecuentemente
-     descrita como /LOOK/.
+     descrita como *look*.
 
-     Sin embargo, el patrón de atención a solicitudes de SCAN y LOOK
+     Sin embargo, el patrón de atención a solicitudes de *scan* y *look*
      dejan qué desear: al llegar a un extremo del recorrido, es
      bastante probable que no haya ninguna solicitud pendiente en la
      primer mitad del recorrido de vuelta (dado que acaban de ser
@@ -259,7 +259,7 @@ ante la cadena de referencia dada.
      compone de la suma del desplazamiento de la cabeza y la demora
      rotacional (que depende de cuál sector del cilindro fue
      solicitado). Para mantener una tasa de transferencia más
-     predecible, el algoritmo /C-SCAN/ (SCAN Circular) realiza las
+     predecible, el algoritmo *c-scan* (*scan* Circular) realiza las
      operaciones en el disco únicamente en un sentido — si el
      algoritmo lee en orden /descendente/, al llegar a la solicitud
      del cilindro más bajo, saltará de vuelta hasta el más alto para
@@ -299,34 +299,34 @@ información como para planificar correctamente sus accesos.
 
 Uno de los cambios más importantes en este sentido fue la transición
 del empleo de la notación C-H-S al esquema de /direccionamiento lógico
-de bloques/ (/Logical Block Addressing/, /LBA/) a principios de los
+de bloques/ (/Logical Block Addressing/, *lba*) a principios de los
 noventa. Hasta ese momento, el sistema operativo tenía información de
 la ubicación /física/ de todos los bloques en el disco.
 
 Una de las desventajas, sin embargo, de este esquema es que el mismo
-BIOS tenía que conocer la /geometría/ de los discos — y el BIOS
+*bios* tenía que conocer la /geometría/ de los discos — y el *bios*
 presentaba límites duros en este sentido: principalmente, no le era
 posible referenciar más allá de 64 cilindros. Al aparecer la interfaz
-de discos IDE (/Electrónica integrada al dispositivo/) e ir
-reemplazando a la ST-506, se introdujo LBA.
+de discos *ide* (/Electrónica integrada al dispositivo/) e ir
+reemplazando a la *st-506*, se introdujo *lba*.
 
 Este mecanismo convierte la dirección C-H-S a una dirección /lineal/,
 presentando el disco al sistema operativo ya no como un espacio
 /tridimensional/, sino que como un gran arreglo de bloques. En este
 primer momento, partiendo de que $CPC$ denota el número de cabezas por
 cilindro y $SPC$ el número de sectores por cilindro, la equivalencia
-de una dirección C-H-S a una LBA era:
+de una dirección C-H-S a una *lba* era:
 
 #+BEGIN_QUOTE
 $LBA = ((Cilindro \times CPC) + Cabeza) \times SPC + Sector - 1$
 #+END_QUOTE
 
-LBA significó mucho más que una nueva notación: marcó el inicio de
-la transferencia de inteligencia y control del CPU al controlador de
+*lba* significó mucho más que una nueva notación: marcó el inicio de
+la transferencia de inteligencia y control del *cpu* al controlador de
 disco. El impacto de esto se refleja directamente en dos factores:
 
 - Sectores variables por cilindro :: En casi todos los discos previos
-     a LBA,[fn:: Las unidades de disco /Commodore 1541/ y /Macintosh
+     a *lba*,[fn:: Las unidades de disco /Commodore 1541/ y /Macintosh
      Superdrive/, que empleaban velocidad variable por cilindro para
      aprovechar mejor el medio magnético, constituyen notorias
      excepciones; en ambos casos, sin embargo, terminaron
@@ -344,7 +344,7 @@ disco. El impacto de esto se refleja directamente en dos factores:
      #+caption: Disco formateado bajo /densidad de bits por zona/, con más sectores por pista en las pistas exteriores. (Imagen de la Wikipedia: /Zone Bit Recording/)
      [[./img/zone_bit_recording.png]]
 
-     Bajo LBA, los discos duros comenzaron a emplear un esquema de
+     Bajo *lba*, los discos duros comenzaron a emplear un esquema de
      /densidad de bits por zona/ (/zone bit recording/), con la que en
      los cilindros más externos se aumenta.
 
@@ -355,13 +355,13 @@ disco. El impacto de esto se refleja directamente en dos factores:
      puede rescatar la información de dichos sectores de forma
      imperceptible al usuario.
 
-     Los discos duros ST-506 típicamente iban acompañados por una
+     Los discos duros *st-506* típicamente iban acompañados por una
      /lista de defectos/, una lista de coordenadas C-H-S que desde su
      fabricación habían presentado errores. El usuario debía ingresar
      estos defectos al formatear el disco /a bajo nivel/.
 
      Hoy en día, el controlador del disco detecta estos fallos y se
-     los /salta/, presentando un mapa LBA lineal y completo. Los
+     los /salta/, presentando un mapa *lba* lineal y completo. Los
      discos duros típicamente vienen con cierto número de /sectores de
      reserva/ para que, conforme se van detectando potenciales daños,
      estos puedan reemplazarse de forma transparente.
@@ -383,8 +383,8 @@ equipos que ejecutan sistemas /heredados/ o de controladores que no
 permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
 que efectuar, dentro de la lógica de su controlador, una emulación — y
 una modificación de un sólo sector se vuelve un /ciclo
-lectura-modificación-escritura/ (/RMW/), que redunda en una espera de
-por lo menos una revolución adicional (8ms con un disco de 7200RPM)
+lectura-modificación-escritura/ (*rmw*), que redunda en una espera de
+por lo menos una revolución adicional (8ms con un disco de 7200 *rpm*)
 del disco antes de que la operación pueda completarse.
 
 Resulta claro que, dados estos cambios en la manera en que debe
@@ -428,46 +428,46 @@ discos de estado solido que hay.  Al hablar de la tecnología sobre la
 cual se implementa este tipo de almacenamiento, los principales medios
 son:
 
-- NVRAM :: Unidades /RAM No Volátil/. Almacenan la información en
-           chips de RAM estándar, con un respaldo de batería para
-           mantener la información cuando se desconecta la corriente
-           externa. Las primeras unidades de estado sólido eran de
-           este estilo; hoy en día son poco comunes en el mercado,
-           pero siguen existiendo.
+- *nvram* :: Unidades *ram* No Volátil. Almacenan la información en
+             chips de *ram* estándar, con un respaldo de batería para
+             mantener la información cuando se desconecta la corriente
+             externa. Las primeras unidades de estado sólido eran de
+             este estilo; hoy en día son poco comunes en el mercado,
+             pero siguen existiendo.
 
-	   Su principal ventaja es la velocidad y durabilidad: el
-           tiempo de acceso o escritura de datos es el mismo que el
-           que podría esperarse de la memoria principal del sistema, y
-           al no haber demoras mecánicas, este tiempo es el mismo
-           independientemente de la dirección que se solicite.
+	     Su principal ventaja es la velocidad y durabilidad: el
+             tiempo de acceso o escritura de datos es el mismo que el
+             que podría esperarse de la memoria principal del sistema,
+             y al no haber demoras mecánicas, este tiempo es el mismo
+             independientemente de la dirección que se solicite.
 
-	   Su principal desventaja es el precio: en líneas generales,
-           la memoria RAM es, por volumen de almacenamiento, cientos
-           de veces más cara que el medio magnético. Y si bien el
-           medio no se degrada con el uso, la batería sí, lo que
-           podría poner en peligro a la supervivencia de la
-           información.
+	     Su principal desventaja es el precio: en líneas
+             generales, la memoria *ram* es, por volumen de
+             almacenamiento, cientos de veces más cara que el medio
+             magnético. Y si bien el medio no se degrada con el uso,
+             la batería sí, lo que podría poner en peligro a la
+             supervivencia de la información.
 
-	   Estas unidades típicamente se instalan internamente como
-           una tarjeta de expansión.
+	     Estas unidades típicamente se instalan internamente como
+             una tarjeta de expansión.
 
-	   #+caption: Unidad de estado sólido basado en RAM: DDRdrive X1 (Imagen de la Wikipedia: /Solid state drive/)
-	   #+attr_latex: width=0.5\textwidth
-	   #+attr_html: height="200" width="300"
-	   [[./img/estado_solido_ddr_drivex1.jpg]]
+	     #+caption: Unidad de estado sólido basado en *ram*: DDRdrive X1 (Imagen de la Wikipedia: /Solid state drive/)
+	     #+attr_latex: width=0.5\textwidth
+	     #+attr_html: height="200" width="300"
+	     [[./img/estado_solido_ddr_drivex1.jpg]]
 
-- Memoria /flash/ :: Derivada de los /EEPROM/ (/Electrically Erasable
+- Memoria /flash/ :: Derivada de los *eeprom* (/Electrically Erasable
      Programmable Read-Only Memory/, /Memoria de Sólo Lectura
-     Programable y Borrable Eléctricamente/). Los EEPROM tienen la
+     Programable y Borrable Eléctricamente/). Los *eeprom* tienen la
      característica de que, además de lectura y escritura, hay un
      tercer tipo de operación que deben implementar: el /borrado/. Un
-     EEPROM ya utilizado debe borrarse antes de volverse a escribir a
+     *eeprom* ya utilizado debe borrarse antes de volverse a escribir a
      él. La principal característica que distingue a las memorias
-     /flash/ de los EEPROMs tradicionales es que el espacio de
+     /flash/ de los *eeprom* tradicionales es que el espacio de
      almacenamiento está dividido en muchas /celdas/, y el controlador
      puede leer, borrar o escribir a cada uno de ellos por
      separado.[fn:: Estos dispositivos se conocen como /flash/ en
-     referencia a los chips EPROM (antes de que fuera posible borrar
+     referencia a los chips *eprom* (antes de que fuera posible borrar
      /eléctricamente/): estos chips tenían una ventana en la parte
      superior, y debían operar siempre cubiertos con una
      etiqueta. Para borrar sus contenidos, se retiraba la etiqueta y
@@ -482,15 +482,15 @@ son:
      en su tiempo de acceso como en su durabilidad. En este sentido,
      existen dos tipos principales de dispositivos /flash/:
 
-  - Almacenamiento primario (SSD) :: Las llamadas formalmente
+  - Almacenamiento primario (*ssd*) :: Las llamadas formalmente
        /unidad de estado sólido/ (/Solid State Drive/)[fn:: Un
        error muy común es confundir la /D/ con /Disk/, que
        denotaría que llevan un /disco/, un /medio rotativo/] son
        unidades Flash de alta velocidad y capacidad, y típicamente
        presentan una interfaz similar a la que tienen los discos
-       duros; hoy en día, la más común es SATA.
+       duros; hoy en día, la más común es *sata*.
 
-       #+caption: Unidad de estado sólido basado en Flash con interfaz SATA (Imagen de la Wikipedia: /Solid state drive/)
+       #+caption: Unidad de estado sólido basado en Flash con interfaz *sata* (Imagen de la Wikipedia: /Solid state drive/)
        #+attr_html: height="262" width="400"
        #+attr_latex: width=0.5\textwidth
        [[./img/estado_solido_sata.jpg]]
@@ -509,12 +509,12 @@ son:
 
   - Transporte de archivos :: Esta tecnología también está presente en
        las diversas unidades extraíbles o móviles, como las unidades
-       USB, SD, Memory Stick, Compact Flash, etc. La principal
+       *usb*, *sd*, Memory Stick, Compact Flash, etc. La principal
        diferencia entre estas son los diferentes conectores que
        emplean; todas estas tecnologías presentan dispositivos que
        varían fuertemente en capacidad, velocidad y durabilidad.
 
-       #+caption: Unidad de estado sólido basado en Flash con interfaz USB (Imagen de la Wikipedia: /Solid state drive/)
+       #+caption: Unidad de estado sólido basado en Flash con interfaz *usb* (Imagen de la Wikipedia: /Solid state drive/)
        #+attr_html: height="300" width="335"
        #+attr_latex: width=0.5\textwidth
        [[./img/estado_solido_usb.png]]
@@ -558,7 +558,7 @@ hacer un mejor balanceo de uso.
 *** Emulación de discos
 
 Hoy en día, casi la totalidad de medios de estado sóldo se presentan
-ante el sistema con una interfaz que emula la de los discos, la /FTL/
+ante el sistema con una interfaz que emula la de los discos, la *ftl*
 (/Flash Translation Layer/, /Capa de Traducción de Flash/). La ventaja
 de esta emulación es que no hizo falta desarrollar controladores
 adicionales para comenzar a emplear estos medios. La desventaja, sin
@@ -597,7 +597,7 @@ básicos, sin duda hay espacio para mejorar. Este es un tema que
 seguramente brinda amplio espacio para investigación y desarrollo para
 los próximos años.
 
-* RAID: Más allá de los límites físicos
+* *raid*: Más allá de los límites físicos
 # <<FS_FIS_RAID>>
 En la sección \ref{FS_conceptos} se presentó muy escuetamente al
 concepto de /volumen/, mencionando que un volumen /típicamente/
@@ -607,38 +607,38 @@ mecanismos que permite combinar diferentes /dispositivos físicos/ en
 un sólo volumen, llevando –bajo sus diferentes modalidades– a mayor
 confiabilidad, rendimiento y espacio disponible.
 
-El esquema más difundido para este fin es conocido como /RAID/,
+El esquema más difundido para este fin es conocido como *raid*,
 /Arreglo Redundante de Discos Baratos/ (/Redundant Array of
-Inexpensive Disks/)[fn:: Ocasionalmente se presenta a RAID como
+Inexpensive Disks/)[fn:: Ocasionalmente se presenta a *raid* como
 acrónimo de /Arreglo Redundante de Discos Independientes/ (/Redundant
 Array of Independent Disks/)], propuesto en 1988 por David Patterson,
 Garth Gibson y Randy Katz ante el diferencial que se presentaba (y se
 sigue presentando) entre el avance en velocidad y confiabilidad de las
 diversas áreas del cómputo en relación al almacenamiento magnético.
 
-Bajo los esquemas RAID queda sobreentendido que los diferentes discos
+Bajo los esquemas *raid* queda sobreentendido que los diferentes discos
 que forman parte de un volumen son del mismo tamaño. Si se remplaza un
 disco de un arreglo por uno más grande, la capacidad /en exceso/ que
 tenga éste sobre los demás discos será desperdiciada.
 
-Por muchos años, para emplear un /arreglos RAID/ era necesario contar
+Por muchos años, para emplear un /arreglo/ *raid* era necesario contar
 con controladores dedicados, que presentaban al conjunto como un
 dispositivo único al sistema operativo. Hoy en día, prácticamente
 todos los sistemas operativos incluyen la capacidad de integrar varias
 unidades independientes en un arreglo por software; esto conlleva un
 impacto en rendimiento, aunque muy pequeño. Hay también varias
 tecnologías presentes en distintos sistemas operativos modernos que
-heredan las ideas presentadas por RAID, pero integrándolos con
+heredan las ideas presentadas por *raid*, pero integrándolos con
 funciones formalmente implementadas por capas superiores.
 
-RAID no es un sólo esquema, sino que especifica un /conjunto/ de
+*raid* no es un sólo esquema, sino que especifica un /conjunto/ de
 /niveles/, cada uno de ellos diseñado para mejorar distintos aspectos
 del almacenamiento en discos. Se exponen a continuación las
 características de los principales niveles en uso hoy en día.
 
-** RAID nivel 0: división en /franjas/
+** *raid* nivel 0: división en /franjas/
 
-El primer nivel de RAID brinda una ganancia tanto en espacio total,
+El primer nivel de *raid* brinda una ganancia tanto en espacio total,
 dado que presenta a un volumen grande en vez de varios discos más
 pequeños (simplificando la tarea del administrador) como de velocidad,
 dado que las lecturas y escrituras al volumen ya no estarán sujetas al
@@ -647,10 +647,10 @@ por cada uno de los discos que conformen al volumen.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_raid_0
-#+caption: Cinco discos organizados en RAID 0
+#+caption: Cinco discos organizados en *raid* 0
 [[./img/dot/raid_0.png]]
 
-Los discos que participan en un volumen RAID 0 no están sencillamente
+Los discos que participan en un volumen *raid* 0 no están sencillamente
 /concatenados/, sino que los datos son /divididos en franjas/ (en
 inglés, el proceso se conoce como /striping/, de la palabra /stripe/,
 franja; algunas traducciones al español se refieren a este proceso
@@ -669,9 +669,9 @@ respecto a si cada uno de los discos se manejara por separado: basta
 con que uno de los discos presente daños para que la información
 contenida en el volumen se pierda.
 
-Un arreglo RAID nivel 0 puede construirse con un mínimo de dos discos.
+Un arreglo *raid* nivel 0 puede construirse con un mínimo de dos discos.
 
-** RAID nivel 1: espejo
+** *raid* nivel 1: espejo
 
 Este nivel está principalmente orientado a aumentar la confiabilidad
 de la información: los datos son grabados de forma /simultánea e
@@ -681,35 +681,35 @@ empleado: en su configuración habitual, de dos discos por volumen, el
 50% del espacio de almacenamiento se pierde por fungir como respaldo
 del otro 50%.
 
-La velocidad de acceso a los datos bajo RAID 1 es mayor a la que se
+La velocidad de acceso a los datos bajo *raid* 1 es mayor a la que se
 lograría con un disco tradicional: basta con obtener los datos de uno
-de los discos; el controlador RAID (sea el sistema operativo o una
+de los discos; el controlador *raid* (sea el sistema operativo o una
 implementación en hardware) puede incluso programar las solicitudes de
 lectura para que se vayan repartiendo entre ambas unidades. La
 velocidad de escritura se ve levemente reducida, dado que hay que
 esperar a que ambos discos escriban la información.
 
 #+label: FS_FIS_raid_1
-#+caption: Dos discos en espejo con RAID 1
+#+caption: Dos discos en espejo con *raid* 1
 #+attr_latex: width=0.3\textwidth
 [[./img/dot/raid_1.png]]
 
-Un arreglo RAID nivel 1 se construye típicamente con dos discos.
+Un arreglo *raid* nivel 1 se construye típicamente con dos discos.
 
-** Los niveles 2, 3 y 4 de RAID
+** Los niveles 2, 3 y 4 de *raid*
 
-Los siguientes tres niveles de RAID combinan propiedades de los
+Los siguientes tres niveles de *raid* combinan propiedades de los
 primeros junto con un algoritmo de verificación de integridad y
 corrección de errores. Estos han caído casi por completo en el desuso
 dado que los otros niveles, y muy en particular el nivel 5, ofrecen
 las mismas características, pero con mayor confiabilidad
 
-** RAID nivel 5: paridad dividida por bloques
+** *raid* nivel 5: paridad dividida por bloques
 
-El nivel 5 de RAID proporciona un muy buen equilibrio respecto a las
+El nivel 5 de *raid* proporciona un muy buen equilibrio respecto a las
 características que se han mencionando: brinda el espacio total
 de almacenamiento de todos los discos que formen parte del volumen
-/menos uno/. Para cada una de las /franjas/, RAID5 calcula un bloque
+/menos uno/. Para cada una de las /franjas/, *raid* 5 calcula un bloque
 de /paridad/.
 
 Para obtener una mayor tolerancia a fallos, este bloque de paridad no siempre va al mismo
@@ -721,7 +721,7 @@ quien reemplazará al disco dañado lo antes posible (dado que, de no
 hacerlo, la falla en un segundo disco resultará en la pérdida de toda
 la información).
 
-En equipos RAID profesionales es común contar con discos de reserva
+En equipos *raid* profesionales es común contar con discos de reserva
 /en caliente/ (/hot spares/): discos que se mantienen apagados pero
 listos para trabajar. Si el controlador detecta un disco dañado, sin
 esperar a la intervención del administrador, desactiva al disco
@@ -730,34 +730,39 @@ información a partir de los datos en los discos /sanos/.
 
 #+attr_latex: width=0.9\textwidth
 #+label: FS_FIS_franjas_raid_5
-#+caption: División de datos en /franjas/, con paridad, para RAID 5
+#+caption: División de datos en /franjas/, con paridad, para *raid* 5
 [[./img/ditaa/franjas_raid_5.png]]
 
 Dependiendo de la configuración, la velocidad de acceso de este nivel
 puede ser es ligeramente menor que la obtenida de los discos
-sin RAID, o ligeramente menor a la que se logra con RAID
+sin *raid*, o ligeramente menor a la que se logra con *raid*
 nivel 0. Dado que la electrónica en los discos actuales
 notificará explícitamente al sistema operativo en caso de fallo de
 lectura, cuando el sistema requiere leer datos, estos pueden ser
-solicitados únicamente a $n-1$ discos (e ignorar al de paridad); si el arreglo RAID está
+solicitados únicamente a $n-1$ discos (e ignorar al de paridad); si el arreglo *raid* está
 configurado para verificar la paridad en lecturas, todas
 las lecturas tendrán que obtener la franja correspondiente de todos
 los discos del arreglo para poder calcularla.
 
-RAID 5 opera con un algoritmo de verificación y recuperación
-sorprendentemente eficiente y simple: el de una /suma XOR/, ilustrado
-en la figura \ref{FS_FIS_redundancia_xor}. La operación booleana XOR
-(de /Exclusive OR/) suma los bits individuales, columna por
-columna. Si es un número par, almacena un 0, si es impar, almacena
-un 1. Esta operación es muy eficiente computacionalmente.
+*raid* 5 opera con un algoritmo de verificación y recuperación
+sorprendentemente eficiente y simple: el de una
+#+latex: \emph{suma \textbf{xor}},
+#+html: <i>suma <b>xor</b></i>,
+ilustrado en la figura \ref{FS_FIS_redundancia_xor}. La operación
+booleana *xor*
+#+latex: (de \emph{Exclusive \textbf{or}})
+#+html: (de <i>Exclusive <b>or</b></i>)
+suma los bits individuales, columna por columna. Si es un número par,
+almacena un 0, si es impar, almacena un 1. Esta operación es muy
+eficiente computacionalmente.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_redundancia_xor
-#+caption: Para cada franja, el disco de paridad guarda la suma XOR de los bits de las franjas correspondientes de los otros discos; no importa cuál disco falle, sus datos pueden recuperarse haciendo un XOR de los datos de los demás.
+#+caption: Para cada franja, el disco de paridad guarda la suma *xor* de los bits de las franjas correspondientes de los otros discos; no importa cuál disco falle, sus datos pueden recuperarse haciendo un *xor* de los datos de los demás.
 [[./img/ditaa/redundancia_xor.png]]
 
 Las escrituras son invariablemente más lentas respecto tanto ante
-la ausencia de RAID como en niveles 0 y 1, dado que siempre
+la ausencia de *raid* como en niveles 0 y 1, dado que siempre
 tendrá que recalcularse la paridad; en el caso de una escritura
 mínima (menor a una franja) tendrá que leerse la franja entera de
 todos los discos participantes en el arreglo, recalcularse la
@@ -771,10 +776,10 @@ provendría del disco dañado.
 
 #+attr_latex: width=0.8\textwidth
 #+label: FS_FIS_raid_5
-#+caption: Cinco discos organizados en RAID 5. La franja de paridad se va alternando, repartiéndose entre todos los discos.
+#+caption: Cinco discos organizados en *raid* 5. La franja de paridad se va alternando, repartiéndose entre todos los discos.
 [[./img/dot/raid_5.png]]
 
-Para implementar RAID nivel 5 son necesarios por lo menos 3 discos,
+Para implementar *raid* nivel 5 son necesarios por lo menos 3 discos,
 aunque es común verlos más /anchos/, pues de este modo se desperdicia
 menos espacio en paridad. Si bien teóricamente un arreglo nivel 5
 puede ser arbitrariamente ancho, en la práctica es muy raro ver
@@ -783,53 +788,53 @@ probabilidad de falla. Si un arreglo que está ya operando en el modo
 interino de recuperación de datos se encuentra con una falla en
 cualquiera de sus discos, tendrá que reportar un fallo irrecuperable.
 
-** RAID nivel 6: paridad por redundancia P+Q
+** *raid* nivel 6: paridad por redundancia P+Q
 
-Se trata nuevamente de un nivel de RAID muy poco utilizado. Se basa en
-el mismo principio que el de RAID 5 pero, empleando dos distintos
+Se trata nuevamente de un nivel de *raid* muy poco utilizado. Se basa en
+el mismo principio que el de *raid* 5 pero, empleando dos distintos
 algoritmos para calcular la paridad, permite la pérdida de hasta dos
 de los discos del arreglo. La complejidad computacional es
-sensiblemente mayor a la de RAID 5, no sólo porque se trata de un
+sensiblemente mayor a la de *raid* 5, no sólo porque se trata de un
 segundo cálculo de paridad, sino porque este cálculo debe hacerse
 empleando un algoritmo distinto y más robusto — si bien para obtener
-la paridad $P$ basta con hacer una operación /XOR/ sobre todos los
+la paridad $P$ basta con hacer una operación *xor* sobre todos los
 segmentos de una /franja/, la segunda paridad $Q$ típicamente emplea
 al /algoritmo Reed-Solomon/, /paridad diagonal/ o /paridad dual
 ortogonal/. Esto conlleva a una mayor carga al sistema, en caso de que
-sea RAID por software, o a que el controlador sea de mayor costo por
+sea *raid* por software, o a que el controlador sea de mayor costo por
 implementar mayor complejidad, en caso de ser hardware dedicado.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_raid_6
-#+caption: Cinco discos organizados en RAID 6. Al igual que bajo RAID 5, las franjas de paridad se van alternando entre todos los discos.
+#+caption: Cinco discos organizados en *raid* 6. Al igual que bajo *raid* 5, las franjas de paridad se van alternando entre todos los discos.
 [[./img/dot/raid_6.png]]
 
-El nivel 6 de RAID puede implementarse con 4 o más unidades, y si
+El nivel 6 de *raid* puede implementarse con 4 o más unidades, y si
 bien el espacio dedicado a la redundancia se incrementa a dos discos,
 la redundancia adicional que ofrece este esquema permite crear
 volúmenes con un mayor número de discos.
 
-** Niveles combinados de RAID
+** Niveles combinados de *raid*
 
-Viendo desde el punto de vista de la abstracción presentada, RAID
+Viendo desde el punto de vista de la abstracción presentada, *raid*
 toma una serie de dispositivos de bloques y los /combina/ en otro
 dispositivo de bloques. Esto significa que puede tomarse una serie de
-volúmenes RAID y combinarlos en uno solo, aprovechando las
+volúmenes *raid* y combinarlos en uno solo, aprovechando las
 características de los diferentes niveles.
 
 Si bien pueden combinarse arreglos de todo tipo, hay combinaciones más
 frecuentes que otras. Con mucho, la más popular es la de los niveles
-1 + 0 — esta combinación, frecuentemente llamada sencillamente /RAID
-10/, ofrece un máximo de redundancia y rendimiento, sin sacrificar
+1 + 0 — esta combinación, frecuentemente llamada sencillamente *raid*
+10, ofrece un máximo de redundancia y rendimiento, sin sacrificar
 demasiado espacio.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_FIS_raid_10
-#+caption: Seis discos organizados en RAID 1+0
+#+caption: Seis discos organizados en *raid* 1+0
 [[./img/dot/raid_10.png]]
 
-Con RAID nivel 10 se crean volúmenes que suman por franjas unidades en
-espejo (un volumen RAID 0 compuesto de varios volúmenes RAID 1). En
+Con *raid* nivel 10 se crean volúmenes que suman por franjas unidades en
+espejo (un volumen *raid* 0 compuesto de varios volúmenes *raid* 1). En
 caso de fallar cualquiera de las unidades del arreglo, ésta puede ser
 reemplazada fácilmente, y su reemplazo no significará un trabajo tan
 intensivo para el arreglo entero (sólo para su disco espejo).
@@ -850,31 +855,31 @@ nivel de redundancia resulta mucho menor.
 
 #+attr_latex: width=0.65\textwidth
 #+label: FS_FIS_raid_01
-#+caption: Seis discos organizados en RAID 0+1, ilustrando cómo una combinación errónea puede /reducir/ la tolerancia máxima a fallos del arreglo
+#+caption: Seis discos organizados en *raid* 0+1, ilustrando cómo una combinación errónea puede /reducir/ la tolerancia máxima a fallos del arreglo
 [[./img/dot/raid_01.png]]
 
 En este caso, el arreglo soportará también el fallo de hasta $n \over
-2$ de sus discos, pero únicamente si ocurren /en el mismo volumen RAID
+2$ de sus discos, pero únicamente si ocurren /en el mismo volumen *raid*
 1/ del espejo.
 
-Dado que RAID opera meramente agregando /dispositivos de bloques/ en
+Dado que *raid* opera meramente agregando /dispositivos de bloques/ en
 un nuevo dispositivo del mismo tipo, no tiene conocimiento de la
 información subyacente. Por tanto, si se perdieran al mismo tiempo el
 disco 1 (del subvolumen 1) y el disco 5 (del subvolumen 2), resultaría
 en pérdida de datos.[fn:: O por lo menos, en una tarea de
 reconstrucción manual, dada que la información completa existe. Sin
-embargo, ambos volúmenes RAID 1 estarían dañados e incompletos.]
+embargo, ambos volúmenes *raid* 1 estarían dañados e incompletos.]
 
 * Manejo avanzado de volúmenes
 # <<FS_FIS_man_av_vol>>
 
-Los esquemas RAID vienen, sin embargo, de fines de la década de 1980,
+Los esquemas *raid* vienen, sin embargo, de fines de la década de 1980,
 y si bien han cambiado el panorama del almacenamiento, en los más de
 20 años desde su aparición, han sido ya superados. El énfasis en el
-estudio de RAID (y no tanto en los desarrollos posteriores) se
+estudio de *raid* (y no tanto en los desarrollos posteriores) se
 justifica dada la limpieza conceptual que presentan, y dado que
 esquemas posteriores incluso hacen referencia explícita al nivel de
-RAID que /estarían reemplazando/ en su documentación.
+*raid* que /estarían reemplazando/ en su documentación.
 
 A continuación se presentan brevemente dos esquemas avanzados de
 gestión de volúmenes, principalmente ilustrando la dirección en que
@@ -884,11 +889,11 @@ han expuesto en las últimas páginas, la exposición se limitará a
 presentar ejemplos de aplicación, sin entrar más que a un nivel
 descriptivo de su funcionamiento.
 
-** LVM: el Gestor de Volúmenes Lógicos
+** *lvm:* el Gestor de Volúmenes Lógicos
 
-Una evolución natural de los conceptos de RAID es el /LVM2/ (segunda
+Una evolución natural de los conceptos de *raid* es el *lvm2* (segunda
 generación del /Logical Volume Manager/, o /Gestor de Volúmenes
-Lógicos/) de Linux. La lógica de operación de LVM está basada en los
+Lógicos/) de Linux. La lógica de operación de *lvm* está basada en los
 siguientes conceptos:
 
 - Volumen físico :: Cada uno de los discos o unidades disponibles.
@@ -898,7 +903,7 @@ siguientes conceptos:
 		    como un dispositivo, y que puede alojar sistemas
                     de archivos.
 
-El esquema es limpio y elegante: LVM es una interfaz que permite, como
+El esquema es limpio y elegante: *lvm* es una interfaz que permite, como
 dos pasos independientes, agregar diferentes /volúmenes físicos/ a un
 /grupo de volúmenes/, para posteriormente –y siguiendo las necesidades
 del administrador del sistema, ya independientes del tamaño de las
@@ -906,72 +911,72 @@ unidades físicamente existentes– crear las /unidades lógicas/, donde
 se alojarán los sistemas de archivos propiamente.
 
 Este esquema permite naturalmente una funcionalidad comparable con
-RAID 0: puede crearse un grupo de volúmenes con todos los discos que
+*raid* 0: puede crearse un grupo de volúmenes con todos los discos que
 disponibles, y dentro de este crear un volumen lógico
 único. Dependiendo de la configuración, este volumen lógico puede
 crecer abarcando todos los discos en cuestión, sea como simple
 concatenación o dividiéndose en franjas.
 
 Permite también la creación de unidades /espejo/, con una operación
-a grandes rasgos equivalente a la de RAID1. Incluso, dentro de un
+a grandes rasgos equivalente a la de *raid* 1. Incluso, dentro de un
 mismo grupo de volúmenes, pueden existir tanto volúmenes lógicos
 espejeados como otros que no lo estén, a diferencia de la estricta
-rigidez de RAID.
+rigidez de *raid*.
 
-Para los niveles 4, 5 y 6 de RAID, la correspondencia es más directa
-aún: al crear un volumen, se le puede solicitar a LVM al crear un
-volumen lógico que cree un volumen con ese nivel de RAID — obviamente,
+Para los niveles 4, 5 y 6 de *raid*, la correspondencia es más directa
+aún: al crear un volumen, se le puede solicitar a *lvm* al crear un
+volumen lógico que cree un volumen con ese nivel de *raid* — obviamente,
 siempre que cuente con suficientes volúmenes físicos.
 
-El esquema de LVM no brinda, pues, funcionalidad estrictamente
-distinta a la que presenta RAID — pero da al administrador del sistema
+El esquema de *lvm* no brinda, pues, funcionalidad estrictamente
+distinta a la que presenta *raid* — pero da al administrador del sistema
 flexibilidad: ampliar o reducir el espacio dedicado a cada uno de los
 volúmenes, incluso en un sistema en producción y con datos.
 
-LVM ofrece varias funcionalidades adicionales, como las /fotografías/
+*lvm* ofrece varias funcionalidades adicionales, como las /fotografías/
 (/snapshots/) o varios esquemas de reemplazo de disco; si bien hay
-mucho más que podría decirse de LVM, no se profundiza más en esta
+mucho más que podría decirse de *lvm*, no se profundiza más en esta
 herramienta dado que excede del objetivo del presente material.
 
-** ZFS
+** *zfs*
 # <<FS_FIS_zfs>>
 
-Si bien LVM realiza una importante tarea de simplificación en la
+Si bien *lvm* realiza una importante tarea de simplificación en la
 administración del sistema, su operación sigue siendo orientada a
 /bloques/: los volúmenes lógicos deben aún ser formateados bajo el
 sistema de archivos que el administrador del sistema considere acorde
 para la tarea requerida.
 
-ZFS[fn:: El nombre /ZFS/ proviene de /Zettabyte File System/. Los
-diseñadores de ZFS indican, sin embargo, que esto no es para indicar
-que ZFS sea capaz de direccionar hasta zettabytes de información, sino
+*zfs*[fn:: El nombre *zfs* proviene de /Zettabyte File System/. Los
+diseñadores de *zfs* indican, sin embargo, que esto no es para indicar
+que *zfs* sea capaz de direccionar hasta zettabytes de información, sino
 que será /el último sistema de archivos/ que cualquier administrador
 requerirá.] fue desarrollado por Sun Microsystems desde el año 2001,
 forma parte del sistema operativo /Solaris/ desde el 2005, y hoy en
 día puede emplearse desde los principales sistemas operativos
-libres.[fn:: ZFS no puede ser incorporado íntegramente al núcleo de
+libres.[fn:: *zfs* no puede ser incorporado íntegramente al núcleo de
 Linux por /incompatibilidad de licencias/: si bien ambos son software
-libre, los modelos de licenciamiento GPL (de Linux) y CDDL (de ZFS)
-son incompatibles.] Y si bien ZFS resulta suficientemente atractivo
+libre, los modelos de licenciamiento *gpl* (de Linux) y *cddl* (de *zfs*)
+son incompatibles.] Y si bien *zfs* resulta suficientemente atractivo
 tan sólo por haber sido diseñado para que el usuario nunca más se tope
 con un límite impuesto por el sistema operativo, el principal cambio
 que presenta al usuario es una forma completamente distinta de
 referirse al almacenamiento.
 
-En primer término, al igual que LVM presenta una primer integración
+En primer término, al igual que *lvm* presenta una primer integración
 entre conceptos, permitiendo unir de diferentes maneras varios
-dispositivos físicos en un dispositivo lógico, ZFS incluye en la misma
+dispositivos físicos en un dispositivo lógico, *zfs* incluye en la misma
 lógica administrativa al sistema de archivos: en la configuración
 estándar, basta conectar una unidad al sistema para que ésta aparezca
 como espacio adicional disponible para los usuarios. El espacio
 combinado de todas las unidades conforma un /fondo de almacenamiento/
 (/storage pool/).
 
-La lógica de ZFS parte de que operará una /colección/ de sistemas de
+La lógica de *zfs* parte de que operará una /colección/ de sistemas de
 archivos en una organización jerárquica. Pero a diferencia del esquema
 tradicional Unix en que cada sistema de archivos es preparado desde un
-principio para su función, en ZFS se pueden aplicar límites a
-jerarquías completas. Bajo un esquema ZFS, la creación y el montaje de
+principio para su función, en *zfs* se pueden aplicar límites a
+jerarquías completas. Bajo un esquema *zfs*, la creación y el montaje de
 un sistema de archivos es una operación sencilla — al grado que se
 presenta como recomendación que, para cada usuario en el sistema, se
 genere un sistema de archivos nuevo e independiente.
@@ -991,15 +996,15 @@ las diferentes regiones del sistema.
 ** Preguntas de autoevaluación
 
 1. Se presentaron algunos algoritmos para gestionar las solicitudes de
-   acceso a disco — /Primero llegado, primero servido/ (FIFO), /Tiempo
-   más corto a continuación/ (SSTF), /Elevador/ (SCAN), y algunas de
+   acceso a disco — /Primero llegado, primero servido/ (*fifo*), /Tiempo
+   más corto a continuación/ (*sstf*), /Elevador/ (*scan*), y algunas de
    sus variaciones. Se mencionó también que, a pesar de la importancia
    de conocerlos por su importancia histórica, hoy en día han dejado
    de ser tan importantes como lo fueron hacia los 1980. Mencione dos
    factores que han llevado a que pierdan relevancia.
 
 2. Realice un esquema de cómo se estructura cada bloque de información
-   sobre varios discos bajo RAID niveles 0, 1 y 5. Para cada uno de
+   sobre varios discos bajo *raid* niveles 0, 1 y 5. Para cada uno de
    estos niveles, indique el impacto que su empleo tendría en cuanto a
    espacio total, velocidad de acceso y confiabilidad.
 
@@ -1041,7 +1046,7 @@ las diferentes regiones del sistema.
 - /The Design and Implementation of a Log-Structured File System/
   #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf}
   #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf">http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf</a><br/>
-  Mendel Rosenblum, J. K. Ousterhout (1992); ACM Transactions on
+  Mendel Rosenblum, J. K. Ousterhout (1992); *acm* Transactions on
   Computer Systems
 
 - /LogFS — Finally a scalable flash file system/
@@ -1062,7 +1067,7 @@ las diferentes regiones del sistema.
 - /A case for Redundant Arrays of Inexpensive Disks/
   #+latex: \otrorec{http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf}
   #+html: <br/><a href="http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf">http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf</a><br/>
-  Patterson, Gibson, Katz (1988); ACM SIGMOD
+  Patterson, Gibson, Katz (1988); *acm sigmod*
 
 - /Unidades de estado sólido. El reto de la computación forense en el
   mundo de los semiconductores/

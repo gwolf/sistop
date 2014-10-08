@@ -112,7 +112,10 @@ planificador /a mediano plazo/.
 
 Como ya se ha visto, los procesos típicamente alternan entre /ráfagas/
 (periodos, en inglés /bursts/) en que realizan principalmente cómputo
-interno (están /limitados por CPU/, /CPU-bound/) y otras en que la
+interno (están
+#+latex: \emph{limitados por \textbf{cpu}}, \emph{\textbf{cpu}-bound})
+#+html: <i>limitados por <b>cpu</b>, <i><b>cpu</b>-bound</i>)
+y otras en que la
 atención está puesta en transmitir los datos desde o hacia
 dispositivos externos (están /limitados por entrada-salida/,
 /I/O-bound/). Dado que cuando un proceso se suspende para realizar
@@ -124,7 +127,7 @@ en:
 - Procesos largos :: Aquellos que /por mucho tiempo/[fn:: ¿Cuánto es
      mucho? Dependerá de las políticas generales que se definan para el
      sistema] han estado en /listos/ o en ejecución, esto es,
-     procesos que estén en una larga ráfaga limitada por CPU.
+     procesos que estén en una larga ráfaga limitada por *cpu*.
 
 - Procesos cortos :: Aquellos que, ya sea que en /este momento/[fn:: Y
      también, /este momento/ debe ser interpretado con la granularidad
@@ -137,7 +140,7 @@ Por lo general se busca dar un tratamiento /preferente/ a los procesos
 cortos, en particular a los interactivos. Cuando un usuario está
 interactuando con un proceso, si no tiene una respuesta /inmediata/ a
 su interacción con el equipo (sea proporcionar comandos, recibir la
-respuesta a un /teclazo/ o mover el puntero en el GUI) su percepción
+respuesta a un /teclazo/ o mover el puntero en el *gui*) su percepción
 será la de una respuesta degradada.
 
 ** Midiendo la respuesta
@@ -161,9 +164,9 @@ al ser ambos parámetros ajustables, una misma implementación puede
 sobrevivir ajustándose a la evolución del hardware.
 
 - /Tick/ :: Una fracción de tiempo durante la cual se puede realizar
-            trabajo útil - Esto es, usar la CPU sin interrupción[fn:: Ignorando
+            trabajo útil - Esto es, usar la *cpu* sin interrupción[fn:: Ignorando
 	    las interrupciones causadas por los dispositivos de 
-            entrada y salida y otras señales que llegan a la CPU]. El tiempo
+            entrada y salida y otras señales que llegan a la *cpu*.]. El tiempo
 	    correspondiente a un tick está determinado por una señal (interrupción)
 	    periódica, emitida por el /temporizador/ (timer). La frecuencia con 
 	    que ocurre esta señal se establece al inicio del sistema. Por ejemplo,
@@ -213,11 +216,11 @@ los diversos procesos del sistema, es necesario considerar también:
      a llamadas al sistema, y cubrir diversas tareas administrativas.]
      el empleado en decidir e implementar la política de planificación
      y los cambios de contexto. Este tiempo no se contabiliza cuando
-     se calcula el tiempo de CPU utilizado por un proceso.
+     se calcula el tiempo de *cpu* utilizado por un proceso.
 
 - Tiempo de sistema :: Tiempo que pasa un proceso en espacio núcleo 
      atendiendo el pedido de un proceso (syscall). Se incluye dentro 
-     del tiempo de uso de CPU de un proceso y suele discriminarse del 
+     del tiempo de uso de *cpu* de un proceso y suele discriminarse del 
      tiempo de usuario.
 
 - Tiempo de usuario :: Tiempo que pasa un proceso en modo usuario, es
@@ -231,7 +234,7 @@ los diversos procesos del sistema, es necesario considerar también:
 - Tiempo desocupado (/idle/) :: Tiempo en que la cola de procesos
      listos está vacía y no puede realizarse ningún trabajo.
 
-- Utilización del CPU :: Porcentaje del tiempo en que el CPU está
+- Utilización del *cpu* :: Porcentaje del tiempo en que el *cpu* está
      realizando /trabajo útil/. Si bien conceptualmente puede
      ubicarse dicha utilización entre 0 y 100%, en sistemas reales se
      ha observado (Silberschatz, p.179) que se ubica en un rango
@@ -391,13 +394,13 @@ algunos de estos objetivos pueden ser mutuamente contradictorios):
      penalización a los procesos preexistentes al momento de exceder
      este umbral.
 
-** Primero llegado, primero servido (/FCFS/)
+** Primero llegado, primero servido (*fcfs*)
 
 El esquema más simple de planificación es el /Primero llegado, primero
-servido/ (/First come, first serve/, /FCFS/). Este es un mecanismo
+servido/ (/First come, first serve/, *fcfs*). Este es un mecanismo
 cooperativo, con la mínima lógica posible: cada proceso se ejecuta en
 el orden en que fue llegando, y hasta que /suelta el control/. El
-despachador es muy simple, básicamente una cola FIFO.
+despachador es muy simple, básicamente una cola *fifo*.
 
 Para comparar los distintos algoritmos de planificación que serán
 presentados, se presentará el resultado de cada uno de ellos sobre el
@@ -416,10 +419,10 @@ siguiente juego de procesos: (Finkel 1988, p.35)
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_fcfs
-#+caption: Primero llegado, primero servido (FCFS)
+#+caption: Primero llegado, primero servido (*fcfs*)
 [[./img/ditaa/planif_fcfs.png]]
 
-Si bien un esquema FCFS reduce al mínimo la /sobrecarga
+Si bien un esquema *fcfs* reduce al mínimo la /sobrecarga
 administrativa/ (que incluye tanto al tiempo requerido por el
 planificador para seleccionar al siguiente proceso como el tiempo
 requerido para el cambio de contexto), el rendimiento percibido por
@@ -431,7 +434,7 @@ $\rho \le 1$. En caso de que se sostenga $\rho > 1$, la demora para
 iniciar la atención de un proceso crecerá cada vez más, cayendo en
 una cada vez mayor inanición.
 
-FCFS tiene características claramente inadecuadas para trabajo
+*fcfs* tiene características claramente inadecuadas para trabajo
 interactivo, sin embargo, al no requerir de hardware de apoyo (como
 un temporizador) sigue siendo ampliamente empleado.
 
@@ -440,7 +443,7 @@ un temporizador) sigue siendo ampliamente empleado.
 
 El esquema /ronda/ busca dar una relación de respuesta buena tanto
 para procesos largos como para los cortos. La principal diferencia
-entre la ronda y FCFS es que en este caso sí emplea multitarea
+entre la ronda y *fcfs* es que en este caso sí emplea multitarea
 apropiativa: cada proceso que esté en la lista de procesos listos puede
 ejecutarse por un sólo /quantum/ ($q$). Si un proceso no ha
 terminado de ejecutar al final de su /quantum/, será interrumpido y
@@ -471,7 +474,7 @@ los cambios de contexto) se obtienen los siguientes resultados:
 
 La /ronda/ puede ser ajustada modificando la duración de
 $q$. Conforme se incrementa $q$, la ronda tiende a convertirse en
-FCFS — si cada /quantum/ es arbitrariamente grande, todo proceso
+*fcfs* — si cada /quantum/ es arbitrariamente grande, todo proceso
 terminará su ejecución dentro de su /quantum/; por otro lado,
 conforme decrece $q$, se tiene una mayor frecuencia de cambios de
 contexto; esto llevaría a una mayor ilusión de tener un procesador
@@ -484,7 +487,7 @@ administrativa.
 
 Finkel (1988, p.35) se refiere a esto como el /principio de la
 histéresis/: /hay que resistirse al cambio/. Como ya lo se mencionó,
-FCFS mantiene al mínimo posible la sobrecarga administrativa, y
+*fcfs* mantiene al mínimo posible la sobrecarga administrativa, y
 –aunque sea marginalmente– resulta en mejor rendimiento global.
 
 Si se repite el análisis anterior bajo este mismo mecanismo, pero con
@@ -507,13 +510,13 @@ un /quantum/ de 4 /ticks/, el resultado es:
 [[./img/ditaa/planif_rr4.png]]
 
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
-respuesta, aumentarlo hasta convertirlo en un FCFS efectivo degenera
+respuesta, aumentarlo hasta convertirlo en un *fcfs* efectivo degenera
 en una penalización a los procesos cortos, y puede llevar a la
 inanición cuando $\rho > 1$. Silberschatz apunta (p.188) a que
 típicamente el /quantum/ debe mantenerse inferior a la duración
 promedio del 80% de los procesos.
 
-** El proceso más corto a continuación (SPN)
+** El proceso más corto a continuación (*spn*)
 # <<PLAN_spn>>
 (Del inglés, /Shortest Process Next/)
 
@@ -529,7 +532,7 @@ necesidades del proceso: ver si durante su historia de ejecución[fn::
 Cabe recordar que todos estos mecanismos se aplican al
 /planificador a corto plazo/. Cuando un proceso se bloquea esperando
 una operación de E/S, sigue en ejecución, y la información de
-contabilidad del mismo sigue alimentándose. SPN se ``nutre''
+contabilidad del mismo sigue alimentándose. *spn* se ``nutre''
 precisamente de dicha información de contabilidad.] ha sido un proceso
 tendiente a manejar ráfagas /limitadas por entrada-salida/ o
 /limitadas por procesador/, y cuál es su tendencia actual.
@@ -571,10 +574,10 @@ siguiente resultado:
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_spn
-#+caption: El proceso más corto a continuación (SPN)
+#+caption: El proceso más corto a continuación (*spn*)
 [[./img/ditaa/planif_spn.png]]
 
-Como era de esperarse, SPN favorece a los procesos cortos. Sin
+Como era de esperarse, *spn* favorece a los procesos cortos. Sin
 embargo, un proceso largo puede esperar mucho tiempo antes de ser
 atendido, especialmente con valores de $\rho$ cercanos o superiores a
 1 — un proceso más largo que el promedio está predispuesto a sufrir
@@ -587,43 +590,43 @@ inanición.
 [[./img/gnuplot/promedio_exponencial.png]]
 
 En un sistema poco ocupado, en que la cola de procesos listos es
-corta, SPN generará resultados muy similares a los de FCFS. Sin
+corta, *spn* generará resultados muy similares a los de *fcfs*. Sin
 embargo, puede observarse en el ejemplo que con sólo una permutación
 en los cinco procesos ejemplos (/B/ y /C/), los factores de
 penalización a los procesos ejemplo resultaron muy beneficiados.
 
-*** SPN apropiativo (PSPN)
+*** *spn* apropiativo (*pspn*)
 
 (/Preemptive Shortest Process Next/)
 
 Finkel (1988, p.44) apunta a que, a pesar de que intuitivamente daría
-una mayor ganancia combinar las estrategias de SPN con un esquema de
+una mayor ganancia combinar las estrategias de *spn* con un esquema de
 multitarea apropiativa, el comportamiento obtenido es muy similar para
 la amplia mayoría de los procesos. Incluso para procesos muy largos,
-PSPN no los penaliza mucho más allá de lo que lo haría la ronda, y
+*pspn* no los penaliza mucho más allá de lo que lo haría la ronda, y
 obtiene mejores promedios de forma consistente porque, al despachar
 primero a los procesos más cortos, mantiene la lista de procesos
 pendientes corta, lo que lleva naturalmente a menores índices de
 penalización.
 
-*** El más penalizado a continuación (HPRN)
+*** El más penalizado a continuación (*hprn*)
 
 (/Highest Penalty Ratio Next/)
 
 En un sistema que no cuenta con multitarea apropiativa, las alternativas
-presentadas hasta ahora resultan invariablmente injustas: FCFS
-favorece a los procesos largos, y SPN a los cortos. Un intento de
-llegar a un algoritmo más balanceado es HPRN.
+presentadas hasta ahora resultan invariablmente injustas: *fcfs*
+favorece a los procesos largos, y *spn* a los cortos. Un intento de
+llegar a un algoritmo más balanceado es *hprn*.
 
 Todo proceso inicia su paso por la cola de procesos listos con un
 valor de penalización $P = 1$. Cada vez que es obligado a esperar
 un tiempo $w$ por otro proceso, $P$ se actualiza como $P =
 \frac{w+t}{t}$. El proceso que se elige como activo será el que
-tenga mayor $P$. Mientras $\rho < 1$, HPRN evitará que incluso los
+tenga mayor $P$. Mientras $\rho < 1$, *hprn* evitará que incluso los
 procesos más largos sufran inanición.
 
-En los experimentos realizados por Finkel, HPRN se sitúa siempre en
-un punto medio entre FCFS y SPN; su principal desventaja se presenta
+En los experimentos realizados por Finkel, *hprn* se sitúa siempre en
+un punto medio entre *fcfs* y *spn*; su principal desventaja se presenta
 conforme crece la cola de procesos listos, ya que $P$ tiene que
 calcularse para cada uno de ellos cada vez que el despachador toma una
 decisión.
@@ -634,7 +637,7 @@ decisión.
 # /t/ de un proceso de antemano. Algunos sistemas utilizan alguna 
 # estimación de /t/ en base a la historia anterior.
 
-** Ronda egoísta (SRR)
+** Ronda egoísta (*srr*)
 
 (/Selfish Round Robin/)
 
@@ -644,7 +647,7 @@ no son programados directamente para su ejecución, sino que se les
 forma en la cola de /procesos nuevos/, y se avanza únicamente con la
 cola de /procesos aceptados/.
 
-Para SRR se emplean los parámetros $a$ y $b$, ajustables según las
+Para *srr* se emplean los parámetros $a$ y $b$, ajustables según las
 necesidades del sistema. $a$ indica el ritmo según el cual se
 incrementará la prioridad de los procesos de la cola de /procesos
 nuevos/, y $b$ el ritmo del incremento de prioridad para los /procesos
@@ -653,7 +656,7 @@ prioridad de un proceso aceptado, el nuevo se vuelve aceptado. Si la
 cola de procesos aceptados queda vacía, se acepta el proceso nuevo con
 mayor prioridad.
 
-El comportamiento de SRR con los procesos ejemplo es:
+El comportamiento de *srr* con los procesos ejemplo es:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   Llegada |     |        |     |     |     |      |
@@ -668,7 +671,7 @@ El comportamiento de SRR con los procesos ejemplo es:
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_srr
-#+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
+#+caption: Ronda egoísta (*srr*) con $a = 2$ y $b = 1$
 [[./img/ditaa/planif_srr.png]]
 
 Mientras $\frac{b}{a} < 1$, la prioridad de un proceso entrante
@@ -678,7 +681,7 @@ procesos, la prioridad de todos ellos será la misma (esto es, son
 despachados efectivamente por una simple ronda).
 
 Incluso cuando $\frac{b}{a} \ge 1$, el proceso en ejecución terminará,
-y $B$ será aceptado. En este caso, este esquema se convierte en FCFS.
+y $B$ será aceptado. En este caso, este esquema se convierte en *fcfs*.
 
 Si $\frac{b}{a} = 0$ (esto es, si $b = 0$), los procesos recién
 llegados serán aceptados inmediatamente, con lo cual se convierte en
@@ -687,7 +690,7 @@ una ronda. Mientras $0 < \frac{b}{a} < 1$, la ronda será
 incluso si los que llevan mucho tiempo ejecutando son muy largos (y
 por tanto, su prioridad es muy alta).
 
-** Retroalimentación multinivel (FB)
+** Retroalimentación multinivel (*fb*)
 
 (/Multilevel Feedback/)
 
@@ -748,7 +751,7 @@ se encuentra antes del /quantum/ a iniciar:
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_fb_bas
-#+caption: Retroalimentación multinivel (FB) básica
+#+caption: Retroalimentación multinivel (*fb*) básica
 [[./img/ditaa/planif_fb_bas.png]]
 
 Llama la atención que prácticamente todos los números apuntan a que
@@ -798,7 +801,7 @@ retroalimentación multinivel con un incremento exponencial al
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_planif_fb_exp
-#+caption: Retroalimentación multinivel (FB) con $q$ exponencial
+#+caption: Retroalimentación multinivel (*fb*) con $q$ exponencial
 [[./img/ditaa/planif_fb_exp.png]]
 
 Los promedios de tiempos de terminación, respuesta, espera y
@@ -844,7 +847,7 @@ de veces por segundo, para /jugar/ a la lotería es suficiente emplear
 un generador débil pseudoaleatorio. El artículo en que este mecanismo
 fue presentado presenta la implementación del algoritmo Park-Miller,
 $S' = (A \times S) mod (2^{31} - 1)$ con $A = 16807$, implementado en
-12 instrucciones de procesador RISC.], y otorga el siguiente quantum
+12 instrucciones de procesador *risc*.], y otorga el siguiente quantum
 al proceso que tenga el boleto ganador. El boleto ganador /no es
 retirado/, esto es, la probabilidad de que determinado proceso sea
 puesto en ejecución no varía entre invocaciones sucesivas del
@@ -877,20 +880,20 @@ es, si un proceso es tratado de distinta forma dependiendo de su
 historial de ejecución.
 
 #+caption: Caracterización de los mecanismos de planificación a corto plazo
-|---------------+-----------------+-------------------------|
-|               | *No considera*  | *Considera*             |
-|               | *intrínseca*    | *intrínseca*            |
-|---------------+-----------------+-------------------------|
-| *Cooperativa* | Primero llegado | Proceso más             |
-|               | primero servido | corto (SPN),            |
-|               | (FCFS)          | Proceso más             |
-|               |                 | penalizado (HPRN)       |
-|---------------+-----------------+-------------------------|
-| *Preventiva*  | Ronda (RR)      | Proceso más corto       |
-|               | Lotería         | apropiativo (PSPN),     |
-|               |                 | Retroalimentación (FB), |
-|               |                 | Ronda egoísta (SRR)     |
-|---------------+-----------------+-------------------------|
+|---------------+-----------------+---------------------------|
+|               | *No considera*  | *Considera*               |
+|               | *intrínseca*    | *intrínseca*              |
+|---------------+-----------------+---------------------------|
+| *Cooperativa* | Primero llegado | Proceso más               |
+|               | primero servido | corto (*spn*),            |
+|               | (*fcfs*)        | Proceso más               |
+|               |                 | penalizado (*hprn*)       |
+|---------------+-----------------+---------------------------|
+| *Preventiva*  | Ronda (*rr*)    | Proceso más corto         |
+|               | Lotería         | apropiativo (*pspn*),     |
+|               |                 | Retroalimentación (*fb*), |
+|               |                 | Ronda egoísta (*srr*)     |
+|---------------+-----------------+---------------------------|
 
 Ahora bien, estas características primarias pueden ser empleadas en
 conjunto, empleando diferentes algoritmos a diferentes niveles, o
@@ -898,18 +901,18 @@ cambiándolos según el patrón de uso del sistema, aprovechando de mejor
 manera sus bondades y logrando evitar sus deficiencias. A
 continuación, algunos ejemplos de esquemas híbridos.
 
-*** Algoritmo por cola dentro de FB
+*** Algoritmo por cola dentro de *fb*
 
 Al introducir varias colas, se abre la posibilidad de que cada una de
 ellas siga un esquema diferente para elegir cuál de sus procesos está
 a la cabeza. En los ejemplos antes presentados, todas las colas
 operaban siguiendo una ronda, pero podría contemplarse, por ejemplo,
-que parte de las colas sean procesadas siguiendo una variación de PSPN
+que parte de las colas sean procesadas siguiendo una variación de *pspn*
 que /empuje/ a los procesos más largos a colas que les puedan dar
 atención con menor número de interrupciones (incluso sin haberlos
 ejecutado aún).
 
-Podría emplearse un esquema SRR para las colas de menor prioridad,
+Podría emplearse un esquema *srr* para las colas de menor prioridad,
 siendo que ya tienen procesos que han esperado mucho tiempo para su
 ejecución, para –sin que repercutan en el tiempo de respuesta de
 los procesos cortos que van entrando a las colas superiores– terminen
@@ -923,13 +926,13 @@ externos al despachador. Algunas ideas al respecto son:
 
 - Si los procesos listos son /en promedio/ no muy largos, y el valor
   de saturación es bajo ($\rho < 1$), optar por los métodos que menos
-  sobrecarga administrativa signifiquen, como FCFS o SPN (o, para
-  evitar los peligros de la multitarea cooperativa, un RR con un
+  sobrecarga administrativa signifiquen, como *fcfs* o *spn* (o, para
+  evitar los peligros de la multitarea cooperativa, un *rr* con un
   /quantum/ muy largo). Si el despachador observa que la longitud de
   la cola excede un valor determinado (o /muestra una tendencia/ en
   ese sentido, al incrementarse $\rho$), cambiar a un mecanismo que
-  garantice una mejor distribución de la atención, como un RR con
-  /quantum/ corto o PSPN.
+  garantice una mejor distribución de la atención, como un *rr* con
+  /quantum/ corto o *pspn*.
 
 - Usar un esquema simple de ronda. La duración de un /quantum/ puede
   ser ajustada periódicamente (a cada cambio de contexto, o como un
@@ -951,9 +954,9 @@ externos al despachador. Algunas ideas al respecto son:
   por el usuario). Un proceso de mayor prioridad ejecutará /quantums/
   más largos.
 
-- /Peor servicio a continuación/ (/WSN/, /Worst Service Next/). Es
+- /Peor servicio a continuación/ (*wsn*, /Worst Service Next/). Es
   una generalización sobre varios de los mecanismos mencionados; su
-  principal diferencia respecto a /HPRN/ es que no sólo se considera
+  principal diferencia respecto a *hprn* es que no sólo se considera
   /penalización/ el tiempo que ha pasado esperando en la cola, sino
   que se considera el número de veces que ha sido interrumpido por el
   temporizador o su prioridad externa, y se considera (puede ser a
@@ -962,11 +965,11 @@ externos al despachador. Algunas ideas al respecto son:
   seleccionado para su ejecución, y si varios empatan, se elige uno
   en ronda.
 
-  La principal desventaja de /WSN/ es que, al considerar tantos
+  La principal desventaja de *wsn* es que, al considerar tantos
   factores, el tiempo requerido por un lado para recopilar todos estos
   datos, y por otro lado calcular el peso que darán a cada uno de los
   procesos implicados, puede impactar en el tiempo global de
-  ejecución. Es posible acudir a WSN periódicamente (y no cada vez que
+  ejecución. Es posible acudir a *wsn* periódicamente (y no cada vez que
   el despachador es invocado) para que reordene las colas según
   criterios generales, y abanzar sobre dichas colas con algoritmos más
   simples, aunque esto reduce la velocidad de reacción ante cambios de
@@ -1012,8 +1015,8 @@ presentados y comparados ante una determinada carga de procesos. No se
 puede asumir, sin embargo, que su comportamiento será igual ante
 diferentes distribuciones: un patrón de trabajo donde predominen los
 procesos cortos y haya unos pocos procesos largos probablemente se
-verá mucho más penalizado por un esquema SRR (y mucho más favorecido
-por un SPN o PSPN) que uno en el cual predominen los procesos largos.
+verá mucho más penalizado por un esquema *srr* (y mucho más favorecido
+por un *spn* o *pspn*) que uno en el cual predominen los procesos largos.
 
 #+attr_html: height="483"
 #+attr_latex: width=0.7\textwidth
@@ -1051,7 +1054,7 @@ p.187), por lo que incluso con el /quantum/ de 10ms (el más corto que
 manejan tanto Linux como Windows), representa apenas la milésima parte
 del tiempo efectivo de proceso.
 
-Una estrategia empleada por Control Data Corporation para la CDC6600
+Una estrategia empleada por Control Data Corporation para la *cdc6600*
 (comercializada a partir de 1964, y diseñada por Seymour Cray) fue
 emplear hardware especializado que permitiera efectivamente /compartir
 el procesador/: un sólo procesador tenía 10 /juegos/ de registros,
@@ -1063,14 +1066,14 @@ aplicaciones como 10 procesadores efectivos, cada uno de 100 KHz,
 reduciendo los costos al implementar sólamente una vez cada una de las
 unidades funcionales. Puede verse una evolución de esta idea retomada
 hacia mediados de la década del 2000 en los procesadores que manejan
-hilos de ejecución.[fn:: Aunque la arquitecura de la CDC6600 era
+hilos de ejecución.[fn:: Aunque la arquitecura de la *cdc6600* era
 /plenamente superescalar/, a diferencia de los procesadores
 /Hyperthreading/, que será abordada brevemente en la sección
 \ref{PLAN_proc_hyperthread}, en que para que dos instrucciones se
 ejecuten simultáneamente deben ser de naturalezas distintas, no
-requiriendo ambas de la misma /unidad funcional/ del CPU. El
-procesador de la CDC6600 no manejaba /pipelines/, sino que cada
-ejecución empleaba al CPU completo].
+requiriendo ambas de la misma /unidad funcional/ del *cpu*. El
+procesador de la *cdc6600* no manejaba /pipelines/, sino que cada
+ejecución empleaba al *cpu* completo].
 
 Esta arquitectura permitía tener multitarea real sin tener que
 realizar cambios de contexto, sin embargo, al tener un /nivel de
@@ -1145,12 +1148,12 @@ mapeo:
                   modelo.
 
 - Uno a uno :: Cada hilo es ejecutado como un /proceso ligero/
-               (/lightweight process/ o /LWP/); podría dar la
+               (/lightweight process/ o *lwp*); podría dar la
                impresión de que este esquema desperdicia la principal
                característica de los hilos, que es una mayor sencillez
                y rapidez de inicialización que los procesos, sin
                embargo, la información de estado requerida para crear
-               un LWP es mucho menor que la de un proceso regular, y
+               un *lwp* es mucho menor que la de un proceso regular, y
                mantiene como ventaja que los hilos continúan
                compartiendo su memoria, descriptores de archivos y
                demás estructuras.
@@ -1159,16 +1162,16 @@ mapeo:
                ventajas del paralelismo, pudiendo ejecutarse cada hilo
                en un procesador distinto, y como única condición para
                su existencia, el sistema operativo debe poder
-               implementar los LWP.
+               implementar los *lwp*.
 
 	       La esquematización de este modelo puede apreciarse en
                la figura \ref{PLAN_hilos_uno_a_uno}.
 
 - Muchos a muchos :: Este mecanismo permite que existan hilos de ambos
      modelos: permite la existencia de /hilos unidos/ (/bound
-     threads/), en que cada hilo corresponde a un (y sólo un) LWP, y
+     threads/), en que cada hilo corresponde a un (y sólo un) *lwp*, y
      de /hilos no unidos/ (/unbound threads/), de los cuales /uno o
-     más/ estarán mapeados a cada LWP.
+     más/ estarán mapeados a cada *lwp*.
 
      El esquema /muchos a muchos/ proporciona las principales
      características de ambos esquemas; en caso de ejecutarse en un
@@ -1184,11 +1187,11 @@ marco de desarrollo o máquina virtual (ver sección
 cual sistema operativo ante ellos, probablemente con alguno de los
 mecanismos ilustrados anteriormente.
 
-** Los hilos POSIX (=pthreads=)
+** Los hilos *posix* (=pthreads=)
 
 La clasificiación recién presentada de modelos de mapeo entre hilos y
 procesos se refleja aproximadamente en la categorización de los hilos
-POSIX (=pthreads=) denominada el /ámbito de contención/.
+*posix* (=pthreads=) denominada el /ámbito de contención/.
 
 Hay dos enfoques respecto a la /contención/ que deben tener los
 hilos, esto es: en el momento que un proceso separa su ejecución en
@@ -1196,7 +1199,7 @@ dos hilos, ¿debe cada uno de estos recibir la misma atención que
 recibiría un proceso completo?
 
 - Ámbito de contención de proceso :: (/Process Contention Scope/,
-     /PCS/; en POSIX, =PTHREAD_SCOPE_PROCESS=) Una respuesta es que
+     *pcs*; en *posix*, =PTHREAD_SCOPE_PROCESS=) Una respuesta es que
      todos los hilos deben ser atendidos sin exceder el tiempo que
      sería asignado a un sólo proceso. Un proceso que consta de varios
      hilos siguiendo el modelo /muchos a uno/, o uno que /multiplexa/
@@ -1204,7 +1207,7 @@ recibiría un proceso completo?
      ejecuta bajo este ámbito.
 
 - Ámbito de contención de sistema :: (/System Contention Scope/,
-     /SCS/; en POSIX, =PTHREAD_SCOPE_SYSTEM=) Este ámbito es cuando,
+     *scs*; en *posix*, =PTHREAD_SCOPE_SYSTEM=) Este ámbito es cuando,
      en contraposición, cada hilo es visto por el planificador como un
      proceso independiente; este es el ámbito en el que se ejecutarían
      los hilos bajo el modelo /uno a uno/, o cada uno de los /hilos
@@ -1221,7 +1224,7 @@ otro, notificando del error (pero permitiendo continuar con la
 operación).
 
 Las implementaciones de =pthreads= tanto en Windows como en Linux
-sólo contemplan SCS.
+sólo contemplan *scs*.
 
 Respecto a los otros aspectos mencionados en este capítulo, la
 especificación =pthreads= incluye funciones por medio de las cuales
@@ -1258,7 +1261,7 @@ niveles de caché; si un proceso es migrado entre dos núcleos del mismo
 procesador, probablemente sólo haga falta invalidar los datos en el
 caché más interno (L1), dado que el caché en chip (L2) es compartido
 entre los varios núcleos del mismo chip; si un proceso es migrado a
-un CPU físicamente separado, será necesario invalidar también el
+un *cpu* físicamente separado, será necesario invalidar también el
 caché en chip (L2), y mantener únicamente el del controlador de
 memoria (L3).
 
@@ -1284,7 +1287,7 @@ declarar /afinidad dura/, con lo cual se /garantiza/ a un proceso que
 siempre será ejecutado en un procesador, o en un conjunto de
 procesadores.
 
-Un entorno NUMA, por ejemplo, funcionará mucho mejor si el sistema que
+Un entorno *numa*, por ejemplo, funcionará mucho mejor si el sistema que
 lo emplea maneja tanto un esquema de afinidad dura como algoritmos de
 asignación de memoria que le aseguren que un proceso siempre se
 ejecutará en el procesador que tenga mejor acceso a sus datos.
@@ -1329,7 +1332,7 @@ siempre ambos mecanismos.
 
 Como sea, debe mantenerse en mente que todo balanceo de cargas que
 se haga entre los procesadores conllevará una penalización en
-términos de afinidad al CPU.
+términos de afinidad al *cpu*.
 
 ** Colas de procesos: ¿una o varias?
 
@@ -1371,18 +1374,18 @@ separando las /unidades funcionales/ de un procesador.
 [[./img/ditaa/pipeline.png]]
 
 El flujo de una sóla instrucción a través de un procesador simple como
-el MIPS puede ser dividido en cinco secciones principales, creando una
-estructura conocida como /pipeline/ (tubería). Idealmente, en todo
+el *mips* puede ser dividido en cinco secciones principales, creando
+una estructura conocida como /pipeline/ (tubería). Idealmente, en todo
 momento habrá una instrucción diferente ejecutando en cada una de las
 secciones del procesador, como lo ilustra la figura
-\ref{PLAN_pipeline}. Las secciones en los procesadores MIPS clásicos
+\ref{PLAN_pipeline}. Las secciones en los procesadores *mips* clásicos
 son:
 
-- Recuperación de la instrucción (/Instruction Fetch/, IF)
-- Decodificación de la instrucción (/Instruction Decode/, ID)
-- Ejecución (/Execution/, EX)
-- Acceso a datos (MEM)
-- Almacenamiento (Writeback, WB)
+- Recuperación de la instrucción (/Instruction Fetch/, =IF=)
+- Decodificación de la instrucción (/Instruction Decode/, =ID=)
+- Ejecución (/Execution/, =EX=)
+- Acceso a datos (=MEM=)
+- Almacenamiento (Writeback, =WB=)
 
 La complejidad de los procesadores actuales ha crecido ya por encima
 de lo aquí delineado (el Pentium 4 tiene más de 20 etapas), sin
@@ -1433,7 +1436,7 @@ aprovechamiento del paralelismo), o uno de arquitectura de sistemas
 (estudio del pipeline, aspectos del hardware).
 
 Esta estrategia guarda gran similitud, y no puede evitar hacerse el
-paralelo, con la /compartición de procesador/ empleada por la CDC6600,
+paralelo, con la /compartición de procesador/ empleada por la *cdc6600*,
 presentada en la sección \ref{PLAN_resumen_algoritmos}.
 
 * Tiempo real
@@ -1583,7 +1586,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
    | E       | 6       | 8   |
    | F       | 6       | 3   |
    Desarrolle la representación gráfica de cómo el despachador les
-   asignaría el CPU, y la tabla de análisis, bajo:
+   asignaría el *cpu*, y la tabla de análisis, bajo:
    - Ronda con $q=1$
    - Ronda con $q=3$
    - Proceso más corto a continuación
@@ -1649,7 +1652,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
   esto, en complejidad de código y en velocidad?
 
   Pueden basarse para la preparación de este tema en un interesante
-  reporte de NIST (Instituto Nacional de Estándares y Tecnología) de
+  reporte de *nist* (Instituto Nacional de Estándares y Tecnología) de
   diciembre del 2002, [[http://www.aeolean.com/html/RealTimeLinux/RealTimeLinuxReport-2.0.0.pdf][Introduction to Linux for Real-Time Control:
   Introductory Guidelines and Reference for Control Engineers and
   Managers]]. Detalla muy bien cuáles son los requisitos (y las razones
@@ -1679,7 +1682,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
   En marzo del 2014, con el anuncio de la versión 3.14 del kernel, fue
   agregada la clase =SCHED_DEADLINE=, principalmente pensada para dar
   soporte a las necesidades de tiempo real. Esta opera bajo una lógica
-  =EDF= (/Primer Plazo Primero/, /Earliest Deadline First/).
+  *edf* (/Primer Plazo Primero/, /Earliest Deadline First/).
 
   Además de revisar este algoritmo, resulta interesante comprender
   cómo el sistema da soporte a la /mezcla/ de distintas clases de
@@ -1689,7 +1692,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 
   Algunas ligas al respecto:
 
-  - [[https://lwn.net/Articles/575497/][Artículo en LWN de diciembre de 2013 anticipando la inclusión de
+  - [[https://lwn.net/Articles/575497/][Artículo en *lwn* de diciembre de 2013 anticipando la inclusión de
     SCHED_DEADLINE]], que presenta los conceptos, e incluye una
     discusión al respecto que puede resultarles interesante y útil
   - [[https://en.wikipedia.org/wiki/SCHED_DEADLINE][La página de la clase de planificación SCHED_DEADLINE en
@@ -1723,7 +1726,7 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 
 - /Páginas de manual/ de Linux:
 
-  - Hilos POSIX (=pthreads=)
+  - Hilos *posix* (=pthreads=)
     #+latex: \otrorec{http://man7.org/linux/man-pages/man7/pthreads.7.html}
     #+html: <br/><a href="http://man7.org/linux/man-pages/man7/pthreads.7.html">http://man7.org/linux/man-pages/man7/pthreads.7.html</a><br/>
 

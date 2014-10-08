@@ -195,8 +195,10 @@ de periféricos en línea.
 
 A lo largo de su ejecución, un programa normalmente pasa por etapas
 con muy distintas características: durante un ciclo fuertemente
-dedicado al cálculo numérico, el sistema opera /limitado por el CPU/
-(/CPU-bound/), mientras que al leer o escribir resultados a medios
+dedicado al cálculo numérico, el sistema opera
+#+latex: \emph{limitado por el \textbf{cpu}} (\emph{\textbf{cpu}-bound}),
+#+html: <i>limitado por el <b>cpu</b></i> (<i><b>cpu</b>-bound</i>),
+mientras que al leer o escribir resultados a medios
 externos (incluso mediante /spools/) el límite es impuesto por los
 dispositivos, esto es, opera /limitado por entrada-salida/ (/I-O
 bound/). La programación multitareas o los sistemas
@@ -241,7 +243,7 @@ procesos).
 
 - Multitarea /cooperativa/ o /no apropiativa/ :: (/Cooperative
      multitasking/). La implementaron los sistemas multiprogramados: cada
-     proceso tenía control del CPU hasta que éste hacía una llamada al
+     proceso tenía control del *cpu* hasta que éste hacía una llamada al
      sistema (o indicara su /disposición a cooperar/ por medio de la
      llamada =yield=: /ceder el paso/).
 
@@ -560,7 +562,7 @@ desarrollara sus propias aplicaciones.
 [[./img/psion_organiser.jpg]]
 
 El hardware del /Organiser/ original era, claro está, muy
-limitado. Con sólo 4KB de ROM y 2KB de RAM no incluía un sistema
+limitado. Con sólo 4KB de ROM y 2KB de memoria no incluía un sistema
 operativo, y el lenguaje de programación disponible al usuario era
 meramente un ensamblador. No tener un sistema operativo significa que,
 en vez de hacer las /llamadas al sistema/ necesarias para realizar
@@ -576,7 +578,7 @@ durante la mayor parte de la década del 2000.
 #+attr_html: width="350", height="297"
 #+attr_latex: width=0.35\textwidth
 #+label: INTRO_pda_casio
-#+caption: Sharp *ZQ-770*, diseño bajo uno de los formatos de *pda* (Asistente Personal Digital) más popularizados de la década de los noventa (imagen de la Wikipedia: /Sharp Wizard/).
+#+caption: Sharp *zq-770*, diseño bajo uno de los formatos de *pda* (Asistente Personal Digital) más popularizados de la década de los noventa (imagen de la Wikipedia: /Sharp Wizard/).
 [[./img/pda_sharp.jpg]]
 
 Siguiendo los pasos del /Organiser/, muchas otras empresas fueron
@@ -650,7 +652,7 @@ sus características técnicas.
          que el sistema operativo que emplean para sus equipos de
          escritorio,
 	 #+latex: Mac\textsc{os x}, i\textsc{os}
-	 #+html: Mac<b>OS X</b>, i<b>os</b>
+	 #+html: Mac<b>os x</b>, i<b>os</b>
 	 está basado en el núcleo /Darwin/, derivado de
 	 #+latex: Free\textsc{bsd},
 	 #+html: Free<b>bsd</b>,
@@ -1185,7 +1187,7 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
   #+latex: \otrorec{http://dl.acm.org/citation.cfm?id=1283947}
   #+html: <br/><a href="http://dl.acm.org/citation.cfm?id=1283947">http://dl.acm.org/citation.cfm?id=1283947</a><br/>
   Fernando J. Corbató
-  (1990); ACM Turing award lectures
+  (1990); *acm* Turing award lectures
 - /A Brief History of Computer Operating Systems/
   #+latex: \otrorec{http://cs.gordon.edu/courses/cs322/lectures/history.html}
   #+html: <br/><a href="http://cs.gordon.edu/courses/cs322/lectures/history.html">http://cs.gordon.edu/courses/cs322/lectures/history.html</a><br/>

@@ -480,17 +480,16 @@ En los sistemas derivados de *ms-dos* puede verse aún un remanente de
 los archivos estructurados: en estos sistemas, un archivo puede ser
 /de texto/ o /binario/. Un archivo de texto está compuesto por una
 serie de caracteres que forman /líneas/, y la separación entre una
-línea y otra constituye de un /retorno de carro/ (=CR=, caracter
-*ascii* 13) seguido de un /salto de línea/ (=LF=, caracter *ascii*
-10).[fn:: Esta lógica es herencia de las máquinas de escribir
-manuales, en que el /salto de línea/ (avanzar el rodillo a la línea
-siguiente) era una operación distinta a la del /retorno de carro/
-(devolver la cabeza de escritura al inicio de la línea). En la época
-de los teletipos, como medida para evitar que se perdieran caracteres
-mientras la cabeza volvía hasta la izquierda, se decidió separar el
-inicio de nueva línea en los dos pasos que tienen las máquinas de
-escribir, para inducir una demora que evitara la pérdida de
-información.]
+línea y otra constituye de un /retorno de carro/ (caracter *ascii* 13,
+=CR=) seguido de un /salto de línea/ (caracter *ascii* 10, =LF=).[fn::
+Esta lógica es herencia de las máquinas de escribir manuales, en que
+el /salto de línea/ (avanzar el rodillo a la línea siguiente) era una
+operación distinta a la del /retorno de carro/ (devolver la cabeza de
+escritura al inicio de la línea). En la época de los teletipos, como
+medida para evitar que se perdieran caracteres mientras la cabeza
+volvía hasta la izquierda, se decidió separar el inicio de nueva línea
+en los dos pasos que tienen las máquinas de escribir, para inducir una
+demora que evitara la pérdida de información.]
 
 El acceso a los archivos puede realizarse de diferentes maneras:
 
@@ -888,13 +887,13 @@ dirigidos por medio de dos mecanismos:
 
 Si bien estos dos tipos de liga existen también en los sistemas
 Windows[fn:: Únicamente en aquellos que emplean el sistema de archivos
-*ntfs*, no en los que utilizan alguna de las variantes
-de *fat* ], en dichos sistemas sigue siendo más común emplear los
-/accesos directos/. Se denomina así a un archivo (identificado por su
-extensión, =.lnk=), principalmente creado para poder /apuntar/ a los
-archivos desde el escritorio y los menúes — si un proceso solicita al
-sistema abrir el /acceso directo/, no obtendrá al archivo destino,
-sino que al acceso directo mismo.
+que introdujo Windows *nt*, el *ntfs*, no en los que utilizan alguna
+de las variantes de *fat* ], en dichos sistemas sigue siendo más común
+emplear los /accesos directos/. Se denomina así a un archivo
+(identificado por su extensión, =.lnk=), principalmente creado para
+poder /apuntar/ a los archivos desde el escritorio y los menúes — si
+un proceso solicita al sistema abrir el /acceso directo/, no obtendrá
+al archivo destino, sino que al acceso directo mismo.
 
 Ahora, si bien tanto las ligas duras como las ligas simbólicas existen
 también en Windows, su uso es muy poco frecuente. El *api* de Win32
@@ -1196,8 +1195,8 @@ por otro lado, con sólo modificaciones relativamente menores a su
 diseño original, ha logrado extenderse de un sistema pensado para
 volúmenes de 150K hasta llegar a las decenas de gigabytes.
 
-En cada una de las entradas del directorio en un sistema de archivos
-*fat*, el byte número 12 almacena los siguientes /atributos/:
+En cada una de las entradas del directorio en un sistema *fat*, el
+byte número 12 almacena los siguientes /atributos/:
 
 - Oculto :: Si está en cendido, el archivo no se deberá mostrar al
             usuario en listados de directorio.
@@ -1230,12 +1229,12 @@ reservado todo un byte para los atributos, algunos sistemas
 extendieron los atributos cubriendo distintas necesidades. Estos
 cuatro atributos son, sin embargo, la base del sistema.
 
-Puede verse que, bajo *ms-dos*, no se hace diferencia entre /lectura/ y
-/ejecución/. Como se presentó en la sección \ref{DIR_tipos_archivo},
-*ms-dos* basa la identificación de archivos en su /extensión/. Y, claro,
-siendo un sistema concebido como /monousuario/, no tiene sentido
-condicionar la /lectura/ de un archivo: El sistema operativo siempre
-permitirá la lectura de cualquier archivo.
+Puede verse que, bajo *ms-dos*, no se hace diferencia entre /lectura/
+y /ejecución/. Como se presentó en la sección \ref{DIR_tipos_archivo},
+el sistema *ms-dos* basa la identificación de archivos en su
+/extensión/. Y, claro, siendo un sistema concebido como /monousuario/,
+no tiene sentido condicionar la /lectura/ de un archivo: El sistema
+operativo siempre permitirá la lectura de cualquier archivo.
 
 ** Modelo tradicional Unix
 
@@ -1409,16 +1408,16 @@ forma parte de su sistema operativo — resultó una implementación tan
 exitosa que a los pocos años formaba parte de todos los sistemas tipo
 Unix.
 
-*nfs* está construido sobre el mecanismo *rpc* (/Remote Procedure Call/,
+Está construido sobre el mecanismo *rpc* (/Remote Procedure Call/,
 /Llamada a Procedimientos Remotos/), un mecanismo de mensajes y manejo
-básico de sesión que actúa como una capa superior a *tcp/ip*, incluyendo
-facilidades de /descubrimiento de recursos/ y /abstracción/. *rpc* puede
-ser comparado con protocolos como *dce/rpc* de *osf*, *dcom* de
-Microsoft, y hoy en día, *soap* y *xml-rpc*. Estos mecanismos permiten
-al programador delegar en un /servicio/ el manejo de las conexiones de
-red, particularmente (en el caso particular aquí descrito) la
-persistencia de sesiones en caso de desconexión, y limitar su atención
-a una /conexión virtual establecida/.
+básico de sesión que actúa como una capa superior a *tcp/ip*,
+incluyendo facilidades de /descubrimiento de recursos/ y
+/abstracción/. *rpc* puede ser comparado con protocolos como *dce/rpc*
+de *osf*, *dcom* de Microsoft, y hoy en día, *soap* y *xml-rpc*. Estos
+mecanismos permiten al programador delegar en un /servicio/ el manejo
+de las conexiones de red, particularmente (en el caso particular aquí
+descrito) la persistencia de sesiones en caso de desconexión, y
+limitar su atención a una /conexión virtual establecida/.
 
 La motivación de origen para la creación de *nfs* fue presentar una
 solución que aprovechara el hardware existente y centralizara la
@@ -1431,7 +1430,7 @@ servidor le envíe incluso el núcleo del sistema operativo que
 ejecutará] y el entorno de usuario completo estuviera disponible en
 cualquiera de las estaciones.
 
-*nfs* ofrece sobre la red un sistema de archivos con la semántica Unix
+El sistema de archivos que ofrece sobre la red *nfs* cumple con la semántica Unix
 completa — para montar un sistema remoto, basta montarlo[fn:: Para
 montar un sistema remoto, se emplea un comando como =mount
 archivos.unam.mx:/ext/home /home=, con lo cual el directorio
@@ -1440,10 +1439,10 @@ montado como directorio =/home= local.] y usarlo como si fuera local. El
 manejo de permisos, usuarios, e incluso las ligas duras y simbólicas
 se manejan exactamente como se haría localmente.
 
-*nfs* es un protocolo muy ligero — no implementa cifrado ni
-verificaciones adicionales, pero al día de hoy, es uno de los mejores
-mecanismos para el envío de grandes cantidades de información — pero
-siempre en redes que sean /completamente confiables/.
+El *nfs* viaja sobre un protocolo muy ligero — no implementa cifrado
+ni verificaciones adicionales, pero al día de hoy, es uno de los
+mejores mecanismos para el envío de grandes cantidades de información
+— pero siempre en redes que sean /completamente confiables/.
 
 Ahora, *nfs* se presenta como uno de los componentes de una solución
 completa. Dado que se espera que la información de usuarios y permisos
@@ -1497,20 +1496,20 @@ siendo ampliamente utilizado.[fn:: Es debido a este nombre que la
 implementación de *cifs* para sistemas Unix, /Samba/, fue llamado de
 esta manera.]
 
-*cifs* se ajusta mucho más a la semántica de los sistemas *ms-dos* y
-Windows, aunque dado el lapso de tiempo que ha existido, ha pasado por
-varios cambios fundamentales, que al día de hoy complican su uso.
+El sistema *cifs* se ajusta mucho más a la semántica de los sistemas
+frecuentemente encontrados en las *pc*, *ms-dos* y Windows, aunque
+dado el lapso de tiempo que ha existido, ha pasado por varios cambios
+fundamentales, que al día de hoy complican su uso.
 
 Para tener acceso a un volumen compartido por *smb* se introdujo el
 comando =NET=;[fn:: Este comando es empleado en *ms-dos*, pero está
 también disponible en Windows, y al día de hoy es una de las
-principales herramientas para administrar usuarios.] basta indicar a
-*dos* o Windows (desde la línea de comando) =NET USE W:
-\\servidor\directorio= para que el recurso
-compartido bajo el nombre =directorio= dentro del equipo conocido como
-=servidor= aparezca en el árbol /Mi PC/, y el usuario pueda emplear
-sus contenidos como si fuera un sistema de archivos local, con un
-volumen asignado de =W:=.
+principales herramientas para administrar usuarios.] basta indicar
+desde la línea de comando a *dos* o Windows =NET USE W:
+\\servidor\directorio= para que el recurso compartido bajo el nombre
+=directorio= dentro del equipo conocido como =servidor= aparezca en el
+árbol /Mi PC/, y el usuario pueda emplear sus contenidos como si fuera
+un sistema de archivos local, con un volumen asignado de =W:=.
 
 Cuando *lan* Manager fue introducido al mercado, los sistemas
 Microsoft no manejaban
@@ -1524,12 +1523,12 @@ usuario/contraseña, que posibilita el otorgamiento de permisos con una
 controlarse el acceso permitido más finamente, a nivel archivo
 individual y usuario individual.]
 
-*smb* fue pensado originalmente para una red /pequeña/, con hasta un par
-de decenas de equipos. La mayor parte de los paquetes eran enviados en
-modo /de difusión/ (/broadcast/), por lo que era fácil llegar a la
-saturación, y no existía un esquema centralizado de resolución de
-nombres, con lo que era frecuente /no encontrar/ a determinado
-equipo.
+El protocolo empleado por *smb* fue pensado originalmente para una red
+/pequeña/, con hasta un par de decenas de equipos. La mayor parte de
+los paquetes eran enviados en modo /de difusión/ (/broadcast/), por lo
+que era fácil llegar a la saturación, y no existía un esquema
+centralizado de resolución de nombres, con lo que era frecuente /no
+encontrar/ a determinado equipo.
 
 Los cambios que *cifs* presenta a lo largo de los años son muy
 profundos. Las primeras implementaciones presentan fuertes problemas
@@ -1573,14 +1572,14 @@ de estaciones] (y lo hacían mucho más hace 30 años): *afs* debe operar
 tan confiablemente como sea posible, /incluso sin la certeza de que la
 red opera correctamente/.
 
-*afs* construye fuertemente sobre el modelo de /tickets/ y credenciales
-de /Kerberos/,[fn:: Un sistema de autenticación y autorización
-centralizado para entornos corporativos.] pero se aleja sensiblemente
-de la semántica de operación de archivos que hasta ahora se han
-presentado. Muchos eventos, operaciones y estados van ligados al
-/momento en el tiempo/ en que se presentan, a través de un /modelo de
-consistencia débil/ (/weak consistency model/). Muy a grandes rasgos,
-esto significa que:
+La autenticación en *afs* se basa fuertemente sobre el modelo de
+/tickets/ y credenciales de /Kerberos/,[fn:: Un sistema de
+autenticación y autorización centralizado para entornos corporativos.]
+pero se aleja sensiblemente de la semántica de operación de archivos
+que hasta ahora se han presentado. Muchos eventos, operaciones y
+estados van ligados al /momento en el tiempo/ en que se presentan, a
+través de un /modelo de consistencia débil/ (/weak consistency
+model/). Muy a grandes rasgos, esto significa que:
 
 - Cuando se abre un archivo, éste se copia completo al cliente. Todas
   las lecturas /y escrituras/ (a diferencia de los esquemas

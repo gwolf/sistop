@@ -881,16 +881,16 @@ por relativamente pocas entradas del *tlb* son muy altas.
 #+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (*tlb*)
 [[./img/dot/paginacion_con_tlb.png]]
 
-Como sea, dado que el *tlb* es limitado en tamaño, es necesario explicitar una
-política que indique dónde guardar las nuevas entradas (esto es, qué 
-entrada reemplazar) una vez que el
-*tlb* está lleno y se produce un fallo de página. Uno de los esquemas
-más comunes es emplear la entrada /menos recientemente utilizada/
-(*lru*, /Least Recently Used/), nuevamente apelando a la localidad de
-referencia. Esto tiene como consecuencia necesaria que debe haber un
-mecanismo que contabilice los accesos dentro del *tlb* (lo cual agrega
-tanto latencia como costo). Otro mecanismo (con obvias desventajas) es
-el reemplazar una página al azar. Se explicará con mayor detalle más
+Como sea, dado que el *tlb* es limitado en tamaño, es necesario
+explicitar una política que indique dónde guardar las nuevas entradas
+(esto es, qué entrada reemplazar) una vez que el *tlb* está lleno y se
+produce un fallo de página. Uno de los esquemas más comunes es emplear
+la entrada /menos recientemente utilizada/ (*lru*, /Least Recently
+Used/), nuevamente apelando a la localidad de referencia. Esto tiene
+como consecuencia necesaria que debe haber un mecanismo que
+contabilice los accesos dentro del *tlb* (lo cual agrega tanto
+latencia como costo). Otro mecanismo (con obvias desventajas) es el
+reemplazar una página al azar. Se explicará con mayor detalle más
 adelante algunos de los mecanismos más empleados para este fin,
 comparando sus puntos a favor y en contra.
 
@@ -1421,10 +1421,10 @@ con tres marcos, y con la siguiente cadena de referencia:
 *** Primero en entrar, primero en salir (*fifo*)
 # <<MEM_FIFO>>
 
-El algoritmo de más simple y de obvia implementación es, nuevamente, el
-*fifo*: al cargar una página en memoria, se toma nota de en qué momento
-fue cargada, y cuando llegue el momento de reemplazar una página
-vieja, se elige la que haya sido cargada hace más tiempo.
+El algoritmo de más simple y de obvia implementación es, nuevamente,
+el *fifo*: al cargar una página en memoria, se toma nota de en qué
+momento fue cargada, y cuando llegue el momento de reemplazar una
+página vieja, se elige la que haya sido cargada hace más tiempo.
 
 Partiendo de un estado inicial en que las tres páginas están
 vacías, necesariamente las tres primeras referencias a distintas
@@ -1502,8 +1502,8 @@ Para la cadena de referencia, *lru* genera 12 fallos, en el punto
 medio entre *opt* y *fifo*.
 
 Una observación interesante puede ser que para una cadena $S$ y su
-/cadena espejo/ (invertida) $R^S$, el resultado de evaluar $S$ por
-*lru* es igual al de evaluar $R^S$ por *opt*, y viceversa.
+/cadena espejo/ (invertida) $R^S$, el resultado de evaluar $S$
+empleando *lru* es igual al de evaluar $R^S$ con *opt*, y viceversa.
 
 La principal debilidad de *lru* es que para su implementación requiere
 apoyo en hardware[fn:: Dada la frecuencia con que se efectúan
@@ -1530,14 +1530,15 @@ subconjunto estricto de las que estarían con $n+1$ marcos.
 
 *** Más frecuentemente utilizada (*mfu*) / Menos frecuentemente utilizada (*lfu*)
 
-Estos dos algoritmos se basan en mantener un contador, como lo hace
-*lru*, pero en vez de medir el tiempo, miden la /cantidad/ de
+Estos dos algoritmos se basan en mantener un contador, tal como lo
+hace *lru*, pero en vez de medir el tiempo, miden la /cantidad/ de
 referencias que se han hecho a cada página.
 
-*mfu* parte de la lógica que, si una página fue empleada muchas veces,
-probablemente vuelva a ser empleada muchas veces más; *lfu* parte de
-que una página que ha sido empleada pocas veces es probablemente una
-página recién cargada, y va a ser empleada en el futuro cercano.
+El *mfu* parte de la lógica que, si una página fue empleada muchas
+veces, probablemente vuelva a ser empleada muchas veces más; *lfu*
+parte de que una página que ha sido empleada pocas veces es
+probablemente una página recién cargada, y va a ser empleada en el
+futuro cercano.
 
 Estos dos algoritmos son tan caros de implementar como *lru*, y su
 rendimiento respecto a *opt* no es tan cercana, por lo cual casi no son
@@ -2277,8 +2278,8 @@ los atacantes menos persistentes o habilidosos.
 
 *** Secciones de datos no ejecutables
 
-En secciones anteriores se describió la protección que puede imponer la
-*mmu* por regiones, evitando la modificación de código ejecutable.
+En secciones anteriores se describió la protección que puede imponer
+la *mmu* por regiones, evitando la modificación de código ejecutable.
 
 En la arquitectura x86, dominante en el mercado de computadoras
 personales desde hace muchos años, esta característica existía en

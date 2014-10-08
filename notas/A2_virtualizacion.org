@@ -206,38 +206,38 @@ compilado nativamente.
 ** De lo abstracto a lo concreto
 
 Si bien las arquitecturas de máquinas virtuales planteadas en el
-apartado anterior se plantearon directamente para no ser
-implementadas en hardware, el éxito comercial de la plataforma llevó
-a crear una línea de chips que ejecutara /nativamente/ código
-intermedio Java, con lo cual podrían ahorrarse pasos y obtener mejor
-rendimiento de los sistemas destino. Sun definió la arquitectura
-*majc* (/Microprocessor Architecture for Java Computing/, Arquitectura
-de microprocesadores para el cómputo con Java) en la segunda mitad de
-los 1990, e incluso produjo un chip de esta arquitectura, el
-*majc 5200*.
+apartado anterior se plantearon directamente para no ser implementadas
+en hardware, el éxito comercial de la plataforma llevó a crear una
+línea de chips que ejecutara /nativamente/ código intermedio Java, con
+lo cual podrían ahorrarse pasos y obtener mejor rendimiento de los
+sistemas destino. Sun definió la arquitectura *majc* (/Microprocessor
+Architecture for Java Computing/, Arquitectura de microprocesadores
+para el cómputo con Java) en la segunda mitad de los 1990, e incluso
+produjo un chip de esta arquitectura, el *majc 5200*.
 
 La arquitectura *majc* introdujo conceptos importantes que han sido
 retomados para el diseño de procesadores posteriores, pero la
 complejidad llevó a un rendimiento deficiente, y el chip resultó un
 fracaso comercial.
 
-Es importante  mencionar otra aproximación. Transitando en el sentido 
-inverso al de Sun con *majc*, /Transmeta/, una empresa hasta entonces 
-desconocida, anunció en el 2000 el procesador /Crusoe/, orientado al 
-mercado de bajo consumo energético. Este procesador, en vez de implementar 
-una arquitectura ya existente para entrar a un mercado ya muy competido 
-y dinámico, centró su oferta en que Crusoe trabajaría mano a mano con un módulo llamado
-*cms* (/Code Morphing Software/, Software de Transformación de Código),
-siendo así el primer procesador diseñado para /emular por hardware/ a
-otras arquitecturas. Crusoe fue lanzado al mercado con el *cms* para la
-arquitectura x86 de Intel, y efectivamente, la emulación era
-completamente transparente al usuario.[fn:: Empleando Transmeta, se
-podían observar ciertos comportamientos curiosos: por ejemplo, dado el
-amplio espacio de caché que implementaba el *cms*, el código ejecutable
-se mantenía /ya traducido/ listo para el procesador, por lo cual la
-primera vez que se ejecutaba una función era notablemente más lenta
-que en ejecuciones posteriores. Sin embargo, si bien estas diferencias
-son medibles y no deben escapar a la vista de quien está analizando a
+Es importante mencionar otra aproximación. Transitando en el sentido
+inverso al de Sun con *majc*, /Transmeta/, una empresa hasta entonces
+desconocida, anunció en el 2000 el procesador /Crusoe/, orientado al
+mercado de bajo consumo energético. Este procesador, en vez de
+implementar una arquitectura ya existente para entrar a un mercado ya
+muy competido y dinámico, centró su oferta en que Crusoe trabajaría
+mano a mano con un módulo llamado *cms* (/Code Morphing Software/,
+Software de Transformación de Código), siendo así el primer procesador
+diseñado para /emular por hardware/ a otras arquitecturas. Crusoe fue
+lanzado al mercado con el *cms* para la arquitectura x86 de Intel, y
+efectivamente, la emulación era completamente transparente al
+usuario.[fn:: Empleando Transmeta, se podían observar ciertos
+comportamientos curiosos: por ejemplo, dado el amplio espacio de caché
+que implementaba el *cms*, el código ejecutable se mantenía /ya
+traducido/ listo para el procesador. Por tal motivo, la primera vez
+que se ejecutaba una función era notablemente más lenta que en
+ejecuciones posteriores. Sin embargo, si bien estas diferencias son
+medibles y no deben escapar a la vista de quien está analizando a
 conciencia estos procesadores, resultaban invisibles para el usuario
 final.] El procesador mismo, además, no implementaba algunas
 características que hoy en día se consideran fundamentales, como una
@@ -510,12 +510,11 @@ modificar su código fuente: de otra manera, ¿cómo se le podría adecuar
 para que supiera desenvolverse en un entorno no nativo?
 
 El proyecto de gestión de virtualización y paravirtualización /Xen/
-nació como un proyecto
-académico de la Universidad de Cambridge, presentando su versión 1.x a
-través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the Art of
-Virtualization]]). Este artículo presenta su experiencia
-paravirtualizando a una versión entonces actual de Linux y de Windows
-*xp*. Sin embargo, Xen sólo pudo ser empleado por muchos años como
+nació como un proyecto académico de la Universidad de Cambridge,
+presentando su versión 1.x a través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen
+and the Art of Virtualization]]). Este artículo presenta su experiencia
+paravirtualizando a una versión entonces actual de Linux y de
+Windows. Sin embargo, Xen sólo pudo ser empleado por muchos años como
 plataforma de paravirtualización de Linux porque, dado que la
 adaptación de Windows se realizó bajo los términos del /Academic
 Licensing Program/, que permitía a los investigadores acceso y

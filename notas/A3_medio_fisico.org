@@ -303,11 +303,11 @@ de bloques/ (/Logical Block Addressing/, *lba*) a principios de los
 noventa. Hasta ese momento, el sistema operativo tenía información de
 la ubicación /física/ de todos los bloques en el disco.
 
-Una de las desventajas, sin embargo, de este esquema es que el mismo
-*bios* tenía que conocer la /geometría/ de los discos — y el *bios*
-presentaba límites duros en este sentido: principalmente, no le era
-posible referenciar más allá de 64 cilindros. Al aparecer la interfaz
-de discos *ide* (/Electrónica integrada al dispositivo/) e ir
+Una de las desventajas, sin embargo, de este esquema es que hacía
+necesario que el *bios* conociera la /geometría/ de los discos — y
+éste presentaba límites duros en este sentido: principalmente, no le
+era posible referenciar más allá de 64 cilindros. Al aparecer la
+interfaz de discos *ide* (/Electrónica integrada al dispositivo/) e ir
 reemplazando a la *st-506*, se introdujo *lba*.
 
 Este mecanismo convierte la dirección C-H-S a una dirección /lineal/,
@@ -321,9 +321,10 @@ de una dirección C-H-S a una *lba* era:
 $LBA = ((Cilindro \times CPC) + Cabeza) \times SPC + Sector - 1$
 #+END_QUOTE
 
-*lba* significó mucho más que una nueva notación: marcó el inicio de
-la transferencia de inteligencia y control del *cpu* al controlador de
-disco. El impacto de esto se refleja directamente en dos factores:
+La transición de *chs* a *lba* significó mucho más que una nueva
+notación: marcó el inicio de la transferencia de inteligencia y
+control del *cpu* al controlador de disco. El impacto de esto se
+refleja directamente en dos factores:
 
 - Sectores variables por cilindro :: En casi todos los discos previos
      a *lba*,[fn:: Las unidades de disco /Commodore 1541/ y /Macintosh
@@ -631,10 +632,11 @@ tecnologías presentes en distintos sistemas operativos modernos que
 heredan las ideas presentadas por *raid*, pero integrándolos con
 funciones formalmente implementadas por capas superiores.
 
-*raid* no es un sólo esquema, sino que especifica un /conjunto/ de
-/niveles/, cada uno de ellos diseñado para mejorar distintos aspectos
-del almacenamiento en discos. Se exponen a continuación las
-características de los principales niveles en uso hoy en día.
+La operación de *raid*, más que un único esquema, especifica un
+/conjunto/ de /niveles/, cada uno de ellos diseñado para mejorar
+distintos aspectos del almacenamiento en discos. Se exponen a
+continuación las características de los principales niveles en uso hoy
+en día.
 
 ** *raid* nivel 0: división en /franjas/
 
@@ -744,7 +746,7 @@ configurado para verificar la paridad en lecturas, todas
 las lecturas tendrán que obtener la franja correspondiente de todos
 los discos del arreglo para poder calcularla.
 
-*raid* 5 opera con un algoritmo de verificación y recuperación
+El algoritmo de verificación y recuperación de *raid* 5 es
 sorprendentemente eficiente y simple: el de una
 #+latex: \emph{suma \textbf{xor}},
 #+html: <i>suma <b>xor</b></i>,
@@ -873,13 +875,13 @@ embargo, ambos volúmenes *raid* 1 estarían dañados e incompletos.]
 * Manejo avanzado de volúmenes
 # <<FS_FIS_man_av_vol>>
 
-Los esquemas *raid* vienen, sin embargo, de fines de la década de 1980,
-y si bien han cambiado el panorama del almacenamiento, en los más de
-20 años desde su aparición, han sido ya superados. El énfasis en el
-estudio de *raid* (y no tanto en los desarrollos posteriores) se
+Los esquemas *raid* vienen, sin embargo, de fines de la década de
+1980, y si bien han cambiado el panorama del almacenamiento, en los
+más de 20 años desde su aparición, han sido ya superados. El énfasis
+en el estudio de *raid* (y no tanto en los desarrollos posteriores) se
 justifica dada la limpieza conceptual que presentan, y dado que
-esquemas posteriores incluso hacen referencia explícita al nivel de
-*raid* que /estarían reemplazando/ en su documentación.
+esquemas posteriores incluso hacen referencia explícita en su
+documentación al nivel de *raid* que /estarían reemplazando/.
 
 A continuación se presentan brevemente dos esquemas avanzados de
 gestión de volúmenes, principalmente ilustrando la dirección en que
@@ -910,9 +912,9 @@ del administrador del sistema, ya independientes del tamaño de las
 unidades físicamente existentes– crear las /unidades lógicas/, donde
 se alojarán los sistemas de archivos propiamente.
 
-Este esquema permite naturalmente una funcionalidad comparable con
-*raid* 0: puede crearse un grupo de volúmenes con todos los discos que
-disponibles, y dentro de este crear un volumen lógico
+Este esquema permite naturalmente una funcionalidad comparable con la
+de un *raid* 0: puede crearse un grupo de volúmenes con todos los
+discos que disponibles, y dentro de este crear un volumen lógico
 único. Dependiendo de la configuración, este volumen lógico puede
 crecer abarcando todos los discos en cuestión, sea como simple
 concatenación o dividiéndose en franjas.
@@ -933,10 +935,11 @@ distinta a la que presenta *raid* — pero da al administrador del sistema
 flexibilidad: ampliar o reducir el espacio dedicado a cada uno de los
 volúmenes, incluso en un sistema en producción y con datos.
 
-*lvm* ofrece varias funcionalidades adicionales, como las /fotografías/
-(/snapshots/) o varios esquemas de reemplazo de disco; si bien hay
-mucho más que podría decirse de *lvm*, no se profundiza más en esta
-herramienta dado que excede del objetivo del presente material.
+Además de lo anterior, *lvm* ofrece varias funciones adicionales, como
+las /fotografías/ (/snapshots/) o varios esquemas de reemplazo de
+disco; si bien hay mucho más que podría decirse de *lvm*, no se
+profundiza más en esta herramienta dado que excede del objetivo del
+presente material.
 
 ** *zfs*
 # <<FS_FIS_zfs>>
@@ -947,21 +950,22 @@ administración del sistema, su operación sigue siendo orientada a
 sistema de archivos que el administrador del sistema considere acorde
 para la tarea requerida.
 
-*zfs*[fn:: El nombre *zfs* proviene de /Zettabyte File System/. Los
-diseñadores de *zfs* indican, sin embargo, que esto no es para indicar
-que *zfs* sea capaz de direccionar hasta zettabytes de información, sino
-que será /el último sistema de archivos/ que cualquier administrador
-requerirá.] fue desarrollado por Sun Microsystems desde el año 2001,
-forma parte del sistema operativo /Solaris/ desde el 2005, y hoy en
-día puede emplearse desde los principales sistemas operativos
-libres.[fn:: *zfs* no puede ser incorporado íntegramente al núcleo de
-Linux por /incompatibilidad de licencias/: si bien ambos son software
-libre, los modelos de licenciamiento *gpl* (de Linux) y *cddl* (de *zfs*)
-son incompatibles.] Y si bien *zfs* resulta suficientemente atractivo
-tan sólo por haber sido diseñado para que el usuario nunca más se tope
-con un límite impuesto por el sistema operativo, el principal cambio
-que presenta al usuario es una forma completamente distinta de
-referirse al almacenamiento.
+El sistema de archivos *zfs*[fn:: El nombre *zfs* proviene de
+/Zettabyte File System/. Los diseñadores de *zfs* indican, sin
+embargo, que esto no es para indicar que *zfs* sea capaz de
+direccionar hasta zettabytes de información, sino que será /el último
+sistema de archivos/ que cualquier administrador requerirá.] fue
+desarrollado por Sun Microsystems desde el año 2001, forma parte del
+sistema operativo /Solaris/ desde el 2005, y hoy en día puede
+emplearse desde los principales sistemas operativos libres.[fn:: *zfs*
+no puede ser incorporado íntegramente al núcleo de Linux por
+/incompatibilidad de licencias/: si bien ambos son software libre, los
+modelos de licenciamiento *gpl* (de Linux) y *cddl* (de *zfs*) son
+incompatibles.] Y si bien *zfs* resulta suficientemente atractivo tan
+sólo por haber sido diseñado para que el usuario nunca más se tope con
+un límite impuesto por el sistema operativo, el principal cambio que
+presenta al usuario es una forma completamente distinta de referirse
+al almacenamiento.
 
 En primer término, al igual que *lvm* presenta una primer integración
 entre conceptos, permitiendo unir de diferentes maneras varios

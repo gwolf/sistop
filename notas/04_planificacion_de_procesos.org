@@ -434,9 +434,10 @@ $\rho \le 1$. En caso de que se sostenga $\rho > 1$, la demora para
 iniciar la atención de un proceso crecerá cada vez más, cayendo en
 una cada vez mayor inanición.
 
-*fcfs* tiene características claramente inadecuadas para trabajo
-interactivo, sin embargo, al no requerir de hardware de apoyo (como
-un temporizador) sigue siendo ampliamente empleado.
+Puede observarse que *fcfs* tiene características claramente
+inadecuadas para trabajo interactivo, sin embargo, al no requerir de
+hardware de apoyo (como un temporizador) sigue siendo ampliamente
+empleado.
 
 ** Ronda (/Round Robin/)
 # << PLAN_RoundRobin >>
@@ -472,23 +473,23 @@ los cambios de contexto) se obtienen los siguientes resultados:
 #+caption: Ronda (/Round Robin/)
 [[./img/ditaa/planif_rr1.png]]
 
-La /ronda/ puede ser ajustada modificando la duración de
-$q$. Conforme se incrementa $q$, la ronda tiende a convertirse en
-*fcfs* — si cada /quantum/ es arbitrariamente grande, todo proceso
-terminará su ejecución dentro de su /quantum/; por otro lado,
-conforme decrece $q$, se tiene una mayor frecuencia de cambios de
-contexto; esto llevaría a una mayor ilusión de tener un procesador
-dedicado por parte de cada uno de los procesos, dado que cada proceso
-sería incapaz de notar las /ráfagas/ de atención que éste le da
-(avance rápido durante un periodo corto seguido de un periodo sin
-avance). Claro está, el procesador simulado sería cada vez más lento,
-dada la fuerte penalización que iría agregando la sobrecarga
-administrativa.
+La /ronda/ puede ser ajustada modificando la duración de $q$. Conforme
+se incrementa $q$, la ronda tiende a convertirse en *fcfs* — si cada
+/quantum/ es arbitrariamente grande, todo proceso terminará su
+ejecución dentro de su /quantum/; por otro lado, conforme decrece $q$,
+se tiene una mayor frecuencia de cambios de contexto; esto llevaría a
+una mayor ilusión de tener un procesador dedicado por parte de cada
+uno de los procesos, dado que cada proceso sería incapaz de notar las
+/ráfagas/ de atención que éste le da (avance rápido durante un periodo
+corto seguido de un periodo sin avance). Claro está, el procesador
+simulado sería cada vez más lento, dada la fuerte penalización que
+iría agregando la sobrecarga administrativa.
 
 Finkel (1988, p.35) se refiere a esto como el /principio de la
 histéresis/: /hay que resistirse al cambio/. Como ya lo se mencionó,
-*fcfs* mantiene al mínimo posible la sobrecarga administrativa, y
-–aunque sea marginalmente– resulta en mejor rendimiento global.
+el algoritmo *fcfs* mantiene al mínimo posible la sobrecarga
+administrativa, y –aunque sea marginalmente– resulta en mejor
+rendimiento global.
 
 Si se repite el análisis anterior bajo este mismo mecanismo, pero con
 un /quantum/ de 4 /ticks/, el resultado es:
@@ -603,11 +604,11 @@ Finkel (1988, p.44) apunta a que, a pesar de que intuitivamente daría
 una mayor ganancia combinar las estrategias de *spn* con un esquema de
 multitarea apropiativa, el comportamiento obtenido es muy similar para
 la amplia mayoría de los procesos. Incluso para procesos muy largos,
-*pspn* no los penaliza mucho más allá de lo que lo haría la ronda, y
-obtiene mejores promedios de forma consistente porque, al despachar
-primero a los procesos más cortos, mantiene la lista de procesos
-pendientes corta, lo que lleva naturalmente a menores índices de
-penalización.
+este algoritmo no los penaliza mucho más allá de lo que lo haría la
+ronda, y obtiene mejores promedios de forma consistente porque, al
+despachar primero a los procesos más cortos, mantiene la lista de
+procesos pendientes corta, lo que lleva naturalmente a menores índices
+de penalización.
 
 *** El más penalizado a continuación (*hprn*)
 
@@ -1190,8 +1191,8 @@ mecanismos ilustrados anteriormente.
 ** Los hilos *posix* (=pthreads=)
 
 La clasificiación recién presentada de modelos de mapeo entre hilos y
-procesos se refleja aproximadamente en la categorización de los hilos
-*posix* (=pthreads=) denominada el /ámbito de contención/.
+procesos se refleja aproximadamente en la categorización denominada el
+/ámbito de contención/ de los hilos *posix* (=pthreads=).
 
 Hay dos enfoques respecto a la /contención/ que deben tener los
 hilos, esto es: en el momento que un proceso separa su ejecución en

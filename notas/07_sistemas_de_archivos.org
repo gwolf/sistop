@@ -332,13 +332,13 @@ Esto presenta una complicación adicional al hablar del directorio
 /raiz/ de una unidad: si bien los directorios derivados no tienen este
 límite, al estar el directorio raiz ubicado en una sección fija del
 disco, tiene una longitud límite máxima: en un disco flexible (que
-hasta el día de hoy, por su limitada capacidad, se formatea bajo
-*fat12*), desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un
-tamaño de sector de 512 bytes, el directorio raiz mide $512 \times 14
-= 7168$ bytes, esto es, $\frac{7168}{32} = 224$ entradas como máximo. Y
-si bien esto puede no parecer muy limitado, ocupar cuatro entradas por
-archivo cuando, empleando *vfat*, se tiene un nombre medianamente largo
-reduce fuertemente el panorama.
+hasta el día de hoy, por su baja capacidad, se formatea bajo *fat12*),
+desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un tamaño
+de sector de 512 bytes, el directorio raiz mide $512 \times 14 = 7168$
+bytes, esto es, $\frac{7168}{32} = 224$ entradas como máximo. Y si
+bien esto puede no parecer muy limitado, ocupar cuatro entradas por
+archivo cuando, empleando *vfat*, se tiene un nombre medianamente
+largo reduce fuertemente el panorama.
 
 El problema no resulta tan severo como podría parecer: para *fat32*, el
 directorio raiz ya no está ubicado en un espacio reservado, sino que
@@ -433,11 +433,12 @@ especial (dependiendo de la versión de *fat*) =0xFFF=, =0xFFFF= o
 Ahora bien, si los directorios son sencillamente archivos que reciben
 un tratamiento especial, estos son también susceptibles a la
 fragmentación. Dentro de un sistema Windows 95 o superior (empleando
-*vfat*), con directorios anidados a cuatro o cinco niveles como lo
-establece su jerarquía estándar[fn:: Por ejemplo, =C:\Documents and
-Settings\Usuario\Menú Inicio\Programa Ejemplo\Programa Ejemplo.lnk=],
-la simple tarea de recorrerlos para encontrar determinado archivo puede
-resultar muy penalizado por la fragmentación.
+las extensiones *vfat*), con directorios anidados a cuatro o cinco
+niveles como lo establece su jerarquía estándar[fn:: Por ejemplo,
+=C:\Documents and Settings\Usuario\Menú Inicio\Programa
+Ejemplo\Programa Ejemplo.lnk=], la simple tarea de recorrerlos para
+encontrar determinado archivo puede resultar muy penalizado por la
+fragmentación.
 
 *** La eliminación de entradas del directorio
 
@@ -706,11 +707,11 @@ Los sistemas de archivos nacieron para facilitar el uso de
 dispositivos de almacenamiento para la información que debe persistir
 a largo plazo. Sin embargo, dado que la abstracción para su uso
 resulta tan natural para representar todo tipo de información, desde
-la década de 1980 aparecieron diversas implementaciones de discos
-*RAM*: Programas diseñados para tomar un espacio de memoria y darle la
-semántica de un disco, permitiendo manipular su contenido como si
-fuera un disco cualquiera. Esto es, presenta almacenamiento volátil,
-pero de muy alta velocidad.
+la década de 1980 aparecieron diversos discos *ram*: Programas
+diseñados para tomar un espacio de memoria y darle la semántica de un
+disco, permitiendo manipular su contenido como si fuera un disco
+cualquiera. Esto es, presenta almacenamiento volátil, pero de muy alta
+velocidad.
 
 Estos esquemas gozaron de relativa popularidad a lo largo de los 1980
 y 1990; fue sin embargo con la popularización de los sistemas que
@@ -724,8 +725,8 @@ persistentes (como el directorio con los archivos de dispositivos,
 *** Una ventana al núcleo
 # <<FS_proc>>
 
-En junio 1984, en el congreso de desarrolladores de sistemas Unix
-*usenix*, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
+En junio 1984, en el congreso de desarrolladores de sistemas Unix del
+grupo *usenix*, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
 files]]. Killian implementó un sistema de archivos virtual para ser
 montado en el directorio =/proc= del sistema que, en vez de
 representar un mapa de bloques, presentaba una ventana a la lista de
@@ -800,13 +801,13 @@ podamos asignar a un nuevo archivo.
 
 Los esquemas de asignación contigua se emplean hoy en día
 principalmente en sistemas de archivo de sólo lectura — por ejemplo,
-lo emplea el sistema principal que utilizan los *cd-rom*, el
-*iso-9660*, pensado para aprovechar al máximo un espacio que, una vez
-grabado, sólo podrá abrirse en modo de sólo lectura. Esto explica por
-qué, a diferencia de como ocurre en cualquier otro medio de
-almacenamiento, al /quemar/ un *cd-rom* es necesario preparar primero
-una /imagen/ en la que los archivos ocupen sus posiciones definitivas,
-y esta imagen debe grabarse al disco en una sola operación.
+lo emplea el sistema principal que utilizan los *cd-rom*, *iso-9660*,
+pensado para aprovechar al máximo un espacio que, una vez grabado,
+sólo podrá abrirse en modo de sólo lectura. Esto explica por qué, a
+diferencia de como ocurre en cualquier otro medio de almacenamiento,
+al /quemar/ un *cd-rom* es necesario preparar primero una /imagen/ en
+la que los archivos ocupen sus posiciones definitivas, y esta imagen
+debe grabarse al disco en una sola operación.
 
 ** Asignación ligada
 
@@ -872,14 +873,14 @@ bloque empleado por éste; el tema de fallos y recuperación bajo estos
 esquemas es abordado en la sección \ref{FS_fallos_recuperacion}).
 
 Hay dos mecanismos de mitigación para este problema: el empleado por
-*fat* es guardar una (o, bajo *fat12*, dos) copias adicionales de la tabla
-de asignación, entre las cuales que el sistema puede verificar si se
-mantengan consistentes y buscar corregirlas en caso contrario. Por
-otro lado, puede manejarse una estructura de /lista doblemente ligada/
-(en vez de una /lista ligada/ sencilla) en que cada elemento apunte
-tanto al siguiente como al anterior, con lo cual, en caso de
-detectarse una inconsistencia en la información, esta pueda ser
-recorrida /de atrás hacia adelante/ para confirmar los datos
+los sistemas *fat* es guardar una (o, bajo *fat12*, dos) copias
+adicionales de la tabla de asignación, entre las cuales que el sistema
+puede verificar si se mantengan consistentes y buscar corregirlas en
+caso contrario. Por otro lado, puede manejarse una estructura de
+/lista doblemente ligada/ (en vez de una /lista ligada/ sencilla) en
+que cada elemento apunte tanto al siguiente como al anterior, con lo
+cual, en caso de detectarse una inconsistencia en la información, esta
+pueda ser recorrida /de atrás hacia adelante/ para confirmar los datos
 correctos. En ambos casos, sin embargo, la sobrecarga administrativa
 se duplica.
 
@@ -1052,23 +1053,22 @@ suyo, el sistema tendrá que buscar todos sus fragmentos a lo largo del
 disco.
 
 Ante estos dos aspectos, no puede perderse de vista la edad que tiene
-*fat*. Otros sistemas de archivos más modernos han resuelto este
-problema a través de los /grupos de asignación/: los directorios del
-sistema son /esparcidos/ a lo largo del volumen, y /se intenta/ ubicar
-a los archivos cerca de los directorios desde donde son referidos[fn::
-Claro está, en el caso de los archivos que están como /ligas duras/
-desde varios directorios, pueden ubicarse sólo cerca de uno de
-ellos]. Esto tiene por consecuencia que los archivos que presentan
-/cercanía temática/ (que pertenecen al mismo usuario o proyecto, o que
-por alguna razón están en la misma parte de la jerarquía del sistema)
-quedan ubicados en disco cerca unos de otros (y cerca de sus
-directorios). Y dado que
-es probable que sean empleados aproximadamente al mismo tiempo, esto
-reduce las distancias que recorrerán las cabezas. Además, al esparcir
-los archivos, se distribuye también mejor el espacio libre, por lo
-cual el impacto de los cambios de tamaño de un archivo en lo relativo
-a la fragmentación se limita a los que forman parte del mismo bloque
-de asignación.
+el sistema *fat*. Otros sistemas de archivos más modernos han resuelto
+este problema a través de los /grupos de asignación/: los directorios
+del sistema son /esparcidos/ a lo largo del volumen, y /se intenta/
+ubicar a los archivos cerca de los directorios desde donde son
+referidos[fn:: Claro está, en el caso de los archivos que están como
+/ligas duras/ desde varios directorios, pueden ubicarse sólo cerca de
+uno de ellos]. Esto tiene por consecuencia que los archivos que
+presentan /cercanía temática/ (que pertenecen al mismo usuario o
+proyecto, o que por alguna razón están en la misma parte de la
+jerarquía del sistema) quedan ubicados en disco cerca unos de otros (y
+cerca de sus directorios). Y dado que es probable que sean empleados
+aproximadamente al mismo tiempo, esto reduce las distancias que
+recorrerán las cabezas. Además, al esparcir los archivos, se
+distribuye también mejor el espacio libre, por lo cual el impacto de
+los cambios de tamaño de un archivo en lo relativo a la fragmentación
+se limita a los que forman parte del mismo bloque de asignación.
 
 Los sistemas de archivos que están estructurados siguiendo esta lógica
 de grupos de asignación no evitan la fragmentación, pero sí la mayor

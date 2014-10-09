@@ -19,17 +19,17 @@ En contraposición con /proceso/, en un sistema por lotes se habla de
 basta con guardar la información relacionada con la /contabilidad/ de
 los recursos empleados. Una tarea no es interrumpida en el transcurso
 de su ejecución. Ahora bien, esta distinción no es completamente
-objetiva — y se pueden encontrar muchos textos que emplean
+objetiva —y se pueden encontrar muchos textos que emplean
 indistintamente una u otra nomenclatura.
 
 Si bien el sistema brinda la /ilusión/ de que muchos procesos se
 están ejecutando al mismo tiempo, la mayor parte de ellos típicamente
-está esperando para continuar su ejecución — en un momento
+está esperando para continuar su ejecución —en un momento
 determinado sólo puede estar ejecutando sus instrucciones un número
 de procesos igual o menor al número de procesadores que tenga el sistema.
 
 En este capítulo se desarrollan los conceptos relacionados con
-procesos, hilos, concurrencia y sincronización — las técnicas y
+procesos, hilos, concurrencia y sincronización —las técnicas y
 algoritmos que emplea el sistema operativo para determinar cómo y en
 qué orden hacer los cambios de proceso que brindan al usuario la
 ilusión de simultaneidad se abordarán en el capítulo \ref{PLAN}.
@@ -38,7 +38,7 @@ ilusión de simultaneidad se abordarán en el capítulo \ref{PLAN}.
 # <<PROC_estados_de_un_proceso>>
 
 Un proceso, a lo largo de su vida, alterna entre diferentes /estados/
-de ejecución. Estos son:
+de ejecución. Éstos son:
 
 - Nuevo :: Se solicitó al sistema operativo la creación de un proceso,
            y sus recursos y estructuras están siendo creadas.
@@ -52,20 +52,21 @@ de ejecución. Estos son:
 
 - Bloqueado :: En espera de algún evento para poder continuar
                su ejecución (aun si hubiera un procesador disponible,
-               no podría avanzar). 
+               no podría avanzar).pcb
 
 - Zombie :: El proceso ha finalizado su ejecución, pero el sistema
             operativo debe realizar ciertas operaciones de limpieza
             para poder eliminarlo de la lista.[fn:: Estas operaciones
             pueden incluir notificar al proceso padre, cerrar las
-            conexiones de red que tenía activas, liberar memoria, etc.]
+            conexiones de red que tenía activas, liberar memoria,
+            etcétera.]
 
 - Terminado :: El proceso terminó de ejecutarse; sus estructuras están
-               a la espera de ser /limpiadas/ por el sistema operativo
+               a la espera de ser /limpiadas/ por el sistema operativo.
 
 #+attr_latex: width=0.4\textwidth
 #+label: PROC_estados_proceso
-#+caption: Diagrama de transición entre los estados de un proceso
+#+caption: Diagrama de transición entre los estados de un proceso.
 [[./img/dot/estados_proceso.png]]
 
 ** Información asociada a un proceso
@@ -87,7 +88,7 @@ Block/). El *pcb* incluye campos como:
 - Información de planificación (scheduling) :: La prioridad del
      proceso, la /cola/ en que está agendado, y demás información que
      puede ayudar al sistema operativo a planificar los procesos; se
-     profundizará el tema en el capítulo \ref{PLAN}.
+     profundizará en este tema en el capítulo \ref{PLAN}.
 
 - Información de administración de memoria :: La información de mapeo
      de memoria (páginas o segmentos, dependiendo del sistema
@@ -95,11 +96,12 @@ Block/). El *pcb* incluye campos como:
      el tema en el capítulo \ref{MEM}.
 
 - Información de contabilidad :: Información de la utilización de
-     recursos que ha tenido este proceso — puede incluir el tiempo
+     recursos que ha tenido este proceso —puede incluir el tiempo
      total empleado y otros (/de usuario/, cuando el procesador va
      avanzando sobre las instrucciones del programa propiamente, /de
      sistema/ cuando el sistema operativo está atendiendo las
-     solicitudes del proceso), uso acumulado de memoria y dispositivos, etc.
+     solicitudes del proceso), uso acumulado de memoria y
+     dispositivos, etcétera.
 
 - Estado de E/S :: Listado de dispositivos y archivos asignados que el
                    proceso tiene /abiertos/ en un momento dado.
@@ -120,7 +122,7 @@ recursos. Una respuesta a esta problemática fue la de utilizar los
 (*lwp*, /Lightweight processes/).
 
 Cuando se consideran procesos basados en un modelo de hilos, se puede
-proyectar en sentido inverso que todo proceso es como un sólo hilo de
+proyectar en sentido inverso que todo proceso es como un solo hilo de
 ejecución. Un sistema operativo que no ofreciera soporte expreso a los
 hilos los planificaría exactamente del mismo modo.
 
@@ -141,10 +143,10 @@ completamente y de forma transparente en espacio de usuario (sin
 involucrar al sistema operativo). Estos hilos se llaman /hilos de
 usuario/ (/user threads/), y muchos lenguajes de programación los
 denominan /hilos verdes/ (/green threads/). Un caso de uso interesante
-es en sistemas operativos mínimos (p. ej. para dispositivos embebidos)
-capaces de ejecutar una máquina virtual (ver sección
+es en los sistemas operativos mínimos (p. ej. para dispositivos
+embebidos), capaces de ejecutar una máquina virtual (ver sección
 \ref{VIRT_arq_inexistentes}) de alguno de esos lenguajes:
-si bien el sistema operativo no maneja multiprocesamiento, a través de
+si bien el sistema operativo no maneja multiprocesamiento, mediante
 los hilos de usuario se crean procesos con multitarea interna.
 
 Los procesos que implementan hilos ganan un poco en el rendimiento
@@ -152,7 +154,7 @@ gracias a no tener que reemplazar al *pcb* activo cuando intercalan la
 ejecución de sus diferentes hilos; pero además de esto, ganan mucho
 más por la ventaja de compartir espacio de memoria sin tener que
 establecerlo explícitamente a través de /mecanismos de comunicación
-entre procesos/ (*ipc* — /Inter Process Communications/). Dependiendo
+entre procesos/ (*ipc*, /Inter Process Communications/). Dependiendo
 de la plataforma, a veces los hilos de usuario inclusive utilizan
 multitarea cooperativa para pasar el control dentro de un mismo
 proceso. Cualquier llamada al sistema /bloqueante/ (como obtener datos
@@ -183,7 +185,7 @@ cada aplicación, e incluso se pueden /anidar/ (esto es, se podría
 tener una /línea de ensamblado/ dentro de la cual uno de los pasos sea
 un /equipo de trabajo/):
 
-- Jefe / trabajador :: Un hilo tiene una tarea distinta de todos los
+- Jefe/trabajador :: Un hilo tiene una tarea distinta de todos los
      demás: el hilo /jefe/ genera o recopila tareas para realizar, las
      separa y se las entrega a los hilos /trabajadores/.
 
@@ -193,21 +195,21 @@ un /equipo de trabajo/):
      programa (el hilo /jefe/) esperando a que ocurran eventos
      externos. El jefe realiza poco trabajo, se limita a /invocar/ a
      los trabajadores para que hagan el trabajo /de verdad/; como mucho,
-     puede llevar contabilidad de los trabajos realizados.
+     puede llevar la contabilidad de los trabajos realizados.
 
      Típicamente, los hilos trabajadores realizan su operación, posiblemente
      notifican al /jefe/ de su trabajo, y /finalizan/ su ejecución.
 
      #+attr_latex: width=0.4\textwidth
      #+label: PROC_jefe_trabajador
-     #+caption: Patrón de hilos jefe/trabajador
+     #+caption: Patrón de hilos jefe/trabajador.
      [[./img/dot/jefe_trabajador.png]]
 
 #ejemplo
 
 - Equipo de trabajo :: al iniciar la porción multihilos del proceso,
      se crean muchos hilos idénticos, que realizarán las mismas tareas
-     sobre diferentes datos. Este modelo es muy frecuentemente
+     sobre diferentes datos. Este modelo es frecuentemente
      utilizado para cálculos matemáticos (p. ej.: criptografía,
      render, álgebra lineal). Puede combinarse con un estilo jefe/trabajador para irle
      dando al usuario una previsualización del resultado de su
@@ -220,7 +222,7 @@ un /equipo de trabajo/):
      trabajo/ no es un hilo más, sino que prepara los datos para que
      éstos sean lanzados en /paralelo/. Estos datos no son resultado de
      /eventos independientes/ (como en el caso anterior), sino 
-     partes de un sólo cálculo. Por consecuencia, resulta natural que
+     partes de un solo cálculo. Como consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
      hilos no /terminan/, sino que /son sincronizados/ y luego continúan la
@@ -228,7 +230,7 @@ un /equipo de trabajo/):
 
      #+attr_latex: width=0.5\textwidth
      #+label: PROC_equipo_trab
-     #+caption: Patrón de hilos /Equipo de trabajo/
+     #+caption: Patrón de hilos /Equipo de trabajo/.
      [[./img/dot/equipo_trab.png]]
 
 #ejemplo
@@ -238,13 +240,13 @@ un /equipo de trabajo/):
      enfocarse a hacer sólo un paso y pasarle los datos a otro hilo
      conforme vaya terminando. Una de las principales ventajas de este
      modelo es que ayuda a mantener rutinas simples de comprender,
-     y permite que el procesamiento de datos continúe incluso si parte
+     y permite que el procesamiento de datos continúe, incluso si parte
      del programa está bloqueado esperando E/S.
 
      Un punto importante a tener en cuenta en una línea de ensamblado
      es que, si bien los hilos trabajan de forma secuencial, pueden
      estar ejecutándose paralelamente sobre bloques consecutivos de
-     información, eventos, etc.
+     información, eventos, etcétera.
 
      Este patrón es claramente distinto de los dos anteriormente
      presentados; si bien en los anteriores los diferentes hilos (a
@@ -254,7 +256,7 @@ un /equipo de trabajo/):
 
      #+attr_latex: width=0.6\textwidth
      #+label: PROC_linea_ensamblado
-     #+caption: Patrón de hilos /Línea de ensamblado/
+     #+caption: Patrón de hilos /Línea de ensamblado/.
      [[./img/dot/linea_ensamblado.png]]
 
 * Concurrencia
@@ -267,10 +269,10 @@ o más eventos que ocurren a la vez sino a dos o más eventos cuyo orden
 es /no determinista/, esto es, eventos acerca de los cuales /no se
 puede predecir el orden relativo en que ocurrirán/. Si bien dos
 procesos (o también dos hilos) completamente independientes entre sí
-ejecutándose simultáneamente son dos procesos concurrentes, la
-concurrencia se ocupa principalmente de procesos cuya ejecución está
-vinculada de alguna manera (p. ej.: dos procesos que comparten cierta
-información o que dependen uno del otro).
+ejecutándose simultáneamente son concurrentes, los temas que en la
+presente sección se expondrán se ocupan principalmente de procesos
+cuya ejecución está vinculada de alguna manera (p. ej.: dos procesos
+que comparten cierta información o que dependen uno del otro).
 
 Aunque una de las tareas principales de los sistemas operativos es dar
 a cada proceso la ilusión de que se está ejecutando en una computadora
@@ -284,13 +286,13 @@ Se verá que pueden aparecer muchos problemas cuando se estudia la
 interacción entre hilos del mismo proceso, la sincronización entre
 distintos procesos, la asignación de recursos por parte del sistema operativo a
 procesos simultáneos, o incluso cuando interactuan usuarios de
-diferentes computadoras de una red — se presentarán distintos conceptos
+diferentes computadoras de una red —se presentarán distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
-pero muchos de esos conceptos en realidad son independientes del
+pero muchos de dichos conceptos en realidad son independientes del
 escenario: más bien esta sección se centra en la relación entre
 procesos que deben compartir recursos o sincronizar sus tareas.
 
-Para presentar los problemas y conceptos relacionados con la
+Para presentar la problemática y los conceptos relacionados con la
 concurrencia suelen utilizarse algunos problemas clásicos, que
 presentan casos particulares muy simplificados, y puede encontrárseles
 relación con distintas cuestiones que un programador enfrentará en
@@ -302,18 +304,18 @@ sistema operativo se encontraría en una situación similar.
 
 Para cada problema se mostrará /una forma/ de resolverlo 
 aunque en general hay más de
-una solución válida. Algunos de estos problemas fueron originalmente
+una solución válida. Algunos de éstos fueron originalmente
 planteados como justificación del desarrollo de las estructuras de
 control presentadas o de nuevos paradigmas de concurrencia y muchos
 son aun objeto de debate e investigación.
 
-Para profundizar más en este tema, se recomienda el libro «[[http://greenteapress.com/semaphores/][The little
-book of semaphores]]» de Allen Downey (2008).
-En este libro (de libre descarga) se encuentran muchos ejemplos
-que ilustran el uso de semáforos no sólo para resolver problemas de
-sincronización, sino como un mecanismo simple de comunicación entre
-procesos. También se desarrollan distintas soluciones para los
-problemas clásicos (y no tan clásicos).
+Para profundizar más en este tema, se recomienda el libro [[http://greenteapress.com/semaphores/][The little
+book of semaphores]] de Allen Downey (2008).  En este libro (de libre
+descarga) se encuentran muchos ejemplos que ilustran el uso de
+semáforos, no sólo para resolver problemas de sincronización, sino como
+un mecanismo simple de comunicación entre procesos. También se
+desarrollan distintas soluciones para los problemas clásicos (y no tan
+clásicos).
 
 ** Problema: el jardín ornamental
 # <<PROC_problemas_clasicos>>
@@ -325,7 +327,7 @@ apreciar sus fantásticas rosas, arbustos y plantas acuáticas. Por
 supuesto, se cobra una módica suma de dinero a la entrada para lo cual
 se colocan dos torniquetes, uno en cada una de sus dos entradas. Se desea
 conocer cuánta gente ha ingresado al jardín así que se instala una
-computadora conectada a ambos torniquetes: cada torniquete envía una
+computadora conectada a ambos torniquetes: estos envían una
 señal cuando una persona ingresa al jardín. Se realiza un modelo
 simplificado de la situación, así que no se estudiarán los
 detalles del hardware utilizado. Aquí es importante notar que los dos
@@ -381,8 +383,8 @@ utilizar un solo torniquete, =cuenta= siempre tiene el valor correcto
 
 ¿Qué es lo que está ocurriendo? La mayor parte de los lenguajes de
 programación convierten cada instrucción en una serie más o menos
-larga de operaciones de máquina (instrucciones ensamblador). De modo,
-que una instrucción aparentemente simple como =cuenta = cuenta + 1=
+larga de operaciones de máquina (instrucciones ensamblador). De modo
+que una instrucción aparentemente simple, como =cuenta = cuenta + 1=
 habitualmente implica varias operaciones de más bajo nivel (las instrucciones
 de ejemplo corresponden a arquitecturas Intel x86):
 
@@ -397,7 +399,7 @@ razón, los valores almacenados en registros se preservan (junto con la
 información sobre el proceso) para poder restaurarlo cuando la
 ejecución continúe (de esta forma se provee la ilusión de la
 multitarea en sistemas de un solo núcleo). Así, en el problema del
-Jardín Ornamental cada torniquete tiene su propia copia de los valores
+jardín ornamental cada torniquete tiene su propia copia de los valores
 en los registros. Sin embargo, se supone que el resto de la memoria es
 compartida (en particular, se utiliza ese hecho para llevar la cuenta
 de personas que ingresan).
@@ -438,18 +440,19 @@ ejecución de estas instrucciones:
 
 Nuevamente ambos procesos ejecutaron sus instrucciones para
 incrementar en 1 el contador. Sin embargo, ¡en este caso =cuenta=
-tiene el valor 1!. A este problema también se lo conoce como /problema
+tiene el valor 1! A este problema también se lo conoce como /problema
 de las actualizaciones múltiples/.
 
 - Esto parece muy específico ::
 
-  Si bien este análisis parece muy específico es fácil ver que la
-  misma circustancia podría darse en un sistema de reserva de vuelos
+  Si bien este análisis presenta aparentemente una problemática
+  específica al planteamiento en cuestiónm es fácil ver que la misma
+  circustancia podría darse en un sistema de reserva de vuelos
   (p. ej.: puede que dos operadores vean un asiento vacío en su copia
   local de los asientos y ambos marquen el mismo asiento como ocupado)
   o con dos procesos que decidan cambiar simultáneamente datos en un
-  archivo. Aquí las operaciones ya no son necesariamente operaciones
-  internas de la máquina.
+  archivo. Aquí las operaciones ya no son necesariamente internas de
+  la máquina.
 
 - ¿Pero no es muy poco probable? ::
 
@@ -463,24 +466,24 @@ de las actualizaciones múltiples/.
   perfectamente la mayor parte del tiempo, pero de vez en cuando puede
   fallar. Subsecuentes ejecuciones con los mismos argumentos producen
   nuevamente el resultado correcto. Esto hace que los problemas de
-  concurrencia sean muy difíciles de detectar y más aun de corregir. Es
+  concurrencia sean muy difíciles de detectar y más aún de corregir. Es
   importante (y mucho más efectivo) realizar un buen diseño inicial de
   un programa concurrente en lugar de intentar arreglarlo cuando se
   detecta alguna falla. También es interesante notar que dependiendo del
   sistema, puede ser que alguna de las instrucciones sea muy lenta, en
   el caso de un sistema de reserva de asientos de aviones, las
   operaciones pueden durar un tiempo importante (p. ej.: desde que el
-  operador muestra los asientos disponibles hasta que el cliente elige
-  el asiento) haciendo mucho más probable que ocurra una secuencia no
+  operador muestra los asientos disponibles hasta que el cliente lo
+  elige) haciendo mucho más probable que ocurra una secuencia no
   deseada.
 
 - ¿Vale la pena preocuparse? ::
 
-  A modo de ilustración de la gravedad del problema, estos son algunos
+  A modo de ilustración de la gravedad del problema, éstos son algunos
   valores para el resultado final de la variable =cuenta= cuando se
   ejecuta el programa anterior en Pascal-FC[fn::
   http://www-users.cs.york.ac.uk/burns/pf.html]: 25 29 31 20 21 26 27
-  18 31 35. Notesé que incluso uno de los valores es menor que /20/
+  18 31 35. Nótese que incluso uno de los valores es menor que /20/
   (que es lo mínimo que cuenta cada torniquete). Es un ejercicio
   interesante pensar qué secuencia de eventos podría producir tal
   valor y cuál es el mínimo valor posible.
@@ -498,31 +501,31 @@ de las actualizaciones múltiples/.
 
 *** Algunos conceptos de concurrencia
 
-Antes de abordar posibles soluciones al problema presentado, se
+Antes de abordar algunas posibles soluciones al problema, se
 presentan las definiciones de algunos conceptos importantes.
 
-- Operación atómica :: Operación que requiere la garantía de que se
-     ejecutará como una sóla unidad de ejecución, o fallará
+- Operación atómica :: Manipulación de datos que requiere la garantía
+     de que se ejecutará como una sóla unidad de ejecución, o fallará
      completamente, sin resultados o estados parciales observables por
      otros procesos o el entorno. Esto no necesariamente implica que
      el sistema no retirará el flujo de ejecución en medio de la
      operación, sino que /el efecto de que se le retire el flujo/ no
-     llevará a comportamiento inconsistente.
+     llevará a un comportamiento inconsistente.
 
-- Condición de carrera :: (En inglés, /Race condition/) Categoría de errores de
+- Condición de carrera :: (/Race condition/) Categoría de errores de
      programación que involucra a dos procesos que fallan al comunicarse
      su estado mutuo, llevando a resultados inconsistentes. Es uno de
      los problemas más frecuentes y difíciles de depurar, y ocurre
      típicamente por no considerar la /no atomicidad/ de una operación
 
 - Sección (o región) crítica :: El área de código que requiere ser protegida de
-     accesos simultáneos, donde se realiza la modificiación de datos
+     accesos simultáneos donde se realiza la modificiación de datos
      compartidos.
 
-- Recurso compartido :: Un recurso que puede ser accedido desde más de
-     un proceso. En muchos escenarios esto es un variable en memoria 
-     (como =cuenta= en el jardín ornamental),
-     pero podrían ser archivos, periféricos, etc...
+- Recurso compartido :: Un recurso al que se puede tener acceso desde
+     más de un proceso. En muchos escenarios esto es un variable en
+     memoria (como =cuenta= en el jardín ornamental), pero podrían ser
+     archivos, periféricos, etcétera.
 
 Dado que el sistema no tiene forma de saber cuáles instrucciones (o
 áreas del código) deben funcionar de forma atómica, el programador debe asegurar
@@ -531,30 +534,31 @@ procesos. El sistema no debe permitir la ejecución de parte de esa
 área en dos procesos de forma simultánea (sólo puede haber un proceso
 en la sección crítica en un momento dado).
 
-**** ¿Y qué tiene que ver esto con el problema del Jardín Ornamental?
+**** ¿Y qué tiene que ver esto con el problema del jardín ornamental?
 
-En el problema hay claramente un /recurso compartido/ que es la =cuenta=, así la
-sección que modifica la cuenta es una /sección crítica/ y la operación
-=cuenta = cuenta + 1= debe ser una /operación atómica/. La secuencia de eventos que
-se mostró es una /condición de carrera/: el segundo torniquete presume
-un estado (=cuenta = 0=) que no es el mismo que conoce el =torniquete1=
-(=cuenta = 1=).
+En el problema hay claramente un /recurso compartido/ que es la
+=cuenta=, por tanto, el código que modifica la cuenta constituye una
+/sección crítica/ y la operación =cuenta = cuenta + 1= debe ser una
+/operación atómica/. La secuencia de eventos que se mostró es una
+/condición de carrera/: el segundo torniquete presume un estado
+(=cuenta = 0=) que no es el mismo que conoce el =torniquete1= (=cuenta
+= 1=).
 
 *** Soluciones posibles (y no tanto)
 
-El planteamiento del problema del /jardín ornamental/ busca llevar al
-lector a ir encontrando, a través de sucesivos refinamientos, los
+El planteamiento del problema del jardín ornamental busca llevar al
+lector a ir encontrando, mediante sucesivos refinamientos, los
 mecanismos principales que se emplean para resolver –en general– los
 problemas que implican el acceso concurrente a una sección crítica. Se
-presentan a continuación, pues, los sucesivos /intentos/.
+presentan a continuación los sucesivos /intentos/.
 
-- Intento 1: No utilizar multitarea ::
-  En este sencillo ejemplo una posible solución es utilizar una sola
-  entrada (o torniquete). Esto podría ser una solución en tanto que no
-  haya mucha gente que haga cola para entrar. Sin embargo, en un sistema
-  análogo de reserva de pasajes aereos no parece tener mucho sentido que
-  todos los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado,
-  ya deberían ser claras las ventajas de la multitarea y el poseer
+- Intento 1: No utilizar multitarea :: En este sencillo ejemplo una
+  posible solución es utilizar únicamente una entrada (o
+  torniquete). Esto podría ser una solución en tanto que no haya mucha
+  gente que haga cola para entrar. Sin embargo, en un sistema análogo
+  de reserva de pasajes aéreos no parece tener mucho sentido que todos
+  los pasajeros deban ir a Japón a sacar su pasaje. Por otro lado, ya
+  deberían ser claras las ventajas de la multitarea y el poseer
   distintos núcleos.
 
 - Intento 2: Suspender la multitarea durante la sección crítica ::
@@ -579,13 +583,13 @@ presentan a continuación, pues, los sucesivos /intentos/.
   - Permitir que un programa de usuario deshabilite las interrupciones
     en un sistema operativo de propósito general involucra un gran
     problema de seguridad: cualquier usuario podría hacer un programa
-    malicioso (o sencillamente erroneo) que deshabilite las
+    malicioso (o sencillamente erróneo) que deshabilite las
     interrupciones y suspenda indefinidamente el resto del sistema.
 
-  - No funciona para sistemas distribuídos (como el sistema de reserva
+  - No funciona para sistemas distribuidos (como el sistema de reserva
     de pasajes aereos), ni siquiera para sistemas multinúcleo o
     multiprocesador, ya que las interrupciones se deshabilitan en un
-    sólo núcleo (si bien también es posible detener a los demás
+    solo núcleo (si bien también es posible detener a los demás
     procesadores, representa un costo demasiado alto).
 
   - Expone detalles de hardware y podría provocar mal funcionamiento de
@@ -622,7 +626,7 @@ presentan a continuación, pues, los sucesivos /intentos/.
   7. =torniquete2=: =cuenta = cuenta + 1;=
   8. =torniquete1=: =cuenta = cuenta + 1; /* Ups, no se respetó la región crítica */=
 
-  Notar que el problema aquí es que la bandera también es un recurso
+  Pero nótese que el problema aquí es que la bandera también es un recurso
   compartido: lo único que ha cambiado es que ahora la sección crítica
   está en otro lugar. La solución funcionaría si se pudiera
   garantizar que la secuencia de operaciones se realizara atómicamente:
@@ -667,16 +671,16 @@ presentan a continuación, pues, los sucesivos /intentos/.
   impidiendo que otro proceso decremente la bandera. Y aún cuando el
   sistema operativo decida cambiar de proceso en el siguiente tic de
   reloj, es evidente que se podría aprovechar el procesador para hacer
-  algo útil durante ese tiempo y que suspender el proceso de otra manera
-  le da más posibilidad a otros procesos para que cambien la bandera. A
-  esto se lo conoce como /espera activa/ o /espera ocupada/ (/busy
-  waiting/ en inglés) y es una situación que se desea evitar.
+  algo útil durante ese tiempo y que suspender el proceso de otra
+  manera le da más posibilidad a otros procesos para que cambien la
+  bandera. A esto se lo conoce como /espera activa/ o /espera ocupada/
+  (/busy waiting/ o /spinlock/) y es una situación que se desea evitar.
 
   El otro problema tiene que ver con el hardware: determinadas
   arquitecturas no permiten instrucciones que lean y actualicen en una
   única operación una dirección de memoria (se requiere una operación
   para leer y otra para escribir).  En particular, ninguna arquitectura
-  RISC lo permite (p. ej.: SPARC, RS 6000, ...).
+  tipo *risc* lo permite (p. ej.: *sparc*, *rs 6000*, ...).
 
 - Intento 5: Utilizar turnos ::
   Una alternativa para evitar el problema de la actualización múltiple a
@@ -710,9 +714,9 @@ presentan a continuación, pues, los sucesivos /intentos/.
   Esto garantiza que no hay dos procesos en sección crítica. Pero nótese
   que hacer esto equivale a tener un solo torniquete: sólo podrá haber
   una persona ingresando a la vez... o incluso peor, las personas
-  deberán utilizar alternativamente los torniquetes. Así que si bien
-  esto soluciona el problema de la actualización múltiple en realidad es
-  una solución muy restrictiva: un proceso que no está en la sección
+  deberán utilizar alternativamente los torniquetes. Así que, si bien
+  esto soluciona el problema de la actualización múltiple, en realidad es
+  una respuesta muy restrictiva: un proceso que no está en la sección
   crítica puede obligar a que otro proceso espere mucho tiempo para
   ingresar a la sección crítica. De aquí en más se buscarán soluciones en
   las que no ocurra esto.
@@ -750,22 +754,22 @@ presentan a continuación, pues, los sucesivos /intentos/.
 
   Nuevamente aquí está garantizado que no puede haber dos procesos en la
   región crítica, pero este enfoque sufre de un problema grave: ambos
-  procesos pueden bloquearse mutuamente (si el proceso 1 coloca su
-  bandera en 1 y luego se cambia el control al proceso 2 quien también
+  pueden bloquearse mutuamente (si el proceso 1 coloca su
+  bandera en 1 y luego se cambia el control al proceso 2, el cual también
   colocará su bandera en 1).
 
-*** Una solución: el Algoritmo de Peterson
+*** Una solución: el algoritmo de Peterson
 
-La primera solución a esta problema fue propuesta por Dekker
-en 1957. Sin embargo su explicación es bastante extensa (aunque
+La primera solución a este problema fue propuesta por el matemático
+Theodorus Dekker en 1957. Sin embargo su explicación es bastante extensa (aunque
 perfectamente comprensible). Se presentará la solución
-planteada por Peterson unos cuantos años más tarde: en 1970.
+planteada por Peterson unos cuantos años más tarde, en 1970.
 
 La solución está basada en una combinación de los intentos anteriores:
 utilizar banderas para indicar qué proceso puede entrar, pero además
 usa un turno para /desempatar/ en caso de que ambos procesos busquen
 entrar a la vez. En cierto modo es un algoritmo /amable/: si un proceso
-detecta que el otro proceso fue el primero en actualizar el turno,
+detecta que el otro fue el primero en actualizar el turno,
 entonces lo deja pasar:
 
 #+begin_src C
@@ -801,25 +805,26 @@ Cabe apuntar las siguientes notas sobre la solución de Peterson:
                    de la espera activa (también llamados /spinlocks/):
                    un proceso puede consumir mucho tiempo de
                    procesador sólo para esperar que otro proceso
-                   cambie una bandera, lo cual en un sistema con
+                   cambie una bandera lo cual, en un sistema con
                    manejo de /prioridades/, puede resultar dañino para
                    el desempeño global. Una forma de
                    mitigar los efectos es forzar (o sugerir) cambios
-                   de contexto en esos puntos a través de una
+                   de contexto en esos puntos mediante una
                    /primitiva/ del lenguaje o del sistema operativo
                    (p. ej.: =sleep= o =yield=), pero debe resultar
                    claro que de ninguna forma es una solución
                    general. Por esta razón los sistemas operativos o
                    lenguajes suelen proveer alguna abstracción para
                    soportar explícitamente operaciones atómicas o
-                   implementar una solución más elegante al
+                   darle una solución más elegante al
                    problema. Se verán algunas de esas abstracciones
                    más adelante.
 
-		   Para mayores detalles acerca de las razones, ventajas y desventajas
-                   del uso de spinlocks en sistemas operativos reales,
-                   referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html][Spin Locks & Other Forms of
-                   Mutual Exclusion]] (Theodore P. Baker 2010)
+		   Para mayores detalles acerca de las razones,
+                   ventajas y desventajas del uso de /spinlocks/ en
+                   sistemas operativos reales, referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html][Spin Locks
+                   & Other Forms of Mutual Exclusion]] (Theodore
+                   P. Baker 2010)
 
 
 - Solución para más procesos :: El algoritmo de Peterson sirve
@@ -856,42 +861,42 @@ algoritmo de Peterson (o similiares) se llama /mutex/ o /candado/
 (lock).
 
 La palabra /mutex/ nace de la frecuencia con que se habla de las
-/regiones de exclusión mutua/ (en inglés, /mutual exclusion/). Es un
+/regiones de exclusión mutua/ (/mutual exclusion/). Es un
 mecanismo que asegura que cierta región del código será ejecutada
 como si fuera atómica.
 
 #+attr_html: height="261"
 #+attr_latex: width=0.8\textwidth
 #+label: PROC_secc_crit
-#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/. La figura ilustra a varios procesos que requieren de una misma sección crítica; las flechas punteadas representan el tiempo que un proceso está a la espera de que otro libere el paso para dicha sección, y las punteadas verticales indican la transferencia del /candado/.
+#+caption: Sincronización: la exclusión de las /secciones críticas/ entre varios procesos se protegen por medio de regiones de /exclusión mutua/. La figura ilustra varios procesos que requieren de una misma sección crítica; las flechas punteadas representan el tiempo que un proceso está a la espera de que otro libere el paso para dicha sección, y las punteadas verticales indican la transferencia del /candado/.
 [[./img/gnuplot/secc_crit.png]]
 
-Hay que tener en cuenta que un mutex /no implica/ que el código no se
-va a interrumpir mientras se está dentro de esta región — eso sería
+Hay que tener en cuenta que un /mutex/ /no implica/ que el código no se
+va a interrumpir mientras se está dentro de esta región —eso sería
 muy peligroso, dado que permitiría que el sistema operativo pierda el
 control del planificador, volviendo (para propósitos prácticos) a un
-esquema de multitarea cooperativa. El mutex es un /mecanismo de
+esquema de multitarea cooperativa. El /mutex/ es un /mecanismo de
 prevención/, que mantiene en espera a cualquier hilo o proceso que
-quiera entrar a la /sección crítica/ protegida por el mutex,
+quiera entrar a la /sección crítica/ protegida por el /mutex/,
  reteniéndolo antes de entrar a
 ésta hasta que el proceso que la está
 ejecutando salga de ella. Si no hay ningún hilo o proceso en dicha
 sección crítica (o cuando un hilo sale de ella), uno
-sólo de los que esperan podrá ingresar.
+solo de los que esperan podrá ingresar.
 
-Como se vio en el ejemplo anterior, para que un mutex sea efectivo
-tiene que ser implementado a través de una /primitiva/ a un nivel
-inferior[fn:: ¿Qué significa inferior? Las llamadas de sincronización
-entre hilos deben implementarse por lo menos a nivel del proceso que
-los contiene; aquellas que se realizan entre procesos independientes,
-deben implementarse a nivel del sistema operativo. Debe haber un
-agente /más abajo/ en niveles de abstracción, en control /real/ del
-equipo de cómputo, ofreciendo estas operaciones.], implicando al
-planificador.
+Como se vio en el ejemplo anterior, para que un /mutex/ sea efectivo
+tiene que ser implementado mediante una /primitiva/ a un nivel
+inferior,[fn:: ¿Qué significa inferior? Las llamadas de sincronización
+entre hilos deben implementarse por lo menos en el nivel del proceso
+que los contiene; aquellas que se realizan entre procesos
+independientes, deben implementarse en el nivel del sistema
+operativo. Debe haber un agente /más abajo/ en niveles de abstracción,
+en control /real/ del equipo de cómputo, ofreciendo estas
+operaciones.] implicando al planificador.
 
 El problema de la actualización múltiple que surge en el caso de la
-venta de pasajes aereos podría reescribirse de la siguiente manera
-empleando un mutex:
+venta de pasajes aéreos podría reescribirse de la siguiente manera
+empleando un /mutex/:
 
 #+begin_src perl
 my ($proximo_asiento :shared, $capacidad :shared);
@@ -915,17 +920,17 @@ Se debe tener en cuenta que en este caso se utiliza una implementación
 de hilos, esto hace que la solución sea dependiente del lenguaje
 específico de implementación, en este caso Perl. Al ser
 =$proximo_asiento= una variable compartida tiene algunas /propiedades/
-adicionales, en este caso, la de poder operar como un mutex. La
+adicionales, en este caso, la de poder operar como un /mutex/. La
 implementación en Perl resulta muy /limpia/, dado que evita el uso
-de un candado explícito — se podría leer la línea 5 como /exclusión
+de un candado explícito —se podría leer la línea cinco como /exclusión
 mutua sobre/ =$proximo_asiento=.
 
-En la implementación de hilos de Perl, la función =lock()= implementa
-un mutex delimitado por el /ámbito léxico/ de su invocación: el área
-de exclusión mutua abarca desde la línea 5 en que es invocada hasta la
-15 en que termina el bloque en que se invocó.
+En la implementación de hilos de Perl, la función =lock()= utiliza
+un /mutex/ delimitado por el /ámbito léxico/ de su invocación: el área
+de exclusión mutua abarca desde la línea cinco en que es invocada
+hasta la 15 en que termina el bloque en que se invocó.
 
-Un área de exclusion mutua debe:
+Un área de exclusión mutua debe:
 
 - Ser mínima :: Debe ser /tan corta como sea posible/, para evitar que
                 otros hilos queden bloqueados fuera del área
@@ -940,8 +945,8 @@ Un área de exclusion mutua debe:
      se podría haber puesto =lock($asignado)= dentro del =if=, dado
      que sólo dentro de su evaluación positiva se modifica la variable
      =$proximo_asiento=. Sin embargo, si la ejecución de un hilo se
-     interrumpiera entre las líneas 7 y 8, la condición del =if= se
-     podría evaluar incorrectamente.
+     interrumpiera entre las líneas siete y ocho, la condición del
+     =if= se podría evaluar incorrectamente.
 
 Como comparación, una rutina equivalente escrita en Bash (entre
 procesos independientes y utilizando a los archivos
@@ -971,7 +976,7 @@ sino que envuelve a una /llamada al sistema/. El sistema operativo
 garantiza que la verificación y creación de este /candado/ se
 efectuará de forma atómica.
 
-Un mutex es, pues, una herramienta muy sencilla, y podría verse como
+Un /mutex/ es, pues, una herramienta muy sencilla, y podría verse como
 la pieza básica para la sincronización entre procesos. Lo fundamental
 para emplearlos es identificar las regiones críticas del código, y
 proteger el acceso /con un mecanismo apto de sincronización/, que
@@ -979,7 +984,7 @@ garantice atomicidad.
 
 *** Semáforos
 
-La interfaz ofrecida por los mutexes es muy sencilla, pero no permite
+La interfaz ofrecida por los /mutexes/ es muy sencilla, pero no permite
 resolver algunos problemas de sincronización. Edsger Dijkstra, en
 1968, propuso los /semáforos/.[fn:: El símil presentado por Dijkstra
 no es del semáforo vial, con una luz roja y una luz verde (dicho
@@ -1036,7 +1041,7 @@ Un semáforo permite la implementación de varios patrones, entre los
 cuales se mencionarán los siguientes:
 
 - Señalizar :: Un hilo debe informar a otro que cierta condición está
-               ya cumplida — por ejemplo, un hilo prepara una conexión
+               ya cumplida —por ejemplo, un hilo prepara una conexión
                en red mientras que otro calcula lo que tiene que
                enviar. No se puede arriesgar a comenzar a enviar
                antes de que la conexión esté lista. Se inicializa el
@@ -1057,14 +1062,14 @@ cuales se mencionarán los siguientes:
 
 	       #+end_src
 
-	       No importa si =prepara_conexion()= termina primero — en
+	       No importa si =prepara_conexion()= termina primero —en
 	       el momento en que termine, =senal= valdrá 1 y
 	       =envia_datos()= podrá proceder.
 
 - /Rendezvous/ :: Así se denomina en francés (y ha sido adoptado al
                   inglés) a quedar en una /cita/. Este patrón busca
                   que dos hilos se esperen mutuamente en cierto punto
-                  para continuar en conjunto — por ejemplo, en una
+                  para continuar en conjunto —por ejemplo, en una
                   aplicación *gui*, un hilo prepara la interfaz gráfica
                   y actualiza sus eventos mientras otro efectúa
                   cálculos para mostrar. Se desea presentar al usuario
@@ -1094,8 +1099,8 @@ cuales se mencionarán los siguientes:
 		    procesa_calculo()
 		  #+end_src
 
-- Mutex :: El uso de un semáforo inicializado a 1 puede implementar
-	   fácilmente un mutex. En Python:
+- Mutex :: El uso de un semáforo inicializado a uno puede implementar
+	   fácilmente un /mutex/. En Python:
 
            #+begin_src python
 	   mutex = Semaphore(1)
@@ -1108,15 +1113,15 @@ cuales se mencionarán los siguientes:
            #+end_src
 
 - Multiplex :: Permite la entrada de no más de /n/ procesos a la
-               región crítica. Si se lo ve como una generalización de
-               /Mutex/, basta con inicializar al semáforo al número
+               región crítica. Si se lo ve como una generalización del
+               /mutex/, basta con inicializar al semáforo al número
                máximo de procesos deseado.
 
-	       Su construcción es idéntica a la de un mutex, pero es
+	       Su construcción es idéntica a la de un /mutex/, pero es
                inicializado al número de procesos que se quiere
                permitir que ejecuten de forma simultánea.
 
-- Torniquete :: Una construcción que por sí sóla no hace mucho, pero
+- Torniquete :: Una construcción que por sí sola no hace mucho, pero
                 resulta útil para patrones posteriores. Esta
                 construcción garantiza que un grupo de hilos o
                 procesos /pasa por un punto determinado/ de uno en uno
@@ -1139,26 +1144,26 @@ cuales se mencionarán los siguientes:
                 paso. Posteriormente, los procesos que esperan
                 pasarán ordenadamente por el torniquete.
 
-		El torniquete por sí sólo no es tan útil, pero su
+		El torniquete por sí solo no es tan útil, pero su
                 función se hará clara a continuación.
 
 - Apagador :: Cuando se tiene una situación de /exclusión categórica/
-              (basada en categorías y no en procesos individuales —
-              varios procesos de la misma categoría pueden entrar a la
+              (basada en categorías y no en procesos individuales
+              —varios procesos de la misma categoría pueden entrar a la
               sección crítica, pero procesos de dos categorías
               distintas deben tenerlo prohibido), un /apagador/
               permite evitar la inanición de una de las categorías
               ante un flujo constante de procesos de la otra.
 
-	      El apagador usa, como uno de sus componentes, a un
+	      El apagador usa, como uno de sus componentes, un
 	      torniquete. Para ver una implementación ejemplo de un
-	      apagador, referirse a la solución presentado a
-	      continuación para el problema de los lectores y los
+	      apagador, referirse a la solución presentada para el
+              problema de los lectores y los
               escritores (sección \ref{PROC_lectores_escritores}).
 
 - Barrera :: Una barrera es una generalización de /rendezvous/ que
              permite la sincronización entre varios hilos (no sólo
-             dos), y no requiere que el rol de cada uno de los hilos
+             dos), y no requiere que el papel de cada uno de los hilos
              sea distinto.
 
 	     Esta construcción busca que ninguno de los hilos
@@ -1169,7 +1174,7 @@ cuales se mencionarán los siguientes:
              guarde algo de información adicional además del semáforo,
              particularmente, el número de hilos que se han lanzado
              (para esperarlos a todos). Esta será una variable
-             compartida y, por tanto, requiere de un mutex. La
+             compartida y, por tanto, requiere de un /mutex/. La
              inicialización (que se ejecuta antes de iniciar los
              hilos) será:
 
@@ -1215,7 +1220,7 @@ cuales se mencionarán los siguientes:
 	     int pthread_barrier_destroy(pthread_barrier_t *barrier);
 	     #+end_src
 
-- Cola :: Se emplea una cola cuando se tienen dos /clases de/
+- Cola :: Se emplea cuando se tienen dos /clases de/
           hilos que deben proceder en pares. Este patrón es a veces
           referido como /baile de salón/: para que una pareja baile,
           hace falta que haya un /líder/ y un /seguidor/. Cuando
@@ -1252,40 +1257,40 @@ cuales se mencionarán los siguientes:
 *** Variables de condición
 
 Las variables de condición presentan una extensión sobre el
-comportamiento de los mutexes, buscando darles la "inteligencia" de
+comportamiento de los /mutexes/, buscando darles la "inteligencia" de
 responder ante determinados eventos. Una variable de condición siempre
-opera /en conjunto con/ un mutex, y en algunas implementaciones es
-necesario indicar cuál será dicho mutex desde la misma inicialización
+opera /en conjunto con/ un /mutex/, y en algunas implementaciones es
+necesario indicar cuál será dicho /mutex/ desde la misma inicialización
 del objeto.[fn:: Mientras que otras implementaciones permiten que se
 declaren por separado, pero siempre que se invoca a una variable
-de condición, debe indicársele qué mutex estará empleando.]
+de condición, debe indicársele qué /mutex/ estará empleando.]
 
 Una variable de condición presenta las siguientes operaciones:
 
-- Espera :: Se le indica una condición y un mutex. El mutex tiene que
-            haber sido ya adquirido. Esta operación /libera/ al mutex,
-            y se bloquea hasta recibir una /notificación/ de otro hilo
-            o proceso. Una vez que la notificación es recibida, y
-            antes de devolver la ejecución al hilo, /re-adquiere/ el
-            mutex.
+- Espera :: Se le indica una condición y un /mutex/, el cual tiene
+            que haber sido ya adquirido. Esta operación /libera/ al
+            /mutex/, y se bloquea hasta recibir una /notificación/ de
+            otro hilo o proceso. Una vez que la notificación es
+            recibida, y antes de devolver la ejecución al hilo,
+            /re-adquiere/ el /mutex/.
 
 - Espera medida :: Tiene una semántica igual a la de la espera, pero
                    recibe un argumento adicional, indicando el tiempo
                    de expiración. Si pasado el tiempo de expiración
                    no ha sido notificado, despierta al hilo
                    regresándole un error (y sin re-adquirir el
-                   mutex).
+                   /mutex/).
 
-- Señaliza :: Requiere que el mutex ya haya sido adquirido. Despierta
+- Señaliza :: Requiere que el /mutex/ ya haya sido adquirido. Despierta
               (señaliza) a uno o más hilos (algunas implementaciones
               permiten indicar como argumento a cuántos hilos) de los
               que están bloqueados en la espera asociada. /No/ libera
-              el mutex — esto significa que el flujo de ejecución /se
+              el /mutex/ —esto significa que el flujo de ejecución /se
               mantiene en el invocante/, quien tiene que salir de su
-              sección crítica (entregar el mutex) antes de que otro de
+              sección crítica (entregar el /mutex/) antes de que otro de
               los hilos continúe ejecutando.
 
-- Señaliza a todos :: Indica a /todos los hilos/ que estén esperando a
+- Señaliza a todos :: Despierta a /todos los hilos/ que estén esperando
      esta condición.
 
 La interfaz de hilos *posix* (=pthreads=) presenta la siguiente
@@ -1347,9 +1352,9 @@ requisitos, como:
   Pero el acceso a =buffer= no está protegido para garantizar la
   exclusión mutua, y podría quedar en un estado inconsistente si
   =append()= y =pop()= intentan manipular sus estructuras al mismo
-  tiempo. Además, si bien en este ejemplo se asumió que hay un sólo hilo
-  productor y un sólo hilo consumidor, se puede extender el programa
-  para que haya varios hilos en cualquiera de estos roles.
+  tiempo. Además, si bien en este ejemplo se asumió que hay solo un
+  hilo productor y solo uno consumidor, se puede extender el programa
+  para que haya varios hilos en cualquiera de estos papeles.
 
   En este caso, la variable =event= no requiere de protección, dado
   que es local a cada hilo.
@@ -1426,15 +1431,15 @@ requisitos, como:
   A pesar de ser más clara, no se empleará en este texto esta notación
   por dos razones. La primera es para mantener la conciencia de la
   semántica de las operaciones =acquire()= y =release()=, y la segunda
-  es mantener la consistencia a través de las distintas
+  es mantener la consistencia entre las distintas
   implementaciones, ya que se encontrarán varios casos en que no es el
   mismo hilo el que adquiere un semáforo y el que lo libera (esto es,
-  los semáforos no siempre son empleados como mutexes).
+  los semáforos no siempre son empleados como /mutexes/).
 
 ** Bloqueos mutuos e inanición
 
 Cuando hay concurrencia, además de asegurar la atomicidad de ciertas
-operaciones, se debe evitar dos problemas que son consecuencia natural
+operaciones, es necesario evitar dos problemas que son consecuencia natural
 de la existencia de la asignación de recursos de forma exclusiva:
 
 - Bloqueo mutuo :: (o /interbloqueo/; en inglés, /deadlock/) Situación
@@ -1445,7 +1450,7 @@ de la existencia de la asignación de recursos de forma exclusiva:
                    ninguno de los procesos involucrados podrán
                    avanzar.
 
-- Inanición :: (en inglés /resource starvation/) Situación en que un
+- Inanición :: (/resource starvation/) Situación en que un
 	       proceso no puede avanzar en su ejecución dado que necesita
 	       recursos que están (alternativamente) asignados a
 	       otros procesos.
@@ -1453,13 +1458,13 @@ de la existencia de la asignación de recursos de forma exclusiva:
 El que se presenten estos conceptos aquí no significa que están
 /exclusivamente/ relacionados con este tema: son conceptos que
 se enfrentan una y otra vez al hablar de asignación exclusiva de
-recursos — temática recurrente en el campo de los sistemas operativos.
+recursos —temática recurrente en el campo de los sistemas operativos.
 
 ** Problema de los lectores y los escritores
 # <<PROC_lectores_escritores>>
 *** Planteamiento
      Una estructura de datos puede ser accedida simultáneamente por
-     muchos procesos /lectores/, pero si algún proceso está
+     muchos procesos /lectores/, pero si alguno está
      escribiendo, se debe evitar que cualquier otro lea (dado que
      podría encontrarse con los datos en un estado inconsistente). Los
      requisitos de sincronización son
@@ -1485,9 +1490,9 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   Un primer acercamiento a este problema permite una resolución
   libre de bloqueos mutuos, empleando sólo tres estructuras globales:
   un contador que indica cuántos lectores hay en la sección crítica,
-  un mutex protegiendo a dicho contador, y otro mutex indicando que no
+  un /mutex/ protegiendo a dicho contador, y otro /mutex/ indicando que no
   hay lectores ni escritores accediendo al buffer (o
-  cuarto). Se implementan los mutexes con semáforos. 
+  cuarto). Se implementan los /mutexes/ con semáforos. 
 
   #+begin_src python
   import threading
@@ -1517,7 +1522,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   #+end_src
 
   El semáforo =cuarto_vacio= sigue un patrón visto antes llamado /apagador/. El
-  escritor utiliza al apagador como a cualquier mutex: lo utiliza para
+  escritor utiliza al apagador como a cualquier /mutex/: lo utiliza para
   rodear a su sección crítica. El lector, sin embargo, lo emplea de
   otra manera. Lo primero que hace es verificar /si la luz está
   prendida/, esto es, si hay algún otro lector en el cuarto (si
@@ -1572,28 +1577,27 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   #+end_src
 
   En la implementación de los escritores, esto puede parecer inútil:
-  únicamente se agregó un mutex redundante alrededor de lo que ya
+  únicamente se agregó un /mutex/ redundante alrededor de lo que ya
   se tenía. Sin embargo, al hacer que el lector pase por un
   torniquete antes de actualizar =lectores=, obligando a que
   se mantenga encendida la luz, se lo fuerza a esperar a que el
-  escritor suelte este mutex exterior. Nuevamente se puede ver cómo la misma
+  escritor suelte este /mutex/ exterior. Nuevamente se puede ver cómo la misma
   estructura es tratada de dos diferentes maneras: para el lector es
-  un torniquete, y para el escritor es un mutex.
+  un torniquete, y para el escritor es un /mutex/.
 
 ** La cena de los filósofos
 *** Planteamiento
      Cinco filósofos se dan cita para comer arroz en una mesa
-     redonda. En la mesa, cada uno de ellos se sienta frente a un
-     plato. A su derecha, tiene un palito chino, y a su izquierda
-     tiene otro.
+     redonda. En ella, cada uno se sienta frente a un plato. A su
+     derecha, tiene un palito chino, y a su izquierda tiene otro.
 
      Los filósofos sólo saben =pensar()= y =comer()=. Cada uno de
      ellos va a =pensar()= un tiempo arbitrario, hasta que le da
      hambre. El hambre es mala consejera, por lo que intenta
      =comer()=. Los requisitos son:
 
-     - Sólo un filósofo puede sostener determinado palito a la vez, esto es
-       los palitos son recursos de acceso exclusivo.
+     - Sólo un filósofo puede sostener determinado palito a la vez,
+       esto es, los palitos son recursos de acceso exclusivo.
 
      - Debe ser imposible que un filósofo muera de inanición estando a
        la espera de un palito.
@@ -1609,14 +1613,14 @@ recursos — temática recurrente en el campo de los sistemas operativos.
   al mismo tiempo, sino que se presenten situaciones en el curso normal de
   la operación que lleven a un bloqueo mutuo.
 
-  A diferencia del caso antes descripto, ahora se utilizarán los
-  semáforos no como una herramienta para indicar al planificador
+  A diferencia del caso antes descrito, ahora se utilizarán los
+  semáforos, no como una herramienta para indicar al planificador
   cuándo despertar a uno de los hilos, sino como una herramienta de
   comunicación entre los propios hilos.
 
 *** Primer acercamiento
 
-  Se puede representar a los palillos como un arreglo de semáforos,
+  Los palillos pueden representarse como un arreglo de semáforos,
   asegurando la exclusión mutua (esto es, sólo un filósofo puede
   sostener un palillo al mismo tiempo), pero eso no evita el bloqueo
   mutuo. Por ejemplo, si la  solución fuera:
@@ -1654,7 +1658,7 @@ recursos — temática recurrente en el campo de los sistemas operativos.
       # (...)
   #+end_src
 
-  Podría pasar que todos los filósofos quieran comer al mismo tiempo,
+  Podría pasar que todos los filósofos quieran comer al mismo tiempo
   y el planificador dejara suspendidos a todos con el palillo derecho
   en la mano.
 
@@ -1707,13 +1711,13 @@ Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
      para fumar son tabaco, papel y cerillos. Cada uno de los
      fumadores tiene una cantidad infinita de alguno de los
      ingredientes, pero no les gusta compartir. Afortunadamente, del
-     mismo modo que no comparten, no son acaparadores[fn:: Esto es, no
+     mismo modo que no comparten, no son acaparadores.[fn:: Esto es, no
      buscan obtener y conservar los recursos /preventivamente/, sino
      que los toman sólo cuando satisfacen /por completo/ sus
-     necesidades.].
+     necesidades.]
 
      De tiempo en tiempo, el agente consigue una dosis de dos de los
-     ingredientes — por ejemplo, si deja en la mesa un papel y tabaco,
+     ingredientes —por ejemplo, si deja en la mesa un papel y tabaco,
      el que trae los cerillos educadamente tomará los ingredientes, se
      hará un cigarro, y lo fumará.
 
@@ -1726,7 +1730,7 @@ Hay tres fumadores empedernidos y un /agente/ que, de tiempo en
        que notificar acerca de los flujos a cada uno de los programas
        que ejecuta!
 
-     - El planteamiento original de Patil menciona que no debe
+     - El planteamiento original de Patil menciona que no deben
        emplearse arreglos de semáforos o usar condicionales en el
        flujo. Esta segunda restricción haría efectivamente irresoluble
        al problema, por lo que se ignorará.
@@ -1777,7 +1781,7 @@ El problema en este caso es que, al tener que cubrir un número de
 ingredientes mayor a uno, utilizar sólo un semáforo ya no funciona: si
 =agente()= decide proveer papel y cerillos, nada garantiza que no sea
 el =fumador['cerillo']= el que reciba la primer señal o que
-=fumador['tabaco']= reciba la segunda — para que este programa avance
+=fumador['tabaco']= reciba la segunda; para que este programa avance
 hace falta, más que otra cosa, la buena suerte de que las señales sean
 recibidas por el proceso indicado.
 
@@ -1833,7 +1837,7 @@ para recibir una nueva notificación.
 
 ** Otros mecanismos
 
-Más allá de los mecanismos basados en mutexes y semáforos, existen
+Más allá de los mecanismos basados en /mutexes/ y semáforos, hay
 otros que emplean diferentes niveles de /encapsulamiento/
 para proteger las abstracciones. A continuación se presentan muy
 brevemente algunos de ellos.
@@ -1851,7 +1855,7 @@ Además, al hablar de procesos que compiten por recursos de una forma
 /hostil/, la implementación basada en semáforos puede resultar
 insuficiente. A mode de ejemplo, se mostrará por qué en el modelo
 original de Dijkstra (así como en los ejemplos presentados
-anteriormente) sólo existen las operaciones de incrementar y
+anteriormente) sólo se contemplan las operaciones de incrementar y
 decrementar, y no se permite verificar el estado (como lo ofrece
 =sem_trywait()= en =pthreads=):
 
@@ -1862,12 +1866,12 @@ sem_post(semaforo);
 #+end_src
 
 El código presentado es absolutamente válido — pero cae en una
-/espera activa/ que desperdicia innecesariamente y constantemente
+/espera activa/ que desperdicia innecesaria y constantemente
 tiempo de procesador (y no tiene garantía de tener más éxito que una
 espera pasiva, como sería el caso con un =sem_wait()=).
 
 Por otro lado, algún programador puede creer que su código ejecutará
-suficientemente rápido y con suficientemente baja frecuencia para que
+suficientemente rápido y con tan baja frecuencia que
 la probabilidad de que usar la sección crítica le cause problemas sea
 muy baja. Es frecuente ver ejemplos como el siguiente:
 
@@ -1877,30 +1881,30 @@ seccion_critica();
 #+end_src
 
 Los perjuicios causados por este programador resultan obvios. Sin
-embargo, es común ver casos como este.
+embargo, es común ver casos como éste.
 
 Los /monitores/ son estructuras provistas por el lenguaje o entorno de
-desarrollo que /encapsulan/ tanto a los datos /como a las funciones
-que los pueden manipular/, e impiden el acceso directo a las funciones
-potencialmente peligrosas — en otras palabras, son /tipos de datos
-abstractos/ (en inglés, /Abstract Data Types/, *adt*), /clases/ de
-/objetos/, y /exponen/ una serie de /métodos públicos/, además de
-poseer /métodos privados/ que emplean internamente.
+desarrollo que /encapsulan/ tanto los datos /como las funciones que
+los pueden manipular/, impidiendo el acceso directo a las funciones
+potencialmente peligrosas. En otras palabras, son /tipos de datos
+abstractos/ (/Abstract Data Types/, *adt*), /clases/ de /objetos/, y
+/exponen/ una serie de /métodos públicos/, además de poseer /métodos
+privados/ que emplean internamente.
 
 Al no presentar al usuario/programador una interfaz que puedan
 /subvertir/, el monitor mantiene todo el código necesario para
-asegurar el acceso concurrente a los datos en un sólo lugar.
+asegurar el acceso concurrente a los datos en un solo lugar.
 
 Un monitor puede implementarse utilizando cualquiera de los
-mecanismos de sincronización presentados anteriormente — la
+mecanismos de sincronización presentados anteriormente —la
 diferencia radica en que esto se hace /en un solo lugar/. Los
 programas que quieran emplear el recurso protegido lo hacen
-incluyendo el código del monitor como módulo / biblioteca, lo cual fomenta
+incluyendo el código del monitor como módulo/biblioteca, lo cual fomenta
 la /reutilización de código/.
 
 Como ejemplo, el lenguaje de programación /Java/ implementa
 sincronización vía monitores entre hilos como una propiedad de la
-declaración de método, y lo implementa directamente en la *jvm*. Si
+declaración de método, y lo hace directamente en la *jvm*. Si
 se declara un método de la siguiente manera:
 
 #+begin_src java
@@ -1917,9 +1921,9 @@ Y se inicializa a un =SimpleClass sc = new SimpleClass()=, cuando
 se llame a =sc.metodoSeguro()=, la máquina virtual verificará si ningún
 otro proceso está ejecutando =metodoseguro()=; en caso de que no sea
 así, le permitirá la ejecución obteniendo el candado, y en caso de sí
-haberlo, el hilo se bloqueará hasta que el candado sea liberado — esto
+haberlo, el hilo se bloqueará hasta que el candado sea liberado, esto
 es, la propiedad =synchronized= hace que todo acceso al método en
-cuestión sea protegido por una mutex.
+cuestión sea protegido por una /mutex/.
 
 El modelo de sincronización basado en monitores no sólo provee la
 exclusión mutua. Mediante /variables de condición/ se puede
@@ -1928,11 +1932,11 @@ semáforos, con los métodos =var.wait()= y =var.signal()=. En el caso
 de los monitores, =var.wait()= suspende al hilo hasta que otro hilo
 ejecute =var.signal()=; en caso de no haber ningún proceso esperando,
 =var.signal()= no tiene ningún efecto (no cambia el estado de =var=, a
-diferencia de lo que ocurre con los semáforos)
+diferencia de lo que ocurre con los semáforos).
 
 Aquí se presenta, a modo de ilustración, la resolución del problema de
-la /cena de los filósofos/ en C[fn:: Implementación basada en el
-[[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo de Ted Baker]], sobre la solución propuesta por Tanenbaum]. Esto
+la /cena de los filósofos/ en C.[fn:: Implementación basada en el
+[[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo de Ted Baker]], sobre la solución propuesta por Tanenbaum.] Esto
 demuestra, además, que si bien se utiliza semántica de orientación a
 objetos, no sólo los lenguajes clásicamente relacionados con la
 programación orientada a objetos permiten emplear monitores.
@@ -1997,13 +2001,13 @@ Esta implementación evita los bloqueos mutuos señalizando el estado de
 cada uno de los filósofos en el arreglo de variables =estado[]=.
 
 La lógica base de esta resolución marca en la verificación del estado
-propia y de los vecinos siempre que hay un cambio de estado: cuando el
+propio y de los vecinos siempre que hay un cambio de estado: cuando el
 filósofo =i= llama a la función =toma_palillos(i)=, esta se limita a
-adquirir el mutex =M=, marcar su estado como =HAMBRIENTO=, y llamar a
+adquirir el /mutex/ =M=, marcar su estado como =HAMBRIENTO=, y llamar a
 la función interna =actualiza(i)=. Del mismo modo, cuando el filósofo
-=i= termina de comer y llama a =suelta_palillos(i)=, esta función
+=i= termina de comer y llama a =suelta_palillos(i)=, ésta función
 marca su estado como =PENSANDO= e invoca a =actualiza()= dos veces:
-una para el vecino izquierdo y una para el vecino derecho.
+una para el vecino de la izquierda y otra para el de la derecha.
 
 Es importante recalcar que, dado que esta solución está estructurada
 como un monitor, ni =actualiza()= ni las variables que determinan el
@@ -2064,7 +2068,7 @@ haga mal uso del mecanismo de sincronización.
 
      Esto facilitaría mucho más aún la sincronización: en vez de
      hablar de /secciones críticas/, se podría reintentar la
-     transacción y sólo preocuparse de revisar si fue exitosa o no —
+     transacción y sólo preocuparse de revisar si fue exitosa o no,
      por ejemplo:
 
      #+BEGIN_SRC C
@@ -2076,9 +2080,9 @@ haga mal uso del mecanismo de sincronización.
      } while (! commit_transaction());
      #+END_SRC
 
-     Si en el transcurso de la transacción algún otro proceso
-     modifica alguna de las variables, la transacción se abortará,
-     pero se puede volver a ejecutar.
+     Si en el transcurso de la transacción algún otro proceso modifica
+     alguna de las variables, ésta se abortará, pero se puede volver a
+     ejecutar.
 
      Claro está, el ejemplo presentado desperdicia recursos de
      proceso (lleva a cabo los cálculos al tiempo que va modificando
@@ -2086,7 +2090,7 @@ haga mal uso del mecanismo de sincronización.
      crítica.
 
      Hay numerosas implementaciones en software de este principio
-     (Software Transactional Memory, *stm*) para los principales
+     (/Software Transactional Memory/, *stm*) para los principales
      lenguajes, aunque el planteamiento ideal sigue apuntando a una
      implementación en hardware. Hay casos en que, sin embargo, esta
      técnica puede aún llevar a resultados inconsistentes
@@ -2104,7 +2108,7 @@ avenidas del mismo rango en que no hay un semáforo, cada uno desde
 otra dirección. Los reglamentos de tránsito señalan que la precedencia
 la tiene /el automovilista que viene más por la derecha/. En este
 caso, cada uno de los cuatro debe ceder el paso al que tiene a la
-derecha — y ante la ausencia de un criterio humano que rompa el
+derecha —y ante la ausencia de un criterio humano que rompa el
 bloqueo, deberían todos mantenerse esperando por siempre.
 
 # de aquí en adelante se hace mucha confusión entre los términos
@@ -2123,7 +2127,7 @@ Red, p. 185):
 3. Los recursos no pueden ser extraídos de los procesos que los tienen
    hasta su completa utilización (condición de /no apropiatividad/).
 
-4. Existe una cadena circular de procesos en la que cada uno mantiene a
+4. Hay una cadena circular de procesos en la que cada uno mantiene a
    uno o más recursos que son requeridos por el siguiente proceso de la
    cadena (condición de /espera circular/).
 
@@ -2141,13 +2145,13 @@ secuencia:
 
 2. /B/ solicita una unidad de cinta y se bloquea.
 
-3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
-   en ejecución.
+3. El sistema operativo otorga la unidad /1/ a /A/, y le vuelve a
+   otorgar la ejecución. /B/ permanece bloqueado.
 
 4. /A/ continúa procesando; termina su periodo de ejecución.
 
-5. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a poner
-   en ejecución.
+5. El sistema operativo otorga la unidad /2/ al proceso /B/, y lo
+   vuelve a poner en ejecución.
 
 6. /B/ solicita otra unidad de cinta y se bloquea.
 
@@ -2155,7 +2159,7 @@ secuencia:
    asignar. Mantiene a /B/ bloqueado; otorga el control de vuelta a
    /A/.
 
-8. /A/ solicita otra unidad de cinta y se bloquea
+8. /A/ solicita otra unidad de cinta y se bloquea.
 
 9. El sistema operativo no tiene otra unidad de cinta por
    asignar. Mantiene bloqueado tanto /A/ como /B/ y otorga el control de vuelta a
@@ -2169,12 +2173,13 @@ secuencia:
 
 Sin una política de prevención o resolución de bloqueos mutuos, no hay
 modo de que /A/ o /B/ continúen su ejecución. Se verán algunas
-estrategias para enfrentar a los bloqueos mutuos.
+estrategias para enfrentar los bloqueos mutuos.
 
 En el apartado de /Exclusión mutua/, los hilos presentados estaban
-diseñados para /cooperar explícitamente/. El rol del sistema operativo
-va más allá, tiene que implementar /políticas/ que eviten, en la
-medida de lo posible, dichos bloqueos.
+diseñados para /cooperar explícitamente/. Un sistema operativo debe ir
+más allá, tiene que implementar /políticas/ que eviten, en la medida
+de lo posible, dichos bloqueos incluso entre procesos completamente
+independientes.
 
 Las políticas tendientes a otorgar los recursos lo antes posible
 cuando son solicitadas pueden ser vistas como /liberales/, en tanto
@@ -2183,24 +2188,24 @@ que las que controlan más la asignación de recursos,
 
 #+attr_latex: width=0.6\textwidth
 #+label: PROC_deadlocks_conserv_lib
-#+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
+#+caption: Espectro liberal-conservador de esquemas para evitar bloqueos.
 [[./img/dot/deadlocks_conserv_lib.png]]
 
-Las líneas principales que describen a las estrategias para enfrentar
+Las líneas principales que describen las estrategias para enfrentar
 situaciones de bloqueo (La Red, p. 188) son:
 
-- Prevención :: se centra en modelar el comportamiento del sistema
+- Prevención :: Se centra en modelar el comportamiento del sistema
 		para que /elimine toda posibilidad/ de que se produzca
 		un bloqueo. Resulta en una utilización subóptima de
 		recursos.
 
-- Evasión :: busca imponer condiciones menos estrictas que en la
+- Evasión :: Busca imponer condiciones menos estrictas que en la
 	     prevención, para intentar lograr una mejor utilización de
 	     los recursos. Si bien no puede evitar /todas las
 	     posibilidades/ de un bloqueo, cuando éste se produce
 	     busca /evitar/ sus consecuencias.
 
-- Detección y recuperación :: el sistema /permite/ que ocurran los
+- Detección y recuperación :: El sistema /permite/ que ocurran los
      bloqueos, pero busca /determinar si ha ocurrido/ y tomar medidas
      para eliminarlo.
 
@@ -2221,41 +2226,41 @@ rivales/ (que no requieran acceso exclusivo — por ejemplo, empleo de
 archivos en el disco, sin que exista un acceso directo del proceso al
 disco), pero sólo uno podría obtener recursos de forma exclusiva al
 mismo tiempo. Este mecanismo sería la /serialización/, y la situación
-antes descripta se resolvería de la siguiente manera:
+antes descrita se resolvería de la siguiente manera:
 
-1. /A/ solicita una unidad de cinta y se bloquea
+1. /A/ solicita una unidad de cinta y se bloquea.
 
-2. /B/ solicita una unidad de cinta y se bloquea
+2. /B/ solicita una unidad de cinta y se bloquea.
 
 3. El sistema operativo otorga la unidad /1/ a /A/ y lo vuelve a poner
-   en ejecución
+   en ejecución. /B/ permanece bloqueado.
 
-4. /A/ continúa procesando; termina su periodo de ejecución
+4. /A/ continúa procesando; termina su periodo de ejecución.
 
 5. El sistema operativo mantiene bloqueado a /B/, dado que /A/ tiene
-   un recurso
+   un recurso asignado.
 
-6. /A/ solicita otra unidad de cinta y se bloquea
+6. /A/ solicita otra unidad de cinta y se bloquea.
 
 7. El sistema operativo otorga la unidad /2/ a /A/ y lo vuelve a poner
-   en ejecución
+   en ejecución. /B/ permanece bloqueado.
 
-8. /A/ libera la unidad de cinta /1/
+8. /A/ libera la unidad de cinta /1/.
 
 9. /A/ libera la unidad de cinta /2/ (y con ello, el bloqueo de uso de
-   recursos)
+   recursos).
 
-10. El sistema operativo otorga la unidad /1/ a /B/ y lo vuelve a
-    poner en ejecución
+10. El sistema operativo otorga la unidad /1/ a /B/ y le otorga la
+    ejecución.
 
-11. /B/ solicita otra unidad de cinta y se bloquea
+11. /B/ solicita otra unidad de cinta y se bloquea.
 
-12. El sistema operativo otorga la unidad /2/ a /B/ y lo vuelve a
-    poner en ejecución
+12. El sistema operativo otorga la unidad /2/ a /B/ y lo pone
+    nuevamente en ejecución.
 
-13. /B/ libera la unidad de cinta /1/
+13. /B/ libera la unidad de cinta /1/.
 
-14. /B/ libera la unidad de cinta /2/
+14. /B/ libera la unidad de cinta /2/.
 
 Si bien la serialización resuelve la situación aquí mencionada, el
 mecanismo empleado es subóptimo dado que puede haber hasta /n-1/
@@ -2270,7 +2275,7 @@ tiene un peligro fuerte de caer en /inanición/.
 Otro ejemplo de política preventiva /menos conservadora/ sería la
 /retención y espera/ o /reserva/ (/advance claim/): que todos los
 programas declaren al iniciar su ejecución qué recursos van a
-requerir. Los recursos son apartados para su uso exclusivo hasta que
+requerir. Éstos son apartados para su uso exclusivo hasta que
 el proceso termina, pero el sistema operativo puede seguir atendiendo
 solicitudes /que no rivalicen/: si a los procesos /A/ y /B/ anteriores
 se suman procesos /C/ y /D/, pero requieren otro tipo de recursos,
@@ -2279,18 +2284,18 @@ termine, podrían continuar ejecutando /B/, /C/ y /D/.
 
 El bloqueo resulta ahora imposible por diseño, pero el usuario que
 inició /B/ tiene una percepción de injusticia dado el tiempo que tuvo
-que esperar para que su solicitud fuera atendida — de hecho, si /A/ es
+que esperar para que su solicitud fuera atendida —de hecho, si /A/ es
 un proceso de larga duración (incluso si requiere la unidad de cinta
 sólo por un breve periodo), esto lleva a que /B/ sufra una /inanición/
 innecesariamente prolongada.
 
 Además, la implementación de este mecanismo preventivo requiere que el
-programador sepa por anticipado qué recursos requerirá — y esto en la
+programador sepa por anticipado qué recursos requerirá —y esto en la
 realidad muchas veces es imposible. Si bien podría diseñarse una
 estrategia de lanzar procesos /representantes/ (o /proxy/) solicitando
 recursos específicos cuando éstos hicieran falta, esto sólo
 transferiría la situación de bloqueo por recursos a bloqueo por
-procesos — y un programador poco cuidadoso podría de todos modos
+procesos —y un programador poco cuidadoso podría de todos modos
 desencadenar la misma situación.
 
 *** Solicitud /de una vez/ (/one-shot/)
@@ -2304,8 +2309,8 @@ por/, haciendo imposible que se presente un bloqueo.
 En su planteamiento inicial, este mecanismo requería que un proceso
 declarara /una sola vez/ qué recursos requeriría, pero posteriormente
 la estrategia se modificó, permitiendo que un proceso solicite
-recursos nuevamente, pero únicamente a condición de que previo a
-hacerlo /renuncien a los recursos/ que tenían en ese momento —
+recursos nuevamente, pero únicamente con la condición de que previo a
+hacerlo /renuncien a los recursos/ que tenían en ese momento;
 claro, pueden volver a incluirlos en la operación de solicitud.
 
 Al haber una /renuncia explícita/, se imposibilita de forma tajante
@@ -2327,25 +2332,25 @@ Otro mecanismo de evasión es la asignación /jerárquica/ de
 recursos. Bajo este mecanismo, se asigna una prioridad o /nivel
 jerárquico/ a cada recurso o clase de recursos.[fn:: Incluso varios
 recursos distintos, o varias clases, pueden compartir prioridad,
-aunque esto dificultaría la programación. Podría verse a la /solicitud
-de una vez/ como un caso extremo de asignación jerárquica, con una
-jerarquía plana.] La condición básica es que, una vez que un proceso
-obtiene un recurso de determinado nivel, sólo puede solicitar recursos
-adicionales de niveles superiores. En caso de requerir dos
-dispositivos ubicados al mismo nivel, tiene que hacerse de forma
-atómica.
+aunque esto dificultaría la programación. Podría verse la /solicitud
+de una vez/ como un caso extremo de asignación jerárquica, en la que
+todos los recursos tienen el mismo nivel.] La condición básica es que,
+una vez que un proceso obtiene un recurso de determinado nivel, sólo
+puede solicitar recursos adicionales de niveles superiores. En caso de
+requerir dos dispositivos ubicados al mismo nivel, tiene que hacerse
+de forma atómica.
 
 De este modo, si las unidades de cinta tienen asignada la prioridad
-$x$, $P_1$ sólo puede solicitar dos unidades de cinta por medio de
-/una sóla operación/. En caso de también requerir dos unidades de
+$x$, $P_1$ sólo puede solicitar dos de ellas por medio de
+/una sola operación/. En caso de también requerir dos unidades de
 cinta el proceso $P_2$ /al mismo tiempo/, al ser atómicas las
-solicitudes, éstas le serán otorgadas a sólo un de los dos procesos,
+solicitudes, éstas le serán otorgadas a sólo uno de los dos procesos,
 por lo cual no se presentará bloqueo.
 
 Además, el crear una jerarquía de recursos permitiría ubicar los
 recursos más escasos o /peleados/ en la cima de la jerarquía,
 reduciendo las situaciones de contención en que varios procesos
-compiten por dichos recursos — sólo llegarían a solicitarlos aquellos
+compiten por dichos recursos —sólo llegarían a solicitarlos aquellos
 procesos que ya tienen /asegurado/ el acceso a los demás recursos que
 vayan a emplear.
 
@@ -2360,7 +2365,7 @@ recursos más altos, por lo que conduce a una alta inanición.
 ** Evasión de bloqueos
 
 Para la evasión de bloqueos, el sistema partiría de poseer, además de
-la información descrita en el caso anterior, información acerca de
+la información descrita en el caso anterior, conocer
 /cuándo/ requiere un proceso utilizar cada recurso. De este modo, el
 planificador puede marcar qué orden de ejecución (esto es, qué
 /flujos/) entre dos o más procesos son /seguros/ y cuáles son
@@ -2375,7 +2380,7 @@ planificador puede marcar qué orden de ejecución (esto es, qué
 El análisis de la interacción entre dos procesos se representa como en
 la figura \ref{PROC_tray_proc_evasion_bloqueo}; el avance es marcado
 en sentido horizontal para el proceso $A$, o vertical para el proceso
-$B$; en un sistema multiprocesador, podría haber avance mutuo, y lo
+$B$; en un sistema multiprocesador, podría haber avance mutuo, y
 se indicaría en diagonal.
 
 En el ejemplo presentado, el proceso $A$ solicita acceso
@@ -2393,11 +2398,11 @@ formalmente en cualquier punto[fn:: En realidad, sólo sería
 posible /tocar/ el márgen izquierdo o inferior de este bloque: al caer
 en bloqueo mutuo, avanzar hacia su área interior resultaría
 imposible.] en $3 \le t_A \le 7$, y $4 \le t_B \le 6$ (indicado con el
-recuadro rojo, /Bloqueo mutuo/).
+recuadro /Bloqueo mutuo/).
 
 Pero la existencia del recuadro que indica el bloqueo mutuo podría ser
 revelada con anterioridad: si el flujo entra en el área marcada como
-/Bloqueo inminente/, en color naranja (en $3 \le t_A \le 7$ y $2 \le
+/bloqueo inminente/ (en $3 \le t_A \le 7$ y $2 \le
 t_B \le 6$), resulta /ineludible/ caer en el bloqueo mutuo. 
 
 La región de bloqueo inminente ocurre a partir de que $A$ obtuvo el
@@ -2415,13 +2420,13 @@ el sistema mantendrá /en espera/ a $B$ si $t_B \le 2$ mientras $2 \le
 t_A \le 6$, y mantendrá a $A$ en espera si $t_A \le 2$ cuando  $2 \le t_B
 \le 6$.
 
-La región marcada como /inalcanzable/ en color amarillo, no representa
+La región marcada como /inalcanzable/ no representa
 ningún peligro: sólo indica aquellos estados en que resulta imposible
 entrar. Incluso una vez evadido el bloqueo (por ejemplo, si $B$ fue
 suspendido en $t_B = 1.8$ y $A$ avanza hasta pasar $t_A = 7$, si el
 sistema operativo vuelve a dar la ejecución a $B$, este sólo podrá
 avanzar hasta $t_B=2$, punto en que $B$ solicita la impresora. Para
-que $B$ continúe, es necesario avanzar hasta $t_A > 7.5$ para que $B$
+que $B$ continúe, es necesario llegar hasta $t_A > 7.5$ para que $B$
 siga avanzando.
 
 Este mecanismo proveería una mejor respuesta que los vistos en el
@@ -2447,8 +2452,8 @@ satisfacer los préstamos (recursos) solicitados por sus clientes
 banco).
 
 Este algoritmo permite que el conjunto de recursos solicitado por los
-procesos en ejecución en el sistema sea mayor a los recursos
-físicamente disponibles, pero a través de un monitoreo y control en su
+procesos en ejecución en el sistema sea mayor a los
+físicamente disponibles, pero mediante un monitoreo y control en su
 asignación, logra este nivel de /sobre-compromiso/ sin poner en riesgo
 la operación correcta del sistema.
 
@@ -2456,24 +2461,25 @@ Este algoritmo debe ejecutarse cada vez que un proceso solicita
 recursos; el sistema evita caer en situaciones conducentes a un
 bloqueo mutuo ya sea denegando o posponiendo la solicitud. El
 requisito particular es que, al iniciar, cada proceso debe /anunciar
-su reclamo máximo/ (llamese =claim()=) al sistema: el número máximo
-de recursos de cada tipo que va a emplear a lo largo de su ejecución —
+su reclamo máximo/ (llámese =claim()=) al sistema: el número máximo
+de recursos de cada tipo que va a emplear a lo largo de su ejecución;
 esto sería implementado como una llamada al sistema. Una vez que un
 proceso presentó su reclamo máximo de recursos, cualquier llamada
 subsecuente a =claim()= falla. Claro está, si el proceso anuncia una
-necesidad mayor al número existente de recursos de algún tipo, también
+necesidad mayor al número de recursos de algún tipo que hay, también
 falla dado que el sistema no será capaz de cumplirlo.
 
-Para el algoritmo del banquero:
+Para el algoritmo del banquero, a partir del punto evaluado se
+analizarán las transiciones a través de /estados/: matrices de
+recursos disponibles, reclamos máximos y asignación de recursos a los
+procesos en un momento dado. Estos pueden ser:
 
-- Estado :: matrices de recursos disponibles, reclamos máximos y
-            asignación de recursos a los procesos en un momento dado.
-- Estado seguro :: un estado en el cual todos los procesos pueden
-                   ejecutar hasta el final sin encontrar un bloqueo
-                   mutuo.
-- Estado inseguro :: todo estado que no garantice que todos los
-     procesos puedan ejecutar hasta el final sin encontrar un bloqueo
-     mutuo.
+- Un /estado seguro/, si todos los procesos pueden continuar desde el
+  momento evaluado hasta el final de su ejecución sin encontrar un
+  bloqueo mutuo.
+- Un /estado inseguro/ es todo aquel que no garantice que todos los
+  procesos puedan continuar hasta el final sin encontrar un bloqueo
+  mutuo.
 
 Este algoritmo típicamente trabaja basado en diferentes /categorías/ de
 recursos, y los reclamos máximos anunciados por los procesos son por
@@ -2511,7 +2517,7 @@ que:
   a la cantidad de recursos /disponibles/ en el sistema para dicha
   categoría.
 
-Formalmente, y volviendo a la definición de un estado seguro: un
+Formalmente, y volviendo a la definición anterior: un
 estado /es seguro/ cuando hay una secuencia de procesos (denominada
 /secuencia segura/) tal que:
 
@@ -2531,14 +2537,15 @@ En el peor de los casos, esta secuencia segura llevaría a bloquear
 todas las solicitudes excepto las del único proceso que puede avanzar
 sin peligro en el orden presentado.
 
-Se presnta un ejemplo simplificando, asumiendo sólo una clase de
-procesos, e iniciando con 2 instancias libres:
+Se presenta un ejemplo simplificando, asumiendo sólo una clase de
+procesos, e iniciando con dos instancias libres:
 
 | Proceso | Asignado | Reclamando |
 |---------+----------+------------|
 | /A/     |        4 |          6 |
 | /B/     |        4 |         11 |
 | /C/     |        2 |          7 |
+|---------+----------+------------|
 
 /A/ puede terminar porque sólo requiere de 2 instancias adicionales
 para llegar a las 6 que indica en su reclamo. Una vez que termine,
@@ -2552,18 +2559,20 @@ instancias libres):
 
 | Proceso | Asignado | Reclamado |
 |---------+----------+-----------|
-| /A/     | 4        | 6         |
-| /B/     | 4        | 11        |
-| /C/     | 2        | 9         |
+| /A/     |        4 |         6 |
+| /B/     |        4 |        11 |
+| /C/     |        2 |         9 |
+|---------+----------+-----------|
 
 /A/ puede terminar, pero no se puede asegurar que /B/ o /C/ puedan
-hacerlo, porque incluso una vez terminando /A/, se tendrían sólo 6
-instancias no asignadas.
+hacerlo, ya que incluso una vez terminando /A/, tendrían sólo seis
+instancias no asignadas: menos que las siete que ambos podrían
+a requerir según sus reclamos iniciales.
 
 Es necesario apuntar que no hay /garantía/ de que continuar a partir
 de este estado lleve a un bloqueo mutuo, dado que /B/ o /C/ pueden no
 incrementar ya su utilización hasta cubrir su reclamo, esto es, puede
-que lleguen a finalizar sin requerir más recursos, ya sea porque ya
+que lleguen a finalizar sin requerir más recursos, ya sea porque
 los emplearon y liberaron, o porque el /uso efectivo/ de recursos
 requeridos sencillamente resulte menor al del reclamo inicial.
 
@@ -2587,27 +2596,28 @@ puts "La secuencia segura encontrada es: %s" % s
 Hay refinamientos sobre este algoritmo que logran resultados
 similares, reduciendo su costo de ejecución (se debe recordar que es
 un procedimiento que puede ser llamado con muy alta frecuencia), como
-el desarrollado por Habermann (ref: Finkel, p.136).
+el desarrollado por Habermann (Finkel, p. 136).
 
-El algoritmo del banquero es un algoritmo conservador, dado que evita
+El algoritmo del banquero es conservador, dado que evita
 entrar en un estado inseguro a pesar de que dicho estado no lleve con
 certeza a un bloqueo mutuo. Sin embargo, su política es la más liberal
 que permite asegurar que no se caerá en bloqueos mutuos, sin conocer el
 /orden y tiempo/ en que cada uno de los procesos requeriría los
 recursos.
 
-Una desventaja fuerte de todos los mecanismos de evasión de bloqueos
-es que requieren saber por anticipado los reclamos máximos de cada
-proceso, lo cual puede no ser conocido en el momento de su ejecución.
+Una desventaja importante de todos los mecanismos de evasión de
+bloqueos es que requieren saber por anticipado los reclamos máximos de
+cada proceso, lo cual puede no ser conocido en el momento de su
+ejecución.
 
 ** Detección y recuperación de bloqueos
 # <<PROC_det_y_rec_bloq>>
 
 La detección de bloqueos es una forma de /reaccionar/ ante una
 situación de bloqueo que ya se produjo y de buscar la mejor manera de
-salir de ella. La detección de bloqueos podría ser una tarea
+salir de ella. Esta podría ejecutarse ser una tarea
 /periódica/, y si bien no puede prevenir situaciones de bloqueo, puede
-detectarlas una vez que ya ocurrieron y limitar su impacto.
+detectarlas una vez que ya ocurrieron y limitar su efecto.
 
 Manteniendo una lista de recursos asignados y solicitados, el sistema
 operativo puede saber cuando un conjunto de procesos están esperándose
@@ -2621,28 +2631,28 @@ como grafos dirigidos, se representará:
   - Puede representarse como un círculo grande a una /clase/ o
     /categoría/ de recursos, y como círculos pequeños dentro de éste a
     una /serie de recursos idénticos/ (p. ej. las diversas unidades de
-    cinta)
+    cinta).
 
 - Las flechas que van de un recurso a un proceso indican que el
-  recurso /está asignado/ al proceso
+  recurso /está asignado/ al proceso.
 
 - Las flechas que van de un proceso a un recurso indican que el
-  proceso /solicita/ el recurso
+  proceso /solicita/ el recurso.
 
 Cabe mencionar en este momento que, cuando se consideran categorías de
 recursos, el tener la representación visual de un ciclo no implica
-que haya ocurrido un bloqueo — este sólo se presenta cuando todos
+que haya ocurrido un bloqueo; este sólo se presenta cuando todos
 los procesos involucrados están en espera mutua.
 
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=373
 #+label: PROC_ciclo_no_bloqueo
-#+caption: Al emplear categorías de recursos, un ciclo /no necesariamente/ indica un bloqueo
+#+caption: Al emplear categorías de recursos, un ciclo /no necesariamente/ indica un bloqueo.
 [[./img/ciclo_no_bloqueo.png]]
 
 En la figura \ref{PROC_ciclo_no_bloqueo}, si bien $P_1$ y $P_2$ están
 esperando que se liberen recursos de tipo $R_1$ y $R_2$, $P_3$ y $P_4$
-siguen operando normalmente, y es esperable que lleguen a liberar el
+siguen operando normalmente, y se espera que lleguen a liberar el
 recurso por el cual están esperando. En el caso ilustrado, dado que el
 bloqueo se presenta únicamente al ser imposible que un proceso
 /libere/ recursos que /ya le fueron asignados/, tendría que
@@ -2653,7 +2663,7 @@ ilustrada a continuación.
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=267
 #+label: PROC_bloqueo_con_categorias
-#+caption: Situación en que se presenta espera circular, incluso empleando categorías de recursos
+#+caption: Situación en que se presenta espera circular, incluso empleando categorías de recursos.
 [[./img/bloqueo_con_categorias.png]]
 
 Si se tiene una representación completa de los procesos y recursos en
@@ -2680,7 +2690,9 @@ sistema /en un momento dado/):
 #+caption: Detección de ciclos denotando bloqueos: grafo de procesos y recursos en un momento dado.
 [[./img/dot/deteccion_bloqueos.png]]
 
-En la gráfica /Detección de ciclos denotando bloqueos/, se procede así:
+Para resolver la situación planteada en la figura
+\ref{PROC_deteccion_bloqueos} se puede proceder de la siguiente
+manera:
 
 - Se reduce por /B/, dado que actualmente no está esperando a ningún
   recurso.
@@ -2688,12 +2700,12 @@ En la gráfica /Detección de ciclos denotando bloqueos/, se procede así:
 - Se reduce por /A/ y /F/, dado que los recursos por los cuales están
   esperando quedan libres en ausencia de /B/.
 
-Y queda un interbloqueo entre /C/, /D/ y /E/, en torno a los
-recursos /4/, /5/ y /7/.
+- Y queda un interbloqueo entre /C/, /D/ y /E/, en torno a los
+  recursos /4/, /5/ y /7/.
 
 Nótese que /reducir/ un proceso del grafo no implica que éste haya
 /entregado/ sus recursos, sino únicamente que, hasta donde se tiene
-conocimiento, /tiene posibilidad de hacerlo/. Los procesos que estan
+conocimiento, /tiene posibilidad de hacerlo/. Los procesos que están
 esperando por recursos retenidos por un proceso pueden sufrir
 inanición aún por un tiempo indeterminado.
 
@@ -2703,7 +2715,7 @@ su ejecución no avanzará más), hay varias estrategias para la
 recuperación:
 
 - Terminar a todos los procesos bloqueados. Esta es la técnica más
-  sencilla y, de cierto modo, más justa — todos los procesos
+  sencilla y, de cierto modo, más justa —todos los procesos
   implicados en el bloqueo pueden ser relanzados, pero todo el estado
   del cómputo que han realizado hasta este momento se perderá.
 
@@ -2715,10 +2727,10 @@ recuperación:
   /puntos de control/.
 
   Podría parecer que retroceder a un punto previo llevaría
-  indefectiblemente a que se repita la situación — pero los bloqueos
+  indefectiblemente a que se repita la situación —pero los bloqueos
   mutuos requieren de un orden de ejecución específico para
   aparecer. Muy probablemente, una ejecución posterior logrará
-  salvar el bloqueo — y en caso contrario, puede repetirse este paso.
+  salvar el bloqueo y, en caso contrario, puede repetirse este paso.
 
 - Terminar, uno por uno y no en bloque, a cada uno de los procesos
   bloqueados. Una vez que se termina uno, se evalúa la situación para
@@ -2728,8 +2740,9 @@ recuperación:
   Para esto, si bien podría elegirse un proceso al azar de entre los
   bloqueados, típicamente se consideran elementos adicionales como:
 
-  - Los procesos que demandan garantías de /tiempo real/ son los más
-    sensibles para detener y relanzar
+  - Los procesos que demandan garantías de /tiempo real/ (ver sección
+    \ref{PLAN_tiempo_real}) son los más sensibles para detener y
+    relanzar.
 
   - La menor cantidad de tiempo de procesador consumido hasta el
     momento. Dado que el proceso probablemente tenga que ser
@@ -2742,7 +2755,7 @@ recuperación:
     que más le falte por hacer.
 
   - Menor número de recursos asignados hasta el momento. Un poco como
-    criterio de justicia, y un poco partiendo de que es un proceso que
+    criterio de justicia, y otro poco partiendo de que es un proceso que
     está haciendo menor uso del sistema.
 
   - Prioridad más baja. Cuando hay un ordenamiento de procesos o
@@ -2759,7 +2772,7 @@ recuperación:
 Un punto importante a considerar es cada cuánto debe realizarse la
 verificación de bloqueos. Podría hacerse:
 
-- Cada vez que un proceso solicite un recurso. pero esto llevaría a un
+- Cada vez que un proceso solicite un recurso, pero esto llevaría a un
   gasto de tiempo en este análisis demasiado frecuente.
 
 - Con una periodicidad fija, pero esto arriesga a que los procesos
@@ -2771,26 +2784,25 @@ verificación de bloqueos. Podría hacerse:
 - Una estrategia combinada.
 
 Por último, si bien los dispositivos aquí mencionados requieren
-bloqueo exclusivo, otra estragegia es la /apropiación temporal/: tomar
+bloqueo exclusivo, otra estrategia es la /apropiación temporal/: tomar
 un recurso asignado a determinado proceso para otorgárselo
-/temporalmente/ a otro. Esto no siempre es posible, claro, y depende
-fuertemente de la naturaleza del mismo — pero podría, por ejemplo,
+/temporalmente/ a otro. Esto no siempre es posible, y depende
+fuertemente de la naturaleza del mismo —pero podría, por ejemplo,
 interrumpirse un proceso que tiene asignada (pero inactiva) a una
 impresora para otorgársela temporalmente a otro que tiene un trabajo
 corto pendiente. Esto último, sin embargo, es tan sensible a detalles
 de cada clase de recursos que rara vez puede hacerlo el sistema
-operativo — es normalmente hecho /de acuerdo/ entre los procesos
+operativo —es normalmente hecho /de acuerdo/ entre los procesos
 competidores, por medio de algún protocolo pre-establecido.
 
 ** Algoritmo del avestruz
 
 Una cuarta línea (que, por increíble que parezca, es la más común,
-empleada en todos los sistemas operativos de propósito general)
-es el llamado /algoritmo del avestruz/: ignorar
-las situaciones de bloqueo (escondiéndose de ellas como avestruz que
-esconde la cabeza bajo la tierra), esperando que su ocurrencia sea
-suficientemente poco frecuente, o si ocurre, que su impacto no afecte
-al sistema.
+empleada en todos los sistemas operativos de propósito general) es el
+llamado /algoritmo del avestruz/: ignorar las situaciones de bloqueo
+(escondiéndose de ellas como avestruz que mete la cabeza bajo la
+tierra), esperando que su ocurrencia sea poco frecuente, o si ocurre,
+que su efecto no repercuta en el sistema.
 
 *** Justificando a los avestruces
 
@@ -2806,7 +2818,7 @@ programadores) ante la disyuntiva de afrontar restricciones para la
 forma y conveniencia de solicitar recursos.
 
 En este caso, se toma una decisión entre lo /correcto/ y lo
-/conveniente/ — un sistema operativo formalmente no debería permitir
+/conveniente/ —un sistema operativo formalmente no debería permitir
 la posibilidad de que hubiera bloqueos, pero la inconveniencia
 presentada al usuario sería inaceptable.
 
@@ -2816,7 +2828,7 @@ mencionamos únicamente de forma casual, evadiendo definiciones claras:
 definido. Se podría, como mencionan los ejemplos, hablar de los
 clásicos recursos de acceso rival y secuencial: impresoras, cintas,
 terminales seriales, etc. Sin embargo, también se pueden ver como
-recursos a otras entidades administradas por el sistema operativo — el
+recursos a otras entidades administradas por el sistema operativo —el
 espacio disponible de memoria, el tiempo de procesamiento, o incluso
 estructuras lógicas /creadas y gestionadas/ por el sistema operativo,
 como archivos, semáforos o monitores. Y para esos casos, prácticamente
@@ -2827,7 +2839,7 @@ características de acceso y bloqueo necesarias.
 
 La realidad del cómputo marca que es el programador de aplicaciones
 quien debe prever las situaciones de carrera, bloqueo e inanición en
-su código — el sistema operativo empleará ciertos mecanismos para
+su código —el sistema operativo empleará ciertos mecanismos para
 asegurar la seguridad en general entre los componentes del sistema,
 pero el resto recae en las manos del programador.
 
@@ -2844,9 +2856,9 @@ Por otro lado, hay una gran cantidad de aplicaciones de monitoreo en
 espacio de usuario. Conociendo el funcionamiento esperable específico
 de determinados programas es posible construir aplicaciones que los
 monitoreen /de una forma inteligente/ y tomen acciones (ya sea alertar
-a los administradores o, como se lo revisa en la sección
-\ref{PROC_det_y_rec_bloq} (/Detección y recuperación de bloqueos/),
-abortar -y posiblemente reiniciar- la ejecución de aquellos procesos
+a los administradores o, como se revisa en la sección
+\ref{PROC_det_y_rec_bloq}, /detección y recuperación de bloqueos/,
+abortar –y posiblemente reiniciar– la ejecución de aquellos procesos
 que no puedan recuperarse).
 
 *** De avestruces, ingenieros y matemáticos
@@ -2856,23 +2868,23 @@ broma, como un síntoma de la tensión que caracteriza al cómputo como
 profesión: la computación nació como /ciencia/ dentro de los
 departamentos de matemáticas en diversas facultades, sin embargo, al
 pasar de los años ha ido integrando cada vez más a la /ingeniería/. Y el
-campo, una de las áreas más jóvenes pero al mismo tiempo más
+campo, una de las áreas más jóvenes pero, al mismo tiempo, más
 prolíficas del conocimiento humano, está en una constante discusión y
-definición: ¿Cómo puede describirse mejor a sus profesionales? ¿Como
+definición: ¿cómo puede describirse mejor a sus profesionales: como
 matemáticos, ingenieros, o... alguna otra cosa?
 
-La asignación de recursos, pues, puede verse desde el punto de vista
+La asignación de recursos puede verse desde el punto de vista
 matemático: es un problema con un planteamiento de origen, y hay
 varias estrategias distintas (los mecanismos y algoritmos descritos en
-esta sección). Pueden no ser perfectos, pero el problema no ha
-/demostrado/ ser intratable. Y un bloqueo es claramente un error — una
+esta sección); pueden no ser perfectos, pero el problema no ha
+/demostrado/ ser intratable. Y un bloqueo es claramente un error —una
 situación de excepción, inaceptable. Los matemáticos del árbol
 genealógico académico llaman a no ignorar este problema, a
 resolverlo sin importar la complejidad computacional.
 
 Los ingenieros, más aterrizados en el /mundo real/, tienen como parte
-básica de su formación, sí, el evitar defectos nocivos — pero también
-contemplan el cálculo de costos, la probabilidad de impacto, los
+básica de su formación, sí, el evitar defectos nocivos, pero también
+consideran el cálculo de costos, la probabilidad de impacto, los
 umbrales de tolerancia... Para un ingeniero, si un sistema típico
 /corre riesgo/ de caer en un bloqueo mutuo con una probabilidad $p >
 0$, dejando inservibles a dos procesos en un sistema, pero debe
@@ -2883,15 +2895,15 @@ prevenir el bloqueo conlleva un costo adicional en complejidad para el
 desarrollo o en rendimiento del sistema (dado que perderá tiempo
 llevando a cabo las verificaciones ante cualquier nueva solicitud de
 recursos), no debe sorprender a nadie que los ingenieros se inclinen
-por adoptar la estrategia del avestruz — claro está, siempre que no
+por adoptar la estrategia del avestruz —claro está, siempre que no
 haya opción /razonable/.
 
 * Ejercicios
 
 ** Preguntas de autoevaluación
 
-1. ¿Qué diferencias y similitudes hay entre un programa y un proceso?
-   ¿Y entre un proceso y un hilo?
+1. ¿Qué diferencias y similitudes hay entre un programa y un proceso,
+   y entre un proceso y un hilo?
 
 2. Un proceso puede estar en uno de cinco /estados/. Indique cuáles
    son estos estados (describiendo brevemente sus características) y
@@ -2899,7 +2911,7 @@ haya opción /razonable/.
 
 3. Presente un ejemplo de cada uno de los tres patrones de trabajo
    para la /paralelización de la ejecución/ en varios hilos: los
-   patrones /jefe / trabajador/, /equipo de trabajo/ y /línea de
+   patrones /jefe/trabajador/, /equipo de trabajo/ y /línea de
    ensamblado/.
 
 4. Defina los siguientes conceptos, e ilustre las relaciones entre
@@ -2917,11 +2929,11 @@ haya opción /razonable/.
    En un restaurante de comida rápida, en un afán de reducir las
    distracciones causadas por las pláticas entre los empleados, el
    dueño decide que cada uno de ellos estará en un cubículo aislado y
-   no pueden comunicarse entre sí (o con el cliente) más que a través
-   de primitivas de sincronización. Tenemos los siguientes procesos y
-   roles:
+   no pueden comunicarse entre sí (o con el cliente) más que mediante
+   primitivas de sincronización. Tenemos los siguientes procesos y
+   papeles:
 
-   - /n/ Clientes :: Cada cliente que llega pide la comida y
+   - /n/ clientes :: Cada cliente que llega pide la comida y
                      especifica cualquier particularidad para su órden
                      (doble carne, sin picante, con/sin lechuga,
                      tomate y cebolla, etc.)  Paga lo que le indique
@@ -2929,29 +2941,28 @@ haya opción /razonable/.
                      se lo come, y deja un comentario en el libro de
                      visitas.
 
-   - 1 Cajero :: Recibe la órden del cliente. Cobra el dinero /antes/
-                 de que comience a procesarse la órden.
+   - Un cajero :: Recibe la órden del cliente. Cobra el dinero /antes/
+                  de que comience a procesarse la órden.
 
-   - 3 Cocineros :: Saca la carne del refrigerador. Pone a la carne
-                    sobre la plancha. Le da la vuelta a cada carne
-                    para que quede bien cocida. Pone a la carne sobre
-                    una base de pan. Sólo puede sacar la carne de la
-                    plancha si ya tiene una base de pan lista.
+   - Tres cocineros :: Saca la carne del refrigerador, pone a la carne
+                       sobre la plancha, le da la vuelta a cada carne
+                       para que quede bien cocida y la pone en una
+                       base de pan. Sólo puede sacar la carne de la
+                       plancha si ya tiene una base de pan lista.
 
-		    Puede haber más de un cocinero, pero la estufa
-                    sólo tiene espacio para dos carnes. ¡Recuerda
-                    evitar que los cocineros pongan más de las que
-                    caben!
+		       Puede haber más de un cocinero, pero la estufa
+                       sólo tiene espacio para dos carnes. ¡Recuerde
+                       evitar que los cocineros pongan más de las que
+                       caben!
 
-   - 1 Armador :: Mantiene suficientes panes (y no demasiados, porque
-                  se secan) aderezados y listos para que el cocinero
-                  deposite la carne. Una vez que un pan con carne está
-                  listo, le agrega los ingredientes que hagan falta,
-                  lo cierra y entrega al cliente.
+   - Un armador :: Mantiene suficientes panes (y no demasiados, porque
+                   se secan) aderezados y listos para que el cocinero
+                   deposite la carne. Una vez que un pan con carne
+                   está listo, le agrega los ingredientes que hagan
+                   falta, lo cierra y entrega al cliente.
 
-   Implemente en pseudocódigo la solución para este
-   sistema. Identifique qué patrones de sincronización fueron
-   empleados.
+   Implemente en pseudocódigo la solución para este sistema, e
+   identifique qué patrones de sincronización fueron empleados.
 
 6. Los /bloqueos mutuos/ no sólo ocurren en el campo del
    cómputo. Identifique, basándose en las /condiciones de Coffman/,
@@ -2959,21 +2970,21 @@ haya opción /razonable/.
    impredictibilidad humana) constituirían bloqueos mutuos. Describa
    por qué considera que se cumple cada una de las condiciones.
 
-7. Suponga un sistema con 14 dispositivos del mismo tipo, que
+7. Suponga un sistema con 14 dispositivos del mismo tipo que
    requieren acceso exclusivo. En este sistema se ejecutarán de forma
    simultánea cinco procesos de larga duración, cada uno de los cuales
-   requerirá el uso de cinco de estos dispositivos — Tres de ellos
+   requerirá el uso de cinco de estos dispositivos —tres de ellos
    desde temprano en la ejecución del proceso, y los dos restantes,
    apenas por unos segundos y cerca del fin de su ejecución.
 
    - Si el sistema implementa una política muy conservadora de
-     asignación de recursos (/Serialización/), ¿cuántos dispositivos
+     asignación de recursos (/serialización/), ¿cuántos dispositivos
      estarán ociosos como mínimo y como máximo mientras se mantengan
      los cinco procesos en ejecución?
 
-   - Si el sistema implementa una política basada en el /Algoritmo del
+   - Si el sistema implementa una política basada en el /algoritmo del
      banquero/, ¿cuál será el máximo de procesos que puedan avanzar al
-     mismo tiempo? ¿Cuántos dispositivos estarán ociosos como mínimo y
+     mismo tiempo, cuántos dispositivos estarán ociosos como mínimo y
      como máximo mientras se mantengan los cinco procesos en ejecución?
 
 ** Temas de investigación sugeridos
@@ -2982,7 +2993,7 @@ haya opción /razonable/.
 
   Un tema no directamente relacionado con el expuesto en este
   capítulo, pero que puede ligarse con varios de los conceptos aquí
-  abordados, es la gestión del arranque del sistema: Una vez que el
+  abordados, es la gestión del arranque del sistema: una vez que el
   núcleo carga y hace un recorrido básico del hardware creándose un
   mapa de cómo es el sistema en que está corriendo, tiene que llevar
   el equipo a un estado funcional para sus usuarios. ¿Cómo ocurre
@@ -2996,28 +3007,32 @@ haya opción /razonable/.
   originalmente por RedHat.
 
   ¿Cuáles son los planteamientos básicos de los arranques tipo /SysV/
-  y tipo *bsd*? ¿A qué tipo de cambios en /la realidad/ es que se hace
-  referenciarefiero?  ¿Por qué los esquemas tradicionales ya no son
-  suficientes para los sistemas actuales? ¿En qué se parecen y en qué
-  se diferencian los sistemas clásicos y /systemd/? ¿Qué ventajas y
+  y tipo *bsd*; a qué tipo de cambios en /la realidad/ es que se hace
+  referencia; por qué los esquemas tradicionales ya no son
+  suficientes para los sistemas actuales; en qué se parecen y en qué
+  se diferencian los sistemas clásicos y /systemd/; qué ventajas y
   desventajas conllevan?
 
 - Problemas adicionales de sincronización ::
 
-  De todo el libro, es en este capítulo en que más se trata
+  De todo el libro, es en este capítulo en el que más se trata
   directamente con código. Si bien para presentar como casos de
   ejemplo se emplearon cinco de los casos clásicos (el /jardín
   ornamental/, el /problema productor-consumidor/, el /problema
   lectores-escritores/, la /cena de los filósofos/ y los /fumadores
   compulsivos/), hay muchos otros casos ampliamente analizados.
 
-  El libro libremente redistribuíble [[http://greenteapress.com/semaphores][The little book of semaphores]]
+  El libro libremente redistribuible /The little book of semaphores/
   (Allan Downey, 2008) tiene más de 20 problemas de sincronización,
   planteados junto con su implementación empleando semáforos en el
   lenguaje Python. Profundizar en alguno de estos problemas
   adicionales ayudará al aprendizaje de los temas expuestos.
 
 ** Lecturas relacionadas
+- /The little book of semaphores/
+  #+latex: \otrorec{http://greenteapress.com/semaphores}
+  #+html: <br/><a href="http://greenteapress.com/semaphores">http://greenteapress.com/semaphores</a><br/>
+  Allan Downey (2008); Green Tea Press
 - /Tutorial de hilos de Perl/
   #+latex: \otrorec{http://perldoc.perl.org/perlthrtut.html}
   #+html: <br/><a href="http://perldoc.perl.org/perlthrtut.html">http://perldoc.perl.org/perlthrtut.html</a><br/>

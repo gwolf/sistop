@@ -314,7 +314,7 @@ directorio bajo *fat32*.
 
 #+attr_latex: width=\textwidth
 #+label: FS_entrada_directorio_fat
-#+caption: Formato de la entrada del directorio bajo *fat* (Mohammed, 2007)
+#+caption: Formato de la entrada del directorio bajo *fat* (Mohammed, 2007).
 [[./img/ditaa/entrada_directorio_fat.png]]
 
 La extensión *vfat* fue agregada con el lanzamiento de Windows 95. Esta
@@ -346,7 +346,7 @@ como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
 #+label: FS_directorio_vfat
-#+caption: Entradas representando archivos con (y sin) nombre largo bajo *vfat*
+#+caption: Entradas representando archivos con (y sin) nombre largo bajo *vfat*.
 #+attr_html: width="843" height="724"
 #+attr_latex: width=\textwidth
 [[./img/directorio_vfat.png]]
@@ -783,7 +783,7 @@ primer /cluster/.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_fs_asignacion_contigua
-#+caption: Asignación contigua de archivos: directorio con inicio y longitud
+#+caption: Asignación contigua de archivos: directorio con inicio y longitud.
 [[./img/ditaa/fs_asignacion_contigua.png]]
 
 La principal ventaja de este mecanismo de asignación, claro está, es
@@ -846,7 +846,7 @@ el espacio necesario para guardar un apuntador.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_fs_asignacion_ligada
-#+caption: Asignación ligada de archivos: directorio con apuntador sólo al primer /cluster/
+#+caption: Asignación ligada de archivos: directorio con apuntador sólo al primer /cluster/.
 [[./img/ditaa/fs_asignacion_ligada.png]]
 
 La principal ventaja del empleo de asignación ligada es que desaparece
@@ -910,7 +910,7 @@ superior a la de la asignación ligada.
 
 #+attr_latex: width=0.9\textwidth
 #+label: FS_fs_asignacion_indexada
-#+caption: Asignación indexada de archivos: directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
+#+caption: Asignación indexada de archivos: directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente).
 [[./img/ditaa/fs_asignacion_indexada.png]]
 
 Un esquema de asignación indexada brinda una mayor eficiencia de caché
@@ -941,7 +941,7 @@ tamaño del archivo, se empleen apuntadores con los niveles de
 indirección que /vayan haciendo falta/.
 
 #+label: FS_fs_apuntadores_indirectos
-#+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada /cluster/ (con sólo tres /cluster/ por lista)
+#+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada /cluster/ (con sólo tres /cluster/ por lista).
 #+attr_latex: width=0.8\textwidth
 [[./img/dot/fs_apuntadores_indirectos.png]]
 
@@ -1023,7 +1023,7 @@ adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
 #+label: FS_tabla_fat
-#+caption: Ejemplo de entradas en la tabla de asignación de archivos en *fat32*
+#+caption: Ejemplo de entradas en la tabla de asignación de archivos en *fat32*.
 #+attr_latex: width=\textwidth
 #+attr_html: width="628" height="284"
 [[./img/tabla_fat.png]]
@@ -1131,7 +1131,7 @@ sección \ref{FS_otros_recursos}).] son:
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_inconsistencias_fat
-#+caption: Inconsistencias en un sistema de archivos tipo *fat*
+#+caption: Inconsistencias en un sistema de archivos tipo *fat*.
 [[./img/dot/inconsistencias_fat.png]]
 
 Cada sistema de archivos podrá presentar un distinto conjunto de
@@ -1334,7 +1334,7 @@ volverse a registrar sin peligro.
 
 #+attr_latex: width=\textwidth
 #+label: FS_fs_journaling
-#+caption: Sistema de archivos con bitácora
+#+caption: Sistema de archivos con bitácora.
 [[./img/dot/fs_journaling.png]]
 
 Este esquema es el más implementado hoy en día, y está presente en

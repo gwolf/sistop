@@ -23,7 +23,7 @@ compilación de los programas (en particular, la fase de
 emplean implementaciones que requieren de hardware especializado — la
 /Unidad de Manejo de Memoria/ (*mmu*). Se describirá cómo se manejaban
 los sistemas multitarea antes de la universalización de las *mmu*, y qué
-rol juegan hoy en día.
+papel juegan hoy en día.
 
 En esta primer sección se presentarán algunos conceptos base que 
 se emplearán en las secciones subsecuentes.
@@ -135,7 +135,7 @@ recursos que tuviera asignados y notificando a su usuario.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_mem_base_a_limite
-#+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
+#+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite.
 [[./img/ditaa/mem_base_a_limite.png]]
 
 ** La memoria /caché/
@@ -185,7 +185,7 @@ referencia/:
      memoria, tiende a ser requerido de forma secuencial.
 
 #+label: MEM_localidad_de_referencia
-#+caption: Patrones de acceso a memoria, demostrando la localidad espacial / temporal (Silberschatz, p.350)
+#+caption: Patrones de acceso a memoria, demostrando la localidad espacial / temporal (Silberschatz, p.350).
 #+attr_html: width:"330"
 #+attr_latex: width=0.7\textwidth
 [[./img/localidad_de_referencia.png]]
@@ -240,7 +240,7 @@ relativa a su ejecución.
 
 #+attr_latex: width=0.5\textwidth
 #+label: MEM_proceso_en_memoria
-#+caption: Regiones de la memoria para un proceso
+#+caption: Regiones de la memoria para un proceso.
 [[./img/ditaa/proceso_en_memoria.png]]
 
 
@@ -309,7 +309,7 @@ resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.4\textwidth
 #+label: MEM_tipo_resol_direcc
-#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281)
+#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, p.281).
 [[./img/dot/tipo_resol_direcc.png]]
 
 * Asignación de memoria contigua
@@ -425,7 +425,7 @@ permitiendo unificar varios bloques libres contiguos en uno solo.
 
 #+attr_latex: width=0.6\textwidth
 #+label: MEM_compactacion_memoria
-#+caption: Compactación de la memoria de procesos en ejecución
+#+caption: Compactación de la memoria de procesos en ejecución.
 [[./img/ditaa/compactacion_memoria.png]]
 
 La compactación tiene un costo alto — involucra mover prácticamente la
@@ -508,7 +508,7 @@ tipos de acceso.
 
 
 #+label: MEM_segmentacion_de_memoria
-#+caption: Ejemplo de segmentación
+#+caption: Ejemplo de segmentación.
 #+attr_latex: width=\textwidth
 [[./img/dot/segmentacion_de_memoria.png]]
 
@@ -720,7 +720,7 @@ desplazamiento).
 
 #+attr_latex: width=0.7\textwidth
 #+label: MEM_direccion_a_pag_y_despl
-#+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
+#+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes.
 [[./img/ditaa/direccion_a_pag_y_despl.png]]
 
 Para poder realizar este mapeo, la *mmu* requiere de una  estructura
@@ -731,7 +731,7 @@ en que /realmente/ se encuentra en la memoria del sistema).
 
 #+attr_latex: width=\textwidth
 #+label: MEM_hardware_de_paginacion
-#+caption: Esquema del proceso de paginación, ilustrando el rol de la *mmu*
+#+caption: Esquema del proceso de paginación, ilustrando el papel de la *mmu*.
 [[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
@@ -745,7 +745,7 @@ significativos/).
 
 #+attr_latex: width=0.75\textwidth
 #+label: MEM_ejemplo_de_paginacion
-#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes
+#+caption: Ejemplo (minúsculo) de paginación, con un espacio de direccionamiento de 32 bytes y páginas de 4 bytes.
 [[./img/ditaa/ejemplo_de_paginacion.png]]
 
 El proceso que se presenta tiene una visión de la memoria como la
@@ -878,7 +878,7 @@ por relativamente pocas entradas del *tlb* son muy altas.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_paginacion_con_tlb
-#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (*tlb*)
+#+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (*tlb*).
 [[./img/dot/paginacion_con_tlb.png]]
 
 Como sea, dado que el *tlb* es limitado en tamaño, es necesario
@@ -918,7 +918,7 @@ de 32 bits en una /tabla externa/ de 10 bits, una /tabla interna/ de
 10 bits, y el /desplazamiento/ de 12 bits.
 
 #+label: MEM_paginacion_jerarquica
-#+caption: Paginación en dos niveles: una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits)
+#+caption: Paginación en dos niveles: una tabla externa de 10 bits, tablas intermedias de 10 bits, y marcos de 12 bits (esquema común para procesadores de 32 bits).
 #+attr_latex: width=\textwidth
 [[./img/dot/paginacion_jerarquica.png]]
 
@@ -1121,7 +1121,7 @@ disco duro), a través de un esquema de /intercambio/ (/swap/) guardando
 y trayendo páginas enteras.
 
 #+label: MEM_esquema_gral_mem_virtual
-#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
+#+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual.
 #+attr_latex: width=0.6\textwidth
 [[./img/dot/esquema_gral_mem_virtual.png]]
 
@@ -1187,7 +1187,7 @@ a que el sistema operativo lo suspenda y traiga a memoria la página
 solicitada para luego continuar con su ejecución:
 
 #+label: MEM_respuesta_a_fallo_de_pagina
-#+caption: Pasos que atraviesa la respuesta a un fallo de página
+#+caption: Pasos que atraviesa la respuesta a un fallo de página.
 #+attr_latex: width=0.6\textwidth
 [[./img/dot/respuesta_a_fallo_de_pagina.png]]
 
@@ -1434,7 +1434,7 @@ sin requerir una nueva transferencia.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_fifo
-#+caption: Algoritmo *fifo* de reemplazo de páginas
+#+caption: Algoritmo *fifo* de reemplazo de páginas.
 [[./img/ditaa/reemplazo_pag_fifo.png]]
 
 La principal ventaja de este algoritmo es, como ya se ha
@@ -1468,7 +1468,7 @@ página que /no vaya a ser utilizada/ por un tiempo máximo (o nunca más).
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_opt
-#+caption: Algoritmo óptimo de reemplazo de páginas (*opt*)
+#+caption: Algoritmo óptimo de reemplazo de páginas (*opt*).
 [[./img/ditaa/reemplazo_pag_opt.png]]
 
 Si bien este algoritmo está demostrado como óptimo o mínimo, se
@@ -1495,7 +1495,7 @@ ha sido empleada hace más tiempo.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_reemplazo_pag_lru
-#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (*lru*)
+#+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (*lru*).
 [[./img/ditaa/reemplazo_pag_lru.png]]
 
 Para la cadena de referencia, *lru* genera 12 fallos, en el punto
@@ -1898,7 +1898,7 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+label: MEM_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349)
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349).
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -1928,7 +1928,7 @@ conjunto activo, el proceso accese de golpe una serie de páginas que
 no había referenciado en cierto tiempo.
 
 #+label: MEM_conjunto_activo
-#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/
+#+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/.
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/conjunto_activo.png]]
@@ -2077,7 +2077,7 @@ tuvieron lugar estos cuatro pasos.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_stackframe
-#+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
+#+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32.
 [[./img/ditaa/stackframe.png]]
 
 *** C y las funciones de manejo de cadenas
@@ -2163,7 +2163,7 @@ código ejemplo luce como lo presenta la figura \ref{MEM_overflow_500}.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_500
-#+caption: Estado de la memoria después del =strcpy()=
+#+caption: Estado de la memoria después del =strcpy()=.
 [[./img/ditaa/overflow_500.png]]
 
 Para volver de una función a quien la invocó, incluso si dicha
@@ -2240,7 +2240,7 @@ es saltar /hacia adentro del stack/.
 
 #+attr_latex: width=0.8\textwidth
 #+label: MEM_overflow_jump
-#+caption: Ejecutando el código arbitrario inyectado al buffer
+#+caption: Ejecutando el código arbitrario inyectado al buffer.
 [[./img/ditaa/overflow_jump.png]]
 
 Para hacerlo, si en vez de proporcionar simplemente una cadena

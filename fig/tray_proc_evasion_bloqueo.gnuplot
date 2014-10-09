@@ -27,7 +27,7 @@ set arrow nohead from 0,7 to 9,7 linetype 3 linecolor rgb "black"
 set arrow heads filled from 1,4 to 1,7 linewidth 1.5
 
 set object rectangle from 2,2 to 7.5,7 fillcolor rgb "yellow"
-set label "Región Inalcanzable" at 4.75,6.5 center
+set label "Región inalcanzable" at 4.75,6.5 center
 
 set object rectangle from 2,2 to 7,6 fillcolor rgb "orange"
 set label "Bloqueo\ninevitable" at 4.5,3.5 center

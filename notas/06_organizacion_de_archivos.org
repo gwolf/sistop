@@ -4,7 +4,7 @@
 * Introducción
 #<<DIR>>
 
-De los roles que cumple el sistema operativo, probablemente el que más
+De los papeles que cumple el sistema operativo, probablemente el que más
 consciente tengan en general sus usuarios es el de la gestión del
 espacio de almacenamiento, esto es, la organización de la información
 en un /sistema de archivos/. Al día de
@@ -27,7 +27,7 @@ los programas en espacio de usuario.
 
 #+attr_latex: height=0.5\textheight
 #+label: DIR_capas_acceso_a_discos
-#+caption: Capas de abstracción para implementar los sistemas de archivos
+#+caption: Capas de abstracción para implementar los sistemas de archivos.
 [[./img/dot/capas_acceso_a_discos.png]]
 
 La información /cruda/ tiene que pasar una serie de
@@ -513,7 +513,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
 #+attr_latex: width=\textwidth
 #+label: DIR_acceso_secuencial
-#+caption: Archivo de acceso secuencial
+#+caption: Archivo de acceso secuencial.
 [[./img/ditaa/acceso_secuencial.png]]
 
 - Acceso aleatorio :: El empleo de gestores como /SQLite/ u otros
@@ -536,7 +536,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
 #+attr_latex: width=\textwidth
 #+label: DIR_acceso_aleatorio
-#+caption: Archivo de acceso aleatorio
+#+caption: Archivo de acceso aleatorio.
 [[./img/ditaa/acceso_aleatorio.png]]
 
 - Acceso relativo a índice :: En los últimos años se han popularizado
@@ -587,7 +587,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
 
 #+attr_latex: width=\textwidth
 #+label: DIR_acceso_relativo_a_indice
-#+caption: Acceso relativo a índice: un índice apuntando al punto justo de un archivo sin estructura
+#+caption: Acceso relativo a índice: un índice apuntando al punto justo de un archivo sin estructura.
 [[./img/ditaa/acceso_relativo_a_indice.png]]
 
 ** Archivos especiales
@@ -771,7 +771,7 @@ de Archivos de Usuario/).
 
 #+attr_latex: width=\textwidth
 #+label: DIR_directorio_simple
-#+caption: Directorio simple, limitado a un sólo nivel de profundidad
+#+caption: Directorio simple, limitado a un sólo nivel de profundidad.
 [[./img/dot/directorio_simple.png]]
 
 Este esquema resuelve el problema principal del nombre global único:
@@ -796,7 +796,7 @@ piense en el espacio de almacenamiento como un espacio a largo plazo.
 
 #+attr_latex: width=\textwidth
 #+label: DIR_directorio_arbol
-#+caption: Directorio estucturado en árbol
+#+caption: Directorio estucturado en árbol.
 [[./img/dot/directorio_arbol.png]]
 
 Junto con esta estructura nacen las /rutas de búsqueda/ (/search
@@ -832,7 +832,7 @@ objeto/ está presente en más de un punto del árbol.
 
 #+attr_latex: width=0.5\textwidth
 #+label: DIR_directorio_DAG
-#+caption: Directorio como un /grafo dirigido acíclico/: el directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
+#+caption: Directorio como un /grafo dirigido acíclico/: el directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=.
 [[./img/dot/directorio_DAG.png]]
 
 Un sistema de archivos puede permitir la organización como un /grafo
@@ -1036,7 +1036,7 @@ se corre el peligro de entrar en un bucle infinito.
 
 #+attr_latex: width=0.2\textwidth
 #+label: DIR_arbol_para_recorrer
-#+caption: Directorio basado en grafo dirigido que incluye ciclos
+#+caption: Directorio basado en grafo dirigido que incluye ciclos.
 [[./img/dot/dir_traversal.png]]
 
 Para recorrer al directorio ilustrado como ejemplo en la figura
@@ -1132,7 +1132,7 @@ comunes.]
 
 #+attr_latex: width=\textwidth
 #+label: DIR_puntos_de_montaje
-#+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
+#+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=.
 [[./img/dot/puntos_de_montaje.png]]
 
 La manera en que esto se presenta en sistemas Windows es muy
@@ -1167,7 +1167,7 @@ comportamiento y configuración específica.
 
 #+attr_latex: width=0.9\textwidth
 #+label: DIR_montaje_windows
-#+caption: Vista de un sistema de archivos Windows
+#+caption: Vista de un sistema de archivos Windows.
 [[./img/dot/montaje_windows.png]]
 
 * Control de acceso
@@ -1394,7 +1394,7 @@ locales/.
 
 Al hablar de sistemas de archivos en red, casi siempre se hará
 siguiendo un /modelo cliente-servidor/. Estos términos no se refieren
-a las prestaciones relativas de una computadora, sino al rol que ésta
+a las prestaciones relativas de una computadora, sino al papel que ésta
 juega /dentro de cada conexión/ — esto es, se designa como /cliente/ a
 la computadora que solicita un servicio, y como /servidor/ a la que lo
 provee; es frecuente que dos computadoras sean tanto servidor como
@@ -1561,9 +1561,9 @@ compartidos/ no tengan que estar en un servidor en particular, sino
 que un conjunto de equipos se repartan la carga (esto es,
 /agnosticismo a la ubicación/). *afs* busca también una /fácil
 escalabilidad/, la capacidad de agregar tanto espacio de
-almacenamiento como equipos con rol de servidor. *afs* permite inclusive
-migrar completamente un volumen mientras está siendo empleado, de
-forma transparente.
+almacenamiento como equipos con papel de servidor. *afs* permite
+inclusive migrar completamente un volumen mientras está siendo
+empleado, de forma transparente.
 
 Ante la complejidad e inestabilidad adicional que presentan con
 tanta frecuencia las redes grandes[fn:: El uso típico de *afs* se

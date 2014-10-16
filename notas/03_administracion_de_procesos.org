@@ -1800,6 +1800,7 @@ variables globales, de esta manera:
     for i in ingredientes:
       que_tengo[i] = False
       semaforos_interm[i] = threading.Semaphore(0)
+    
     interm_mutex = threading.Semaphore(1)
     intermediarios = [threading.Thread(target=intermediario, args=[i]).start() for i in ingredientes]
     
@@ -2581,10 +2582,10 @@ aunque típicamente ejecuta en $O(n^2)$. Una implementación de este
 algoritmo podría ser:
 
 #+begin_src ruby
-l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
+l = ['A', 'B', 'C', 'D', 'E']; # Todos los procesos del sistema
 s = []; # Secuencia segura
 while ! l.empty? do
-  p = l.select {|id| asignado[id] - reclamado[id] > libres}.first
+  p = l.select {|id| reclamado[id] - asignado[id] > libres}.first
   raise Exception, 'Estado inseguro' if p.nil?
   libres += asignado[p]
   l.delete(p)

@@ -482,10 +482,10 @@ Sólo una clase de recursos, 2 instancias libres
 
 ** Implementación ejemplo (para una sóla categoría)
 #+begin_src ruby
-l = [1, 2, 3, 4, 5]; # Todos los procesos del sistema
+l = ['A', 'B', 'C', 'D', 'E']; # Todos los procesos del sistema
 s = []; # Secuencia segura
 while ! l.empty? do
-  p = l.select {|id| asignado[id] - reclamado[id] > libres}.first
+  p = l.select {|id| reclamado[id] - asignado[id] > libres}.first
   raise Exception, 'Estado inseguro' if p.nil?
   libres += asignado[p]
   l.delete(p)

@@ -1,0 +1,225 @@
+\documentclass[aspectratio=169,dvips,10pt]{beamer}
+\mode<presentation>
+{
+  \usetheme{Berkeley}
+  \setbeamercovered{transparent}
+}
+
+\setcounter{tocdepth}{1}
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Organización de la presentación}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage[scanall]{psfrag}
+\usepackage{bibunits}
+
+\newcommand{\beq}[1]{$#1$}
+\input{commands}
+\newcommand{\pd}{\emph{PowerDEVS}}
+\title{Escritura Colaborativa utilizando Software Libre}
+\author {Esteban Ruiz, Federico Bergero, Gunnar Wolf } 
+\institute[UNR] % (optional, but mostly needed)
+{ UNR - Argentina, Universidad Autónoma de México - México}
+\date {LACLO - Latin Workshop - Octubre 2014}
+
+\subject{Talks}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+ 
+\section{Intoducción}
+\begin{frame}{Introducción}
+ \begin{exampleblock}{Sistemas Operativos}
+ \begin{itemize}
+  \item Libro sobre tópicos de Sistemas Operativos clásicos.
+  \item Cubriendo las necesidades de un curso de grado universitario.
+  \item Realizado nativamente en español por docentes del área.
+  \end{itemize}
+ \end{exampleblock}
+ 
+ \begin{exampleblock}{Grupo de Escritura}
+  \begin{itemize}
+   \item Esteban Ruiz y Federico Bergero. Docentes de la Universidad Nacional de Rosario. Materia ``Sistemas Operativos II'' de la LCC.
+   \item Gunnar Wolf de la Universidad Nacional Autónoma de México. Materia ``Sistemas Operativos'' de la Ingeniería en Computación.
+  \end{itemize}
+
+ \end{exampleblock}
+
+
+\end{frame}
+
+\section{Organización del Grupo de Escritura}
+
+\section{Herramientas Utilizadas}
+\begin{frame}{Herramientas de Código abierto}
+ \begin{itemize}
+  
+  \item El proyecto LATIN apunta a realizar libros \emph{libres} de forma colaborativa.
+  \item Los autores del libro somos usuarios de software libre.
+  \item Por ello utilizamos tanto para el desarrollo del material como para la organización grupal distintas herramientas 
+  de software libre.
+ \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Herramienta de Escritura}
+ 
+ \begin{exampleblock}{Emacs + Org mode}	
+  \begin{itemize}
+  \item Mucho del material ya estaba escrito utilizando emacs y org mode.
+  \item Por ello no utilizamos la plataforma de escritura provista por LATIN.
+  \item Utilizando org mode la forma de desarrollo no es WYSIWYG. 
+  \item Permite separar el proceso de escritura del proceso de edición.
+  \item El material se escribe como un archivo de texto.
+  \item Luego éste puede ser exportado a HTML, Latex o PDF.
+  \end{itemize}
+
+ \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}{Desarrollo Colaborativo}
+ \begin{exampleblock}{Desarrollo colaborativo y control de versiones}
+  \begin{itemize}
+   \item Por la distribución geográfica de los autores la colaboración fue realizada por internet.
+   \item Utlizamos una herramienta de control de versiones llamada \alert{git} para mantener los fuentes del libro.
+   \item git permite 
+      \begin{itemize}
+	\item Colaboración concurrente (a distancia).
+	\item Revisar cambios.
+	\item Mantener distintas versiones del material.
+	\item Obtener estadísticas de modificaciones.
+	
+
+      \end{itemize}
+      
+  \end{itemize}
+
+ \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}{Estadísticas git}
+\begin{figure}
+\includegraphics[width=7cm]{../figs/actividad.eps}\includegraphics[width=5cm]{../figs/commits_by_author.eps}
+\end{figure}
+ 
+\end{frame}
+
+\begin{frame}[fragile]{Elaboración de Gráficas}
+ Para la elaboración de gráficas e imágenes se utlizaron varias herramientas que generan las imágenes.
+ \begin{exampleblock}{GraphViz}
+ \begin{columns}
+  \begin{column}{5cm}
+ \tiny
+\begin{verbatim}
+digraph G {
+  layout = circo;
+  A [label = "Proceso\nA"];
+  B [label = "Proceso\nB"];
+  1 [label = "Unidad\n1", shape = box];
+  2 [label = "Unidad\n2", shape = box];
+  A -> 1 [label = "Asignada"];
+  B -> 2 [label = "Asignada"];
+  2 -> A [label = "Solicitada", style = dotted];
+  1 -> B [label = "Solicitada", style = dotted];
+}
+ \end{verbatim}
+  \end{column}
+  \begin{column}{5cm}
+\includegraphics[width=5cm]{../figs/bloqueo.eps}
+  \end{column}
+\end{columns}
+ 
+
+  
+ \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}[fragile]{Elaboración de gráficas - cont.}
+ \begin{exampleblock}{Ditaa}
+ \begin{columns}
+  \begin{column}{5cm}
+ \tiny
+\begin{verbatim}
+  1024K +-------------------+  0x100000
+        | Espacio cPNK      |
+        | Libre             |
+        |                   |
+        |                   |
+        |                   |
+        |                   |
+  556K  +-------------------+<-0x08AFFF<--569343 (base+límite)
+        | Proceso 3 cGRE    | +0x00FFFF   +65535 (límite)
+  492K  +-------------------+<-0x07B000<--503808 (base)
+        |                   |
+        |                   |
+        | Proceso 2         |
+  256K  +-------------------+  0x040000
+        |                   |
+        | Proceso 1         |
+  128K  +-------------------+  0x020000
+        | Sistema Operativo |
+        | cBLU              |
+  0     +-------------------+  0x000000
+ \end{verbatim}
+  \end{column}
+  \begin{column}{7cm}
+\includegraphics[width=7cm]{../figs/mem.eps}
+  \end{column}
+\end{columns}
+ 
+
+  
+ \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Elaboración de gráficas - cont.}
+ \begin{exampleblock}{GNUPlot}
+ \begin{columns}
+  \begin{column}{5cm}
+ \tiny
+\begin{verbatim}
+  plot "-" using 1:2 with linespoints linewidth 2
+1	12
+2	12
+3	9
+4	10
+5	5
+6	5
+7	5
+e
+ \end{verbatim}
+  \end{column}
+  \begin{column}{7cm}
+\includegraphics[width=7cm]{../figs/anomalia_belady.eps}
+  \end{column}
+\end{columns}
+ 
+
+  
+ \end{exampleblock}
+\end{frame}
+
+
+
+\section{Evaluación y Utilización del Libro}
+\section{Modificaciones y mejoras Futuras}
+\section{Conclusiones}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\end{document}

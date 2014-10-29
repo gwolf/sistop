@@ -678,31 +678,31 @@ descriptores primarios
 |               |                 | Ronda egoísta (SRR)     |
 |---------------+-----------------+-------------------------|
 
-** ¡Tarea!
-#+BEGIN_CENTER
-Tenemos ya cubiertos los principales esquemas base de planificación.
+# ** ¡Tarea!
+# #+BEGIN_CENTER
+# Tenemos ya cubiertos los principales esquemas base de planificación.
 
-Queda claro que están enunciados /en líneas generales/, y muchas veces
-operan en forma híbrida o altamente parametrizada.
+# Queda claro que están enunciados /en líneas generales/, y muchas veces
+# operan en forma híbrida o altamente parametrizada.
 
-Elige /dos/ sistemas operativos en uso /relativamente común/ en
-ambientes de producción, y describe cómo es su mecanismo de
-planificación.
+# Elige /dos/ sistemas operativos en uso /relativamente común/ en
+# ambientes de producción, y describe cómo es su mecanismo de
+# planificación.
 
-*Entrega: Adjunto via EDUCAFI*
-#+END_CENTER
+# *Entrega: Adjunto via EDUCAFI*
+# #+END_CENTER
 
-** Tarea: ¿Qué quiero que desarrollen?
-- A cuál o cuáles de los esquemas presentados se parecen más
-- ¿Hay alguna diferenciación clara derivada del tipo de uso que se le
-  da al sistema?
-  - Por ejemplo, ¿Planifican servidores diferente de estaciones de
-    trabajo? ¿En dispositivos móviles? ¿En hardware /embebido/?
-  - ¿Debería haberla?
-- ¿Ofrece el sistema alguna interfaz al usuario/administrador para
-  cambiar el mecanismo o ajustar sus parámetros?
-  - ¿Qué tan común te parece que es manipularlo entre sus usuarios?
-    ¿Por qué?
+# ** Tarea: ¿Qué quiero que desarrollen?
+# - A cuál o cuáles de los esquemas presentados se parecen más
+# - ¿Hay alguna diferenciación clara derivada del tipo de uso que se le
+#   da al sistema?
+#   - Por ejemplo, ¿Planifican servidores diferente de estaciones de
+#     trabajo? ¿En dispositivos móviles? ¿En hardware /embebido/?
+#   - ¿Debería haberla?
+# - ¿Ofrece el sistema alguna interfaz al usuario/administrador para
+#   cambiar el mecanismo o ajustar sus parámetros?
+#   - ¿Qué tan común te parece que es manipularlo entre sus usuarios?
+#     ¿Por qué?
 
 
 * Esquemas híbridos y prioridades externas
@@ -787,3 +787,29 @@ planificación.
   - Entre más procesos pendientes, mayor el peso que /modifique/ a la
     prioridad
 
+** ...¡Hora de otra tarea!
+- Implementar y comparar los algoritmos /más sencillos/
+  - En su lenguaje favorito
+  - FCFS, RR (¿duración de quantum?), SPN
+  - ¿Quieren divertirse? FB, SRR, alguno más
+- Bajo /algunas/ cargas, no sólo sobre una carga ejemplo
+  - Generadas de forma aleatoria
+- Presentar los resultados de varias ejecuciones
+  - Unos cinco resultados, para poder comparar un poco las tendencias
+  - ¡Verifiquen manualmente algunos de los resultados!
+- (Y claro: Presentar el código)
+- Entrega vía EDUCAFI: /una semana desde hoy/
+
+** Ejemplo de resultados
+#+begin_src sh
+$ compara_planif
+- Primera ronda:
+  A: 0, t=3; B: 1, t=5; C: 3, t=2; D: 9, t=5; E: 12, t=5 (tot:20)
+  FCFS: T=6.2, E=2.2, P=1.74
+  RR1:  T=7.6, E=3.6, P=1.98
+  RR4:  T=7.2, E=3.2, P=1.88
+  SPN:  T=5.6, E=1.6, P=1.32
+- Segunda ronda
+  A: 0, t=5; B: 3, t=3; C: 3, t=7; D: 7, t=4; E:8, t=4 (tot:23)
+  (...)
+#+end_src

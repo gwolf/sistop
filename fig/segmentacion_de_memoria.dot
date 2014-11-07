@@ -5,17 +5,17 @@ digraph G {
 	layout = dot;
 	subgraph cluster_logico {
 		label = "Espacio lógico de direccionamiento";
-		seg0 [shape=box, label = "Segmento 0:\nSección de texto\ndel programa"];
-		seg1 [shape=ellipse, label = "Segmento 1:\nTabla de\nsímbolos"];
-		seg2 [shape=diamond, label = "Segmento 2:\nBiblioteca de\nfunciones C"];
-		seg3 [shape=trapezium, label = "Segmento 3:\nPila (stack)\nde llamadas"];
-		seg4 [shape=hexagon, label = "Segmento 4:\nBiblioteca ligada\ndinámicamente"];
+		seg0 [shape=box, label = "Segmento 0:\nsección de texto\ndel programa"];
+		seg1 [shape=ellipse, label = "Segmento 1:\ntabla de\nsímbolos"];
+		seg2 [shape=diamond, label = "Segmento 2:\nbiblioteca de\nfunciones C"];
+		seg3 [shape=trapezium, label = "Segmento 3:\npila (stack)\nde llamadas"];
+		seg4 [shape=hexagon, label = "Segmento 4:\nbiblioteca ligada\ndinámicamente"];
 		seg5 [shape=plaintext, label = "..."];
 		seg1 -> seg3 [style=invis];
 		seg2 -> seg4 [style=invis];
         }
 
-	tabla [shape=record, label="Tabla de segmentos\nID: Base, Límite|<0>0: 320, 96|<1>1: 630, 180|<2>2: 1300, 64|<3>3: 860, 128|<4>4: 1024, 128"];
+	tabla [shape=record, label="Tabla de segmentos\nID: base, límite|<0>0: 320, 96|<1>1: 630, 180|<2>2: 1300, 64|<3>3: 860, 128|<4>4: 1024, 128"];
 
 	fis [shape=record, label="Memoria física|0-319|<0>320-415|416-629|<1>630-809|810-859|<3>860-987|988-1023|<4>1024-1151|1152-1299|<2>1300-1363"];
 

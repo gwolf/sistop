@@ -10,19 +10,19 @@ digraph G {
 		solic_baja [label = "00e51438"];
 	}
 	subgraph cluster_ext {
-		label = "Tabla de\npaginación externa\n(1024 entradas de 10 bits)";
+		label = "Tabla de\npaginación externa\n(1 024 entradas de 10 bits)";
 		color = "#ffffff";
 		externa [shape=record, label="<ffc0>FFC0FFFF—FFFFFFFFF|<ff80>FF800000—FFBFFFFF|(...)|<8340>83400000—837FFFFF|<8380>83800000—83BFFFFF|(...)|<c0>00C00000—00FFFFFF|<0080>00800000—00BFFFFF|<0040>00400000—007FFFFF|<0000>00000000—003FFFFF"];
 	}
 	subgraph cluster_med {
-		label = "Tablas intermedias de la\ntabla de paginación\n(1024 entradas de 10 bits\nen cada una de\nlas 1024 tablas)";
+		label = "Tablas intermedias de la\ntabla de paginación\n(1 024 entradas de 10 bits\nen cada una de\nlas 1 024 tablas)";
 		color = "#ffffff";
 		med_ffc0 [shape=record, label="FFFFF000—FFFFFFFF|(...)|<alta>FFF21000—FFF21FFF|(...)|FFC00000—FFC00FFF"];
 		med_8340 [shape=record, label="837FF000—837FFFFF|<med>837FE000—837FEFFF|(...)|83400000—83400FFF"];
 		med_00c0 [shape=record, label="00FFF000—00FFFFFF|(...)|<baja>00E51000—00E51FFF|(...)|00C00000—00C00FFF"];
 	}
 	subgraph cluster_mem {
-		label = "Marcos de\nmemoria física\n(Hasta 1048576 marcos\nde 12 bits, 4096 bytes)";
+		label = "Marcos de\nmemoria física\n(Hasta 1 048 576 marcos\nde 12 bits, 4 096 bytes)";
 		color = "#ffffff";
 		memoria [shape=record, label="FFFFF000—FFFFFFFF|(...)|FFF22000—FFF22FFF|<alta>FFF21000—FFF21FFF|FFF20000—FFF20FFF|(...)|837FF000—837FFFFF|<med>837FE000—837FEFFF|837FD000—837FDFFF|(...)|00E52000—00E52FFF|<baja>00E51000—00E51FFF|00E50000—00E50FFF|(...)|00001000—00001FFF|00000000—00000FFF"]
 	}

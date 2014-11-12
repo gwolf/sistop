@@ -89,18 +89,18 @@ programador.
 
 #+caption: Velocidad y gestor de los principales niveles de memoria (Silberschatz, Galvin, Gagne; p.28).
 #+label: HW_tabla_velocidad_gestor_memoria
-| Nivel            | 1            | 2         | 3         | 4           |
-|------------------+--------------+-----------+-----------+-------------|
-| *Nombre*         | Registros    | Cache     | Memoria   | Disco       |
-| *Tamaño*         | <1KB         | <16MB     | <64GB     | >100GB      |
-| *Tecnología*     | Multipuerto, | *cmos*    | *cmos*    | Magnética   |
-|                  | *cmos*       | *sram*    | *dram*    |             |
-| *Acceso (ns)*    | 0.25-0.5     | 0.5-25    | 80-250    | $5~000~000$ |
-| *Transferencia*  | 20-100 GB/s  | 5-10 GB/s | 1-5 GB/s  | 20-150 MB/s |
-| *Gestionado por* | Compilador   | Hardware  | Sistema   | Sistema     |
-|                  |              |           | Operativo | Operativo   |
-| *Respaldado en*  | Cache        | Memoria   | Disco     | CD, cinta   |
-|------------------+--------------+-----------+-----------+-------------|
+| Nivel            | 1              | 2            | 3           | 4              |
+|------------------+----------------+--------------+-------------+----------------|
+| *Nombre*         | Registros      | Cache        | Memoria     | Disco          |
+| *Tamaño*         | <1 *kb*        | <16 *mb*     | <64 *gb*    | >100 *gb*      |
+| *Tecnología*     | Multipuerto,   | *cmos*       | *cmos*      | Magnética      |
+|                  | *cmos*         | *sram*       | *dram*      |                |
+| *Acceso (ns)*    | 0.25-0.5       | 0.5-25       | 80-250      | $5~000~000$    |
+| *Transferencia*  | 20-100 *gb* /s | 5-10 *gb* /s | 1-5 *gb* /s | 20-150 *mb* /s |
+| *Gestionado por* | Compilador     | Hardware     | Sistema     | Sistema        |
+|                  |                |              | Operativo   | Operativo      |
+| *Respaldado en*  | Cache          | Memoria      | Disco       | CD, cinta      |
+|------------------+----------------+--------------+-------------+----------------|
 
 Ahora bien, aunque la relación entre estos medios de almacenamiento
 puede parecer natural, para una computadora tiene una realidad
@@ -796,7 +796,7 @@ Esto cambió hacia el 2005. Tras más de 40 años de cumplirse, el modelo
 conocido como la /Ley de Moore/, enunciando que cada dos años la
 densidad de transistores por circuito integrado se duplicaría,
 llevaba a velocidades de *cpu* que, en el ámbito comercial, excedían los
-3GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
+3 GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
 el diferencial de velocidad con el acceso a memoria era cada vez más
 alto. Esto motivó a que las principales compañías productoras de los *cpu*
 cambiaran de estrategia, introduciendo chips que son, para propósitos
@@ -809,7 +809,7 @@ prácticos, /paquetes/ con dos o más procesadores dentro.
 [[./img/gnuplot/ley_de_moore.png]]
 
 Con este cambio, el /reloj/ de los procesadores se ha mantenido casi
-sin cambios, cerca de 1GHz, pero el rendimiento de los equipos sigue
+sin cambios, cerca de 1 GHz, pero el rendimiento de los equipos sigue
 aumentando. Sin embargo, los programadores de sistemas operativos y
 programas de aplicación ya no pueden ignorar esta complejidad
 adicional.
@@ -1093,8 +1093,8 @@ de la utilidad misma del paralelismo masivo.
    desventajas de esta tendencia?
 
 3. ¿Cuál es el máximo de información (en bytes) que puede transferir a
-   memoria en un segundo un disco con un tiempo de acceso de 15ms y
-   una tasa de transferencia de 80MB/s?
+   memoria en un segundo un disco con un tiempo de acceso de 15 ms y
+   una tasa de transferencia de 80 *mb* por segundo?
 
 4. De la siguiente lista de eventos, indique cuáles que corresponden
    a interrupciones y cuáles a excepciones
@@ -1109,11 +1109,12 @@ de la utilidad misma del paralelismo masivo.
    7. Los datos solicitados al controlador de disco duro ya están
       disponibles.
 
-5. Si el procesador de un sistema corre a 1GHz, la latencia de la
+5. Si el procesador de un sistema corre a 1 GHz, la latencia de la
    memoria es de 130ns, y el bus de memoria puede sostener un ancho de
-   banda de $3~000$ MB/s, asumiendo que no hay ningún otro proceso en
-   ejecución que entorpezca el proceso, ¿cuántos ciclos de reloj tiene
-   que esperar el procesador al solicitar una palabra (64 bits)?
+   banda de $3~000$ *mb* por segundos, asumiendo que no hay ningún
+   otro proceso en ejecución que entorpezca el proceso, ¿cuántos
+   ciclos de reloj tiene que esperar el procesador al solicitar una
+   palabra (64 bits)?
 
 
 

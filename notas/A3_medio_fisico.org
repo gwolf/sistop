@@ -64,14 +64,14 @@ contradicción de que los discos (físicamente) más chicos tenían más
 capacidad que los más grandes.
 
 #+caption: Principales formatos de disco flexible que se popularizaron en el mercado.
-|-----------------------+-------------+---------------+--------------|
-|                       |  8 pulgadas | 5.25 pulgadas | 3.5 pulgadas |
-|-----------------------+-------------+---------------+--------------|
-| Fecha de introducción |        1971 |          1976 |         1982 |
-| Capacidad             | 150KB-1.2MB |   110KB-1.2MB | 264KB-2.88MB |
-| Velocidad (kbit/s)    |          33 |       125-500 |     250-1000 |
-| Pistas por pulgada    |          48 |         48-96 |          135 |
-|-----------------------+-------------+---------------+--------------|
+|-----------------------+---------------------+---------------------+----------------------|
+|                       |          8 pulgadas |       5.25 pulgadas |         3.5 pulgadas |
+|-----------------------+---------------------+---------------------+----------------------|
+| Fecha de introducción |                1971 |                1976 |                 1982 |
+| Capacidad             | 150 *kb* a 1.2 *mb* | 110 *kb* a 1.2 *mb* | 264 *kb* a 2.88 *mb* |
+| Velocidad (kbit/s)    |                  33 |             125-500 |             250-1000 |
+| Pistas por pulgada    |                  48 |               48-96 |                  135 |
+|-----------------------+---------------------+---------------------+----------------------|
 
 El nombre de /disco duro/ o /disco flexible/ se debe al medio empleado
 para el almacenamiento de la información (y no a la rigidez de su
@@ -89,21 +89,21 @@ lectura y escritura, y toda la electrónica de control. Esto permite
 que los discos duros tengan densidades de almacenamiento y velocidades
 de transmisión muy superiores a la de los discos flexibles: los
 primeros discos duros que se comercializaron para computadoras
-personales eran de 10MB (aproximadamente 70 discos flexibles de su
-época), y actualmente hay ya discos de 4TB. La velocidad máxima de
-transferencia sostenida hoy en día es superior a los 100MB por
+personales eran de 10 *mb* (aproximadamente 70 discos flexibles de su
+época), y actualmente hay ya discos de 4 *tb*. La velocidad máxima de
+transferencia sostenida hoy en día es superior a los 100 *mb* por
 segundo, 100 veces más rápido que la última generación de discos
 flexibles.
 
 Para medir la eficiencia de un disco duro, además de la /demora
 rotacional/ presentada unos párrafos atrás, el otro dato importante es
 el tiempo que toma la cabeza en moverse a través de la superficie del
-disco. Hoy en día, las velocidades más comunes son de 20ms para un
+disco. Hoy en día, las velocidades más comunes son de 20 ms para un
 /recorrido completo/ (desde el primer hasta el último sector), y entre
-0.2ms y 0.8ms para ir de un cilindro al inmediato siguiente. Como
+0.2 ms y 0.8 ms para ir de un cilindro al inmediato siguiente. Como
 punto de comparación, el recorrido completo en una unidad de disco
-flexible toma aproximadamente 100ms, y el tiempo de un cilindro al
-siguiente va entre 3 y 8ms.
+flexible toma aproximadamente 100 ms, y el tiempo de un cilindro al
+siguiente va entre 3 y 8 ms.
 
 *** Notación C-H-S
 
@@ -182,7 +182,7 @@ ante la cadena de referencia dada.
           disco completo tres veces. Esto es, despreciando la demora
           rotacional la demora mecánica para que el brazo se detenga por
           completo antes de volver a moverse, esta lectura tomaría un
-          mínimo de 60ms, siendo el recorrido completo del disco 20ms.
+          mínimo de 60 ms, siendo el recorrido completo del disco 20 ms.
 
 	  Puede identificarse como causante de buena parte de esta
           demora a la quinta posición de la cadena de referencia:
@@ -385,7 +385,7 @@ permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
 que efectuar, dentro de la lógica de su controlador, una emulación — y
 una modificación de un sólo sector se vuelve un /ciclo
 lectura-modificación-escritura/ (*rmw*), que redunda en una espera de
-por lo menos una revolución adicional (8ms con un disco de $7~200$ *rpm*)
+por lo menos una revolución adicional (8 ms con un disco de $7~200$ *rpm*)
 del disco antes de que la operación pueda completarse.
 
 Resulta claro que, dados estos cambios en la manera en que debe

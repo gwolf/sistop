@@ -124,11 +124,11 @@ penalidad /cada acceso a memoria/ para verificar que esté en el rango
 permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
-64K ($65~535$ bytes) a partir de la dirección $504~214$ (492K), el
-/registro base/ contendría $504~214$, y el /registro límite/
+64 *kb* ($65~535$ bytes) a partir de la dirección $504~214$ (492
+*kb*), el /registro base/ contendría $504~214$, y el /registro límite/
 $65~535$. Si hubiera una instrucción por parte de dicho proceso que
-solicitara una dirección menor a $504~214$ o mayor a $569~749$ (556K),
-la *mmu* lanzaría una excepción o /trampa/ interrumpiendo el
+solicitara una dirección menor a $504~214$ o mayor a $569~749$ (556
+*kb*), la *mmu* lanzaría una excepción o /trampa/ interrumpiendo el
 procesamiento, e indicando al sistema operativo que ocurrió una
 /violación de segmento/ (/segmentation fault/).[fn:: ¿Por qué /de
 segmento/? Véase la sección \ref{MEM_segmentacion}.] El sistema
@@ -1232,12 +1232,13 @@ atender a un fallo de página ($t_f$):
 $$t_e = (1-p)t_a + pt_f$$
 
 Ahora bien, dado que $t_a$ ronda hoy en día entre los 10 y 200ns,
-mientras que $t_f$ está más bien cerca de los 8ms (la latencia típica
-de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
-5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
-prácticos se puede ignorar a $t_a$. Con los valores presentados, seleccionando
-el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
-1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1~000}$):
+mientras que $t_f$ está más bien cerca de los 8 ms (la latencia típica
+de un disco duro es de 3 ms, el tiempo de posicionamiento de cabeza de
+5ms, y el tiempo de transferencia es de 0.05 ms), para propósitos
+prácticos se puede ignorar a $t_a$. Con los valores presentados,
+seleccionando el mayor de los $t_a$ presentados, si sólo un acceso a
+memoria de cada 1000 ocasiona un fallo de página (esto es,
+$p=\frac{1}{1~000}$):
 
 $$t_e = (1-\frac{1}{1~000}) \times 200ns + \frac{1}{1~000} \times 8~000~000ns$$
 
@@ -1256,7 +1257,7 @@ de paginación sobre demanda permite, al no requerir que se tengan en
 memoria todas las páginas de un proceso, que haya /más procesos
 activos/ en el mismo espacio en memoria, aumentando el grado de
 multiprogramación del equipo. De este modo, si un proceso se ve
-obligado a esperar por 8ms a que se resuelva un fallo de página,
+obligado a esperar por 8 ms a que se resuelva un fallo de página,
 durante ese tiempo pueden seguirse ejecutando los demás procesos.
 
 *** Acomodo de las páginas en disco

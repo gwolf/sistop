@@ -121,8 +121,8 @@ conceptos para almacenar, ubicar o recuperar la información:
      encontrar de forma compacta el espacio ocupado y disponible, así
      como el lugar adecuado para crear un nuevo archivo.
 
-     El bitmap para un disco de 100GB puede, de esta manera,
-     representarse en 23MB ($100 \times 10^9 \over 4~096$), cantidad
+     El bitmap para un disco de 100 *gb* puede, de esta manera,
+     representarse en 23 *mb* ($100 \times 10^9 \over 4~096$), cantidad
      que puede razonablemente mantener en memoria un sistema de
      escritorio promedio hoy en día.[fn:: Esto explica por qué,
      incluso sin estar trabajando activamente con ningún archivo
@@ -210,7 +210,7 @@ En el caso de *fat*, el volumen indica no sólo la /generación/ del
 sistema de archivos que se está empleando (*fat12*, *fat16* o *fat32*, en
 los tres casos denominados así por la cantidad de bits para
 referenciar a cada uno de los bloques lógicos o /clusters/), sino el
-tamaño de los /clusters/, que puede ir desde los 2 y hasta los 32 Kb.
+tamaño de los /clusters/, que puede ir desde los 2 y hasta los 32 *kb*.
 
 *** Volúmenes /crudos/
 # <<FS_volumenes_crudos>>
@@ -541,7 +541,7 @@ El primer sistema de archivos que se popularizó fue /Stacker/,
 comercializado a partir de 1990 por /Stac Electronics/. Stacker
 operaba bajo *ms-dos*, creando un dispositivo de bloques virtual alojado
 en un disco estándar[fn:: Esto significa que, al solicitarle la
-creación de una unidad comprimida de 30MB dentro del volumen =C=
+creación de una unidad comprimida de 30 *mb* dentro del volumen =C=
 (disco duro primario), esta aparecería disponible como un volumen
 adicional. El nuevo volúmen requería de la carga de un /controlador/
 especial para ser /montado/ por el sistema operativo.]. Varias
@@ -698,7 +698,7 @@ en el cual está almacenado debe mantenerse en memoria. En el caso de
 la implementación de *zfs* en
 #+latex: Free\textbf{bsd},
 #+html: Free<b>bsd</b>,
-[[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar 5GB de memoria por cada TB de
+[[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar 5 *gb* de memoria por cada *tb* de
 almacenamiento (0.5% de la capacidad total)]].
 
 ** Sistemas de archivos virtuales
@@ -947,24 +947,25 @@ indirección que /vayan haciendo falta/.
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
 esquema y únicamente tres indirecciones? Suponiendo magnitudes que
-típicas hoy en día (/clusters/ de 4KB y direcciones de 32 bits), en un
+típicas hoy en día (/clusters/ de 4 *kb* y direcciones de 32 bits), en un
 /cluster/ vacío caben 128 apuntadores ($4~096 \over 32$). Si los
 metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 100
 apuntadores:
 
-- Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede ser referido
+- Un archivo de hasta $(100-3) \times 4$ *kb* = 388 *kb* puede ser referido
   por completo directamente en el i-nodo, y es necesario un sólo
   acceso a disco para obtener su lista de /clusters/.
-- Un archivo de hasta $(100-3 + 128) \times 4KB = 900KB$ puede
+- Un archivo de hasta $(100-3 + 128) \times 4$ *kb* = 900 *kb* puede
   representarse con el bloque de indirección sencilla, y obtener su
   lista de /clusters/ significa dos accesos a disco adicionales.
 - Con el bloque de doble indirección, puede hacerse referencia a
   archivos mucho más grandes:
 
-  $(100-3 + 128 + (128\times 128) ) \times 4KB = 66~436KB \approx 65MB$
+  $(100-3 + 128 + (128\times 128) ) \times 4$ *kb* $= 66~436$ *kb*
+  $\approx 65$ *mb*
 
   Sin embargo, aquí ya llama la atención otro importante punto: para
-  acceder a estos 65MB, es necesario que realizar hasta 131 accesos a
+  acceder a estos 65 *mb*, es necesario que realizar hasta 131 accesos a
   disco. A partir de este punto, resulta importante que el sistema
   operativo asigne /clusters/ cercanos para los metadatos (y, de ser
   posible, para los datos), pues la diferencia en tiempo de acceso
@@ -973,7 +974,7 @@ apuntadores:
 - Empleando triple indirección, se puede llegar hasta:
 
   $(100-3 + 128 + (128 \times 128) + (128 \times 128 \times 128) )
-  \times 2KB = 8~455~044KB \approx 8GB$
+  \times 2$ *kb* $= 8~455~044 *kb* \approx 8$ *gb*
 
   Esto es ya más de lo que puede representarse en un sistema de 32
   bits. La cantidad de bloques a leerse, sin embargo, para encontrar
@@ -1040,7 +1041,7 @@ archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del
-/cluster/ es pequeño (2KB), podrá almacenar sólo 64 entradas ($2~048
+/cluster/ es pequeño (2 *kb*), podrá almacenar sólo 64 entradas ($2~048
 \over 32$) y cada /cluster/ adicional le dará 64 entradas más. Y como
 tal, está sujeto también a la fragmentación: conforme se agregan
 entradas al directorio, éste crece. Llegado el momento, requiere
@@ -1423,7 +1424,7 @@ de archivos resurja.
 
 2. El sistema de archivos /Reiser/ está basado en la /asignación
    indexada/, pero introduce un nuevo concepto: Las /colitas/
-   (/tails/). Estas permiten que archivos muy pequeños, de hasta 4KB,
+   (/tails/). Estas permiten que archivos muy pequeños, de hasta 4 *kb*,
    puedan ser almacenados /en el mismo i-nodo/. Esto permite a
    Reiser ahorrar espacio en disco (se estima que logra una
    eficiencia hasta 5% mayor que sistemas que no emplean esta

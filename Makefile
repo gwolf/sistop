@@ -111,6 +111,10 @@ libro_tex: libro_index
 	sed -i 's/\\ref{VIRT}/\\ref{sec-9}/' $(srcdir)/$(libro_tex)
 	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(srcdir)/$(libro_tex)
 
+	# Necesitamos mayor control que el que nos da \maketitle para
+	# hacer la página de título como la queremos
+	sed -i 's/\\maketitle/\\input{titlepages_unam}/' $(srcdir)/$(libro_tex)
+
 libro_latin_tex: libro_tex
 	rm -f $(srcdir)/$(libro_latin_tex)
 	./$(srcdir)/latin/latinize.rb $(srcdir)/$(libro_tex) $(srcdir)/$(libro_latin_tex)

@@ -116,13 +116,13 @@ conceptos para almacenar, ubicar o recuperar la información:
 
 - /Mapa de bits/ de espacio libre :: La función del bitmap es poder gestionar
      el espacio libre del disco. Recuérdese que el disco se presenta
-     asignado por /bloques/, típicamente de 4096 bytes — en el bitmap
+     asignado por /bloques/, típicamente de $4~096$ bytes — en el bitmap
      cada bloque se representa con un bit, con lo que aquí se puede
      encontrar de forma compacta el espacio ocupado y disponible, así
      como el lugar adecuado para crear un nuevo archivo.
 
      El bitmap para un disco de 100GB puede, de esta manera,
-     representarse en 23MB ($100 \times 10^9 \over 4096$), cantidad
+     representarse en 23MB ($100 \times 10^9 \over 4~096$), cantidad
      que puede razonablemente mantener en memoria un sistema de
      escritorio promedio hoy en día.[fn:: Esto explica por qué,
      incluso sin estar trabajando activamente con ningún archivo
@@ -193,7 +193,7 @@ puede presentar información útil alguna al usuario (e incluso
 arriesgaría destruirla).
 
 Se mencionó ya que el tamaño de bloques (históricamente, 512 bytes; el
-estándar /Advanced Format/ en marzo del 2010 introdujo bloques de 4096
+estándar /Advanced Format/ en marzo del 2010 introdujo bloques de $4~096$
 bytes) es establecido por el hardware. Es muy común que, tanto por
 razones de eficiencia como para alcanzar a direccionar mayor espacio,
 el sistema de archivos /agrupe/ a varios bloques físicos en un bloque
@@ -334,8 +334,8 @@ límite, al estar el directorio raiz ubicado en una sección fija del
 disco, tiene una longitud límite máxima: en un disco flexible (que
 hasta el día de hoy, por su baja capacidad, se formatea bajo *fat12*),
 desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un tamaño
-de sector de 512 bytes, el directorio raiz mide $512 \times 14 = 7168$
-bytes, esto es, $\frac{7168}{32} = 224$ entradas como máximo. Y si
+de sector de 512 bytes, el directorio raiz mide $512 \times 14 = 7~168$
+bytes, esto es, $\frac{7~168}{32} = 224$ entradas como máximo. Y si
 bien esto puede no parecer muy limitado, ocupar cuatro entradas por
 archivo cuando, empleando *vfat*, se tiene un nombre medianamente
 largo reduce fuertemente el panorama.
@@ -821,14 +821,14 @@ Para hacer esto, hay dos mecanismos: el primero, reservar un espacio
 al final de cada /cluster/ para guardar el apuntador, y el segundo,
 crear una tabla independiente, que guarde únicamente los apuntadores.
 
-En el primer caso, si se manejan /clusters/ de 2048 bytes, y se reservan
-los 4 bytes (32 bits) finales de cada uno, el resultado sería de gran
-incomodidad al programador: frecuentemente, los programadores buscan
-alinear sus operaciones con las fronteras de las estructuras
+En el primer caso, si se manejan /clusters/ de $2~048$ bytes, y se
+reservan los 4 bytes (32 bits) finales de cada uno, el resultado sería
+de gran incomodidad al programador: frecuentemente, los programadores
+buscan alinear sus operaciones con las fronteras de las estructuras
 subyacentes, para optimizar los accesos (por ejemplo, evitar que un
 sólo registro de base de datos requiera ser leído de dos distintos
 bloques en disco). El programador tendría que diseñar sus estructuras
-para ajustarse a la poco ortodoxa cantidad de 2044 bytes.
+para ajustarse a la poco ortodoxa cantidad de $2~044$ bytes.
 
 Y más allá de esta inconveniencia, guardar los apuntadores al final de
 cada /cluster/ hace mucho más lento el manejo de todos los archivos:
@@ -948,7 +948,7 @@ indirección que /vayan haciendo falta/.
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
 esquema y únicamente tres indirecciones? Suponiendo magnitudes que
 típicas hoy en día (/clusters/ de 4KB y direcciones de 32 bits), en un
-/cluster/ vacío caben 128 apuntadores ($4096 \over 32$). Si los
+/cluster/ vacío caben 128 apuntadores ($4~096 \over 32$). Si los
 metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 100
 apuntadores:
 
@@ -961,7 +961,7 @@ apuntadores:
 - Con el bloque de doble indirección, puede hacerse referencia a
   archivos mucho más grandes:
 
-  $(100-3 + 128 + (128\times 128) ) \times 4KB = 66436KB \approx 65MB$
+  $(100-3 + 128 + (128\times 128) ) \times 4KB = 66~436KB \approx 65MB$
 
   Sin embargo, aquí ya llama la atención otro importante punto: para
   acceder a estos 65MB, es necesario que realizar hasta 131 accesos a
@@ -973,11 +973,11 @@ apuntadores:
 - Empleando triple indirección, se puede llegar hasta:
 
   $(100-3 + 128 + (128 \times 128) + (128 \times 128 \times 128) )
-  \times 2KB = 8455044KB \approx 8GB$
+  \times 2KB = 8~455~044KB \approx 8GB$
 
   Esto es ya más de lo que puede representarse en un sistema de 32
   bits. La cantidad de bloques a leerse, sin embargo, para encontrar
-  todos los /clusters/ significarían hasta 16516 accesos a disco (en
+  todos los /clusters/ significarían hasta $16~516$ accesos a disco (en
   el peor de los casos).
 
 ** Las tablas en *fat*
@@ -1040,17 +1040,16 @@ archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del
-/cluster/ es pequeño (2KB), podrá almacenar sólo 64 entradas ($2048
-\over 32$) y cada
-/cluster/ adicional le dará 64 entradas más. Y como tal, está sujeto
-también a la fragmentación: conforme se agregan entradas al
-directorio, éste crece. Llegado el momento, requiere /clusters/
-adicionales. Y si un directorio termina disperso por todo el disco,
-resultará –como cualquier otro archivo– más lento leerlo y trabajar
-con él. Siempre que se abra un archivo dentro de un directorio grande,
-o que se lo recorra para abrir algún archivo en algún subdirectorio
-suyo, el sistema tendrá que buscar todos sus fragmentos a lo largo del
-disco.
+/cluster/ es pequeño (2KB), podrá almacenar sólo 64 entradas ($2~048
+\over 32$) y cada /cluster/ adicional le dará 64 entradas más. Y como
+tal, está sujeto también a la fragmentación: conforme se agregan
+entradas al directorio, éste crece. Llegado el momento, requiere
+/clusters/ adicionales. Y si un directorio termina disperso por todo
+el disco, resultará –como cualquier otro archivo– más lento leerlo y
+trabajar con él. Siempre que se abra un archivo dentro de un
+directorio grande, o que se lo recorra para abrir algún archivo en
+algún subdirectorio suyo, el sistema tendrá que buscar todos sus
+fragmentos a lo largo del disco.
 
 Ante estos dos aspectos, no puede perderse de vista la edad que tiene
 el sistema *fat*. Otros sistemas de archivos más modernos han resuelto
@@ -1413,7 +1412,7 @@ de archivos resurja.
 ** Preguntas de autoevaluación
 
 1. Asuma el siguiente sistema de archivos basado en /asignación
-   indexada/. Cada /cluster/ mide 4096 bytes, y el apuntador a un
+   indexada/. Cada /cluster/ mide $4~096$ bytes, y el apuntador a un
    bloque requiere 32 bits (4 bytes). Dados los metadatos que van a
    almacenarse en el i-nodo del archivo, dentro del i-nodo principal
    puede guardar 24 apuntadores directos, y está considerando permitir

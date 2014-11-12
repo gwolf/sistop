@@ -525,13 +525,13 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      el acceso a un punto determinado del archivo podría resultar
      demasiado costoso.
 
-     Afortunadamente, que el sistema operativo no imponga registros
-     de longitud fija no impide que /el programa gestor/ lo haga. Si
-     en el archivo al cual apunta el descriptor de archivo =FD=
-     hay 2000 registros de 75 bytes cada uno y el usuario requiere
-     recuperar el registro número 65 hacia el buffer =registro=, puede
+     Afortunadamente, que el sistema operativo no imponga registros de
+     longitud fija no impide que /el programa gestor/ lo haga. Si en
+     el archivo al cual apunta el descriptor de archivo =FD= hay 2000
+     registros de 75 bytes cada uno y el usuario requiere recuperar el
+     registro número 65 hacia el buffer =registro=, puede
      /reposicionar/ el apuntador de lectura al byte $65 \times 75 =
-     4875$ (=seek(FD, 4875)=) y leer los siguientes 75 bytes en
+     4~875$ (=seek(FD, 4875)=) y leer los siguientes 75 bytes en
      =registro= (=read(FD, *registro, 75)=).
 
 #+attr_latex: width=\textwidth
@@ -1058,9 +1058,9 @@ en los sistemas de archivos /reales/ deben emplear un indexado basado
 en /i-nodo/[fn:: Que si bien no ha sido definido aún formalmente, para
 esta discusión bastará saber que es un número único por volumen.]
 identifica sin lugar a dudas a cada uno de los archivos. En el caso
-presentado, si el i-nodo de =jose= fuera 10543, al consultar a los
+presentado, si el i-nodo de =jose= fuera $10~543$, al consultar a los
 miembros de =miembros= el sistema encontrará que su primer entrada
-apunta al i-nodo 10543, por lo cual la registraría sólo como un
+apunta al i-nodo $10~543$, por lo cual la registraría sólo como un
 apuntador a datos /ya archivados/, y continuaría con la segunda
 entrada del directorio, que apunta a =pedro=.
 

@@ -810,7 +810,7 @@ para el resto del sistema.
 Para evitar la inanición, puede considerarse también la
 retroalimentación en sentido inverso: si un proceso largo fue
 /degradado/ a la cola $C_P$ y pasa determinado tiempo sin recibir
-servicio, puede /promoverse/ de nuevo a la cola $C_{P-1$} para que no
+servicio, puede /promoverse/ de nuevo a la cola $C_{P-1}$ para que no
 sufra inanición.
 
 Hoy en día, muchos de los principales sistemas operativos operan bajo
@@ -834,7 +834,7 @@ sería demasiado caro para un proceso que se ejecuta decenas o cientos
 de veces por segundo, para /jugar/ a la lotería es suficiente emplear
 un generador débil pseudoaleatorio. El artículo en que este mecanismo
 fue presentado presenta la implementación del algoritmo Park-Miller,
-$S' = (A \times S) mod (2^{31} - 1)$ con $A = 16807$, implementado en
+$S' = (A \times S) mod (2^{31} - 1)$ con $A = 16~807$, implementado en
 12 instrucciones de procesador *risc*.], y otorga el siguiente quantum
 al proceso que tenga el boleto ganador. El boleto ganador /no es
 retirado/, esto es, la probabilidad de que determinado proceso sea

@@ -49,7 +49,7 @@ décadas de 1970 y 1980 — los más conocidos incluyen al Intel 8080 y
 recalcar que estos procesadores son reconocidos como procesadores de
 /8 bits/, pero con /espacio de direccionamiento/ de 16 bits. El
 procesador empleado en las primeras *pc*, el Intel 8086, manejaba un
-direccionamiento de 20 bits (hasta 1024KB), pero al ser una
+direccionamiento de 20 bits (hasta $1~024$ KB), pero al ser una
 arquitectura /real/ de 16 bits requería del empleo de /segmentación/
 para alcanzar toda su memoria.
 
@@ -65,7 +65,7 @@ memorias ampliamente disponibles alcanzaran dicha capacidad.
 
 Hoy en día, los procesadores dominantes son de 32 o 64 bits. En el caso de
 los procesadores de 32 bits, sus registros pueden referenciar hasta
-4,294,967,296 bytes (4GB) de *ram*, que está ya dentro de los
+$4~294~967~296$ bytes (4GB) de *ram*, que está ya dentro de los
 parámetros de lo esperable hoy en día. Una arquitectura de
 32 bits sin extensiones adicionales no puede emplear una memoria
 de mayor capacidad. No obstante, a través de un mecanismo llamado *pae*
@@ -125,15 +125,16 @@ permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
 64K ($65~535$ bytes) a partir de la dirección $504~214$ (492K), el
-/registro base/ contendría 504214, y el /registro límite/ $65~535$. Si
-hubiera una instrucción por parte de dicho proceso que solicitara una
-dirección menor a $504~214$ o mayor a $569~749$ (556K), la *mmu*
-lanzaría una excepción o /trampa/ interrumpiendo el procesamiento, e
-indicando al sistema operativo que ocurrió una /violación de segmento/
-(/segmentation fault/).[fn:: ¿Por qué /de segmento/? Véase la sección
-\ref{MEM_segmentacion}.] El sistema operativo entonces procedería a
-terminar la ejecución del proceso, reclamando todos los recursos que
-tuviera asignados y notificando a su usuario.
+/registro base/ contendría $504~214$, y el /registro límite/
+$65~535$. Si hubiera una instrucción por parte de dicho proceso que
+solicitara una dirección menor a $504~214$ o mayor a $569~749$ (556K),
+la *mmu* lanzaría una excepción o /trampa/ interrumpiendo el
+procesamiento, e indicando al sistema operativo que ocurrió una
+/violación de segmento/ (/segmentation fault/).[fn:: ¿Por qué /de
+segmento/? Véase la sección \ref{MEM_segmentacion}.] El sistema
+operativo entonces procedería a terminar la ejecución del proceso,
+reclamando todos los recursos que tuviera asignados y notificando a su
+usuario.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_mem_base_a_limite
@@ -296,15 +297,15 @@ desde el sitio Web del autor, http://www.iecc.com/linker/ ] en:
 Esto es, los nombres simbólicos (por ejemplo, una variable llamada
 =contador=) para ser traducidos ya sea a ubicaciones en la memoria,
 pueden resolverse en tiempo de compilación (y quedar plasmada en el
-programa en disco con una ubicación explícita y definitiva: 510200),
-en tiempo de carga (sería guardada en el programa en disco como
-/inicio/ + 5986 bytes, y el proceso de carga incluiría sustituirla
-por la dirección resuelta a la suma del registro base, 504214, y el
-/desplazamiento/, 5986, esto es, 510200).
+programa en disco con una ubicación explícita y definitiva:
+$510~200)$, en tiempo de carga (sería guardada en el programa en disco
+como /inicio/ + $5~986$ bytes, y el proceso de carga incluiría
+sustituirla por la dirección resuelta a la suma del registro base,
+$504~214$, y el /desplazamiento/, $5~986$, esto es, $510~200)$.
 
 Por último, para emplear la resolución en tiempo de ejecución, se
 mantiene en las instrucciones a ser ejecutadas por el proceso la
-etiqueta relativa al módulo actual, /inicio/ + 5986 bytes, y es
+etiqueta relativa al módulo actual, /inicio/ + $5~986$ bytes, y es
 resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.4\textwidth
@@ -632,13 +633,13 @@ intercambio por segmentos.
 A modo de ejemplo, y conjuntando los conceptos presentados en esta
 sección, si un proceso tuviera la siguiente tabla de segmentos:
 
-| Segmento | Inicio | Tamaño | Permisos | Presente |
-|----------+--------+--------+----------+----------|
-|        0 |  15208 |    160 | *rwx*    | sí       |
-|        1 |   1400 |    100 | *r*      | sí       |
-|        2 |    964 |     96 | *rx*     | sí       |
-|        3 |      - |    184 | *w*      | no       |
-|        4 |  10000 |    320 | *rwx*    | sí       |
+| Segmento | Inicio   | Tamaño | Permisos | Presente |
+|----------+----------+--------+----------+----------|
+|        0 | $15~208$ |    160 | *rwx*    | sí       |
+|        1 | $1~400$  |    100 | *r*      | sí       |
+|        2 | 964      |     96 | *rx*     | sí       |
+|        3 | -        |    184 | *w*      | no       |
+|        4 | $10~000$ |    320 | *rwx*    | sí       |
 
 En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
 /X/ a ejecución.
@@ -653,14 +654,14 @@ tipos de acceso:
 | Dirección | Tipo de | Dirección                               |
 |    lógica | acceso  | física                                  |
 |-----------+---------+-----------------------------------------|
-|     0-100 | *r*     | 15308                                   |
-|      2-84 | *x*     | 1048                                    |
+|     0-100 | *r*     | $15~308$                                |
+|      2-84 | *x*     | $1~048$                                 |
 |      2-84 | *w*     | Atrapada: violación de seguridad        |
 |     2-132 | *r*     | Atrapada: desplazamiento fuera de rango |
 |      3-16 | *w*     | Atrapada: segmento faltante             |
 |     3-132 | *r*     | Atrapada: segmento faltante;            |
 |           |         | violación de seguridad                  |
-|     4-128 | *x*     | 10128                                   |
+|     4-128 | *x*     | $10~128$                                |
 |      5-16 | *x*     | Atrapada: segmento inválido             |
 
 Cuando se atrapa una situación de excepción, el sistema operativo debe
@@ -749,12 +750,12 @@ desplazamiento con los dos bits /menos significativos/).
 
 El proceso que se presenta tiene una visión de la memoria como la
 columna del lado izquierdo: para el proceso hay cuatro páginas, y
-tiene sus datos distribuidos en orden desde la dirección 00000 (0)
-hasta la 01111 (15), aunque en realidad en el sistema éstas se
+tiene sus datos distribuidos en orden desde la dirección $00~000$ (0)
+hasta la $01~111$ (15), aunque en realidad en el sistema éstas se
 encuentren desordenadas y ubicadas en posiciones no contiguas.
 
 Cuando el proceso quiere referirse a la letra /f/, lo hace indicando
-la dirección 00101 (5). De esta dirección, los tres bits más
+la dirección $00~101$ (5). De esta dirección, los tres bits más
 significativos (001, 1 —y para la computadora, lo
 /natural/ es comenzar a contar por el 0) se refieren a la página
 uno, y los dos bits menos significativos (01, 1) indican al
@@ -762,7 +763,7 @@ uno, y los dos bits menos significativos (01, 1) indican al
 
 La *mmu* verifica en la tabla de páginas, y encuentra que la página 1
 corresponde al marco número 6 (110), por lo que traduce la dirección
-lógica 00101 (5) a la física 11001 (26).
+lógica $00~101$ (5) a la física $11~001$ (26).
 
 Se puede tomar la paginación como una suerte de resolución o traducción de
 direcciones en tiempo de ejecución, pero con una /base/ distinta para
@@ -812,7 +813,7 @@ del tipo de información que se declare que almacenarán.
 Algunos de los primeros equipos en manejar memoria paginada empleaban
 un conjunto especial de registros para representar la tabla de
 páginas. Esto era posible dado que eran sistemas de 16 bits, con
-páginas de 8KB ($2^{13}). Esto significa que en el sistema había
+páginas de 8KB ($2^{13}$). Esto significa que en el sistema había
 únicamente ocho páginas posibles ($2^3$), por lo que resultaba sensato
 dedicar un registro a cada una.
 
@@ -899,7 +900,7 @@ Incluso empleando un *tlb*, el espacio empleado por las páginas sigue
 siendo demasiado grande. Si se considera un escenario más frecuente
 que el propuesto anteriormente: empleando un procesador con espacio de
 direccionamiento de 32 bits, y un tamaño de página estándar (4KB,
-$2^{12}), se tendría $1~048~576$ ($2^{20}$) páginas. Si cada entrada
+$2^{12}$), se tendría $1~048~576$ ($2^{20}$) páginas. Si cada entrada
 de la página ocupa 40 bits[fn:: 20 bits identificando a la página y
 otros 20 bits al marco; omitiendo aquí la necesidad de alinear los
 accesos a memoria a /bytes/ individuales, que lo aumentarían a 24.]
@@ -1235,17 +1236,17 @@ de un disco duro es de 3ms, el tiempo de posicionamiento de cabeza de
 5ms, y el tiempo de transferencia es de 0.05ms), para propósitos
 prácticos se puede ignorar a $t_a$. Con los valores presentados, seleccionando
 el mayor de los $t_a$ presentados, si sólo un acceso a memoria de cada
-1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1000}$):
+1000 ocasiona un fallo de página (esto es, $p=\frac{1}{1~000}$):
 
-$$t_e = (1-\frac{1}{1000}) \times 200ns + \frac{1}{1000} \times 8,000,000ns$$
+$$t_e = (1-\frac{1}{1~000}) \times 200ns + \frac{1}{1~000} \times 8~000~000ns$$
 
-$$t_e = 199.8ns + 8000ns = 8199.8ns$$
+$$t_e = 199.8ns + 8~000ns = 8~199.8ns$$
 
 Esto es, en promedio, se tiene un tiempo efectivo de acceso a memoria
 /40 veces/ mayor a que si no se empleara este mecanismo. Con estos
 mismos números, para mantener la degradación de rendimiento por acceso
 a memoria por debajo del 10%, se debería reducir la probabiliad de
-fallos de página a $\frac{1}{399,990}$.
+fallos de página a $\frac{1}{399~990}$.
 
 Cabe mencionar que este impacto al rendimiento no necesariamente
 significa que una proporción relativamente alta de fallos de página
@@ -1568,8 +1569,8 @@ hardware, algunos sistemas implementan una /aproximación/ a éste.
      bajo (una actualización sólo modifica el bit más significativo).
      Por ejemplo, con una implementación de 4 bits, un
      marco que no ha sido empleado en los últimos 4 periodos tendría
-     el valor 0000, mientras que un marco que sí ha sido referenciado
-     los últimos cuatro periodos tendría 1111. Un marco que fue
+     el valor $0~000$, mientras que un marco que sí ha sido referenciado
+     los últimos cuatro periodos tendría $1~111$. Un marco que fue
      empleado hace cuatro y tres periodos, pero desde entonces no,
      tendría el 0011.
 
@@ -1652,7 +1653,7 @@ que la asignación inicial (y, de ser posible, en el transcurso de la
 ejecución) sea adecuada?
 
 Por ejemplo, usando esquema sencillo: un sistema con
-1024KB de memoria, compuesta de 256 páginas de 4096 bytes cada una, y
+$1~024$ KB de memoria, compuesta de 256 páginas de 4096 bytes cada una, y
 basado en paginación puramente sobre demanda.
 
 Si el sistema operativo ocupa 248KB, el primer paso será reservar las
@@ -1742,7 +1743,7 @@ el espacio será compartido por igual.
 
 La asignación igualitaria resulta ser un esquema deficiente para casi
 todas las distribuciones de procesos: bajo este esquema, si $P_1$ es
-un gestor de bases de datos que puede estar empleando 2048KB (512
+un gestor de bases de datos que puede estar empleando $2~048$ KB (512
 páginas) de memoria virtual (a pesar de que el sistema tiene sólo 1MB
 de memoria física) y $P_2$ es un lector de texto que está empleando un
 usuario, requiriendo apenas 112KB (28 páginas), con lo cual incluso
@@ -1757,10 +1758,9 @@ empleando 560KB (140 páginas) y a $P_4$ con 320KB (80 páginas) de
 memoria virtual, el uso total de memoria virtual sería de $V_T = 512 +
 28 + 140 + 80 = 760$ páginas, esto es, el sistema tendría comprometido
 a través de la memoria virtual un sobreuso cercano a 4:1 sobre la
-memoria física[fn:: Ya que de los 1024KB, o 256 páginas, que
-tiene el sistema descrito, descontando los 248KB, o 62 páginas, que ocupa
-el sistema operativo, quedan 194 páginas disponibles para los
-procesos].
+memoria física[fn:: Ya que de los $1~024$ KB, o 256 páginas, que tiene
+el sistema descrito, descontando los 248KB, o 62 páginas, que ocupa el
+sistema operativo, quedan 194 páginas disponibles para los procesos.].
 
 Cada proceso recibirá entonces $F_P = \frac{V_P}{V_T} \times m$, donde
 $F_P$ indica el espacio de memoria física que el proceso recibirá,
@@ -2505,20 +2505,20 @@ seguirán ejecutando la versión de la biblioteca con el error.
 2. Un proceso en un sistema con arquitectura de memoria basada en la
    /segmentación/ tiene la siguiente tabla de segmentos:
 
-    | Segmento | Inicio | Tamaño | Permisos |
-    |----------+--------+--------+----------|
-    |        0 |    240 |    600 | *rx*     |
-    |        1 |   2300 |     16 | *r*      |
-    |        2 |     90 |    100 | *rw*     |
-    |        3 |   1320 |    950 | *rw*     |
-    |        4 |      - |     96 | *rx*     |
+    | Segmento | Inicio  | Tamaño | Permisos |
+    |----------+---------+--------+----------|
+    |        0 | 240     |    600 | *rx*     |
+    |        1 | $2~300$ |     16 | *r*      |
+    |        2 | 90      |    100 | *rw*     |
+    |        3 | $1~320$ |    950 | *rw*     |
+    |        4 | -       |     96 | *rx*     |
 
    Para cada una de las siguientes solicitudes, indique qué dirección
    física correspondería, y –de ser el caso– qué excepción se genera.
 
    1. Lectura, 0-430
    2. Escritura, 0-150
-   3. Lectura, 1,15
+   3. Lectura, 1-15
    4. Escritura, 2-130
    5. Ejecución, 4-25
 
@@ -2538,8 +2538,9 @@ seguirán ejecutando la versión de la biblioteca con el error.
    atendido, ¿qué diferencia en rendimiento puede observarse?
 
 5. Suponga un sistema paginado con un rango de direcciones de 4GB
-   (4294967296 direcciones).
-   - ¿Cuántas páginas tendrá el sistema si se utilizan páginas de 4096 bytes?
+   ($4~294~967~296$ direcciones).
+   - ¿Cuántas páginas tendrá el sistema si se utilizan páginas de
+     $4~096$ bytes?
    - ¿Qué tamaño (en bits) tendrá una entrada de la tabla de
      traducción? Suponga que sólo se guarda el número de marco
      físico.
@@ -2576,7 +2577,7 @@ seguirán ejecutando la versión de la biblioteca con el error.
       18 los procesos en la cola de ejecución)
    5. Instalar un 25% más de memoria principal (pasar de 2 a 2.5GB)
    6. Instalar un disco duro un 33% más rápido (cambiar un disco de
-      5400 RPM por uno de 7200 RPM)
+      $5~400$ RPM por uno de $7~200$ RPM)
 
 8. Describa en qué consiste un ataque de /desbordamiento de pila/
    (/stack overflow/), y un mecanismo de protección del sistema para

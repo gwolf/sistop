@@ -79,8 +79,8 @@ para el almacenamiento de la información (y no a la rigidez de su
 flexibles emplean una hoja plástica flexible, los
 discos duros son metálicos. Los discos están /permanentemente/
 montados sobre un eje, lo que permite que tengan una velocidad de giro
-entre 20 y 50 veces mayor que los discos flexibles — entre 4,200 y
-15,000 revoluciones por minuto (*rpm*), esto es, con una demora
+entre 20 y 50 veces mayor que los discos flexibles — entre $4~200$ y
+$15~000$ revoluciones por minuto (*rpm*), esto es, con una demora
 rotacional de entre 2 y 7.14 milisegundos.
 
 Además, a excepción de algunos modelos tempranos, los discos duros
@@ -136,7 +136,7 @@ pista y la siguiente.
 
 Un /sector/ es un segmento de arco de uno de los cilindros, y contiene
 siempre la misma cantidad de información (históricamente 512 bytes; en
-actualmente se están adoptando gradualmente sectores de 4096
+actualmente se están adoptando gradualmente sectores de $4~096$
 bytes. Refiérase a la sección \ref{FS_FIS_limitaciones} para una mayor
 discusión al respecto.)
 
@@ -376,16 +376,16 @@ completamente autónoma del sistema operativo.
 Y si bien las diferentes unidades de disco duro habían mantenido
 sectores de 512 bytes desde los primeros discos duros, a partir de la
 aprobación del /Formato Avanzado/ en 2010 que incrementa los sectores
-a 4096 bytes, presenta otra abstracción más: un disco con sectores de
-4096 bytes que es empleado por el sistema operativo como si fuera de
-512[fn:: Al día de hoy, los principales sistemas operativos pueden ya
-hacer referencia al nuevo tamaño de bloque, pero la cantidad de
-equipos que ejecutan sistemas /heredados/ o de controladores que no
+a $4~096$ bytes, presenta otra abstracción más: un disco con sectores
+de $4~096$ bytes que es empleado por el sistema operativo como si
+fuera de 512[fn:: Al día de hoy, los principales sistemas operativos
+pueden ya hacer referencia al nuevo tamaño de bloque, pero la cantidad
+de equipos que ejecutan sistemas /heredados/ o de controladores que no
 permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
 que efectuar, dentro de la lógica de su controlador, una emulación — y
 una modificación de un sólo sector se vuelve un /ciclo
 lectura-modificación-escritura/ (*rmw*), que redunda en una espera de
-por lo menos una revolución adicional (8ms con un disco de 7200 *rpm*)
+por lo menos una revolución adicional (8ms con un disco de $7~200$ *rpm*)
 del disco antes de que la operación pueda completarse.
 
 Resulta claro que, dados estos cambios en la manera en que debe
@@ -533,7 +533,7 @@ de movimiento de cabezas como la rotacional.
 La memoria Flash presenta patrones de desgaste muy distintos de los que
 presentan otros medios. La memoria Flash tiene capacidad de
 aguantar un cierto número de operaciones de borrado por página[fn::
-Dependiendo de la calidad, va entre las 3,000 y 100,000] antes de
+Dependiendo de la calidad, va entre las $3~000$ y $100~000$.] antes de
 comenzar a degradarse y fallar. Las
 estructuras tradicionales de sistemas de archivos basados en disco
 /concentran/ una gran cantidad de modificaciones frecuentes a lo largo

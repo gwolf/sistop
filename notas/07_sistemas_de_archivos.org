@@ -4,25 +4,26 @@
 * Plasmando la estructura en el dispositivo
 # <<FS>>
 
-A lo largo del capítulo \ref{DIR} se presentaron los elementos del sistema de archivos tal
+A lo largo del capítulo \ref{DIR} se abordaron los elementos del sistema de archivos tal
 como son presentados al usuario final, sin entrar en detalles respecto
 a cómo organiza toda esta información el sistema operativo en un
-/dispositivo persistente/ — mencionamos algunas estructuras base, pero
+/dispositivo persistente/ —mencionamos algunas estructuras base, pero
 dejándolas explícitamente pendientes de definición. En este capítulo
 se tratarán las principales estructuras y mecanismos
 empleados para que un sistema de archivos sea ya no sólamente una
 estructura formal ideal, sino que una entidad almacenada en un dispositivo.
 
-A lo largo de la historia del cómputo, el almacenamiento no siempre
-se realizó en discos (dispositivos giratorios de acceso aleatorio). En
-un principio, los medios principales de acceso estrictamente
-secuencial (tarjetas perforadas, cintas de papel, cintas magnéticas);
-por más de 30 años, el medio primario de almacenamiento han sido los
-distintos tipos de discos magnéticos, y desde hace algunos años,
-estamos viendo una migración a /almacenamiento de estado sólido/, a
-dispositivos sin partes móviles que guardan la información en un tipo
-particular de memoria. Volviendo a las categorías presentadas en la
-sección \ref{HW_refiriendo}, los medios de acceso secuencial son
+A lo largo de la historia del cómputo, el almacenamiento no siempre se
+realizó en discos (dispositivos giratorios de acceso aleatorio). Por
+varias décadas, los medios principales almacenamiento eran de acceso
+estrictamente secuencial (tarjetas perforadas, cintas de papel, cintas
+magnéticas); por más de 30 años, el medio primario de almacenamiento
+han sido los distintos tipos de discos magnéticos, y desde hace
+algunos años, estamos viendo una migración a /almacenamiento de estado
+sólido/, a dispositivos sin partes móviles que guardan la información
+en un tipo particular de memoria (tema que se abordará en la sección
+\ref{FS_FIS_estado_solido}). Volviendo a las categorías presentadas en
+la sección \ref{HW_refiriendo}, los medios de acceso secuencial son
 /dispositivos de caracteres/, y tanto discos como unidades de estado
 sólido son /dispositivos de bloques/.
 
@@ -38,20 +39,20 @@ archivos respaldados en medios /distintos/ a un disco.
 
 Mientras tanto, conviene mantener una visión aún bastante idealizada y
 abstracta: un /disco/ visto desde la perspectiva del sistema operativo
-será presentado a lo largo del presente capítulo[fn:: Para una visión
-más rigurosa de cómo se relaciona el sistema operativo con los discos
-y demás mecanismos de almacenamiento, refiérase al apéndice
-\ref{FS_FIS}.] como un arreglo muy grande de /bloques/ de tamaño
-fijo, cada uno de ellos /directamente direccionable/; esto significa
-que el sistema operativo puede referirse por igual a cualquiera de los
-bloques del disco a través de una dirección física e inambigua dentro
-del disco entero. Partiendo de esto, se emplean los siguientes
-conceptos para almacenar, ubicar o recuperar la información:
+será presentado a lo largo del presente capítulo[fn:: Para un punto de
+vista más riguroso de cómo se relaciona el sistema operativo con los
+discos y demás mecanismos de almacenamiento, refiérase al apéndice
+\ref{FS_FIS}.] como un arreglo muy grande de /bloques/ de tamaño fijo,
+cada uno de ellos /directamente direccionable/; esto significa que el
+sistema operativo puede referirse por igual a cualquiera de los
+bloques del disco mediante una dirección física e inambigua dentro del
+disco entero. Partiendo de esto, se emplean los siguientes conceptos
+para almacenar, ubicar o recuperar la información:
 
 - Partición :: Una subdivisión de un disco, por medio de la cual el
                administrador/usuario del sistema puede definir la
                forma en que se emplea el espacio del disco,
-               segmentándolo si hace falta según haga falta.
+               segmentándolo según haga falta.
 
 	       Un disco puede tener varias particiones, y cada una de
                ellas puede tener un sistema de archivos independiente.
@@ -64,8 +65,8 @@ conceptos para almacenar, ubicar o recuperar la información:
 
 	     El volumen se /describe/ ante el sistema operativo en el
              /bloque de control de volumen/, también conocido como
-             /superbloque/ en Unix, o /Tabla Maestra de Archivos/
-             (/Master File Table/) en *ntfs*.
+             /superbloque/ en Unix, o /tabla maestra de archivos/
+             (/master file table/) en *ntfs*.
 
 - Sistema de archivos :: Esquema de organización que sigue un
      determinado /volumen/. Dependiendo del sistema de archivos
@@ -77,7 +78,7 @@ conceptos para almacenar, ubicar o recuperar la información:
      determinado volumen, el sistema operativo debe tener soporte para
      el sistema de archivos particular en que éste esté estructurado.
 
-- Directorio raiz :: La estructura que relaciona cada nombre
+- Directorio raíz :: La estructura que relaciona cada nombre
      de archivo con su números de /i-nodo/. Típicamente sólo almacena los
      archivos que están en el /primer nivel jerárquico/ del sistema, y
      los directorios derivados son únicamente referenciados desde
@@ -92,27 +93,28 @@ conceptos para almacenar, ubicar o recuperar la información:
                archivo que /no es/ el contenido del archivo mismo. Por ejemplo, el
                nombre, tamaño o tipo del archivo, su propietario, el
                control de acceso, sus fechas de creación, último
-               acceso y modificación, ubicación en disco, etc.
+               acceso y modificación, ubicación en disco, etcétera.
 
-- I-nodo :: Del inglés /i-node/, /information node/ (nodo de
-            información); en los sistemas tipo Windows, normalmente se
-            le denomina /bloque de control de archivo/ (*fcb*). Es la
-            estructura en disco que guarda los /metadatos/ de cada uno
-            de los archivos, proporcionando un vínculo entre la
-            /entrada en el directorio/ y los datos que lo conforman.
+- /I-nodo/ :: Del inglés /i-node/, /information node/ (nodo de
+              información); en los sistemas tipo Windows, normalmente
+              se le denomina /bloque de control de archivo/
+              (*fcb*). Es la estructura en disco que guarda los
+              /metadatos/ de cada uno de los archivos, proporcionando
+              un vínculo entre la /entrada en el directorio/ y los
+              datos que lo conforman.
 
-	    La información almacenada incluye todos los metadatos
-            relacionados con el archivo /a excepción del nombre/
-            (mismo que radica únicamente en el /directorio/): los
-            permisos y propietarios del archivo, sus fechas de
-            creación, última modificación y último acceso, y la
-            /relación de bloques/ que ocupa en el disco. Más adelante
-            se abordarán algunos de los esquemas más comunes para
-            presentar esta relación de bloques.
+	      La información almacenada incluye todos los metadatos
+              relacionados con el archivo /a excepción del nombre/
+              (mismo que radica únicamente en el /directorio/): los
+              permisos y propietarios del archivo, sus fechas de
+              creación, última modificación y último acceso, y la
+              /relación de bloques/ que ocupa en el disco. Más
+              adelante se abordarán algunos de los esquemas más
+              comunes para presentar esta relación de bloques.
 
-	    Esta separación entre directorio e /i-nodo/ permite a un
-            mismo archivo formar parte de distintos directorios, como
-            se explicó en la sección \ref{DIR_grafo_dirigido}.
+	      Esta separación entre directorio e /i-nodo/ permite a un
+              mismo archivo formar parte de distintos directorios,
+              como se explicó en la sección \ref{DIR_grafo_dirigido}.
 
 - /Mapa de bits/ de espacio libre :: La función del bitmap es poder gestionar
      el espacio libre del disco. Recuérdese que el disco se presenta
@@ -124,9 +126,9 @@ conceptos para almacenar, ubicar o recuperar la información:
      El bitmap para un disco de 100 *gb* puede, de esta manera,
      representarse en 23 *mb* ($100 \times 10^9 \over 4~096$), cantidad
      que puede razonablemente mantener en memoria un sistema de
-     escritorio promedio hoy en día.[fn:: Esto explica por qué,
+     escritorio promedio hoy en día.[fn:: Esto explica porqué,
      incluso sin estar trabajando activamente con ningún archivo
-     contenido en éste, el sólo hecho de montar un volumen con gran
+     contenido en éste, el solo hecho de montar un volumen con gran
      cantidad de datos obliga al sistema a reservarle una cantidad de
      memoria.]
 
@@ -137,35 +139,35 @@ conceptos para almacenar, ubicar o recuperar la información:
 
 Un sistema operativo puede dar soporte a varios distintos sistemas de
 archivos; un administrador de sistemas puede tener muy diferentes
-razones que influyan para elegir cuál sistema de
-archivos empleará para su información — algunas razones para
-elegir a uno u otro son que el rendimiento de cada uno puede estar
-/afinado/ para diferentes patrones de carga, necesidad de emplear un
-dispositivo portátil para intercambiar datos con distintos sistemas, e
-incluso restricciones de hardware.[fn:: Por ejemplo, los /cargadores
-de arranque/ en algunas plataformas requieren poder leer el volumen
-donde está alojada la imágen del sistema operativo — lo cual obliga a
-que esté en un sistema de archivos nativo a la plataforma.]
+razones que influyan para elegir cuál sistema de archivos empleará
+para su información; algunas razones para elegir a uno u otro son que
+el rendimiento de cada uno puede estar /afinado/ para diferentes
+patrones de carga, necesidad de emplear un dispositivo portátil para
+intercambiar datos con distintos sistemas, e incluso restricciones de
+hardware.[fn:: Por ejemplo, los /cargadores de arranque/ en algunas
+plataformas requieren poder leer el volumen donde está alojada la
+imágen del sistema operativo —lo cual obliga a que esté en un sistema
+de archivos nativo a la plataforma.]
 
 A lo largo de esta sección se revisará cómo los principales
 conceptos a abordar se han implementado en distintos sistemas de
 archivos; se hará referencia principalmente a una familia de sistema de
 archivos simple de comprender, aunque muestra claramente su edad: el
-sistema *fat*. La razón de elegir al sistema de archivos *fat* es la
+sistema *fat*. La razón para elegir al sistema de archivos *fat* es la
 simplicidad de sus estructuras, que permiten comprender la
 organización general de la información. Donde sea pertinente, se
 mencionará en qué puntos principales estiba la diferencia con los
 principales sistemas de la actualidad.
 
-El sistema *fat* fue creado hacia fines de los 1970, y su diseño muestra
-claras evidencias de haber sido concebido para discos flexibles. Sin
-embargo, a través de varias extensiones que se han presentado con el
-paso de los años (algunas con compatibilidad hacia atrás,[fn:: Se
-denomina /compatibilidad hacia atrás/ a aquellos cambios que permiten
-interoperar de forma transparente con las versiones anteriores.] otras
-no), sigue siendo uno de los sistemas más empleados al día de hoy, a
-pesar de que ya no es recomendado como sistema primario por ningún
-sistema operativo de escritorio.
+El sistema *fat* fue creado hacia finales de los setenta, y su diseño
+muestra claras evidencias de haber sido concebido para discos
+flexibles. Sin embargo, por medio de varias extensiones que se han
+presentado con el paso de los años (algunas con compatibilidad hacia
+atrás,[fn:: Se denomina /compatibilidad hacia atrás/ a aquellos
+cambios que permiten interoperar de forma transparente con las
+versiones anteriores.] otras no), sigue siendo uno de los sistemas más
+empleados al día de hoy, a pesar de que ya no es recomendado como
+sistema primario por ningún sistema operativo de escritorio.
 
 Si bien *fat* tuvo su mayor difusión con los sistemas operativos de la
 familia *ms-dos*, es un sistema de archivos nativo para una gran
@@ -184,7 +186,7 @@ usuario, etc. Esta información está contenida en el /bloque de control
 de volumen/, también conocido como /superbloque/ o /tabla maestra de
 archivos/.[fn:: Y aquí hay que aclarar: este bloque /no contiene a
 los archivos/, ni siquiera a las estructuras que apuntan hacia ellos,
-sólo describe al volumen para que pueda ser montado]
+sólo describe al volumen para que pueda ser montado.]
 
 Tras leer la información del superbloque, el sistema operativo
 determina en primer término si puede proceder — si no sabe cómo
@@ -193,38 +195,37 @@ puede presentar información útil alguna al usuario (e incluso
 arriesgaría destruirla).
 
 Se mencionó ya que el tamaño de bloques (históricamente, 512 bytes; el
-estándar /Advanced Format/ en marzo del 2010 introdujo bloques de $4~096$
-bytes) es establecido por el hardware. Es muy común que, tanto por
-razones de eficiencia como para alcanzar a direccionar mayor espacio,
-el sistema de archivos /agrupe/ a varios bloques físicos en un bloque
-lógico. En la sección \ref{FS_el_directorio} se revisará qué factores
-determinan el tamaño de bloques en cada sistema de archivos.
+estándar /Advanced Format/ en marzo del 2010 introdujo bloques de
+$4~096$ bytes) es establecido por el hardware. Es muy común que, tanto
+por razones de eficiencia como para alcanzar a direccionar mayor
+espacio, el sistema de archivos /agrupe/ a varios bloques físicos en
+uno lógico. En la sección \ref{FS_el_directorio} se revisará qué
+factores determinan el tamaño de bloques en cada sistema de archivos.
 
-Dado que describir al volumen es la más fundamental de las
-operaciones a realizar, muchos sistemas de archivos
-mantienen /copias adicionales/ del superbloque, a veces dispersas a
-lo largo del sistema de archivos, para poder recuperarlo en caso de
-que se corrompa.
+Dado que describir el volumen es la más fundamental de las operaciones
+a realizar, muchos sistemas de archivos mantienen /copias adicionales/
+del superbloque, a veces dispersas a lo largo del sistema de archivos,
+para poder recuperarlo en caso de que se corrompa.
 
 En el caso de *fat*, el volumen indica no sólo la /generación/ del
 sistema de archivos que se está empleando (*fat12*, *fat16* o *fat32*, en
 los tres casos denominados así por la cantidad de bits para
 referenciar a cada uno de los bloques lógicos o /clusters/), sino el
-tamaño de los /clusters/, que puede ir desde los 2 y hasta los 32 *kb*.
+tamaño de los /clusters/, que puede ir desde los dos y hasta los 32 *kb*.
 
 *** Volúmenes /crudos/
 # <<FS_volumenes_crudos>>
 
-Si bien una de los principales tareas de un sistema operativo es
-la organización del espacio de almacenamiento en sistemas de
-archivos y su gestión para compartirse entre diversos usuarios y
-procesos, hay algunos casos en que un dispositivo orientado a bloques
-puede ser puesto a disposición de un proceso en particular para que
-éste lo gestione directamente. Este modo de uso se denomina el de
-/dispositivos crudos/ o /dispositivos en crudo/ (/raw devices/).
+Si bien una de las principales tareas de un sistema operativo es la
+organización del espacio de almacenamiento en sistemas de archivos y
+su gestión para compartirse entre diversos usuarios y procesos, hay
+algunos casos en que un dispositivo orientado a bloques puede ser
+puesto a disposición de un proceso en particular para que éste lo
+gestione directamente. Este modo de uso se denomina /dispositivos
+crudos/ o /dispositivos en crudo/ (/raw devices/).
 
 Pueden encontrarse dos casos de uso primarios hoy en día para
-dispositivos orientados a bloques no administrados a través de la
+dispositivos orientados a bloques no administrados mediante la
 abstracción de los sistemas de archivos:
 
 - Espacio de intercambio :: Como se vio en la sección \ref{MEM_acomodo_de_paginas}, la
@@ -254,7 +255,7 @@ abstracción de los sistemas de archivos:
                     hoy en día, aunque es indudablemente un tema que
                     se presta para discusión e investigación.
 
-** El directorio y los i-nodos
+** El directorio y los /i-nodos/
 # <<FS_el_directorio>>
 
 El directorio es la estructura que relaciona a los archivos como son
@@ -267,11 +268,11 @@ implementado muy distintos esquemas de organización. Se presenta a
 continuación la estructura básica de la popular familia de sistemas de
 archivos *fat*.
 
-*** El directorio raiz
+*** El directorio raíz
 
-Una vez que el sistema de archivos está /montado/ (ver
+Una vez que el sistema de archivos está /montado/ (véase
 \ref{DIR_montaje_directorios}), todas las referencias a archivos
-dentro de éste deben pasar a través del directorio. El directorio raiz
+dentro de éste deben pasar a través del directorio. El directorio raíz
 está siempre en una ubicación /bien conocida/ dentro del sistema de
 archivos — típicamente al inicio del volumen, en los primeros
 sectores[fn:: Una excepción a esta lógica se presentó en la década de
@@ -280,7 +281,7 @@ los 1980, cuando los diseñadores del sistema
 #+html: Amiga<b>os</b>,
 decidieron ubicar al directorio en el sector /central/ de los
 volúmenes, para reducir a la mitad el tiempo promedio de acceso a la
-parte más frecuentemente referida del disco]. Un disco flexible tenía
+parte más frecuentemente referida del disco.]. Un disco flexible tenía
 80 /pistas/ (típicamente denominadas /cilindros/ al hablar de discos
 duros), con lo que, al ubicar al directorio en la pista 40, el tiempo
 promedio de movimiento de cabezas para llegar a él se reducía a la
@@ -299,8 +300,8 @@ operativo).
 
 Todas las versiones de *fat* siguen para los nombres de archivos un
 esquema claramente arcáico: los nombres de archivo pueden medir hasta
-8 caracteres, con una extensión opcional de 3 caracteres más, dando un
-total de 11. El sistema no sólo no es sensible a mayúsculas y
+ocho caracteres, con una extensión opcional de tres caracteres más,
+dando un total de 11. El sistema no sólo no es sensible a mayúsculas y
 minúsculas, sino que todos los nombres deben guardarse completamente
 en mayúsculas, y permite sólo ciertos caracteres no
 alfanuméricos. Este sistema de archivos no implementa la separación
@@ -308,7 +309,7 @@ entre directorio e i-nodo, que hoy es la norma, por lo que cada una de
 las entradas en el directorio mide exactamente 32 bytes. Como es de
 esperarse en un formato que ha vivido tanto tiempo y ha pasado por
 tantas generaciones como *fat*, algunos de estos campos han cambiado
-substancialmente sus significados. La figura
+sustancialmente sus significados. La figura
 \ref{FS_entrada_directorio_fat} muestra los campos de una entrada del
 directorio bajo *fat32*.
 
@@ -329,19 +330,19 @@ este atributo hasta antes de la incorporación de *vfat* /no estaba
 definida/.]
 
 Esto presenta una complicación adicional al hablar del directorio
-/raiz/ de una unidad: si bien los directorios derivados no tienen este
-límite, al estar el directorio raiz ubicado en una sección fija del
+/raíz/ de una unidad: si bien los directorios derivados no tienen este
+límite, al estar el directorio raíz ubicado en una sección fija del
 disco, tiene una longitud límite máxima: en un disco flexible (que
 hasta el día de hoy, por su baja capacidad, se formatea bajo *fat12*),
 desde el bloque 20 y hasta el 33, esto es, 14 bloques. Con un tamaño
-de sector de 512 bytes, el directorio raiz mide $512 \times 14 = 7~168$
+de sector de 512 bytes, el directorio raíz mide $512 \times 14 = 7~168$
 bytes, esto es, $\frac{7~168}{32} = 224$ entradas como máximo. Y si
 bien esto puede no parecer muy limitado, ocupar cuatro entradas por
 archivo cuando, empleando *vfat*, se tiene un nombre medianamente
 largo reduce fuertemente el panorama.
 
 El problema no resulta tan severo como podría parecer: para *fat32*, el
-directorio raiz ya no está ubicado en un espacio reservado, sino que
+directorio raíz ya no está ubicado en un espacio reservado, sino que
 como parte del espacio de datos, por lo cual es extensible en caso de
 requerirse.
 
@@ -355,11 +356,11 @@ Los primeros sistemas de archivos estaban pensados para unidades de
 muy baja capacidad; por mucho tiempo, las implementaciones del
 directorio eran simplemente listas lineales con los archivos que
 estaban alojados en el volumen. En muchos de estos primeros sistemas
-no se contemplaban directorios jerárquicos, sino que presentaban un
+no se consideraban directorios jerárquicos, sino que presentaban un
 único espacio /plano/ de nombres; cuando estos sistemas fueron
 evolucionando para soportar directorios anidados, por compatibilidad
 hacia atrás (y por consideraciones de rendimiento que se abordan a
-continuación) siguieron almacenando únicamente al directorio raiz en
+continuación) siguieron almacenando únicamente al directorio raíz en
 esta posición privilegiada, manejando a todos los directorios que
 derivaran de éste como si fueran archivos, repartidos por el disco.
 
@@ -372,7 +373,7 @@ derivaran de éste como si fueran archivos, repartidos por el disco.
 |   2 | Sistema       | El archivo pertenece al sistema y no debe    |
 |     |               | moverse de sus /clusters/ (empleado, por     |
 |     |               | ejemplo, para los componentes a cargar para  |
-|     |               | iniciar al sistema operativo)                |
+|     |               | iniciar al sistema operativo).               |
 |   3 | Etiqueta      | Indica el nombre del volumen, no un archivo. |
 |     |               | En *vfat*, expresa la /continuación/ de un   |
 |     |               | nombre largo.                                |
@@ -385,21 +386,22 @@ derivaran de éste como si fueran archivos, repartidos por el disco.
 |   6 | Dispositivo   | Para uso interno del sistema operativo, no   |
 |     |               | fue adoptado para los archivos.              |
 |   7 | Reservado     | Reservado, no debe ser manipulado.           |
+|-----+---------------+----------------------------------------------|
 
 En un sistema que implementa los directorios como listas lineales,
 entre más archivos haya, el tiempo que toma casi cualquier operación
 se incrementa linealmente (dado que potencialmente se tiene que leer
-al directorio completo para encontrar a un archivo). Y las listas
+el directorio completo para encontrar un archivo). Y las listas
 lineales presentan un segundo problema: cómo reaccionar cuando se
 /llena/ el espacio que tienen asignado.
 
-Como ya se presentó, *fat* asigna un espacio fijo al directorio raiz,
+Como ya se presentó, *fat* asigna un espacio fijo al directorio raíz,
 pero los subdirectorios pueden crecer abritrariamente. Un
 subdirectorio es básicamente una entrada con un tipo especial de
-archivo — si el doceavo byte de una entrada de directorio, que indica
+archivo —si el doceavo byte de una entrada de directorio, que indica
 los /atributos del archivo/ (ver figura
 \ref{FS_entrada_directorio_fat} y cuadro \ref{FS_atributos_fat}) tiene
-al bit 4 activado, la región de datos correspondientes a dicho archivo
+al bit cuatro activado, la región de datos correspondientes a dicho archivo
 será interpretada como un subdirectorio.
 
 *** La tabla de asignación de archivos
@@ -409,34 +411,33 @@ Queda claro que *fat* es un sistema heredado, y que exhibe muchas
 prácticas que ya se han abandonado en diseños modernos de sistemas de
 archivos. Se vio que dentro de la entrada de directorio de cada archivo
 está prácticamente su /i-nodo/ completo: la información de permisos,
-atributos, fechas de creación — y muy particularmente, el apuntador
+atributos, fechas de creación, y muy particularmente, el apuntador
 al /cluster/ de inicio (bytes 26-28, mas los 20-22 para *fat32*). Esto
 resulta en una de las grandes debilidades de *fat*: la tendencia a la
 fragmentación.
 
-La familia *fat* obtiene su nombre de la Tabla de Asignación de Archivos
-(/File Allocation Table/), que aparece antes del directorio, en los
-primeros sectores del disco.[fn:: Esta tabla es tan importante que,
-dependiendo de la versión de *fat*, se guarda por duplicado, o incluso
-por triplicado.] Cada byte de la *fat*
-representa a un /cluster/ en el área de datos; cada entrada en el
-directorio indica, en su campo /cluster/, cuál es el primer /cluster/
-que conforma al archivo. Ahora bien, conforme se usa un disco, y los
-archivos crecen y se eliminan, y van llenando los espacios vacíos que
-van dejando, *fat* va asignando espacio /conforme encuentra nuevos
-clusters libres/, sin cuidar que sea espacio continuo. Los apuntadores al
-/siguiente cluster/ se van marcando en la tabla, /cluster/ por
-/cluster/, y el último /cluster/ de cada archivo recibe el valor
-especial (dependiendo de la versión de *fat*) =0xFFF=, =0xFFFF= o
-=0xFFFFFFFF=.
+La familia *fat* obtiene su nombre de la tabla de asignación de
+archivos (/file allocation table/), que aparece antes del directorio,
+en los primeros sectores del disco.[fn:: Esta tabla es tan importante
+que, dependiendo de la versión de *fat*, se guarda por duplicado, o
+incluso por triplicado.] Cada byte de la *fat* representa un /cluster/
+en el área de datos; cada entrada en el directorio indica, en su campo
+/cluster/, cuál es el primer /cluster/ que conforma al archivo. Ahora
+bien, conforme se usa un disco, y los archivos crecen y se eliminan, y
+van llenando los espacios vacíos que van dejando, *fat* va asignando
+espacio /conforme encuentra nuevos clusters libres/, sin cuidar que
+sea espacio continuo. Los apuntadores al /siguiente cluster/ se van
+marcando en la tabla, /cluster/ por /cluster/, y el último de cada
+archivo recibe el valor especial (dependiendo de la versión de *fat*)
+=0xFFF=, =0xFFFF= o =0xFFFFFFFF=.
 
 Ahora bien, si los directorios son sencillamente archivos que reciben
-un tratamiento especial, estos son también susceptibles a la
+un tratamiento especial, éstos son también susceptibles a la
 fragmentación. Dentro de un sistema Windows 95 o superior (empleando
 las extensiones *vfat*), con directorios anidados a cuatro o cinco
-niveles como lo establece su jerarquía estándar[fn:: Por ejemplo,
+niveles como lo establece su jerarquía estándar,[fn:: Por ejemplo,
 =C:\Documents and Settings\Usuario\Menú Inicio\Programa
-Ejemplo\Programa Ejemplo.lnk=], la simple tarea de recorrerlos para
+Ejemplo\Programa Ejemplo.lnk=] la simple tarea de recorrerlos para
 encontrar determinado archivo puede resultar muy penalizado por la
 fragmentación.
 
@@ -444,7 +445,7 @@ fragmentación.
 
 Sólo unos pocos sistemas de archivos guardan sus directorios ordenados
 — si bien esto facilitaría las operaciones más frecuentes que se
-realizan sobre de ellos (en particular, la búsqueda: cada vez que un
+realizan sobre ellos (en particular, la búsqueda: cada vez que un
 directorio es recorrido hasta encontrar un archivo tiene que leerse
 potencialmente completo), mantenerlo ordenado ante cualquier
 modificación resultaría mucho más /caro/, dado que tendría que
@@ -456,15 +457,15 @@ repentina (fallo de sistema, corte eléctrico, desconexión del
 dispositivo, etc.) se presentara corrupción de la información llevando
 a pérdida de datos. Al almacenar las entradas del directorio sin
 ordenar, las escrituras que modifican esta crítica estructura se
-mantienen atómicas: un sólo sector de 512 bytes puede almacenar 16
-entradas básicas de *fat*, de 32 bytes cada una.[fn:: Aunque en el caso
-de *vfat*, las diferentes entradas que componen un sólo nombre de
+mantienen atómicas: un solo sector de 512 bytes puede almacenar 16
+entradas básicas de *fat*, de 32 bytes cada una.[fn:: Aunque en el
+caso de *vfat*, las diferentes entradas que componen un sólo nombre de
 archivo pueden quedar separadas en diferentes sectores.]
 
 Ordenar las entradas del directorio teniendo sus contenidos ya en
 memoria y, en general, diferir las modificaciones al directorio
 resulta mucho más conveniente en el caso general. Esto vale también
-para la eliminación de archivos — a continuación se abordará la
+para la eliminación de archivos —a continuación se abordará la
 estrategia que sigue *fat*. Cabe recordar que *fat* fue diseñado cuando el
 medio principal de almacenamiento era el disco flexible, decenas de
 veces más lento que el disco duro, y con mucha menor confiabilidad.
@@ -476,7 +477,7 @@ ignorado, reemplazando el primer caracter de su nombre por =0xE5=. Ni
 la entrada de directorio, ni la /cadena/ de /clusters/ correspondiente
 en las tablas de asignación,[fn:: Este tema será abordado en breve, en
 la sección \ref{FS_tablas_fat}, al hablar de las tablas de asignación
-de archivos.] son eliminadas — sólo son marcadas como
+de archivos.] son eliminadas —sólo son marcadas como
 /disponibles/. El espacio de almacenamiento que el archivo eliminado
 ocupa debe, entonces, ser /sumado/ al espacio libre que tiene el
 volumen. Es sólo cuando se crea un nuevo archivo empleando esa misma
@@ -484,11 +485,11 @@ entrada, o cuando otro archivo ocupa el espacio físico que ocupaba el
 que fue eliminado, que el sistema operativo marca /realmente/ como
 desocupados los /clusters/ en la tabla de asignación.
 
-Es por esto que desde los primeros días de las *pc* existen tantas
+Es por esto por lo que desde los primeros días de las *pc* hay tantas
 herramientas de recuperación (o /des-borramiento/, /undeletion/) de
-archivos: siempre que no haya sido creado un archivo nuevo que ocupe
-la entrada de directorio en cuestión, recuperar un archivo es tan
-simple como volver a ponerle el primer caracter a su nombre.
+archivos: siempre que no haya sido creado uno nuevo que ocupe la
+entrada de directorio en cuestión, recuperar un archivo es tan simple
+como volver a ponerle el primer caracter a su nombre.
 
 Este es un ejemplo de un /mecanismo flojo/ (en contraposición de los
 /mecanismos ansiosos/, como los vistos en la sección
@@ -516,18 +517,19 @@ patrones comunes son:
   numerosas ocasiones las palabras que describen sus conceptos
   principales.
 
-Conforme las computadoras aumentaron su poder de cómputo, desde fines
-de los 1980 se presentaron varios mecanismos que permitían aprovechar
-las regularidades en los datos almacenados en el disco para comprimir
-el espacio utilizable en un mismo medio. La compresión típicamente se
-hace por medio de mecanismos estimativos derivados del análisis del
-contenido[fn:: Uno de los algoritmos más frecuentemente utilizados y
-fáciles de entender es la /Codificación Huffman/; este y la familia de
-algoritmos /Lempel-Ziv/ sirven de base para prácticamente la totalidad
-de implementaciones.], que tienen por resultado un nivel variable de
-compresión: con tipos de contenido altamente regulares (como podría
-ser texto, código fuente, o audio e imágenes /en crudo/), un volumen
-puede almacenar frecuentemente mucho más del 200% de su espacio real.
+Conforme las computadoras aumentaron su poder de cómputo, desde
+finales de los ochenta se presentaron varios mecanismos que permitían
+aprovechar las regularidades en los datos almacenados en el disco para
+comprimir el espacio utilizable en un mismo medio. La compresión
+típicamente se hace por medio de mecanismos estimativos derivados del
+análisis del contenido,[fn:: Uno de los algoritmos más frecuentemente
+utilizados y fáciles de entender es la /Codificación Huffman/; éste y
+la familia de algoritmos /Lempel-Ziv/ sirven de base para
+prácticamente la totalidad de las implementaciones.] que tienen como
+resultado un nivel variable de compresión: con tipos de contenido
+altamente regulares (como podría ser texto, código fuente, o audio e
+imágenes /en crudo/), un volumen puede almacenar frecuentemente mucho
+más de 200% de su espacio real.
 
 Con contenido poco predecible o con muy baja redundancia (como la
 mayor parte de formatos de imágenes o audio, que incluyen ya una fase
@@ -538,46 +540,46 @@ empleada.
 *** Compresión de volumen completo
 
 El primer sistema de archivos que se popularizó fue /Stacker/,
-comercializado a partir de 1990 por /Stac Electronics/. Stacker
+comercializado a partir de 1990 por /Stac Electronics/. /Stacker/
 operaba bajo *ms-dos*, creando un dispositivo de bloques virtual alojado
-en un disco estándar[fn:: Esto significa que, al solicitarle la
+en un disco estándar.[fn:: Esto significa que, al solicitarle la
 creación de una unidad comprimida de 30 *mb* dentro del volumen =C=
-(disco duro primario), esta aparecería disponible como un volumen
+(disco duro primario), ésta aparecería disponible como un volumen
 adicional. El nuevo volúmen requería de la carga de un /controlador/
-especial para ser /montado/ por el sistema operativo.]. Varias
+especial para ser /montado/ por el sistema operativo.] Varias
 implementaciones posteriores de esta misma época se basaron en este
 mismo principio.
 
-Ahora, sumando la variabilidad derivada del enfoque probabilístico
-al uso del espacio con el ubicarse como una compresión orientada al
+Ahora, sumando la variabilidad derivada del enfoque probabilístico al
+uso del espacio con el ubicarse como una compresión orientada al
 volumen entero, resulta natural encontrar una de las dificultades
 resultantes del uso de estas herramientas: dado que el sistema
 operativo estructura las operaciones de lectura y escritura por
-bloques de dimensiones regulares (por ejemplo, el
-tamaño típico de sector hardware de 512 bytes), al poder estos traducirse a más
-o menos bloques reales al pasar por una capa de compresión, es posible
-que el sistema de archivos tenga que reacomodar constantemente la
+bloques de dimensiones regulares (por ejemplo, el tamaño típico de
+sector hardware de 512 bytes), al poder éstos traducirse a más o menos
+bloques reales tras pasar por una capa de compresión, es posible que
+el sistema de archivos tenga que reacomodar constantemente la
 información al /crecer/ alguno de los bloques previos.  Conforme mayor
-era el tiempo de uso de una unidad comprimida por Stacker, se notaba
+era el tiempo de uso de una unidad comprimida por /Stacker/, se notaba
 más degradación en su rendimiento.
 
 Además, dado que bajo este esquema se empleaba el sistema de archivos
 estándar, las tablas de directorio y asignación de espacio resultaban
-también comprimidas. Estas tablas, como ya se ha expuesto,
-contienen la información fundamental del sistema de
-archivos; al comprimirlas y reescribirlas constantemente, la
-probabilidad de que resulten dañadas en alguna falla (eléctrica o
-lógica) aumenta. Y sí, si bien los discos comprimidos por /Stacker/ y
-otras herramientas fueron populares principalmente durante la primera
-mitad de los 1990, conforme aumentó la capacidad de los discos duros
-fue declinando su utilización.
+también comprimidas. Estas tablas, como ya se ha expuesto, contienen
+la información fundamental del sistema de archivos; al comprimirlas y
+reescribirlas constantemente, la probabilidad de que resulten dañadas
+en alguna falla (eléctrica o lógica) aumenta. Y si bien los discos
+comprimidos por /Stacker/ y otras herramientas fueron populares,
+principalmente durante la primera mitad de los noventa, conforme
+aumentó la capacidad de los discos duros fue declinando su
+utilización.
 
 *** Compresión archivo por archivo
 
-Dado el éxito del que gozó Stacker en sus primeros años, Microsoft
+Dado el éxito del que gozó /Stacker/ en sus primeros años, Microsoft
 anunció como parte de las características de la versión 6.0 de *ms-dos*
 (publicada en 1993) que incluiría /DoubleSpace/, una tecnología muy
-similar a la de Stacker. Microsoft incluyó en sus sistemas operativos
+similar a la de /Stacker/. Microsoft incluyó en sus sistemas operativos
 el soporte para DoubleSpace
 por siete años, cubriendo las últimas versiones de *ms-dos* y las de
 Windows 95, 98 y Millenium, pero como ya se vio, la compresión de
@@ -596,19 +598,19 @@ sistemas operativos Windows a partir de la versión *xp*, liberada en el
 año 2003.
 
 Si bien la compresión transparente a nivel archivo se muestra mucho
-más atractiva que la compresión de volumen completo, no es una panacea
-y es frecuente encontrar en foros en línea la recomendación de
-deshabilitarla. En primer término, comprimir un archivo implica que
-un cambio pequeño puede tener un impacto mucho mayor: modificar un
-bloque puede implicar que el tamaño final de los datos cambie, lo cual
-se traduciría a la reescritura del archivo desde ese punto en
-adelante; esto podría mitigarse insertando espacios para preservar el
-espacio ya ocupado, pero agrega complejidad al proceso (y abona en
-contra de la compresión). Los archivos comprimidos son además mucho
-más sensibles a la corrupción de datos, particularmente en casos de
-fallo de sistema o de energía: dado que un cambio menor puede resultar
-en la necesidad de reescribir al archivo completo, la ventana de
-tiempo para que se produzca un fallo se incrementa.
+más atractiva que la de volumen completo, no es una panacea y es
+frecuente encontrar en foros en línea la recomendación de
+deshabilitarla. En primer término, comprimir un archivo implica que un
+cambio pequeño puede tener un efecto mucho mayor: modificar un bloque
+puede implicar que el tamaño final de los datos cambie, lo cual se
+traduciría a la reescritura del archivo desde ese punto en adelante;
+esto podría mitigarse insertando espacios para preservar el espacio ya
+ocupado, pero agrega complejidad al proceso (y abona en contra de la
+compresión). Los archivos comprimidos son además mucho más sensibles a
+la corrupción de datos, particularmente en casos de fallo de sistema o
+de energía: dado que un cambio menor puede resultar en la necesidad de
+reescribir al archivo completo, la ventana de tiempo para que se
+produzca un fallo se incrementa.
 
 En archivos estructurados para permitir el acceso aleatorio, como
 podrían ser las tablas de bases de datos, la compresión implicaría que
@@ -617,7 +619,7 @@ programa gestor espera, lo cual acarreará necesariamente una
 penalización en el rendimiento y en la confiabilidad.
 
 Por otro lado, los formatos nativos en que se expresan los datos que
-típicamente más espacio ocupan en el almacenamiento de los usuarios
+típicamente ocupan más espacio en el almacenamiento de los usuarios
 finales implican ya un alto grado de compresión: los archivos de
 fotografías, audio o video están codificados empleando diversos
 esquemas de compresión aptos para sus particularidades. Y comprimir un
@@ -625,7 +627,7 @@ archivo que de suyo está ya comprimido no sólo no reporta ningún
 beneficio, sino que resulta en desperdicio de trabajo por el esfuerzo
 invertido en descomprimirlo cada vez que es empleado.
 
-La compresión transparente archivo por archivo tiene innegables
+La compresión transparente, archivo por archivo, tiene innegables
 ventajas, sin embargo, por las desventajas que implica, no puede
 tomarse como el modo de operación por omisión.
 
@@ -636,22 +638,23 @@ Hay una estrategia fundamentalmente distinta para optimizar el uso del
 espacio de almacenamiento, logrando muy altos niveles de /sobreuso/:
 guardar /sólo una copia/ de cada cosa.
 
-Ha habido sistemas implementando distintos tipos de desduplicación
-desde fines de los 1980, aunque su efectividad era muy limitada y, por
-tanto, su uso se mantuvo como muy marginal hasta recientemente.
+Desde fines de los ochenta se han planteado sistemas implementando
+distintos tipos de desduplicación, aunque su efectividad era muy
+limitada y, por tanto, su nivel de adopción se mantuvo muy reducido
+hasta recientemente.
 
-El que se retomara la desduplicación se debe en buena medida se debe a
-la /consolidación/ de servidores ante la adopción a gran escala de
-mecanismos de virtualización (ver apéndice \ref{VIRT}, y en particular
-la sección \ref{VIRT_contenedores}). Dado que un mismo servidor puede
-estar alojando a decenas o centenas de /máquinas virtuales/, muchas de
-ellas con el mismo sistema operativo y programas base, los mismos archivos se repiten
-muchas veces; si el sistema de archivos puede determinar que
-determinado archivo o bloque está ya almacenado, podría almacenarse
-sólamente una copia.
+El que se retomara la desduplicación se debe en buena medida a la
+/consolidación/ de servidores ante la adopción a gran escala de
+mecanismos de virtualización (véanse apéndice \ref{VIRT} y en
+particular la sección \ref{VIRT_contenedores}). Dado que un mismo
+servidor puede estar alojando a decenas o centenas de /máquinas
+virtuales/, muchas de ellas con el mismo sistema operativo y programas
+base, los mismos archivos se repiten muchas veces; si el sistema de
+archivos puede determinar que cierto archivo o bloque está ya
+almacenado, podría guardar sólamente una copia.
 
 La principal diferencia entre la desduplicación y las /ligas duras/
-mencionados en la sección \ref{DIR_grafo_dirigido} es que, en caso
+mencionadas en la sección \ref{DIR_grafo_dirigido} es que, en caso
 de que cualquiera de estos archivos (o bloques) sea modificado, el
 sistema de archivos tomará el espacio necesario para representar estos
 cambios y evitará que esto afecte a los demás archivos. Además, si dos
@@ -664,7 +667,7 @@ ejemplo, empleando el algoritmo *sha-256*, el cual brinda una
 probabilidad de /colisión/ de 1 en $2^{256}$, suficientemente
 confiable para que la pérdida de datos sea mucho menos probable que la
 falla del disco.]; este mecanismo permite una búsqueda rápida y
-confiable de coincidencias, sea a nivel archivo o a nivel bloque.
+confiable de coincidencias, ya sea por archivo o por bloque.
 
 La desduplicación puede realizarse /en línea/ o /fuera de línea/ —
 esto es, analizar los datos buscando duplicidades al momento que estos
@@ -677,21 +680,21 @@ hacerlo a nivel bloque, pero hacerlo a nivel bloque lleva típicamente
 a una optimización del uso de espacio mucho mayor.
 
 Al día de hoy, el principal sistema de archivos que implementa
-desduplicación es *zfs*[fn:: Las características básicas de *zfs* serán
-presentadas en la sección \ref{FS_FIS_zfs}], desarrollado por Sun
+desduplicación es *zfs*,[fn:: Las características básicas de *zfs* serán
+presentadas en la sección \ref{FS_FIS_zfs}.] desarrollado por Sun
 Microsystems (hoy Oracle). En Linux, esta característica forma parte
 de *btrfs*, aunque no ha alcanzado los niveles de estabilidad como para
 recomendarse para su uso en entornos de producción.
 
-En Windows, esta funcionalidad se conoce como /Single Instance
-Storage/ (/Almacenamiento de Instancia Única/). Esta característica
-apareció a nivel de archivo, implementada en espacio de usuario, como
-una de las características del servidor de correo /Exchange Server/
-entre los años 2000 y 2010. A partir de Windows Server 2003, la
-funcionalidad de desduplicación existe para *ntfs*, pero su uso es poco
-frecuente.
+En Windows, esta funcionalidad se conoce como /single instance
+storage/ (/almacenamiento de instancia única/). Esta característica
+apareció, implementada en espacio de usuario y operando a nivel de
+archivo, como una de las características del servidor de correo
+/Exchange Server/ entre los años 2000 y 2010. A partir de Windows
+Server 2003, la funcionalidad de desduplicación existe para
+directamente para *ntfs*, pero su uso es poco frecuente.
 
-El uso de desduplicación, particularmente cuando se efectúa a nivel
+El uso de desduplicación, particularmente cuando se efectúa por
 bloques, tiene un alto costo en memoria: para mantener buenos niveles
 de rendimiento, la tabla que relaciona el hash de datos con el sector
 en el cual está almacenado debe mantenerse en memoria. En el caso de
@@ -707,79 +710,78 @@ Los sistemas de archivos nacieron para facilitar el uso de
 dispositivos de almacenamiento para la información que debe persistir
 a largo plazo. Sin embargo, dado que la abstracción para su uso
 resulta tan natural para representar todo tipo de información, desde
-la década de 1980 aparecieron diversos discos *ram*: Programas
-diseñados para tomar un espacio de memoria y darle la semántica de un
-disco, permitiendo manipular su contenido como si fuera un disco
-cualquiera. Esto es, presenta almacenamiento volátil, pero de muy alta
-velocidad.
+la década de los ochenta aparecieron diversas implementaciones de
+discos *ram*: programas diseñados para tomar un espacio de memoria y
+darle la semántica de un disco, permitiendo manipular su contenido
+como si fuera un disco cualquiera. Esto es, presenta almacenamiento
+volátil, pero de muy alta velocidad.
 
-Estos esquemas gozaron de relativa popularidad a lo largo de los 1980
-y 1990; fue sin embargo con la popularización de los sistemas que
-implementan memoria virtual que este esquema se volvió verdaderamente
-popular. En los sistemas Linux modernos, la norma es el uso de
-sistemas de archivos virtuales para el espacio de almacenamiento
-temporal =/tmp=, e incluso otros espacios tradicionalmente
-persistentes (como el directorio con los archivos de dispositivos,
-=/dev=) se han convertido en virtuales.
+Estos esquemas gozaron de relativa popularidad a lo largo de los
+ochenta y noventa; fue, sin embargo, con la popularización de los
+sistemas que implementan memoria virtual que este esquema se volvió
+verdaderamente popular. En los sistemas Linux modernos, la norma es el
+uso de sistemas de archivos virtuales para el espacio de
+almacenamiento temporal =/tmp=, e incluso otros espacios
+tradicionalmente persistentes (como el directorio con los archivos de
+dispositivos, =/dev=) se han convertido en virtuales.
 
 *** Una ventana al núcleo
 # <<FS_proc>>
 
 En junio 1984, en el congreso de desarrolladores de sistemas Unix del
-grupo *usenix*, T. J. Killian presentó el artículo [[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
-files]]. Killian implementó un sistema de archivos virtual para ser
+grupo *usenix*, T. J. Killian presentó el artículo "/[[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
+files]]/". Killian implementó un sistema de archivos virtual para ser
 montado en el directorio =/proc= del sistema que, en vez de
 representar un mapa de bloques, presentaba una ventana a la lista de
-procesos en ejecución en el sistema. Este sistema fue incorporado a
-prácticamente todos los sistemas tipo Unix.
+procesos en ejecución en el sistema. El uso de =/proc= fue incorporado
+a prácticamente todos los sistemas tipo Unix.
 
 Esta idea ha avanzado y madurado, y al día de hoy es una herramienta
 fundamental para la administración de sistemas. Si bien la propuesta
 original de Killian estaba encaminada principalmente a facilitar la
 implementación de depuradores presentando el espacio de memoria de los
-procesos, =/proc= presenta hoy en día una suerte de ventana a
-estructuras internas del sistema: un árbol de directorios con una gran
-cantidad de archivos por medio de los cuales se puede monitorear el
-estado del sistema (memoria libre, número de procesos, consumo de
-procesador, etc.), e incluso modificar la configuración del sistema en
-ejecución.
+procesos, =/proc= es hoy en día una suerte de ventana a estructuras
+internas del sistema: un árbol de directorios con una gran cantidad de
+archivos por medio de los cuales se puede monitorear el estado del
+sistema (memoria libre, número de procesos, consumo de procesador,
+etc.), e incluso modificar la configuración del sistema en ejecución.
 
-Por ejemplo, en Linux, leer de =/proc/sys/vm/swappiness= dará (por
-omisión) un valor de 60. Escribir el valor 100 a este archivo tendrá
+Por ejemplo, en Linux, leer de =/proc/sys/vm/swappiness= dará, por
+omisión, un valor de 60. Escribir el valor 100 a este archivo tendrá
 por resultado inmediato que el sistema sea más agresivo con la
-paginación de memoria virtual (ver sección \ref{MEM_virtual}) de lo
-que normalmente sería. Por otro lado, escribir el valor 1 tendrá por
-efecto que el sistema operativo realice la paginación sólo si no tiene
-otra alternativa. Un valor de 0 tendrá como efecto el deshabilitar la
-paginación por completo. Este archivo, al igual que todos los que
-conforman =/proc=, se presenta como un archivo de tipo normal — La
-particularidad radica en el sistema de archivos en que se ubica.
+paginación de memoria virtual (véase la sección \ref{MEM_virtual}) de
+lo que normalmente sería. Por otro lado, escribir el valor uno tendrá
+por efecto que el sistema operativo realice la paginación sólo si no
+tiene otra alternativa. Un valor de cero tendrá como efecto el
+deshabilitar la paginación por completo. Este archivo, al igual que
+todos los que conforman =/proc=, se presenta ante los procesos en
+ejecución como un archivo de tipo normal —la particularidad radica en
+el sistema de archivos en que se ubica.
 
 Claro está, por más que parezca una simple lectura de un archivo, el
 leer o modificar un valor dentro de =/proc= cruza también por una
 serie de llamadas al sistema; el que la configuración de la memoria
-virtual esté disponible a través de algo que /parece ser/ un archivo
-(sin serlo) es precisamente un caso de abstracción hacia una interfaz
+virtual esté disponible mediante algo que /parece ser/ un archivo (sin
+serlo) es precisamente un caso de abstracción hacia una interfaz
 consistente y conocida.
 
 * Esquemas de asignación de espacio
 
 Hasta este punto, la presentación de la /entrada de directorio/ se ha
-limitado a indicar que ésta apunta al punto donde inicia el espacio
-empleado por el archivo. No se ha detallado en cómo se implementa la
-asignación y administración de dicho espacio. En esta sección se hará
-un breve repaso de los tres principales mecanismos, para después de
-ésta explicar cómo es la implementación de *fat*, abordando sus
-principales virtudes y debilidades.
+limitado a indicar que ésta tiene un apuntador al lugar donde inicia
+el espacio empleado por el archivo. No se ha detallado en cómo se
+implementa la asignación y administración de dicho espacio. En esta
+sección se hará un breve repaso de los tres principales mecanismos,
+para después explicar cómo es la implementación de *fat*, abordando
+sus principales virtudes y debilidades.
 
 ** Asignación contigua
 
 Los primeros sistemas de archivos en disco empleaban un esquema de
 /asignación contigua/. Para implementar un sistema de archivos de este
-tipo, no haría falta el contar con una /tabla de asignación de
-archivos/: bastaría con la información que forma parte del
-directorio de *fat* — la extensión del archivo y la dirección de su
-primer /cluster/.
+tipo, no haría falta contar con una /tabla de asignación de archivos/:
+bastaría con la información que forma parte del directorio de *fat*
+—la extensión del archivo y la dirección de su primer /cluster/.
 
 #+attr_latex: width=0.7\textwidth
 #+label: FS_fs_asignacion_contigua
@@ -796,18 +798,18 @@ sensible a la /fragmentación externa/; si un archivo requiere crecer,
 debe ser movido íntegramente a un bloque más grande (lo cual toma
 demasiado tiempo), y el espacio que libera un archivo en caso de
 reducirse su necesidad de espacio queda /atrapado/ entre bloques
-asignados; podemos tener mucho más espacio disponible que el que
+asignados. Podemos tener mucho más espacio disponible que el que
 podamos asignar a un nuevo archivo.
 
 Los esquemas de asignación contigua se emplean hoy en día
-principalmente en sistemas de archivo de sólo lectura — por ejemplo,
-lo emplea el sistema principal que utilizan los *cd-rom*, *iso-9660*,
+principalmente en sistemas de archivo de sólo lectura, por ejemplo, lo
+emplea el sistema principal que utilizan los *cd-rom*, *iso-9660*,
 pensado para aprovechar al máximo un espacio que, una vez grabado,
-sólo podrá abrirse en modo de sólo lectura. Esto explica por qué, a
-diferencia de como ocurre en cualquier otro medio de almacenamiento,
+sólo podrá abrirse en modo de sólo lectura. Esto explica porqué, a
+diferencia de lo que ocurre en cualquier otro medio de almacenamiento,
 al /quemar/ un *cd-rom* es necesario preparar primero una /imagen/ en
 la que los archivos ocupen sus posiciones definitivas, y esta imagen
-debe grabarse al disco en una sola operación.
+debe grabarse en el disco en una sola operación.
 
 ** Asignación ligada
 
@@ -818,12 +820,12 @@ directorio apunta a un primer /grupo/ de sectores (o /cluster/), y
 éste contiene un apuntador que indica cuál es el siguiente.
 
 Para hacer esto, hay dos mecanismos: el primero, reservar un espacio
-al final de cada /cluster/ para guardar el apuntador, y el segundo,
+al final de cada /cluster/ para guardar el apuntador y, el segundo,
 crear una tabla independiente, que guarde únicamente los apuntadores.
 
 En el primer caso, si se manejan /clusters/ de $2~048$ bytes, y se
-reservan los 4 bytes (32 bits) finales de cada uno, el resultado sería
-de gran incomodidad al programador: frecuentemente, los programadores
+reservan los cuatro bytes (32 bits) finales de cada uno, el resultado
+sería de gran incomodidad a los programadores, ya que, frecuentemente,
 buscan alinear sus operaciones con las fronteras de las estructuras
 subyacentes, para optimizar los accesos (por ejemplo, evitar que un
 sólo registro de base de datos requiera ser leído de dos distintos
@@ -832,14 +834,14 @@ para ajustarse a la poco ortodoxa cantidad de $2~044$ bytes.
 
 Y más allá de esta inconveniencia, guardar los apuntadores al final de
 cada /cluster/ hace mucho más lento el manejo de todos los archivos:
-al no tener en una sola ubicación la relación de /clusters/ que conforman
-a un archivo, todas las transferencias se convierten en
-/secuenciales/: para llegar directamente a
-determinado bloque del archivo, habrá que atravesar todos los bloques
-previos para encontrar su ubicación.
+al no tener en una sola ubicación la relación de /clusters/ que
+conforman un archivo, todas las transferencias se convierten en
+/secuenciales/: para llegar directamente a determinado bloque del
+archivo, habrá que pasar por todos los bloques previos para encontrar
+su ubicación.
 
 Particularmente por este segundo punto es mucho más común el empleo de
-una /tabla de asignación de archivos/ — y precisamente así es como
+una /tabla de asignación de archivos/ —y precisamente así es como
 opera *fat* (de hecho, esta tabla es la que le da su nombre). La tabla
 de asignación es un mapa de los /clusters/, representando a cada uno por
 el espacio necesario para guardar un apuntador.
@@ -856,14 +858,14 @@ aquí referencia al concepto presentado en la sección
 /fragmentación/ se refiere a la necesidad de /compactación/; es muy
 distinto, y sí se presenta bajo este esquema: cada archivo se separa
 en pequeños /fragmentos/ que pueden terminar esparcidos por todo el
-disco, impactando fuertemente en el rendimiento del sistema] Al ya no
+disco, afectando fuertemente en el rendimiento del sistema.] Al ya no
 requerir la /pre-asignación/ de un espacio contiguo, cada uno de los
 archivos puede crecer o reducirse según sea necesario.
 
 Ahora, la /asignación ligada/ no sólo resulta más lenta que la
 contigua, sino que presenta una mayor /sobrecarga administrativa/: el
 espacio desperdiciado para almacenar los apuntadores típicamente es
-cercano al 1% del disponible en el medio.
+cercano a 1% del disponible en el medio.
 
 Este esquema también presenta /fragilidad de metadatos/: si alguno de
 los apuntadores se pierde o corrompe, lleva a que se pierda el archivo
@@ -874,12 +876,12 @@ esquemas es abordado en la sección \ref{FS_fallos_recuperacion}).
 
 Hay dos mecanismos de mitigación para este problema: el empleado por
 los sistemas *fat* es guardar una (o, bajo *fat12*, dos) copias
-adicionales de la tabla de asignación, entre las cuales que el sistema
-puede verificar si se mantengan consistentes y buscar corregirlas en
+adicionales de la tabla de asignación, entre las cuales el sistema
+puede verificar que se mantengan consistentes y buscar corregirlas en
 caso contrario. Por otro lado, puede manejarse una estructura de
 /lista doblemente ligada/ (en vez de una /lista ligada/ sencilla) en
 que cada elemento apunte tanto al siguiente como al anterior, con lo
-cual, en caso de detectarse una inconsistencia en la información, esta
+cual, en caso de detectarse una inconsistencia en la información, ésta
 pueda ser recorrida /de atrás hacia adelante/ para confirmar los datos
 correctos. En ambos casos, sin embargo, la sobrecarga administrativa
 se duplica.
@@ -889,7 +891,7 @@ se duplica.
 El tercer modelo es la /asignación indexada/, el mecanismo empleado
 por casi todos los sistemas de archivos modernos. En este esquema, se
 crea una estructura intermedia entre el directorio y los datos, única
-para cada archivo: el /i-nodo/ (o /nodo de información/). Cada i-nodo
+para cada archivo: el /i-nodo/ (o /nodo de información/). Cada uno
 guarda los metadatos y la lista de bloques del archivo, reduciendo la
 probabilidad de que se presente la /corrupción de apuntadores/
 mencionada en la sección anterior.
@@ -897,12 +899,12 @@ mencionada en la sección anterior.
 La sobrecarga administrativa bajo este esquema potencialmente es mucho
 mayor: al asignar el i-nodo, éste se crea ocupando como mínimo un
 /cluster/ completo. En el caso de un archivo pequeño, que quepa en un
-sólo /cluster/, esto representa un desperdicio del 100% de espacio (un
+sólo /cluster/, esto representa un desperdicio de 100% de espacio (un
 /cluster/ para el i-nodo y otro para los datos);[fn:: Algunos sistemas
 de archivos, como Reiser, *btrfs* o *ufs*, presentan esquemas de
 asignación /sub-cluster/. Estos denominan /colas/ (/tails/) a los
 archivos muy pequeños, y pueden ubicarlos ya sea dentro de su mismo
-i-nodo o compartiendo un mismo cluster con un /desplazamiento/ dentro
+i-nodo o compartiendo un mismo /cluster/ con un /desplazamiento/ dentro
 de éste. Esta práctica no ha sido adoptada por sistemas de archivos de
 uso mayoritario por su complejidad relativa.] para archivos más
 grandes, la sobrecarga relativa disminuye, pero se mantiene siempre
@@ -916,7 +918,7 @@ superior a la de la asignación ligada.
 Un esquema de asignación indexada brinda una mayor eficiencia de caché
 que la asignación ligada: si bien en dicho caso es común guardar copia
 de la tabla de asignación en memoria para mayor agilidad, con la
-asignación indexada bastará hacer caché /únicamente de la información
+asignación indexada bastará hacer caché /sólo de la información
 importante/, esto es, únicamente de los archivos que se emplean en un
 momento dado. El /mapa de asignación/ para los archivos y directorios
 que no hayan sido empleados recientemente no requerirán estar en
@@ -946,8 +948,8 @@ indirección que /vayan haciendo falta/.
 [[./img/dot/fs_apuntadores_indirectos.png]]
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
-esquema y únicamente tres indirecciones? Suponiendo magnitudes que
-típicas hoy en día (/clusters/ de 4 *kb* y direcciones de 32 bits), en un
+esquema y únicamente tres indirecciones? Suponiendo magnitudes típicas
+hoy en día (/clusters/ de 4 *kb* y direcciones de 32 bits), en un
 /cluster/ vacío caben 128 apuntadores ($4~096 \over 32$). Si los
 metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 100
 apuntadores:
@@ -964,12 +966,12 @@ apuntadores:
   $(100-3 + 128 + (128\times 128) ) \times 4$ *kb* $= 66~436$ *kb*
   $\approx 65$ *mb*
 
-  Sin embargo, aquí ya llama la atención otro importante punto: para
-  acceder a estos 65 *mb*, es necesario que realizar hasta 131 accesos a
-  disco. A partir de este punto, resulta importante que el sistema
-  operativo asigne /clusters/ cercanos para los metadatos (y, de ser
-  posible, para los datos), pues la diferencia en tiempo de acceso
-  puede ser muy grande.
+  Sin embargo, a estas alturas comienza a llamar la atención otro
+  importante punto: para acceder a estos 65 *mb*, es necesario
+  realizar hasta 131 accesos a disco. A partir de este punto, resulta
+  importante que el sistema operativo asigne /clusters/ cercanos para
+  los metadatos (y, de ser posible, para los datos), pues la
+  diferencia en tiempo de acceso puede ser muy grande.
 
 - Empleando triple indirección, se puede llegar hasta:
 
@@ -984,17 +986,17 @@ apuntadores:
 ** Las tablas en *fat*
 # <<FS_tablas_fat>>
 
-Volviendo al caso que se presenta como ejemplo, el sistema de
-archivos *fat*: en este sistema, cada entrada del directorio apunta al
-primer /cluster/ que ocupa cada uno de los archivos, y se emplea un
-esquema de asignación ligada. El directorio tiene también un campo
-indicando la /longitud total/ del archivo, pero esto no es empleado
-para leer la información, sino para poderla presentar más ágilmente al
-usuario (y para que el sistema operativo sepa dónde indicar /fin de
-archivo/ al leer el último /cluster/ que compone a determinado archivo).
+Volviendo al caso que se presenta como ejemplo, para el sistema de
+archivos *fat*, cada entrada del directorio apunta al primer /cluster/
+que ocupa cada uno de los archivos, y se emplea un esquema de
+asignación ligada. El directorio tiene también un campo indicando la
+/longitud total/ del archivo, pero esto no es empleado para leer la
+información, sino para poderla presentar más ágilmente al usuario (y
+para que el sistema operativo sepa dónde indicar /fin de archivo/ al
+leer el último /cluster/ que compone a determinado archivo).
 
 La estructura fundamental de este sistema de archivos es la tabla de
-asignación de archivos (/File Allocation Table/) — tanto que de ella
+asignación de archivos (/file allocation table/) — tanto que de ella
 toma su nombre *fat*.
 
 Cada entrada de la *fat* mide lo que la longitud correspondiente a su
@@ -1030,43 +1032,44 @@ así sea.
 [[./img/tabla_fat.png]]
 
 En la sección \ref{FS_el_directorio}, al presentar el formato del
-directorio de *fat*, se mencionó que los subdirectorios son en realidad
-archivos de un tipo especial: una suerte de archivos estructurados
-(ver sección \ref{DIR_archivos_estructurados}), gestionados por el
-sistema operativo. Lo único que distingue a un directorio de un
-archivo normal es que, en la entrada que lo describe en su directorio
-padre, el doceavo byte de la entrada (que indica los /atributos del
-archivo/, ver figura \ref{FS_entrada_directorio_fat} y cuadro
-7.1) tiene activado el bit 4.
+directorio de *fat*, se mencionó que los subdirectorios son en
+realidad archivos de un tipo especial: una suerte de archivos
+estructurados (véase la sección \ref{DIR_archivos_estructurados}),
+gestionados por el sistema operativo. Lo único que distingue a un
+directorio de un archivo normal es que, en la entrada que lo describe
+en su directorio padre, el doceavo byte de la entrada (que indica los
+/atributos del archivo/, véanse la figura
+\ref{FS_entrada_directorio_fat} y el cuadro 7.1) tiene activado el
+bit 4.
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del
-/cluster/ es pequeño (2 *kb*), podrá almacenar sólo 64 entradas ($2~048
-\over 32$) y cada /cluster/ adicional le dará 64 entradas más. Y como
-tal, está sujeto también a la fragmentación: conforme se agregan
-entradas al directorio, éste crece. Llegado el momento, requiere
-/clusters/ adicionales. Y si un directorio termina disperso por todo
-el disco, resultará –como cualquier otro archivo– más lento leerlo y
-trabajar con él. Siempre que se abra un archivo dentro de un
-directorio grande, o que se lo recorra para abrir algún archivo en
-algún subdirectorio suyo, el sistema tendrá que buscar todos sus
-fragmentos a lo largo del disco.
+/cluster/ es pequeño (2 *kb*), podrá almacenar sólo 64 entradas
+($2~048 \over 32$) y cada /cluster/ adicional le dará 64 entradas
+más. Y como tal, está sujeto también a la fragmentación: conforme se
+agregan entradas al directorio, éste crece. Llegado el momento,
+requiere /clusters/ adicionales. Y si un directorio termina disperso
+por todo el disco, resultará –como cualquier otro archivo– más lento
+leerlo y trabajar con él. Siempre que se abra un archivo dentro de un
+directorio grande, o que se le recorra para abrir algún archivo en un
+subdirectorio suyo, el sistema tendrá que buscar todos sus fragmentos
+a lo largo del disco.
 
 Ante estos dos aspectos, no puede perderse de vista la edad que tiene
 el sistema *fat*. Otros sistemas de archivos más modernos han resuelto
-este problema a través de los /grupos de asignación/: los directorios
-del sistema son /esparcidos/ a lo largo del volumen, y /se intenta/
-ubicar a los archivos cerca de los directorios desde donde son
-referidos[fn:: Claro está, en el caso de los archivos que están como
-/ligas duras/ desde varios directorios, pueden ubicarse sólo cerca de
-uno de ellos]. Esto tiene por consecuencia que los archivos que
-presentan /cercanía temática/ (que pertenecen al mismo usuario o
-proyecto, o que por alguna razón están en la misma parte de la
-jerarquía del sistema) quedan ubicados en disco cerca unos de otros (y
-cerca de sus directorios). Y dado que es probable que sean empleados
+este problema mediante los /grupos de asignación/: los directorios del
+sistema son /esparcidos/ a lo largo del volumen, y /se intenta/ ubicar
+los archivos cerca de los directorios desde donde son referidos.[fn::
+Claro está, en el caso de los archivos que están como /ligas duras/
+desde varios directorios, pueden ubicarse sólo cerca de uno de ellos.]
+Esto tiene como consecuencia que los archivos que presentan /cercanía
+temática/ (que pertenecen al mismo usuario o proyecto, o que por
+alguna razón están en la misma parte de la jerarquía del sistema)
+quedan ubicados en disco cerca unos de otros (y cerca de sus
+directorios). Y dado que es probable que sean empleados
 aproximadamente al mismo tiempo, esto reduce las distancias que
 recorrerán las cabezas. Además, al esparcir los archivos, se
-distribuye también mejor el espacio libre, por lo cual el impacto de
+distribuye también mejor el espacio libre, por lo cual el efecto de
 los cambios de tamaño de un archivo en lo relativo a la fragmentación
 se limita a los que forman parte del mismo bloque de asignación.
 
@@ -1076,21 +1079,21 @@ parte de sus consecuencias negativas. Para mantener este esquema
 operando confiablemente, eso sí, requieren de mantener disponibilidad
 de espacio — al presentarse saturación, esta estrategia pierde
 efectividad. Para evitar que esto ocurra, es muy frecuente en los
-sistemas Unix que haya un cierto porcentaje (típicamente cercano al
-5%) del disco que esté disponible únicamente para el administrador —
-en caso de que el sistema de archivos pase del 95%, los usuarios no
-podrán escribir ya a él, pero el administrador puede efectuar tareas
-de mantenimiento para volver a un rango operacional.
+sistemas Unix que haya un cierto porcentaje (típicamente cercano a 5%)
+del disco disponible únicamente para el administrador — en caso de que
+el sistema de archivos pase de 95%, los usuarios no podrán escribir en
+él, pero el administrador puede efectuar tareas de mantenimiento para
+volver a un rango operacional.
 
 * Fallos y recuperación
 # <<FS_fallos_recuperacion>>
 
-El sistema de archivos *fat* es /relativamente frágil/: no es difícil que se
-presente una situación de /corrupción de metadatos/, y muy
+El sistema de archivos *fat* es /relativamente frágil/: no es difícil
+que se presente una situación de /corrupción de metadatos/, y muy
 particularmente, de la estructura de las tablas de asignación. Los
-usuarios de sistemas basados en *fat* en Windows sin duda conocen a los
-programas =CHKDSK= y =SCANDISK=, dos programas que implementan la
-misma funcionalidad base, y difieren principalmente en su interfaz al
+usuarios de sistemas basados en *fat* en Windows sin duda conocen a
+=CHKDSK= y =SCANDISK=, dos programas que implementan la misma
+funcionalidad base, y difieren principalmente en su interfaz al
 usuario: =CHKDSK= existe desde los primeros años de *ms-dos*, y está
 pensado para su uso interactivo en línea de comando; =SCANDISK= se
 ejecuta desde el entorno gráfico, y presenta la particularidad de que
@@ -1100,32 +1103,31 @@ sistema de archivos mientras se ejecuta.
 ¿Cómo es el funcionamiento de estos programas?
 
 A lo largo de la vida de un sistema de archivos, conforme los archivos
-se van asignando y liberando, van cambiando su tamaño, y conforme el
-sistema de archivos se monta y des-monta, pueden ir apareciendo
+se van asignando y liberando, cambian su tamaño, y conforme el sistema
+de archivos se monta y desmonta, pueden ir apareciendo
 /inconsistencias/ en su estructura. En los sistemas tipo *fat*, las
-principales inconsistencias[fn:: Que no las únicas. Estas y otras más
-están brevemente descritas en la página de manual de =dosfsck= (ver
-sección \ref{FS_otros_recursos}).] son:
+principales inconsistencias[fn:: Que no las únicas. Éstas y otras más
+están brevemente descritas en la página de manual de =dosfsck= (véase
+la sección \ref{FS_otros_recursos}).] son:
 
-- Archivos cruzados :: En inglés, /cross-linked file/. Recuérdese que
-     la entrada en el directorio de un archivo incluye un apuntador al
-     primer /cluster/ de una /cadena/. Cada cadena debe ser única,
-     esto es, ningún /cluster/ debe pertenecer a más de un
-     archivo. Si dos archivos incluyen al mismo /cluster/, esto
-     indica una inconsistencia, y la única forma de resolverla es
-     /truncar/ a uno de los archivos en el punto inmediato anterior a
-     este cruce.
+- Archivos cruzados :: (/cross-linked file/) Recuérdese que la entrada
+     en el directorio de un archivo incluye un apuntador al primer
+     /cluster/ de una /cadena/. Cada cadena debe ser única, esto es,
+     ningún /cluster/ debe pertenecer a más de un archivo. Si dos
+     archivos incluyen al mismo /cluster/, esto indica una
+     inconsistencia, y la única forma de resolverla es /truncar/ uno
+     de los archivos en el punto inmediato anterior a este cruce.
 
-- Cadenas perdidas o /huérfanas/ :: En inglés, /lost clusters/. Cuando
-     hay espacio marcado como ocupado en la tabla de asignación, pero
-     no hay ninguna entrada de directorio haciendo referencia a ella,
-     el espacio está efectivamente bloqueado y, desde la perspectiva
-     del usuario, inutilizado; además, estas cadenas pueden ser un
-     archivo que el usuario aún requiera.
+- Cadenas perdidas o /huérfanas/ :: (/lost clusters/) Cuando hay
+     espacio marcado como ocupado en la tabla de asignación, pero no
+     hay ninguna entrada de directorio haciendo referencia a ella, el
+     espacio está efectivamente bloqueado y, desde la perspectiva del
+     usuario, inutilizado; además, estas cadenas pueden ser un archivo
+     que el usuario aún requiera.
 
      Este problema resultó tan frecuente en versiones históricas de
-     Unix que al día de hoy es muy común tener un directorio llamado
-     =lost+found= en la raiz de todos los sistemas de archivos, donde
+     Unix que incluso hoy es muy común tener un directorio llamado
+     =lost+found= en la raíz de todos los sistemas de archivos, donde
      =fsck= (el equivalente en Unix de =CHKDSK=) creaba ligas a los
      archivos perdidos por corrupción de metadatos.
 
@@ -1138,25 +1140,26 @@ Cada sistema de archivos podrá presentar un distinto conjunto de
 inconsistencias, dependiendo de sus estructuras
 básicas y de la manera en que cada sistema operativo las maneja.
 
-En la década de los 1980 comenzaron a entrar a mercado los
-/controladores de disco inteligentes/, y en menos de diez años
-dominaban ya el mercado. Estos controladores, con buses tan disímiles
-como *scsi*, *ide*, o los más modernos, *sas* y *sata*, introdujeron muchos
-cambios que fueron disociando cada vez más al sistema operativo de la
-gestión física directa de los dispositivos; en el apéndice
-\ref{FS_FIS} se presenta a mayor profundidad lo que esto ha
+En la década de los 1980 comenzaron a venderse los /controladores de
+disco inteligentes/, y en menos de 10 años dominaban ya el
+mercado. Estos controladores, con interfaces físicas tan disímiles
+como *scsi*, *ide*, o los más modernos, *sas* y *sata*, introdujeron
+muchos cambios que fueron disociando cada vez más al sistema operativo
+de la gestión física directa de los dispositivos; en el apéndice
+\ref{FS_FIS} se presenta con mayor profundidad lo que esto ha
 significado para el desarrollo de sistemas de archivos y algoritmos
-relacionados. Sin embargo, para el tema en discusión, los /controladores
-inteligentes/ resultan relevantes porque, si bien antes el sistema
-operativo podía determinar con toda certeza si una operación se había
-realizado o no, hoy en día los controladores dan un /acuse de recibo/
-a la información en el momento en que la colocan en el caché
-incorporado del dispositivo — en caso de un fallo de corriente, esta
-información puede no haber sido escrita por completo al disco.
+relacionados. Sin embargo, para el tema en discusión, los
+/controladores inteligentes/ resultan relevantes porque, si bien antes
+el sistema operativo podía determinar con toda certeza si una
+operación se había realizado o no, hoy en día los controladores dan un
+/acuse de recibo/ a la información en el momento en que la colocan en
+el caché incorporado del dispositivo —en caso de un fallo de
+corriente, esta información puede no haber sido escrita por completo
+al disco.
 
-Es importante recordar que las operaciones con los metadatos que conforman al
-sistema de archivos no son atómicas. Por poner un ejemplo, crear un
-archivo en un volumen *fat* requiere:
+Es importante recordar que las operaciones con los metadatos que
+conforman el sistema de archivos no son atómicas. Por poner un
+ejemplo, crear un archivo en un volumen *fat* requiere:
 
 1. Encontrar una lista de /clusters/ disponibles suficiente para
    almacenar la información que conformará al archivo.
@@ -1165,27 +1168,26 @@ archivo en un volumen *fat* requiere:
    ocupará el archivo.
 4. Crear en el espacio encontrado una entrada con el nombre del
    archivo, apuntando al primero de sus /clusters/.
-5. Guardar los datos del archivo en cuestión en los /clusters/
-   correspondientes.
+5. Guardar los datos del archivo en cuestión en los /clusters/ que
+   correspondan.
 
-Cualquier fallo que se presente después del tercer paso (cuando
-hacemos la primer modificación) tendrá como consecuencia que el
-archivo resulte corrupto, y muy probablemente que el sistema de
-archivos todo /presente inconsistencias/ o /esté en un estado
+Cualquier fallo que se presente después del tercer paso (tras
+efectuarse la primera modificación) tendrá como consecuencia que el
+archivo resulte corrupto, y muy probablemente todo que el sistema de
+archivos /presente inconsistencias/ o /esté en un estado
 inconsistente/.
 
 ** Datos y metadatos
 
-En el ejemplo recién presentado, el sistema de archivos
-estará consistente siempre que se terminen los pasos 3 y 4 — la
+En el ejemplo recién presentado, el sistema de archivos estará en un
+estado consistente siempre que se terminen los pasos 3 y 4 —la
 consistencia del sistema de archivos es independiente de la validez de
 los datos del archivo. Lo que busca el sistema de archivos, más que
-asegurar la integridad de los /datos/ de uno de los archivos, es
-asegurar la de los /metadatos/: los datos que describen la
-estructura.
+garantizar la integridad de los /datos/ de uno de los archivos, es
+asegurar la de los /metadatos/: los datos que describen la estructura.
 
 En caso de que un usuario desconecte una unidad a media
-operación, es muy probable que se presentará pérdida de información,
+operación, es muy probable que se presente pérdida de información,
 pero el sistema de archivos debe buscar no presentar ningún problema
 que ponga en riesgo /operaciones posteriores/ o /archivos no
 relacionados/. La corrupción y recuperación de datos en archivos
@@ -1199,46 +1201,46 @@ Cada sistema operativo incluye programas para realizar verificación
 archivo. En el caso de *ms-dos* y Windows, como ya se vio, estos
 programas son =CHKDSK= y =SCANDISK=; en los sistemas Unix, el programa
 general se llama =fsck=, y típicamente emplea a asistentes según el
-tipo de sistema a revisar — =fsck.vfat=, =fsck.ext2=, etc.
+tipo de sistema que haya que revisar — =fsck.vfat=, =fsck.ext2=,
+etcétera.
 
 Estos programas hacen un /barrido/ del sistema de archivos, buscando
 evidencias de inconsistencia. Esto lo hacen, en líneas generales:
 
 - Siguiendo todas las cadenas de /clusters/ de archivos o tablas de
   i-nodos, y verificando que no haya archivos cruzados (compartiendo
-  erróneamente bloques)
+  erróneamente bloques).
 - Verificando que todas las cadenas de /clusters/, así como todos los
-  directorios, sean alcanzables y sigan una estructura válida
+  directorios, sean alcanzables y sigan una estructura válida.
 - Recalculando la correspondencia entre las estructuras encontradas y
-  los diferentes bitmaps y totales de espacio vacío
+  los diferentes bitmaps y totales de espacio vacío.
 
 Estas operaciones son siempre procesos intensivos y complejos. Como
-requieren una revisión profunda del volúmen entero, es frecuente que
+requieren una revisión profunda del volumen entero, es frecuente que
 duren entre decenas de minutos y horas. Además, para poder llevar a
 cabo su tarea deben ejecutarse teniendo acceso exclusivo al volumen a
 revisar, lo cual típicamente significa colocar al sistema completo en
 modo de mantenimiento.
 
 Dado el elevado costo que tiene verificar el volumen entero, en la
-década de 1990 surgieron varios esquemas orientados a evitar la
+década de los noventa surgieron varios esquemas orientados a evitar la
 necesidad de invocar a estos programas de verificación: las
 /actualizaciones suaves/, los /sistemas de archivos con bitácora/, y
 los /sistemas de archivos estructurados en bitácora/.
 
 ** Actualizaciones suaves
 
-El esquema de /actualizaciones suaves/ (en inglés, /soft updates/)
-aparentemente es el más simple de los que se presentan,
-pero su implementación resultó mucho más compleja de lo inicialmente
-estimado, y en buena medida por esta causa hoy en día no ha sido
-empleado más ampliamente. La idea básica detrás de este esquema es
-estructurar el sistema de archivos de una forma más simple y organizar
-las escrituras al mismo de modo que el estado resultante /no pueda/
-ser inconsistente, ni siquiera en caso de fallo, y de exigir que todas
-las operaciones de actualización de metadatos se realicen de forma
-/síncrona/.[fn:: Esto es, no se le reporta éxito en alguna operación
-de archivos al usuario sino hasta que ésta es completada y grabada a
-disco.]
+El esquema de /actualizaciones suaves/ (/soft updates/) aparentemente
+es el más simple de los que se presentan, pero su implementación
+resultó mucho más compleja de lo inicialmente estimado y, en buena
+medida, por esta causa no ha sido empleado más ampliamente. La idea
+básica detrás de este esquema es estructurar el sistema de archivos de
+una forma más simple y organizar las escrituras del mismo de modo que
+el estado resultante /no pueda/ ser inconsistente, ni siquiera en caso
+de fallo, y de exigir que todas las operaciones de actualización de
+metadatos se realicen de forma /síncrona/.[fn:: Esto es, no se le
+reporta éxito en alguna operación de archivos al usuario sino hasta
+que ésta es completada y grabada a disco.]
 
 Ante la imposibilidad de tener un sistema /siempre consistente/, esta
 exigencia se relajó para permitir inconsistencias /no destructivas/:
@@ -1256,25 +1258,26 @@ sistema de archivos que no fue /limpiamente desmontado/ pueda ser
 montado y utilizado de inmediato, sin peligro de pérdida de
 información o de corrupción.
 
-Al requerir que todas las operaciones sean síncronas, parecería que
-el rendimiento global del sistema de archivos tendría que verse
-afectado, pero por ciertos patrones de acceso muy frecuentes, resulta
-incluso beneficioso. Al mantenerse un ordenamiento lógico entre las
-dependencias de todas las operaciones pendientes, el
-sistema operativo puede /combinar/ a muchas de estas y reducir de
-forma global las escrituras a disco.
+Al requerir que todas las operaciones sean síncronas, parecería que el
+rendimiento global del sistema de archivos tendría que verse afectado,
+pero por ciertos patrones de acceso muy frecuentes, resulta incluso
+beneficioso. Al mantenerse un ordenamiento lógico entre las
+dependencias de todas las operaciones pendientes, el sistema operativo
+puede /combinar/ muchas de estas y reducir de forma global las
+escrituras a disco.
 
 A modo de ejemplos: si varios archivos son creados en el mismo
-directorio de forma consecutiva, cada uno de ellos a través de una
-llamada =open()= independiente, el sistema operativo combinará a todos
-estos accesos en uno sólo, reduciendo el número de llamadas. Por otro
-lado, un patrón frecuente en sistemas Unix es, al crear un archivo de
-uso temporal, solicitar al sistema la creación de un archivo, abrir el
-archivo recién creado, y ya teniendo al descriptor de archivo,
-eliminarlo — en este caso, con estas tres operaciones seguidas, /soft
+directorio de forma consecutiva, cada uno de ellos mediante una
+llamada =open()= independiente, el sistema operativo combinará todos
+estos accesos en uno solo, reduciendo el número de llamadas. Por otro
+lado, un patrón frecuente en sistemas Unix es que, para crear un
+archivo de uso temporal reforzando la confidencialidad de su
+contenido, el proceso solicite al sistema la creación de un archivo,
+abra el archivo recién creado, y ya teniendo al descriptor de archivo,
+lo elimine —en este caso, con estas tres operaciones seguidas, /soft
 updates/ podría ahorrarse por completo la escritura a disco.
 
-Esta estrategia se vio impactada por los controladores inteligentes:
+Esta estrategia se vio afectada por los controladores inteligentes:
 si un disco está sometido a carga intensa, no hay garantía para el
 sistema operativo del orden que seguirán /en verdad/ sus solicitudes,
 que se /forman/ en el caché propio del disco. Dado que las
@@ -1289,9 +1292,9 @@ y fueron adoptadas por los principales sistemas de la familia *bsd*,
 aunque
 #+latex: Net\textbf{bsd}
 #+html: Net<b>bsd</b>
-lo retiró en 2012, prefiriendo el empleo de sistemas con bitácora —
-muy probablemente, la lógica destrás de esta decisión sea la cantidad
-de sistemas que emplean esta segunda estrategia que se abordará a
+lo retiró en 2012, prefiriendo el empleo de sistemas con bitácora —muy
+probablemente, la lógica destrás de esta decisión sea la cantidad de
+sistemas que emplean esta segunda estrategia que se abordará a
 continuación, y lo complejo de mantener dentro del núcleo dos
 estrategias tan distintas.
 
@@ -1300,15 +1303,14 @@ estrategias tan distintas.
 Este esquema tiene su origen en el ámbito de las bases de datos
 distribuidas. Consiste en separar un área del volumen y dedicarla a
 llevar una bitácora (/journal/) con todas las /transacciones/ de
-metadatos.[fn::
-Existen implementaciones que registran también los datos en la
-bitácora, pero tanto por el tamaño que ésta requiere como por el
-impacto en velocidad que significa, son poco utilizadas. La sección
+metadatos.[fn:: Hay implementaciones que registran también los datos
+en la bitácora, pero tanto por el tamaño que ésta requiere como por el
+efecto en velocidad que significa, son poco utilizadas. La sección
 \ref{FS_log_structured} presenta una idea que elabora sobre una
 bitácora que almacena tanto datos como metadatos.] Una /transacción/
 es un conjunto de operaciones que deben aparecer como atómicas.
 
-La bitácora es generalmente implementada como una /lista ligada
+La bitácora se implementa generalmente como una /lista ligada
 circular/, con un apuntador que indica cuál fue la última operación
 realizada exitosamente. Periódicamente, o cuando la carga de
 transferencia de datos disminuye, el sistema verifica qué operaciones
@@ -1320,35 +1322,33 @@ sistema operativo sólo tiene que leer la bitácora, encontrar cuál fue
 la última operación efectuada, y aplicar las restantes.
 
 Una restricción de este esquema es que las transacciones guardadas en
-la bitácora deben ser /idempotentes/ — esto es, si una de ellas es
+la bitácora deben ser /idempotentes—/ esto es, si una de ellas es
 efectuada dos veces, el efecto debe ser exactamente el mismo que si
-hubiera sido efectuada una sóla vez. Por poner un ejemplo, no sería
-válido que una transacción indicara "Agregar al directorio /x/ un
+hubiera sido efectuada una sola vez. Por poner un ejemplo, no sería
+válido que una transacción indicara "agregar al directorio /x/ un
 archivo llamado /y/", dado que si la falla se produce después de
 procesar esta transacción pero antes de avanzar al apuntador de la
-bitácora, el directorio /x/ quedaría con dos archivos /y/ — una
+bitácora, el directorio /x/ quedaría con dos archivos /y/ —una
 situación inconsistente. En todo caso, tendríamos que indicar
 "registrar al archivo /y/ en la posición /z/ del directorio /x/"; de
 esta manera, incluso si el archivo ya había sido registrado, puede
-volverse a registrar sin peligro.
+volverse a hacerlo sin peligro.
 
 #+attr_latex: width=\textwidth
 #+label: FS_fs_journaling
 #+caption: Sistema de archivos con bitácora.
 [[./img/dot/fs_journaling.png]]
 
-Este esquema es el más implementado hoy en día, y está presente en
-casi todos los sistemas de archivos modernos. Si bien con un sistema
-con bitácora no hace falta verificar el sistema de archivos completo
-tras una detención abrupta, esta no exime de que, de tiempo en
-tiempo, el sistema de archivos sea verificado: es altamente
-tras una detención abrupta, esta no nos exime de que, de tiempo en
-tiempo, el sistema de archivos sea verificado: es altamente
-recomendado hacer una verificación periódica en caso de presentarse
-alguna corrupción, sea por algún bug en la implementación, fallos en
-el medio físico, o factores similarmente poco frecuentes.
+Este esquema es el más utilizado hoy en día, y está presente en casi
+todos los sistemas de archivos modernos. Si bien con un sistema con
+bitácora no hace falta verificar el sistema de archivos completo tras
+una detención abrupta, esta no exime de que, de tiempo en tiempo, el
+sistema de archivos sea verificado: es altamente recomendado hacer una
+verificación periódica en caso de presentarse alguna corrupción, sea
+por algún bug en la implementación, fallos en el medio físico, o
+factores similarmente poco frecuentes.
 
-La mayor parte de sistemas de archivos incluyen contadores de
+La mayor parte de los sistemas de archivos incluyen contadores de
 /cantidad de montajes/ y de /fecha del último montaje/, que permiten
 que el sistema operativo determine, de forma automática, si
 corresponde hacer una verificación preventiva.
@@ -1369,10 +1369,10 @@ de /recolección de basura/, reacomodando la información que esté más
 cerca de la /cola/ de la bitácora (y liberando toda aquella que
 resulte redundante).
 
-Este tipo de sistemas de archivos facilita las escrituras,
-haciéndolas siempre secuenciales, y buscan –a través del empleo del
-caché ya mencionado– evitar que las cabezas tengan que desplazarse
-con demasiada frecuencia para recuperar fragmentos de archivos.
+Este tipo de sistemas de archivos facilita las escrituras, haciéndolas
+siempre secuenciales, y buscan –por medio del empleo del caché ya
+mencionado– evitar que las cabezas tengan que desplazarse con
+demasiada frecuencia para recuperar fragmentos de archivos.
 
 Una consecuencia directa de esto es que los sistemas de archivos
 estructurados en bitácora fueron los primeros en ofrecer /fotografías/
@@ -1384,7 +1384,7 @@ archivos /completa/ (incluyendo los datos de los archivos).
 Los sistemas de archivo estructurados en bitácora, sin embargo, no
 están optimizados para cualquier carga de trabajo. Por ejemplo, una
 base de datos relacional, en que cada uno de los registros es
-típicamente actualizados de forma independiente de los demás, y ocupan
+típicamente actualizado de forma independiente de los demás, y ocupan
 apenas fracciones de un bloque, resultaría tremendamente
 ineficiente. La implementación referencia de Ousterhut y Rosenblum fue
 parte de los sistemas *bsd*, pero dada su tendencia a la /extrema
@@ -1404,9 +1404,9 @@ aplicando a sistemas de archivo estándar.
 Por otro lado, dado el fuerte crecimiento que están registrando los
 medios de almacenamiento de estado sólido (en la sección
 \ref{FS_FIS_estado_solido} se abordarán algunas de sus
-particularidades), y dado que estos sistemas aprovechan mejor varias
-de sus características, es probable que el interés en estos sistemas
-de archivos resurja.
+particularidades), y dado que estos sistemas logran aprovechan mejor
+varias de sus características, es probable que el interés en estos
+sistemas de archivos resurja.
 
 * Ejercicios
 
@@ -1423,20 +1423,19 @@ de archivos resurja.
    de archivos?
 
 2. El sistema de archivos /Reiser/ está basado en la /asignación
-   indexada/, pero introduce un nuevo concepto: Las /colitas/
-   (/tails/). Estas permiten que archivos muy pequeños, de hasta 4 *kb*,
-   puedan ser almacenados /en el mismo i-nodo/. Esto permite a
-   Reiser ahorrar espacio en disco (se estima que logra una
-   eficiencia hasta 5% mayor que sistemas que no emplean esta
-   técnica), y además reduce el tiempo requerido para recuperar estos
-   archivos, dado que los datos pueden almacenarse en el mismo i-nodo
-   que alguna de sus bibliotecas, sin requerir leer ningún bloque
-   adicional.
+   indexada/, pero introduce un nuevo concepto: las /colitas/
+   (/tails/). Éstas permiten que distintos archivos pequeños, de hasta
+   4 *kb*, puedan ser almacenados /en un mismo cluster/. Esto permite a
+   Reiser ahorrar espacio en disco (se estima que logra una eficiencia
+   hasta 5% mayor que sistemas que no emplean esta técnica), y además
+   reduce el tiempo requerido para recuperar estos archivos, dado que
+   los datos pueden almacenarse en el mismo i-nodo que alguna de sus
+   bibliotecas, sin requerir leer ningún bloque adicional.
 
    Reiser se popularizó alrededor del 2001, pero su desarrollo se ha
    detenido, y esta característica en particular no ha sido adoptada
    más que por unos pocos sistemas de archivos (*ufs2* y *btrfs*). ¿Qué
-   problemas encuentra con el planteaiento de las /colitas/?
+   problemas encuentra con el planteamiento de las /colitas/?
 
 3. Describa el funcionamiento de un /sistema de archivos con bitácora/
    (/journaling file system/). ¿Cómo nos asegura que el sistema se
@@ -1449,21 +1448,22 @@ de archivos resurja.
 
   Una de las características que ofrecen varios sistemas operativos de
   última generación es la /desduplicación/, presentada en la sección
-  \ref{FS_desduplicacion}: La detección de sectores idénticos
+  \ref{FS_desduplicacion}: la detección de sectores idénticos
   pertenecientes a más de un archivo, para evitar repetirlos varias
   veces en el disco (es un fenómeno que ocurre mucho más de lo que
   esperaríamos). Esta detección se realiza típicamente por medio de
   /hashes criptográficos/.
 
-  ¿Cómo opera un poco más a detalle este mecanismo? ¿Qué tan confiable
+  ¿Cómo opera un poco más a detalle este mecanismo, qué tan confiable
   es? (esto es, ¿se recomienda utilizar ya en sistemas en producción?)
   ¿Qué tan eficiente resulta con los datos que se encuentran
-  típicamente?  ¿Qué pasa con el espacio libre reportado al sistema?
-  ¿No se cae en riesgos de /sobrecomprometimiento/ (/overcommit/)?
-  ¿Qué diferencias tienen la /desduplicación en línea/ y la
-  /desduplicación fuera de línea/ (/online deduplication/, /offline
-  deduplication/)? ¿Cómo opera el /hash criptográfico/? ¿Hay veces que
-  resulte insuficiente?  ¿Qué alternativas hay?
+  típicamente, qué pasa con el espacio libre reportado al sistema, no
+  se cae en riesgos de /sobrecomprometimiento/ (/overcommit/)?
+  Respecto a su forma de operación, ¿qué diferencias tienen la
+  /desduplicación en línea/ y la /desduplicación fuera de línea/
+  (/online deduplication/, /offline deduplication/), Cómo opera el
+  /hash criptográfico/? Y de forma general, ¿hay veces que este
+  mecanismo resulte insuficiente, qué alternativas hay?
 
   Como referencia informal al respecto, sugiero leer el siguiente hilo
   de discusión al respecto en la lista de DebConf (el congreso de
@@ -1489,7 +1489,7 @@ de archivos resurja.
   el sistema que describe) ya no se utilizan. Este libro, descargable
   desde el sitio Web del autor, tiene una muy buena descripción de
   varios sistemas de archivos, y aborda a profundidad técnicas que
-  hace 15 años eran verdaderamente novedosas, y hoy forman parte de
+  hace 15 años eran verdaderamente novedosas y hoy forman parte de
   casi todos los sistemas de archivos con uso amplio, e incluso
   algunas que no se han logrado implementar y que BeFS sí ofrecía.
 

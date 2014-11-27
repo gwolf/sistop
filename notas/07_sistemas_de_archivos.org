@@ -50,7 +50,7 @@ disco entero. Partiendo de esto, se emplean los siguientes conceptos
 para almacenar, ubicar o recuperar la información:
 
 - Partición :: Una subdivisión de un disco, por medio de la cual el
-               administrador/usuario del sistema puede definir la
+               administrador o usuario del sistema puede definir la
                forma en que se emplea el espacio del disco,
                segmentándolo según haga falta.
 
@@ -123,8 +123,8 @@ para almacenar, ubicar o recuperar la información:
      encontrar de forma compacta el espacio ocupado y disponible, así
      como el lugar adecuado para crear un nuevo archivo.
 
-     El bitmap para un disco de 100 *gb* puede, de esta manera,
-     representarse en 23 *mb* ($100 \times 10^9 \over 4~096$), cantidad
+     El bitmap para un disco de 100 *gb*, de esta manera, se puede
+     representar en 23 *mb* ($100 \times 10^9 \over 4~096$), cantidad
      que puede razonablemente mantener en memoria un sistema de
      escritorio promedio hoy en día.[fn:: Esto explica porqué,
      incluso sin estar trabajando activamente con ningún archivo
@@ -318,6 +318,7 @@ directorio bajo *fat32*.
 #+caption: Formato de la entrada del directorio bajo *fat* (Mohammed, 2007).
 [[./img/ditaa/entrada_directorio_fat.png]]
 
+#+latex: \eject
 La extensión *vfat* fue agregada con el lanzamiento de Windows 95. Esta
 extensión permitía que, si bien el nombre /real/ de un archivo
 seguiría estando limitada al formato presentado, pudieran agregarse
@@ -896,6 +897,11 @@ guarda los metadatos y la lista de bloques del archivo, reduciendo la
 probabilidad de que se presente la /corrupción de apuntadores/
 mencionada en la sección anterior.
 
+#+attr_latex: width=0.9\textwidth
+#+label: FS_fs_asignacion_indexada
+#+caption: Asignación indexada de archivos: directorio con apuntador al i-nodo (ejemplificado con un i-nodo de tamaño extremadamente ineficiente).
+[[./img/ditaa/fs_asignacion_indexada.png]]
+
 La sobrecarga administrativa bajo este esquema potencialmente es mucho
 mayor: al asignar el i-nodo, éste se crea ocupando como mínimo un
 /cluster/ completo. En el caso de un archivo pequeño, que quepa en un
@@ -909,11 +915,6 @@ de éste. Esta práctica no ha sido adoptada por sistemas de archivos de
 uso mayoritario por su complejidad relativa.] para archivos más
 grandes, la sobrecarga relativa disminuye, pero se mantiene siempre
 superior a la de la asignación ligada.
-
-#+attr_latex: width=0.9\textwidth
-#+label: FS_fs_asignacion_indexada
-#+caption: Asignación indexada de archivos: directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente).
-[[./img/ditaa/fs_asignacion_indexada.png]]
 
 Un esquema de asignación indexada brinda una mayor eficiencia de caché
 que la asignación ligada: si bien en dicho caso es común guardar copia
@@ -931,6 +932,11 @@ indexada se vuelve necesario contar con un /bitmap/ independiente —
 pero al sólo requerir representar si cada /cluster/ está vacío u
 ocupado (y ya no apuntar al siguiente), resulta de mucho menor tamaño.
 
+#+label: FS_fs_apuntadores_indirectos
+#+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada /cluster/ (con sólo tres /cluster/ por lista).
+#+attr_latex: width=0.8\textwidth
+[[./img/dot/fs_apuntadores_indirectos.png]]
+
 Ahora, ¿qué pasa cuando la lista de /clusters/ de un archivo no cabe
 en un i-nodo? Este ejemplo se ilustra en el tercer archivo de la
 figura \ref{FS_fs_apuntadores_indirectos}: en este caso, cada
@@ -941,11 +947,6 @@ necesario extender al i-nodo con una lista adicional. La
 implementación más común de este mecanismo es que, dependiendo del
 tamaño del archivo, se empleen apuntadores con los niveles de
 indirección que /vayan haciendo falta/.
-
-#+label: FS_fs_apuntadores_indirectos
-#+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesarios para llegar a cada /cluster/ (con sólo tres /cluster/ por lista).
-#+attr_latex: width=0.8\textwidth
-[[./img/dot/fs_apuntadores_indirectos.png]]
 
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
 esquema y únicamente tres indirecciones? Suponiendo magnitudes típicas
@@ -1010,6 +1011,7 @@ descritos en el cuadro \ref{FS_valores_especiales_fat}.
 | =0x000= | =0x0000= | =0x00000000= | Disponible, puede ser asignado       |
 | =0xFF7= | =0xFFF7= | =0xFFFFFFF7= | /Cluster/ dañado, no debe utilizarse |
 | =0xFFF= | =0xFFFF= | =0xFFFFFFFF= | Último /cluster/ de un archivo       |
+|---------+----------+--------------+--------------------------------------|
 
 Llama la atención que haya un valor especial para indicar que un
 /cluster/ tiene sectores dañados. Esto remite de vuelta al momento
@@ -1040,20 +1042,21 @@ directorio de un archivo normal es que, en la entrada que lo describe
 en su directorio padre, el doceavo byte de la entrada (que indica los
 /atributos del archivo/, véanse la figura
 \ref{FS_entrada_directorio_fat} y el cuadro 7.1) tiene activado el
-bit 4.
+bit cuatro.
 
 Un directorio es almacenado en disco /exactamente/ como cualquier otro
 archivo. Si se le asigna únicamente un /cluster/, y el tamaño del
 /cluster/ es pequeño (2 *kb*), podrá almacenar sólo 64 entradas
 ($2~048 \over 32$) y cada /cluster/ adicional le dará 64 entradas
-más. Y como tal, está sujeto también a la fragmentación: conforme se
-agregan entradas al directorio, éste crece. Llegado el momento,
-requiere /clusters/ adicionales. Y si un directorio termina disperso
-por todo el disco, resultará –como cualquier otro archivo– más lento
-leerlo y trabajar con él. Siempre que se abra un archivo dentro de un
-directorio grande, o que se le recorra para abrir algún archivo en un
-subdirectorio suyo, el sistema tendrá que buscar todos sus fragmentos
-a lo largo del disco.
+más. Y dado que es tratado tal cual si fuera un archivo normal, estará
+sujeto también a la fragmentación: conforme se agreguen entradas al
+directorio, éste crecerá. Llegado el momento, requerirá /clusters/
+adicionales. Y si un directorio termina disperso por todo el disco,
+resultará –como cualquier otro archivo– más lento leerlo y trabajar
+con él. Siempre que se abra un archivo dentro de un directorio grande,
+o que se le recorra para abrir algún archivo en un subdirectorio suyo,
+el sistema tendrá que buscar todos sus fragmentos a lo largo del
+disco.
 
 Ante estos dos aspectos, no puede perderse de vista la edad que tiene
 el sistema *fat*. Otros sistemas de archivos más modernos han resuelto
@@ -1090,10 +1093,10 @@ volver a un rango operacional.
 
 El sistema de archivos *fat* es /relativamente frágil/: no es difícil
 que se presente una situación de /corrupción de metadatos/, y muy
-particularmente, de la estructura de las tablas de asignación. Los
-usuarios de sistemas basados en *fat* en Windows sin duda conocen a
-=CHKDSK= y =SCANDISK=, dos programas que implementan la misma
-funcionalidad base, y difieren principalmente en su interfaz al
+particularmente, que ésta afecte la estructura de las tablas de
+asignación. Los usuarios de sistemas basados en *fat* en Windows sin
+duda conocen a =CHKDSK= y =SCANDISK=, dos programas que implementan la
+misma funcionalidad base, y difieren principalmente en su interfaz al
 usuario: =CHKDSK= existe desde los primeros años de *ms-dos*, y está
 pensado para su uso interactivo en línea de comando; =SCANDISK= se
 ejecuta desde el entorno gráfico, y presenta la particularidad de que
@@ -1131,14 +1134,14 @@ la sección \ref{FS_otros_recursos}).] son:
      =fsck= (el equivalente en Unix de =CHKDSK=) creaba ligas a los
      archivos perdidos por corrupción de metadatos.
 
+Cada sistema de archivos podrá presentar un distinto conjunto de
+inconsistencias, dependiendo de sus estructuras
+básicas y de la manera en que cada sistema operativo las maneja.
+
 #+attr_latex: width=0.7\textwidth
 #+label: FS_inconsistencias_fat
 #+caption: Inconsistencias en un sistema de archivos tipo *fat*.
 [[./img/dot/inconsistencias_fat.png]]
-
-Cada sistema de archivos podrá presentar un distinto conjunto de
-inconsistencias, dependiendo de sus estructuras
-básicas y de la manera en que cada sistema operativo las maneja.
 
 En la década de los 1980 comenzaron a venderse los /controladores de
 disco inteligentes/, y en menos de 10 años dominaban ya el
@@ -1292,11 +1295,11 @@ y fueron adoptadas por los principales sistemas de la familia *bsd*,
 aunque
 #+latex: Net\textbf{bsd}
 #+html: Net<b>bsd</b>
-lo retiró en 2012, prefiriendo el empleo de sistemas con bitácora —muy
-probablemente, la lógica destrás de esta decisión sea la cantidad de
-sistemas que emplean esta segunda estrategia que se abordará a
-continuación, y lo complejo de mantener dentro del núcleo dos
-estrategias tan distintas.
+lo retiró en 2012, prefiriendo el empleo de sistemas con bitácora,
+tema que será tratado a continuación. Muy probablemente, la lógica
+destrás de esta decisión sea la cantidad de sistemas que emplean esta
+segunda estrategia, y lo complejo que resulta dar mantenimiento dentro
+del núcleo dos estrategias tan distintas.
 
 ** Sistemas de archivo con bitácora
 

@@ -115,10 +115,11 @@ libro_tex: libro_index
 	# hacer la página de título como la queremos
 	sed -i 's/\\maketitle/\\input{titlepages_unam}/' $(srcdir)/$(libro_tex)
 
-	echo '\\vfill \\tiny \\hfill  Compilación:' > $(srcdir)/compiled.tex
+	echo '{ \\vfill \\tiny \\hfill  Compilación:' > $(srcdir)/compiled.tex
 	date +%Y/%m/%d-%H:%M:%S >> $(srcdir)/compiled.tex
 	echo 'Commit:'  >> $(srcdir)/compiled.tex
 	git log HEAD~..HEAD --oneline |cut -f 1 -d ' ' >> $(srcdir)/compiled.tex
+	echo '}'  >> $(srcdir)/compiled.tex
 
 libro_latin_tex: libro_tex
 	rm -f $(srcdir)/$(libro_latin_tex)

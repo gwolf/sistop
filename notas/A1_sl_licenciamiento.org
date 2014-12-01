@@ -16,7 +16,7 @@ sistemas operativos, sino que directamente –como se explica en la
 sección \ref{SL_obras_cult_lib}– para el presente libro en
 particular.
 
-** /Free as in Freedom/: El proyecto *gnu*
+** /Free as in Freedom/: el proyecto *gnu*
 
 Citando [[https://www.gnu.org/philosophy/free-sw.es.html][la definición que brinda la Fundación del Software Libre (Free
 Software Foundation)]], el software libre es todo programa en el cual
@@ -39,13 +39,18 @@ software/:
 
 El software libre en tanto /movimiento ideológico/ tiene bien
 identificados sus orígenes y génesis: en septiembre de 1983, Richard
-M. Stallman [[https://www.gnu.org/gnu/gnu-history.html][anunció el nacimiento del Proyecto *gnu*]], que buscaba
-crear un sistema operativo tipo Unix, junto con todas las herramientas
-básicas del sistema (partiendo naturalmente desde la creación de un
-entorno de edición y un compilador).  Tras sistematizar los
-fundamentos del proyecto, en marzo de 1985 Stallman publicó el
-[[https://www.gnu.org/gnu/manifesto.html][Manifiesto *gnu*]], documento que al día de hoy es lectura obligada para
-comprender al fenómeno que nació en ese momento.
+M. Stallman [[https://www.gnu.org/gnu/gnu-history.html][anunció el nacimiento]] del Proyecto *gnu*,[fn:: Con el
+particular sentido del humor que caracteriza a Stallman, las siglas
+que eligió para el proyecto, *gnu*, son un /acrónimo recursivo/,
+significan
+#+latex: \emph{\textbf{gnu} is Not Unix: } \textbf{gnu}
+#+html: <i><b>gnu</b> is Not Unix</i>: <b>gnu</b>
+no es Unix.] que buscaba crear un sistema operativo tipo Unix, junto
+con todas las herramientas básicas del sistema (partiendo naturalmente
+desde la creación de un entorno de edición y un compilador).  Tras
+sistematizar los fundamentos del proyecto, en marzo de 1985 Stallman
+publicó el [[https://www.gnu.org/gnu/manifesto.html][Manifiesto]] *gnu*, documento que hoy es lectura obligada
+para comprender al fenómeno que nació en ese momento.
 
 Algunos meses más tarde, en octubre de 1985, creó la /[[http://www.fsf.org][Fundación de
 Software Libre]]/ (*fsf*, /Free Software Foundation/), enfocada en la
@@ -56,19 +61,19 @@ de desarrollo.
 
 El trabajo de la *fsf* es desde cualquier óptica impresionante por su
 magnitud y por su envergadura técnica. Sin embargo, probablemente su
-mayor contribución sea la /Licencia Pública General/ (*gpl*), que será
-abordada en la sección \ref{SL_copyleft}.
+mayor contribución sea la /Licencia Pública General/ (General Public
+License, *gpl*), que será abordada en la sección \ref{SL_copyleft}.
 
 ** El software libre antes de *gnu*
 
 El software libre como hoy se conoce existió mucho antes del
-nacimiento del proyecto *gnu*: era la norma prácticamente hasta la
+nacimiento del Proyecto *gnu*: era la norma prácticamente hasta la
 aparición de las computadoras personales.
 
 Los sistemas operativos, las herramientas de sistema y los
-compiladores eran, en un principio, entregadas por los fabricantes
+compiladores eran, en un principio, entregados por los fabricantes
 junto con el equipo de cómputo no sólo como /objetos binarios/, sino
-que en código fuente. Esto era natural: los operadores de las
+como código fuente. Esto era natural: los operadores de las
 computadoras no limitaban su uso a adecuar el software, sino que era
 común que adecuaran también el hardware: cada equipo instalado era,
 hasta cierto punto, único.
@@ -79,22 +84,22 @@ implícitamente pasaba por las /cuatro libertades/ ya enunciadas.
 
 Durante las primeras décadas, prácticamente la totalidad del
 desarrollo del cómputo se llevó a cabo siguiendo la /tradición
-académica/: los programas eran distribuidos, sea en cintas o incluso
-en listados impresos, requiriendo únicamente –como en un artículo
-científico– que se preserve la /atribución de autoría/. Sólo de este
-modo puede entenderse el desarrollo (y la supervivencia hasta el día
-de hoy) de sistemas con la relevancia de *cp-cms*, creado por la muy
-pragmática y corporativa empresa *ibm* y cuya progenie sigue
+académica/: los programas eran distribuidos, ya fuera en cintas o
+incluso en listados impresos, requiriendo únicamente –como en un
+artículo científico– que se preserve la /atribución de autoría/. Sólo
+de este modo puede entenderse el desarrollo (y la supervivencia hasta
+el día de hoy) de sistemas con la relevancia de *cp-cms*, creado por
+la muy pragmática y corporativa empresa *ibm* y cuya progenie sigue
 empleándose como núcleo de su arquitectura de virtualización
 #+latex: z/\textbf{vm}
 #+html: z/<b>vm</b>
-(ver sección \ref{VIRT_asist_por_hw}) o Unix.
+(véase la sección \ref{VIRT_asist_por_hw}) o Unix.
 
 Unix nació como una reacción al sistema operativo /Multics/,
 desarrollado principalmente entre 1965 y 1970, y en el que
 participaban de forma conjunta varias empresas y el Instituto de
 Tecnología de Massachusetts (*mit*). Multics resultó un proyecto
-demasiado grande, y AT&T lo abandonó en 1969; del equipo de AT&T que
+demasiado grande y AT&T lo abandonó en 1969; del equipo de AT&T que
 trabajaba en Unix, dos de los desarrolladores (Ken Thompson y Dennis
 Ritchie) comenzaron a escribir en 1969 un sistema mucho menos
 ambicioso, tomando algunos de los principales criterios de diseño,
@@ -102,12 +107,9 @@ pero simplificando fuertemente el modelo de usuario y los requisitos
 en hardware. El nombre de Unix (originalmente /Unics/) es, de hecho,
 una broma sobre el nombre /Multics/.
 
-Citando a Dennis Ritchie: [fn:: The Evolution of the Unix
-Time-sharing System; Language Design and Programming Methodology
-conference; Sydney,
-Australia, 1979. http://cm.bell-labs.com/cm/cs/who/dmr/hist.html]
+Citando a Dennis Ritchie:
 
-#+BEGIN_CENTER
+#+BEGIN_QUOTE
 Lo que queríamos preservar no sólo era un buen ambiente en el cual
 programar, sino que un sistema alrededor del cual pudiera formarse una
 cofradía. Sabíamos por experiencia propia que la esencia del cómputo
@@ -115,18 +117,18 @@ comunal, provisto por computadoras de acceso remoto y tiempo
 compartido, no se limita únicamente a escribir programas en una
 terminal en vez de emplear tarjetas perforadas, sino que favorece la
 comunicación cercana.
-#+END_CENTER
+#+END_QUOTE
 
 El párrafo inicial de este apéndice, que hace referencia a la
 /naturaleza social/ del software libre, resuena con esta cita. El
-desarrollo de software va mucho más allá de su impacto técnico: es una
+desarrollo de software va mucho más allá de su efecto técnico: es una
 actividad tan social como cualquier otro desarrollo intelectual.
 
-A lo largo de sus primeros diez años de vida, Unix pasó rápidamente de
+A lo largo de sus primeros 10 años de vida, Unix pasó rápidamente de
 ser un sistema /de juguete/ a ser, sin proponérselo, la base de
 desarrollo tecnológico sobre la cual se tendieron las bases de
 Internet. Decenas de empresas y universidades obtuvieron copias de
-Unix y lo modificaron, agregando funcionalidad — y /compartiendo/ esta
+Unix y lo modificaron, agregando funcionalidad —y /compartiendo/ esta
 nueva funcionalidad con el resto de la /comunidad/ que se formó
 alrededor de Unix.
 
@@ -154,7 +156,7 @@ En este sentido, vale mucho la pena leer la [[https://upload.wikimedia.org/wikip
 entusiastas]] que Bill Gates, socio de la entonces naciente y pequeña
 empresa /Micro-Soft/ publicó en varias revistas de cómputo personal;
 la publicación original fue en el /Homebrew Computer Club Newsletter/
-(/periódico del club de cómputo casero/) en enero de 1976, y fue
+(/Periódico del Club de Cómputo Casero/) en enero de 1976, y fue
 replicado en varias otras revistas.
 
 Esta carta abierta tuvo amplias repercusiones, y desató un interesante
@@ -179,7 +181,7 @@ tipo de uso sin autorización expresa y explícita del autor.]
 A continuación, se abordan los dos principales enfoques del
 licenciamiento libre.
 
-*** Licenciamiento académico/permisivo: *mit*, *bsd*, *x11*, etc.
+*** Licenciamiento académico/permisivo: *mit*, *bsd*, *x11*, etcétera
 
 Las licencias derivadas del /primer momento/ del software libre
 descrito son, en su conjunto, como licencias /académicas/ o
@@ -201,7 +203,7 @@ Hay decenas de licencias que caben en esta categoría, con variaciones
 relativamente muy menores entre ellas. Los principales puntos que
 tienen en común son:
 
-- Son licencias /muy cortas/. Siendo documentos legales, son muy
+- Licencias /muy cortas/. Siendo documentos legales, son muy
   sencillas y no dejan espacio a interpretaciones ambiguas.
 
 - Se limitan a autorizar expresamente el uso del software, en fuente o
@@ -212,7 +214,7 @@ tienen en común son:
 
 Una crítica reiterada al uso de estos esquemas de licenciamiento por
 parte de la *fsf* es que permiten la /privatización/ de mejorías hechas
-al software libre — pero al mismo tiempo, este punto constituye una de
+al software libre —pero al mismo tiempo, este punto constituye una de
 las principales fortalezas de este licenciamiento.
 
 La masificación de Internet, y su adopción en los sistemas operativos
@@ -234,7 +236,7 @@ diferentes empresas. Posteriormente, con el auge de los sistemas
 operativos libres, estos pudieron también adoptar esta base
 tecnológica en igualdad de condiciones.
 
-*** Licenciamiento /Copyleft/: *gpl*, *lgpl*, *mpl*, *cddl*, etc.
+*** Licenciamiento /Copyleft/: *gpl*, *lgpl*, *mpl*, *cddl*, etcétera
 # <<SL_copyleft>>
 
 Para la *fsf*, el desarrollo de software es explícitamente un hecho
@@ -242,7 +244,7 @@ social, y la creación de un sistema libre es un imperativo ético. La
 principal herramienta que emplearon para difundir y /exigir/ la
 libertad del software fue el conjunto de licencias /Copyleft/.[fn::
 Término empleado para contraponerse a la noción de /Copyright/,
-/Derecho de autor/.] Y como se vio, si bien esto podría no ser
+/derecho de autor/.] Y como se vio, si bien esto podría no ser
 compartido por los diferentes actores (personas y empresas), el
 desarrollo de Unix partió desde este mismo punto de vista.
 
@@ -252,17 +254,18 @@ licenciamiento que expresa este imperativo ético: una familia de
 licencias cuyos principales exponentes son la /Licencia Pública
 General/ (/General Public License/, *gpl*) y la /Licencia Pública
 General para Bibliotecas/ (/Library General Public License/, *lgpl*, hoy
-renombrada a /Licencia Pública General Disminuída/, /Lesser General
+renombrada a /Licencia Pública General Disminuida/, /Lesser General
 Public License/).
 
-Existen varios ejemplos de licenciamiento que siguen estas ideas
-básicas; probablemente los más importantes sean la /Licencia Pública
-de Mozilla/ (*mpl*) o la /Licencia Común de Distribución y Desarrollo/
-(*cddl*, desarrollada por Sun Microsystems), y su principal diferencia
-con las presentadas por la *fsf* es que fueron propuestas no por grupos
-idealistas para el desarrollo de software aún inexistente, sino que
-por empresas que teníán ya un cuerpo de software, y encontraron este
-modelo como el más /sustentable/ para continuar su desarrollo.
+Hay varios ejemplos de licenciamiento que siguen estas ideas básicas;
+probablemente los más importantes sean la /Licencia Pública de
+Mozilla/ (*mpl*, por sus siglas en inglés) o la /Licencia Común de
+Distribución y Desarrollo/ (*cddl*, por sus siglas en inglés, creada
+por Sun Microsystems), y su principal diferencia con las presentadas
+por la *fsf* es que fueron propuestas no por grupos idealistas para el
+desarrollo de software aún inexistente, sino que por empresas que
+teníán ya un cuerpo de software, y encontraron este modelo como el más
+/sustentable/ para continuar su desarrollo.
 
 La principal característica de estos esquemas es que permiten el uso
 del software para cualquier fin, imponiendo como única condición que,
@@ -272,12 +275,12 @@ ejecutable sino que el código fuente del cual éste provino, /bajo las
 mismas condiciones de licenciamiento original/.
 
 Este esquema asegura que lo que una vez fue software libre /Copyleft/
-siempre lo siga siendo. El licenciamiento *gpl* ha llevado a que muchas
-empresas empleen al sistema operativo Linux como base para su
-desarrollo /contribuyan/ sus cambios de vuelta a la comunidad —
-convirtiendo a Linux al paso de los años de un sistema relativamente
-aficionado y con mediocre soporte a hardware en un sistema
-verdaderamente sólido y universal.
+siempre lo siga siendo. El licenciamiento *gpl* ha llevado a que
+muchas empresas empleen al sistema operativo Linux como base para su
+desarrollo /contribuyan/ sus cambios de vuelta a la comunidad
+—convirtiendo a Linux al paso de los años de un sistema relativamente
+aficionado y con mediocre soporte a hardware en uno verdaderamente
+sólido y universal.
 
 Muchos han criticado a este /espíritu viral/ de las licencias
 /Copyleft/: una vez que un proyecto incorpora componentes *gpl*, esta
@@ -295,10 +298,10 @@ diferencias entre estos esquemas o resolver las controversias, sino
 # <<SL_obras_cult_lib>>
 
 Los distintos esquemas de software libre fueron logrando una masa
-crítica y poco a poco rompieron las predicciones de fracaso. 1998 fue
-un año crítico, en que varios importantes proyectos propietarios
-decidieron migrar a un licenciamiento libre por resultar más
-conveniente y sustentable.
+crítica y poco a poco rompieron las predicciones de fracaso. Un año
+crítico fue 1998, en que importantes proyectos propietarios decidieron
+migrar a un licenciamiento libre por resultar más conveniente y
+sustentable.
 
 Ya con esta experiencia previa, y conforme el acceso a Internet se
 masificaba cada vez más, comenzó a verse la necesidad de crear con
@@ -316,17 +319,17 @@ matices ideológicos.
 
 El proyecto /Wikipedia/ fue anunciado en enero del 2001. Al convocar a
 /todo mundo/ y no sólo a un manojo de especialistas, a crear contenido
-enciclopédico, este experimento iniciado por Jimmy Wales y Larry
-Sanger demostró que la creación es un acto profundamente social. Miles
-de voluntarios de todo el mundo han contribuído para hacer de la
+enciclopédico, este experimento, iniciado por Jimmy Wales y Larry
+Sanger, demostró que la creación es un acto profundamente social. Miles
+de voluntarios de todo el mundo han contribuido para hacer de la
 Wikipedia el compendio de conocimiento humano más grande de la
 historia. Al nacer, la Wikipedia adoptó el modelo de licenciamiento
 recomendado por la *fsf* para manuales y libros de texto: la /Licencia
-de Documentación Libre de *gnu*/ (*gfdl*).
+de Documentación Libre de/ *gnu* (*gfdl*, por sus siglas en inglés).
 
-El modelo de la *gfdl* resulta, sin embargo, de dificil comprensión y
+El modelo de la *gfdl* resulta, sin embargo, de difícil comprensión y
 aplicación para muchos autores, y la licencia no resulta apta para
-obras creativas más allá de lo que puede constituir
+obras creativas más allá de lo que puede tomarse como
 /documentación/.
 
 El marco regulatorio de la Convención de Berna, que rige al derecho de
@@ -339,15 +342,14 @@ expresión. En pocos años hubo una proliferación de licencias que
 buscaban ayudar a los autores de obras creativas de todo tipo — no se
 abordarán los distintos intentos, sino que –aprovechando que la
 distancia en tiempo permiten simplificar– se tocará sólo el esquema de
-licenciamiento que más impacto ha tenido.
+licenciamiento que más repercusión ha tenido.
 
-** La familia de licencias /Creative Commons/ 
+** La familia de licencias /Creative Commons/
 # <<SL_CC>>
 
 En el año 2001, el abogado estadounidense Larry Lessig inició el
-proyecto /[[http://www.creativecommons.org/][Creative Commons]]/ (en adelante, *cc*). Citando del
-libro /Construcción Colaborativa del Conocimiento/ (Wolf, Miranda
-2011):
+proyecto /[[http://www.creativecommons.org/][Creative Commons]]/ (en adelante, *cc*). Citando del libro
+/Construcción Colaborativa del Conocimiento/ (Wolf y Miranda, 2011):
 
 #+begin_quote
 Pero no sólo el conocimiento formalizado puede compartirse. En 2001
@@ -356,7 +358,7 @@ estadounidense Larry Lessig. Esta organización liderada localmente en
 una gran cantidad de países por personalidades versadas en temas
 legales, fue creada para servir como punto de referencia para quien
 quiera crear obras artísticas, intelectuales y científicas
-libres. Asimismo, ofrece un marco legal para que gente no experta en
+libres. Asimismo, ofrece un marco legal para que la gente no experta en
 estos temas pueda elegir los términos de licenciamiento que juzgue más
 adecuados para su creación, sin tener que ahondar de más en las áridas
 estepas legales; se mantiene asesorada y liderada por un grupo de
@@ -384,13 +386,15 @@ licencias]] de Creative Commons; dicho texto está licenciado bajo un
 esquema *cc-by* (atribución) 4.0.]
 
 - *cc0* (Dominio Público) :: La rigidez del convenio de Berna hace muy
-     dificil en la mayor parte de las jurisdicciones el liberar una
-     obra renunciando expresamente a todos los derechos patrimoniales
-     que conlleva. La licencia /cero/ o /dedicación al dominio
-     público/ explicita esta renuncia expresa de derechos.
+     difícil en la mayor parte de las jurisdicciones el liberar una
+     obra renunciando expresamente todos los derechos patrimoniales
+     que conlleva.
+
+     La licencia /cero/ o /dedicación al dominio público/ explicita
+     esta renuncia expresa de derechos.
 
 - *by* (Atribución) :: Todas las combinaciones de licencias *cc*
-     a excepción de CC0 incluyen la cláusula de /atribución/: la obra
+     a excepción de *cc0* incluyen la cláusula de /atribución/: la obra
      puede emplearse para cualquier fin, pero toda redistribución debe
      reconocer el crédito de manera adecuada, proporcionar un enlace a
      la licencia, e indicar si se han realizado cambios. Puede hacerlo
@@ -398,7 +402,7 @@ esquema *cc-by* (atribución) 4.0.]
      que tiene el apoyo del licenciante o lo recibe por el uso que
      hace.
 
-- *sa* (Compartir Igual) :: Si un usuario del la obra en cuestión decide
+- *sa* (Compartir Igual) :: Si un usuario de la obra en cuestión decide
      mezclar, transformar o crear nuevo material a partir de ella,
      puede distribuir su contribución siempre que utilice la misma
      licencia que la obra original. Esto es, la cláusula /Compartir
@@ -410,26 +414,26 @@ esquema *cc-by* (atribución) 4.0.]
      de la licencia siempre y cuando esto no se considere o dirija
      hacia una ganancia comercial o monetaria.
 
-- *nd* (No Derivadas) :: La obra puede ser redistribuida acorde con los
-     otros componentes elegidos de la licencia, pero debe ser
-     redistribuida sólo si no se afecta su integridad: no puede ser
-     modificada sin autorización expresa del autor.
+- *nd* (No Derivadas) :: La obra puede ser redistribuida acorde con
+     los otros componentes elegidos de la licencia, pero debe serlo
+     sólo si no se afecta su integridad: no puede ser modificada sin
+     autorización expresa del autor.
 
-Las licencias *cc* han sido empleadas para todo tipo de
-creaciones: Libros, música, películas, artes plásticas — incluso, si
-bien no era su fin original, para licenciamiento de software. Y su
-gran éxito estiba no sólo en su uso, sino en que han llevado la noción
-del licenciamiento permisivo y de las obras culturales libres a una
-gran cantidad de creadores que, sin *cc*, probablemente habrían
-publicado sus creaciones bajo la tradicional modalidad /todos los
-derechos reservados/.
+Las licencias *cc* han sido empleadas para todo tipo de creaciones:
+libros, música, películas, artes plásticas —incluso, si bien no era su
+fin original, para licenciamiento de software. Su gran éxito estiba no
+sólo en su uso, sino en que han llevado la noción del licenciamiento
+permisivo y de las obras culturales libres a una gran cantidad de
+creadores que, sin *cc*, probablemente habrían publicado sus
+creaciones bajo la tradicional modalidad /todos los derechos
+reservados/.
 
 *** Creative Commons y las obras culturales libres
 
 No todas las licencias *cc* califican de /obras culturales libres/: en
 2005, Benjamin /Mako/ Hill exploró el paralelismo entre *cc* y el
-movimiento del software libre en su texto /Towards a Standard of
-Freedom: Creative Commons and the Free Software Movement/; este
+movimiento del software libre en su texto /Towards a standard of
+freedom: Creative commons and the free software movement/; este
 trabajo sirvió como semilla para la definición de /Obras culturales
 libres/, publicada en 2006. De forma paralela a las cuatro libertades
 del software, esta definición acepta como obras libres a aquellas que
@@ -437,17 +441,17 @@ garantizan:
 
 - La libertad de usar el trabajo y disfrutar de los beneficios de su
   uso.
-- La libertad de estudiar el trabajo y aplicar el conocimiento
-  adquirido de él.
+- La libertad de estudiar el trabajo y aplicar el conocimiento que
+  pueda adquirirse de él.
 - La libertad de hacer y redistribuir copias, totales o parciales, de
   la información o expresión.
-- La libertad de hacer cambios y mejoras, y distribuir los trabajos
-  derivados.
+- La libertad de hacer cambios y mejoras, y distribuir obras
+  derivadas.
 
 De las opciones de licenciamiento *cc*, las que están aprobados
-como obras culturales libres son *cc0* (Dominio Público), *by*
-(Atribución) y *sa* (Compartir Igual). Las variedades *nc* (No
-Comercial) y *nd* (No Derivadas), si bien permitenuna mayor divulgación
+como obras culturales libres son *cc0* (dominio público), *by*
+(atribución) y *sa* (compartir igual). Las variedades *nc* (no
+comercial) y *nd* (no derivadas), si bien permitenuna mayor divulgación
 y circulación de la obra, restringen demasiado la apropiación que
 puede realizar un usuario, por lo que no constituyen obras culturales
 libres.
@@ -459,7 +463,7 @@ libremente apropiable y reutilizable para la enseñanza superior en
 países hispanoparlantes. Para lograr este fin, todo el material
 contenido en el libro (texto, código fuente e imágenes) está
 licenciado bajo /Creative Commons Atribución 4.0 Internacional/ (*cc by*
-4.0)[fn:: https://creativecommons.org/licenses/by/4.0/deed.es], salvo
+4.0),[fn:: https://creativecommons.org/licenses/by/4.0/deed.es] salvo
 si se menciona explícitamente de otra manera.
 
 #+BEGIN_CENTER
@@ -468,34 +472,32 @@ si se menciona explícitamente de otra manera.
 [[./img/CC-BY-SA.png]]
 #+END_CENTER
 
-Esto significa que usted es libre para:
+Esto significa que el usuario es libre para:
 
-- /Compartir/ — copiar y redistribuir el material en cualquier medio o
-  formato
-- /Adaptar/ — remezclar, transformar y crear a partir del material
-- Para cualquier propósito, /incluso comercialmente/
+- /Compartir/ —copiar y redistribuir el material en cualquier medio o
+  formato, y mediante cualquier mecanismo.
+- /Adaptar/ —remezclar, transformar y crear a partir del material.
+- Para cualquier propósito, /incluso comercialmente/.
 - El licenciante no puede revocar estas libertades en tanto usted siga
-  los términos de la licencia
+  los términos de la licencia.
 
 Bajo los siguientes términos:
 
-- /Atribución/ — usted debe reconocer el crédito de una obra de manera
+- /Atribución/ — Se debe reconocer el crédito de una obra de manera
   adecuada, proporcionar un enlace a la licencia, e indicar si se han
-  realizado cambios . Puede hacerlo en cualquier forma razonable, pero
-  no de forma tal que sugiera que tiene el apoyo del licenciante o lo
+  realizado cambios. Puede hacerse en cualquier forma razonable, pero
+  no de manera tal que sugiera que tiene el apoyo del licenciante o lo
   recibe por el uso que hace.
 
-- /CompartirIgual/ — si usted mezcla, transforma o crea nuevo material
-  a partir de esta obra, usted podrá distribuir su contribución
-  siempre que utilice la /misma licencia/ que la obra original.
+- /CompartirIgual/ —si se mezcla, transforma o crea nuevo material a
+  partir de esta obra, se podrá distribuir su contribución siempre que
+  utilice la /misma licencia/ que la obra original.
 
 No hay restricciones adicionales — usted no puede aplicar términos
 legales ni medidas tecnológicas que restrinjan legalmente a otros
 hacer cualquier uso permitido por la licencia.
 
-* Ejercicios
-
-** Lecturas relacionadas
+* Lecturas relacionadas
 - /The GNU Manifesto/
   #+latex: \otrorec{https://www.gnu.org/gnu/manifesto.html}
   #+html: <br/><a href="https://www.gnu.org/gnu/manifesto.html">https://www.gnu.org/gnu/manifesto.html</a><br/>
@@ -505,6 +507,12 @@ hacer cualquier uso permitido por la licencia.
   #+latex: \otrorec{https://gnu.org/licenses/gpl.html}
   #+html: <br/><a href="https://gnu.org/licenses/gpl.html">https://gnu.org/licenses/gpl.html</a><br/>
   Free Software Foundation (2007)
+
+- /The Evolution of the Unix Time-sharing System/
+  #+latex: \otrorec{http://cm.bell-labs.com/cm/cs/who/dmr/hist.html}
+  #+html: <br/><a href="http://cm.bell-labs.com/cm/cs/who/dmr/hist.html">http://cm.bell-labs.com/cm/cs/who/dmr/hist.html</a>
+  Dennis Ritchie, Language Design and Programming Methodology
+  conference; Sydney, Australia, 1979.
 
 - /GPL, BSD, and NetBSD - why the *gpl* rocketed Linux to success/
   #+latex: \otrorec{http://www.dwheeler.com/blog/2006/09/01/}

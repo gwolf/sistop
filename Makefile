@@ -71,6 +71,7 @@ libro_index:
 		TITULO=`grep -i ^#+title: $(srcdir)/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
+	        echo '#+latex: \\vfill \eject \\thispagestyle{empty}' >> $(libro); \
 	done
 
 	echo '' >> $(libro)
@@ -82,6 +83,7 @@ libro_index:
 		TITULO=`grep -i ^#+title: $(srcdir)/$$APDX | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$APDX :minlevel 1" >> $(libro); \
+	        echo '#+latex: \\vfill \eject \\thispagestyle{empty}' >> $(libro); \
 	done
 	# No hay muchas tablas, este listado no tiene tanto sentido
 	# echo "#+latex: \listoftables" >> $(libro)

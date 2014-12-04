@@ -19,8 +19,8 @@ en el capítulo \ref{FS}.
 
 Cabe mencionar que la razón de separar este contenido hacia un
 apéndice es que, si bien estas funciones resultan relevantes para los
-sistemas operativos y estos cada vez más van asumiendo las funciones
-que aquí serán descritas, estas comenzaron siendo implementadas por
+sistemas operativos y éstos cada vez más van asumiendo las funciones
+que aquí serán descritas, éstas comenzaron siendo implementadas por
 hardware especializado; fue apenas hasta la aparición de los esquemas
 de manejo avanzado de volúmenes (que serán cubiertos en la sección
 \ref{FS_FIS_man_av_vol}) que entran al ámbito del sistema operativo.
@@ -30,11 +30,11 @@ de manejo avanzado de volúmenes (que serán cubiertos en la sección
 El principal medio de almacenamiento empleado en los últimos 40 años
 es el /disco magnético/. Hay dos tipos diferentes de disco, aunque la
 lógica de su funcionamiento es la misma: los /discos duros/ y los
-/discos flexibles/ (o /floppies/).
+/flexibles/ (o /floppies/).
 
-La principal diferencia entre estos es que los primeros son
-típicamente almacenamiento /interno/ en los equipos de cómputo, y los
-segundos fueron pensados para ser almacenamiento /transportable/. Los
+La principal diferencia entre éstos es que, los primeros, son
+típicamente almacenamiento /interno/ en los equipos de cómputo y, los
+segundos, fueron pensados para ser almacenamiento /transportable/. Los
 discos duros tienen mucha mayor capacidad y son mucho más rápidos,
 pero a cambio de ello, son correspondientemente más sensibles a la
 contaminación por partículas de polvo y a daños mecánicos, razón por
@@ -42,7 +42,7 @@ la cual hoy en día se venden, junto con el mecanismo lector e incluso
 la electrónica de control, en empaque sellado.
 
 Un disco flexible es una hoja de material plástico, muy similar al
-empleado en las cintas magnéticas, resguardado por un estuche
+empleado en las cintas magnéticas, resguardado por un estuche de
 plástico. Al insertarse el disco en la unidad lectora, esta lo hace
 girar sujetándolo por el centro, y las cabezas lectoras (en un
 principio una sola; posteriormente aparecieron las unidades de doble
@@ -50,16 +50,16 @@ cara, con dos cabezas lectoras) se deslizan por una ventana que tiene
 el estuche.
 
 La mayor parte de los discos flexibles presentaban velocidades de
-rotación de entre 300 y 400 revoluciones por minuto — presentaban,
+rotación de entre 300 y 400 revoluciones por minuto —presentaban,
 pues, una /demora rotacional/ de entre 0.15 y 0.2 segundos. La /demora
 rotacional/ es el tiempo que toma la cabeza lectora en volver a
-posicionarse sobre un mismo sector del disco. (Ver figura
+posicionarse sobre un mismo sector del disco. (Véase la figura
 \ref{FS_FIS_disco_duro})
 
 A lo largo de más de 20 años se presentaron muy diferentes formatos
 físicos siguiendo esta misma lógica, designándose principalmente por
 su tamaño (en pulgadas). La capacidad de los discos, claro está, fue
-creciendo con el paso de los años — esto explica la aparente
+creciendo con el paso de los años —esto explica la aparente
 contradicción de que los discos (físicamente) más chicos tenían más
 capacidad que los más grandes.
 
@@ -77,11 +77,11 @@ El nombre de /disco duro/ o /disco flexible/ se debe al medio empleado
 para el almacenamiento de la información (y no a la rigidez de su
 /estuche/, como mucha gente erróneamente cree): mientras que los discos
 flexibles emplean una hoja plástica flexible, los
-discos duros son metálicos. Los discos están /permanentemente/
+duros son metálicos. Los discos están /permanentemente/
 montados sobre un eje, lo que permite que tengan una velocidad de giro
 entre 20 y 50 veces mayor que los discos flexibles — entre $4~200$ y
 $15~000$ revoluciones por minuto (*rpm*), esto es, con una demora
-rotacional de entre 2 y 7.14 milisegundos.
+rotacional de entre dos y 7.14 milisegundos.
 
 Además, a excepción de algunos modelos tempranos, los discos duros
 constituyen un paquete cerrado y sellado que incluye las cabezas de
@@ -97,23 +97,23 @@ flexibles.
 
 Para medir la eficiencia de un disco duro, además de la /demora
 rotacional/ presentada unos párrafos atrás, el otro dato importante es
-el tiempo que toma la cabeza en moverse a través de la superficie del
+el tiempo que toma la cabeza en moverse por la superficie del
 disco. Hoy en día, las velocidades más comunes son de 20 ms para un
 /recorrido completo/ (desde el primer hasta el último sector), y entre
-0.2 ms y 0.8 ms para ir de un cilindro al inmediato siguiente. Como
-punto de comparación, el recorrido completo en una unidad de disco
-flexible toma aproximadamente 100 ms, y el tiempo de un cilindro al
-siguiente va entre 3 y 8 ms.
+0.2 y 0.8 ms para ir de un cilindro al inmediato siguiente. Como punto
+de comparación, el recorrido completo en una unidad de disco flexible
+toma aproximadamente 100 ms, y el tiempo de un cilindro al siguiente
+va entre 3 y 8 ms.
 
 *** Notación C-H-S
 
-En un principio y hasta la década de los noventa, el sistema operativo
-siempre hacía referencia a la ubicación de un bloque de información en
-el disco es conocido como la /notación C-H-S/ — indicando el cilindro,
-cabeza y sector (/Cylinder, Head, Sector/) para ubicar a cada bloque
-de datos. Esto permite mapear el espacio de almacenamiento de un disco
-a un espacio tridimensional, con cual resulta trivial ubicar a un
-conjunto de datos en una región contigua.
+En un principio, y hasta la década de los noventa, el sistema
+operativo siempre hacía referencia a la ubicación de un bloque de
+información en el disco empleando la /notación C-H-S/ — indicando el
+cilindro, cabeza y sector (/Cylinder, Head, Sector/) para ubicar a
+cada bloque de datos. Esto permite mapear el espacio de almacenamiento
+de un disco a un espacio tridimensional, con el cual resulta trivial
+ubicar un conjunto de datos en una región contigua.
 
 #+attr_html: height="360" width="388"
 #+attr_latex: width=0.5\textwidth
@@ -123,8 +123,8 @@ conjunto de datos en una región contigua.
 
 La /cabeza/ indica a cuál de las superficies del disco se hace
 referencia; en un disco flexible hay sólo una o dos cabezas (cuando
-aparecieron las unidades de doble lado eran en un lujo, y al paso de
-los años se fueron convirtiendo en la norma), pero en un disco duro es
+aparecieron las unidades de doble lado eran un lujo y, al paso de los
+años, se fueron convirtiendo en la norma), pero en un disco duro es
 común tener varios /platos/ paralelos. Todas las cabezas van fijas a
 un mismo motor, por lo que no pueden moverse de forma independiente.
 
@@ -134,8 +134,8 @@ heredada de la época en que la música se distribuia principalmente en
 discos de vinil, y se podía ver a simple vista la frontera entre una
 pista y la siguiente.
 
-Un /sector/ es un segmento de arco de uno de los cilindros, y contiene
-siempre la misma cantidad de información (históricamente 512 bytes; en
+Un /sector/ es un segmento de arco de uno de los cilindros y contiene
+siempre la misma cantidad de información (históricamente 512 bytes;
 actualmente se están adoptando gradualmente sectores de $4~096$
 bytes. Refiérase a la sección \ref{FS_FIS_limitaciones} para una mayor
 discusión al respecto.)
@@ -228,10 +228,10 @@ ante la cadena de referencia dada.
      modificaciones menores llevan a que el patrón de atención
      resultante sea muy distinto.
 
-     El planteamiento base para el algoritmo básico de elevador (*scan*)
-     busca evitar la inanición, minimizando al mismo tiempo el
-     movimiento de las cabezas. Su lógica indica que la cabeza debe
-     recorrer el disco de extremo a extremo, como si fuera un elevador
+     El planteamiento base para el algoritmo básico de elevador
+     (*scan*) busca evitar la inanición, minimizando al mismo tiempo
+     el movimiento de las cabezas. Su lógica indica que la cabeza debe
+     recorrer el disco de un extremo a otro, como si fuera un elevador
      en un edificio alto, atendiendo a todas las solicitudes que haya
      pendientes en su camino. Si bien los recorridos para ciertos
      patrones pueden resultar en mayores desplazamientos a los que
@@ -285,7 +285,7 @@ completo.
 
 Por otro lado, el sistema operativo muchas veces requiere dar
 distintas prioridades a los diferentes tipos de solicitud. Por
-ejemplo, sería esperable que diera preferencia a los accesos a memoria
+ejemplo, se esperaría que diera preferencia a los accesos a memoria
 virtual por encima de las solicitudes de abrir un nuevo archivo. Estos
 algoritmos tampoco permiten expresar esta necesidad.
 
@@ -307,7 +307,7 @@ Una de las desventajas, sin embargo, de este esquema es que hacía
 necesario que el *bios* conociera la /geometría/ de los discos — y
 éste presentaba límites duros en este sentido: principalmente, no le
 era posible referenciar más allá de 64 cilindros. Al aparecer la
-interfaz de discos *ide* (/Electrónica integrada al dispositivo/) e ir
+interfaz de discos *ide* (/electrónica integrada al dispositivo/) e ir
 reemplazando a la *st-506*, se introdujo *lba*.
 
 Este mecanismo convierte la dirección C-H-S a una dirección /lineal/,
@@ -323,7 +323,7 @@ $LBA = ((Cilindro \times CPC) + Cabeza) \times SPC + Sector - 1$
 
 La transición de *chs* a *lba* significó mucho más que una nueva
 notación: marcó el inicio de la transferencia de inteligencia y
-control del *cpu* al controlador de disco. El impacto de esto se
+control del *cpu* al controlador de disco. El efecto de esto se
 refleja directamente en dos factores:
 
 - Sectores variables por cilindro :: En casi todos los discos previos
@@ -381,12 +381,12 @@ de $4~096$ bytes que es empleado por el sistema operativo como si
 fuera de 512[fn:: Al día de hoy, los principales sistemas operativos
 pueden ya hacer referencia al nuevo tamaño de bloque, pero la cantidad
 de equipos que ejecutan sistemas /heredados/ o de controladores que no
-permiten este nuevo modo de acceso limitan una adopción al 100%] tiene
-que efectuar, dentro de la lógica de su controlador, una emulación — y
-una modificación de un sólo sector se vuelve un /ciclo
-lectura-modificación-escritura/ (*rmw*), que redunda en una espera de
-por lo menos una revolución adicional (8 ms con un disco de $7~200$ *rpm*)
-del disco antes de que la operación pueda completarse.
+permiten este nuevo modo de acceso limitan una adopción al 100 por
+ciento.] tiene que efectuar, dentro de la lógica de su controlador,
+una emulación — y una modificación de un solo sector se vuelve un
+/ciclo lectura-modificación-escritura/ (*rmw*), que redunda en una
+espera de por lo menos una revolución adicional (8 ms con un disco de
+$7~200$ *rpm*) del disco antes de que la operación pueda completarse.
 
 Resulta claro que, dados estos cambios en la manera en que debe
 referirse a los bloques del disco, el sistema operativo no cuenta ya
@@ -414,14 +414,14 @@ que, a pesar de ser fundamentalmente distintos a los discos
 magnéticos, se presentan ante el sistema operativo como si fueran lo
 mismo: en lo que podría entenderse como un esfuerzo para ser
 utilizados pronto y sin tener que esperar a que los desarrolladores de
-sistemas operativos adecuaran los controladores, se conectan a través
-de la misma interfaz y empleando la misma semántica que un disco
+sistemas operativos adecuaran los controladores, se conectan mediante
+la misma interfaz y empleando la misma semántica que un disco
 rotativo.[fn:: Las unidades de estado sólido cuentan con una /capa de
 traducción/ que emula el comportamiento de un disco duro, y presenta
 la misma interfaz tanto de bus como semántica.] Esto no sólo evita que
 se aprovechen sus características únicas, adoptando restricciones y
 criterios de diseño que ahora resultan indudablemente artificiales,
-sino que incluso se exponen a mayor stress por no emplearse de la
+sino que incluso se exponen a mayor /stress/ por no emplearse de la
 forma que les resultaría natural.
 
 Antes de ver por qué, conviene hacer un breve repaso de los tipos de
@@ -434,7 +434,7 @@ son:
              mantener la información cuando se desconecta la corriente
              externa. Las primeras unidades de estado sólido eran de
              este estilo; hoy en día son poco comunes en el mercado,
-             pero siguen existiendo.
+             pero todavía hay.
 
 	     Su principal ventaja es la velocidad y durabilidad: el
              tiempo de acceso o escritura de datos es el mismo que el
@@ -481,12 +481,12 @@ son:
      la vibración. Hoy en día hay dispositivos /flash/ de muy bajo
      costo y capacidad, aunque presentan una gran variabilidad tanto
      en su tiempo de acceso como en su durabilidad. En este sentido,
-     existen dos tipos principales de dispositivos /flash/:
+     hay dos tipos principales de dispositivos /flash/:
 
   - Almacenamiento primario (*ssd*) :: Las llamadas formalmente
        /unidad de estado sólido/ (/Solid State Drive/)[fn:: Un
        error muy común es confundir la /D/ con /Disk/, que
-       denotaría que llevan un /disco/, un /medio rotativo/] son
+       denotaría que llevan un /disco/, un /medio rotativo/.] son
        unidades Flash de alta velocidad y capacidad, y típicamente
        presentan una interfaz similar a la que tienen los discos
        duros; hoy en día, la más común es *sata*.
@@ -551,14 +551,14 @@ forma transparente, y marca el bloque original como libre.
 
 Los mecanismos más simples de nivelamiento de escrituras lo hacen
 únicamente intercambiando los bloques libres con los recién
-reescritos; mecanismos más avanzados buscan nivelar el nivel de
+reescritos; mecanismos más avanzados buscan equilibrar el nivel de
 reescritura en toda la unidad reubicando periódicamente también a los
 bloques que no son modificados, para no favorecerlos injustamente y
 hacer un mejor balanceo de uso.
 
 *** Emulación de discos
 
-Hoy en día, casi la totalidad de medios de estado sóldo se presentan
+Hoy en día, casi la totalidad de medios de estado sólido se presentan
 ante el sistema con una interfaz que emula la de los discos, la *ftl*
 (/Flash Translation Layer/, /Capa de Traducción de Flash/). La ventaja
 de esta emulación es que no hizo falta desarrollar controladores
@@ -575,7 +575,7 @@ funcionamiento de los controladores como los patrones de velocidad y
 desgaste de los mismos apuntan a que la estructura subyacente de casi
 todos los medios de estado sólido es la de un /sistema de archivos
 estructurado en bitácora/. Aurora indica que hay varias operaciones
-que no pueden ser traducidas eficientemente a través de esta capa de
+que no pueden ser traducidas eficientemente por medio de esta capa de
 emulación, y que seguramente permitirían un mucho mejor
 aprovechamiento del medio. Como se mencionó en la sección
 \ref{FS_log_structured} (/Sistemas de archivo estructurados en
@@ -610,15 +610,15 @@ confiabilidad, rendimiento y espacio disponible.
 
 El esquema más difundido para este fin es conocido como *raid*,
 /Arreglo Redundante de Discos Baratos/ (/Redundant Array of
-Inexpensive Disks/)[fn:: Ocasionalmente se presenta a *raid* como
+Inexpensive Disks/),[fn:: Ocasionalmente se presenta a *raid* como
 acrónimo de /Arreglo Redundante de Discos Independientes/ (/Redundant
-Array of Independent Disks/)], propuesto en 1988 por David Patterson,
+Array of Independent Disks/)] propuesto en 1988 por David Patterson,
 Garth Gibson y Randy Katz ante el diferencial que se presentaba (y se
 sigue presentando) entre el avance en velocidad y confiabilidad de las
-diversas áreas del cómputo en relación al almacenamiento magnético.
+diversas áreas del cómputo en relación con el almacenamiento magnético.
 
 Bajo los esquemas *raid* queda sobreentendido que los diferentes discos
-que forman parte de un volumen son del mismo tamaño. Si se remplaza un
+que forman parte de un volumen son del mismo tamaño. Si se reemplaza un
 disco de un arreglo por uno más grande, la capacidad /en exceso/ que
 tenga éste sobre los demás discos será desperdiciada.
 
@@ -641,7 +641,7 @@ en día.
 ** *raid* nivel 0: división en /franjas/
 
 El primer nivel de *raid* brinda una ganancia tanto en espacio total,
-dado que presenta a un volumen grande en vez de varios discos más
+dado que presenta un volumen grande en vez de varios discos más
 pequeños (simplificando la tarea del administrador) como de velocidad,
 dado que las lecturas y escrituras al volumen ya no estarán sujetas al
 movimiento de una sola cabeza, sino que habrá una cabeza independiente
@@ -679,9 +679,9 @@ Este nivel está principalmente orientado a aumentar la confiabilidad
 de la información: los datos son grabados de forma /simultánea e
 idéntica/ en todos los discos que formen parte del volumen. El costo
 de mantener los datos en espejo, claro está, es el del espacio
-empleado: en su configuración habitual, de dos discos por volumen, el
-50% del espacio de almacenamiento se pierde por fungir como respaldo
-del otro 50%.
+empleado: en su configuración habitual, de dos discos por volumen, 50%
+del espacio de almacenamiento se pierde por fungir como respaldo del
+otro 50 por ciento.
 
 La velocidad de acceso a los datos bajo *raid* 1 es mayor a la que se
 lograría con un disco tradicional: basta con obtener los datos de uno
@@ -736,15 +736,15 @@ información a partir de los datos en los discos /sanos/.
 [[./img/ditaa/franjas_raid_5.png]]
 
 Dependiendo de la configuración, la velocidad de acceso de este nivel
-puede ser es ligeramente menor que la obtenida de los discos
-sin *raid*, o ligeramente menor a la que se logra con *raid*
-nivel 0. Dado que la electrónica en los discos actuales
-notificará explícitamente al sistema operativo en caso de fallo de
-lectura, cuando el sistema requiere leer datos, estos pueden ser
-solicitados únicamente a $n-1$ discos (e ignorar al de paridad); si el arreglo *raid* está
-configurado para verificar la paridad en lecturas, todas
-las lecturas tendrán que obtener la franja correspondiente de todos
-los discos del arreglo para poder calcularla.
+puede ser es ligeramente menor que la obtenida de los discos que no
+operan en *raid*, o ligeramente menor a la que se logra con *raid*
+nivel 0. Dado que la electrónica en los discos actuales notificará
+explícitamente al sistema operativo en caso de fallo de lectura,
+cuando el sistema requiere leer datos, estos pueden ser solicitados
+únicamente a $n-1$ discos (e ignorar al de paridad); si el arreglo
+está configurado para verificar la paridad en lecturas, todas tendrán
+que obtener la franja correspondiente de todos los discos del arreglo
+para poder calcularla.
 
 El algoritmo de verificación y recuperación de *raid* 5 es
 sorprendentemente eficiente y simple: el de una
@@ -781,14 +781,15 @@ provendría del disco dañado.
 #+caption: Cinco discos organizados en *raid* 5. La franja de paridad se va alternando, repartiéndose entre todos los discos.
 [[./img/dot/raid_5.png]]
 
-Para implementar *raid* nivel 5 son necesarios por lo menos 3 discos,
-aunque es común verlos más /anchos/, pues de este modo se desperdicia
-menos espacio en paridad. Si bien teóricamente un arreglo nivel 5
-puede ser arbitrariamente ancho, en la práctica es muy raro ver
-arreglos con más de 5 discos: tener un arreglo más ancho aumentaría la
-probabilidad de falla. Si un arreglo que está ya operando en el modo
-interino de recuperación de datos se encuentra con una falla en
-cualquiera de sus discos, tendrá que reportar un fallo irrecuperable.
+Para implementar *raid* nivel 5 son necesarios por lo menos tres
+discos, aunque es común verlos más /anchos/, pues de este modo se
+desperdicia menos espacio en paridad. Si bien teóricamente un arreglo
+nivel 5 puede ser arbitrariamente ancho, en la práctica es muy raro
+ver arreglos con más de cinco discos: tener un arreglo más ancho
+aumentaría la probabilidad de falla. Si un arreglo que está ya
+operando en el modo interino de recuperación de datos se encuentra con
+una falla en cualquiera de sus discos, tendrá que reportar un fallo
+irrecuperable.
 
 ** *raid* nivel 6: paridad por redundancia P+Q
 
@@ -811,9 +812,9 @@ implementar mayor complejidad, en caso de ser hardware dedicado.
 #+caption: Cinco discos organizados en *raid* 6. Al igual que bajo *raid* 5, las franjas de paridad se van alternando entre todos los discos.
 [[./img/dot/raid_6.png]]
 
-El nivel 6 de *raid* puede implementarse con 4 o más unidades, y si
-bien el espacio dedicado a la redundancia se incrementa a dos discos,
-la redundancia adicional que ofrece este esquema permite crear
+El nivel 6 de *raid* puede implementarse con cuatro o más unidades, y
+si bien el espacio dedicado a la redundancia se incrementa a dos
+discos, la redundancia adicional que ofrece este esquema permite crear
 volúmenes con un mayor número de discos.
 
 ** Niveles combinados de *raid*
@@ -835,11 +836,12 @@ demasiado espacio.
 #+caption: Seis discos organizados en *raid* 1+0.
 [[./img/dot/raid_10.png]]
 
-Con *raid* nivel 10 se crean volúmenes que suman por franjas unidades en
-espejo (un volumen *raid* 0 compuesto de varios volúmenes *raid* 1). En
-caso de fallar cualquiera de las unidades del arreglo, ésta puede ser
-reemplazada fácilmente, y su reemplazo no significará un trabajo tan
-intensivo para el arreglo entero (sólo para su disco espejo).
+Con *raid* nivel 10 se crean volúmenes que suman por franjas unidades
+en espejo (un volumen *raid* 0 compuesto de varios volúmenes *raid*
+1). En caso de fallar cualquiera de las unidades del arreglo, ésta
+puede ser reemplazada fácilmente, operación que no significará un
+trabajo tan intensivo para el arreglo entero (sólo para su disco
+espejo).
 
 Bajo este esquema, en el peor de los casos, un volumen con $n$
 discos físicos está conformado por $n \over 2$ volúmenes nivel 1, y por tanto
@@ -847,7 +849,7 @@ puede soportar la pérdida de hasta $n \over 2$ discos — siempre
 que estos no formen parte de un mismo volumen nivel 1.
 
 Esta combinación ilustra cómo el orden de los
-factores /sí altera/ al producto: si en vez de la concatenación de
+factores /sí altera/ el producto: si en vez de la concatenación de
 varias unidades espejeadas (un volumen nivel 0 compuesto de varios
 volúmenes nivel 1) se armara el arreglo en orden inverso (esto
 es, como el espejeo de varias unidades concatenadas por franjas),
@@ -869,18 +871,19 @@ un nuevo dispositivo del mismo tipo, no tiene conocimiento de la
 información subyacente. Por tanto, si se perdieran al mismo tiempo el
 disco 1 (del subvolumen 1) y el disco 5 (del subvolumen 2), resultaría
 en pérdida de datos.[fn:: O por lo menos, en una tarea de
-reconstrucción manual, dada que la información completa existe. Sin
-embargo, ambos volúmenes *raid* 1 estarían dañados e incompletos.]
+reconstrucción manual, dada que la información completa puede aún ser
+encontrada. Sin embargo, ambos volúmenes del arreglo *raid* 1 estarían
+dañados e incompletos.]
 
 * Manejo avanzado de volúmenes
 # <<FS_FIS_man_av_vol>>
 
-Los esquemas *raid* vienen, sin embargo, de fines de la década de
-1980, y si bien han cambiado el panorama del almacenamiento, en los
-más de 20 años desde su aparición, han sido ya superados. El énfasis
-en el estudio de *raid* (y no tanto en los desarrollos posteriores) se
-justifica dada la limpieza conceptual que presentan, y dado que
-esquemas posteriores incluso hacen referencia explícita en su
+Los esquemas *raid* vienen, sin embargo, de finales de la década de
+los ochenta, y si bien han cambiado el panorama del almacenamiento, en
+los más de 20 años desde su aparición, han sido ya superados. El
+énfasis en el estudio de *raid* (y no tanto en los desarrollos
+posteriores) se justifica dada la limpieza conceptual que presentan, y
+dado que esquemas posteriores incluso hacen referencia explícita en su
 documentación al nivel de *raid* que /estarían reemplazando/.
 
 A continuación se presentan brevemente dos esquemas avanzados de
@@ -921,7 +924,7 @@ concatenación o dividiéndose en franjas.
 
 Permite también la creación de unidades /espejo/, con una operación
 a grandes rasgos equivalente a la de *raid* 1. Incluso, dentro de un
-mismo grupo de volúmenes, pueden existir tanto volúmenes lógicos
+mismo grupo de volúmenes, pueden haber tanto volúmenes lógicos
 espejeados como otros que no lo estén, a diferencia de la estricta
 rigidez de *raid*.
 
@@ -1009,7 +1012,7 @@ las diferentes regiones del sistema.
 
 2. Realice un esquema de cómo se estructura cada bloque de información
    sobre varios discos bajo *raid* niveles 0, 1 y 5. Para cada uno de
-   estos niveles, indique el impacto que su empleo tendría en cuanto a
+   estos niveles, indique el efecto que su empleo tendría en cuanto a
    espacio total, velocidad de acceso y confiabilidad.
 
 
@@ -1022,7 +1025,7 @@ las diferentes regiones del sistema.
   podrían estos aprovecharse mejor.
 
   ¿Qué sistemas de archivos están mejor /afinados/ para operar con
-  medios Flash? ¿Cuáles son los principales obstáculos para que gocen
+  medios Flash, y cuáles son los principales obstáculos para que gocen
   de una mayor adopción?
 
 ** Lecturas relacionadas

@@ -7,14 +7,14 @@
 La /virtualización/ no es un concepto nuevo. Sin embargo, tras largos
 años de estar relegado a un segundo plano, en la actualidad se torna
 fundamental en referencia a los sistemas operativos, particularmente en
-rol de servidores. Este tema se abordará de momento desde una
-óptica más bien descriptiva, y posteriormente se profundizará en
+papel de servidores. Este tema se abordará de momento desde un
+punto de vista más bien descriptivo, y posteriormente se profundizará en
 algunos de sus asepectos.
 
 En primer término, es importante aclarar que el concepto de /virtualización/ 
 no se refiere a una única tecnología o metodología, es un término que
-agrupa a muy distintas tecnologías que existen – de
-diversas formas – desde hace décadas. Cada una de ellas tiene su lugar,
+agrupa a muy distintas tecnologías que hay –de
+diversas formas– desde hace décadas. Cada una de ellas tiene su lugar,
 con diferentes usos y propósitos, algunos de los cuales se usan de forma
 transparente para el usuario promedio.
 
@@ -24,10 +24,10 @@ siempre es clara. Una implementación específica puede caer en más
 de una categoría, o puede ir migrando naturalmente de un tipo hacia
 otro.
 
-A nivel general, /virtualizar/ consiste en proveer algo que no está ahí,
-aunque parece estarlo. Más específicamente, presentar a un sistema elementos
+En escala general, /virtualizar/ consiste en proveer algo que no está ahí,
+aunque parezca estarlo. Más específicamente, presentar a un sistema elementos
 que se comporten de la misma forma que un componente físico (hardware), sin que 
-exista en realidad — un acto de ilusionismo o de magia, en cual se busca
+exista en realidad —un acto de ilusionismo o de magia, en el cual se busca
 presentar el elemento de forma tan convincente que la ilusión se mantenga tanto
 como sea posible.[fn:: Una aproximación inicial a este concepto puede ser
 un archivo con la imagen de un disco en formato *iso*: mediante determinados mecanismos, es posible
@@ -48,7 +48,7 @@ Para casi todos los casos que se presentan, se emplearán los siguientes términ
 * Emulación
 
 La técnica de virtualización más sencilla, y que hace más tiempo
-existe en las computadoras personales, es la emulación. Emular
+tienen las computadoras personales, es la emulación. Emular
 consiste en implementar /en software/ algo que se presente como el
 hardware de un sistema de cómputo completo, típicamente de una arquitectura hardware
 distinta a la del anfitrión (la arquitectura /nativa/).[fn:: A lo largo de esta discusión, se hará
@@ -61,9 +61,9 @@ una de las instrucciones en la arquitectura /huésped/ a la
 arquitectura del sistema /anfitrión/.
 
 Vale la pena recalcar que una emulación no se limita con traducir del
-lenguaje y la estructura de un procesador a otro — para que una
+lenguaje y la estructura de un procesador a otro —para que una
 computadora pueda ser utilizada, requiere de una serie de chips de
-apoyo — desde los controladores de cada uno de los /buses/ hasta los
+apoyo, desde los controladores de cada uno de los /buses/ hasta los
 periféricos básicos (teclado, video). Casi todas las emulaciones
 incluirán un paso más allá: los periféricos mismos (discos, interfaces
 de red, puertos). Todo esto tiene que ser implementado por el
@@ -74,23 +74,24 @@ ineficiente. Los sistemas huéspedes resultantes típicamente tendrán un
 rendimiento cientos o miles de veces menor al del anfitrión.
 
 Ahora bien, ¿qué pasa cuando hay dos arquitecturas de cómputo que
-emplean al mismo procesador? Este caso fue relativamente común en la
-década de los 80 y 90; si bien en general las computadoras de 8 bits no tenían
-el poder de cómputo necesario para implementar la emulación de
-arquitecturas similares, al aparecer tres líneas de computadoras
-basadas en el *cpu* Motorola 68000 (Apple Macintosh, Atari *st* y
-Commodore Amiga), diferenciadas principalmente por sus /chipsets/,
-aparecieron emuladores que permitían ejecutar programas de una línea
-en la otra, prácticamente a la misma velocidad que en el sistema nativo.
+emplean el mismo procesador? Este caso fue relativamente común en la
+década de los ochenta y noventa; si bien en general las computadoras
+de 8 bits no tenían el poder de cómputo necesario para implementar la
+emulación de arquitecturas similares, al aparecer tres líneas de
+computadoras basadas en el *cpu* Motorola 68000 (Apple Macintosh,
+Atari *st* y Commodore Amiga), diferenciadas principalmente por sus
+/chipsets/, aparecieron emuladores que permitían ejecutar programas de
+una línea en la otra, prácticamente a la misma velocidad que en el
+sistema nativo.
 
 Hoy en día, la emulación se emplea para hacer /desarrollos cruzados/,
 más que para emplear software /ya escrito y compilado/.  La mayor
-parte de la emulación tradicional hoy se emplea para el /desarrollo de
+parte de la emulación tradicional se emplea para el /desarrollo de
 software/. Hoy en día, la mayor parte de las computadoras vendidas son
 sistemas /embebidos/[fn:: Computadoras pequeñas, limitadas en
 recursos, y típicamente carentes de una interfaz usuario — desde
 puntos de acceso y ruteadores hasta los controladores de cámaras,
-equipos de sonido, automóviles, y un larguísimo etcétera] o
+equipos de sonido, automóviles, y un larguísimo etcétera.] o
 dispositivos móviles, que hacen imposible (o, por lo menos, muy
 difícil) desarrollar software directamente en ellos. Los programadores
 desarrollan en equipos de escritorio, ejecutan entornos de prueba en
@@ -108,31 +109,31 @@ emplea por la comodidad de no depender de la velocidad de equipos
 específicos. Es posible crear emuladores para arquitecturas que /nunca
 han sido implementadas/ en hardware real.
 
-Esta idea viene de los 1970, cuando comenzó la explosión de
+Esta idea viene de los setenta, cuando comenzó la explosión de
 arquitecturas. La Universidad de California en San Diego propuso una
 arquitectura llamada /p-system/, o /sistema-p/, la cual definiría una
 serie de instrucciones a las que hoy se clasificarían como /código intermedio/ o
 /bytecode/, a ser ejecutado en una /máquina-p/, o /p-machine/. El
 lenguaje base para este sistema fue el /Pascal/, mismo que fue
 adoptado muy ampliamente de manera principal en entornos académicos a
-lo largo de los 1970 y 1980 por su limpieza y claridad
+lo largo de los setenta y ochenta por su limpieza y claridad
 estructural. Todo programa compilado para ejecutarse en un /sistema-p/
 ejecutaría sin modificaciones en cualquier arquitectura hardware que lo
 implementara.
 
 Los /sistemas-p/ gozaron de relativa popularidad hasta mediados de los
-1980, logrando implementaciones para las arquitecturas de
-microcomputadoras más populares — el *mos* 6502, el Zilog *z80* y el Intel
-80x86.
+ochenta, logrando implementaciones para las arquitecturas de
+microcomputadoras más populares —el *mos* 6502, el Zilog *z80* y el
+Intel 80x86.
 
 Hay una diferencia muy importante entre la emulación de una
-arquitectura real y la de una arquitectura inexistente: emular una
+arquitectura real y la de una inexistente: emular una
 computadora entera requiere implementar no sólo las
 instrucciones de su procesador, sino que /todos los chips de apoyo/,
 ¡incluso hay que convertir la entrada del teclado en las
 interrupciones que generaría un controlador de teclado! Emular una
 arquitectura hipotética permite manejar diversos componentes de forma
-abstracta, y permite definir estructuras de mucho más alto nivel que
+abstracta, y también definir estructuras de mucho más alto nivel que
 las que se encuentran implementadas en hardware. Por ejemplo, si bien
 resultaría impráctico crear como tipo de datos nativo para una
 arquitectura en hardware una abstracción como las cadenas de
@@ -140,10 +141,10 @@ caracteres, estas sí existen como /ciudadanos de primera clase/ en
 casi todas las arquitecturas meramente virtuales.
 
 Esta idea ha sido ampliamente adoptada y forma parte de
-la vida diaria. En la década de los 1990, /Sun Microsystems/
+la vida diaria. En la década de los noventa, /Sun Microsystems/
 desarrolló e impulsó la arquitectura /Java/, actualizando la idea de
 las /máquinas-p/ a los paradigmas de desarrollo que aparecieron a lo
-largo de veinte años, y dado que el cómputo había dejado de ser un campo
+largo de 20 años, y dado que el cómputo había dejado de ser un campo
 especializado y escaso para masificarse, invirtiendo fuertemente en
 publicidad para impulsar su adopción.
 
@@ -154,8 +155,8 @@ Virtual Java/) se implementaría para las arquitecturas hardware más
 limitadas y más poderosas. Sun creó también el lenguaje Java, diseñado
 para aprovechar la arquitectura de la *jvm*, enfatizando en la
 orientación a objetos e incorporando facilidades multi-hilos. Al día
-de hoy existen distintas implementaciones de la *jvm*, de diferentes
-empresas y grupos de desarrolladores y con diferentes focos de
+de hoy hay distintas implementaciones de la *jvm*, de diferentes
+empresas y grupos de desarrolladores y con diversos focos de
 especialización, pero todas ellas deben poder ejecutar el /bytecode/
 de Java.
 
@@ -176,16 +177,16 @@ hardware nativa).
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="600"
 #+label: VIRT_maquina_virtual_dotnet
-#+caption: Arquitectura de la infraestructura de lenguajes comunes (*cli*) de *.net* (Imagen de la Wikipedia: /Common Language Infrastructure/).
+#+caption: Arquitectura de la infraestructura de lenguajes comunes (*cli*) de *.net* (imagen de la Wikipedia: /Common Language Infrastructure/).
 [[./img/maquina_virtual_dotnet.png]]
 
-En los años 90, una de las principales críticas a Java (y esta crítica
-podría ampliarse hacia cualqueir otra plataforma comparable) era el
+En los años noventa, una de las principales críticas a Java (la cual
+podría ampliarse hacia cualquier otra plataforma comparable) era el
 desperdicio de recursos de procesamiento al tener que traducir, una y
 otra vez, el código intermedio para su ejecución en el
-procesador. Hacia el 2010, el panorama había ya cambiado
-fuertemente. Hoy en día las máquinas virtuales implementan varias
-técnicas para reducir el tiempo que se desperdicia emulando:
+procesador. Hacia el 2010, el panorama había cambiado fuertemente. Hoy
+en día las máquinas virtuales implementan varias técnicas para reducir
+el tiempo que se desperdicia emulando:
 
 - Traducción dinámica :: Compilación parcial del código a ejecutar a
      formatos nativos, de modo que sólo la primera vez que se ejecuta
@@ -194,14 +195,14 @@ técnicas para reducir el tiempo que se desperdicia emulando:
      secciones de código que tendrán que ser ejecutadas para,
      paralelamente al avance del programa,  traducirlas a código
      nativo de forma preventiva.
-- Compilación /justo a tiempo/ (*jit*) :: Almacenar copia del código ya
-     traducido de un programa, de modo que no tenga que traducirse ni
-     siquiera a cada ejecución, sino que sólo una vez en la vida de
+- Compilación /justo a tiempo/ (*jit*) :: Almacenar copia del código
+     ya traducido de un programa, de modo que no tenga que hacerse ni
+     siquiera en cada ejecución, sino que sólo una vez en la vida de
      la máquina virtual.
 
-A través de estas estrategias, el rendimiento de las
-arquitecturas emuladas es ya prácticamente idéntico al del código
-compilado nativamente.
+Mediante estas estrategias, el rendimiento de las arquitecturas
+emuladas es ya prácticamente idéntico al del código compilado
+nativamente.
 
 ** De lo abstracto a lo concreto
 
@@ -211,9 +212,9 @@ en hardware, el éxito comercial de la plataforma llevó a crear una
 línea de chips que ejecutara /nativamente/ código intermedio Java, con
 lo cual podrían ahorrarse pasos y obtener mejor rendimiento de los
 sistemas destino. Sun definió la arquitectura *majc* (/Microprocessor
-Architecture for Java Computing/, Arquitectura de microprocesadores
-para el cómputo con Java) en la segunda mitad de los 1990, e incluso
-produjo un chip de esta arquitectura, el *majc 5200*.
+Architecture for Java Computing/, arquitectura de microprocesadores
+para el cómputo con Java) en la segunda mitad de los noventa, e
+incluso produjo un chip de esta arquitectura, el *majc 5200*.
 
 La arquitectura *majc* introdujo conceptos importantes que han sido
 retomados para el diseño de procesadores posteriores, pero la
@@ -240,11 +241,11 @@ ejecuciones posteriores. Sin embargo, si bien estas diferencias son
 medibles y no deben escapar a la vista de quien está analizando a
 conciencia estos procesadores, resultaban invisibles para el usuario
 final.] El procesador mismo, además, no implementaba algunas
-características que hoy en día se consideran fundamentales, como una
+características que hoy se consideran fundamentales, como una
 unidad de manejo de memoria, dado que eso podía ser implementado por
 software en el *cms*. Separando de esta manera las características
 complejas a una segunda capa, podían mantenerse más bajos tanto el
-número de transistores (y, por tanto, el gasto eneergético) y los
+número de transistores (y, por tanto, el gasto energético) y los
 costos de producción.
 
 La segunda generación de chips Transmeta (/Efficeon/) estaba basada
@@ -267,17 +268,17 @@ edición). Esto significa que un emulador reproduce todos los procesos
 internos que realizaría el sistema nativo, y busca cubrir todos los
 comportamientos respectivos implementando los mismos mecanismos.
 
-/Simular/, por otra parte y según este mismo diccionario, significa
-/Representar algo, fingiendo o imitando lo que no es/. Un sistema
+/Simular/, por otra parte, y según este mismo diccionario, significa
+/representar algo, fingiendo o imitando lo que no es/. Un sistema
 simulador simula o finge las áreas de determinado sistema que
-interesan al usuario; puede emplear datos pre-cargados para generar
+interesan al usuario; puede emplear datos precargados para generar
 ciertas respuestas, obviando los procesos que los generarían.
 
 A diferencia de los ejemplos presentados a lo largo de esta sección,
 que llevan a ejecutar software arbitrario para la plataforma destino
 buscando idealmente que éstos no detecten siquiera una diferencia en
 comportamiento, un simulador puede presentar mucho mayor detalle en
-determinadas áreas, pero no realiza las funciones substantivas del
+determinadas áreas, pero no realiza las funciones sustantivas del
 sistema simulado. Por ejemplo, es muy común (incluso para el
 entrenamiento de pilotos reales) el uso de simuladores de vuelo; estos
 programas pueden representar una cabina equivalente a la de un avión
@@ -291,27 +292,27 @@ en un receptor de radio.
 * Virtualización asistida por hardware
 # <<VIRT_asist_por_hw>>
 
-Actualmente se usa la virtualización como una herramienta para la 
-consolidación de servicios, de gran ayuda para los
-administradores de sistemas. Este uso se refiere principalmente a lo
-que se presentará en este apartado, así como en las secciones
-\ref{VIRT_paravirt} (/Paravirtualización/) y \ref{VIRT_contenedores}
-(/Contenedores/). Y si bien este /zumbido/ de la virtualización se ha
-producido mayormente a partir del 2006-2007, no se trata de
-tecnologías o ideas novedosas — existe desde fines de los 1960. Hasta
-hace algunos años, sin embargo, se mantenía dentro del ámbito de los
-servidores a gran escala, fuera del alcance de la mayor parte de los
-usuarios. Es necesario estudiar la génesis de esta herramienta, para poder
-comprender mejor cómo opera y cómo se implementa.
+Actualmente se usa la virtualización como una herramienta para la
+consolidación de servicios, de gran ayuda para los administradores de
+sistemas. Este uso se refiere principalmente a lo que se presentará en
+este apartado, así como en las secciones \ref{VIRT_paravirt}
+(/Paravirtualización/) y \ref{VIRT_contenedores} (/Contenedores/). Y
+si bien este /zumbido/ de la virtualización se ha producido mayormente
+a partir del 2006-2007, no se trata de tecnologías o ideas novedosas —
+pueden encontrarse ejemplos desde finales de los sesenta. Hasta hace
+algunos años, sin embargo, se mantenía dentro del ámbito de los
+servidores en gran escala, fuera del alcance de la mayor parte de los
+usuarios. Es necesario estudiar la génesis de esta herramienta, para
+poder comprender mejor cómo opera y se implementa.
 
 En 1964, *ibm* creó la primer /familia de computadoras/, la
 serie 360. Presentaron la entonces novedosa idea de que una
 organización podía adquirir un modelo sencillo y, si sus necesidades
-se ajustaban al modelo de cómputo, podrían migrar facilmente hacia
-modelos más poderosos dado que tendrían /compatibilidad binaria/.
+se ajustaban al modelo de cómputo, podrían migrar fácilmente hacia
+otros más poderosos, dado que tendrían /compatibilidad binaria/.
 
 Uno de los modelos de esta familia fue la /S-360-67/, con la
-característica distintiva en ser la única de la serie 360 en ofrecer
+característica distintiva de ser la única de la serie 360 en ofrecer
 una unidad de manejo de memoria (*mmu*), con lo cual permitía la
 reubicación de programas en memoria. Esto, sin embargo, creaba un
 problema: el software desarrollado para los equipos más pequeños de la
@@ -322,19 +323,19 @@ modo multitarea).
 
 La respuesta de *ibm* fue muy ingeniosa: desarrollar un sistema
 operativo mínimo, *cp* (/Control Program/, Programa de Control) con el
-único propósito de crear y gestionar /máquinas virtuales/ dentro del
+único propósito de crear y gestionar /máquinas virtuales/ en del
 hardware S/360-67, dentro de /cada una de las cuales/ pudiera
 ejecutarse /sin requerir modificaciones/ un sistema operativo estándar
-de la serie 360. De entre los varios sistemas operativos disponibles
-para la S/360, el que más frecuentemente se utilizó fue el /*cms*/,[fn::
-Originalmente, las siglas *cms* eran por el /Cambridge Monitor System/,
-por haber sido desarrollado en la división de investigación de *ibm* en
-Cambridge, pero posteriormente fue renombrado a /Conversational
-Monitor System/, /Sistema de Monitoreo Conversacional/] un sistema
-sencillo, interactivo y monousuario. La combinación *cp/cms*
-proporcionaba un sistema operativo multiusuario, con plena protección
-entre procesos, y con compatibilidad con los modelos más modestos de
-la serie 360.
+de la serie 360. Entre los varios sistemas operativos disponibles para
+la S/360, el que más frecuentemente se utilizó fue el /*cms*/,[fn::
+Originalmente, las siglas *cms* eran por el /Cambridge Monitor
+System/, por haber sido desarrollado en la división de investigación
+de *ibm* en Cambridge, pero posteriormente fue renombrado a
+/Conversational Monitor System/, /Sistema de Monitoreo
+Conversacional/.] un sistema sencillo, interactivo y monousuario. La
+combinación *cp/cms* proporcionaba un sistema operativo multiusuario,
+con plena protección entre procesos, y con compatibilidad con los
+modelos más modestos de la serie 360.
 
 Aún después de la vida útil de la serie 360 original, *ibm* mantuvo
 compatibilidad con este modelo hacia la serie 370, e incluso hoy, 50
@@ -343,12 +344,12 @@ años más tarde, se encuentra aún como
 #+html: z/<b>vm</b>
 /z/VM/ en la línea de /Sistemas z/.
 
-Vale la pena mencionar que tanto *cp* como *cms* fueron distribuidos desde
-el principio de forma consistente con lo que en la actualidad se conoce como
-/software libre/: *ibm* los distribuía en fuentes, con permiso de
-modificación y redistribución, y sus diferentes usuarios fueron
-enviando las mejoras que realizaban de vuelta a *ibm*, de modo que hoy
-en día incorpora el trabajo de 50 años de desarrolladores.
+Vale la pena mencionar que tanto *cp* como *cms* fueron distribuidos
+desde el principio de forma consistente con lo que en la actualidad se
+conoce como /software libre/: *ibm* los distribuía en fuentes, con
+permiso de modificación y redistribución, y sus diferentes usuarios
+fueron enviando las mejoras que realizaban de vuelta a *ibm*, de modo
+que hoy incorpora el trabajo de 50 años de desarrolladores.
 
 ** El hipervisor
 
@@ -363,9 +364,9 @@ hacia arriba, se fue popularizando el nombre de /hipervisor/ para el
 programa que administra y virtualiza a los supervisores. Algunas
 características primarias que definen qué es un hipervisor son:
 
-- Es únicamente un /micro-sistema operativo/, dado que no cubre
-  muchas de las áreas clásicas ni presenta las interfaces abstractas
-  al usuario final — sistemas de archivos, mecanismos de comunicación
+- Es únicamente un /micro-sistema operativo/, dado que no cubre muchas
+  de las áreas clásicas ni presenta las interfaces abstractas al
+  usuario final —sistemas de archivos, mecanismos de comunicación
   entre procesos, gestión de memoria virtual, evasión de bloqueos,
   etcétera.
 
@@ -373,7 +374,7 @@ características primarias que definen qué es un hipervisor son:
   asignación de dispositivos y /poco/ más que eso.
 
 - Normalmente no tiene una interfaz usuario directa, sino que es
-  administrado a través de llamadas privilegiadas desde alguno de los
+  administrado por medio de llamadas privilegiadas desde alguno de los
   sistemas operativos huésped.
 
 Estas líneas se han ido haciendo borrosas con el tiempo. Ahora,
@@ -388,14 +389,14 @@ componente más de un sistema operativo estándar.
 
 Hasta alrededor del año 2005, la virtualización no se mencionaba muy
 frecuentemente. Si bien había hardware virtualizable 40 años atrás,
-era hardware bastante especializado — y caro. Ese año, Intel sacó al
-mercado los procesadores con las extensiones necesarias para la
-virtualización, bajo el nombre /Vanderpool Technology/ (o
+era bastante especializado— y caro. Ese año, Intel sacó al mercado los
+procesadores con las extensiones necesarias para la virtualización,
+bajo el nombre /Vanderpool Technology/ (o
 #+latex: \textbf{vt}/x).
 #+html: Free<b>vt</b>/x).
 Al año siguiente, *amd* hizo lo propio, denominándolas /extensiones
-Pacifica/. Hoy en día, casi todas las computadoras de escritorio de
-rango medio-alto tienen el sopote necesario para llevar a cabo
+Pacífica/. Ahora casi todas las computadoras de escritorio de rango
+medio-alto tienen el sopote necesario para llevar a cabo
 virtualización asistida por hardware. Y si bien en un principio el
 tema tardó en tomar tracción, llevó a un replanteamiento completo de
 la metodología de trabajo tanto de administradores de sistemas como de
@@ -403,33 +404,33 @@ programadores.
 
 En contraste con las arquitecturas diseñadas desde un principio para
 la virtualización, los usuarios de computadoras personales (inclusive
-cuando estas son servidores en centros de datos — siguen estando
+cuando estas son servidores en centros de datos, siguen estando
 basadadas en la misma arquitectura básica) se enfrentan a una mayor
 variedad de dispositivos para todo tipo de tareas.[fn:: Una
 descripción completa de la complejidad a la que debe enfrentarse un
 hipervisor bajo arquitectura x86 excede con mucho el ámbito del
 presente texto; se sugiere a los lectores interesados referirse al
-excelente artículo de [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bugnion et. al. (2012)]] detallando la
-implementación de /VMWare/.] Y si bien la virtualización permite
+excelente artículo de [[https://dl.acm.org/citation.cfm?doid=2382553.2382554][Bugnion /et al/. (2012)]] detallando la
+implementación de /VMWare/.]  Si bien la virtualización permite
 aparentar varias computadoras distintas ejecutando sobre el mismo
-procesador, esta no incluye a los dispositivos. Al presentarse una
+procesador, ésta no incluye los dispositivos. Al presentarse una
 máquina virtual, el sistema anfitrión esta casi siempre[fn:: Hay
 mecanismos para reservar y dirigir un dispositivo físico existente a
-una máquina virtual específica, pero hacerlo implica que éste
+una máquina virtual específica, pero hacerlo implica que este
 dispositivo no será /multiplexado/ hacia las demás máquinas virtuales
 que se ejecuten paralelamente.] emulando hardware. Claro está, lo más
 frecuente es que el hipervisor ofrezca a los huéspedes la emulación de
 dispositivos relativamente viejos y simples.[fn:: Por ejemplo, *kvm*
 bajo Linux emula tarjetas de red tipo *ne2000*, tarjetas de sonido
 tipo Soundblaster16 y tarjetas de video Cirrus Logic, todos ellos de
-la década de los 1990.] Esto no significa que estén limitados a las
+la década de los noventa.] Esto no significa que estén limitados a las
 prestaciones del equipo emulado (por ejemplo, a los 10 Mbps para los
 que estaba diseñada una tarjeta de red *ne2000*), sino que la interfaz
 del núcleo para enviar datos a dicho dispositivo es una sencilla y que
 ha sido empleada tanto tiempo que presenta muy poca inestabilidad.
 
 Y este último punto permite un acercamiento mayor a una de las ventajas que
-ofrecen los sistemas operativos virtualizados — la estabilidad. Los
+ofrecen los sistemas operativos virtualizados —la estabilidad. Los
 controladores de dispositivos provistos por fabricante han sido
 responsabilizados una y otra vez, y con justa razón, de la
 inestabilidad de los sistemas operativos de escritorio. En particular,
@@ -462,16 +463,16 @@ sigue presentando algunas desventajas:
   en líneas generales un factor de diferenciación entre las líneas
   económicas y de lujo.
 - La capa de emulación, si bien es delgada, conlleva un cierto peso.
-- Si bien es posible virtualizar arquitecturas como la x86, hay
-  muchas arquitecturas para las cuales no existen las extensiones
-  hardware necesarias.
+- Si bien es posible virtualizar arquitecturas como la x86, hay muchas
+  otras para las cuales no se tienen las extensiones hardware
+  necesarias.
 
 La /paravirtualización/, o /virtualización asistida por el sistema
 operativo/, parte de un planteamiento distinto: en vez de /engañar/ al
 sistema operativo para que funcione sobre un sistema que parece real
 pero no lo es, la paravirtualización busca hacerlo /con pleno
 conocimiento y cooperación/ por parte de los sistemas huéspedes.  Esto
-es, la paravirtualización consiste en alojar a sistemas operativos
+es, la paravirtualización consiste en alojar sistemas operativos
 huésped que, a sabiendas de que están ejecutando en hardware
 virtualizado, /no hacen llamadas directas a hardware/ sino que las
 traducen a llamadas al sistema operativo anfitrión.
@@ -492,35 +493,37 @@ en un sistema operativo, al hablar de paravirtualización este
 beneficio naturalmente crece: los controladores de hardware sencillos
 y bien comprendidos que se usaban para gestionar los
 dispositivos emulados se convierten casi en simples pasarelas de
-llamadas al sistema, brindando además de una sobrecarga mínima, aún
+llamadas al sistema, brindando además de una sobrecarga mínima, aun
 mayor estabilidad por simplicidad del código.
 
 ** Paravirtualización y software libre
 
 La paravirtualización resulta muy atractiva, presentando muy obvias
 ventajas. Pero a pesar de que es posible emplearla en cualquier
-arquitectura hardware, no siempre es posible emplearla.
+arquitectura hardware, algunas veces no lo es.
 
-Como se mencionó anteriormente, incorporar dentro de un sistema operativo
- el soporte para una arquitectura de paravirtualización es casi equivalente a traducirlo a
-una nueva arquitectura hardware. Para que los autores de un entorno que
-implemente paravirtualización logren que un sistema operativo nuevo
-pueda ser ejecutado en su arquitectura, deben poder manipular y
-modificar su código fuente: de otra manera, ¿cómo se le podría adecuar
-para que supiera desenvolverse en un entorno no nativo?
+Como se mencionó anteriormente, incorporar dentro de un sistema
+operativo el soporte para una arquitectura de paravirtualización es
+casi equivalente a traducirlo a una nueva arquitectura hardware. Para
+que los autores de un entorno que implemente paravirtualización logren
+que un sistema operativo nuevo pueda ser ejecutado en su arquitectura,
+deben poder manipular y modificar su código fuente: de otra manera,
+¿cómo se le podría adecuar para que supiera desenvolverse en un
+entorno no nativo?
 
 El proyecto de gestión de virtualización y paravirtualización /Xen/
 nació como un proyecto académico de la Universidad de Cambridge,
-presentando su versión 1.x a través de un artículo en 2003 (ver [[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen
-and the Art of Virtualization]]). Este artículo presenta su experiencia
+presentando su versión 1.x mediante un artículo en 2003 ([[http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf][Xen and the
+Art of Virtualization]]). Este artículo presenta su experiencia
 paravirtualizando a una versión entonces actual de Linux y de
 Windows. Sin embargo, Xen sólo pudo ser empleado por muchos años como
 plataforma de paravirtualización de Linux porque, dado que la
 adaptación de Windows se realizó bajo los términos del /Academic
 Licensing Program/, que permitía a los investigadores acceso y
-modificación al código fuente, pero no su redistribución — la versión
-paravirtualizable de Windows *xp* existe, pero no puede distribuirse
-fuera de los participantes de dicho programa de licenciamiento.
+modificación al código fuente, pero no su redistribución —la versión
+paravirtualizable de Windows *xp* fue desarrollada, pero no puede
+distribuirse fuera de los participantes de dicho programa de
+licenciamiento.
 
 En tanto, el trabajo necesario para lograr la paravirtualización de
 un sistema operativo libre, como Linux,
@@ -535,7 +538,7 @@ interes.
 ** Paravirtualización de dispositivos
 
 Las ideas derivadas de la paravirtualización pueden emplearse también
-bajo entornos basados en virtualización plena: Si el sistema operativo
+bajo entornos basados en virtualización plena: si el sistema operativo
 está estructurado de una forma modular (sin que esto necesariamente
 signifique que es un sistema /microkernel/, sino que permita la carga
 dinámica de controladores o /drivers/ para el hardware, como
@@ -547,11 +550,11 @@ De esta manera, si bien es posible ejecutar un sistema operativo /sin
 modificaciones/ que espera ser ejecutado en hardware real, los
 dispositivos que típicamente generan más actividad de entrada y
 salida[fn:: Medios de almacenamiento, interfaz de red y salida de
-video] pueden ser atendidos por drivers paravirtuales. Por supuesto, varios
-aspectos que son parte del núcleo /duro/ del sistema, como la
-administración de memoria o el manejo de interrupciones (incluyendo al
-temporizador) tendrán que seguirse manejando a través de una
-emulación, aunque mucho más delgada.
+video.] pueden ser atendidos por drivers paravirtuales. Por supuesto,
+varios aspectos que son parte del núcleo /duro/ del sistema, como la
+administración de memoria o el manejo de interrupciones (incluyendo el
+temporizador) tendrán que seguirse manejando mediante una emulación,
+aunque mucho más delgada.
 
 Según mediciones empíricas realizadas en 2007 por Qumranet (quienes
 liderearon el desarrollo del módulo de virtualización asistido por
@@ -571,7 +574,7 @@ Una estrategia completamente distinta para la creación de máquinas
 virtuales es la de /contenedores/. A diferencia de emulación,
 virtualización asistida por hardware y paravirtualización, al emplear
 contenedores /sólo se ejecuta un sistema operativo/, que es el mismo
-para los sistemas anfitrión y huesped. El anfitrión implementará una
+para los sistemas anfitrión y huésped. El anfitrión implementará una
 serie de medidas para /aumentar el grado de separación/ que mantiene
 entre procesos, agregando la noción de /contextos/ o /grupos/ que
 se describirán en breve. Dado que el sistema operativo es el
@@ -582,12 +585,12 @@ Podría presentarse un símil: las tecnologías antes descritas de
 virtualización implementan /hardware virtual/ para cada sistema
 operativo, mientras que los contenedores más bien presentan un
 /sistema operativo virtual/ para el conjunto de procesos que definen
-el comportamiento de cada máquina virtual — muchos autores presentan a
-la virtualización por contenedores bajo el nombre /virtualización a
-nivel sistema operativo/. Y si bien el efecto a ojos del usuario
-puede ser comparable, este método más que una multiplexación de
-máquinas virtuales sobre hardware real opera a través de
-restricciones adicionales sobre los procesos de usuario.
+el comportamiento de cada máquina virtual —muchos autores presentan la
+virtualización por contenedores bajo el nombre /virtualización a nivel
+sistema operativo/. Y si bien el efecto a ojos del usuario puede ser
+comparable, este método más que una multiplexación de máquinas
+virtuales sobre hardware real opera mediante restricciones adicionales
+sobre los procesos de usuario.
 
 Al operar a un nivel más alto, un contenedor presenta algunas
 limitantes adicionales (principalmente, se pierde la flexibilidad de
@@ -611,7 +614,7 @@ ruta absoluta, el archivo que se abrirá será =/usr/local/boot.img=
 Ahora bien, =chroot()= no es (ni busca ser) un verdadero aislamiento,
 sólo proporciona un inicio[fn:: Como referencia a por qué no es un
 verdadero aislamiento, puede referirse al artículo /[[http://www.bpfh.net/computing/docs/chroot-break.html][How to break out
-of a chroot() jail]]/ (Simes, 2002)] — pero conforme más usuarios
+of a chroot() jail]]/ (Simes, 2002)] —pero conforme más usuarios
 comenzaban a utilizarlo para servicios en producción, se hizo claro
 que resultaría útil ampliar la conveniencia de =chroot()= a un
 verdadero aislamiento.
@@ -625,16 +628,15 @@ en los distintos sistemas Unix. Hay incluso un producto propietario,
 el /Parallels Virtuozzo Containers/, que implementa esta
 funcionalidad para sistemas Windows.
 
-Un punto importante a mencionar cuando se habla  de contenedores es que
+Un punto importante a mencionar cuando se habla de contenedores es que
 se pierde buena parte de la universalidad mencionada en las secciones
 anteriores. Si bien las diferentes implementaciones comparten
-principios básicos de operación, la manera en que implementan la
-separación e incluso la nomenclatura que emplean difieren
-fuertemente.
+principios básicos de operación, la manera en que logran la separación
+e incluso la nomenclatura que emplean difieren fuertemente.
 
 El núcleo del sistema crea un /grupo/ para cada /contenedor/ (también
 conocido como /contexto de seguridad/), aislándolos entre sí por lo
-menos en los siguientes áreas:
+menos en las siguientes áreas:
 
 - Tablas de procesos :: Los procesos en un sistema Unix se presentan
      como un árbol, en cuya raíz está siempre el proceso 1,
@@ -655,12 +657,12 @@ menos en los siguientes áreas:
      /física/ resulta engañosa.] Claro está, cada una de ellas
      recibirá una diferente dirección *ip*, y el núcleo ruteará e
      incluso aplicará reglas de firewall entre ellas.
-- Dispositivos de hardware :: Normalmente los sistemas huesped no tienen
-     acceso directo a ningún dispositivo en hardware. En algunos
-     casos, el acceso a dispositivos será multiplexado, y en otros, un
-     dispositivo puede especificarse a través de su
+- Dispositivos de hardware :: Normalmente los sistemas huésped no
+     tienen acceso directo a ningún dispositivo en hardware. En
+     algunos casos, el acceso a dispositivos será multiplexado y, en
+     otros, un dispositivo puede especificarse por medio de su
      configuración. Cabe mencionar que, dado que esta multiplexión no
-     requiere /emulación/ sino que únicamente una cuidadosa
+     requiere /emulación/, sino únicamente una cuidadosa
      /planificación/, no resulta tan oneroso como la emulación.
 - Límites en consumo de recursos :: Casi todas las implementaciones
      permiten asignar cotas máximas para el consumo de recursos
@@ -674,14 +676,13 @@ menos en los siguientes áreas:
 Una de las principales características que atrae a muchos
 administradores a elegir la virtualización por medio de contenedores
 es un consumo de recursos óptimo: bajo los demás métodos de
-virtualización (y particularmente al hablar de emulación y de
+virtualización (y, particularmente, al hablar de emulación y de
 virtualización asistida por hardware), una máquina virtual siempre
 ocupará algunos recursos, así esté inactiva. El hipervisor tendrá que
 estar notificando a los temporizadores, enviando los paquetes de red
-recibidos, etcétera. Bajo un esquema de contenedores, una máquina
-virtual que no tiene trabajo se convierte sencillamente en un grupo
-de procesos /dormidos/, probables candidatos a ser /paginados/ a
-disco.
+recibidos, etc. Bajo un esquema de contenedores, una máquina virtual
+que no tiene trabajo se convierte sencillamente en un grupo de
+procesos /dormidos/, probables candidatos a ser /paginados/ a disco.
 
 * Ejercicios
 
@@ -698,25 +699,25 @@ disco.
    de ellas es verdadera o falsa, sustentando con argumentos su
    conclusión.
 
-   - La emulación implica naturalmente el implementar un intérprete
-     del código que fue originado para una arquitectura distinta. Este
+   - La emulación implica naturalmente implementar un intérprete del
+     código que fue originado para una arquitectura distinta. Este
      proceso necesariamente tiene un alto costo en tiempo de cómputo,
      y una infraestructura basada en emulación siempre será por lo
      menos un órden de magnitud más lenta que lo que resultaría de su
-     ejecución nativa. La popularización de la emulación deriva por un
-     lado de la diferencia de poder de cómputo entre las arquitecturas
-     de escritorio y las embebidas, y por el otro de la conveniencia
-     de contar con código que pueda ser transportado fácilmente
-     (/write once, run anywhere/).
+     ejecución nativa. La popularización de la emulación deriva, por
+     un lado, de la diferencia de poder de cómputo entre las
+     arquitecturas de escritorio y las embebidas y, por el otro, de la
+     conveniencia de contar con código que pueda ser transportado
+     fácilmente (/write once, run anywhere/).
 
    - La /Ley de Moore/ (presentada en la sección
      \ref{HW_multiprocesamiento}) ha llevado a una cada vez mayor
      integración y ha llevado a que el desarrollo del cómputo por fin
      cruzara obligadamente por el multiprocesamiento, el desarrollo de
      código paralelizable es mucho más complejo para los
-     desarrolladores de software; casi todo el material de la presente
-     obra deriva del cuestionamiento de cómo compartir recursos entre
-     procesos rivales.
+     programadores; casi todo el material de la presente obra deriva
+     del cuestionamiento de cómo compartir recursos entre procesos
+     rivales.
 
      En este sentido, una de las grandes ventajas que ofrece la
      virtualización es que, al separar las aplicaciones en máquinas
@@ -727,13 +728,13 @@ disco.
 3. De los recursos que administra un sistema operativo, algunos pueden
    ser fácilmente compartidos, en tanto que otros requieren un uso
    exclusivo para cada una de las máquinas virtuales. ¿Cuáles
-   entrarían en cada una de estas clases? ¿Qué estrategia podría
+   entrarían en cada una de estas clases, qué estrategia podría
    sugerir para compartir un dispositivo cuya naturaleza fuera de uso
    exclusivo?
 
-4. ¿Cuál de las siguientes afirmaciones describe a la principal
-   diferencia entre la virtualización asistida por hardware y la
-   paravirtualización?
+4. Identifique cuál de las siguientes afirmaciones describe la
+   principal diferencia entre la virtualización asistida por hardware
+   y la paravirtualización
 
    1. La virtualización asistida por hardware requiere de electrónica
       específica para ser empleada, mientras que la paravirtualización
@@ -759,8 +760,8 @@ disco.
    2. Se mantiene completamente invisible ante la perspectiva del
       sistema huésped.
 
-   3. Es completamente transparente: Un hipervisor debe poder correr
-      otros hipervisores dentro de sí.
+   3. Es completamente transparente: un hipervisor debe poder correr
+      otros dentro de sí.
 
    4. Cubre algunas de las tareas que realiza normalmente el sistema
       operativo.
@@ -805,10 +806,10 @@ disco.
   Un ejemplo de sistema mínimo fue presentado en septiembre de 2013:
   #+latex: \textbf{os}v.
   #+html: <b>os</b>v.
-  Busca /no implementar/ los subsistemas innecesarios de un Linux
-  tradicional, sino que únicamente permitir la ejecución de varios de
-  los procesos más comunes en una máquina virtual. Pueden buscar al
-  respecto:
+  Este sistema busca /no implementar/ los subsistemas innecesarios de
+  un Linux tradicional, sino únicamente permitir la ejecución de
+  varios de los procesos más comunes en una máquina virtual. Pueden
+  buscar al respecto:
 
   - [[http://linux.slashdot.org/story/13/09/17/2113211/new-operating-system-seeks-to-replace-linux-in-the-cloud][Anuncio en Slashdot: New operating system seeks to replace Linux
     in the cloud]]
@@ -820,20 +821,20 @@ disco.
     en GitHub]].
 
   Algunos puntos que podrían desarrollar:
-  - ¿Qué gana
+  - Qué gana
     #+latex: \textbf{os}v
     #+html: <b>os</b>v
-    y otros proyectos por el estilo? ¿Qué pierden?
-  - ¿Cómo ha avanzado la adopción de estas ideas?
-  - ¿Qué le agrega o quita a la complejidad de la administración de
-    sistemas?
+    y otros proyectos por el estilo, y qué pierden.
+  - Cómo ha avanzado la adopción de estas ideas.
+  - Qué le agrega o quita a la complejidad de la administración de
+    sistemas.
 
 ** Lecturas relacionadas
 - /Bringing Virtualization to the x86 Architecture with the Original
   VMware Workstation/
   #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2382553.2382554}
   #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2382553.2382554">https://dl.acm.org/citation.cfm?doid=2382553.2382554</a><br/>
-  Bugnion et. al. (2012); *acm* Transactions on Computer Systems
+  Bugnion et al. (2012); *acm* Transactions on Computer Systems
 - /Performance Evaluation of Intel EPT Hardware Assist/
   #+latex: \otrorec{http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf}
   #+html: <br/><a href="http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf">http://www.vmware.com/pdf/Perf_ESX_Intel-EPT-eval.pdf</a><br/>
@@ -845,7 +846,7 @@ disco.
 - /Xen and the Art of Virtualization/
   #+latex: \otrorec{http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf}
   #+html: <br/><a href="http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf">http://www.cl.cam.ac.uk/netos/papers/2003-xensosp.pdf</a><br/>
-  Paul Barham, Boris Dragovic et. al. (2003)
+  Paul Barham, Boris Dragovic et al. (2003)
 - /KVM: The Linux Virtual Machine Monitor/
   #+latex: \otrorec{http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf}
   #+html: <br/><a href="http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf">http://kernel.org/doc/ols/2007/ols2007v1-pages-225-230.pdf</a><br/>

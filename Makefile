@@ -87,6 +87,7 @@ libro_index:
 	done
 	# No hay muchas tablas, este listado no tiene tanto sentido
 	# echo "#+latex: \listoftables" >> $(libro)
+	echo '#+latex: \\addcontentsline{toc}{chapter}{Índice de figuras}' >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
 
 libro_tex: libro_index

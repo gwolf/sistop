@@ -89,6 +89,7 @@ libro_index:
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo '#+latex: \\addcontentsline{toc}{chapter}{Índice de figuras}' >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
+	echo '#+latex: \printbibliography' >> $(libro)
 
 libro_tex: libro_index
 	# Si org-mode se queja de no tener definido "book" en
@@ -131,8 +132,12 @@ libro_latin_tex: libro_tex
 libro_latin_pdf: fig libro_latin_tex
 	- cd $(srcdir) ; echo q | pdflatex $(libro_latin_tex) ; echo q | pdflatex $(libro_latin_tex)
 
-libro_pdf: fig libro_index libro_tex
+libro_pdf: fig libro_index libro_tex biblio
 	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
+
+biblio: libro_tex
+	cd $(srcdir) && pdflatex sistemas_operativos.tex && bibtex sistemas_operativos
+
 
 beamer: fig
 	echo '#+TITLE: SISTEMAS OPERATIVOS — Láminas de clase' > $(idx_laminas)

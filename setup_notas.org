@@ -6,7 +6,6 @@
 #+INFOJS_OPT: tdepth:2 sdepth:2 ftoc:nil ltoc:nil
 #+LINK_UP: index.html
 #+LINK_HOME: index.html
-#+BIBLIOGRAPHY: /home/gwolf/vcs/doc_gwolf/bib/gwolf.bib apalike limit:t
 #+LATEX_HEADER: \usepackage[spanish]{babel}
 #+LATEX_HEADER: \usepackage{subfigure}
 #+LATEX_HEADER: \usepackage{color}
@@ -17,6 +16,9 @@
 #+LATEX_HEADER: \renewcommand{\ttdefault}{pcr} \lstset{basicstyle=\ttfamily\small\bfseries, frame=shadowbox, showstringspaces=false, rulesepcolor=\color{shadow}, keywordstyle=\color{keyword}, stringstyle=\color{string}, identifierstyle=\color{identifier}, commentstyle=\mdseries\textit, inputencoding=utf8, extendedchars=true, breaklines=true, breakatwhitespace=true, breakautoindent=true, numbers=left, numberstyle=\ttfamily\footnotesize\textit, framexleftmargin=7mm}
 #+LATEX_HEADER: \hypersetup{unicode=true, pdftex=true,plainpages=false,colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black}
 #+LATEX_HEADER: \lstset{ extendedchars=true, literate={á}{{\'a}}1 {é}{{\~e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1 {Á}{{\'A}}1 {É}{{\~E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1 {¡}{{!`}}1 {¿}{{?`}}1 }
+#+latex_header: \usepackage[bibencoding=utf8, style=authoryear, backref=true, backrefstyle=two, block=none]{biblatex}
+#+latex_header: \ExecuteBibliographyOptions{ autocite=inline, sortcites=true, sorting=nyt, labelyear=true, uniquename=true}
+#+latex_header: \addbibresource{sistemas_operativos.bib}
 #+LATEX_HEADER: \newcommand{\otrorec}[1]{ \\ {\small \url{#1}} \\ }
 #+LATEX_HEADER: \renewcommand{\textbf}[1]{{\textsc{#1}}}
 #+LATEX_HEADER: \let\perc\%

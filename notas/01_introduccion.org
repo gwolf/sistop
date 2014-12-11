@@ -118,13 +118,13 @@ revisar brevemente su desarrollo histórico. Esto no sólo permitirá
 comprender por qué fueron apareciendo determinadas características y
 patrones de diseño que se siguen empleando décadas más tarde, sino
 (como resulta particularmente bien ejemplificado en el discurso de
-recepción del premio Turing de Fernando Corbató en 1990, /[[http://dl.acm.org/citation.cfm?id=1283947][On building
-systems that will fail]]/), adecuar un sistema a un entorno
-cambiante, por mejor diseñado que éste estuviera, lleva casi
-inevitablemente a abrir espacios de comportamiento no previsto —el
-espacio más propicio para que florezcan los fallos. Conocer los
-factores que motivaron a los distintos desarrollos puede ayudar a
-prever y prevenir problemas.
+recepción del premio Turing de Fernando Corbató, /Acerca de la
+construcción de sistemas que fallarán/, \parencite{Corbato90}),
+adecuar un sistema a un entorno cambiante, por mejor diseñado que éste
+estuviera, lleva casi inevitablemente a abrir espacios de
+comportamiento no previsto —el espacio más propicio para que florezcan
+los fallos. Conocer los factores que motivaron a los distintos
+desarrollos puede ayudar a prever y prevenir problemas.
 
 ** Proceso por lotes (/batch processing/)
 
@@ -626,10 +626,10 @@ caber en el bolsillo de una camisa. Sin embargo, a este segmento deben
 agregarse las /tabletas/. La historia de su desarrollo y adopción se
 parecen a la aquí presentada respecto a la interfaz de los teléfonos
 inteligentes (e incluso, llevada más al extremo): Es posible encontrar
-antecedentes desde 1915,[fn:: El registro de [[http://www.freepatentsonline.com/1117184.pdf][patente $1~117~184$ de
-los Estados Unidos]] se refiere a una máquina para reconocer los
-caracteres escritos en una hoja] numerosas descripciones literarias en
-la ciencia ficción a lo largo del siglo *xx*, y varias
+antecedentes desde 1915,[fn:: El registro de patente $1~117~184$ de
+los Estados Unidos \parencite{OCRPatent} se refiere a una máquina para
+reconocer los caracteres escritos en una hoja] numerosas descripciones
+literarias en la ciencia ficción a lo largo del siglo *xx*, y varias
 implementaciones funcionales desde inicios de la década de los
 noventa. Sin embargo, las tabletas parecieron por largos años estar
 destinadas a nunca conquistar al mercado, hasta el año 2010, en que
@@ -1183,26 +1183,10 @@ núcleo puede reiniciarlo o incluso reemplazarlo.
 
 
 ** Lecturas relacionadas
-- /On building systems that will fail/
-  #+latex: \otrorec{http://dl.acm.org/citation.cfm?id=1283947}
-  #+html: <br/><a href="http://dl.acm.org/citation.cfm?id=1283947">http://dl.acm.org/citation.cfm?id=1283947</a><br/>
-  Fernando J. Corbató
-  (1990); *acm* Turing award lectures
-- /A Brief History of Computer Operating Systems/
-  #+latex: \otrorec{http://cs.gordon.edu/courses/cs322/lectures/history.html}
-  #+html: <br/><a href="http://cs.gordon.edu/courses/cs322/lectures/history.html">http://cs.gordon.edu/courses/cs322/lectures/history.html</a><br/>
-  R. Bjork (2000); Gordon College
-- /Making EPERM friendlier/
-  #+latex: \otrorec{http://lwn.net/Articles/532771/}
-  #+html: <br/><a href="http://lwn.net/Articles/532771/">http://lwn.net/Articles/532771/</a><br/>
-  Michael Kerrisk (2013); Linux Weekly News: explica algunas de las
-  limitantes de la semántica *posix* como la falta de granularidad en
-  el reporte de mensajes de error (=EPERM=) y =errno= global por hilo.
-- /Biculturalism/
-  #+latex: \otrorec{http://www.joelonsoftware.com/articles/Biculturalism.html}
-  #+html: <br/><a href="http://www.joelonsoftware.com/articles/Biculturalism.html">http://www.joelonsoftware.com/articles/Biculturalism.html</a><br/>
-  Joel Spolsky (2003); Joel on Software
-- /The future of the Internet and how to stop it/
-  #+latex: \otrorec{http://futureoftheinternet.org/}
-  #+html: <br/><a href="http://futureoftheinternet.org/">http://futureoftheinternet.org/</a><br/>
-  Jonathan Zittrain (2008); Yale University Press
+- \fullcite{Corbato90}
+- \fullcite{BriefHistory}
+- \fullcite{EPERM} explica algunas de las limitantes de la semántica
+  *posix* como la falta de granularidad en el reporte de mensajes de
+  error (=EPERM=) y =errno= global por hilo.
+- \fullcite{SpolskyBiculturalism}
+- \fullcite{Zittrain08}

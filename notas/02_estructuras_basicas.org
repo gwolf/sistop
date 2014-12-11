@@ -789,11 +789,12 @@ sólo.
 #+attr_latex: width=0.5\textwidth
 #+attr_html: height=415
 #+label: HW_moore_orig
-#+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por 10 años.
+#+caption: La /Ley de Moore/: figura publicada en el artículo de 1965, prediciendo la miniaturización por 10 años.
 [[./img/moore_orig.png]]
 
 Esto cambió hacia el 2005. Tras más de 40 años de cumplirse, el modelo
-conocido como la /Ley de Moore/, enunciando que cada dos años la
+conocido como la /Ley de Moore/ \parencite{Moore65}, enunciando que
+cada dos años la
 densidad de transistores por circuito integrado se duplicaría,
 llevaba a velocidades de *cpu* que, en el ámbito comercial, excedían los
 3 GHz, lo cual presentaba ya problemas serios de calentamiento. Además,
@@ -919,13 +920,12 @@ Al programar una aplicación de forma que aproveche al paralelismo
 sus /porciones paralelizables/) ¿cuál es el incremento al rendimiento
 que se puede esperar?
 
-En 1967, Gene Amdahl presentó un artículo[fn:: [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf]["Validity of the Single
-Processor Approach to Achieving Large Scale Computing Capabilities"]],
-Amdahl, 1967] en el que indica los límites máximos en que resultará la
-programación multiprocesada ante un determinado programa: parte de la
-observación de que aproximadamente 40% del tiempo de ejecución de
-un programa se dedicaba a la administración y el mantenimiento de los
-datos, esto es, a tareas secuenciales.
+En 1967, Gene Amdahl presentó un artículo en el que indica los límites
+máximos en que resultará la programación multiprocesada ante un
+determinado programa \parencite{amdahl1967}: parte de la observación
+de que aproximadamente 40% del tiempo de ejecución de un programa se
+dedicaba a la administración y el mantenimiento de los datos, esto es,
+a tareas secuenciales.
 
 Si únicamente el 60% del tiempo de procesamiento es susceptible,
 pues, de ser paralelizado, el rendimiento general del sistema no se
@@ -1034,15 +1034,14 @@ Ley de Amdahl resultó (como ya se mencionó) en varias décadas de mucho
 mayor atención a la miniaturización y aumento de reloj, y no al
 multiprocesamiento.
 
-Fue hasta 1988 que John Gustafson publicó una observación a esta
-ley[fn:: [[http://www.johngustafson.net/pubs/pub13/amdahl.htm]["Reevaluating Amdahl's Law"]], John L. Gustafson, "Communications
-of the *acm*", vol. 31, mayo de 1988] que, si bien no la invalida,
-permite verla bajo una luz completamente diferente y mucho más
-optimista. Gustafson publicó este artículo corto tras haber obtenido
-ganancias superiores a $1~020$ en una supercomputadora con $1~024$
-procesadores: un incremento casi perfectamente lineal al número de
-procesadores. Sí, respondiendo a una carga altamente optimizada, pero
-no por eso menos digna de análisis.
+Fue hasta 1988 que John Gustafson publicó una observación a esta ley
+\parencite{Gustafson1988} que, si bien no la invalida, permite verla
+bajo una luz completamente diferente y mucho más optimista. Gustafson
+publicó este artículo corto tras haber obtenido ganancias superiores a
+$1~020$ en una supercomputadora con $1~024$ procesadores: un
+incremento casi perfectamente lineal al número de procesadores. Sí,
+respondiendo a una carga altamente optimizada, pero no por eso menos
+digna de análisis.
 
 El argumento de Gustafson es que al aumentar el número de
 procesadores, típicamente se verá una modificación /al problema
@@ -1162,38 +1161,21 @@ de la utilidad misma del paralelismo masivo.
   únicamente los sistemas operativos /aprobados/ o /firmados/ por el
   fabricante.
 
-  Como lectura para este tema resultan referencia obligada los diversos
-  artículos en el [[http://mjg59.dreamwidth.org/][blog del desarrollador Matthew Garrett]],
-  particularmente entre septiembre del 2011 y mayo del 2013. Garrett
-  lidereó la alternativa que al día de hoy más se usa para poder
-  iniciar Linux en un sistema bajo *tpm*; tiene /decenas/ de artículos
-  desde muy descriptivos y generales hasta técnicos y específicos a
-  puntos muy particulares.
+  Como lectura para este tema resultan referencia obligada los
+  diversos artículos en el /blog/ del desarrollador Matthew Garrett[fn::
+  [[http://mjg59.dreamwidth.org/]]], particularmente entre septiembre del
+  2011 y mayo del 2013. Garrett lidereó la alternativa que al día de
+  hoy más se usa para poder iniciar Linux en un sistema bajo *tpm*;
+  tiene /decenas/ de artículos desde muy descriptivos y generales
+  hasta técnicos y específicos a puntos muy particulares.
 
-  Otro artículo interesante al respecto es el de Jonathan Corbet
-  (septiembre 2013): [[https://lwn.net/Articles/566169/][ *bsd*-style securelevel comes to Linux —
-  Again]]. Explica con bastante detalle cómo es que se plantea
-  implementar el nivel de protección que busca ofrecer *tpm* desde un
-  sistema Linux.
+  /Linux Weekly News/ publica otro artículo interesante al respecto
+  \parencite{Securelevel}. Explica con bastante detalle cómo es que se
+  plantea implementar el nivel de protección que busca ofrecer *tpm*
+  desde un sistema Linux.
 
 ** Lecturas relacionadas
-- /Can programming be liberated from the von Neumann style?: a
-  functional style and its algebra of programs/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=359576.359579}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=359576.359579">https://dl.acm.org/citation.cfm?doid=359576.359579</a><br/>
-  John Backus, 1978; Communications of the *acm*
-
-- /Cramming more components onto integrated circuits/
-  #+latex: \otrorec{http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf}
-  #+html: <br/><a href="http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf">http://cs.utexas.edu/~fussell/courses/cs352h/papers/moore.pdf</a><br/>
-  Gordon E. Moore, 1965; Proceedings of the *ieee*
-
-- /An Introduction to the Intel® QuickPath Interconnect/
-  #+latex: \otrorec{http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html}
-  #+html: <br/><a href="http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html">http://www.intel.com/content/www/us/en/io/quickpath-technology/quick-path-interconnect-introduction-paper.html</a><br/>
-  Intel, 2009 (Document Number: 320412-001US)
-
-- /Intel® Desktop Board D875PBZ Technical Product Specification/
-  #+latex: \otrorec{http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf}
-  #+html: <br/><a href="http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf">http://downloadmirror.intel.com/15199/eng/D875PBZ_TechProdSpec.pdf</a><br/>
-  (Intel, 2003)
+- \fullcite{Backus78}
+- \fullcite{Moore65}
+- \fullcite{IntelInterconnect}
+- \fullcite{IntelDesktopBoard}

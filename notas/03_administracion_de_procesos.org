@@ -309,8 +309,8 @@ planteados como justificación del desarrollo de las estructuras de
 control presentadas o de nuevos paradigmas de concurrencia y muchos
 son aun objeto de debate e investigación.
 
-Para profundizar más en este tema, se recomienda el libro [[http://greenteapress.com/semaphores/][The little
-book of semaphores]] de Allen Downey (2008).  En este libro (de libre
+Para profundizar más en este tema, se recomienda el libro The little
+book of semaphores \parencite{Downey2008}.  En este libro (de libre
 descarga) se encuentran muchos ejemplos que ilustran el uso de
 semáforos, no sólo para resolver problemas de sincronización, sino como
 un mecanismo simple de comunicación entre procesos. También se
@@ -481,8 +481,8 @@ de las actualizaciones múltiples/.
 
   A modo de ilustración de la gravedad del problema, éstos son algunos
   valores para el resultado final de la variable =cuenta= cuando se
-  ejecuta el programa anterior en Pascal-FC[fn::
-  http://www-users.cs.york.ac.uk/burns/pf.html]: 25 29 31 20 21 26 27
+  ejecuta el programa anterior en Pascal-FC
+  \parencites{Burns1993}{PascalFC}: 25 29 31 20 21 26 27
   18 31 35. Nótese que incluso uno de los valores es menor que /20/
   (que es lo mínimo que cuenta cada torniquete). Es un ejercicio
   interesante pensar qué secuencia de eventos podría producir tal
@@ -822,9 +822,9 @@ Cabe apuntar las siguientes notas sobre la solución de Peterson:
 
 		   Para mayores detalles acerca de las razones,
                    ventajas y desventajas del uso de /spinlocks/ en
-                   sistemas operativos reales, referirse a [[http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html][Spin Locks
-                   & Other Forms of Mutual Exclusion]] (Theodore
-                   P. Baker 2010)
+                   sistemas operativos reales, referirse al artículo
+                   /Spin Locks & Other Forms of Mutual Exclusion/
+                   \parencite{Baker2010}.
 
 
 - Solución para más procesos :: El algoritmo de Peterson sirve
@@ -1937,10 +1937,11 @@ diferencia de lo que ocurre con los semáforos).
 
 Aquí se presenta, a modo de ilustración, la resolución del problema de
 la /cena de los filósofos/ en C.[fn:: Implementación basada en el
-[[http://www.cs.fsu.edu/~baker/realtime/restricted/notes/philos.html][ejemplo de Ted Baker]], sobre la solución propuesta por Tanenbaum.] Esto
-demuestra, además, que si bien se utiliza semántica de orientación a
-objetos, no sólo los lenguajes clásicamente relacionados con la
-programación orientada a objetos permiten emplear monitores.
+ejemplo sobre la solución propuesta por Tanenbaum
+\parencite{Baker2006}.] Esto demuestra, además, que si bien se utiliza
+semántica de orientación a objetos, no sólo los lenguajes clásicamente
+relacionados con la programación orientada a objetos permiten emplear
+monitores.
 
 #+begin_src C
 /* Implementacion para cinco filósofos */
@@ -2193,7 +2194,7 @@ que las que controlan más la asignación de recursos,
 [[./img/dot/deadlocks_conserv_lib.png]]
 
 Las líneas principales que describen las estrategias para enfrentar
-situaciones de bloqueo (La Red, p. 188) son:
+situaciones de bloqueo \parencite[188]{LaRed2001} son:
 
 - Prevención :: Se centra en modelar el comportamiento del sistema
 		para que /elimine toda posibilidad/ de que se produzca
@@ -2597,7 +2598,7 @@ puts "La secuencia segura encontrada es: %s" % s
 Hay refinamientos sobre este algoritmo que logran resultados
 similares, reduciendo su costo de ejecución (se debe recordar que es
 un procedimiento que puede ser llamado con muy alta frecuencia), como
-el desarrollado por Habermann (Finkel, p. 136).
+el desarrollado por Habermann \parencite[136]{Finkel1988}.
 
 El algoritmo del banquero es conservador, dado que evita
 entrar en un estado inseguro a pesar de que dicho estado no lleve con
@@ -3024,36 +3025,14 @@ haya opción /razonable/.
   compulsivos/), hay muchos otros casos ampliamente analizados.
 
   El libro libremente redistribuible /The little book of semaphores/
-  (Allan Downey, 2008) tiene más de 20 problemas de sincronización,
+  \parencite{Downey2008} tiene más de 20 problemas de sincronización,
   planteados junto con su implementación empleando semáforos en el
   lenguaje Python. Profundizar en alguno de estos problemas
   adicionales ayudará al aprendizaje de los temas expuestos.
 
 ** Lecturas relacionadas
-- /The little book of semaphores/
-  #+latex: \otrorec{http://greenteapress.com/semaphores}
-  #+html: <br/><a href="http://greenteapress.com/semaphores">http://greenteapress.com/semaphores</a><br/>
-  Allan Downey (2008); Green Tea Press
-- /Tutorial de hilos de Perl/
-  #+latex: \otrorec{http://perldoc.perl.org/perlthrtut.html}
-  #+html: <br/><a href="http://perldoc.perl.org/perlthrtut.html">http://perldoc.perl.org/perlthrtut.html</a><br/>
-  John Orwant (1998); The Perl Journal
-- /Python higher level threading interface/
-  #+latex: \otrorec{http://docs.python.org/2/library/threading.html}
-  #+html: <br/><a href="http://docs.python.org/2/library/threading.html">http://docs.python.org/2/library/threading.html</a><br/>
-  Python Software Foundation (1990-2014); Python 2.7.6 Documentation
-- /Spin Locks & Other Forms of Mutual Exclusion/
-  #+latex:  \otrorec{http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html}
-  #+html: <br/><a href="http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html">http://www.cs.fsu.edu/~baker/devices/notes/spinlock.html</a><br/>
-  Theodore P. Baker (2010); Florida State University
-- /Dining philosophers revisited/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=101091}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=101091">https://dl.acm.org/citation.cfm?id=101091</a><br/>
-  Armando R. Gingras (1990), *acm sigcse* Bulletin
-
-# Me queda pendiente:
-# 
-# Writing Papers Using org-mode
-# http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
-# \bibliographystyle{plain}
-# \bibliography{refs}{}
+- \fullcite{Downey2008}
+- \fullcite{Perlthrtut}
+- \fullcite{PythonThreads}
+- \fullcite{Baker2010}
+- \fullcite{Gingras1990}

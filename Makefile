@@ -89,6 +89,7 @@ libro_index:
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo '#+latex: \\addcontentsline{toc}{chapter}{Índice de figuras}' >> $(libro)
 	echo "#+latex: \listoffigures" >> $(libro)
+	echo '#+latex: \\vfill \\eject \\addcontentsline{toc}{chapter}{Bibliografía}' >> $(libro)
 	echo '#+latex: \printbibliography' >> $(libro)
 
 libro_tex: libro_index
@@ -136,7 +137,8 @@ libro_pdf: fig libro_index libro_tex biblio
 	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
 
 biblio: libro_tex
-	cd $(srcdir) && pdflatex sistemas_operativos.tex && bibtex sistemas_operativos
+	rm -f $(srcdir)/sistemas_operativos-blx.bib $(srcdir)/sistemas_operativos.{aux,bbl,blg,lof,log,toc}
+	cd $(srcdir) && pdflatex sistemas_operativos.tex && (biber sistemas_operativos || bibtex sistemas_operativos)
 
 
 beamer: fig

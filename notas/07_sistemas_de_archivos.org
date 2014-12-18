@@ -702,8 +702,8 @@ en el cual está almacenado debe mantenerse en memoria. En el caso de
 la implementación de *zfs* en
 #+latex: Free\textbf{bsd},
 #+html: Free<b>bsd</b>,
-[[http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html][la documentación sugiere dedicar 5 *gb* de memoria por cada *tb* de
-almacenamiento (0.5% de la capacidad total)]].
+la documentación sugiere dedicar 5 *gb* de memoria por cada *tb* de
+almacenamiento (0.5% de la capacidad total) \parencite{FreeBSDZFS}.
 
 ** Sistemas de archivos virtuales
 
@@ -730,12 +730,12 @@ dispositivos, =/dev=) se han convertido en virtuales.
 # <<FS_proc>>
 
 En junio 1984, en el congreso de desarrolladores de sistemas Unix del
-grupo *usenix*, T. J. Killian presentó el artículo "/[[http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf][Processes as
-files]]/". Killian implementó un sistema de archivos virtual para ser
-montado en el directorio =/proc= del sistema que, en vez de
-representar un mapa de bloques, presentaba una ventana a la lista de
-procesos en ejecución en el sistema. El uso de =/proc= fue incorporado
-a prácticamente todos los sistemas tipo Unix.
+grupo *usenix*, T. J. Killian presentó el artículo "/Processes as
+files/" \parencite{Killian84}. Killian implementó un sistema de
+archivos virtual para ser montado en el directorio =/proc= del sistema
+que, en vez de representar un mapa de bloques, presentaba una ventana
+a la lista de procesos en ejecución en el sistema. El uso de =/proc=
+fue incorporado a prácticamente todos los sistemas tipo Unix.
 
 Esta idea ha avanzado y madurado, y al día de hoy es una herramienta
 fundamental para la administración de sistemas. Si bien la propuesta
@@ -1027,7 +1027,7 @@ en el disco. Claro está, la tabla puede apuntar a varios /clusters/
 adyacentes, pero el sistema de archivos mismo no hace nada para que
 así sea.
 
-#+label: FS_tabla_fat
+#+label: FS_img_tabla_fat
 #+caption: Ejemplo de entradas en la tabla de asignación de archivos en *fat32*.
 #+attr_latex: width=\textwidth
 #+attr_html: width="628" height="284"
@@ -1477,10 +1477,7 @@ sistemas de archivos resurja.
 ** Lecturas relacionadas
 # <<FS_otros_recursos>>
 
-- /Practical File System Design/
-  #+latex: \otrorec{http://www.nobius.org/~dbg/}
-  #+html: <br/><a href="http://www.nobius.org/~dbg/">http://www.nobius.org/~dbg/</a><br/>
-  Dominic Giampaolo (1999). El autor fue parte del equipo que
+- \fullcite{Giampaolo1999}. El autor fue parte del equipo que
   implementó el sistema operativo
   #+latex: Be\textbf{os},
   #+html: Be<b>os</b>,
@@ -1490,94 +1487,24 @@ sistemas de archivos resurja.
   #+latex: Be\textbf{os} (así como Be\textbf{fs},
   #+html: Be<b>os</b> (así como Be<b>fs</b>,
   el sistema que describe) ya no se utilizan. Este libro, descargable
-  desde el sitio Web del autor, tiene una muy buena descripción de
+  desde el sitio Web de su autor, tiene una muy buena descripción de
   varios sistemas de archivos, y aborda a profundidad técnicas que
   hace 15 años eran verdaderamente novedosas y hoy forman parte de
   casi todos los sistemas de archivos con uso amplio, e incluso
   algunas que no se han logrado implementar y que BeFS sí ofrecía.
-
-- /Processes as Files/
-  #+latex: \otrorec{http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf}
-  #+html: <br/><a href="http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf">http://lucasvr.gobolinux.org/etc/Killian84-Procfs-USENIX.pdf</a><br/>
-  T. J. Killian (1984)
-
-- /A method for the construction of Minimum-Redundancy Codes/
-  #+latex: \otrorec{http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf}
-  #+html: <br/><a href="http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf">http://compression.graphicon.ru/download/articles/huff/huffman_1952_minimum-redundancy-codes.pdf</a><br/>
-  David A. Huffman (1952); Proceedings of the I. R. E
-
-- /FAT Root Directory Structure on Floppy Disk and File Information/
-  #+latex: \otrorec{http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831}
-  #+html: <br/><a href="http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831">http://www.codeguru.com/cpp/cpp/cpp_mfc/files/article.php/c13831</a><br/>
-  Mufti Mohammed (2007); Codeguru
-
-- /File Allocation Table: 16bit/
-  #+latex: \otrorec{http://www.beginningtoseethelight.org/fat16/index.htm)}
-  #+html: <br/><a href="http://www.beginningtoseethelight.org/fat16/index.htm)">http://www.beginningtoseethelight.org/fat16/index.htm</a><br/>
-  Peter Clark (2001)
-
-- /Dosfsck: check and repair MS-DOS filesystems/
-  #+latex: \otrorec{http://www.linuxcommand.org/man_pages/dosfsck8.html}
-  #+html: <br/><a href="http://www.linuxcommand.org/man_pages/dosfsck8.html">http://www.linuxcommand.org/man_pages/dosfsck8.html</a><br/>
-  Werner Almesberger (1997)
-
-- /A Fast File System for Unix/
-  #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)}
-  #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)">http://www.cs.berkeley.edu/~brewer/cs262/FFS.pdf)</a><br/>
-  Marshall Kirk Mckusick, William N. Joy, Samuel J. Lefler, Robert
-  S. Fabry (1984); *acm* Transactions on Computer Systems
-
-- /The Design and Implementation of a Log-Structured File System/
-  #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf}
-  #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf">http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf</a><br/>
-  Mendel Rosenblum, J. K. Ousterhout (1992); *acm* Transactions on
-  Computer Systems
-
-- /The Second Extended File System: Internal Layout/
-  #+latex: \otrorec{http://www.nongnu.org/ext2-doc/)}
-  #+html: <br/><a href="http://www.nongnu.org/ext2-doc/)">http://www.nongnu.org/ext2-doc/)</a><br/>
-  Dave Poirier (2001-2011)
-
-- /NILFS2 en Linux/
-  #+latex: \otrorec{http://cyanezfdz.me/articles/2012/08/nilfs2.html}
-  #+html: <br/><a href="http://cyanezfdz.me/articles/2012/08/nilfs2.html">http://cyanezfdz.me/articles/2012/08/nilfs2.html</a><br/>
-  César Yáñez (2012)
-
-- /Disks from the Perspective of a File System/
-  #+latex: \otrorec{http://queue.acm.org/detail.cfm?id=2367378}
-  #+html: <br/><a href="http://queue.acm.org/detail.cfm?id=2367378">http://queue.acm.org/detail.cfm?id=2367378</a><br/>
-  Marshall Kirk McKusick (2012); *acm* Queue
-
-  - Traducción al español: /Los discos desde la perspectiva de un
-    sistema de archivos/
-    #+latex: \otrorec{http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos}
-    #+html: <br/><a href="http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos">http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos</a><br/>
-    César Yáñez (2013)
-
-- /A hash-based DoS attack on Btrfs/
-  #+latex: \otrorec{http://lwn.net/Articles/529077/}
-  #+html: <br/><a href="http://lwn.net/Articles/529077/">http://lwn.net/Articles/529077/</a><br/>
-  Jonathan Corbet (2012); Linux Weekly News
-
-- /Default /etc/apache2/mods-available/disk_cache.conf is incompatible
-  with ext3/
-  #+latex: \otrorec{http://bugs.debian.org/682840}
-  #+html: <br/><a href="http://bugs.debian.org/682840">http://bugs.debian.org/682840</a><br/>
-  Christoph Berg (2012). Reporte de fallo de Debian ilustrando los
-  límites en números de archivos para Ext3.
-
-- /File-system development with stackable layers/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=174613.174616}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=174613.174616">https://dl.acm.org/citation.cfm?id=174613.174616</a><br/>
-  Heidemann y Popek (1994); *acm* Transactions on Computer Systems
-
-- /Serverless network file systems/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=225535.225537}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=225535.225537">https://dl.acm.org/citation.cfm?id=225535.225537</a><br/>
-  Thomas E. Anderson et. al. (1996); *acm* Transactions on Computer
-  Systems
-
-- /Log-structured file systems: There's one in every SSD/
-  #+latex: \otrorec{https://lwn.net/Articles/353411/}
-  #+html: <br/><a href="https://lwn.net/Articles/353411/">https://lwn.net/Articles/353411/</a><br/>
-  Valerie Aurora (2009); Linux Weekly News
+- \fullcite{Killian84}
+- \fullcite{Huffman52}
+- \fullcite{Mohammed2007}
+- \fullcite{Clark2001}
+- \fullcite{McKusick1984}
+- \fullcite{McKusick2012}
+  - Traducción al español: \fullcite{CesarYanez2013}
+- \fullcite{Rosenblum1992}
+- \fullcite{Poirier2011}
+- \fullcite{Yanez2012}
+- \fullcite{CorbetBtrfsDoS},
+- \fullcite{ApacheCacheExt3}. Reporte de fallo de Debian ilustrando
+  los límites en números de archivos para Ext3.
+- \fullcite{Heidemann1994}
+- \fullcite{Anderson1996}
+- \fullcite{Aurora2009}

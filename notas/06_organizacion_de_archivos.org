@@ -62,8 +62,8 @@ precisamente el modo en que se implementan de forma transparente
 características hoy en día tan comunes como sistemas de archivos en
 red, o compresión y cifrado de la información. Una referencia más
 detallada acerca de ventajas, desventajas, técnicas y mecanismos de la
-división y comunicación entre capas puede ubicarse en el artículo de
-[[https://dl.acm.org/citation.cfm?doid=174613.174616][Heidemann y Popek (1994)]].
+división y comunicación entre capas puede ubicarse en
+\parencite{Heidemann1994}.
 
 * Concepto de archivo
 
@@ -1701,43 +1701,18 @@ compartir un archivo de uso intensivo y aleatorio.
   red local?
 
 ** Lecturas relacionadas
-- /File System Interface: Functions for manipulating files/
-  #+latex:  \otrorec{https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html}
-  #+html: <br/><a href="https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html">https://www.gnu.org/software/libc/manual/html_node/File-System-Interface.html</a><br/>
-  The *gnu* C Library manual (Free Software Foundation)
+- \fullcite{FileSystemInterfaceGNUlibc}
+- \fullcite{McKusick2012}
+  - Traducción al español: \fullcite{CesarYanez2013}
+- \fullcite{Heidemann1994}
+- \fullcite{Anderson1996}
+- \fullcite{Walberg2006}
 
-- /Disks from the Perspective of a File System/
-  #+latex: \otrorec{http://queue.acm.org/detail.cfm?id=2367378}
-  #+html: <br/><a href="http://queue.acm.org/detail.cfm?id=2367378">http://queue.acm.org/detail.cfm?id=2367378</a><br/>
-  Marshall Kirk McKusick
-  (2012); *acm* Queue
+# Liga rota :-(
+# - /OpenPlanets Results Evaluation Framework/
+#   #+latex: \otrorec{http://data.openplanetsfoundation.org/ref/}
+#   #+html: <br/><a href="http://data.openplanetsfoundation.org/ref/">http://data.openplanetsfoundation.org/ref/</a><br/>
+#   David Tarrant
+#   (2012). Muestra la evolución a lo largo de los años de cómo
+#   reconocen archivos de tipos conocidos varias herramientas
 
-  - Traducción al español: /Los discos desde la perspectiva de un
-    sistema de archivos/
-    #+latex: \otrorec{http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos}
-    #+html: <br/><a href="http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos">http://cyanezfdz.me/post/los-discos-desde-la-perspectiva-de-un-sistema-de-archivos</a><br/>
-    César Yáñez (2013).
-
-- /File-system development with stackable layers/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?id=174613.174616}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?id=174613.174616">https://dl.acm.org/citation.cfm?id=174613.174616</a><br/>
-  Heidemann y
-  Popek (1994); *acm* Transactions on Computer Systems
-
-- /Serverless network file systems/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=225535.225537}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=225535.225537">https://dl.acm.org/citation.cfm?doid=225535.225537</a><br/>
-  Thomas
-  E. Anderson et. al. (1996); *acm* Transactions on Computer Systems
-
-- /OpenPlanets Results Evaluation Framework/
-  #+latex: \otrorec{http://data.openplanetsfoundation.org/ref/}
-  #+html: <br/><a href="http://data.openplanetsfoundation.org/ref/">http://data.openplanetsfoundation.org/ref/</a><br/>
-  David Tarrant
-  (2012). Muestra la evolución a lo largo de los años de cómo
-  reconocen archivos de tipos conocidos varias herramientas
-
-- /Finding open files with lsof/
-  #+latex: \otrorec{http://www.ibm.com/developerworks/aix/library/au-lsof.html)}
-  #+html: <br/><a href="http://www.ibm.com/developerworks/aix/library/au-lsof.html)">http://www.ibm.com/developerworks/aix/library/au-lsof.html)</a><br/>
-  Sean A. Walberg (2006); *ibm* DeveloperWorks

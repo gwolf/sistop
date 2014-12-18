@@ -188,7 +188,7 @@ referencia/:
      memoria, tiende a ser requerido de forma secuencial.
 
 #+label: MEM_localidad_de_referencia
-#+caption: Patrones de acceso a memoria, demostrando la localidad espacial/temporal (Silberschatz p:350).
+#+caption: Patrones de acceso a memoria, demostrando la localidad espacial/temporal (Silberschatz, Galvin y Gagné 2010, pág. 350).
 #+attr_html: width:"330"
 #+attr_latex: width=0.7\textwidth
 [[./img/localidad_de_referencia.png]]
@@ -269,8 +269,7 @@ inicio del proceso en memoria/ —esto es, las direcciones son
 que se pueden clasificar a grandes rasgos[fn:: Esta explicación
 simplifica muchos detalles; para el lector interesado en profundizar
 en este tema, se recomienda el libro /Linkers and Loaders/ (/Ligadores
-y cargadores/) de John R. Levine (1999). Está disponible en línea
-desde el sitio Web del autor, http://www.iecc.com/linker/ ] en:
+y cargadores/) \parencite{Levine1999}, disponible en línea.] en:
 
 - En tiempo de compilación :: El texto del programa tiene la dirección
      /absoluta/ de las variables y funciones. Esto era muy común en las
@@ -310,7 +309,7 @@ resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.4\textwidth
 #+label: MEM_tipo_resol_direcc
-#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz p:281).
+#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, Galvin y Gagné 2010, pág. 281).
 [[./img/dot/tipo_resol_direcc.png]]
 
 * Asignación de memoria contigua
@@ -405,9 +404,9 @@ sistema le entregará dos bloques ($1~024$ bytes), con lo cual desperdicia
 proceso podría solicitar $kn+1$ bytes de memoria, desperdiciando por
 fragmentación interna $n-1$ bytes.
 
-Según análisis estadísticos (Silberschatz, p.289), por cada /N/
-bloques asignados, se perderán del orden de /0.5N/ bloques por
-fragmentación interna y externa.
+Según análisis estadísticos \parencite[289]{Silberschatz2010}, por
+cada /N/ bloques asignados, se perderán del orden de /0.5N/ bloques
+por fragmentación interna y externa.
 
 *** Compactación
 
@@ -736,12 +735,13 @@ en que /realmente/ se encuentra en la memoria del sistema).
 [[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
-presentado en la figura \ref{MEM_ejemplo_de_paginacion} (Silberschatz
-p:292). Éste muestra un esquema minúsculo de paginación: un /espacio
-de direccionamiento/ de 32 bytes (cinco bits), organizado en ocho
-páginas de cuatro bytes cada una (esto es, la página es representada
-con los tres bits /más significativos/ de la dirección, y el
-desplazamiento con los dos bits /menos significativos/).
+presentado en la figura \ref{MEM_ejemplo_de_paginacion}
+\parencite[292]{Silberschatz2010}. Éste muestra un esquema minúsculo
+de paginación: un /espacio de direccionamiento/ de 32 bytes (cinco
+bits), organizado en ocho páginas de cuatro bytes cada una (esto es,
+la página es representada con los tres bits /más significativos/ de la
+dirección, y el desplazamiento con los dos bits /menos
+significativos/).
 
 #+attr_latex: width=0.75\textwidth
 #+label: MEM_ejemplo_de_paginacion
@@ -865,16 +865,16 @@ las búsquedas se efectúan en tiempo constante.
 
 El *tlb* típicamente tiene entre 64 y $1~024$ entradas. Cuando el
 procesador efectúa un acceso a memoria, si la página solicitada está
-en el *tlb*, la *mmu* tiene la dirección física de inmediato.[fn:: Indica
-Silberschatz (p.295) que el tiempo efectivo de acceso puede ser 10%
-superior al que tomaría sin emplear paginación.] En caso de no
+en el *tlb*, la *mmu* tiene la dirección física de inmediato.[fn:: El
+tiempo efectivo de acceso puede ser 10% superior al que tomaría sin
+emplear paginación \parencite[295]{Silberschatz2010} .] En caso de no
 encontrarse la página en el *tlb*, la *mmu* lanza un /fallo de página/
 (/page fault/), con lo cual consulta de la memoria principal cuál es
 el marco correspondiente. Esta nueva entrada es agregada al *tlb*; por
-las propiedades de /localidad de referencia/ que se presentaron anteriormente,
-la probabilidad de que las regiones más empleadas de la memoria
-durante un área específica de ejecución del programa sean cubiertas
-por relativamente pocas entradas del *tlb* son muy altas.
+las propiedades de /localidad de referencia/ que se presentaron
+anteriormente, la probabilidad de que las regiones más empleadas de la
+memoria durante un área específica de ejecución del programa sean
+cubiertas por relativamente pocas entradas del *tlb* son muy altas.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_paginacion_con_tlb
@@ -1374,7 +1374,7 @@ marcos, como se puede ver en la figura \ref{MEM_anomalia_belady}.
 
 Es importante recalcar que si bien la anomalía de Belady se presenta
 como un problema importante ante la evaluación de los algoritmos, en
-el texto de Luis La Red (pp. 559-569) se puede observar que en
+\parencite[559-569]{LaRed2001} se puede observar que en
 simulaciones con características más cercanas a las de los patrones
 reales de los programas, su efecto observado es prácticamente nulo.
 
@@ -1894,8 +1894,8 @@ veces contradictorias. El procesador tiene que comenzar a ejecutar
 parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
-#+label: MEM_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, p.349).
+#+label: MEM_graf_hiperpaginacion
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, Galvin y Gagné 2010, pág. 349).
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -1948,10 +1948,8 @@ orden de los últimos miles a decenas de miles de accesos a memoria.
 Para una cobertura a mayor profundidad del material presentado en
 esta sección, se sugiere estudiar los siguientes textos:
 
-- [[http://www.phrack.org/issues.html?issue=49&id=14][Smashing The Stack For Fun And Profit]] (Aleph One, revista
-  /Phrack/, 1996).
-- [[http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf][The Tao of Buffer Overflows]] (Enrique Sánchez, inédito, pero
-  disponible en Web).
+- Smashing The Stack For Fun And Profit \parencite{AlephOne1996}
+- The Tao of Buffer Overflows \parencite{TaoBufferOverflow}
 
 ** Desbordamientos de buffer (/buffer overflows/)
 # <<MEM_buffer_overflow>>
@@ -2609,8 +2607,8 @@ seguirán ejecutando la versión de la biblioteca con el error.
 
   En el número de septiembre del 2013 de la revista "Communications of
   the *acm*" aparece un artículo corto, conciso y bastante
-  interesante, de Cristoph Lameter: "[[https://dl.acm.org/citation.cfm?doid=2500468.2500477][An overview of non-uniform memory
-  access]]". Sugiero emplearlo como punto de partida.
+  interesante: "An overview of non-uniform memory access"
+  \parencite{Lameter2013}. Sugerimos emplearlo como punto de partida.
 
 - Cargado y ligado de programas ::
 
@@ -2668,9 +2666,7 @@ seguirán ejecutando la versión de la biblioteca con el error.
   operativos distintos seguramente resultará también interesante al
   lector; en el caso de Linux, se sugiere revisar la documentación de
   los parámetros de /sysctl/ relativos a la memoria virtual. Éstos
-  están documentados en:
-
-  https://github.com/torvalds/linux/blob/master/Documentation/sysctl/vm.txt
+  están documentados en \parencite{LinuxProcSysVm}.
 
 - Otras categorías de vulnerabilidad ::
 
@@ -2688,13 +2684,11 @@ seguirán ejecutando la versión de la biblioteca con el error.
   - En agosto del 2013, se descubrió lo que se popularizó como una
     /cadena Unicode de la muerte/: un conjunto de caracteres que causa
     que cualquier programa que intente desplegarlos en pantalla en la
-    línea de productos Apple se /caiga/. El siguiente artículo,
-    publicado por Chris Williams, relata el proceso que llevó a
+    línea de productos Apple se /caiga/. El artículo publicado por The
+    Register \parencite{Williams2013} relata el proceso que llevó a
     averiguar, a partir del /reporte de falla/ generado por el sistema
     y analizando el contenido de la memoria que éste reporta, cómo se
     puede encontrar un /desbordamiento de entero/.
-
-    http://www.theregister.co.uk/2013/09/04/unicode_of_death_crash/
 
   - En abril de 2014 se dio a conocer un fallo en la biblioteca
     criptográfica
@@ -2710,26 +2704,39 @@ seguirán ejecutando la versión de la biblioteca con el error.
     renombre que implica descubrir una vulnerabilidad de este tamaño,
     los descubridores de este fallo montaron el sitio
     http://heartbleed.com/ donde hay todo tipo de ligas describiendo
-    esta problemática; otro artículo que la explica muy claramente es:
-
-    http://www.theregister.co.uk/2014/04/09/heartbleed_explained/
+    esta problemática; otro artículo,también publicado por The
+    Register \parencite{Williams2014}, explica la problemática
+    explotada muy claramente.
 
 ** Lecturas relacionadas
-- /The Grumpy Editor goes 64-bit/
-  #+latex: \otrorec{https://lwn.net/Articles/79036/}
-  #+html: <br/><a href="https://lwn.net/Articles/79036/">https://lwn.net/Articles/79036/</a><br/>
-  Jonathan Corbet (2004); Linux Weekly News.  Experiencia del editor
-  de Linux Weekly News al migrar a una arquitectura de 64 bits
-  en 2004. Lo más interesante del artículo son los comentarios,
-  ilustran buena parte de los pros y contras de una migración de 32 a
-  64 bits.
-
-- /Using Valgrind to debug Xen Toolstacks/
-  #+latex: \otrorec{http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/}
-  #+html: <br/><a href="http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/">http://www.hellion.org.uk/blog/posts/using-valgrind-on-xen-toolstacks/</a><br/>
-  Ian J. Campbell (2013). Presenta un ejemplo de uso de la herramienta
-  /Valgrind/, para encontrar problemas en la asignación, uso y
-  liberación de memoria en un programa en C.
+- \fullcite{CorbetGrumpy64}.  Experiencia del editor de Linux Weekly
+  News al migrar a una arquitectura de 64 bits en 2004. Lo más
+  interesante del artículo son los comentarios, ilustran buena parte
+  de los pros y contras de una migración de 32 a 64 bits.
+- \fullcite{Campbell2013}. Presenta un ejemplo de uso de la
+  herramienta /Valgrind/, para encontrar problemas en la asignación,
+  uso y liberación de memoria en un programa en C.
+- \fullcite{Males2014} presenta ejemplos del uso de pmap en diferentes
+  sistemas Unix.
+- \fullcite{NetBSDpmap}. Más allá de simplemente mostrar la operación de
+  una herramienta del sistema en Unix, esta página de manual ilustra
+  claramente la estructura de la organización de la memoria.
+- \fullcite{Levine1999}
+- \fullcite{Belady1969}
+- \fullcite{Gorman2004}. Libro de libre descarga y
+  redistribución. Aborda a profundidad los mecanismos y algoritmos
+  relativos a la memoria empleados por el sistema operativo
+  Linux. Entra en detalles técnicos a profundidad, presentándolos poco
+  a poco, por lo que no resulta demasiado complejo de leer. El primer
+  tercio del libro describe los mecanismos, y los dos tercios
+  restantes siguen el código comentado que los implementa.
+- \fullcite{Swanson2003}
+- \fullcite{TaoBufferOverflow}
+- \fullcite{AlephOne1996},
+- \fullcite{Kingcopes2013} Explica cómo puede burlarse la protección
+  basada en aleatorización de direcciones (*alsr*) en Windows 7 y 8,
+  logrando una dirección predecible de memoria hacia la cual saltar.
+- \fullcite{Lameter2013}
 # Liga muerta :( Como sea, me gustaría adaptar lo que relata para
 # mencionarlo con memoria virtual
 #
@@ -2763,73 +2770,3 @@ seguirán ejecutando la versión de la biblioteca con el error.
 #
 # Now my system is really smooth and using Chrome + Terminal + Tmux +
 # Rhythmbox is acceptable.
-
-- /Process memory usage/
-  #+latex: \otrorec{http://troysunix.blogspot.mx/2011/07/process-memory-usage.html}
-  #+html: <br/><a href="http://troysunix.blogspot.mx/2011/07/process-memory-usage.html">http://troysunix.blogspot.mx/2011/07/process-memory-usage.html</a><br/>
-  ejemplos de pmap en diferentes Unixes
-
-- /Página de manual de pmap en NetBSD/
-  #+latex: \otrorec{http://www.daemon-systems.org/man/pmap.1.html}
-  #+html: <br/><a href="http://www.daemon-systems.org/man/pmap.1.html">http://www.daemon-systems.org/man/pmap.1.html</a><br/>
-  Más allá de
-  simplemente mostrar la operación de una herramienta del sistema en
-  Unix, esta página de manual ilustra claramente la estructura de la
-  organización de la memoria.
-
-- /Linkers and Loaders/
-  #+latex: \otrorec{http://www.iecc.com/linker/}
-  #+html: <br/><a href="http://www.iecc.com/linker/">http://www.iecc.com/linker/</a><br/>
-  John R. Levine
-  (1999). Libro de libre descarga y redistribución, dedicado a la
-  tarea de los editores de ligado y el proceso de carga de los
-  programas.
-
-- /An anomaly in space-time characteristics of certain programs
-  running in a paging machine/
-  #+latex: \otrorec{http://dl.acm.org/citation.cfm?doid=363011.363155}
-  #+html: <br/><a href="http://dl.acm.org/citation.cfm?doid=363011.363155">http://dl.acm.org/citation.cfm?doid=363011.363155</a><br/>
-  Belady, Nelson,
-  Shedler (1969); Communications of the *acm*
-
-- /Understanding the Linux Virtual Memory Manager/
-  #+latex:  \otrorec{http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf}
-  #+html: <br/><a href="http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf">http://ptgmedia.pearsoncmg.com/images/0131453483/downloads/gorman_book.pdf</a><br/>
-  Mel Gorman (2004).  Libro de libre descarga y redistribución, parte
-  de la colección /Bruce Perens' Open Source Series/.  Aborda a
-  profundidad los mecanismos y algoritmos relativos a la memoria
-  empleados por el sistema operativo Linux. Entra en detalles técnicos
-  a profundidad, presentándolos poco a poco, por lo que no resulta
-  demasiado complejo de leer. El primer tercio del libro describe los
-  mecanismos, y los dos tercios restantes siguen el código comentado
-  que los implementa.
-
-- /The art of picking Intel registers/
-  #+latex: \otrorec{http://www.swansontec.com/sregisters.html}
-  #+html: <br/><a href="http://www.swansontec.com/sregisters.html">http://www.swansontec.com/sregisters.html</a><br/>
-  William Swanson (2003).
-
-- /The Tao of Buffer Overflows/
-  #+latex: \otrorec{http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf}
-  #+html: <br/><a href="http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf">http://sistop.gwolf.org/biblio/The_Tao_of_Buffer_Overflows_-_Enrique_Sanchez.pdf</a><br/>
-  Enrique Sánchez (trabajo en proceso, facilitado por el autor)
-
-- /Smashing the Stack for fun and profit/
-  #+latex: \otrorec{http://www.phrack.org/issues.html?issue=49&id=14}
-  #+html: <br/><a href="http://www.phrack.org/issues.html?issue=49&id=14">http://www.phrack.org/issues.html?issue=49&id=14</a><br/>
-  /Aleph One/ (1996): Uno de los primeros artículos publicados acerca de los
-  /buffers desbordados/
-
-- /Attacking the Windows 7/8 Address Space Randomization/
-  #+latex: \otrorec{http://kingcope.wordpress.com/2013/01/24/}
-  #+html: <br/><a href="http://kingcope.wordpress.com/2013/01/24/">http://kingcope.wordpress.com/2013/01/24/</a><br/>
-  /Kingcopes/ (2013):
-  Explica cómo puede burlarse la protección *alsr* (aleatorización de
-  direcciones) en Windows 7 y 8, logrando una dirección predecible de
-  memoria hacia la cual saltar.
-
-- /An overview of Non-Uniform Memory Access/
-  #+latex: \otrorec{https://dl.acm.org/citation.cfm?doid=2500468.2500477}
-  #+html: <br/><a href="https://dl.acm.org/citation.cfm?doid=2500468.2500477">https://dl.acm.org/citation.cfm?doid=2500468.2500477</a><br/>
-  Cristoph Lameter (2013); Communications of the *acm*
-

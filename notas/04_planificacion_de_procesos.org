@@ -236,7 +236,7 @@ los diversos procesos del sistema, es necesario considerar también:
 - Utilización del *cpu* :: Porcentaje del tiempo en que el *cpu* está
      realizando /trabajo útil/. Si bien conceptualmente puede
      ubicarse dicha utilización entre 0 y 100%, en sistemas reales se
-     ha observado (Silberschatz p:179) que se ubica en un rango
+     ha observado \parencite[179]{Silberschatz2010} que se ubica en un rango
      entre 40 y el 90 por ciento.
 
 Por ejemplo, si llegan a la cola de procesos listos:
@@ -333,7 +333,7 @@ equivalen, sino el rendimiento relativo del sistema entero ante una
 carga dada.
 
 La presente sección está basada fuertemente en el capítulo 2 de /An
-operating systems vade mecum/ (Raphael Finkel, 1988).
+operating systems vade mecum/ \parencite{Finkel1988}.
 
 ** Objetivos de la planificación
 
@@ -402,7 +402,7 @@ despachador es muy simple, básicamente una cola *fifo*.
 
 Para comparar los distintos algoritmos de planificación que serán
 presentados, se dará el resultado de cada uno de ellos sobre el
-siguiente juego de procesos (Finkel 1988 p:35):
+siguiente juego de procesos \parencite[35]{Finkel1988}:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ |  /P/ |
 |          |   llegada |     |        |     |     |     |      |
@@ -483,7 +483,7 @@ corto seguido de uno sin avance). Claro está, el procesador
 simulado sería cada vez más lento, dada la fuerte penalización que
 iría agregando la sobrecarga administrativa.
 
-Finkel (1988 p:35) se refiere a esto como el /principio de la
+\cite[35]{Finkel1988} se refiere a esto como el /principio de la
 histéresis/: /hay que resistirse al cambio/. Como ya se mencionó,
 el algoritmo *fcfs* mantiene al mínimo posible la sobrecarga
 administrativa, y –aunque sea marginalmente– resulta en mejor
@@ -511,9 +511,9 @@ un /quantum/ de cuatro /ticks/, el resultado es:
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
 respuesta, aumentarlo hasta convertirlo en un *fcfs* efectivo degenera
 en una penalización a los procesos cortos, y puede llevar a la
-inanición cuando $\rho > 1$. Silberschatz apunta (p.188) a que
+inanición cuando $\rho > 1$. Mediciones estadístcias apuntan a que
 típicamente el /quantum/ debe mantenerse inferior a la duración
-promedio del 80% de los procesos.
+promedio del 80% de los procesos \parencite[188]{Silberschatz2010}.
 
 ** El proceso más corto a continuación (*spn*, /shortest process next/)
 # <<PLAN_spn>>
@@ -595,7 +595,7 @@ penalización a los procesos ejemplo resultaron muy beneficiados.
 
 *** *spn* apropiativo (*pspn*, /preemptive shortest process next/)
 
-Finkel (1988 p.:4) apunta que, a pesar de que intuitivamente daría una
+\cite[4]{Finkel1988} apunta que, a pesar de que intuitivamente daría una
 mayor ganancia combinar las estrategias de *spn* con un esquema de
 multitarea apropiativa, el comportamiento obtenido es muy similar para
 la amplia mayoría de los procesos. Incluso para procesos muy largos,
@@ -822,8 +822,8 @@ con hasta decenas de colas.
 
 Los mecanismos hasta aquí descritos vienen con largas décadas de
 desarrollo. Uno de los últimos algoritmos que ha sido ampliamente
-difundido en unirse a esta lista es el de /planificación por lotería/,
-publicado por [[http://www.waldspurger.org/carl/papers/lottery-osdi94.pdf][Carl Waldspurger y William Weihl (1994)]].
+difundido en unirse a esta lista es el de /planificación por lotería/
+\parencite{Waldspurger1994}.
 
 Bajo el esquema de la /lotería/, cada proceso tiene un número
 determinado de boletos, y cada boleto le representa una oportunidad de
@@ -1032,15 +1032,15 @@ algunos aspectos importantes de los diferentes despachadores.
 
 *** Duración mínima del /quantum/
 
-La penalización por cambios de contexto en esquemas
-apropiativos como la /ronda/ puede evitarse empleando /quantums/
-mayores. Pero abordando la contraparte, ¿qué tan corto tiene sentido que sea un
-/quantum/? Con el hardware y las estructuras requeridas por los
-sistemas operativos de uso general disponibles hoy en día, un cambio
-de contexto requiere del orden de 10 microsegundos (Silberschatz
-p:187), por lo que incluso con el /quantum/ de 10 ms (el más corto que
-manejan tanto Linux como Windows), representa apenas la milésima parte
-del tiempo efectivo de proceso.
+La penalización por cambios de contexto en esquemas apropiativos como
+la /ronda/ puede evitarse empleando /quantums/ mayores. Pero abordando
+la contraparte, ¿qué tan corto tiene sentido que sea un /quantum/? Con
+el hardware y las estructuras requeridas por los sistemas operativos
+de uso general disponibles hoy en día, un cambio de contexto requiere
+del orden de 10 microsegundos \parencite[187]{Silberschatz2010}, por
+lo que incluso con el /quantum/ de 10 ms (el más corto que manejan
+tanto Linux como Windows), representa apenas la milésima parte del
+tiempo efectivo de proceso.
 
 Una estrategia empleada por Control Data Corporation para la *cdc6600*
 (comercializada a partir de 1964, y diseñada por Seymour Cray) fue
@@ -1638,16 +1638,17 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 
   Pueden basarse para la preparación de este tema en un interesante
   reporte de *nist* (Instituto Nacional de Estándares y Tecnología) de
-  diciembre del 2002, [[http://www.aeolean.com/html/RealTimeLinux/RealTimeLinuxReport-2.0.0.pdf][Introduction to Linux for Real-Time Control:
+  diciembre del 2002, Introduction to Linux for Real-Time Control:
   Introductory Guidelines and Reference for Control Engineers and
-  Managers]]. Detalla muy bien cuáles son los requisitos (y las razones
-  detrás de ellos) para la implementación de sistemas operativos de
-  tiempo real, e incluye una revisión del panorama de este campo, muy
-  interesante y muy buen recurso para construir desde ahí.
+  Managers \parencite{NISTLinuxRT}. Detalla muy bien cuáles son los
+  requisitos (y las razones detrás de ellos) para la implementación de
+  sistemas operativos de tiempo real, e incluye una revisión del
+  panorama de este campo, muy interesante y muy buen recurso para
+  construir desde ahí.
 
   Otra referencia muy recomendable al respecto es el artículo
-  de Jonathan Corbet, publicado en agosto del 2013 por /Linux Weekly News/,
-  [[https://lwn.net/Articles/563185/][Optimizing preemption]].
+  publicado por /Linux Weekly News/, Optimizing preemption
+  \parencite{CorbetOptimizingPreemption}.
 
   Si bien este tema toca principalmente temas de planificación de
   procesos, estos temas van relacionados muy de cerca con los
@@ -1675,68 +1676,33 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
   análisis acerca de qué tanto =EDF= (o =SCHED_DEADLINE=, esta
   implementación específica) es tiempo real suave o duro.
 
-  Algunas ligas al respecto:
+  Algunos textos que permiten profundizar al respecto:
 
-  - [[https://lwn.net/Articles/575497/][Artículo en *lwn* de diciembre de 2013 anticipando la inclusión de
-    SCHED_DEADLINE]], que presenta los conceptos, e incluye una
+  - El artículo /Deadline scheduling: coming soon?/
+    \parencite{CorbetDeadlineScheduling}, anticipando la inclusión de
+    =SCHED_DEADLINE=, que presenta los conceptos, e incluye una
     discusión al respecto que puede resultarles interesante y útil.
-  - [[https://en.wikipedia.org/wiki/SCHED_DEADLINE][La página de la clase de planificación SCHED_DEADLINE en
-    Wikipedia]].
-  - [[https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/scheduler/sched-deadline.txt?id=712e5e34aef449ab680b35c0d9016f59b0a4494c][La documentación de SCHED_DEADLINE en el núcleo de Linux]].
+  - La página en /Wikipedia/ de la clase de planificación
+    =SCHED_DEADLINE= \parencite{WikipediaSchedDeadline}.
+  - La documentación de =SCHED_DEADLINE= en el núcleo de Linux
+    \parencite{LinuxSchedDeadline}.
 
 ** Lecturas relacionadas
 # <<PLAN_relacionadas>>
-- /Simulation of CPU Process scheduling/
-  #+latex: \otrorec{http://stimulationofcp.sourceforge.net/}
-  #+html: <br/><a href="http://stimulationofcp.sourceforge.net/">http://stimulationofcp.sourceforge.net/</a><br/>
-  P. A. Krishnan
-  (1999-2009); programa en Java desarrollado para un curso de Sistemas
-  Operativos, presentando la simulación de distintos algoritmos de
-  planificación.
-
-- /Thread Scheduling (ctd): quanta, switching and scheduling
-  algorithms/
-  #+latex: \otrorec{http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml}
-  #+html: <br/><a href="http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml">http://www.javamex.com/tutorials/threads/thread_scheduling_2.shtml</a><br/>
-  Neil Coffey (2013); Javamex tutorial and performance information
-
-- /Microprocessor Design / Pipelined Processors/
-  #+latex: \otrorec{http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors}
-  #+html: <br/><a href="http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors">http://en.wikibooks.org/wiki/Microprocessor_Design/Pipelined_Processors</a><br/>
-  WikiBooks.org (2007-2013)
-
-- /Thread scheduling and synchronization/
-  #+latex: \otrorec{http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf}
-  #+html: <br/><a href="http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf">http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf</a><br/>
-  Beth Plale (2003); Indiana University
-
+- \fullcite{Krishnan1999}; programa en Java desarrollado para un curso
+  de sistemas operativos, presentando la simulación de distintos
+  algoritmos de planificación.
+- \fullcite{Coffey2013}
+- \fullcite{MicroProcessorDesign}
+- \fullcite{Plale2003}
 - /Páginas de manual/ de Linux:
-
-  - Hilos *posix* (=pthreads=)
-    #+latex: \otrorec{http://man7.org/linux/man-pages/man7/pthreads.7.html}
-    #+html: <br/><a href="http://man7.org/linux/man-pages/man7/pthreads.7.html">http://man7.org/linux/man-pages/man7/pthreads.7.html</a><br/>
-
-  - Modificación del ámbito de contención (=pthread_attr_setscope=)
-    #+latex: \otrorec{http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html}
-    #+html: <br/><a href="http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html">http://man7.org/linux/man-pages/man3/pthread_attr_setscope.3.html</a><br/>
-
-  - Interfaz para solicitar cambios a los parámetros y políticas de
-    planificación (=sched_setscheduler=)
-    #+latex: \otrorec{http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html}
-    #+html: <br/><a href="http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html">http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html</a><br/>
-
-- /Windows Internals, 6th edition/
-  #+latex: \otrorec{http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx}
-  #+html: <br/><a href="http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx">http://technet.microsoft.com/en-us/sysinternals/bb963901.aspx</a><br/>
-  Mark Russinovich, David A. Solomon y Alex Ionescu (2012); por
-  Microsoft Press. El capítulo 5 aborda a profundidad los temas de
-  hilos y procesos bajo Windows, y está disponible como ejemplo del
-  libro para su descarga en la página referida.
-
-- /Optimizing preemption/
-  #+latex: \otrorec{https://lwn.net/Articles/563185/}
-  #+html: <br/><a href="https://lwn.net/Articles/563185/">https://lwn.net/Articles/563185/</a><br/>
-  Jonathan Corbet (2013), /Linux Weekly News/
+  - \fullcite{pthreads},
+  - \fullcite{pthread_attr_setscope},
+  - \fullcite{sched_setscheduler}
+- \fullcite{Russinovich2012}. El capítulo 5 aborda a profundidad los
+  temas de hilos y procesos bajo Windows, y está disponible como
+  ejemplo del libro para su descarga en la página referida.
+- \fullcite{CorbetOptimizingPreemption}
 
 #
 # REVISAR:

@@ -569,7 +569,7 @@ ventajas estructurales — y más importante aún, no puede evitar las
 debilidades inherentes al medio.
 
 Uno de los ejemplos más claros de esta falta de control real del medio
-la ilustra el [[https://lwn.net/Articles/353411/][artículo de Valerie Aurora (2009)]], que menciona que
+la ilustra \parencite{Aurora2009}, que menciona que
 tanto la poca información públicamente disponible acerca del
 funcionamiento de los controladores como los patrones de velocidad y
 desgaste de los mismos apuntan a que la estructura subyacente de casi
@@ -1029,65 +1029,15 @@ las diferentes regiones del sistema.
   de una mayor adopción?
 
 ** Lecturas relacionadas
-- /OpenSolaris ZFS Deduplication: Everything You Need to Know/
-  #+latex:  \otrorec{http://constantin.glez.de/blog/2010/03/opensolaris-zfs-deduplication-everything-you-need-know}
-  #+html: <br/><a href="http://constantin.glez.de/blog/2010/03/opensolaris-zfs-deduplication-everything-you-need-know">http://constantin.glez.de/blog/2010/03/opensolaris-zfs-deduplication-everything-you-need-know</a><br/>
-  Constantin Gonzalez (2010)
-
-- /The Z File System (ZFS)/
-  #+latex:  \otrorec{http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html}
-  #+html: <br/><a href="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html">http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/filesystems-zfs.html</a><br/>
-  FreeBSD Handbook
-
-- /A hash-based DoS attack on Btrfs/
-  #+latex: \otrorec{http://lwn.net/Articles/529077/}
-  #+html: <br/><a href="http://lwn.net/Articles/529077/">http://lwn.net/Articles/529077/</a><br/>
-  Jonathan Corbet (2012); Linux Weekly News
-
-- /4K Sector Disk Drives: Transitioning to the Future with Advanced
-  Format Technologies/
-  #+latex:  \otrorec{http://storage.toshiba.com/docs/services-support-documents/toshiba_4kwhitepaper.pdf}
-  #+html: <br/><a href="http://storage.toshiba.com/docs/services-support-documents/toshiba_4kwhitepaper.pdf">http://storage.toshiba.com/docs/services-support-documents/toshiba_4kwhitepaper.pdf</a><br/>
-  Michael E. Fitzpatrick (2011); Toshiba
-
-- /The Design and Implementation of a Log-Structured File System/
-  #+latex: \otrorec{http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf}
-  #+html: <br/><a href="http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf">http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf</a><br/>
-  Mendel Rosenblum, J. K. Ousterhout (1992); *acm* Transactions on
-  Computer Systems
-
-- /LogFS — Finally a scalable flash file system/
-  #+latex:  \otrorec{http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf}
-  #+html: <br/><a href="http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf">http://www.informatik.uni-osnabrueck.de/papers_pdf/2005_07.pdf</a><br/>
-  Jörn Engel, Robert Mertens (2005)
-
-- /Log-structured file systems: There's one in every SSD/
-  #+latex: \otrorec{https://lwn.net/Articles/353411/}
-  #+html: <br/><a href="https://lwn.net/Articles/353411/">https://lwn.net/Articles/353411/</a><br/>
-  Valerie Aurora (2009); Linux Weekly News
-
-- /JFFS2, UBIFS, and the growth of flash storage/
-  #+latex: \otrorec{http://lwn.net/Articles/528617/}
-  #+html: <br/><a href="http://lwn.net/Articles/528617/">http://lwn.net/Articles/528617/</a><br/>
-  Neil Brown (2012); Linux Weekly News
-
-- /A case for Redundant Arrays of Inexpensive Disks/
-  #+latex: \otrorec{http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf}
-  #+html: <br/><a href="http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf">http://www.cs.cmu.edu/~garth/RAIDpaper/Patterson88.pdf</a><br/>
-  Patterson, Gibson, Katz (1988); *acm sigmod*
-
-- /Unidades de estado sólido. El reto de la computación forense en el
-  mundo de los semiconductores/
-  #+latex: \otrorec{http://insecurityit.blogspot.mx/2013/06/}
-  #+html: <br/><a href="http://insecurityit.blogspot.mx/2013/06/">http://insecurityit.blogspot.mx/2013/06/</a><br/>
-  Cano Martinez (2013); IT-Insecurity
-
-- /Non-volatile memory based on the ferroelectric photovoltaic effect/
-  #+latex: \otrorec{http://dx.doi.org/10.1038/ncomms2990}
-  #+html: <br/><a href="http://dx.doi.org/10.1038/ncomms2990">http://dx.doi.org/10.1038/ncomms2990</a><br/>
-  Guo, You, Zhow et. al. (2013); Nature Communications
-
-- /eMMC/SSD File System Tuning Methodology/
-  #+latex: \otrorec{http://elinux.org/images/b/b6/EMMC-SSD_File_System_Tuning_Methodology_v1.0.pdf}
-  #+html: <br/><a href="http://elinux.org/images/b/b6/EMMC-SSD_File_System_Tuning_Methodology_v1.0.pdf">http://elinux.org/images/b/b6/EMMC-SSD_File_System_Tuning_Methodology_v1.0.pdf</a><br/>
-  Cogent Embedded (2013)
+- \fullcite{Constantin2010}
+- \fullcite{FreeBSDZFS}
+- \fullcite{CorbetHashDoSBtrfs}
+- \fullcite{Fitzpatrick2011}
+- \fullcite{Rosenblum1991}
+- \fullcite{Engel2005}
+- \fullcite{Aurora2009}
+- \fullcite{Brown2012},
+- \fullcite{Patterson1988}
+- \fullcite{Cano2013}
+- \fullcite{Guo2013}
+- \fullcite{Cogent2013}

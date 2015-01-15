@@ -124,17 +124,17 @@ penalidad /cada acceso a memoria/ para verificar que esté en el rango
 permitido.
 
 Por ejemplo, si a un proceso le fue asignado un espacio de memoria de
-64 *kb* ($65~535$ bytes) a partir de la dirección $504~214$ (492
-*kb*), el /registro base/ contendría $504~214$, y el /registro límite/
-$65~535$. Si hubiera una instrucción por parte de dicho proceso que
-solicitara una dirección menor a $504~214$ o mayor a $569~749$ (556
-*kb*), la *mmu* lanzaría una excepción o /trampa/ interrumpiendo el
-procesamiento, e indicando al sistema operativo que ocurrió una
-/violación de segmento/ (/segmentation fault/).[fn:: ¿Por qué /de
-segmento/? Véase la sección \ref{MEM_segmentacion}.] El sistema
-operativo entonces procedería a terminar la ejecución del proceso,
-reclamando todos los recursos que tuviera asignados y notificando a su
-usuario.
+64 *kb* ($65~535$ bytes) a partir de la dirección $504~214$
+(492 *kb*), el /registro base/ contendría $504~214$, y el /registro
+límite/ $65~535$. Si hubiera una instrucción por parte de dicho
+proceso que solicitara una dirección menor a $504~214$ o mayor a
+$569~749$ (556 *kb*), la *mmu* lanzaría una excepción o /trampa/
+interrumpiendo el procesamiento, e indicando al sistema operativo que
+ocurrió una /violación de segmento/ (/segmentation fault/).[fn:: ¿Por
+qué /de segmento/? Véase la sección \ref{MEM_segmentacion}.] El
+sistema operativo entonces procedería a terminar la ejecución del
+proceso, reclamando todos los recursos que tuviera asignados y
+notificando a su usuario.
 
 #+attr_latex: width=\textwidth
 #+label: MEM_mem_base_a_limite

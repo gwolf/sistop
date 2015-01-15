@@ -48,18 +48,18 @@ libro_index:
 	echo '#+latex_header: \usepackage{hyphenat}' >> $(libro)
 	echo '#+latex_header: \\tracingparagraphs=1' >> $(libro)
 	echo '#+latex_header: \widowpenalty=1000' >> $(libro)
-#	echo '#+latex_header: \\renewcommand{\href}[2]{#2\\footnote{\url{#1}}}' >> $(libro)
 
 	echo '' >> $(libro)
-#	echo '#+latex: \\frontmatter' >> $(libro)
-	echo '#+latex: \\chapter*{Presentación}' >> $(libro)
-	echo '#+latex: \\addcontentsline{toc}{chapter}{Presentación}' >> $(libro)
+	echo '#+BEGIN_LATEX' >> $(libro)
+	echo '\\chapter*{Presentación}' >> $(libro)
+	echo '\\addcontentsline{toc}{chapter}{Presentación}' >> $(libro)
+	echo '\\renewcommand{\\chaptermark}[1]{\\markboth{\\MakeUppercase{#1}}{}}' >> $(libro)
+	echo '#+END_LATEX' >> $(libro)
 	echo '#+html: <h1>Presentación</h1>' >> $(libro)
-#	echo '* Presentación' >> $(libro)
 	echo '#+include: 00_presentacion.org :minlevel 1' >> $(libro)
 
 	echo '' >> $(libro)
-#	echo '#+latex: \\mainmatter' >> $(libro)
+	echo '#+latex: \\renewcommand{\\chaptermark}[1]{\markboth{\MakeUppercase{Capítulo \\thechapter{}. #1}}{}}' >> $(libro)
 	for CAPITULO in $(srcdir)/01_introduccion.org \
 			$(srcdir)/02_estructuras_basicas.org \
 			$(srcdir)/03_administracion_de_procesos.org \
@@ -76,6 +76,7 @@ libro_index:
 
 	echo '' >> $(libro)
 	echo '#+latex: \\appendix' >> $(libro)
+	echo '#+latex: \\renewcommand{\\chaptermark}[1]{\markboth{\MakeUppercase{Apéndice \\thechapter{}. #1}}{}}' >> $(libro)
 	for APDX in $(srcdir)/A1_sl_licenciamiento.org \
 		$(srcdir)/A2_virtualizacion.org \
 	        $(srcdir)/A3_medio_fisico.org; do \

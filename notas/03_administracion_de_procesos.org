@@ -250,9 +250,9 @@ un /equipo de trabajo/):
 
      Este patrón es claramente distinto de los dos anteriormente
      presentados; si bien en los anteriores los diferentes hilos (a
-     excepción del hilo /jefe/) eran casi siempre idénticos -aunque
-     operando sobre distintos conjuntos de datos-, en este caso son
-     todos completamente distintos.
+     excepción del hilo /jefe/) eran casi siempre idénticos (aplicando
+     las mismas oporaciones a distintos conjuntos de datos), en este
+     caso son todos completamente distintos.
 
      #+attr_latex: width=0.6\textwidth
      #+label: PROC_linea_ensamblado
@@ -684,7 +684,8 @@ presentan a continuación los sucesivos /intentos/.
 
 - Intento 5: Utilizar turnos ::
   Una alternativa para evitar el problema de la actualización múltiple a
-  una bandera es utilizar turnos
+  una bandera es emplear una variable adicional que indique a qué
+  proceso corresponde avanzar en todo momento, esto es, utilizar turnos:
 
   #+begin_src C
   int turno = 1; /* Inicialmente el turno es del proceso 1 */
@@ -2277,12 +2278,12 @@ tiene un peligro fuerte de caer en /inanición/.
 Otro ejemplo de política preventiva /menos conservadora/ sería la
 /retención y espera/ o /reserva/ (/advance claim/): que todos los
 programas declaren al iniciar su ejecución qué recursos van a
-requerir. Éstos son apartados para su uso exclusivo hasta que
-el proceso termina, pero el sistema operativo puede seguir atendiendo
+requerir. Éstos son apartados para su uso exclusivo hasta que el
+proceso termina, pero el sistema operativo puede seguir atendiendo
 solicitudes /que no rivalicen/: si a los procesos /A/ y /B/ anteriores
-se suman procesos /C/ y /D/, pero requieren otro tipo de recursos,
-podrían ejecutarse en paralelo /A/, /C/ y /D/, y una vez que /A/
-termine, podrían continuar ejecutando /B/, /C/ y /D/.
+se suman procesos /C/ y /D/, requiriendo únicamente recursos de otro
+tipo, podría procederse a la ejacución paralela de /A/, /C/ y /D/.
+Una vez que /A/ termine, podrían continuar ejecutando /B/, /C/ y /D/.
 
 El bloqueo resulta ahora imposible por diseño, pero el usuario que
 inició /B/ tiene una percepción de injusticia dado el tiempo que tuvo

@@ -148,12 +148,12 @@ memoria /caché/. Si bien su manejo es (casi) transparente para el
 sistema operativo, es muy importante mantenerlo en mente.
 
 Conforme el procesador avanza en la ejecución de las instrucciones
- (aumentando el valor almacenado en el registro de conteo de instrucción), se 
-producen accesos a memoria. Por un lado, tiene que buscar en
-memoria la siguiente instrucción a ejecutar. Por otro, estas
+(aumentando el valor almacenado en el registro de conteo de
+instrucción), se producen accesos a memoria. Por un lado, tiene que
+buscar en memoria la siguiente instrucción a ejecutar. Por otro, estas
 instrucciones pueden requerirle uno o más operadores adicionales que
 deban ser leídos de la memoria. Por último, la instrucción puede
-requerir guardar su resultado en cierta dirección de memoria.
+requerir guardar su resultado también en memoria.
 
 Hace años esto no era un problema —la velocidad del procesador
 estaba básicamente sincronizada con la del manejador de memoria, y el
@@ -188,7 +188,7 @@ referencia/:
      memoria, tiende a ser requerido de forma secuencial.
 
 #+label: MEM_localidad_de_referencia
-#+caption: Patrones de acceso a memoria, demostrando la localidad espacial/temporal (Silberschatz, Galvin y Gagné 2010, pág. 350).
+#+caption: Patrones de acceso a memoria, demostrando la localidad espacial/temporal (Silberschatz, Galvin y Gagné 2010: 350).
 #+attr_html: width:"330"
 #+attr_latex: width=0.7\textwidth
 [[./img/localidad_de_referencia.png]]
@@ -309,7 +309,7 @@ resuelta cada vez que sea requerido.
 
 #+attr_latex: width=0.4\textwidth
 #+label: MEM_tipo_resol_direcc
-#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, Galvin y Gagné 2010, pág. 281).
+#+caption: Proceso de compilación y carga de un programa, indicando el tipo de resolución de direcciones (Silberschatz, Galvin y Gagné 2010: 281).
 [[./img/dot/tipo_resol_direcc.png]]
 
 * Asignación de memoria contigua
@@ -640,15 +640,16 @@ sección, si un proceso tuviera la siguiente tabla de segmentos:
 |        3 | -        |    184 | *w*      | no       |
 |        4 | $10~000$ |    320 | *rwx*    | sí       |
 
-En la columna de permisos, /R/ se refiere a lectura, /W/ a escritura y
-/X/ a ejecución.
+En la columna de permisos, se indica con /R/ el permiso de lectura
+(/Read/), /W/ el de escritura (/Write/), y /X/ el de ejecución
+(/eXecute/).
 
 Un segmento que ha sido enviado al espacio de intercambio (en este
 caso, el 3), deja de estar presente en memoria y, por tanto, no tiene
 ya dirección de inicio registrada.
 
 El resultado de hacer referencia a las siguientes direcciones y
-tipos de acceso:
+modos:
 
 | Dirección | Tipo de | Dirección                               |
 |    lógica | acceso  | física                                  |
@@ -723,16 +724,16 @@ desplazamiento).
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes.
 [[./img/ditaa/direccion_a_pag_y_despl.png]]
 
+#+attr_latex: width=\textwidth
+#+label: MEM_hardware_de_paginacion
+#+caption: Esquema del proceso de paginación, ilustrando el papel de la *mmu*.
+[[./img/dot/hardware_de_paginacion.png]]
+
 Para poder realizar este mapeo, la *mmu* requiere de una  estructura
 de datos denominada /tabla de páginas/ (/page table/), que /resuelve/ 
 la relación entre páginas y marcos, convirtiendo una /dirección lógica/ 
 (en el espacio del proceso) en la /dirección física/ (la ubicación 
 en que /realmente/ se encuentra en la memoria del sistema).
-
-#+attr_latex: width=\textwidth
-#+label: MEM_hardware_de_paginacion
-#+caption: Esquema del proceso de paginación, ilustrando el papel de la *mmu*.
-[[./img/dot/hardware_de_paginacion.png]]
 
 Se puede tomar como ejemplo para explicar este mecanismo el esquema
 presentado en la figura \ref{MEM_ejemplo_de_paginacion}
@@ -1895,7 +1896,7 @@ parte del tiempo lo pasa en espera de un nuevo marco por parte del
 disco duro. El sistema completo avanza cada vez más lento.
 
 #+label: MEM_graf_hiperpaginacion
-#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, Galvin y Gagné 2010, pág. 349).
+#+caption: Al aumentar demasiado el grado de multiprogramación, el uso del *cpu* cae abruptamente, entrando en hiperpaginación  (Silberschatz, Galvin y Gagné 2010: 349).
 #+attr_html: height="400"
 #+attr_latex: width=0.7\textwidth
 [[./img/gnuplot/hiperpaginacion.png]]
@@ -2377,7 +2378,7 @@ ejecución. En cualquier caso, el ligado dinámico busca que las
 bibliotecas sólo sean cargadas cuando se las requiera.
 
 La figura \ref{MEM_tipo_resol_direcc}
-(p. \pageref{MEM_tipo_resol_direcc}, ilustra el momento en que
+(p. \pageref{MEM_tipo_resol_direcc}) ilustra el momento en que
 ocurre cada uno de estos ligados:
 el ligado estático es realizado por el /editor de ligado/, uniendo en
 un solo /módulo cargable/ al programa compilado (/módulo objeto/) con

@@ -1336,7 +1336,7 @@ archivo no puede pertenecer a más de un grupo, puede hacerse necesario
 crear conjuntos de grupos adicionales que intersectan aspectos
 específicos: una salida muy poco elegante.
 
-#+caption: Lista de control de acceso a un archivo en Windows 7: En esta vista, muestra que el grupo =SYSTEM= tiene permiso para todo tipo de acceso a excepción del definido por /Permisos especiales/.
+#+caption: Lista de control de acceso a un archivo en Windows 7: en esta vista, muestra que el grupo =SYSTEM= tiene permiso para todo tipo de acceso, con excepción del definido por /Permisos especiales/.
 #+label: DIR_ACLs_Win7
 #+attr_latex: width=0.7\textwidth
 [[./img/acl_win7.png]]
@@ -1362,7 +1362,7 @@ y completo de los permisos para todos los archivos en determinado
 directorio. Realizar una evaluación /al vuelo/ de los controles de
 acceso se vuelve más complejo para el administrador.
 
-En tercer lugar, este esquema da lugar a ambigüedades, cuya política
+Por último, este esquema da lugar a ambigüedades, cuya política
 de resolución debe establecerse /a priori/. Por ejemplo, si un usuario
 pertenece a dos grupos distintos, uno de ellos con /aprobación
 explícita/ para la escritura a cierto archivo, y otro con /denegación
@@ -1642,7 +1642,7 @@ compartir un archivo de uso intensivo y aleatorio.
    una sóla respuesta correcta para cada afirmación.
 
    1. Son dos (o más) entradas en el directorio apuntando al mismo
-      i-nodo.
+      \mbox{i-nodo}.
    2. Es un archivo normal e independiente en el sistema de archivos,
       que podría ser abierto directamente por los programas.
    3. Pueden apuntar a directorios, incluso creando ciclos.
@@ -1652,7 +1652,7 @@ compartir un archivo de uso intensivo y aleatorio.
       operaciones /como si fueran/ al archivo referido.
    6. No pueden referirse a archivos en sistemas de archivos distintos
       del propio.
-   7. Pueden existir en un sistema de archivos tipo *fat*.
+   7. Pueden formar representarse en un sistema de archivos tipo *fat*.
    8. Si un usuario elimina cualquiera de las referencias a un archivo
       empleando este esquema, el archivo sigue existiendo en las demás.
 
@@ -1680,7 +1680,7 @@ compartir un archivo de uso intensivo y aleatorio.
 
   En este capítulo se abordaron tres sistemas de archivos /remotos/,
   de los cuales sólo el último puede verse como un sistema de archivos
-  /distribuido/: Bajo *afs*, los datos almacenados no están en una única
+  /distribuido/: bajo *afs*, los datos almacenados no están en una única
   computadora. Pero *afs* tiene ya muchos años de haber sido
   desarrollado, por lo cual su diseño no consideró muchos de los
   aspectos de las redes de datos globales actuales.

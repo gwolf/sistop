@@ -60,7 +60,7 @@ libro_index:
 
 	echo '' >> $(libro)
 	echo '#+latex: \\renewcommand{\\chaptermark}[1]{\markboth{\MakeUppercase{Capítulo \\thechapter{}. #1}}{}}' >> $(libro)
-	for CAPITULO in $(srcdir)/01_introduccion.org \
+	for CAPITULO in $(srcdir)/01_punto_de_partida.org \
 			$(srcdir)/02_estructuras_basicas.org \
 			$(srcdir)/03_administracion_de_procesos.org \
 			$(srcdir)/04_planificacion_de_procesos.org \

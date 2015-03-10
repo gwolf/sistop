@@ -595,7 +595,7 @@ penalización a los procesos ejemplo resultaron muy beneficiados.
 
 *** *spn* apropiativo (*pspn*, /preemptive shortest process next/)
 
-\cite[4]{Finkel1988} apunta que, a pesar de que intuitivamente daría una
+\textcite[41]{Finkel1988} apunta que, a pesar de que intuitivamente daría una
 mayor ganancia combinar las estrategias de *spn* con un esquema de
 multitarea apropiativa, el comportamiento obtenido es muy similar para
 la amplia mayoría de los procesos. Incluso para procesos muy largos,
@@ -772,9 +772,9 @@ $\log(\frac{t(p)}{q})$, lo cual resulta atractivo frente a los
 $\frac{t(p)}{q}$ cambios de contexto que tendría bajo un esquema de
 ronda.
 
-Tras de estos ajustes ante el juego de procesos con una
-retroalimentación multinivel con un incremento exponencial al
-/quantum/ se obtiene como resultado:
+Una vez efectuados estos ajustes, la evaluación del mismo juego de
+procesos bajo retroalimentación multinivel con un /quantum/ que sigue
+un incremento exponencial produce el siguiente resultado:
 
 | Proceso  | Tiempo de | /t/ | Inicio | Fin | /T/ | /E/ | /P/ |
 |          |   llegada |     |        |     |     |     |     |
@@ -1009,13 +1009,13 @@ uno en el cual predominen los procesos largos.
 #+attr_html: height="483"
 #+attr_latex: width=0.7\textwidth
 #+label: PLAN_penalizaciones_por_algoritmo_planificador
-#+caption: Proporción de penalización registrada por cada proceso contra el porcentaje del tiempo que éste requiere (Finkel p:33).
+#+caption: Proporción de penalización registrada por cada proceso contra el porcentaje del tiempo que éste requiere (Finkel 1988: 33).
 [[./img/penalizaciones_por_algoritmo_planificador.png]]
 
 #+attr_html: height="490"
 #+attr_latex: width=0.7\textwidth
 #+label: PLAN_tiempo_en_espera_por_algoritmo_planificador
-#+caption: Tiempo /perdido/ contra porcentaje de tiempo requerido por proceso (Finkel p:34).
+#+caption: Tiempo /perdido/ contra porcentaje de tiempo requerido por proceso (Finkel 1988: 34).
 [[./img/tiempo_en_espera_por_algoritmo_planificador.png]]
 
 Raphael Finkel realizó estudios bajo diversas cargas de trabajo,
@@ -1363,8 +1363,8 @@ el *mips* puede ser dividido en cinco secciones principales, creando
 una estructura conocida como /pipeline/ (tubería). Idealmente, en todo
 momento habrá una instrucción diferente ejecutando en cada una de las
 secciones del procesador, como lo ilustra la figura
-\ref{PLAN_pipeline}. Las secciones en los procesadores *mips* clásicos
-son:
+\ref{PLAN_pipeline}. El /pipeline/ de los procesadores *mips* clásicos
+se compone de las siguientes secciones:
 
 - Recuperación de la instrucción (/Instruction Fetch/, =IF=).
 - Decodificación de la instrucción (/Instruction Decode/, =ID=).
@@ -1397,7 +1397,7 @@ la figura \ref{PLAN_hyperthread}.
 
 #+attr_latex: width=\textwidth
 #+label: PLAN_hyperthread
-#+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores.
+#+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreading/) es visto por el sistema como dos procesadores lógicos.
 [[./img/ditaa/hyperthread.png]]
 
 Hay que recordar que, a pesar de que se /presenten/ como hilos
@@ -1539,7 +1539,7 @@ la /inversión de prioridades/. Esto es:
   interrumpido a la mitad de dicha llamada.
 - Un proceso /B/ de prioridad /tiempo real/ hace una segunda llamada
   al sistema, que requiere de la misma estructura que la que tiene
-  bloqueada /A/.
+  bloqueada el proceso /A/.
 
 Al presentarse esta situación, /B/ se quedará esperando hasta que /A/
 pueda ser nuevamente agendado —esto es, un proceso de alta prioridad
@@ -1596,8 +1596,10 @@ en cuestión/, tras lo cual volverán a su prioridad nativa.
 5. Tanto la afinidad a procesador como el balanceo de cargas son
    elementos importantes y deseables en todo planificador que se
    ejecute en un entorno multiprocesador. Sin embargo, afinidad y
-   balanceo de cargas trabajan uno en contra del otro. ¿Por qué,
-   cuándo debe predominar cada uno?
+   balanceo de cargas trabajan uno en contra del otro.
+
+   Explique la anterior afirmación, y elabore cuándo debe predominar
+   cada uno de estos mecanismos.
 
 
 ** Temas de investigación sugeridos

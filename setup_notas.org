@@ -20,6 +20,13 @@
 #+latex_header: \usepackage[bibencoding=utf8, style=authoryear, backref=true, backrefstyle=two, block=none, backend=biber]{biblatex}
 #+latex_header: \ExecuteBibliographyOptions{ autocite=inline, sortcites=true, sorting=nyt, labelyear=true, uniquename=true}
 #+latex_header: \addbibresource{sistemas_operativos.bib}
+#
+# Llamadas a bibliografía con número de página: En vez de "(Fulano
+# 1990, pág. 123), mostrar (Fulano 1990: 123)
+#
+#+latex_header: \DeclareFieldFormat{postnote}{#1}
+#+latex_header: \renewcommand*{\postnotedelim}{:~}
+#
 #+LATEX_HEADER: \newcommand{\otrorec}[1]{ \\ {\small \url{#1}} \\ }
 #+LATEX_HEADER: \renewcommand{\textbf}[1]{{\textsc{#1}}}
 #+LATEX_HEADER: \let\perc\%

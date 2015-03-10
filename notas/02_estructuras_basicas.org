@@ -331,7 +331,7 @@ de acceso aleatorio (*ram*). En las secciones \ref{HW_interrupciones}
 (/Interrupciones y excepciones/) y \ref{HW_dma} (/Acceso directo a
 memoria/), se explica cómo es que se efectúan dichas referencias.
 
-Los dispositivos de almacenamiento (discos, memorias flash, cintas)
+Los dispositivos de almacenamiento (discos, memorias /flash/, cintas)
 pueden ser vistos como una región donde la computadora lee y escribe
 una serie de bytes que preservarán su valor, incluso luego de apagada
 la computadora.
@@ -385,7 +385,7 @@ características que determinan su topología.
 #+attr_html: height=618px
 #+attr_latex: width=0.6\textwidth
 #+label: HW_northbridge_southbridge
-#+caption: Diagrama de la comunicación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/ (imagen de la Wikipedia: /Puente Norte/).
+#+caption: Diagrama de la comunicación entre componentes de un equipo basado en /puente norte/ y /puente sur/ (imagen de la Wikipedia: /Puente Norte/).
 [[./img/northbridge_southbridge.png]]
 
 Hoy en día, el acomodo más frecuente[fn:: La separación aquí descrita
@@ -716,7 +716,7 @@ núcleo.
 En la familia de sistemas operativos derivados de *cp/m* (el más popular
 de los cuales hoy en día es Windows), el mecanismo es muy
 distinto. Los dispositivos de almacenamiento secundario (discos duros,
-discos compactos, memorias flash, etc.) son relacionados con una letra
+discos compactos, memorias /flash/, etc.) son relacionados con una letra
 cada uno, así (en general) =C:= es el volúmen o partición del disco
 principal, =A:= y =B:= se utilizan para discos extraíbles. A los
 puertos de entrada/salida más utilizados también se les asignan
@@ -859,14 +859,14 @@ Hay diferentes modelos para implementar el cómputo distribuido,
 siempre basados en la transmisión de datos sobre una /red/. Éstos son
 principalmente:
 
-- /Cúmulos/ (clusters) :: Computadoras conectadas por una red local
+- /Cúmulos/ (/clusters/) :: Computadoras conectadas por una red local
      (de alta velocidad), ejecutando cada una su propia instancia de
      sistema operativo. Pueden estar orientadas al /alto rendimiento/,
      /alta disponibilidad/ o al /balanceo de cargas/ (o a una 
      combinación de éstas). Típicamente son equipos homogéneos, y 
      dedicados a la tarea en cuestión.
 
-- /Mallas/ (Grids) :: Computadoras distribuidas geográficamente y
+- /Mallas/ (/Grids/) :: Computadoras distribuidas geográficamente y
      conectadas mediante una red de comunicaciones. Las
      computadoras participantes pueden ser heterogéneas (en
      capacidades y hasta en arquitectura); la comunicación tiene que
@@ -1012,7 +1012,7 @@ sistemas masivamente paralelos presenta /rendimientos decrecientes/.
 #+attr_latex: width=0.6\textwidth
 #+attr_html: height="480"
 #+label: HW_amdahl_porcentajes
-#+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl.
+#+caption: Ganancia máxima al paralelizar un programa, ilustrando los límites que impone la Ley de Amdahl.
 [[./img/gnuplot/amdahl.png]]
 
 Si bien el ejemplo que se acaba de presentar resulta poco optimizado, con sólo
@@ -1079,7 +1079,7 @@ de la utilidad misma del paralelismo masivo.
 1. De las siguientes opciones, ¿cuál responde a la definición de
    /almacenamiento primario/?
    1. Las unidades de almacenamiento no volátil de largo plazo
-      (discos, memoria Flash, *usb*, etcétera)
+      (discos, memoria /flash/, *usb*, etcétera)
    2. La memoria *ram* del sistema.
    3. La capa de memoria que corre a mayor velocidad y está más cerca
       del procesador.

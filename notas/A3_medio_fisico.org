@@ -53,8 +53,8 @@ La mayor parte de los discos flexibles presentaban velocidades de
 rotación de entre 300 y 400 revoluciones por minuto —presentaban,
 pues, una /demora rotacional/ de entre 0.15 y 0.2 segundos. La /demora
 rotacional/ es el tiempo que toma la cabeza lectora en volver a
-posicionarse sobre un mismo sector del disco. (Véase la figura
-\ref{FS_FIS_disco_duro})
+posicionarse sobre un mismo sector del disco (véase la figura
+\ref{FS_FIS_disco_duro}).
 
 A lo largo de más de 20 años se presentaron muy diferentes formatos
 físicos siguiendo esta misma lógica, designándose principalmente por
@@ -63,7 +63,7 @@ creciendo con el paso de los años —esto explica la aparente
 contradicción de que los discos (físicamente) más chicos tenían más
 capacidad que los más grandes.
 
-#+caption: Principales formatos de disco flexible que se popularizaron en el mercado.
+#+caption: Principales formatos de disco flexible que lograron popularizarse en el mercado.
 |-----------------------+---------------------+---------------------+----------------------|
 |                       |          8 pulgadas |       5.25 pulgadas |         3.5 pulgadas |
 |-----------------------+---------------------+---------------------+----------------------|
@@ -165,7 +165,7 @@ forma gráfica la respuesta que presentarían los distintos algoritmos
 ante la cadena de referencia dada.
 
 
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: width=\textwidth
 #+label: FS_FIS_mov_cabeza_por_algoritmo
 #+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 60. Para *scan*, *look* y *c-scan*, se asume que la cabeza inicia avanzando en dirección decreciente.
 [[./img/gnuplot/mov_cabeza_por_algoritmo.png]]
@@ -208,10 +208,9 @@ ante la cadena de referencia dada.
           cilindros, muy cerca del mínimo absoluto posible.
 
 	  Una desventaja de *sstf* es que puede llevar a la inanición:
-          si hay una gran densidad de solicitudes para cilindros en
+          si hay una gran densidad de solicitudes para
           determinada zona del disco, una solicitud para un cilindro
-          alejado puede quedar a la espera
-          indefinidamente.
+          alejado puede quedar a la espera indefinidamente.
 
 	  Ejemplificando esto con una serie de solicitudes distinta a
           la cadena referencia: si el sistema tuviera que atender
@@ -220,7 +219,7 @@ ante la cadena de referencia dada.
           hasta terminar con los cilindros bajos. Si durante el tiempo
           que tome responder a estas solicitudes llegan otras
           adicionales, el proceso que está esperando el contenido del
-          cilindro 175 puede quedar en espera indefinida.
+          cilindro 175 puede quedar en espera de forma indefinida.
 
 - Familia de algoritmos /de elevador/ (*scan*, *look*, *c-scan*) :: En este
      tercer lugar se abordará ya no un sólo algoritmo, sino que una
@@ -487,11 +486,11 @@ son:
        /unidad de estado sólido/ (/Solid State Drive/)[fn:: Un
        error muy común es confundir la /D/ con /Disk/, que
        denotaría que llevan un /disco/, un /medio rotativo/.] son
-       unidades Flash de alta velocidad y capacidad, y típicamente
+       unidades /flash/ de alta velocidad y capacidad, y típicamente
        presentan una interfaz similar a la que tienen los discos
        duros; hoy en día, la más común es *sata*.
 
-       #+caption: Unidad de estado sólido basado en Flash con interfaz *sata* (imagen de la Wikipedia: /Solid state drive/).
+       #+caption: Unidad de estado sólido basado en /flash/ con interfaz *sata* (imagen de la Wikipedia: /Solid state drive/).
        #+attr_html: height="262" width="400"
        #+attr_latex: width=0.5\textwidth
        [[./img/estado_solido_sata.jpg]]
@@ -510,12 +509,12 @@ son:
 
   - Transporte de archivos :: Esta tecnología también está presente en
        las diversas unidades extraíbles o móviles, como las unidades
-       *usb*, *sd*, Memory Stick, Compact Flash, etc. La principal
-       diferencia entre estas son los diferentes conectores que
+       *usb*, *sd*, /Memory Stick/, /Compact Flash/, etc. La principal
+       diferencia entre éstas son los diferentes conectores que
        emplean; todas estas tecnologías presentan dispositivos que
        varían fuertemente en capacidad, velocidad y durabilidad.
 
-       #+caption: Unidad de estado sólido basado en Flash con interfaz *usb* (imagen de la Wikipedia: /Solid state drive/).
+       #+caption: Unidad de estado sólido basado en /flash/ con interfaz *usb* (imagen de la Wikipedia: /Solid state drive/).
        #+attr_html: height="300" width="335"
        #+attr_latex: width=0.5\textwidth
        [[./img/estado_solido_usb.png]]
@@ -530,8 +529,8 @@ de movimiento de cabezas como la rotacional.
 
 *** Desgaste del medio
 
-La memoria Flash presenta patrones de desgaste muy distintos de los que
-presentan otros medios. La memoria Flash tiene capacidad de
+La memoria /flash/ presenta patrones de desgaste muy distintos de los que
+presentan otros medios. La memoria /flash/ tiene capacidad de
 aguantar un cierto número de operaciones de borrado por página[fn::
 Dependiendo de la calidad, va entre las $3~000$ y $100~000$.] antes de
 comenzar a degradarse y fallar. Las
@@ -541,7 +540,7 @@ de la operación normal del sistema en ciertas regiones
 clave: las tablas de asignación y directorios registran muchos más
 cambios que la región de datos.
 
-Casi todos los controladores de discos Flash cuentan con mecanismos de
+Casi todos los controladores de discos /flash/ cuentan con mecanismos de
 /nivelamiento de escrituras/ (/write leveling/). Este mecanismo busca
 reducir el desgaste focalizado modificando el mapeo de los sectores
 que ve el sistema operativo respecto a los que son grabados /en
@@ -569,24 +568,25 @@ ventajas estructurales — y más importante aún, no puede evitar las
 debilidades inherentes al medio.
 
 Uno de los ejemplos más claros de esta falta de control real del medio
-la ilustra \parencite{Aurora2009}, que menciona que
+la ilustra \textcite{Aurora2009}, que menciona que
 tanto la poca información públicamente disponible acerca del
 funcionamiento de los controladores como los patrones de velocidad y
 desgaste de los mismos apuntan a que la estructura subyacente de casi
 todos los medios de estado sólido es la de un /sistema de archivos
-estructurado en bitácora/. Aurora indica que hay varias operaciones
-que no pueden ser traducidas eficientemente por medio de esta capa de
-emulación, y que seguramente permitirían un mucho mejor
-aprovechamiento del medio. Como se mencionó en la sección
-\ref{FS_log_structured} (/Sistemas de archivo estructurados en
-bitácora/), si bien varios de estos sistemas de archivos han
-presentado implementaciones completamente utilizables, la falta de
-interés ha llevado a que muchos de estos proyectos sean abandonados.
+estructurado en bitácora/.
 
-En su [[http://lwn.net/Articles/528617/][artículo de 2012]], Neil Brown apunta a que Linux tiene una
-interfaz apta para hablar directamente con dispositivos de estado
-sólido, llamada =mtd= — /memory technology devices/, /dispositivos de
-tecnología de memoria/.
+Aurora indica que hay varias operaciones que no pueden ser traducidas
+eficientemente por medio de esta capa de emulación, y que seguramente
+permitirían un mucho mejor aprovechamiento del medio. Como se mencionó
+en la sección \ref{FS_log_structured} (/Sistemas de archivo
+estructurados en bitácora/), si bien varios de estos sistemas de
+archivos han presentado implementaciones completamente utilizables, la
+falta de interés ha llevado a que muchos de estos proyectos sean
+abandonados.
+
+\textcite{Brown2012} apunta a que Linux tiene una interfaz apta para
+manipular directamente dispositivos de estado sólido, llamada =mtd= —
+/memory technology devices/, /dispositivos de tecnología de memoria/.
 
 Si bien los discos duros se han empleado por ya 50 años y los sistemas
 de archivos están claramente desarrollados para aprovechar sus
@@ -608,6 +608,7 @@ mecanismos que permite combinar diferentes /dispositivos físicos/ en
 un sólo volumen, llevando –bajo sus diferentes modalidades– a mayor
 confiabilidad, rendimiento y espacio disponible.
 
+#+lateX: \eject
 El esquema más difundido para este fin es conocido como *raid*,
 /Arreglo Redundante de Discos Baratos/ (/Redundant Array of
 Inexpensive Disks/),[fn:: Ocasionalmente se presenta a *raid* como
@@ -661,7 +662,7 @@ uniforme entre todos los discos, y asegura que todas las
 transferencias mayores al tamaño de una franja provengan de más de un
 disco independiente.
 
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: width=0.55\textwidth
 #+label: FS_FIS_franjas_raid_0
 #+caption: División de datos en /franjas/.
 [[./img/ditaa/franjas_raid_0.png]]
@@ -691,12 +692,12 @@ lectura para que se vayan repartiendo entre ambas unidades. La
 velocidad de escritura se ve levemente reducida, dado que hay que
 esperar a que ambos discos escriban la información.
 
+Un arreglo *raid* nivel 1 se construye típicamente con dos discos.
+
 #+label: FS_FIS_raid_1
 #+caption: Dos discos en espejo con *raid* 1.
 #+attr_latex: width=0.3\textwidth
 [[./img/dot/raid_1.png]]
-
-Un arreglo *raid* nivel 1 se construye típicamente con dos discos.
 
 ** Los niveles 2, 3 y 4 de *raid*
 
@@ -776,7 +777,7 @@ mode/, también conocido como /modo degradado/), en el que todas las lecturas in
 que tienen que estar recalculando y /rellenando/ la información que
 provendría del disco dañado.
 
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: width=0.8\textwidth placement=[b]
 #+label: FS_FIS_raid_5
 #+caption: Cinco discos organizados en *raid* 5. La franja de paridad se va alternando, repartiéndose entre todos los discos.
 [[./img/dot/raid_5.png]]
@@ -1018,14 +1019,14 @@ las diferentes regiones del sistema.
 
 ** Temas de investigación sugeridos
 
-- Detalles de los sistemas de archivos en Flash ::
+- Detalles de los sistemas de archivos en /flash/ ::
 
   En este apéndice se expusieron los principales puntos de los medios
   de /estado sólido/ o /no rotativos/, apuntando apenas hacia cómo
   podrían estos aprovecharse mejor.
 
   ¿Qué sistemas de archivos están mejor /afinados/ para operar con
-  medios Flash, y cuáles son los principales obstáculos para que gocen
+  medios /flash/, y cuáles son los principales obstáculos para que gocen
   de una mayor adopción?
 
 ** Lecturas relacionadas

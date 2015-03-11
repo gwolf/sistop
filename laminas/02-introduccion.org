@@ -30,7 +30,9 @@
   - …
 
 ** ¿Qué brinda al /programador/?
-- Abstracción (/embellecimiento/ -Finkel)
+- Abstracción
+  - /Embellecimiento/ -Finkel
+  - /Virtualización/ -Arpaci-Dusseau
 - Gestión de recursos
 - Aislamiento y protección
 ** Abstracción
@@ -87,8 +89,8 @@ enfocados a las /inovaciones/ de cada etapa
 ** En el principio…
 - Arquitectura /von Neumann/ (programa almacenado)
 - Programación directa y explícita para el hardware
-- Tiempo de programación -> tiempo /no productivo/ -> desperdicio de
-  recursos
+- Tiempo de programación \rightarrow tiempo /no productivo/
+  \rightarrow desperdicio de recursos
 
 ** Sistemas de proceso por lotes (/batch processing/)
 - Los programadores codifican su código en un medio de almacenamiento
@@ -189,6 +191,8 @@ requeridas por cada sistema
 - Comienzan a manejarse /dispositivos/: Unidades de cinta, unidades de
   disco, impresoras, modems, etc.
 - Muchas arquitecturas mutuamente incompatibles
+- Separan el /entorno de desarrollo/ del /entorno de ejecución/
+  - Nace la /distribución de binarios/
 - Explosión de la industria de los videojuegos
 
 ** La microcomputadora seria: Familia PC (1981)
@@ -199,8 +203,6 @@ requeridas por cada sistema
 #+latex: \end{column}\begin{column}{0.6\textwidth}
 - Primer computadora de una empresa seria, orientada a su uso en
   ambiente empresarial
-- Separan el /entorno de desarrollo/ del /entorno de programación/, se
-  populariza la /distribución de binarios/
 - Entorno primario de ejecución: /Línea de comando/ (PC-DOS, MS-DOS)
 - Al día de hoy sigue siendo la arquitectura predominante
 #+latex: \end{column}\end{columns}
@@ -280,9 +282,11 @@ escritorio?
 ** Continuando con la introducción…
 #+BEGIN_CENTER
 Seguimos con…
+\vfill
 
 Algunos conceptos base que se presentarán repetidamente a lo largo
 del curso.
+\vfill
 
 Algunos conceptos sin demasiada hilación temática — pero que se harán
 fundamentales
@@ -338,7 +342,7 @@ núcleo?
 
 - Más difíciles de implementar correctamente
 
-** Monolíticos: Esquematizando
+** Microkernel: Esquematizando
 #+attr_latext: height=0.7\textheight
 [[../img/dot/diseno_microkernel.png]]
 
@@ -352,25 +356,5 @@ núcleo?
 
 ** Diseño híbrido: Esquematizando
 #+attr_latext: height=0.7\textheight
-[[../img/dot/diseno_hibrido.png]]
-* Conceptos nuevos
-** En esta presentación vimos...
-- ¿Qué definimos como sistema operativo? (y qué no)
-  - Abstracción/embellecimiento
-  - Gestión de recursos
-  - Aislamiento y protección
-- Sistemas operativos históricos
-  - Por lotes (/batch/)
-  - Spool
-  - Multiprogramación
-  - Tiempo compartido
-  - Microcomputadoras (evolución principalmente \approx 1975 — 1990)
-** En esta presentación vimos...
-- Tipos de multitarea
-  - /Cooperativa/ o /no apropiativa/
-  - /Preventiva/ o /apropiativa/
-- Ejecución en /espacio núcleo/ y /espacio de usuario/
-- Tipos fundamentales de organización de sistema operativo
-  - Monolítico
-  - Microkernel
-  - Híbrido
+   [[../img/dot/diseno_hibrido.png]]
+

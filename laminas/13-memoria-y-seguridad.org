@@ -159,6 +159,7 @@ $ ./ejemplo1 `perl -e 'print "A" x 120'`
 Escribiste: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 $
 #+end_src
+\pause
 #+begin_center
 Invocamos al programa vulnerable con un parámetro demasiado largo
 para el arreglo:
@@ -170,7 +171,7 @@ Segmentation fault
 $
 #+end_src
 #+begin_center
-Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
+Parecería que el sistema /atrapó/ al error exitosamente. \pause ¿O no?
 #+end_center
 
 ** ¿Qué significa nuestro =Segmentation fault=?
@@ -203,8 +204,11 @@ Parecería que el sistema /atrapó/ al error exitosamente, ¿no?
 - ¿Qué pasa si sobreescribimos =RET= con una dirección /válida/?
 
 ** Brincando a otro punto del programa
+- Es necesario comprender cómo el compilador /transforma/ el aparente
+  órden lógico de ciertas operaciones
 - Si estamos en una rutina de verificación (digamos, de contraseña) y
   conocemos la dirección de quien invocó a esta verificación:
+#+latex: \begin{columns} \begin{column}{0.5\textwidth}
 #+begin_src c
 if (valid_user(usr, pass)) {
   /* (...) */
@@ -213,12 +217,18 @@ if (valid_user(usr, pass)) {
   exit 1;
 }
 #+end_src
-- La llamada a =valid_user= regresa al =if= un valor verdadero (0) o
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src asm
+pushl [%rax]
+pushl [%rbx]
+call valid_user
+bne $0, %ebx, user_fail
+#+end_src
+#+latex: \end{column}  \end{columns}
+- La llamada a =valid_user()= regresa al =if= un valor verdadero (0) o
   falso (cualquier otra cosa)
-  - Posteriormente, ese valor se evalúa por el =if= \rarrow =BNE $0,
-    %EBX, FAIL=
-- Si hacemos que el flujo /brinque/ a después del =BNE=, libramos la
-  verificación
+- Si hacemos que el flujo /brinque/ a inmediatamente después del
+  =bne=, libramos la verificación
 
 ** Brincando hacia dentro del stack
 - Si en vez de 'AAAAAAAA...' le damos al sistema código ejecutable
@@ -232,7 +242,7 @@ if (valid_user(usr, pass)) {
   arbitrario con los privilegios del proceso víctima
 
 
-* Mitigación
+* Mitigacizón
 ** Técnicas de mitigación
 - Claro está, desde hace años se han desarrollado maneras de mitigar
   el daño causado

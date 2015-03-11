@@ -181,7 +181,7 @@ xt_t$
     conectados /serialmente/
 
 ** Ejemplo: Chipset Intel 875 (2003)
-#+attr_latex: width=1.1\textwidth
+#+attr_latex: width=\textwidth
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en el chipset Intel 875 (Pentium 4, 2003)
 [[../img/dot/chipset_857.png]]
 
@@ -647,42 +647,3 @@ realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
 constante.
 
 #+latex: }
-* Conceptos nuevos
-** En esta presentación vimos...
-- Jerarquía de almacenamiento
-  - Registros
-    - Acumulador
-    - Propósito general (RISC)
-  - Memoria principal o almacenamiento primario
-    - /Cuello de botella de von Neumann/
-    - Caché
-- Tiempo de acceso, tasa de transferencia
-- Comunicación con dispositivos a través de /canales/
-  - Arquitectura ejemplo: x86 con /Northbridge/ y /Southbridge/
-  - Contención
-
-** En esta presentación vimos...
-- Interrupciones y excepciones
-  - Mecanismo para interrumpir/desviar la ejecución lineal del
-    procesador
-  - Interrupción: Externo al flujo de ejecución; Excepción: originada
-    por el flujo del proceso
-  - Presentación de los /manejadores de interrupciones/
-  - Acceso directo a memoria
-    - Coherencia de caché
-- Llamadas al sistema
-  - API del sistema operativo; compatibilidad de código (¡no binaria!)
-  - Categorías de llamada al sistema
-  - Depuración por trazas
-
-** En esta presentación vimos...
-- Multiprogramación y multiprocesamiento
-  - ¿Por qué nos es inescapable? \rarrow Ley de Moore
-- Tipos de multiprocesamiento
-  - Simétrico
-  - Asimétrico
-  - NUMA
-- Cómputo distribuído
-  - Cúmulos (/clusters/)
-  - Mallas (/grids/)
-  - /La nube/

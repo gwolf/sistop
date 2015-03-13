@@ -122,6 +122,12 @@ libro_tex: libro_index
 	sed -i 's/\\ref{VIRT}/\\ref{sec-9}/' $(srcdir)/$(libro_tex)
 	sed -i 's/\\ref{FS_FIS}/\\ref{sec-10}/' $(srcdir)/$(libro_tex)
 
+	# En el título de dos de los capítulos, la conjunción debe ir
+	# en el renglón del subsecuente, no del precedente
+	perl -p -i -e  's/^.chapter.Software libre y licenciamiento/\\chapter\{Software libre y~licenciamiento/; \
+			s/^.chapter.El medio físico y el almacenamiento/\\chapter\{El medio físico y~el~almacenamiento/;' \
+			$(srcdir)/$(libro_tex)
+
 	# Necesitamos mayor control que el que nos da \maketitle para
 	# hacer la página de título como la queremos
 	sed -i 's/\\maketitle/\\input{titlepages_unam}/' $(srcdir)/$(libro_tex)

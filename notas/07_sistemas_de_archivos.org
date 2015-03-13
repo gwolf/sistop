@@ -413,7 +413,7 @@ prácticas que ya se han abandonado en diseños modernos de sistemas de
 archivos. Se vio que dentro de la entrada de directorio de cada archivo
 está prácticamente su /i-nodo/ completo: la información de permisos,
 atributos, fechas de creación, y muy particularmente, el apuntador
-al /cluster/ de inicio (bytes 26-28, mas los 20-22 para *fat32*). Esto
+al /cluster/ de inicio (bytes 26-28, más los 20-22 para *fat32*). Esto
 resulta en una de las grandes debilidades de *fat*: la tendencia a la
 fragmentación.
 
@@ -546,7 +546,7 @@ operaba bajo *ms-dos*, creando un dispositivo de bloques virtual alojado
 en un disco estándar.[fn:: Esto significa que, al solicitarle la
 creación de una unidad comprimida de 30 *mb* dentro del volumen =C=
 (disco duro primario), ésta aparecería disponible como un volumen
-adicional. El nuevo volúmen requería de la carga de un /controlador/
+adicional. El nuevo volumen requería de la carga de un /controlador/
 especial para ser /montado/ por el sistema operativo.] Varias
 implementaciones posteriores de esta misma época se basaron en este
 mismo principio.
@@ -598,7 +598,7 @@ comprimidas; esta característica viene como parte de todos los
 sistemas operativos Windows a partir de la versión *xp*, liberada en el
 año 2003.
 
-Si bien la compresión transparente a nivel archivo se muestra mucho
+Si bien la compresión transparente por archivo se muestra mucho
 más atractiva que la de volumen completo, no es una panacea y es
 frecuente encontrar en foros en línea la recomendación de
 deshabilitarla. En primer término, comprimir un archivo implica que un
@@ -676,9 +676,10 @@ llegan al sistema, o (dado que es una tarea intensiva, tanto en uso de
 procesador, como de entrada/salida) realizarla como una tarea posterior
 de mantenimiento, en un momento de menor ocupación del sistema.
 
-Desduplicar a nivel archivo es mucho más ligero para el sistema que
-hacerlo a nivel bloque, y lleva típicamente a una optimización del
-uso de espacio mucho mayor.
+Desduplicar por archivo es mucho más ligero para el sistema que
+hacerlo por bloque, aunque dadas las estructuras comunes que comparten
+muchos archivos, desduplicar por bloque lleva típicamente a una mucho
+mayor optimización del uso de espacio.
 
 Al día de hoy, el principal sistema de archivos que implementa
 desduplicación es *zfs*,[fn:: Las características básicas de *zfs* serán
@@ -689,11 +690,11 @@ recomendarse para su uso en entornos de producción.
 
 En Windows, esta funcionalidad se conoce como /single instance
 storage/ (/almacenamiento de instancia única/). Esta característica
-apareció, implementada en espacio de usuario y operando a nivel de
-archivo, como una de las características del servidor de correo
-/Exchange Server/ entre los años 2000 y 2010. A partir de Windows
-Server 2003, la funcionalidad de desduplicación existe directamente
-para *ntfs*, pero su uso es poco frecuente.
+apareció, implementada en espacio de usuario y, por tanto, operando
+únicamente por archivo, como una de las características del servidor
+de correo /Exchange Server/ entre los años 2000 y 2010. A partir de
+Windows Server 2003, la funcionalidad de desduplicación existe
+directamente para *ntfs*, aunque su uso es poco frecuente.
 
 El uso de desduplicación, particularmente cuando se efectúa por
 bloques, tiene un alto costo en memoria: para mantener buenos niveles
@@ -729,13 +730,14 @@ dispositivos, =/dev=) se han convertido en virtuales.
 *** Una ventana al núcleo
 # <<FS_proc>>
 
-En junio 1984, en el congreso de desarrolladores de sistemas Unix del
-grupo *usenix*, T. J. Killian presentó el artículo "/Processes as
-files/" \parencite{Killian84}. Killian implementó un sistema de
-archivos virtual para ser montado en el directorio =/proc= del sistema
-que, en vez de representar un mapa de bloques, presentaba una ventana
-a la lista de procesos en ejecución en el sistema. El uso de =/proc=
-fue incorporado a prácticamente todos los sistemas tipo Unix.
+El artículo titulado /Processes as files/ \parencite{Killian84},
+presentado en el congreso de desarrolladores de sistemas Unix del
+grupo *usenix*, presenta la implementación un sistema de archivos
+virtual para ser montado en el directorio =/proc= del sistema. Dicho
+sistema de archivos, en vez de representar un mapa de bloques en un
+dispositivo físico, presentó una ventana a la lista de procesos en
+ejecución en el sistema. El uso de =/proc= fue incorporado a
+prácticamente todos los sistemas tipo Unix.
 
 Esta idea ha avanzado y madurado, y al día de hoy es una herramienta
 fundamental para la administración de sistemas. Si bien la propuesta
@@ -749,15 +751,16 @@ etc.), e incluso modificar la configuración del sistema en ejecución.
 
 Por ejemplo, en Linux, leer de =/proc/sys/vm/swappiness= dará, por
 omisión, un valor de 60. Escribir el valor 100 a este archivo tendrá
-por resultado inmediato que el sistema sea más agresivo con la
-paginación de memoria virtual (véase la sección \ref{MEM_virtual}) de
-lo que normalmente sería. Por otro lado, escribir el valor uno tendrá
-por efecto que el sistema operativo realice la paginación sólo si no
-tiene otra alternativa. Un valor de cero tendrá como efecto el
-deshabilitar la paginación por completo. Este archivo, al igual que
-todos los que conforman =/proc=, se presenta ante los procesos en
-ejecución como un archivo de tipo normal —la particularidad radica en
-el sistema de archivos en que se ubica.
+por resultado inmediato que el sistema sea más /agresivo/ con la
+paginación de memoria virtual, buscando dejar más espacio de memoria
+física disponible (véase la sección \ref{MEM_virtual}) de lo que
+normalmente haría. Por otro lado, escribir el valor uno tendrá por
+efecto que el sistema operativo realice la paginación sólo si no tiene
+otra alternativa. Un valor de cero tendrá como efecto el deshabilitar
+la paginación por completo. Este archivo, al igual que todos los que
+conforman =/proc=, se presenta ante los procesos en ejecución como un
+archivo de tipo normal —la particularidad radica en el sistema de
+archivos en que se ubica.
 
 Claro está, por más que parezca una simple lectura de un archivo, el
 leer o modificar un valor dentro de =/proc= cruza también por una

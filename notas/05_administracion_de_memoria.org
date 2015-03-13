@@ -839,7 +839,7 @@ tabla de páginas en memoria, y apuntar al inicio de la tabla con un
 juego de registros especiales: el /registro de base de la tabla de
 páginas/ (*ptbr*, /page table base register/) y el /registro de
 longitud de la tabla de páginas/ (*ptlr*, /page table length
-register/),[fn:: ¿Por qué es necesario el segundo? Porque es
+register/).[fn:: ¿Por qué es necesario el segundo? Porque es
 prácticamente imposible que un proceso emplee su espacio de
 direccionamiento completo; al indicar el límite máximo de su tabla de
 páginas por medio del *ptlr* se evita desperdiciar grandes cantidades
@@ -848,9 +848,9 @@ el cambio de contexto sólo hay que cambiar estos dos registros, y
 además se cuenta con un espacio muy amplio para guardar las tablas de
 páginas que se necesiten. El problema con este mecanismo es la
 velocidad: Se estaría penalizando a /cada acceso a memoria/ con uno
-—si para resolver una dirección lógica a su correspondiente dirección
-física hace falta consultar la tabla de páginas en memoria, el tiempo
-efectivo de acceso a memoria se duplica.
+adicional —si para resolver una dirección lógica a su correspondiente
+dirección física hace falta consultar la tabla de páginas en memoria,
+el tiempo efectivo de acceso a memoria se duplica.
 
 *** El buffer de traducción adelantada (*tlb*)
 # <<MEM_tlb>>
@@ -868,7 +868,7 @@ El *tlb* típicamente tiene entre 64 y $1~024$ entradas. Cuando el
 procesador efectúa un acceso a memoria, si la página solicitada está
 en el *tlb*, la *mmu* tiene la dirección física de inmediato.[fn:: El
 tiempo efectivo de acceso puede ser 10% superior al que tomaría sin
-emplear paginación \parencite[295]{Silberschatz2010} .] En caso de no
+emplear paginación \parencite[295]{Silberschatz2010}.] En caso de no
 encontrarse la página en el *tlb*, la *mmu* lanza un /fallo de página/
 (/page fault/), con lo cual consulta de la memoria principal cuál es
 el marco correspondiente. Esta nueva entrada es agregada al *tlb*; por

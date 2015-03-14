@@ -3,34 +3,6 @@
 #+DATE:
 
 * Introducción a la concurrencia
-** Objetivos de esta presentación (1)
-- Comprender los problemas que derivan de la ejecución concurrente
-  - Particularmente sobre datos /compartidos/
-- Familiarizarse con los principales conceptos con que trabajaremos en este tema
-  - Condición de carrera
-  - Operación atómica
-  - Sección crítica
-  - Bloqueo mutuo
-  - Inanición
-
-** Objetivos de esta presentación (2)
-- Comprender las principales /primitivas de sincronización/
-  - ¿Por qué tienen que ser /primitivas/?
-  - /Mutex/ (Exclusión mutua)
-  - Semáforos
-  - Variables de condición
-  - Monitores
-- Conocer algunas soluciones en hardware propuestas para estos
-  problemas
-
-** Objetivos de esta presentación (3)
-- Breviario: ¿Patrones de programación? ¿Qué son? ¿De qué me sirven?
-- Conocer y comprender los principales patrones de sincronización
-  entre procesos
-  - Estudiando su implementación basada en semáforos
-- Comprender la aplicación de los patrones a problemas reales
-  - Abordando problemas clásicos de sincronización
-
 ** Concurrencia
 - No tenemos que preocuparnos cuando todos los datos que maneja un
   hilo son /locales/
@@ -158,6 +130,7 @@ En inglés, /resource starvation/
 ¡Inseguro! ¿Qué hizo el programador bien? ¿qué hizo mal?
 #+END_CENTER
 #+begin_src perl
+use threads::shared;
 my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
 $capacidad = 40;
 sub asigna_asiento {
@@ -177,7 +150,7 @@ sub asigna_asiento {
 
 ** ¿Por qué es inseguro el ejemplo anterior?
 #+BEGIN_CENTER
-Líneas 4 y 5:
+Líneas 5 y 6:
 #+END_CENTER
 - Espera activa (/spinlock/): Desperdicio de recursos
   - Aunque esta espera activa lleva dentro un =sleep=, sigue siendo
@@ -196,6 +169,7 @@ Líneas 4 y 5:
 
 ** Mismo ejemplo, empleando un candado (/mutex/)
 #+begin_src perl
+use threads::shared;
 my ($proximo_asiento :shared, $capacidad :shared);
 $capacidad = 40;
 sub asigna_asiento {
@@ -561,8 +535,8 @@ Sí, pero...
   - No podemos arriesgarnos a comenzar la transmisión hasta que la
     conexión esté lista
 #+begin_src python
-from threading import *
-semaf = threading.Semaphore(0)
+from threading import Semaphore, Thread
+semaf = Semaphore(0)
 Thread(target=prepara_conexion, args=[semaf]).start()
 Thread(target=envia_datos, args=[semaf]).start()
 #+end_src
@@ -595,6 +569,13 @@ def envia_datos(semaf):
   - No queremos que la interfaz se presente en blanco
 
 ** /Rendezvous/
+#+begin_src python
+from threading import Semaphore, Thread
+guiListo = Semaphore(0)
+calculoListo = Semaphore(0)
+Thread(target=gui, args=[]).start()
+Thread(target=calculo, args=[]).start()
+#+end_src
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+begin_src python
 def calculo():
@@ -612,13 +593,6 @@ def gui():
   recibe_eventos()
 #+end_src
 #+latex: \end{column}\end{columns}
-#+begin_src python
-from threading import Semaphore, Thread
-guiListo = Semaphore(0)
-calculoListo = Semaphore(0)
-Thread(target=gui, args=[]).start()
-Thread(target=calculo, args=[]).start()
-#+end_src
 
 ** Mutex
 Un mutex puede implementarse con un semáforo inicializado a 1:
@@ -685,7 +659,7 @@ mutex.release()
 ** Barrera
 - Generalización de /rendezvous/ para manejar a varios hilos (no sólo
   dos)
-- El rol de cada uno de estos hilos puede ser el mismo, puede ser
+- El papel de cada uno de estos hilos puede ser el mismo, puede ser
   distinto
 - Requiere de una variable adicional para mantener registro de su
   /estado/
@@ -694,31 +668,29 @@ mutex.release()
 ** Barrera: Código ejemplo
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+begin_src python
-import random
-from time import sleep
-from threading import Semaphore
-# n = Numero de hilos
-n = random.randint(1,10)
+from threading import Semaphore, Thread
 cuenta = 0
 mutex = Semaphore(1)
 barrera = Semaphore(0)
+for i in range(10):
+  Thread(target=vamos,args=[i]).start()
 #+end_src
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+begin_src python
-def vamos():
-  global cuenta
-  inicializa_estado()
+def vamos(id):
+  global cuenta, mutex, barrera
+  inicializa(id)
   mutex.acquire()
   cuenta = cuenta + 1
   mutex.release()
-  if cuenta == n:
+  if cuenta == 10:
     barrera.release()
   barrera.acquire()
   barrera.release()
-  procesamiento()
+  procesa(id)
 #+end_src
 #+latex: \end{column}\end{columns}
-- Todos los hilos se inicializan por separado (=inicializa_estado()=)
+- Todos los hilos se inicializan por separado (=inicializa()=)
 - Ningún hilo inicia hasta que todos estén listos
 - /Pasar la barrera/ en este caso equivale a /habilitar un torniquete/
 
@@ -772,7 +744,7 @@ def vamos():
   - Pero es entre dos categorías, no entre dos hilos específicos
 - El patrón puede refinarse mucho, esta es la implementación básica
   - Asegurarse que sólo una pareja baile a la vez
-  - Asegurarse que bailendo en el órden en que llegaron
+  - Asegurarse que bailen en el órden en que llegaron
 
 * Problemas clásicos
 ** ¿De qué se tratan estos problemas clásicos?
@@ -1478,7 +1450,8 @@ end
     /antes de/ la suma?
 - /Mayor acoplamiento/ entre las tres funciones
   - =f2= debe recibir una referencia al hilo 1 (=t=)
-  - Cada función debe /comprender/ su rol en la /línea de ensamblaje/
+  - Cada función debe /comprender/ su papel en la /línea de
+    ensamblaje/
 - ¿Aprovecho efectivamente el paralelismo?
   - ¿Se ejecutan /a la vez/ las secciones no críticas?
     (los =sleep 0.1=)

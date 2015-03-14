@@ -900,6 +900,7 @@ venta de pasajes aéreos podría reescribirse de la siguiente manera
 empleando un /mutex/:
 
 #+begin_src perl
+use threads::shared;
 my ($proximo_asiento :shared, $capacidad :shared);
 $capacidad = 40;
 
@@ -923,12 +924,12 @@ específico de implementación, en este caso Perl. Al ser
 =$proximo_asiento= una variable compartida tiene algunas /propiedades/
 adicionales, en este caso, la de poder operar como un /mutex/. La
 implementación en Perl resulta muy /limpia/, dado que evita el uso
-de un candado explícito —se podría leer la línea cinco como /exclusión
+de un candado explícito —se podría leer la línea seis como /exclusión
 mutua sobre/ =$proximo_asiento=.
 
 En la implementación de hilos de Perl, la función =lock()= utiliza
 un /mutex/ delimitado por el /ámbito léxico/ de su invocación: el área
-de exclusión mutua abarca desde la línea cinco en que es invocada
+de exclusión mutua abarca desde la línea seis en que es invocada
 hasta la 15 en que termina el bloque en que se invocó.
 
 Un área de exclusión mutua debe:
@@ -946,7 +947,7 @@ Un área de exclusión mutua debe:
      se podría haber puesto =lock($asignado)= dentro del =if=, dado
      que sólo dentro de su evaluación positiva se modifica la variable
      =$proximo_asiento=. Sin embargo, si la ejecución de un hilo se
-     interrumpiera entre las líneas siete y ocho, la condición del
+     interrumpiera entre las líneas ocho y nueve, la condición del
      =if= se podría evaluar incorrectamente.
 
 Como comparación, una rutina equivalente escrita en Bash (entre
@@ -1050,6 +1051,7 @@ cuales se mencionarán los siguientes:
 
 	       #+begin_src python
 	       # Antes de lanzar los hilos
+               from threading import Semaphore
 	       senal = Semaphore(0)
 
 	       def envia_datos():
@@ -1060,7 +1062,6 @@ cuales se mencionarán los siguientes:
 	       def prepara_conexion():
 	         crea_conexion()
 		 senal.release()
-
 	       #+end_src
 
 	       No importa si =prepara_conexion()= termina primero —en
@@ -1081,11 +1082,12 @@ cuales se mencionarán los siguientes:
                   implementan dos semáforos señalizándose mutuamente:
 
 		  #+begin_src python
+                  from threading import Semaphore, Thread
 		  guiListo = Semaphore(0)
 		  calculoListo = Semaphore(0)
 
-		  threading.Thread(target=maneja_gui, args=[]).start()
-		  threading.Thread(target=maneja_calculo, args=[]).start()
+		  Thread(target=maneja_gui, args=[]).start()
+		  Thread(target=maneja_calculo, args=[]).start()
 
 		  def maneja_gui():
 		    inicializa_gui()
@@ -1180,8 +1182,7 @@ cuales se mencionarán los siguientes:
              hilos) será:
 
 	     #+begin_src python
-	     require random
-	     n = random.randint(1,10) # Número de hilos
+	     num_hilos = 10
 	     cuenta = 0
 	     mutex = Semaphore(1)
 	     barrera = Semaphore(0)
@@ -1199,7 +1200,7 @@ cuales se mencionarán los siguientes:
 	     cuenta = cuenta + 1
 	     mutex.release()
 
-	     if cuenta == n:
+	     if cuenta == num_hilos:
 	       barrera.release()
 
 	     barrera.acquire()

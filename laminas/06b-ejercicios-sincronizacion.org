@@ -1,0 +1,220 @@
+#+SETUPFILE: ../setup_laminas.org
+#+TITLE: Administración de procesos: Ejercicios de sincronización
+#+DATE:
+
+* Introducción
+
+** Introducción
+- En estas láminas presento varios ejercicios de sincronización
+- Sin un órden claro
+  - Simplemente son ejercicios que, comprendiendo los fundamentos de
+    concurrencia y sincronización, deben poder realizar.
+- Sugiero su implementación empleando semáforos
+  - Pero pueden emplear cualquier otro mecanismo de sincronización.
+- Uso probable de estas láminas
+  - Tarea
+  - Ejercicios en clase
+
+* De gatos y ratones
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://www.eecs.harvard.edu/~mdw/course/cs161/assign/asst1.html][Matt Welsh, 2007]]
+\vskip 1em
+Tengo $k$ gatos (y desafortunadamente, $l$ ratones) en su casa.
+\vskip 1em
+Le sirvo la comida a mis gatos en $m$ platos.
+\vskip 1em
+Gatos y ratones han llegado a un acuerdo para repartirse el tiempo y
+comida — Pero tienen que convencerme de que están haciendo su trabajo.
+#+END_CENTER
+
+** Reglas
+  - Los gatos pueden comer de sus $m$ platos de comida.
+  - Los ratones pueden comer de esos mismos platos siempre y cuando no
+    sean vistos.
+  - Si un gato ve a un ratón comiendo, se lo /debe/ comer (para
+    mantener su reputación)
+- Los platos están puestos uno junto al otro
+  - Sólo un animal puede comer de cada plato a la vez
+  - Si un gato está comiendo y un ratón comienza a comer de otro
+    plato, el gato lo ve (y se lo come).
+  - Por /acuerdo de caballeros/, los gatos no se van a acercar a los
+    platos mientras hay ratones comiendo.
+- Importante: ¡Hay que evitar la inanición!
+
+* Intersección de caminos
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://www.eecs.harvard.edu/~mdw/course/cs161/assign/asst1.html][Matt Welsh, 2007]]
+\vskip 1em
+Hay un cruce de caminos sin señalamiento vial:
+
+#+attr_latex: height=0.3\textheight
+[[../img/cruce_caminos.png]]
+
+El tránsito puede llegar desde cualquier lugar y en cualquier
+momento. ¿Cómo aseguramos que no haya choques?
+#+END_CENTER
+
+** Reglas
+- No puede haber dos autos en la misma sección de la intersección a la
+  vez (llamemos a esa situación /accidente/ o /choque/)
+- No existe el rebase, los autos no invaden el carril izquierdo.
+- No debes permitir que se lleve a la inanición: Aunque haya tráfico
+  constante en un sentido, un auto que llegue desde otro debe poder
+  cruzar.
+
+** Refinamiento 1
+#+BEGIN_CENTER
+Tal vez elegiste bloquear la intersección completa cuando un auto
+llega.
+#+END_CENTER
+
+- ¿Por qué es ineficiente?
+- ¿Cómo podrías mejorar el rendimiento (reducir la inanición) y
+  mantener la garantía de no-choques?
+
+** Refinamiento 2
+#+BEGIN_CENTER
+¿Cómo ajustarías el código para modelar también los giros?
+#+END_CENTER
+- Un auto podría girar a la derecha (y emplear sólo un cuadrante)
+- Podría seguir de frente (y emplear dos cuadrantes)
+- Podría girar a la izquierda (y emplear tres cuadrantes).
+- Ojo: ¿Puedes evitar los bloqueos mutuos?
+
+* El elevador
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://alumni.cs.ucsb.edu/~zoran/cs170/project1.html][Zoran Dimitrijevic]]
+#+END_CENTER
+- El elevador de la Facultad se descompone demasiado, porque sus
+  usuarios no respetan los límites.
+  - Te toca evitar este desgaste (y el peligro que conlleva).
+- Implementa el elevador como un hilo, y a cada persona que quiere
+  usarlo como otro hilo.
+- El elevador de la Facultad de Ingeniería da servicio a cinco
+  pisos.
+  - Un usuario puede llamarlo en cualquiera de ellos
+  - Puede querer ir a cualquiera otro de ellos.
+#+END_CENTER
+
+** Reglas
+- El elevador tiene capacidad para cinco pasajeros
+  - Recuerden que el peso canónico de todo ingeniero (estudiante o
+    docente) es constante.
+- Para ir del piso $x$ a $y$, el elevador tiene que cruzar todos los
+  pisos intermedios
+- Los usuarios prefieren esperar dentro del elevador que fuera de él
+  - Si el elevador va subiendo y pasa por el piso $x$, donde está $A$
+    esperando para bajar, $A$ aborda al elevador (no espera a que vaya
+    en la dirección correcta).
+
+** Refinamiento
+- Evita la inanición.
+  - ¿Cómo puedes asegurarte de que una serie de alumnos que van entre
+    dos pisos no van a monopolizar al elevador ante otro usuario que
+    va para otro piso?
+
+* Los alumnos y el asesor
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://alumni.cs.ucsb.edu/~zoran/cs170/project1.html][Zoran Dimitrijevic]]
+#+END_CENTER
+\vfill
+Un profesor de la facultad asesora a varios estudiantes, y estamos en
+su horario de atención.
+\vfill
+Modelar la interacción durante este horario de modo que la espera
+(para todos) sea tan corta como sea posible.
+
+** Reglas
+- Un profesor tiene $x$ sillas en su cubículo
+  - Cuando no hay alumnos que atender, las sillas sirven como sofá, y
+    el profesor se acuesta a dormir la siesta.
+- Los alumnos pueden tocar a su puerta en cualquier momento, pero no
+  pueden entrar más de $x$ alumnos
+- Para evitar confundir al profesor, sólo un alumno puede presentar su
+  duda (y esperar a su respuesta) al mismo tiempo.
+  - Los demás alumnos sentados deben esperar pacientemente su turno.
+  - Cada alumno puede preguntar desde 1 y hasta $y$ preguntas
+    (permitiendo que los demás alumnos pregunten entre una y otra)
+
+* El servidor Web
+** Planteamiento
+#+BEGIN_CENTER
+Al presentar los modelos de programación con hilos presentamos al
+/Jefe-trabajador/:
+
+#+attr_latex: height=0.3\textheight
+[[../img/dot/jefe_trabajador.png]]
+
+Dijimos que así operan muchos servidores de red, como el servidor
+Apache.
+
+¿Cómo modelarías la interacción entre jefe y trabajadores, empleando
+mecanismos de sincronización?
+#+END_CENTER
+
+** Reglas
+- Al inicializar, el proceso jefe lanza $k$ hilos trabajadores
+  - Los trabajadores que no tienen nada que hacer se van a dormir.
+- El proceso jefe recibe una conexión de red, y elige a cualquiera de
+  los trabajadores para que la atienda
+  - Se la asigna a un trabajador y lo despierta
+- El jefe va a buscar mantener siempre a $k$ hilos disponibles y
+  listos para atender las solicitudes que van llegando.
+
+** Refinamiento
+- Seguimiento del sistema: ¿Cómo implementarías lo necesario para
+  mantener /información de contabilidad/?
+  - Cada hilo debe notificar antes de terminar su ejecución,
+    entregando información de su rendimiento
+  - Por ejemplo, qué página fue solicitada
+
+
+* El cruce del río
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://greenteapress.com/semaphores/downey08semaphores.pdf][Little book of semaphores (Allen B. Downey)]]
+#+END_CENTER
+
+- Para llegar a un encuentro de desarrolladores de sistemas
+  operativos, hace falta cruzar un río en balsa.
+- Los desarrolladores podrían pelearse entre sí, hay que cuidar que
+  vayan con un balance adecuado
+
+** Reglas
+- En la balsa caben cuatro (y sólo cuatro) personas
+  - La balsa es demasiado ligera, y con menos de cuatro puede volcar.
+- Al encuentro están invitados /hackers/ (desarrolladores de Linux) y
+  /serfs/ (desarrolladores de Microsoft).
+  - Para evitar peleas, debe mantenerse un buen balance: No debes
+    permitir que aborden tres /hackers/ y un /serf/, o tres /serfs/ y
+    un /hacker/. Pueden subir cuatro del mismo /bando/, o dos y dos.
+- Hay sólo una balsa.
+- No se preocupen por devolver la balsa (está programada para volver
+  sola)
+
+* Santa Claus
+** Planteamiento
+#+BEGIN_CENTER
+Fuente: [[http://greenteapress.com/semaphores/downey08semaphores.pdf][Little book of semaphores (Allen B. Downey)]]
+#+END_CENTER
+
+- Santa Claus duerme en el Polo Norte mientras sus elfos trabajan
+  frenéticamente en la construcción de millones de nuevos juguetes
+  - A veces se topan con un problema — Pueden pedir ayuda a Santa
+    Claus, pero sólo de tres en tres.
+- Sus nueve renos pasan todo el año de vacaciones en las playas del
+  Caribe
+  - Santa debe despertar a tiempo para iniciar su viaje anual
+
+** Reglas
+- Si los nueve renos están de vuelta, es hora de despertar a Santa
+  Claus para que inicie su recorrido.
+- Si los elfos tienen problemas construyendo algún juguete, le piden
+  ayuda a Santa Claus
+  - Pero para no darle demasiada lata, lo hacen sólo cuando hay tres
+    elfos que tienen un problema. Mientras tanto, lo dejan dormir.
+  - Puede haber cualquier cantidad de elfos.

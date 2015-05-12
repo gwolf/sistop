@@ -791,6 +791,30 @@ Las ligas duras presentan dos restricciones principales:
 #+caption: Vista de un sistema de archivos Windows
 [[../img/dot/montaje_windows.png]]
 
+** Tarea / evaluación de unidad (1)
+#+BEGIN_CENTER
+Va como tarea, pero reemplaza al examen parcial de la unidad /Sistemas
+de Archivos/:
+#+END_CENTER
+- Desarrollar un micro-sistema de archivos
+  - Medio para almacenarlo: Un archivo cualquiera
+- Requisitos mínimos:
+  - Entorno interactivo
+  - Un directorio maestro que soporte un /mínimo/ de cuatro archivos
+  - Operaciones del directorio /simplificadas/ respecto a un
+    =dirstream=: =listar()= (no hace falta /recorrer/ entrada por
+    entrada), =crear_archivo(nombre)=, =eliminar_archivo(nombre)=
+** Tarea / evaluación de unidad (2)
+- Requisitos mínimos:
+  - Cada uno de los archivos debe soportar también operaciones
+    simplificadas: =escribir(archivo, datos)=, =leer(archivo)=,
+    =rebobinar(archivo, pos)=
+  - /Pueden/ hacer refinamientos adicionales.
+- El código debe:
+  - Ser compilable/ejecutable legal, en el lenguaje que prefieran
+- El trabajo puede entregarse de forma individual o en parejas
+  - Fecha límite: 22 de mayo
+    - Recomiendo 20 de mayo
 * Sistemas de archivos remotos
 ** La red y los sistemas de archivos
 - /Modelo cliente-servidor/

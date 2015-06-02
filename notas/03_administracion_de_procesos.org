@@ -1802,7 +1802,6 @@ variables globales, de esta manera:
     for i in ingredientes:
       que_tengo[i] = False
       semaforos_interm[i] = threading.Semaphore(0)
-    
     interm_mutex = threading.Semaphore(1)
     intermediarios = [threading.Thread(target=intermediario, args=[i]).start() for i in ingredientes]
     
@@ -1818,13 +1817,19 @@ variables globales, de esta manera:
       while True:
         semaforos[ingr].acquire()
         interm_mutex.acquire()
+        found = True
         for i in otros_ingr:
           if que_tengo[i]:
             que_tengo[i] = False
-            semaforos_interm[i].release()
+            habilitado = list(otros_ingr)
+            habilitado.remove(i)
+            semaforos_interm[habilitado[0]].release()
+            found = True
             break
-          que_tengo[i] = True
+          if not found:
+            que_tengo[ingr] = True
         interm_mutex.release()
+    
   #+END_SRC
 
 Si bien se ve que el código de =fumador()= se simplifica (dado que ya
@@ -1950,7 +1955,6 @@ monitores.
 #define PENSANDO 1
 #define HAMBRIENTO 2
 #define COMIENDO 3
-
 pthread_cond_t  VC[5]; /* Una VC por filósofo */
 pthread_mutex_t M;     /* Mutex para el monitor */
 int estado[5];         /* Estado de cada filósofo */

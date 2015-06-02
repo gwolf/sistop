@@ -97,7 +97,7 @@ libro_index:
 	echo "#+latex: \listoffigures" >> $(libro)
 	echo '#+latex: \\vfill \\eject \\addcontentsline{toc}{chapter}{Bibliografía}' >> $(libro)
 	echo '#+latex: \printbibliography' >> $(libro)
-	echo '#+latex: \input{unam/colofon.tex}' >> $(libro)
+	# echo '#+latex: \input{unam/colofon.tex}' >> $(libro)
 
 libro_tex: libro_index
 	# Si org-mode se queja de no tener definido "book" en

@@ -431,9 +431,9 @@ ejecución de estas instrucciones:
 3. =torniquete1=: =INC= 		(resultado: =rax= de $p_1$ = 1, =cuenta = 0=)
 4. El sistema operativo decide cambiar de tarea, suspende =torniquete1= y
    continúa con =torniquete2=.
-5. =torniquete2=: =LEER= 		(resultado: =rax= de $p_2$ = 1, =cuenta = 1=)
-6. =torniquete2=: =INC= 		(resultado: =rax= de $p_2$ = 2, =cuenta = 1=)
-7. =torniquete2=: =GUARDAR= 		(resultado: =rax= de $p_2$ = 2, =cuenta = 2=)
+5. =torniquete2=: =LEER= 		(resultado: =rax= de $p_2$ = 0, =cuenta = 0=)
+6. =torniquete2=: =INC= 		(resultado: =rax= de $p_2$ = 1, =cuenta = 0=)
+7. =torniquete2=: =GUARDAR= 		(resultado: =rax= de $p_2$ = 1, =cuenta = 1=)
 8. El sistema operativo decide cambiar de tarea, suspende =torniquete2=
    y continua con =torniquete1=.
 9. =torniquete1=: =GUARDAR= 		(resultado: =rax= de $p_1$ = 1, =cuenta = 1=)
@@ -1978,6 +1978,7 @@ void toma_palillos (int i) {
 }
 
 void suelta_palillos (int i) {
+    pthread_mutex_lock(&M)
     estado[i] = PENSANDO;
     actualiza((i - 1) % 5);
     actualiza((i + 1) % 5);

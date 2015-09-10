@@ -1,0 +1,34 @@
+!!!
+%html
+  %head
+    %title= SistopWeb.instance.full_title
+    %meta{:content => "text/html;charset=utf-8", "http-equiv" => "Content-Type"}/
+    %link{:href => "css/sistop.css", :rel => "stylesheet", :type => "text/css"}/
+  %body
+    .encabezado
+      .titulo
+        %h1 Fundamentos de sistemas operativos
+        .logos
+          %a{:href => "http://www.unam.mx"}
+            %img{:height => "50", :src => "/img/logo_unam.png", :title => "Universidad Nacional Autónoma de México", :width => "44"}/
+          %a{:href => "http://www.iiec.unam.mx"}
+            %img{:height => "50", :src => "/img/logo_iiec.png", :title => "Instituto de Investigaciones Económicas", :width => "50"}/
+          %a{:href => "http://www.ingenieria.unam.mx"}
+            %img{:height => "50", :src => "/img/logo_fi.png", :title => "Facultad de Ingeniería", :width => "36"}/
+      .autores
+        %h3 Autores:
+        Gunnar Wolf (FI / IIEc • UNAM)
+        %br/
+        Esteban Ruiz (CIFASIS • UNR)
+        %br/
+        Federico Bergero (CIFASIS • UNR)
+        %br/
+        Erwin Meza (UNICAUCA)
+    .menu
+      = SistopWeb.instance.menu
+    .main
+      .izq
+        %a{:alt => "Fundamentos de sistemas operativos", :href => "/pdf/sistemas_operativos.pdf"}
+          %img{:height => "320", :src => "/img/portada_mini.jpg", :width => "245"}/
+      .content
+        = SistopWeb.instance.body

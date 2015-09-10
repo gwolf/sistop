@@ -18,6 +18,8 @@ libro = $(srcdir)/sistemas_operativos.org
 libro_tex = sistemas_operativos.tex
 libro_latin_tex = sistemas_operativos.latin.tex
 
+webdir = ./website
+
 publish:
 	emacs --batch --load ~/.emacs --load publish.el --funcall org-publish-all
 
@@ -150,6 +152,13 @@ libro_latin_pdf: fig libro_latin_tex
 
 libro_pdf: fig libro_index libro_tex biblio
 	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
+$(srcdir)/sistemas_operativos.pdf: libro_pdf
+
+web:
+	$(webdir)/gensite.rb
+	ln -fs ../img ../pdf ../css $(webdir)/dest/
+	ln -fs $(CURDIR)/$(srcdir)/sistemas_operativos.pdf $(webdir)/pdf/
+	rsync -avL $(webdir)/dest/ sistop.org:sistop.org/
 
 biblio: libro_tex
 	rm -f $(srcdir)/sistemas_operativos-blx.bib $(srcdir)/sistemas_operativos.{aux,bbl,blg,lof,log,toc}

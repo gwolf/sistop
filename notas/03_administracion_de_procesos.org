@@ -251,7 +251,7 @@ un /equipo de trabajo/):
      Este patrón es claramente distinto de los dos anteriormente
      presentados; si bien en los anteriores los diferentes hilos (a
      excepción del hilo /jefe/) eran casi siempre idénticos (aplicando
-     las mismas oporaciones a distintos conjuntos de datos), en este
+     las mismas operaciones a distintos conjuntos de datos), en este
      caso son todos completamente distintos.
 
      #+attr_latex: width=0.6\textwidth
@@ -285,7 +285,7 @@ procesos externos es fundamental.
 Se verá que pueden aparecer muchos problemas cuando se estudia la
 interacción entre hilos del mismo proceso, la sincronización entre
 distintos procesos, la asignación de recursos por parte del sistema operativo a
-procesos simultáneos, o incluso cuando interactuan usuarios de
+procesos simultáneos, o incluso cuando interactúan usuarios de
 diferentes computadoras de una red —se presentarán distintos conceptos
 relacionados con la concurrencia utilizando uno de esos escenarios,
 pero muchos de dichos conceptos en realidad son independientes del
@@ -307,7 +307,7 @@ aunque en general hay más de
 una solución válida. Algunos de éstos fueron originalmente
 planteados como justificación del desarrollo de las estructuras de
 control presentadas o de nuevos paradigmas de concurrencia y muchos
-son aun objeto de debate e investigación.
+son aún objeto de debate e investigación.
 
 Para profundizar más en este tema, se recomienda el libro The little
 book of semaphores \parencite{Downey2008}.  En este libro (de libre
@@ -391,7 +391,7 @@ de ejemplo corresponden a arquitecturas Intel x86):
 - =LEER= :: Leer =cuenta= desde la memoria (p. ej. =mov $cuenta, %rax=). 
 - =INC= :: Incrementar el registro (p. ej. =add $1, %rax=).
 - =GUARDAR= :: Guardar el resultado nuevamente en memoria (p. ej. =mov
-	       %rax, $cuenta=).
+	        %rax, $cuenta=).
 
 En un sistema operativo multitarea cuando un proceso agota su porción
 de tiempo de procesador (quantum) o detiene su ejecución por otra
@@ -446,8 +446,8 @@ de las actualizaciones múltiples/.
 - Esto parece muy específico ::
 
   Si bien este análisis presenta aparentemente una problemática
-  específica al planteamiento en cuestiónm es fácil ver que la misma
-  circustancia podría darse en un sistema de reserva de vuelos
+  específica al planteamiento en cuestión es fácil ver que la misma
+  circunstancia podría darse en un sistema de reserva de vuelos
   (p. ej.: puede que dos operadores vean un asiento vacío en su copia
   local de los asientos y ambos marquen el mismo asiento como ocupado)
   o con dos procesos que decidan cambiar simultáneamente datos en un
@@ -466,7 +466,7 @@ de las actualizaciones múltiples/.
   perfectamente la mayor parte del tiempo, pero de vez en cuando puede
   fallar. Subsecuentes ejecuciones con los mismos argumentos producen
   nuevamente el resultado correcto. Esto hace que los problemas de
-  concurrencia sean muy difíciles de detectar y más aún de corregir. Es
+  concurrencia sean muy difíciles de detectar y más aun de corregir. Es
   importante (y mucho más efectivo) realizar un buen diseño inicial de
   un programa concurrente en lugar de intentar arreglarlo cuando se
   detecta alguna falla. También es interesante notar que dependiendo del
@@ -519,7 +519,7 @@ presentan las definiciones de algunos conceptos importantes.
      típicamente por no considerar la /no atomicidad/ de una operación
 
 - Sección (o región) crítica :: El área de código que requiere ser protegida de
-     accesos simultáneos donde se realiza la modificiación de datos
+     accesos simultáneos donde se realiza la modificación de datos
      compartidos.
 
 - Recurso compartido :: Un recurso al que se puede tener acceso desde
@@ -587,7 +587,7 @@ presentan a continuación los sucesivos /intentos/.
     interrupciones y suspenda indefinidamente el resto del sistema.
 
   - No funciona para sistemas distribuidos (como el sistema de reserva
-    de pasajes aereos), ni siquiera para sistemas multinúcleo o
+    de pasajes aéreos), ni siquiera para sistemas multinúcleo o
     multiprocesador, ya que las interrupciones se deshabilitan en un
     solo núcleo (si bien también es posible detener a los demás
     procesadores, representa un costo demasiado alto).
@@ -832,7 +832,7 @@ Cabe apuntar las siguientes notas sobre la solución de Peterson:
      únicamente cuando hay dos procesos que compiten para acceder a
      una región crítica. ¿Qué se puede hacer si hay más de dos
      entradas al jardín, o si hay más de dos puntos de venta de
-     pasajes aereos? La solución a este problema más general fue
+     pasajes aéreos? La solución a este problema más general fue
      propuesta por Dijkstra en 1968 y posteriormente Eisenberg y
      McGuire en 1972 y Lamport en 1974 presentaron distintas
      soluciones.

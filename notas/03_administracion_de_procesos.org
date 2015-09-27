@@ -1631,7 +1631,6 @@ recursos —temática recurrente en el campo de los sistemas operativos.
     import threading
     num = 5
     palillos = [threading.Semaphore(1) for i in range(num)]
-    filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
     
     def filosofo(id):
       while True:
@@ -1658,6 +1657,8 @@ recursos —temática recurrente en el campo de los sistemas operativos.
     def come(id):
       print "%d - ¡A comer!" % id
       # (...)
+
+    filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
   #+end_src
 
   Podría pasar que todos los filósofos quieran comer al mismo tiempo

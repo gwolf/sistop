@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import threading
 num = 5
 palillos = [threading.Semaphore(1) for i in range(num)]
-filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
 
 def filosofo(id):
     while True:
@@ -28,3 +28,5 @@ def suelta_palillos(id):
 def come(id):
     print "%d - ¡A comer!" % id
     # (...)
+
+filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]

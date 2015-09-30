@@ -21,4 +21,4 @@ if ( b1 && quien==1) {
 }
 /* Sección crítica */
 cuenta = cuenta + 1;
-b1=0;
+b2=0;

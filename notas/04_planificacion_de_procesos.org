@@ -315,12 +315,12 @@ encuentra en algunas de las cuatro siguientes circunstancias:
    finalizar la operación de E/S que solicitó).
 4. Finaliza su ejecución, y pasa de /ejecutando/ a /terminado/.
 
-En el primer y cuarto casos, el sistema operativo siempre tomará el
+En el primer y cuarto caso, el sistema operativo siempre tomará el
 control;[fn:: En el primer caso, el proceso entrará en el dominio del
 /planificador a mediano plazo/, mientras que en el cuarto saldrá
 definitivamente de la lista de ejecución.] un sistema que opera bajo
 /multitarea apropiativa/ implementará también el segundo y tercer
-casos, mientras que uno que opera bajo /multitarea cooperativa/ no
+caso, mientras que uno que opera bajo /multitarea cooperativa/ no
 necesariamente reconocerá dichos estados.
 
 Ahora, para los algoritmos a continuación, cabe recordar que se trata
@@ -511,7 +511,7 @@ un /quantum/ de cuatro /ticks/, el resultado es:
 Si bien aumentar el /quantum/ mejora los tiempos promedio de
 respuesta, aumentarlo hasta convertirlo en un *fcfs* efectivo degenera
 en una penalización a los procesos cortos, y puede llevar a la
-inanición cuando $\rho > 1$. Mediciones estadístcias apuntan a que
+inanición cuando $\rho > 1$. Estadísticas apuntan a que
 típicamente el /quantum/ debe mantenerse inferior a la duración
 promedio del 80% de los procesos \parencite[188]{Silberschatz2010}.
 

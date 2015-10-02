@@ -55,7 +55,7 @@ para alcanzar toda su memoria.
 
 Con la llegada de la era de las /computadoras personales/, diversos
 fabricantes introdujeron, a mediados de los años 1980, los procesadores
-con arquitectura de 32 bits. Por ejemplo, la *ia-32* de Intel tiene su
+con arquitectura de 32 bits. Por ejemplo, *x86-32* de Intel tiene su
 inicio oficial con el procesador 80386 (o simplemente 386).
 Este procesador podía referenciar desde el punto de vista teórico
 hasta $2^{32}$ bytes (4 *gb*) de *ram*. No obstante, debido a las
@@ -84,23 +84,23 @@ por muchos años aún.
 
 ** Hardware: la unidad de manejo de memoria (*mmu*)
 
-Con la introducción de sistemas multitarea, es decir, dos o más
-programas ejecutandose, se vio la necesidad de tener más de un
-programa cargado en memoria. Esto conlleva que el sistema operativo
-junto con información del programa a ejecutar debe resolver cómo
-ubicar los programas en la memoria física disponible.
+En el desarrollo de sistemas multitarea, es decir, sistemas en los
+cuales es posible ejecutar dos o más programas de forma concurrente, surgió la
+necesidad de administrar de forma activa el espacio de memoria disponible. 
+Esto conlleva que el sistema operativo debe encargarse de ubicarse a sí
+mismo y a los programas en /el mismo espacio/ físico de memoria, y de
+administrar el espacio usado y el espacio disponible para él y para los
+programas en ejecución.
 
-Luego ha sido necesario emplear más memoria de la que está directamente disponible,
-con el propósito de ofrecer a los procesos más espacio de lo que puede
-direccionar la arquitectura (hardware) empleada. Por otro lado,
-la abstracción de un espacio virtualmente ilimitado para realizar sus
-operaciones incluso cuando la memoria /real/ es mucho menor a la
-solicitada y, por último, la ilusión de tener un bloque contiguo e
-ininterrumpido de memoria, cuando en realidad puede haber alta
-/fragmentación/.
+A medida que los sistemas operativos y los programas crecieron en tamaño,
+fue necesario /abstraer/ el espacio de almacenamiento para dar la ilusión
+de contar con más memoria de la que está directamente disponible. Con
+asistencia del hardware, es posible configurar un espacio lineal contiguo
+para cada proceso -y para el mismo sistema operativo que se /proyecta/ a
+memoria física y a un almacenamiento secundario.
 
 Se explicará cómo la *mmu* cubre estas necesidades y qué mecanismos
-emplea para lograrlo —y qué cuidados se deben conservar, incluso como
+emplea para lograrlo —y qué cuidados se deben observar, incluso como
 programadores de aplicaciones en lenguajes de alto nivel, para aprovechar de la
 mejor manera estas funciones (y evitar, por el contrario, que los
 programas se vuelvan lentos por no manejar la memoria
@@ -354,11 +354,11 @@ con la familia de funciones =malloc= y =free=.
 *** Fragmentación
 # <<MEM_fragmentacion>>
 
-Comienza a aparecer cuando más procesos terminan su ejecución, y el
-sistema operativo libera la memoria asignada a cada uno de ellos. A
-medida que los procesos finalizan, aparecen regiones de memoria
-disponible, /interrumpidas/ por regiones de memoria usada por los
-procesos que aún se encuentran activos.
+Es un fenómeno que se manifiesta a medida que los procesos terminan su
+ejecución, y el sistema operativo libera la memoria asignada a cada uno de
+ellos. Si los procesos se encontraban en regiones de memoria, apartadas
+entre sí, comienzan a aparecer regiones de memoria disponible, /interrumpidas/
+por regiones de memoria usada por los procesos que aún se encuentran activos.
 
 Si la computadora no tiene hardware específico que permita que los
 procesos resuelvan sus direcciones en tiempo de ejecución, el sistema
@@ -387,12 +387,14 @@ disponibles:
 
 - Peor ajuste :: El sistema busca cuál es el bloque más grande
                  disponible, y se lo asigna al nuevo
-                 proceso. Empleando una estrucura de datos como un
+                 proceso. Empleando una estructura de datos como un
                  /montículo/, esta operación puede ser incluso más
-                 rápida que la de primer espacio. Con este mecanismo
+                 rápida que la de primer ajuste. Con este mecanismo
                  se busca que los bloques que queden después de
                  otorgarlos a un proceso sean tan grandes como sea
                  posible, de cierto modo balanceando su tamaño.
+
+*** Fragmentación externa e interna
 
 La /fragmentación externa/ se produce cuando hay muchos bloques libres
 entre bloques asignados a procesos; la /fragmentación interna/ se
@@ -461,7 +463,7 @@ personales tenían típicamente entre 1 y 8 *mb* de memoria.
 
 Se debe considerar que las unidades de disco son del orden de decenas de miles
 de veces más lentas que la memoria, por lo que este proceso resulta
-muy caro, por ejemplo, si la imagen en memoria de un proceso es de
+muy caro. Por ejemplo, si la imagen en memoria de un proceso es de
 100 *mb*, bastante conservador hoy en día, y la tasa de transferencia
 sostenida al disco de 50 *mb*/s, intercambiar un proceso al disco toma
 dos segundos. Cargarlo de vuelta a la memoria toma otros dos segundos
@@ -534,8 +536,8 @@ para obtener una /dirección lineal física/.
 La traducción de una dirección lógica a una dirección lineal puede fallar
 por diferentes razones: si el segmento no se encuentra en memoria, ocurrirá
 una /excepción/ del tipo /segmento no presente/. Por otro lado, si el 
-desplazamiento especificado es mayor al tamaño definido para el segmento, 
-ocurrirá una excepción del tipo /violación de segmento/ 
+desplazamiento especificado es mayor al tamaño definido para el segmento,
+ocurrirá una excepción del tipo /violación de segmento/.
 
 ** Permisos
 # <<MEM_permisos>>
@@ -591,7 +593,7 @@ iniciativa del sistema operativo.
 
 En la sección \ref{MEM_swap}, donde se presenta el concepto de
 intercambio, se explicó que intercambiar un proceso completo
-resultaba demasaido caro. Cuando se tiene de un espacio de memoria
+resultaba demasiado caro. Cuando se tiene de un espacio de memoria
 segmentado y, muy particularmente, cuando se usan bibliotecas de
 carga dinámica, la sobrecarga es mucho menor.
 
@@ -688,7 +690,7 @@ pueden evitarse por completo empleando la /paginación/. Ésta consiste
 en que cada proceso está dividio en varios bloques
 de tamaño fijo (más pequeños que los segmentos) llamados /páginas/, dejando
 de requerir que la asignación sea de un área /contigua/ de
-memoria. Claro está, esto requiere de mayor espacialización por parte
+memoria. Claro está, esto requiere de mayor soporte por parte
 del hardware, y mayor información relacionada a cada uno de los
 procesos: no basta sólo con indicar dónde inicia y termina el
 área de memoria de cada proceso, sino que se debe establecer un /mapeo/
@@ -811,14 +813,13 @@ del tipo de información que se declare que almacenarán.
 
 ** Almacenamiento de la tabla de páginas
 
-Algunos de los primeros equipos en manejar memoria paginada empleaban
+Algunos de los primeros sistemas en manejar memoria paginada empleaban
 un conjunto especial de registros para representar la tabla de
-páginas. Esto era posible dado que eran sistemas de 16 bits, con
-páginas de 8 *kb* ($2^{13}$). Esto significa que en el sistema había
-únicamente ocho páginas posibles ($2^3$), por lo que resultaba sensato
-dedicar un registro a cada una.
+páginas. Esto era posible dado que sus registros eran de 16 bits, con
+páginas de 8 *kb* ($2^{13}$). Esto significa que contaban con ocho páginas
+posibles ($2^3$), por lo que resultaba sensato dedicar un registro a cada una.
 
-En los equipos actuales, mantener la tabla de páginas en registros
+En los sistemas actuales, mantener la tabla de páginas en registros
 resultaría claramente imposible: teniendo un procesador de 32 bits, e
 incluso si se definiera un tamaño de página /muy/ grande (por ejemplo,
 4 *mb*), existirían $1~024$ páginas posibles;[fn:: 4 *mb* es $2^{22}$ bytes;
@@ -1257,9 +1258,9 @@ para un proceso afecte negativamente a todo el sistema —el mecanismo
 de paginación sobre demanda permite, al no requerir que se tengan en
 memoria todas las páginas de un proceso, que haya /más procesos
 activos/ en el mismo espacio en memoria, aumentando el grado de
-multiprogramación del equipo. De este modo, si un proceso se ve
-obligado a esperar por 8 ms a que se resuelva un fallo de página,
-durante ese tiempo pueden seguirse ejecutando los demás procesos.
+multiprogramación. De este modo, si un proceso se ve obligado a esperar por 8
+ms a que se resuelva un fallo de página, durante ese tiempo pueden seguirse
+ejecutando los demás procesos.
 
 *** Acomodo de las páginas en disco
 # <<MEM_acomodo_de_paginas>>
@@ -1299,10 +1300,10 @@ El reemplazo de páginas es una parte fundamental de la paginación,
 ya que es la pieza que posibilita una verdadera separación
 entre memoria lógica y física. El mecanismo básico a ejecutar es simple: 
 si todos los marcos están ocupados, el sistema deberá encontrar una página 
-que pueda liberar (una /página víctima/) y grabarla al espacio de 
+que pueda liberar (una /página víctima/) y llevarla al espacio de 
 intercambio en el disco. Luego, se puede emplear el espacio recién
-liberado para cargar la página requerida, y continuar con la ejecución
-del proceso.
+liberado para /traer de vuelta/ la página requerida, y continuar con la
+ejecución del proceso.
 
 Esto implica una /doble/ transferencia al disco (una para grabar
 la página víctima y una para traer la página de reemplazo), y por
@@ -1364,6 +1365,8 @@ dado que a cada solicitud se debería reemplazar el único marco
 disponible. El rendimiento evaluado sería en los casos de que se cuenta
 con dos o tres marcos.
 
+*** Anomalía de Belady
+
 Un fenómeno interesante que se presenta con algunos algoritmos es la
 /anomalía de Belady/, publicada en 1969: si bien la lógica indica que
 a mayor número de marcos disponibles se tendrá una menor cantidad de
@@ -1422,8 +1425,8 @@ con tres marcos, y con la siguiente cadena de referencia:
 
 El algoritmo de más simple y de obvia implementación es, nuevamente,
 el *fifo*: al cargar una página en memoria, se toma nota de en qué
-momento fue cargada, y cuando sea necesario reemplazar una página
-vieja, se elige la que haya sido cargada hace más tiempo.
+momento fue cargada, y cuando sea necesario reemplazar una página,
+se elige la que haya sido cargada hace más tiempo.
 
 Partiendo de un estado inicial en que las tres páginas están
 vacías, necesariamente las tres primeras referencias a distintas
@@ -1638,11 +1641,11 @@ Un mecanismo que se emplea cada vez con mayor frecuencia es que el
 sistema no espere a enfrentarse a la necesidad de reemplazar un
 marco, sino que proactivamente busque tener siempre espacio vacío en
 memoria. Para hacerlo, conforme la carga lo permite, el sistema
-operativo busca las páginas /sucias/ más proclives a ser paginadas a
+operativo busca las páginas /sucias/ más proclives a ser llevadas a
 disco y va actualizando el disco (y marcándolas nuevamente como
-/limpias/). De este modo, cuando tenga que traer una página nueva del
-disco, siempre habrá espacio donde ubicarla sin tener que esperar a
-que se transfiera una para liberarla.
+/limpias/). De este modo, cuando tenga que traer de vuelta una página,
+siempre habrá espacio donde ubicarla sin tener que esperar a que se
+transfiera una para liberarla.
 
 ** Asignación de marcos
 
@@ -1749,7 +1752,7 @@ de memoria física) y $P_2$ es un lector de texto que está empleando un
 usuario, requiriendo apenas 112 *kb* (28 páginas), con lo cual incluso
 dejaría algunos de sus marcos sin utilizar.
 
-Un segundo esquema, que resuelve mejor esta situación, es la
+Un segundo esquema que resuelve mejor esta situación es la
 /asignación proporcional/: dar a cada proceso una porción del espacio
 de memoria física proporcional a su uso de memoria virtual.
 
@@ -1843,13 +1846,13 @@ algoritmo de reemplazo de páginas.
      proceso de mayor prioridad por sobre de uno de prioridad más
      baja.
 
-El reemplazo local es más rígido y no permite aprovechar para mejorar
-el rendimiento los periodos de inactividad de algunos de los
-procesos. En contraposición, los esquemas basados en reemplazo global
-pueden llevar a rendimiento inconsistente: dado que la asignación de
-memoria física sale del control de cada proceso puede que la misma
-sección de código presente tiempos de ejecución muy distintos si
-porciones importantes de su memoria fueron paginadas a disco.
+El reemplazo local es más rígido y no permite mejorar el rendimiento
+que tendría el sistema si aprovechara los periodos de inactividad
+de algunos de los procesos. En contraposición, los esquemas basados en
+reemplazo global pueden llevar a rendimiento inconsistente: dado que la
+asignación de memoria física sale del control de cada proceso puede que la
+misma sección de código presente tiempos de ejecución muy distintos si
+porciones importantes de su memoria fueron paginadas a disco.  
 
 ** Hiperpaginación
 # <<MEM_hiperpaginacion>>
@@ -1920,7 +1923,7 @@ esté ocupando más memoria.
 Un pico en la cantidad de fallos de página no necesariamente
 significa que se va a presentar una situación de hiperpaginación
 —muchas veces indica que el proceso cambió su /atención/ de un
-conjunto de páginas a otro, o dicho de otro modo, que cambió elxs
+conjunto de páginas a otro, o dicho de otro modo, que cambió el
 /conjunto activo/ del proceso, y resulta natural que, al cambiar el
 conjunto activo, el proceso accese de golpe una serie de páginas que
 no había referenciado en cierto tiempo.
@@ -2001,7 +2004,7 @@ delimitado por dos valores, almacenados en registros:
      actual/ (dirección inferior) de la pila. En arquitecturas x86,
      emplea el registro =ESP=; cuando se pide al procesador que actúe sobre
      el /stack/ (con las operaciones =pushl= o =popl=), lo hace sobre
-     este registro
+     este registro.
 - Apuntador del marco :: (/Frame pointer/, *fp*, o /Base local/, *lb*)
      Apunta al /inicio/ del marco actual, o lo que es lo mismo, al
      final del marco anterior. En arquitecturas x86, emplea el
@@ -2172,7 +2175,7 @@ proceso actual, se lanza una excepción por violación de segmento, y
 el proceso es terminado.
 
 Ahora, lo expuesto anteriormente implica que el código /es demostrado
-vulnerable/, pero se ha /explotado/ aún. El siguiente paso es,
+vulnerable/, pero no se ha /explotado/ aún. El siguiente paso es,
 conociendo el acomodo exacto de la memoria, sobreescribir únicamente
 lo necesario para alterar el flujo del programa, esto es,
 sobreescribir =RET= con una dirección válida. Para esto, es necesario
@@ -2360,9 +2363,9 @@ general hay dos tipos de ligado, que se explican a continuación.
 
 El /ligado estático/ consiste en tomar el código de una biblioteca e
 integrarlo al código del programa para generar el archivo
-ejecutable. Esto implica que /cada programa/ tiene su propia copia del
+ejecutable. Lo anterior implica que /cada programa/ tiene su propia copia del
 código de la biblioteca, lo cual puede causar un desperdicio de
-memoria y disco si hay muchos programas que usan la misma versión.
+memoria y disco si hay muchos programas que usan la misma versión de ésta.
 
 Por su parte, en el /ligado dinámico/ el código de las bibliotecas no
 se copia dentro de la imagen ejecutable del programa, pero requiere

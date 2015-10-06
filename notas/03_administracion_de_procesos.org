@@ -1628,37 +1628,53 @@ recursos —temática recurrente en el campo de los sistemas operativos.
   mutuo. Por ejemplo, si la  solución fuera:
 
   #+begin_src python
+    # -*- coding: utf-8 -*-
+    #!/usr/bin/env
+
     import threading
+
     num = 5
     palillos = [threading.Semaphore(1) for i in range(num)]
 
+
     def filosofo(id):
-      while True:
-        piensa(id)
-        levanta_palillos(id)
-        come(id)
-        suelta_palillos(id)
+        while True:
+            piensa(id)
+            levanta_palillos(id)
+            come(id)
+            suelta_palillos(id)
+
 
     def piensa(id):
-      # (...)
-      print "%d - Tengo hambre..." % id
+        # (...)
+        print "%d - Tengo hambre..." % id
+
 
     def levanta_palillos(id):
-      palillos[(id+1) % num].acquire()
-      print "%d - Tengo el palillo derecho" % id
-      palillos[id].acquire()
-      print "%d - Tengo ambos palillos" % id
+        palillos[(id + 1) % num].acquire()
+        print "%d - Tengo el palillo derecho" % id
+
+        palillos[id].acquire()
+
+        print "%d - Tengo ambos palillos" % id
+
 
     def suelta_palillos(id):
-      palillos[(id+1) % num].release()
-      palillos[id].release()
-      print "%d - Sigamos pensando..." % id
+        palillos[(id + 1) % num].release()
+        palillos[id].release()
+
+        print "%d - Sigamos pensando..." % id
+
 
     def come(id):
-      print "%d - ¡A comer!" % id
-      # (...)
+        print "%d - ¡A comer!" % id
+        # (...)
 
-    filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
+
+    filosofos = [
+        threading.Thread(target=filosofo, args=[i]).start() for i in range(num)
+    ]
+
   #+end_src
 
   Podría pasar que todos los filósofos quieran comer al mismo tiempo
@@ -1673,16 +1689,17 @@ recursos —temática recurrente en el campo de los sistemas operativos.
 
   #+begin_src python
     def levanta_palillos(id):
-      if (id % 2 == 0): # Zurdo
-        palillo1 = palillos[id]
-        palillo2 = palillos[(id+1) % num]
-      else: # Diestro
-        palillo1 = palillos[(id+1) % num]
-        palillo2 = palillos[id]
-      palillo1.acquire()
-      print "%d - Tengo el primer palillo" % id
-      palillo2.acquire()
-      print "%d - Tengo ambos palillos" % id
+        if (id % 2 == 0):  # Zurdo
+            palillo1 = palillos[id]
+            palillo2 = palillos[(id + 1) % num]
+        else:  # Diestro
+            palillo1 = palillos[(id + 1) % num]
+            palillo2 = palillos[id]
+        palillo1.acquire()
+        print "%d - Tengo el primer palillo" % id
+        palillo2.acquire()
+        print "%d - Tengo ambos palillos" % id
+
   #+end_src
 
   Al asegurar que dos filósofos contiguos no intenten levantar el
@@ -1692,15 +1709,15 @@ recursos —temática recurrente en el campo de los sistemas operativos.
 
   #+begin_src python
     def levanta_palillos(id):
-      if id == 0: # Zurdo
-        palillos[id].acquire()
-        print "%d - Tengo el palillo izquierdo" % id
-        palillos[(id+1) % num].acquire()
-      else: # Diestro
-        palillos[(id+1) % num].acquire()
-        print "%d - Tengo el palillo derecho" % id
-        palillos[id].acquire()
-      print "%d - Tengo ambos palillos" % id
+        if id == 0:  # Zurdo
+            palillos[id].acquire()
+            print "%d - Tengo el palillo izquierdo" % id
+            palillos[(id + 1) % num].acquire()
+        else:  # Diestro
+            palillos[(id + 1) % num].acquire()
+            print "%d - Tengo el palillo derecho" % id
+            palillos[id].acquire()
+        print "%d - Tengo ambos palillos" % id
 
   #+end_src
 

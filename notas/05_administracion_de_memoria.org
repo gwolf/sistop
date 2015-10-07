@@ -84,13 +84,11 @@ por muchos años aún.
 
 ** Hardware: la unidad de manejo de memoria (*mmu*)
 
-En el desarrollo de sistemas multitarea, es decir, sistemas en los
-cuales es posible ejecutar dos o más programas de forma concurrente, surgió la
-necesidad de administrar de forma activa el espacio de memoria disponible. 
-Esto conlleva que el sistema operativo debe encargarse de ubicarse a sí
-mismo y a los programas en /el mismo espacio/ físico de memoria, y de
-administrar el espacio usado y el espacio disponible para él y para los
-programas en ejecución.
+Con la introducción de sistemas multitarea, es decir, donde se tienen
+dos o más programas ejecutandose, apareció la necesidad de tener más
+de un programa cargado en memoria. Esto conlleva que el sistema
+operativo, contando con información de los programas a ejecutar, debe
+resolver cómo ubicar los programas en la memoria física disponible.
 
 A medida que los sistemas operativos y los programas crecieron en tamaño,
 fue necesario /abstraer/ el espacio de almacenamiento para dar la ilusión
@@ -394,8 +392,6 @@ disponibles:
                  otorgarlos a un proceso sean tan grandes como sea
                  posible, de cierto modo balanceando su tamaño.
 
-*** Fragmentación externa e interna
-
 La /fragmentación externa/ se produce cuando hay muchos bloques libres
 entre bloques asignados a procesos; la /fragmentación interna/ se
 refiere a la cantidad de memoria dentro de un bloque que nunca se
@@ -465,7 +461,10 @@ Se debe considerar que las unidades de disco son del orden de decenas de miles
 de veces más lentas que la memoria, por lo que este proceso resulta
 muy caro. Por ejemplo, si la imagen en memoria de un proceso es de
 100 *mb*, bastante conservador hoy en día, y la tasa de transferencia
-sostenida al disco de 50 *mb*/s, intercambiar un proceso al disco toma
+sostenida al disco de 50
+#+latex: \textsc{mb}/s,
+#+html: <b>mb</b>/s,
+intercambiar un proceso al disco toma
 dos segundos. Cargarlo de vuelta a la memoria toma otros dos segundos
 — y a esto debe sumarse el tiempo de posicionamiento de la cabeza de
 lectura/escritura, especialmente si el espacio a emplear no es
@@ -813,11 +812,12 @@ del tipo de información que se declare que almacenarán.
 
 ** Almacenamiento de la tabla de páginas
 
-Algunos de los primeros sistemas en manejar memoria paginada empleaban
+Algunos de los primeros equipos en manejar memoria paginada empleaban
 un conjunto especial de registros para representar la tabla de
-páginas. Esto era posible dado que sus registros eran de 16 bits, con
-páginas de 8 *kb* ($2^{13}$). Esto significa que contaban con ocho páginas
-posibles ($2^3$), por lo que resultaba sensato dedicar un registro a cada una.
+páginas. Esto era posible dado que eran sistemas de 16 bits, con
+páginas de 8 *kb* ($2^{13}$). Esto significa que contaban únicamente
+con ocho páginas posibles ($16-13 = 3; 2^3 = 8$), por lo
+que resultaba sensato dedicar un registro a cada una.
 
 En los sistemas actuales, mantener la tabla de páginas en registros
 resultaría claramente imposible: teniendo un procesador de 32 bits, e
@@ -1258,7 +1258,7 @@ para un proceso afecte negativamente a todo el sistema —el mecanismo
 de paginación sobre demanda permite, al no requerir que se tengan en
 memoria todas las páginas de un proceso, que haya /más procesos
 activos/ en el mismo espacio en memoria, aumentando el grado de
-multiprogramación. De este modo, si un proceso se ve obligado a esperar por 8
+multiprogramación del equipo. De este modo, si un proceso se ve obligado a esperar por 8
 ms a que se resuelva un fallo de página, durante ese tiempo pueden seguirse
 ejecutando los demás procesos.
 
@@ -1752,7 +1752,7 @@ de memoria física) y $P_2$ es un lector de texto que está empleando un
 usuario, requiriendo apenas 112 *kb* (28 páginas), con lo cual incluso
 dejaría algunos de sus marcos sin utilizar.
 
-Un segundo esquema que resuelve mejor esta situación es la
+Un segundo esquema, que resuelve mejor esta situación, es la
 /asignación proporcional/: dar a cada proceso una porción del espacio
 de memoria física proporcional a su uso de memoria virtual.
 
@@ -1852,8 +1852,7 @@ de algunos de los procesos. En contraposición, los esquemas basados en
 reemplazo global pueden llevar a rendimiento inconsistente: dado que la
 asignación de memoria física sale del control de cada proceso puede que la
 misma sección de código presente tiempos de ejecución muy distintos si
-porciones importantes de su memoria fueron paginadas a disco.  
-
+porciones importantes de su memoria fueron paginadas a disco.
 ** Hiperpaginación
 # <<MEM_hiperpaginacion>>
 

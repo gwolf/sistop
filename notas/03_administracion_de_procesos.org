@@ -52,7 +52,7 @@ de ejecución. Éstos son:
 
 - Bloqueado :: En espera de algún evento para poder continuar
                su ejecución (aun si hubiera un procesador disponible,
-               no podría avanzar).pcb
+               no podría avanzar).
 
 - Zombie :: El proceso ha finalizado su ejecución, pero el sistema
             operativo debe realizar ciertas operaciones de limpieza
@@ -150,7 +150,7 @@ si bien el sistema operativo no maneja multiprocesamiento, mediante
 los hilos de usuario se crean procesos con multitarea interna.
 
 Los procesos que implementan hilos ganan un poco en el rendimiento
-gracias a no tener que reemplazar al *pcb* activo cuando intercalan la 
+gracias a no tener que reemplazar al *pcb* activo cuando intercalan la
 ejecución de sus diferentes hilos; pero además de esto, ganan mucho
 más por la ventaja de compartir espacio de memoria sin tener que
 establecerlo explícitamente a través de /mecanismos de comunicación
@@ -221,7 +221,7 @@ un /equipo de trabajo/):
      se plantea desde principio, esto es, el paso de /división de
      trabajo/ no es un hilo más, sino que prepara los datos para que
      éstos sean lanzados en /paralelo/. Estos datos no son resultado de
-     /eventos independientes/ (como en el caso anterior), sino 
+     /eventos independientes/ (como en el caso anterior), sino
      partes de un solo cálculo. Como consecuencia, resulta natural que
      en este modelo los resultados generados por los diferentes hilos
      son /agregados/ o /totalizados/ al terminar su procesamiento. Los
@@ -302,7 +302,7 @@ solución y desmenuzar buscando los casos límite como ejercicio antes de pasar 
 caso. También podría ser útil imaginar en qué circunstancia un
 sistema operativo se encontraría en una situación similar.
 
-Para cada problema se mostrará /una forma/ de resolverlo 
+Para cada problema se mostrará /una forma/ de resolverlo
 aunque en general hay más de
 una solución válida. Algunos de éstos fueron originalmente
 planteados como justificación del desarrollo de las estructuras de
@@ -345,7 +345,7 @@ detalles de sintáxis de un lenguaje concurrente.]
 
 #incluir esquema del jardín ornamental
 #+begin_src C
-int cuenta; 
+int cuenta;
 
 proceso torniquete1() {
 	int i;
@@ -388,7 +388,7 @@ que una instrucción aparentemente simple, como =cuenta = cuenta + 1=
 habitualmente implica varias operaciones de más bajo nivel (las instrucciones
 de ejemplo corresponden a arquitecturas Intel x86):
 
-- =LEER= :: Leer =cuenta= desde la memoria (p. ej. =mov $cuenta, %rax=). 
+- =LEER= :: Leer =cuenta= desde la memoria (p. ej. =mov $cuenta, %rax=).
 - =INC= :: Incrementar el registro (p. ej. =add $1, %rax=).
 - =GUARDAR= :: Guardar el resultado nuevamente en memoria (p. ej. =mov
 	        %rax, $cuenta=).
@@ -411,11 +411,11 @@ considera que =cuenta= está inicialmente en =0=.
 
 1. =cuenta = 0=
 2. =torniquete1=: =LEER= (resultado: =rax= de $p_1$ = 0, =cuenta = 0=)
-3. =torniquete1=: =INC= (resultado: =rax= de $p_1$ = 1, =cuenta = 0=) 
-4. =torniquete1=: =GUARDAR= (resultado: =rax= de $p_1$ = 1, =cuenta = 1=) 
+3. =torniquete1=: =INC= (resultado: =rax= de $p_1$ = 1, =cuenta = 0=)
+4. =torniquete1=: =GUARDAR= (resultado: =rax= de $p_1$ = 1, =cuenta = 1=)
 5. El sistema operativo decide cambiar de tarea, suspende =torniquete1= y
    continúa con =torniquete2=.
-6. =torniquete2=: =LEER= (resultado: =rax= de $p_2$ = 1, =cuenta = 1=) 
+6. =torniquete2=: =LEER= (resultado: =rax= de $p_2$ = 1, =cuenta = 1=)
 7. =torniquete2=: =INC= (resultado: =rax= de $p_2$ = 2, =cuenta = 1=)
 8. =torniquete2=: =GUARDAR= (resultado: =rax= de $p_2$ = 2, =cuenta = 2=)
 
@@ -427,7 +427,7 @@ Pero, también puede darse la siguiente secuencia de eventos durante la
 ejecución de estas instrucciones:
 
 1. =cuenta = 0=
-2. =torniquete1=: =LEER= 		(resultado: =rax= de $p_1$ = 0, =cuenta = 0=) 
+2. =torniquete1=: =LEER= 		(resultado: =rax= de $p_1$ = 0, =cuenta = 0=)
 3. =torniquete1=: =INC= 		(resultado: =rax= de $p_1$ = 1, =cuenta = 0=)
 4. El sistema operativo decide cambiar de tarea, suspende =torniquete1= y
    continúa con =torniquete2=.
@@ -646,13 +646,13 @@ presentan a continuación los sucesivos /intentos/.
 
   #+begin_src C
   int bandera; /* 0 => desocupada */
-  
+
   while (++bandera != 1) {
       bandera--; /* Debe generar "INC" */
   }
   /* Sección crítica */
   cuenta = cuenta + 1;
-  
+
   bandera--;
   #+end_src C
 
@@ -992,7 +992,7 @@ resolver algunos problemas de sincronización. Edsger Dijkstra, en
 no es del semáforo vial, con una luz roja y una luz verde (dicho
 esquema se asemeja al del /mutex/). La referencia es a la del semáforo
 de tren, que permite el paso estando /arriba/, e indica espera estando
-/abajo/.] 
+/abajo/.]
 
 Un semáforo es una variable de tipo entero que tiene definida la
 siguiente interfaz:
@@ -1377,7 +1377,7 @@ requisitos, como:
     buffer = []
     threading.Thread(target=productor, args=[]).start()
     threading.Thread(target=consumidor, args=[]).start()
-    
+
     def productor():
       while True:
         event = genera_evento()
@@ -1385,7 +1385,7 @@ requisitos, como:
         buffer.append(event)
         mutex.release()
         elementos.release()
-    
+
     def consumidor():
       while True:
         elementos.acquire()
@@ -1406,7 +1406,7 @@ requisitos, como:
   es, ambos semáforos comunican /al planificador/ cuándo es posible
   despertar a algún consumidor.
 
-  Si se supone que =genera_evento()= es eficiente y no utiliza 
+  Si se supone que =genera_evento()= es eficiente y no utiliza
   espera activa, esta implementación es óptima: deja en manos
   del planificador toda la espera necesaria, y no desperdicia recursos
   de cómputo esperando a que el siguiente elemento esté listo.
@@ -1494,7 +1494,7 @@ recursos —temática recurrente en el campo de los sistemas operativos.
   un contador que indica cuántos lectores hay en la sección crítica,
   un /mutex/ protegiendo a dicho contador, y otro /mutex/ indicando que no
   hay lectores ni escritores accediendo al buffer (o
-  cuarto). Se implementan los /mutexes/ con semáforos. 
+  cuarto). Se implementan los /mutexes/ con semáforos.
 
   #+begin_src python
   import threading
@@ -1550,27 +1550,27 @@ recursos —temática recurrente en el campo de los sistemas operativos.
     mutex = threading.Semaphore(1)
     cuarto_vacio = threading.Semaphore(1)
     torniquete = threading.Semaphore(1)
-    
+
     def escritor():
       torniquete.acquire()
       cuarto_vacio.acquire()
       escribe()
       cuarto_vacio.release()
       torniquete.release()
-    
+
     def lector():
       global lectores
       torniquete.acquire()
       torniquete.release()
-      
+
       mutex.acquire()
       lectores = lectores + 1
       if lectores == 1:
         cuarto_vacio.acquire()
       mutex.release()
-      
+
       lee()
-      
+
       mutex.acquire()
       lectores = lectores - 1
       if lectores == 0:
@@ -1628,37 +1628,53 @@ recursos —temática recurrente en el campo de los sistemas operativos.
   mutuo. Por ejemplo, si la  solución fuera:
 
   #+begin_src python
+    # -*- coding: utf-8 -*-
+    #!/usr/bin/env
+
     import threading
+
     num = 5
     palillos = [threading.Semaphore(1) for i in range(num)]
-    
-    def filosofo(id):
-      while True:
-        piensa(id)
-        levanta_palillos(id)
-        come(id)
-        suelta_palillos(id)
-    
-    def piensa(id):
-      # (...)
-      print "%d - Tengo hambre..." % id
-    
-    def levanta_palillos(id):
-      palillos[(id+1) % num].acquire()
-      print "%d - Tengo el palillo derecho" % id
-      palillos[id].acquire()
-      print "%d - Tengo ambos palillos" % id
-    
-    def suelta_palillos(id):
-      palillos[(id+1) % num].release()
-      palillos[id].release()
-      print "%d - Sigamos pensando..." % id
-    
-    def come(id):
-      print "%d - ¡A comer!" % id
-      # (...)
 
-    filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
+
+    def filosofo(id):
+        while True:
+            piensa(id)
+            levanta_palillos(id)
+            come(id)
+            suelta_palillos(id)
+
+
+    def piensa(id):
+        # (...)
+        print "%d - Tengo hambre..." % id
+
+
+    def levanta_palillos(id):
+        palillos[(id + 1) % num].acquire()
+        print "%d - Tengo el palillo derecho" % id
+
+        palillos[id].acquire()
+
+        print "%d - Tengo ambos palillos" % id
+
+
+    def suelta_palillos(id):
+        palillos[(id + 1) % num].release()
+        palillos[id].release()
+
+        print "%d - Sigamos pensando..." % id
+
+
+    def come(id):
+        print "%d - ¡A comer!" % id
+        # (...)
+
+
+    filosofos = [
+        threading.Thread(target=filosofo, args=[i]).start() for i in range(num)
+    ]
+
   #+end_src
 
   Podría pasar que todos los filósofos quieran comer al mismo tiempo
@@ -1673,16 +1689,17 @@ recursos —temática recurrente en el campo de los sistemas operativos.
 
   #+begin_src python
     def levanta_palillos(id):
-      if (id % 2 == 0): # Zurdo
-        palillo1 = palillos[id]
-        palillo2 = palillos[(id+1) % num]
-      else: # Diestro
-        palillo1 = paltos[(id+1) % num]
-        palillo2 = palillos[id]
-      palillo1.acquire()
-      print "%d - Tengo el primer palillo" % id
-      palillo2.acquire()
-      print "%d - Tengo ambos palillos" % id
+        if (id % 2 == 0):  # Zurdo
+            palillo1 = palillos[id]
+            palillo2 = palillos[(id + 1) % num]
+        else:  # Diestro
+            palillo1 = palillos[(id + 1) % num]
+            palillo2 = palillos[id]
+        palillo1.acquire()
+        print "%d - Tengo el primer palillo" % id
+        palillo2.acquire()
+        print "%d - Tengo ambos palillos" % id
+
   #+end_src
 
   Al asegurar que dos filósofos contiguos no intenten levantar el
@@ -1692,16 +1709,16 @@ recursos —temática recurrente en el campo de los sistemas operativos.
 
   #+begin_src python
     def levanta_palillos(id):
-      if id == 0: # Zurdo
-        palillos[id].acquire()
-        print "%d - Tengo el palillo izquierdo" % id
-        palillos[(id+1) % num].acquire()
-      else: # Diestro
-        palillos[(id+1) % num].acquire()
-        print "%d - Tengo el palillo derecho" % id
-        palillos[id].acquire()
-      print "%d - Tengo ambos palillos" % id
-    
+        if id == 0:  # Zurdo
+            palillos[id].acquire()
+            print "%d - Tengo el palillo izquierdo" % id
+            palillos[(id + 1) % num].acquire()
+        else:  # Diestro
+            palillos[(id + 1) % num].acquire()
+            print "%d - Tengo el palillo derecho" % id
+            palillos[id].acquire()
+        print "%d - Tengo ambos palillos" % id
+
   #+end_src
 
   Cabe apuntar que ninguno de estos mecanismos asegura que en la mesa
@@ -1752,10 +1769,10 @@ uno de los ingredientes. Un primer acercamiento podría ser:
     semaforo_agente = threading.Semaphore(1)
     for i in ingredientes:
       semaforos[i] = threading.Semaphore(0)
-    
+
     threading.Thread(target=agente, args=[]).start()
     fumadores = [threading.Thread(target=fumador, args=[i]).start() for i in ingredientes]
-    
+
     def agente():
       while True:
         semaforo_agente.acquire()
@@ -1764,7 +1781,7 @@ uno de los ingredientes. Un primer acercamiento podría ser:
         for i in mis_ingr:
           print "Proveyendo %s" % i
           semaforos[i].release()
-    
+
     def fumador(ingr):
       mis_semaf = []
       for i in semaforos.keys():
@@ -1775,7 +1792,7 @@ uno de los ingredientes. Un primer acercamiento podría ser:
           i.acquire()
         fuma(ingr)
         semaforo_agente.release()
-    
+
     def fuma(ingr):
       print 'Fumador con %s echando humo...' % ingr
   #+END_SRC
@@ -1805,13 +1822,13 @@ variables globales, de esta manera:
       semaforos_interm[i] = threading.Semaphore(0)
     interm_mutex = threading.Semaphore(1)
     intermediarios = [threading.Thread(target=intermediario, args=[i]).start() for i in ingredientes]
-    
+
     def fumador(ingr):
       while True:
         semaforos_interm[ingr].acquire()
         fuma(ingr)
         semaforo_agente.release()
-    
+
     def intermediario(ingr):
       otros_ingr = ingredientes[:]
       otros_ingr.remove(ingr)
@@ -1830,7 +1847,7 @@ variables globales, de esta manera:
           if not found:
             que_tengo[ingr] = True
         interm_mutex.release()
-    
+
   #+END_SRC
 
 Si bien se ve que el código de =fumador()= se simplifica (dado que ya
@@ -2053,9 +2070,9 @@ int main() {
   pthread_t th[5];  /* IDs de los hilos filósofos */
   pthread_attr_t attr = NULL;
   palillos_init();
-  for (i=0; i<5; i++) 
+  for (i=0; i<5; i++)
     pthread_create(&th[i], attr, filosofo, (int*) &i);
-  for (i=0; i<5; i++) 
+  for (i=0; i<5; i++)
     pthread_join(th[i],NULL);
 }
 #+end_src
@@ -2413,7 +2430,7 @@ recuadro /Bloqueo mutuo/).
 Pero la existencia del recuadro que indica el bloqueo mutuo podría ser
 revelada con anterioridad: si el flujo entra en el área marcada como
 /bloqueo inminente/ (en $3 \le t_A \le 7$ y $2 \le
-t_B \le 6$), resulta /ineludible/ caer en el bloqueo mutuo. 
+t_B \le 6$), resulta /ineludible/ caer en el bloqueo mutuo.
 
 La región de bloqueo inminente ocurre a partir de que $A$ obtuvo el
 scanner y $B$ obtuvo la impresora. Si en $t_A=2.5$ y $t_B=3$ se cede

@@ -131,9 +131,9 @@ estarán disponibles con un archivo son:
             requiere seguir utilizándolo, tendrá que abrirlo de nuevo
             para obtener un nuevo descriptor.
 
-- Leer :: Si se solicita al sistema la lectura leer de un archivo
+- Leer :: Si se solicita al sistema la lectura de un archivo
           hacia determinado buffer, éste copia el siguiente /pedazo/
-          de información al. Este /pedazo/ podría ser una línea o
+          de información. Este /pedazo/ podría ser una línea o
           un bloque de longitud definida, dependiendo del modo en que
           se solicite la lectura. El sistema mantiene un apuntador a
           la última posición leída, para poder /continuar/ con la
@@ -436,7 +436,7 @@ reconozca el tipo de un archivo:
      #+latex: Mac\textbf{os}
      #+html: Mac<b>os</b>
      ya no emplean esta técnica, sino
-     que una llamada /appDirectory/, para propósitos de esta
+     una llamada /appDirectory/, para propósitos de esta
      discusión, la técnica base es la misma.
 
 ** Estructura de los archivos y métodos de acceso
@@ -555,7 +555,7 @@ El acceso a los archivos puede realizarse de diferentes maneras:
      independientes): la primer sección es una lista corta de
      identificadores, cada uno con el punto de inicio y término de
      los datos a los que apunta. Para leer un registro, se emplea
-     acceso aleatorio sobre el índice, y el apuntador se avanza a la
+     acceso aleatorio sobre el índice, y el apuntador avanza a la
      ubicación específica que se solicita.
 
      En el transcurso de un uso intensivo de esta estructura, dado que

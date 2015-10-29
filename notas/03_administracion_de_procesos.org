@@ -52,7 +52,7 @@ de ejecución. Éstos son:
 
 - Bloqueado :: En espera de algún evento para poder continuar
                su ejecución (aun si hubiera un procesador disponible,
-               no podría avanzar).pcb
+               no podría avanzar).
 
 - Zombie :: El proceso ha finalizado su ejecución, pero el sistema
             operativo debe realizar ciertas operaciones de limpieza
@@ -1644,13 +1644,13 @@ recursos —temática recurrente en el campo de los sistemas operativos.
       print "%d - Tengo hambre..." % id
     
     def levanta_palillos(id):
-      palillos[(id+1) % num].acquire()
+      palillos[(id + 1) % num].acquire()
       print "%d - Tengo el palillo derecho" % id
       palillos[id].acquire()
       print "%d - Tengo ambos palillos" % id
     
     def suelta_palillos(id):
-      palillos[(id+1) % num].release()
+      palillos[(id + 1) % num].release()
       palillos[id].release()
       print "%d - Sigamos pensando..." % id
     
@@ -1675,9 +1675,9 @@ recursos —temática recurrente en el campo de los sistemas operativos.
     def levanta_palillos(id):
       if (id % 2 == 0): # Zurdo
         palillo1 = palillos[id]
-        palillo2 = palillos[(id+1) % num]
+        palillo2 = palillos[(id + 1) % num]
       else: # Diestro
-        palillo1 = paltos[(id+1) % num]
+        palillo1 = paltos[(id + 1) % num]
         palillo2 = palillos[id]
       palillo1.acquire()
       print "%d - Tengo el primer palillo" % id
@@ -1695,9 +1695,9 @@ recursos —temática recurrente en el campo de los sistemas operativos.
       if id == 0: # Zurdo
         palillos[id].acquire()
         print "%d - Tengo el palillo izquierdo" % id
-        palillos[(id+1) % num].acquire()
+        palillos[(id + 1) % num].acquire()
       else: # Diestro
-        palillos[(id+1) % num].acquire()
+        palillos[(id + 1) % num].acquire()
         print "%d - Tengo el palillo derecho" % id
         palillos[id].acquire()
       print "%d - Tengo ambos palillos" % id

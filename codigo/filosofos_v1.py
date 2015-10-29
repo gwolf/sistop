@@ -15,13 +15,13 @@ def piensa(id):
     print "%d - Tengo hambre..." % id
 
 def levanta_palillos(id):
-    palillos[(id+1) % num].acquire()
+    palillos[(id + 1) % num].acquire()
     print "%d - Tengo el palillo derecho" % id
     palillos[id].acquire()
     print "%d - Tengo ambos palillos" % id
 
 def suelta_palillos(id):
-    palillos[(id+1) % num].release()
+    palillos[(id + 1) % num].release()
     palillos[id].release()
     print "%d - Sigamos pensando..." % id
 
@@ -29,4 +29,8 @@ def come(id):
     print "%d - ¡A comer!" % id
     # (...)
 
-filosofos = [threading.Thread(target=filosofo, args=[i]).start() for i in range(num)]
+filosofos = []
+for i in range(num):
+    fil = threading.Thread(target=filosofo, args=[i])
+    filosofos.append(fil)
+    fil.start()

@@ -1,0 +1,9 @@
+%p
+  En esta sección encontrarán el código ejemplo presentado a lo largo
+  del libro. A futuro, lo presentaremos en un órden más lógico,
+  detallando la sección a la que pertenece cada programa (y no
+  sólamente con un ordenamiento alfanumérico).
+%ol
+  - SistopWeb::Progs.files.each do |f|
+    %li
+      %a{:href => f.dest_link}= f.title

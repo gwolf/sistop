@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 require 'haml'
 require 'singleton'
+require 'coderay'
+
 
 $srcdir = File.join( File.dirname(__FILE__), 'src')
 $destdir = File.join( File.dirname(__FILE__), 'dest')
+$progsrcdir = File.join( File.dirname(__FILE__), '../codigo')
+$progdestdir = File.join( $destdir, 'codigo')
 
 class SistopWeb
   include Singleton
@@ -13,7 +17,8 @@ class SistopWeb
     'index' => '',
     'descarga' => 'Descarga',
     'compra' => 'Compra',
-    'material' => 'Material adicional'
+    'material' => 'Material adicional',
+    'codigo' => 'Código fuente'
   }
 
   def set_to(what)
@@ -43,6 +48,42 @@ class SistopWeb
   private
   def readhaml(file)
     File.open(File.join($srcdir, '%s.haml' % file)).read
+  end
+end
+
+class SistopWeb::Progs
+  attr_accessor :src, :dest, :srcfile, :destfile
+  def self.files
+    Dir.open($progsrcdir).entries.select { |f|
+      File.file?(File.join($progsrcdir, f))
+    }.sort.map {|f| self.new(f)}
+  end
+
+  def initialize(src)
+    @src = src
+    @dest = src.gsub(/\./, '_') + '.html'
+    @srcfile = File.join($progsrcdir, @src)
+    @destfile = File.join($progdestdir, @dest)
+
+    process
+  end
+
+  def title
+    @src
+  end
+
+  def dest_link
+    'codigo/' + @dest
+  end
+
+  def process
+    Dir.exists?($progdestdir) || Dir.mkdir($progdestdir)
+
+    File.exists?(@srcfile) or raise RuntimeError, 'Archivo inexistente: «%s»' % @srcfile
+    temp = CodeRay.scan( File.open(@srcfile).read,
+                         CodeRay::FileType.fetch('foobar.rb', :text, true) )
+
+    File.open(@destfile, 'w') { |f| f.puts(temp.html(:line_numbers => :table)) }
   end
 end
 

@@ -154,6 +154,11 @@ libro_pdf: fig libro_index libro_tex biblio
 	cd $(srcdir) && pdflatex sistemas_operativos.tex && pdflatex sistemas_operativos.tex
 $(srcdir)/sistemas_operativos.pdf: libro_pdf
 
+clean_web:
+	rm -rf $(webdir)/dest
+	mkdir $(webdir)/dest
+	echo '*' > $(webdir)/dest/.gitignore
+
 web:
 	$(webdir)/gensite.rb
 	ln -fs ../img ../pdf ../css $(webdir)/dest/
@@ -190,7 +195,7 @@ beamer: fig
 clean-publish-cache:
 	rm -f ~/.org-timestamps/$(srcdir)*.cache
 
-clean: clean-publish-cache clean_fig
+clean: clean-publish-cache clean_fig clean_web
 	rm -f $(srcdir)/sistemas_operativos.*
 	rm -f ltxpng/*.png dot $(srcdir)/*.tex $(srcdir)/*.html $(srcdir)/*.pdf laminas/*.tex laminas/*.html laminas/*.pdf
 	rm -rf html

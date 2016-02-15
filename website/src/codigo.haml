@@ -1,9 +1,18 @@
 %p
   En esta sección encontrarán el código ejemplo presentado a lo largo
-  del libro. A futuro, lo presentaremos en un órden más lógico,
-  detallando la sección a la que pertenece cada programa (y no
-  sólamente con un ordenamiento alfanumérico).
-%ol
-  - SistopWeb::Progs.files.each do |f|
-    %li
-      %a{:href => f.dest_link}= f.title
+  del libro. El código aquí presentado es relevante principalmente al
+  capítulo 3 (Administración de procesos).
+  %table
+    - SistopWeb::Progs::Contents.each do |section|
+      %tr
+        %th{:colspan => 2, :style => 'border-top: solid 1px black'}= section[:title]
+      %tr
+        %th Programa
+        %th Lenguaje
+      - section[:progs].each do |p|
+        - prog = SistopWeb::Progs.new(p)
+        %tr
+          %td
+            %a{:href => File.join(prog.dest_link)}= prog.title
+          %td
+            = prog.language

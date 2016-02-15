@@ -163,6 +163,8 @@ web:
 	$(webdir)/gensite.rb
 	ln -fs ../img ../pdf ../css $(webdir)/dest/
 	ln -fs $(CURDIR)/$(srcdir)/sistemas_operativos.pdf $(webdir)/pdf/
+
+push_web: web
 	rsync -avL $(webdir)/dest/ sistop.org:sistop.org/
 
 biblio: libro_tex

@@ -682,9 +682,9 @@ def vamos(id):
   inicializa(id)
   mutex.acquire()
   cuenta = cuenta + 1
-  mutex.release()
   if cuenta == 10:
     barrera.release()
+  mutex.release()
   barrera.acquire()
   barrera.release()
   procesa(id)

@@ -101,6 +101,9 @@ class SistopWeb::Progs
               { :title => 'Bloqueos mutuos',
                 :progs => [ [ 'algoritmo_banquero.rb', 'Implementación muy simple del algoritmo del banquero' ]
                           ] },
+	      { :title => 'Planificación de procesos',
+		:progs => [ [ 'algoritmos_planificacion.rb', 'Implementación de varios de los algoritmos de planificación abordados en el texto' ]
+	      ] },
               { :title => 'Administración de memoria: Consideraciones de rendimiento',
                 :progs => [ [ 'rendimiento_en_arreglo.c', 'Ejemplo de la importancia de considerar al caché al recorrer un arreglo' ]
                           ] }

@@ -1,6 +1,6 @@
 # Prácticas
 
-Estas prácticas de permiten al lector ejercitar su conocimiento e incrementarlo
+Estas prácticas permiten al lector ejercitar su conocimiento e incrementarlo
 mediante investigación de información relevante.
 
 ## Compilación
@@ -33,4 +33,4 @@ Cuenca](http://www.ucuenca.edu.ec/) (Ecuador).
 Por Daniel Campoverde Carrión [(alx741)](https://github.com/alx741)
 Con sugerencias y correcciones de Angel Vázquez Patiño.
 
-[Capitulo estudiantil ACM UCuenca](http://ucuenca.acm.org/).
+[Capítulo estudiantil ACM UCuenca](http://ucuenca.acm.org/).

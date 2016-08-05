@@ -1,0 +1,258 @@
+= Instalación de un Sistema Operativo GNU/Linux
+Universidad de Cuenca - Sistemas Operativos I
+:hardbreaks:
+:numbered:
+:icons: font
+
+
+== Objetivos
+
+1. Brindar un primer acercamiento al sistema operativo tipo Unix, GNU/Linux,
+instalándolo sobre una máquina virtual haciendo uso del software de
+virtualización https://www.virtualbox.org/[Virtual Box].
+
+2. Proporcionar una visión general sobre los conceptos de particionamiento,
+sistema de ficheros y organización de ficheros involucrados en el proceso.
+
+
+
+== Instrucciones
+
+Es requisito contar con una instalación de *VirtualBox* para esta practica. El
+proceso es trivial y no será cubierto aquí, puede referirse al
+https://www.virtualbox.org/manual/ch02.html[Manual de Usuario de VirtualBox].
+
+El sistema operativo huésped a usar puede ser cualquier distribución GNU/Linux
+basada en *Debian*, e.g., _Lubuntu_, _Mint_, _Ubuntu_, _Kubuntu_, _Edubuntu_,
+_Xubuntu_, _Elementary_, _Debian_. Es necesario descargar la imagen de la
+distribución de su elección, esto es: obtener el fichero `.iso` de la misma, que
+será usada para su instalación sobre la máquina virtual.
+
+NOTE: El requerimiento de una distribución basada en *Debian* es únicamente con
+propósitos de consistencia sobre los comandos usados en la práctica. No pretende
+dar un matiz de superioridad sobre otras distribuciones. *Distintas
+distribuciones se especializan en distintos aspectos y es preciso hacer una
+elección basándose en sus requerimientos.*
+
+
+=== Creación de una máquina virtual
+
+Una vez arrancado *VirtualBox* procedemos a crear una nueva máquina virtual,
+sobre la cual instalaremos una distribución de GNU/Linux. Nos dirigimos a la
+opción *Nuevo* y llenamos el formulario emergente con los siguientes datos:
+
+. Nombre y sistema operativo
+
+    Nombre: maquina1
+    Tipo: Linux
+    Version: Debian (64-bit)
+
+. Ajustamos el _tamaño de la memoria_ a *512MB*
+. Marcamos la opción _"Crear un disco virtual"_
+.. Marcamos la opción _"VDI (VirtualBox Disk Image)"_
+.. Marcamos la opción _"Dynamically allocated"_
+.. Ajustamos el tamaño del disco virtual a *8GB*
+
+Al pulsar _"Crear"_, una nueva máquina virtual aparecerá listada con sus todas
+sus características.
+
+
+==== Responda
+====
+* ¿Qué tipo de virtualización realiza Virtualbox? Discuta.
+* Examine las características de su nueva máquina virtual
+** ¿Encuentra alguna relación sobre el detalle de *almacenamiento* y el proceso
+    de creación del _disco virtual_?
+** ¿Dónde se encuentra el fichero `maquina1.vdi`?
+** Ubique el fichero `maquina1.vdi` en su sistema de ficheros y examínelo con el
+    comando `$ file maquina.vdi`
+** ¿Qué conclusión obtiene al ejecutar el comando `$ du -h maquina.vdi`?
+*** Basado en la práctica y la teoría sobre *Virtualización* ¿Qué puede concluir sobre este
+    fichero?
+====
+
+
+== Instalación de una distribución GNU/Linux
+
+Visite el sitio web oficial de la distribución basada en *Debian* de su elección
+y descargue su imagen `.iso`.
+
+
+==== Responda
+====
+* ¿Qué características observó para hacer su elección sobre la distribución a
+    instalar?
+* ¿Cuáles son los principales usos para los cuales dicha distribución proclama
+    ser útil?
+* ¿Qué características cree usted que diferencian a las distribuciones basadas en
+    *Debian* de otras basadas en *Red Hat*?
+* ¿Para un ambiente de servidores, cuáles son las distribuciones más populares? ¿Por qué?
+* ¿Para un ambiente de usuarios cuyos objetivos son la programación (y que están
+    siguiendo una carrera universitaria como usted) y el uso de aplicaciones
+    comunes (hojas de cálculo, editores de texto, etc) qué distribución
+    recomendaría usted? ¿Por qué?
+====
+
+Proceda a arrancar su máquina virtual. Una ventana emergente le solicitará la
+ubicación de la imagen a iniciar donde deberá colocar la imagen `.iso` que
+descargó.
+
+La versión _"Live"_ del sistema operativo empezará a cargar y le proporcionará
+un entorno gráfico de escritorio cuyas características variarán dependiendo de
+su distribución. En cualquier caso encontrará un ejecutable en su escritorio que
+le permitirá llevar a cabo la instalación sobre el disco virtual a través de una
+interfaz gráfica.
+
+Los primeros pasos de la instalación son evidentes. Asegúrese de seleccionar
+apropiadamente el idioma del sistema y deténgase en el paso *Tipo de
+Instalación*.
+
+En este punto el utilitario gráfico de instalación permitirá realizar un
+particionamiento automático con configuraciones estándar que probablemente
+funcionarán apropiadamente en la mayoría de los casos, pero *nuestro objetivo
+es hacerlo de forma manual y evaluar con criterio fundamentado nuestras
+necesidades.*
+
+Seleccionamos la opción *Algo más* y pulsamos _continuar_.
+
+NOTE: Dependiendo de su distribución la última opción podría tener un nombre
+distinto como: "Personalizado", "Avanzado" o "Manual". Puede guiarse con el
+texto aclarativo de la opción que declara que le permitirá crear particiones,
+redimensionarlas, etc.
+
+Familiarícese con la interfaz de creación de particiones y proceda a crear las
+particiones descritas a continuación:
+
+
+==== Partición raíz
+
+Esta partición contendrá los ficheros del sistema operativo como tal, incluidos
+sus archivos de configuración y programas ejecutables de usuario.
+
+    Tipo de partición:         Primaria
+    Tamaño de partición:       5000MB
+    Ubicación de la partición: Principio
+    Utilizar como:             Sistema de ficheros ext4
+    Punto de montaje:          /
+
+
+==== Partición home
+
+Esta partición contendrá los directorios y ficheros de cada usuario del sistema,
+como sus documentos personales y ficheros de configuración específicos de cada
+usuario.
+
+    Tipo de partición:         Primaria
+    Tamaño de partición:       2000MB
+    Ubicación de la partición: Principio
+    Utilizar como:             Sistema de ficheros ext4
+    Punto de montaje:          /home
+
+
+==== Partición swap
+
+Esta partición permitirá al sistema operativo volcar parte del contenido de la
+memoria RAM al disco para hacer espacio para la ejecución de los programas en
+actividad.
+
+    Tipo de partición:         Primaria
+    Tamaño de partición:       1000MB   (utilice el espacio restante)
+    Ubicación de la partición: Principio
+    Utilizar como:             área de intercambio
+
+
+Antes de continuar examine con detenimiento todas las opciones que se le ofrecen
+en los campos *"Utilizar como"* y *"Punto de montaje"*.
+
+Inicie la instalación y complete una serie adicional de opciones triviales como
+su ubicación geográfica, idioma del teclado y un nuevo usuario/contraseña para
+su usuario.
+
+
+==== Responda
+====
+* ¿A qué se refiere el termino *live cd* cuando iniciamos la distribución para
+    su instalación?
+* Comente las particularidades en el proceso de instalación para la distribución
+    que eligió. ¿Encontró algo distinto a lo descrito?, ¿Qué opciones usó?
+* Durante la instalación creó particiones únicamente primarias. ¿Que diferencia
+    hay entre una partición primaria y una lógica?
+** ¿En qué caso deberíamos forzosamente crear una partición de tipo lógica?
+*** Para nuestro esquema de particionado en particular, ¿Es necesario hacerlo?.
+    Explique.
+* Liste las opciones disponibles para *"Utilizar como"*, ¿a qué ser refieren
+    esas opciones?
+** ¿Cuál es la diferencia entre los sistemas de ficheros _ext2_, _ext3_ y _ext4_?
+*** ¿Considera que el sistema sería capaz de funcionar si usáramos _ext3_?
+    Explique.
+*** ¿A qué ser refiere la opción *"Área de intercambio"*?. ¿Con qué otro nombre
+    se la conoce?
+**** ¿Existen distintos tipos de sistemas de ficheros para el área de
+    intercambio? Discuta.
+* Liste las opciones disponibles para *"Punto de montaje"*, ¿a qué ser refieren
+    esas opciones?
+** ¿Qué propósito tiene cada una de ellas?
+** ¿Qué tipo de ficheros se encontrarán en cada una de las posibles particiones?
+** ¿Es necesario seleccionar un punto de montaje para el área de intercambio?
+    Explique.
+====
+
+
+== Organización del sistema de archivos
+
+Vea el vídeo https://youtu.be/E_IHBKMrfOU[Estructura del sistema de archivos].
+Identifique claramente en su sistema operativo recién instalado dónde se
+encontrarán por defectos sus archivos de fotografías, música, vídeos, archivos
+de usuario, etc.
+
+
+==== Responda
+====
+* ¿En qué difiere la estructura del sistema de archivos mostrado en el vídeo de
+    la de su sistema operativo recién instalado?
+* ¿En qué directorio se guardan los archivos de un programa instalado?
+* Inicie una terminal y ejecute el comando `$ echo $HOME`
+** ¿Qué información obtenemos?
+** ¿Qué relación tiene esto con la ubicación de sus ficheros personales?
+** ¿Cómo cambia el resultado de este comando si iniciamos sesión con un usuario
+    distinto?
+* Inicie una terminal y ejecute el comando `$ echo $PATH`
+** ¿Qué información obtenemos?
+** ¿Qué directorios destacables logra reconocer?
+====
+
+
+== De lo virtual a lo real
+
+Grabe una imagen `.ISO` del sistema operativo de su preferencia en una memoria
+USB (vea por ejemplo http://goo.gl/Hez1PV[http://goo.gl/Hez1PV]).
+
+WARNING: Antes de grabar la imagen `.ISO` asegúrese de respaldar la información de
+su memoria USB.
+
+
+==== Responda
+====
+* ¿Para qué podría ser útil tener la imagen del sistema operativo en una memoria
+    USB?
+* ¿Cambiaría algo al momento de instalar el sistema operativo desde la memoria
+    USB en un computador físico (no virtualizado)?
+* ¿Cree usted la instalación desde una memoria USB será más veloz que desde un
+    CD/DVD? Explique.
+* ¿Es posible crear una imagen persistente en una memoria USB de forma que sus
+    cambios en el sistema se conserven?
+** ¿Qué herramienta usaría para este propósito?
+====
+
+<<<
+
+=== Conclusiones
+
+Escriba a continuación los resultados de su práctica
+
+<<<
+
+=== Referencias
+
+Liste aquí todas las referencias de las citas que haya puesto en el documento.
+Se recomienda, mas no se obliga, usar https://www.zotero.org[Zotero].

@@ -1,0 +1,141 @@
+= Virtualización
+Universidad de Cuenca - Sistemas Operativos I
+:hardbreaks:
+:numbered:
+:icons: font
+
+
+== Objetivo
+
+Proporcionar las habilidades de ejecutar un sistema operativo completo sobre una
+máquina virtual y conocer, mediante la exploración práctica, la relación entre
+el ecosistema de software del anfitrión y del huésped.
+
+
+== Instrucciones
+
+=== Instalación de la herramienta de virtualización
+
+La herramienta de virtualización a usarse es la pieza de software libre *QEMU*
+http://www.qemu.org[(Quick Emulator)]. *QEMU* permite virtualizar varias
+arquitecturas de hardware como _ARM_, _MIPS_, _X86_64_, _SPARC_, entre otros. En
+esta practica usaremos únicamente la arquitectura _X86_64_.
+
+==== Responda
+====
+* ¿Cuáles son las características principales de *QEMU*?
+* ¿En qué sistemas operativos se puede instalar *QEMU*?
+* ¿Qué sistemas operativos huésped se pueden instalar con *QEMU*?
+* ¿*QEMU* permite realizar emulación, virtualización, paravirtualización o sirve como contenedor? Explique.
+* ¿Qué otras 2 alternativas parecidas podría mencionar? Descríbalas brevemente.
+====
+
+Se procede a instalar la herramienta con la siguiente instrucción
+
+    $ sudo apt-get install qemu
+
+[TIP]
+====
+* Recuerde que podría requerir una actualización de su sistema antes de
+    poder realizar la instalación: `sudo apt-get update`.
+* Para ser capaz de ejecutar estas instrucciones se deberá usar una distribución
+    GNU/Linux basada en *Debian* como son: _Mint_, _Ubuntu (y sus variantes)_,
+    _Elementary_, _Debian_, entre otras.
+====
+
+
+
+=== Creación de la máquina virtual
+
+Requeriremos un nuevo directorio para contener la instalación:
+
+    $ cd ~
+    $ mkdir maquina_virtual
+    $ cd maquina_virtual
+
+Creamos una imagen para contener la instalación virtual:
+
+    $ qemu-img create virtual.img 10G
+
+Esto creará un fichero `virtual.img` en el directorio actual que permitirá
+ubicar hasta *10 Gb* de disco virtual.
+
+
+==== Responda
+====
+* Averigüe el espacio que el fichero `virtual.img` ocupa en su disco duro.
+** Compárelo con el tamaño especificado durante la creación (10G).
+** ¿Por qué tiene ese tamaño?
+* Utilice el comando `file` para averiguar el tipo de fichero de `virtual.img`.
+** Averigüe qué es ese tipo de fichero.
+====
+
+
+Para arrancar la máquina virtual el comando a usar en la terminal será
+`qemu-system-x86_64`, pues es la arquitectura que pretendemos virtualizar
+
+    $ qemu-system-x86_64 -hda virtual.img -boot d -cdrom ./imagen.iso -m 512
+
+[NOTE]
+====
+* `virtual.img` es el fichero que creó en el paso anterior
+* `imagen.iso` es la imagen del sistema operativo que desea instalar
+* Puede detener la ejecución de la máquina virtual con `Ctrl+Alt+q`
+====
+
+
+==== Responda
+====
+* ¿Qué significan las opciones que ha usado (_-hda_, _-boot_, _-cdrom_, _-m_) ?
+* ¿Por qué es necesaria la opción _-boot_ con el parámetro *d*?
+* A cambiado el tamaño del fichero `virtual.img`?
+** ¿Por qué tiene ese tamaño?
+====
+
+
+
+=== Instalación del sistema operativo huésped
+
+Inicie nuevamente la máquina virtual con el comando descrito anteriormente y
+proceda a realizar la instalación del sistema operativo cuya imagen ha
+arrancado.
+
+
+==== Responda
+====
+* ¿A cambiado el tamaño del fichero `virtual.img`?
+** ¿Por qué tiene ese tamaño?
+* ¿Dónde considera que se encuentra instalado el sistema operativo huésped?
+* Remueva los permisos de lectura de `virtual.img` con
+
+    $ chmod -r virtual.img.
+
+* ¿Puede arrancar el sistema huésped ahora?. ¿Por qué?
+* Agregue permisos de lectura a `virtual.img` con
+
+    $ chmod +r virtual.img.
+
+====
+
+
+Ahora que el sistema operativo huésped está instalado puede arrancar la máquina
+virtual con
+
+    $ qemu -m 512 -hda virtual.img
+
+
+==== Responda
+====
+* ¿Por qué el comando de arranque ha cambiado?
+** ¿Considera que la opción _-cdrom_ es necesaria ahora?. ¿Por qué?
+* ¿Cómo puede especificar la distribución de teclado de la máquina virtual?
+* ¿Cómo iniciaría la máquina virtual en pantalla completa?
+* Intente mover el fichero `virtual.img` a otro directorio. ¿Puede arrancar la
+  máquina virtual desde ahí? ¿Por qué?
+====
+
+<<<
+
+=== Conclusiones
+
+Escriba a continuación los resultados de su práctica

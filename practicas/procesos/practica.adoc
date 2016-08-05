@@ -1,0 +1,167 @@
+= Administración de procesos
+Universidad de Cuenca - Sistemas Operativos I
+:hardbreaks:
+:numbered:
+:icons: font
+
+
+== Objetivos
+
+1. Adquirir el conocimiento y habilidades básicas de administración de procesos
+    en un sistema operativo basado en Unix.
+
+2. Familiarizarse con la estructura jerárquica de los procesos y su
+    organización.
+
+
+== Instrucciones
+
+=== Procesos
+
+Un proceso es la instancia de un programa en ejecución y toda la información
+adicional sobre el mismo (e.g., PID, procesos hijos, descriptores de archivos,
+recursos consumidos, propietario, permisos).
+
+La forma de identificar a un proceso en particular es mediante su PID
+(Process ID).
+
+
+=== ps
+
+El comando **ps** proporciona información sobre el estado de los procesos como:
+
+* PID
+* PPID
+* UID
+* TTY
+* TIME
+* CMD
+* STAT
+
+El atributo *STAT* puede tomar varios valores posibles:
+
+**R**: Ejecutándose
+**S**: En espera
+**T**: Detenido
+**Z**: Zombie
+**X**: Muerto
+
+
+==== Responda
+====
+* Ejecute el comando `ps`. ¿Reconoce algo de su resultado?
+* ¿Qué ocurre al ejecutar `ps -e`?
+* ¿Qué ocurre al ejecutar `ps -ef`?
+** ¿Qué nueva información considera útil de este resultado?
+* Al ejecutar `ps aux`, ¿Hay nueva información que considere útil? Explique.
+====
+
+
+=== pstree
+
+El comando **pstree** proporciona información sobre el estado de los procesos y
+permite visualizar su organización de árbol.
+
+
+==== Responda
+====
+* Ejecute el comando `pstree`. ¿Considera de mayor utilidad esta forma de
+    visualización? ¿En qué situaciones? Explique.
+* Según el gráfico presentado por `pstree`, ¿Cuál es el proceso raíz del cual
+    surgen todos los demás?
+** Ejecute el comando `ps aux` y examine el proceso con PID igual a 1.
+** ¿Cómo relaciona este proceso con el proceso raíz?
+====
+
+
+=== kill
+
+El mecanismo de comunicación con los procesos es mediante el uso de *señales*.
+
+Si bien el uso más común del comando **kill** es enviar una señal **SIGTERM** al
+proceso para terminarlo, es posible enviar muchas otras señales como:
+
+* SIGKILL
+* SIGINT
+* SIGSTOP
+* SIGPIPE
+* SIGHUP
+* SIGCHLD
+
+Entre otras más.
+
+==== Responda
+====
+* Ejecute el comando `yes` en una terminal.
+** Abra una terminal separada y averigüe el PID de *yes* usando el comando
+    `ps -e`.
+** Usando el PID que acaba de encontrar ejecute el comando `kill PID`. ¿Qué
+    ocurrió con el proceso *yes*?
+====
+
+
+=== nice
+
+Cada proceso tiene asociado una *prioridad* que controla la cantidad de tiempo
+de procesador que puede usar. Es posible asignar una *prioridad* de inicio
+distinta a un proceso al momento de ejecutarlo.
+
+Las *prioridades* tienen un rango de **-20** como la prioridad más alta y **19**
+como la prioridad más baja.
+
+Solamente el superusuario (root) es capaz de asignar prioridades mayores a 0
+(valores negativos de nice).
+
+
+==== Responda
+====
+* Ejecute el comando `yes` en una terminal.
+** Abra una terminal separada y averigüe la prioridad (campo *NI*) usando el
+    comando `ps -el`. ¿Cuál es su prioridad?
+** Termine la ejecución de *yes*.
+* Ejecute el comando `nice -n 5 yes` en una terminal.
+** Abra una terminal separada y averigüe la prioridad (campo *NI*) usando el
+    comando `ps -el`. ¿Cuál es su prioridad?
+* ¿Qué prioridad tiene *yes* si ejecuta `nice -n -5 yes`?
+** ¿Qué ocurre si ejecuta el mismo comando usando *sudo*?
+====
+
+
+=== &
+
+Es posible ejecutar un comando en segundo plano usando el operador **&** al
+final del mismo.
+
+==== Responda
+====
+* Ejecute el comando `sleep 10` y espere. ¿Qué ocurrió?
+* Ejecute ahora el comando `sleep 10 &` y espere. ¿Qué ocurrió?
+* ¿Cuál fue la diferencia entre los 2 comandos? ¿Qué utilidad encuentra a esto?
+====
+
+
+=== top
+
+Una forma más amigable de monitorizar procesos en tiempo real es usando el
+comando **top**, que permite conocer información del estado de CPU y memoria, y
+de los procesos.
+
+==== Responda
+====
+* Ejecute el comando `top`. ¿Qué información útil puede identificar?
+* ¿En qué casos usaría *top* en lugar de las otras herramientas?
+* ¿En qué casos usaría otras herramientas en lugar de *top*?
+====
+
+
+<<<
+
+=== Conclusiones
+
+NOTE: Escriba los principales resultados y conclusiones de su práctica.
+
+<<<
+
+=== Referencias
+NOTE: Liste aquí todas las referencias de las citas que haya puesto en el
+documento. Se recomienda, mas no se obliga, usar https://www.zotero.org[Zotero].

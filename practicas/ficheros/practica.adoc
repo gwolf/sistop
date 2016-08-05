@@ -1,0 +1,130 @@
+= Sistemas de ficheros
+Universidad de Cuenca - Sistemas Operativos I
+:hardbreaks:
+:numbered:
+:icons: font
+
+
+== Objetivos
+
+1. Conocer los tipos de sistemas de ficheros de uso más común, sus ventajas y
+    usos.
+2. Familiarizarse con la jerarquía de ficheros típica de sistemas Unix.
+
+
+== Instrucciones
+
+=== Sistemas de ficheros
+
+Un sistema de ficheros es el componente encargado de proporcionar una interfaz
+amigable con el usuario y con el software de usuario para el acceso ordenado y
+sistemático al almacenamiento no volátil de un computador como el disco duro.
+
+De la practica *"Instalación de un SO GNU/Linux"* recordará un par de sistemas
+de ficheros usados comúnmente como son los `ext` y `swap`
+
+==== Investigue y Responda
+====
+* ¿Qué otros sistemas de ficheros son comúnmente usados?
+** ¿Cuales son sus características principales?
+====
+
+=== Creación de sistemas de ficheros y montaje
+
+* *mkfs* (_Make Filesystem_): permite crear un sistema de ficheros en una unidad
+    de almacenamiento (Disco duro, memoria flash, etc).
+
+Es común usar el comando **mkfs** con sus variantes que especifican el tipo de
+sistema de ficheros directamente como:
+
+* *mkfs.ext4*: crear sistema de ficheros **ext4**
+* *mkfs.fat*: crear sistema de ficheros **fat**
+
+* *mount*: permite montar unidades de almacenamiento en el sistema de ficheros
+
+
+==== Responda
+====
+* Ejecute el comando `$ mount` sin parámetros ¿Puede reconocer algunos sistemas
+    de ficheros en la salida?
+====
+
+
+=== Tipos de ficheros
+
+En un sistema de ficheros existen algunos tipos diferentes a tomar en cuenta:
+
+* Ficheros: Ficheros ordinarios con texto, datos, etc.
+* Directorios: Los directorios son ficheros que contienen una lista de otros
+    ficheros
+* Ficheros especiales: Como dispositivos de hardware.
+* Enlaces: Ficheros que apuntan a otros ficheros.
+
+* *file*: permite conocer el tipo de fichero y tipo de contenido del mismo.
+
+==== Responda
+====
+* Ejecute el comando `$ file fichero` donde **fichero** sean algunos de sus
+    ficheros personales ¿Qué resultados llamaron su atención?
+** ¿Qué ocurre cuando ejecuta el comando `file` con directorios?
+* Ejecute el comando `$ file /dev/sda` ¿Qué tipo de fichero es **sda**?
+* Usando su conocimiento de practicas anteriores cree un fichero de texto y un
+    enlace al mismo con el comando `$ ln -s fichero enlace` donde **fichero** es
+    el fichero de texto que creó
+** Ejecute el comando `$ file enlace` ¿Nos deja claro el resultado que el
+    fichero es un enlace?
+====
+
+
+=== Jerarquía del sistema de ficheros
+
+La mayoría de tipos de sistemas de ficheros presentan una interfaz de cara al
+usuario en la que se organizan los directorios y ficheros en una jerarquía que
+empieza desde el **directorio raíz** conocido también con el símbolo **/**.
+
+Los sistemas Unix utilizan una convención en cuanto a los directorio disponibles
+en la raíz del sistema de ficheros que facilita su uso de forma consistente.
+
+Algunos de estos directorios estándar son:
+
+|===
+| Directorio | Uso/Contenido
+| / | Raíz del sistema de ficheros
+| /bin | Ficheros ejecutables
+| /boot | Ficheros de inicio del sistema
+| /dev | Ficheros especiales de dispositivos de hardware
+| /etc | Ficheros de configuración
+| /home | Ficheros personales de usuarios
+| /lib | Librerías
+| /tmp | Ficheros temporales
+| /media | Punto de montaje para otros dispositivos de almacenamiento
+|===
+
+
+==== Responda
+====
+* Ubíquese en la raíz del sistema de ficheros con el comando `$ cd /` y liste su
+    contenido con `$ ls -l`
+** ¿Qué directorios nuevos reconoce?
+* ¿Hay ficheros que le resulten familiar dentro del directorio **/bin**?
+* ¿Qué tipos de fichero (usando **file**) encuentra en el directorio **/dev**?
+====
+
+<<<
+
+=== Conclusiones
+
+NOTE: Escriba los principales resultados y conclusiones de su práctica.
+
+<<<
+
+=== Referencias
+* Tanenbaum, A.S., Bos, H., 2014. Modern Operating Systems, 4th ed. Pearson,
+    Boston, USA.
+* Wolf, G., Ruiz, E., Bergero, F., Meza, E., 2015. Fundamentos de Sistemas
+    Operativos, 1st ed. Universidad Nacional Autónoma de México, México D.F.,
+    México.
+
+NOTE: Liste aquí todas las referencias de las citas que haya puesto en el
+    documento. Se recomienda, mas no se obliga, usar
+    https://www.zotero.org[Zotero].

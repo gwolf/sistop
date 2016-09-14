@@ -8,10 +8,10 @@ buffer = []
 class Evento:
     def __init__(self):
         self.ident = random.random()
-        print "Generando evento %s" % self.ident
+        print "Generando evento %1.3f" % self.ident
         time.sleep(self.ident)
     def process(self):
-        print "Procesando evento %s" % self.ident
+        print "Procesando evento %1.3f" % self.ident
 
 
 def productor():

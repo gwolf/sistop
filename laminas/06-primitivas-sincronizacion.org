@@ -1529,23 +1529,19 @@ class EjemploHilos
     sleep 0.1; @mut.lock
     @cv.wait(@mut) while (@estado != 0)
     @x += 3; @estado += 1
-    @cv.broadcast(@mut)
+    @cv.broadcast
     @mut.unlock
   end
   def f2
     sleep 0.1; @mut.lock
     @cv.wait(@mut) while (@estado != 1)
     @x *= 2; @estado += 1
-    @cv.broadcast(@mut)
+    @cv.broadcast
     @mut.unlock
   end
 end
 #+END_SRC
 #+latex: \end{column}\end{columns}
-#+BEGIN_CENTER
-Ojo: /No funcional/ (el intérprete /detecta un bloqueo mutuo/)
-#+END_CENTER
-
 
 ** Sincronización a través de CV
 - Desventaja :: Código resultante /más complejo/ (más elementos a
@@ -1555,29 +1551,64 @@ Ojo: /No funcional/ (el intérprete /detecta un bloqueo mutuo/)
   - Podría mejorarse con un poco de /azucar sintáctico/
 - Ventaja :: Menor acoplamiento entre funciones
   - Ordenamiento determinado por =@estado=
-  - Podría configurarse en un sólo punto, p.ej:
+  - Podría configurarse en un sólo punto — Ejemplo a continuación
+** Solución 2: Variables de condición
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+BEGIN_SRC ruby
-def initialize
-  (...) @orden = {:f1 => 0, :f2 => 1, :run => 2}
-end
-def f1
-  (...) @cv.wait(@mut) while (@estado != @orden[:f1])
+class EjemploHilos
+  require 'thread'
+  def initialize
+    @orden = {:f1 => 0, :f2 => 1, :run => 2}
+    @x = 0; @estado = 0
+    @mut = Mutex.new
+    @cv = ConditionVariable.new
+  end
+  def run
+    @estado = 0
+    t1 = Thread.new {f1}
+    t2 = Thread.new {f2}
+    sleep 0.1; @mut.lock
+    @cv.wait(@mut) while (@estado != @orden[:run])
+    puts '%d ' % @x
+    @mut.unlock
+  end
+#+end_src
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+begin_src ruby
+  def f1
+    sleep 0.1; @mut.lock
+    @cv.wait(@mut) while (@estado != @orden[:f1])
+    @x += 3; @estado += 1
+    @cv.broadcast
+    @mut.unlock
+  end
+  def f2
+    sleep 0.1; @mut.lock
+    @cv.wait(@mut) while (@estado != @orden[:f2])
+    @x *= 2; @estado += 1
+    @cv.broadcast
+    @mut.unlock
+  end
 end
 #+END_SRC
+#+latex: \end{column}\end{columns}
 
 ** ¿Y cómo es que /el intérprete/ detecta...?
-- Habrán notado que el comentario al código basado en CV menciona que
-  el intérprete /detecta un bloqueo mutuo/
+- Por varios semestres(!) /no pude lograr/ que el código que les
+  presenté funcionara
+- El intérprete /detecta un bloqueo mutuo/
 - Indica, sin duda, un error del programador
-#+BEGIN_SRC ruby
->> EjemploHilos.new.run
-fatal: deadlock detected
-	from /usr/lib/ruby/1.9.1/thread.rb:71:in 'sleep'
-	from /usr/lib/ruby/1.9.1/thread.rb:71:in 'wait'
-	from (irb):15:in 'run'
-	from (irb):42
-	from /usr/bin/irb:12:in '<main>'
-#+END_SRC
+  #+BEGIN_SRC ruby
+  >> EjemploHilos.new.run
+  fatal: deadlock detected
+	  from /usr/lib/ruby/1.9.1/thread.rb:71:in 'sleep'
+	  from /usr/lib/ruby/1.9.1/thread.rb:71:in 'wait'
+	  from (irb):15:in 'run'
+	  from (irb):42
+	  from /usr/bin/irb:12:in '<main>'
+  #+END_SRC
+  - Y, sí, derivaba de que llamaba a =@cv.broadcast(@mut)= en vez de
+    simplemente =@cv.broadcast=
 - Pero... ¿Cómo se dio cuenta?
 - ¿Cómo puede el intérprete /prevenir/ este bloqueo y /notificar al
   programador/?

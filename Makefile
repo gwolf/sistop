@@ -1,10 +1,10 @@
 #!/usr/bin/make -f
-baseurl = http://sistop.gwolf.org
+baseurl = http://gwolf.sistop.org
 
 # Bajo este esquema, sólo Gunnar puede llamar a "make publish" y
 # derivados. Bueno, confío en que quien quiera publicar a otro
 # depósito lo modifique ;-)
-publish_dest = gwolf@gwolf.org:/home/gwolf/sistop.gwolf.org
+publish_dest = gwolf@gwolf.org:/home/gwolf/gwolf.sistop.org
 
 publish_src_html = ./html/*
 publish_src_pdf = ./pdf/*

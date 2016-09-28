@@ -1552,7 +1552,7 @@ end
 - Ventaja :: Menor acoplamiento entre funciones
   - Ordenamiento determinado por =@estado=
   - Podría configurarse en un sólo punto — Ejemplo a continuación
-** Solución 2: Variables de condición
+** Solución 3: CVs, ordenamiento centralizado
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+BEGIN_SRC ruby
 class EjemploHilos
@@ -1596,23 +1596,20 @@ end
 ** ¿Y cómo es que /el intérprete/ detecta...?
 - Por varios semestres(!) /no pude lograr/ que el código que les
   presenté funcionara
-- El intérprete /detecta un bloqueo mutuo/
-- Indica, sin duda, un error del programador
-  #+BEGIN_SRC ruby
-  >> EjemploHilos.new.run
-  fatal: deadlock detected
-	  from /usr/lib/ruby/1.9.1/thread.rb:71:in 'sleep'
-	  from /usr/lib/ruby/1.9.1/thread.rb:71:in 'wait'
-	  from (irb):15:in 'run'
-	  from (irb):42
-	  from /usr/bin/irb:12:in '<main>'
-  #+END_SRC
-  - Y, sí, derivaba de que llamaba a =@cv.broadcast(@mut)= en vez de
-    simplemente =@cv.broadcast=
+  - El intérprete /detecta un bloqueo mutuo/
+  - Indica, sin duda, un error del programador
+    #+BEGIN_SRC ruby
+    >> EjemploHilos.new.run
+    fatal: deadlock detected
+	    from /usr/lib/ruby/1.9.1/thread.rb:71:in 'sleep'
+	    from /usr/lib/ruby/1.9.1/thread.rb:71:in 'wait'
+            (...)
+    #+END_SRC
+  - Y, sí, derivaba de que llamaba a =@cv.broadcast(@mut)= (argumento
+    de más)
 - Pero... ¿Cómo se dio cuenta?
-- ¿Cómo puede el intérprete /prevenir/ este bloqueo y /notificar al
-  programador/?
-  - ¡Antes de la primer iteración!
+  - ¿Cómo puede Ruby /prevenir/ este bloqueo y /notificar al
+    programador/? ¿¡Antes de la primer iteración!?
 
 ** ¡No se lo pierda!
 - ¡Muy pronto!

@@ -92,10 +92,12 @@ reactivado, lo trataremos como /un proceso nuevo/.
 ** Tipos de proceso
 - Diversos procesos tienen distintas características
 - Alternan entre /ráfagas/ (/bursts/)
-  - Limitado por CPU
-  - Limitado por E/S
-- Cuando termina una ráfaga limitada por CPU y se suspende esperando
-  E/S, deja de estar /listo/ y sale de la vista del /despachador/
+  - CPU :: Trabajando con datos ya existentes en el sistema
+  - E/S :: Mayormente esperando a eventos de E/S
+- Un /programa/ dado puede ser /mayormente/ de un tipo u otro — Dicho
+  programa está /limitado por CPU/ o /limitado por E/S/
+- Cuando termina una ráfaga de CPU y se suspende esperando E/S, deja
+  de estar /listo/ y sale de la vista del /despachador/
 - Esto nos lleva a separar los procesos en...
 
 ** Tipos de proceso
@@ -103,8 +105,8 @@ reactivado, lo trataremos como /un proceso nuevo/.
 *Ojo: ¡Un poco contraintuitivo!*
 #+END_CENTER
 - Largos :: Han estado /listos/ o /en ejecución/ por mucho tiempo
-  - Esto es, están en una ráfaga limitada por CPU
-- Cortos :: En este momento están en una ráfaga limitada por E/S
+  - Esto es, están en una ráfaga de CPU
+- Cortos :: En este momento están en una ráfaga de E/S
   - Requieren atención meramente ocasional del procesador
   - Tienden a estar bloqueados, esperando a /eventos/
     - Como buena parte de los procesos interactivos

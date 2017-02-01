@@ -1,25 +1,22 @@
 #+AUTHOR: Gunnar Wolf
 #+EMAIL: sistop@gwolf.org
-#+startup: beamer
-#+LaTeX_CLASS: beamer
-#+LaTeX_CLASS_OPTIONS: [bigger]
-#+LaTeX_HEADER \usepackage[spanish]{babel}
-#+LaTeX_HEADER: \pgfdeclareimage[height=0.7\textheight]{../img/pres/cintillo.png}{../img/pres/cintillo.png}\logo{\pgfuseimage{../img/pres/cintillo.png}}
-#+LaTeX_HEADER: \AtBeginSection[]{ \begin{frame}<beamer> \frametitle{Índice} \tableofcontents[currentsection] \end{frame} }
+#+STARTUP: beamer
+#+LATEX_CLASS: beamer
+# #+LATEX_CLASS_OPTIONS: [bigger]
+#+LATEX_HEADER \usepackage[spanish]{babel}
+#+LATEX_HEADER \usepackage{listings}
+#+LATEX_HEADER: \pgfdeclareimage[height=0.7\textheight]{../img/pres/cintillo.png}{../img/pres/cintillo.png}\logo{\pgfuseimage{../img/pres/cintillo.png}}
+#+LATEX_HEADER: \AtBeginSection[]{ \begin{frame}<beamer> \frametitle{Índice} \tableofcontents[currentsection] \end{frame} }
 #+LATEX_HEADER: \definecolor{string}{rgb}{0,0.6,0} \definecolor{shadow}{rgb}{0.5,0.5,0.5} \definecolor{keyword}{rgb}{0.58,0,0.82} \definecolor{identifier}{rgb}{0,0,0.7}
-#+LATEX_HEADER: \renewcommand{\ttdefault}{pcr} \lstset{basicstyle=\ttfamily\scriptsize\bfseries, showstringspaces=false, keywordstyle=\color{keyword}, stringstyle=\color{string}, identifierstyle=\color{identifier}, commentstyle=\mdseries\textit, inputencoding=utf8, extendedchars=true, breaklines=true, breakatwhitespace=true, breakautoindent=true, numbers=left, numberstyle=\ttfamily\tiny\textit}
+# #+LATEX_HEADER: \renewcommand{\ttdefault}{pcr} \lstset{basicstyle=\ttfamily\scriptsize\bfseries, showstringspaces=false, keywordstyle=\color{keyword}, stringstyle=\color{string}, identifierstyle=\color{identifier}, commentstyle=\mdseries\textit, inputencoding=utf8, extendedchars=true, breaklines=true, breakatwhitespace=true, breakautoindent=true, numbers=left, numberstyle=\ttfamily\tiny\textit}
 #+LATEX_HEADER: \newcommand{\rarrow}{$\rightarrow$\hskip 0.5em}
-#+BEAMER_FRAME_LEVEL: 2
-#+MACRO: BEAMERMODE presentation
-#+MACRO: BEAMERTHEME Warsaw
-#+MACRO: BEAMERCOLORTHEME lily
-#+MACRO: BEAMERINSTITUTE Facultad de Ingeniería, UNAM \\ Instituto de Investigaciones Económicas, UNAM
+#+BEAMER_THEME: Warsaw
+#+BEAMER_COLOR_THEME: lily
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE: es
-#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+LINK_UP:  
-#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)

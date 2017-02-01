@@ -24,18 +24,18 @@ Del curso
 ** Horario, calendario
 - Martes y jueves
 - 18:15 a 20:30
-- Salón A-201
-- 72 horas clase en total… En teoría.
-  - Este semestre "perdemos" 15 de septiembre y 1 de noviembre
+- Salón B-103
+- 72 horas clase en total
+  - ¡No /perdemos/ ningún feriado este semestre! :-)
   - 2 o 3 clases para exposición de temas por parte de invitados
-- La evaluación principal será con dos trabajos prácticos y un examen
-  parcial (detalles más adelante)
+- La evaluación principal será con trabajos prácticos
+- Posiblemente un examen parcial (detalles más adelante)
 
 * Encuadre del curso
 
-** El curso dentro de la currícula de la carrera, plan 2010
+** El curso dentro de la currícula (plan 2010)
 #+begin_center
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 [[../img/pres/mapa_curricular.png]]
 #+end_center
 
@@ -78,12 +78,13 @@ Lectura en inglés
 - Windows, MacOS son sistemas válidos y útiles
 - Los encontrarán con frecuencia en su vida diaria/futura
 - Pero para aprender...
-#+latex: \pause
+#+beamer: \pause
 #+BEGIN_CENTER
 ¡Tarea!
 
 Leer el texto [[http://www.joelonsoftware.com/articles/Biculturalism.html][Biculturalism, de Joel Spolsky]] (2003) para discutir en
 clase.
+\small
 
 http://www.joelonsoftware.com/articles/Biculturalism.html
 
@@ -91,7 +92,7 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
 
 ** Programa de estudio
 #+begin_center
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: :width 0.8\textwidth
 [[../img/pres/prog_estudio.png]]
 #+end_center
 
@@ -121,6 +122,7 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
 
 ** ¿Qué espero que logremos?
 #+BEGIN_CENTER
+\scriptsize
 Adicionalmente al objetivo formal...
 #+END_CENTER
 - El alumno conocerá el desarrollo histórico de los sistemas
@@ -136,7 +138,7 @@ Adicionalmente al objetivo formal...
 
 ** ¿Qué espero que logremos?
 #+BEGIN_CENTER
-Desmitificar al uso del cómputo
+/Desmitificar/ al uso del cómputo
 #+END_CENTER
 - ¿Por qué se /congela/ la computadora?
 - ¿Qué es eso de /expulsar con seguridad/ una unidad?
@@ -177,9 +179,8 @@ pueden ser estudiados de forma aislada.
 * Bibliografía
 
 ** Fundamentos de Sistemas Operativos
-#+latex: \vfill {\scriptsize
 #+latex: \begin{columns}\begin{column}{0.35\textwidth}
-#+attr_latex: height=20em
+#+attr_latex: :height 15em
 [[../img/pres/libro_fund_sist_op.jpg]]
 #+latex: \end{column}\begin{column}{0.6\textwidth}
 - Libro en el que participé como autor y coordinador
@@ -191,52 +192,66 @@ pueden ser estudiados de forma aislada.
 #+LaTeX: \end{column}\end{columns}
 
 ** Bibliografía oficial del curso
-#+latex: \vfill {\scriptsize
-#+latex: \begin{columns}\begin{column}{0.4\textwidth}
-#+attr_latex: height=10em
-[[../img/pres/libro_silberschatz.png]]
-\vskip 2em
-#+attr_latex: height=10em
-[[../img/pres/libro_tanenbaum.png]]
-#+latex: \end{column}\begin{column}{0.5\textwidth}
-#+latex: {\large Operating System Concept Essentials} \\
+#+begin_beamer
+\begin{columns}\begin{column}{0.4\textwidth}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{../img/pres/libro_silberschatz.png}
+\end{center}
+\vfill
+\begin{center}
+\includegraphics[width=.9\linewidth]{../img/pres/libro_tanenbaum.png}
+\end{center}
+
+\end{column}
+\begin{column}{0.5\textwidth}
+
+{\large Operating System Concept Essentials} \\
 Abraham Silberschatz, Peter Baen Galvin, Greg Gagne\\
 Wiley (Traducción: Limusa)\\
-5ª edición (1998) en adelante
-#+latex: \vskip 2em
-#+latex: {\large Sistemas operativos: Diseño e implementación} \\
+{\scriptsize 5ª edición (1998) en adelante }
+\vfill
+{\large Sistemas operativos: Diseño e implementación} \\
 Andrew S. Tanenbaum y Albert S. Woodhull \\
-Prentice Hall\\
-2ª (1997) o 3ª (2006) ediciones
-#+LaTeX: \end{column}\end{columns}
+{\scriptsize Prentice Hall 2ª (1997) o 3ª (2006) ediciones}
+
+\end{column}\end{columns}
+#+end_beamer
 
 ** Libros descargables disponibles en español
-#+latex: \vfill {\scriptsize
-#+latex: \begin{columns}\begin{column}{0.25\textwidth} \vskip 10em
-#+attr_latex: height=10em
-[[../img/pres/libro_ruiz.png]]
-#+latex: \end{column}\begin{column}{0.7\textwidth}
-#+latex: {\large Sistemas Operativos} \\
-Luis La Red Martínez\\ Universidad Nacional del Nordeste (Argentina)\\
-[[http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/sistope2.PDF][Disponible en línea]] desde [[http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/SOF.htm][el sitio Web del autor]]
-#+latex: \vskip 2em {\large Sistemas operativos} \\
+#+begin_beamer
+\begin{columns}\begin{column}{0.25\textwidth}
+
+\vskip 5em
+\includegraphics[width=.9\linewidth]{../img/pres/libro_ruiz.png}
+
+\end{column}
+\begin{column}{0.7\textwidth}
+
+{\large Sistemas Operativos} \\
+Luis La Red Martínez$\backslash$\ Universidad Nacional del Nordeste (Argentina)\\
+\href{http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/sistope2.PDF}{Disponible en línea} desde \href{http://exa.unne.edu.ar/depar/areas/informatica/SistemasOperativos/SOF.htm}{el sitio Web del autor}
+\vskip 2em {\large Sistemas operativos} \\
 Pablo Ruiz Múzquiz\\
 Libro Abierto / Serie Apuntes, 2004\\
-[[http://forja.rediris.es/frs/download.php/1922/SSOO-0_5_0.pdf][Disponible en línea]] desde la [[http://alqua.tiddlyspace.com/][editorial de textos libres Alqua]]
-#+latex: \end{column}\end{columns}
+\href{http://forja.rediris.es/frs/download.php/1922/SSOO-0\_5\_0.pdf}{Disponible en línea} desde la \href{http://alqua.tiddlyspace.com/}{editorial de textos libres Alqua}
+
+\end{column}\end{columns}
+#+end_beamer
 
 ** Otros textos recomendados
+ 
 
-#+latex: {\large An operating systems vade mecum } \\
+#+latex: { \large An operating systems vade mecum }\\
 Raphael Finkel\\
 University of Kentucky - Lexington, 1988\\
 [[ftp://ftp.cs.uky.edu/cs/manuscripts/vade.mecum.2.pdf][Disponible en línea]] desde [[http://www.cs.uky.edu/~raphael/][el sitio Web del autor]]
 
 #+latex: \vskip 2em {\large Operating Systems: Three Easy Pieces } \\
-Remzi H. Arpaci-Dusseau y Andrea C. Arpaci-Dusseau \\ University of
- Wisconsin Madison \\ Disponible en
- línea desde [[http://pages.cs.wisc.edu/~remzi/OSTEP][el sitio Web del autor]] capítulo por capítulo, y a la
- venta tanto [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-softcover.html][impreso]] como [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-electronic.html][en un sólo PDF]].
+#+latex: Remzi H. Arpaci-Dusseau y Andrea C. Arpaci-Dusseau \\
+#+latex: University of Wisconsin Madison \\
+Disponible en línea desde [[http://pages.cs.wisc.edu/~remzi/OSTEP][el sitio Web del autor]] capítulo por
+capítulo, y a la venta tanto [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-softcover.html][impreso]] como [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-electronic.html][en un sólo PDF]].
 
 ** Pero... ¡Toma nota!
 - De todos modos, /sugiero fuertemente que cada quién tome notas/
@@ -253,19 +268,10 @@ Encontrarás:
 - Listas de asistencia, calificaciones
 - Temas sugeridos para las exposiciones (las abordamos en breve)
 - Liga al material /formal/
-- Liga a la plataforma educativa
-
-** Uso de la plataforma de cursos
-
-- En el transcurso del curso emplearemos la plataforma educativa
-  /Moodle/ que administro:
-  #+latex: \url{http://docencia.iiec.unam.mx/course/view.php?id=11}
-- Para darlos de alta, requiero el correo electrónico de todos los
-  alumnos
 
 ** Depósito en GitHub
 #+BEGIN_CENTER
-Este semestre introduzco un /experimento/
+Estamos /experimentando/ con el uso de una plataforma educativa...
 #+END_CENTER
 - Entrega de tareas y proyectos al /depósito Git/ en la plataforma /GitHub/
 - Entorno de desarrollo colaborativo
@@ -273,7 +279,7 @@ Este semestre introduzco un /experimento/
 - ...Probablemente tengamos que ir afinándolo en el transcurso del
   curso
 #+BEGIN_CENTER
-http://github.com/gwolf/clase-sistop-2017-01
+[[http://github.com/gwolf/sistop-2017-2]]
 #+END_CENTER
 
 * Normas del grupo
@@ -306,20 +312,18 @@ Compromiso:
 ** Proyectos
 - Desarrollo /propio y original/ que integre el contenido visto en
   determinadas unidades
-  - Administración / planificación de procesos :: Que efectúen
-       monitoreo o configuración del sistema operativo de su
-       preferencia, en un programa multihilos y empleando
-       sincronización.
-  - Sistemas de archivos :: Desarrollo de un micro-sistema de archivos
+  - Introducción / Relación con HW :: /Por definir/
+  - Administración / planificación de procesos :: Monitor del sistema
+  - Sistemas de archivos :: Mini-sistema de archivos
 - La fecha de entrega será anunciada con por lo menos una semana de
-  antelación (aproximado: Fines de septiembre y mediados de noviembre)
+  antelación (aproximado: Fines de marzo y mediados de mayo)
 - Desarrollados de forma individual o en equipos de dos integrantes
 
 ** Examen parcial
 - Planeo realizar únicamente un examen parcial, cubriendo
   principalmente la unidad /Administración de memoria/
 - La fecha será anunciada con por lo menos una semana de antelación
-  (previsto: mediados a fines de octubre)
+  (previsto: mediados a fines de abril)
 
 ** Tareas /obligatorias/
 - La entrega de tareas es /obligatoria/
@@ -327,7 +331,7 @@ Compromiso:
     les resulta imposible/
   - Hasta una semana de demora: Calificadas sobre el 80%
   - Más de una semana de demora: Calificadas sobre el 50%
-  - Más de tres semanas de demora: Calificada como 0, no se recibe ya
+  - Más de tres semanas de demora: *No se recibe*
 - Requisito para la exención: *100%* de tareas
 - Requisito para presentar examen final en primera vuelta: *80%* de tareas
 

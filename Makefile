@@ -187,11 +187,11 @@ beamer: fig
 	    title=`grep -i '#+title:' $$i | sed 's/#+title://i'` \
 	    pdf=`echo $$i|sed s/.org$$/.pdf/`; \
 	    if [ ! -f $$pdf -o $$i -nt $$pdf ] ; then \
-		emacs --batch --visit=$$i --load ~/.emacs --funcall=org-mode --funcall=org-export-as-pdf ; \
+		emacs --batch --visit=$$i --load ~/.emacs --funcall=org-mode --funcall=org-beamer-export-to-pdf ; \
 	    fi ; \
 	    echo "| [[$(baseurl)/$$pdf][$$title]] | $$lastmod" >> $(idx_laminas); \
 	done
-	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --funcall=org-mode --funcall=org-export-as-html
+	emacs --batch --visit=$(idx_laminas) --load ~/.emacs --funcall=org-mode --funcall=org-html-export-to-html
 	rm $(idx_laminas)
 
 clean-publish-cache:

@@ -47,7 +47,7 @@
 
 ** Ejemplo de acumuladores: Intel 8086/8088
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+attr_latex: width=\columnwidth
+#+attr_latex: :width \columnwidth
 #+caption: Imagen de Wikipedia
 [[../img/registros_8086.png]]
 #+latex: \end{column}\begin{column}{0.5\textwidth}
@@ -93,8 +93,7 @@ Paridad, Acarreo
   - Varios niveles de caché
 
 ** Jerarquía de almacenamiento
-#+attr_latex: height=0.7\textheight
-##+attr_latex: width=\textwidth
+#+attr_latex: :height 0.7\textheight
 #+caption: Diferentes niveles de almacenamiento: Diferencias en costo, velocidad y capacidad
 [[../img/dot/jerarquia_memoria.png]]
 ** ¿Tiempo de acceso? ¿Tasa de transferencia?
@@ -127,8 +126,9 @@ xt_t$
 ** Almacenamiento /primario/ y /secundario/
 - El procesador /sólo puede manejar directamente/ a la memoria
   principal
-  - Sólo el almacenamiento primario es parte de la arquitectura von Neumann
   - Se le conoce también como /almacenamiento primario/
+  - Sólo éste es parte de lo que la arquitectura von Neumann llama
+    /computadora/
 - Discos, cintas, almacenamiento /estado sólido/ son /almacenamiento
   secundario/
   - Todas las computadoras lo manejan a través de /controladores/
@@ -138,7 +138,9 @@ xt_t$
 - Los componentes /no directamente referenciables/ de un sistema se
   comunican a través de /canales/ (/buses/)
   - Líneas de comunicación entre el procesador y el /chipset/
-- Acomodo /muy frecuente/ en sistemas x86 actuales:
+- Acomodo /muy frecuente/ en sistemas x86 recientes[fn:: Después del
+  2010, las funciones del /Northbridge/ han tendido a ser absorbidas
+  por el CPU mismo]:
   - Puente norte (Northbridge) :: Conectado directamente al CPU,
        encargado de los buses de alta velocidad y los dispositivos
        fundamentales para el inicio del sistema — Memoria, video (AGP)
@@ -147,7 +149,7 @@ xt_t$
        IDE, PCI / PCIe, USB / Firewire, puertos /heredados/)
 
 ** Canales y puentes
-#+attr_latex: height=\textheight, angle=90
+#+attr_latex: :height \textheight, angle=90
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en /puente norte/ y /puente sur/
 [[../img/northbridge_southbridge.png]]
 
@@ -165,7 +167,7 @@ xt_t$
     conectados /serialmente/
 
 ** Ejemplo: Chipset Intel 875 (2003)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Diagrama de la comuniacación entre componentes de un sistema de cómputo basado en el chipset Intel 875 (Pentium 4, 2003)
 [[../img/dot/chipset_857.png]]
 
@@ -181,6 +183,11 @@ xt_t$
   - P.ej. estructurar la comunicación a todos los periféricos
     alrededor del bus USB
   - Frecuente en equipos ARM
+
+** Ejemplo: Raspberry Pi
+#+attr_latex: :width \textwidth
+#+caption: Diagrama de bloques de la popular plataforma ARM /Raspberry Pi/ de primera generación (Imagen de Wikipedia)
+[[../img/raspberry_block_diag.png]]
 
 * Interrupciones y excepciones
 
@@ -244,7 +251,7 @@ xt_t$
   - APIs implementados por diversos sistemas: POSIX, Win32
 
 ** Flujo de control en una llamada al sistema
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Transición del flujo entre espacio usuario y espacio núcleo en una llamada al sistema
 [[../img/dot/llamada_al_sistema.png]]
 ** Tipos de llamadas al sistema (1)
@@ -372,7 +379,7 @@ intercambiable, pero muy distintos:
      - Hoy en día, la norma.
 
 ** Multiprogramación, multiprocesamiento, híbrido...
-#+attr_latex: height=0.5\textheight
+#+attr_latex: :height 0.5\textheight
 #+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
 [[../img/ditaa/multiproceso_y_multiprogramacion.png]]
 
@@ -414,13 +421,13 @@ Particularmente la abordaremos en las dos siguientes unidades:
   al menos por los próximos 10 años
 
 ** La Ley de Moore, 1965
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: La /Ley de Moore/, en su artículo publicado en 1965, prediciendo la miniaturización por diez años
 [[../img/moore_orig.png]]
 
 ** La Ley de Moore, hoy
 #+latex: \begin{columns}\begin{column}{0.7\textwidth}
-#+attr_latex: height=0.9\textheight
+#+attr_latex: :height 0.9\textheight
 [[../img/gnuplot/ley_de_moore.png]]
 #+latex: \end{column}\begin{column}{0.3\textwidth}
 #+BEGIN_CENTER
@@ -589,7 +596,7 @@ Ley de Amdahl: ejecución de un programa con 500 unidades de tiempo total de tra
 #+END_CENTER
 
 ** Ilustrando la ley de Amdahl (2)
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 #+label: HW_amdahl_porcentajes
 #+caption: Ganancia máxima al paralelizar un programa, según la Ley de Amdahl
 [[../img/gnuplot/amdahl.png]]
@@ -615,19 +622,22 @@ Ley de Amdahl: ejecución de un programa con 500 unidades de tiempo total de tra
   el /bloqueo mental/ contra el paralelismo
 
 ** Observación de Gustafson
-#+latex: { \small
-(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
-independiente del número de procesadores, /lo cual virtualmente nunca
-ocurre de este modo/. Uno no toma un problema de tamaño fijo para
-ejecutarlo en varios procesadores como no sea para hacer un
-ejercicio académico; en la práctica, /el tamaño del problema crece con
-el número de procesadores/. Al obtener procesadores más poderosos, el
-problema generalmente se expande para aprovechar las facilidades
-disponibles. Los usuarios tienen control sobre cosas como la
-resolución de la malla, el número de pasos, la complejidad de los
-operadores y otros parámetros que usualmente se ajustan para permitir
-que el programa se ejecute en el tiempo deseado. Por tanto, podría ser más
-realista que el /tiempo de ejecución/, no el /tamaño del problema/, es
-constante.
+  \small
 
-#+latex: }
+(...)Asumen implícitamente que el tiempo que se ejecuta en paralelo es
+independiente del número de procesadores, *lo cual virtualmente nunca
+ocurre de este modo*. Uno no toma un problema de tamaño fijo para
+ejecutarlo en varios procesadores como no sea para hacer un ejercicio
+académico; en la práctica, *el tamaño del problema crece con el número
+de procesadores*. \vfill
+
+Al obtener procesadores más poderosos, el problema generalmente se
+expande para aprovechar las facilidades disponibles. Los usuarios
+tienen control sobre cosas como la resolución de la malla, el número
+de pasos, la complejidad de los operadores y otros parámetros que
+usualmente se ajustan para permitir que el programa se ejecute en el
+tiempo deseado. \vfill
+
+Por tanto, podría ser más realista decir que el *tiempo de ejecución*,
+no el *tamaño del problema*, es constante.
+

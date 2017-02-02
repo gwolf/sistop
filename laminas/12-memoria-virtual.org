@@ -32,7 +32,7 @@
 
 ** Esquema general empleando memoria virtual
 #+caption: Esquema general de la memoria, incorporando espacio en almacenamiento secundario, representando la memoria virtual
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 [[../img/dot/esquema_gral_mem_virtual.png]]
 
 ** Pequeño cambio de nomenclatura
@@ -95,7 +95,7 @@
 
 ** Respuesta a un fallo de página
 #+caption: Pasos que atraviesa la respuesta a un fallo de página
-#+attr_latex: height=0.75\textheight
+#+attr_latex: :height 0.75\textheight
 [[../img/dot/respuesta_a_fallo_de_pagina.png]]
 
 ** Pasos para atender a un fallo de página
@@ -290,7 +290,7 @@ Por ejemplo, a partir de la cadena de referencia:
   la que se haya cargado hace más tiempo
 
 ** Primero en entrar, primero en salir (FIFO) (2)
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Algoritmo FIFO de reemplazo de páginas: 15 fallos
 [[../img/ditaa/reemplazo_pag_fifo.png]]
 
@@ -316,7 +316,7 @@ Por ejemplo, a partir de la cadena de referencia:
 - FIFO es vulnerable a la anomalía de Belady
 
 ** Anomalía de Belady: Expectativas de comportamiento
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Relación ideal entre el número de marcos y la cantidad de fallos de página
 [[../img/gnuplot/expectativa_fallas_contra_marcos.png]]
 
@@ -334,7 +334,7 @@ Por ejemplo, a partir de la cadena de referencia:
 |      7 |      5 |
 #+end_comment
 
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: El algoritmo FIFO presenta la anomalía de Belady con la cadena de referencia 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
 [[../img/gnuplot/anomalia_belady.png]]
 
@@ -344,7 +344,7 @@ Por ejemplo, a partir de la cadena de referencia:
   utilizada/ por un tiempo máximo
 
 ** Algoritmo óptimo (OPT) o mínimo (MIN) (2)
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Algoritmo óptimo de reemplazo de páginas (OPT): 9 fallos
 [[../img/ditaa/reemplazo_pag_opt.png]]
 
@@ -366,7 +366,7 @@ Por ejemplo, a partir de la cadena de referencia:
 - Elige la página que /no ha sido empleada/ desde hace más tiempo
 
 ** Menos recientemente utilizado (LRU) (2)
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Algoritmo reemplazo de páginas menos recientemente utilizadas (LRU): 12 fallos
 [[../img/ditaa/reemplazo_pag_lru.png]]
 
@@ -486,18 +486,18 @@ Por ejemplo, a partir de la cadena de referencia:
   ubicarla sin tener que hacer una transferencia
 
 ** Ejemplo: Tres sistemas Linux (1)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Manejo de memoria (24 horas) en un sistema embebido (16MB RAM)
 [[../img/munin_sistema_minimo.png]]
 
 
 ** Ejemplo: Tres sistemas Linux (2)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Manejo de memoria (24 horas) en un servidor medio (8GB RAM)
 [[../img/munin_servidor_medio.png]]
 
 ** Ejemplo: Tres sistemas Linux (3)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Manejo de memoria (24 horas) en un servidor grande (32GB RAM)
 [[../img/munin_servidor_grande.png]]
 
@@ -752,7 +752,7 @@ En inglés, /thrashing/ (literal: /paliza/)
 
 ** ¿Cómo se ve la hiperpaginación?
 #+caption: Al aumentar demasiado el grado de multiprogramación, el uso del CPU cae abruptamente y caemos en la hiperpaginación  (Silberschatz, p.349)
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: :width 0.8\textwidth
 [[../img/gnuplot/hiperpaginacion.png]]
 
 ** Respondiendo a la hiperpaginación
@@ -781,7 +781,7 @@ En inglés, /thrashing/ (literal: /paliza/)
 
 ** El conjunto activo
 #+caption: Los picos y valles en la cantidad de fallos de página de un proceso definen a su /conjunto activo/  (Silberschatz, p.349)
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 [[../img/gnuplot/conjunto_activo.png]]
 
 ** El conjunto activo y el espacio en memoria

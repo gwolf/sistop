@@ -46,7 +46,7 @@ fuertemente:
 * Organización de memoria: El stack
 ** Vuelta a la organización de la memoria
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+attr_latex: height=0.5\textheight
+#+attr_latex: :height 0.5\textheight
 [[../img/ditaa/proceso_en_memoria.png]]
 #+latex: \end{column}\begin{column}{0.4\textwidth}
   - Pila de llamadas
@@ -103,7 +103,7 @@ func:
         subl $20,%esp
 #+end_src
 #+latex:\end{column}\end{columns}
-#+attr_latex: width=0.85\textwidth
+#+attr_latex: :width 0.85\textwidth
 #+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
 [[../img/ditaa/stackframe.png]]
 
@@ -179,7 +179,7 @@ Parecería que el sistema /atrapó/ al error exitosamente. \pause ¿O no?
   argumento de 500 bytes para un arreglo medía sólo 256
   - ...Pero esto /no significa/ que el fallo haya sido atrapado
   - De hecho, /no lo fue/
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: :width 0.8\textwidth
 #+caption: Estado de la memoria después del =strcpy()=
 [[../img/ditaa/overflow_500.png]]
 
@@ -234,7 +234,7 @@ bne $0, %ebx, user_fail
 - Si en vez de 'AAAAAAAA...' le damos al sistema código ejecutable
   válido, más que brincarnos una validación, podemos hacer que el
   programa ejecute código arbitrario
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[../img/ditaa/overflow_jump.png]]
 - El flujo de ejecución del proceso está comprometido

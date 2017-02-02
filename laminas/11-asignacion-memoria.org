@@ -24,7 +24,7 @@
     segmento del SO
 
 ** Particiones fijas
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 #+caption: Particiones fijas, con 3 particiones libres
 [[../img/ditaa/mem_particiones_fijas.png]]
 
@@ -54,7 +54,7 @@
   y un registro límite
 
 ** Particiones flexibles
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 #+caption: Espacio de direcciones válidas para el proceso 3 definido por un registro base y un registro límite
 [[../img/ditaa/mem_base_a_limite.png]]
 
@@ -70,7 +70,7 @@
     bloques asignados se pierden del órden de $0.5N$ por fragmentación
 
 ** Fragmentación en la memoria
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 #+caption: Termina el proceso 1 (de 128K); inician 4 (de 64K), 5 (de 156K) y 6 (de 128K); termina 3 (64K). Se va fragmentando la memoria libre.
 [[../img/ditaa/mem_fragmentacion_con_particiones_flexibles.png]]
 
@@ -137,7 +137,7 @@ nuevo proceso:
   - Suspensión sensible de los procesos implicados
 
 ** Compactación
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Compactación de la memoria de procesos en ejecución
 [[../img/ditaa/compactacion_memoria.png]]
 
@@ -208,7 +208,7 @@ Señales que indican necesidad de compactar
     desplazamiento
 
 ** Conceptualización de la segmentación
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Ejemplo de segmentación (Silberschatz, p.305)
 [[../img/dot/segmentacion_de_memoria.png]]
 
@@ -380,7 +380,7 @@ presente=no).
   - A pesar de usar un /modelo plano/ (no segmentado)
 
 ** Esquematización del proceso de paginación
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
 [[../img/dot/hardware_de_paginacion.png]]
 
@@ -395,7 +395,7 @@ presente=no).
   la página; la /menos significativa/, el desplazamiento
 
 ** Ejemplo de página y desplazamiento
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Página y desplazamiento, en un esquema de direccionamiento de 16 bits y páginas de 512 bytes
 [[../img/ditaa/direccion_a_pag_y_despl.png]]
 
@@ -414,7 +414,7 @@ presente=no).
 
 ** Ejemplo (minúsculo) de tabla de páginas
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Ejemplo de paginación (Silberschatz, p.292)
 [[../img/ditaa/ejemplo_de_paginacion.png]]
 #+latex: \end{column}\begin{column}{0.5\textwidth}
@@ -555,7 +555,7 @@ Un tip: Basta multiplicar los números de la lámina anterior por
   - Las búsquedas se realizan en /tiempo constante/
 
 ** Proceso de paginación con TLB
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Esquema de paginación empleando un /buffer de traducción adelantada/ (TLB)
 [[../img/dot/paginacion_con_tlb.png]]
 
@@ -612,7 +612,7 @@ páginas es demasiado grande
 
 ** Tablas de páginas con varios niveles
 #+caption: Paginación en dos niveles: 10+10 bits, con marcos de 12 bits.
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/dot/paginacion_jerarquica.png]]
 
 ** Los costos de los niveles adicionales
@@ -644,7 +644,7 @@ $H: U\rightarrow M$
 
 ** Tablas de páginas con funciones digestoras (/hash/)
 #+caption: Tablas de páginas empleando funciones digestoras (Silberschatz, p. 302)
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 [[../img/tablas_hash.png]]
 
 ** Características de las tablas basadas en /hash/
@@ -680,12 +680,12 @@ Uso más frecuente aún: Compartir /código/
     100%
 
 ** Memoria compartida (3)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
 [[../img/ditaa/memoria_compartida.png]]
 
 ** La arquitectura x86-32: Paginación + Segmentación
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Pasos de la traducción lógica a física en un Pentium
 [[../img/ditaa/traduccion_pentium.png]]
 - La arquitectura x86 de 32 bits permite combinar paginación y
@@ -715,5 +715,5 @@ Uso más frecuente aún: Compartir /código/
 
 ** Paginación en x86-32
 #+caption: Paginación en x86-32 (silberschatz, p.309)
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 [[../img/paginas_en_pentium.png]]

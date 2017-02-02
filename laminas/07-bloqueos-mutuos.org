@@ -20,11 +20,11 @@ completo/ y no avanzar hasta que el otro se haya ido
 
 ** El cruce de un semáforo: ¿Qué queremos evitar?
 #+latex: \begin{columns} \begin{column}{0.5\textwidth}
-#+attr_latex: height=0.55\textheight
+#+attr_latex: :height 0.55\textheight
 #+caption: Tránsito detenido en Nueva York
 [[../img/new-york-city-gridlock.jpg]]
 #+latex: \end{column} \begin{column}{0.5\textwidth}
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Bloqueo circular en el tránsito
 [[../img/Gridlock.png]]
 #+latex: \end{column} \end{columns}
@@ -99,7 +99,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
    en espera)
 
 ** Esquematizando el ejemplo clásico
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades /1/ y /2/.
 [[../img/dot/bloqueo_mutuo_simple.png]]
 
@@ -123,7 +123,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 - Conservadoras :: Controlan más el proceso de asignación de recursos
 
 ** Espectro liberal-conservador de políticas
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[../img/dot/deadlocks_conserv_lib.png]]
 
@@ -298,7 +298,7 @@ sus consecuencias.
 - Análisis de la interacción, marcando /áreas de riesgo/
 
 ** Flujos seguros e inseguros
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 #+caption: Evasión de bloqueos: Los procesos /A/ (horizontal) y /B/ (vertical) requieren del acceso exclusivo a dos recursos rivales, exponiéndose a bloqueo mutuo.
 [[../img/gnuplot/tray_proc_evasion_bloqueo.png]]
 
@@ -453,7 +453,7 @@ Sólo una clase de recursos, 2 instancias libres
 - $t_4$: $P_1$ solicita 1
 
 ** Ejemplo 3: Paso por paso
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption:
 [[../img/banquero1.png]]
 
@@ -462,7 +462,7 @@ Sólo una clase de recursos, 2 instancias libres
 #+END_CENTER
 
 ** Ejemplo 3: Paso por paso
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption:
 [[../img/banquero2.png]]
 
@@ -563,7 +563,7 @@ condiciones de Coffman /pueden presentarse/.
      - Proceder según la política del sistema
 
 ** Ejemplo 1
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 #+caption: Detección de ciclos denotando bloqueos: Grafo de procesos y recursos en un momento dado
 [[../img/dot/deteccion_bloqueos.png]]
 
@@ -579,27 +579,27 @@ condiciones de Coffman /pueden presentarse/.
 
 ** Ejemplo 2
 
-#+attr_latex: width=0.4\textwidth
+#+attr_latex: :width 0.4\textwidth
 #+caption: Ejemplo con categorías de recursos (Imágenes: Luis La Red)
 [[../img/deteccion_bloqueos_por_pasos_1.png]]
 
 ** Ejemplo 2
 #+caption: Resultado de reducir por P9
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 [[../img/deteccion_bloqueos_por_pasos_2.png]]
 
 ** Ejemplo 2
 #+caption: Resultado de reducir por P7
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 [[../img/deteccion_bloqueos_por_pasos_3.png]]
 
 ** Ejemplo 2
 #+caption: Resultado de reducir por P8
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 [[../img/deteccion_bloqueos_por_pasos_4.png]]
 
 ** ¡No todo ciclo es un bloqueo!
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Al manejar /categorías/ de recursos, no siempre un ciclo implicará un bloqueo
 [[../img/ciclo_no_bloqueo.png]]
 
@@ -678,7 +678,7 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Sin embargo...
 
 ** Recapitulando: Conservadores y liberales
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[../img/dot/deadlocks_conserv_lib.png]]
 

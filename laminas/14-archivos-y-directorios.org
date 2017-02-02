@@ -374,7 +374,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 - Avanzamos consecutivamente por los bloques del archivo, de incio a
   final
 - Podemos /reposicionar/ al apuntador (/cabeza lectora/)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Archivo de acceso secuencial
 [[../img/ditaa/acceso_secuencial.png]]
 
@@ -413,7 +413,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   =read(FD, *registro, 75)=
 
 ** Archivo de acceso aleatorio
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Archivo de acceso aleatorio
 [[../img/ditaa/acceso_aleatorio.png]]
 
@@ -432,7 +432,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 - Y un archivo /largo/, que contiene los datos propiamente
 
 ** Acceso /relativo a índice/
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Acceso relativo a índice: Un índice apuntando al punto justo de un archivo sin estructura
 [[../img/ditaa/acceso_relativo_a_indice.png]]
 
@@ -557,7 +557,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   - ¿Cómo pueden dos usuarios trabajar en un mismo proyecto?
 
 ** Directorios de /profundidad fija/
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Directorio simple, limitado a un sólo nivel de profundidad
 [[../img/dot/directorio_simple.png]]
 
@@ -569,7 +569,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
     /preventivamente/, presentando una /ilusión/ de ser ilimitados
 
 ** Directorios estructurados en /árbol/
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Directorio estucturado en árbol
 [[../img/dot/directorio_arbol.png]]
 
@@ -594,12 +594,12 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   - Un mismo nodo puede tener varios /directorios padre/
 
 ** El directorio como un /grafo dirigido/
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
 [[../img/dot/directorio_DAG.png]]
 
 ** El directorio como un /grafo dirigido/: detallando...
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Directorio como un /grafo dirigido/ (ya no /acíclico/), mostrando los /enlaces ocultos/ =.= y =..=
 [[../img/dot/directorio_DAG_completo.png]]
 
@@ -768,7 +768,7 @@ Las ligas duras presentan dos restricciones principales:
   las unidades /como si fueran una nueva raiz/
 
 ** Un árbol con distintos sistemas de archivo /montados/
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Árbol formado del montaje de =sda1= en la raiz, =sda2= como =/usr=, =sdb1= como =/home=, y el directorio virtual =proc=
 [[../img/dot/puntos_de_montaje.png]]
 
@@ -787,7 +787,7 @@ Las ligas duras presentan dos restricciones principales:
     =D=, =E=, =F=, etc.
 
 ** Visión del árbol en un sistema Windows
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Vista de un sistema de archivos Windows
 [[../img/dot/montaje_windows.png]]
 

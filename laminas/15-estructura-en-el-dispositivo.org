@@ -241,7 +241,7 @@ cuantos términos
   a continuación tienen más de un significado
 
 ** FAT: Entrada de directorio
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Formato de la entrada del directorio bajo FAT32 (longitudes en bytes) ([[http://www.codeguru.com/cpp/cpp/cpp\_mfc/files/article.php/c13831/FAT-Root-Directory-Structure-on-Floppy-Disk-and-File-Information.htm][Mohammed, 2007]])
 [[../img/ditaa/entrada_directorio_fat.png]]
 
@@ -255,7 +255,7 @@ cuantos términos
 
 ** FAT: La extensión VFAT
 #+caption: Entradas de directorio representando archivos (con y sin nombres largos) bajo VFAT
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/directorio_vfat.png]]
 
 ** FAT: Tamaño máximo del directorio
@@ -332,7 +332,7 @@ cuantos términos
   - Un archivo no puede /crecer/
 
 ** Asignación contigua de archivos
-#+attr_latex: height=0.65\textheight
+#+attr_latex: :height 0.65\textheight
 #+caption: Asignción contigua de archivos: Directorio con inicio y longitud
 [[../img/ditaa/fs_asignacion_contigua.png]]
 
@@ -353,7 +353,7 @@ cuantos términos
 - FAT es un ejemplo de asignación ligada
 
 ** Asignación ligada
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Asignción ligada de archivos: Directorio con apuntador sólo al primer cluster
 [[../img/ditaa/fs_asignacion_ligada.png]]
 
@@ -395,7 +395,7 @@ cuantos términos
     (los archivos actualmente abiertos)
 
 ** Asignación indexada
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Asignción indexada de archivos: Directorio con apuntador al i-nodo (llevado a un i-nodo de tamaño extremadamente ineficiente)
 [[../img/ditaa/fs_asignacion_indexada.png]]
 
@@ -416,7 +416,7 @@ cuantos términos
 
 ** Apuntadores de indirección a varios niveles
 #+caption: Estructura típica de un i-nodo en Unix, mostrando además el número de accesos a disco necesario para cada cluster
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/dot/fs_apuntadores_indirectos.png]]
 
 ** La lógica de la indirección multinivel
@@ -485,7 +485,7 @@ cuantos términos
 
 ** FAT: Vista de la tabla de asignación de archivos
 #+caption: Ejemplo de entradas en la tabla de asignación de archivos bajo FAT32
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 [[../img/tabla_fat.png]]
 
 ** ¿Cómo lidian con la fragmentación otros sistemas?
@@ -558,7 +558,7 @@ cuantos términos
 - ¿Por qué ocurren estos problemas?
 
 ** FAT: Principales inconsistencias
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: :width 0.7\textwidth
 #+caption: Principales inconsistencias que pueden presentarse en los sistemas de archivos tipo FAT
 [[../img/dot/inconsistencias_fat.png]]
 
@@ -670,7 +670,7 @@ inconsistentes:
   - Su ejecución repetida no debe alterar el resultado
 
 ** Sistemas de archivos con bitácora (/journaling file systems/)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Sistema de archivos con bitácora
 [[../img/dot/fs_journaling.png]]
 

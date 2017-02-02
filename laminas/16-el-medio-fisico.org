@@ -14,7 +14,7 @@
 
 ** Mapeo de un disco duro a /C-H-S/
 #+caption: Coordenadas de un disco duro, presentando cada uno de sus sectores en C-H-S (Silberschatz, p.458)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/disco_duro.png]]
 
 ** Algoritmos de planificación de acceso a disco
@@ -61,7 +61,7 @@
   - Reduciría el recorrido a 208 cilindros
 
 ** Comparación de los algoritmos
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Movimientos de las cabezas bajo los diferentes algoritmos planificadores de acceso a disco, indicando la distancia total recorrida por la cabeza bajo cada uno, iniciando con la cabeza en la posición 53. Para SCAN, LOOK y C-SCAN, asumimos que iniciamos con la cabeza en dirección decreciente.
 [[../img/gnuplot/mov_cabeza_por_algoritmo.png]]
 
@@ -131,7 +131,7 @@
 ** Estado sólido basado en RAM
 #+latex: \begin{columns} \begin{column}{0.4\textwidth}
 #+caption: Unidad de estado sólido basado en RAM: DDRdrive X1 ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 [[../img/estado_solido_ddr_drivex1.jpg]]
 #+latex: \end{column} \begin{column}{0.6\textwidth}
 - Primeros discos de estado sólido
@@ -144,7 +144,7 @@
 ** Estado sólido basado en Flash con interfaz SATA
 #+latex: \begin{columns} \begin{column}{0.4\textwidth}
 #+caption: Unidad de estado sólido basado en Flash con interfaz SATA ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 [[../img/estado_solido_sata.jpg]]
 #+latex: \end{column} \begin{column}{0.6\textwidth}
 - Se comporta como un disco duro estándar
@@ -162,7 +162,7 @@
 ** Estado sólido Flash para /transporte temporal/
 #+latex: \begin{columns} \begin{column}{0.4\textwidth}
 #+caption: Unidad de estado sólido basado en Flash con interfaz USB ([[https://en.wikipedia.org/wiki/Solid-state\_drive][Imagen: Wikipedia]])
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 [[../img/estado_solido_usb.jpg]]
 #+latex: \end{column} \begin{column}{0.6\textwidth}
 - Mecanismo de transporte de archivos personales
@@ -238,7 +238,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Espacio total: Suma de los espacios de todas sus unidades
 - Mejoría en velocidad (más cabezas independientes)
 - Sin mejoría en confiabilidad
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Cinco discos organizados en RAID 0
 [[../img/dot/raid_0.png]]
 
@@ -247,7 +247,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Mejoría en velocidad (el primero que entregue los datos)
 - Confiabilidad: Soporta la pérdida de un disco
 #+caption: Dos discos organizados en RAID 1
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 [[../img/dot/raid_1.png]]
 
 ** RAID 5: Paridad dividida por bloques
@@ -257,7 +257,7 @@ ya empleados hoy en día. Los principales en uso son:
   recalcular el resultado)
 - El disco de paridad es otro /a cada bloque/
 - Soporta la pérdida de un disco (cualquiera de ellos)
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 #+caption: Cinco discos organizados en RAID 5
 [[../img/dot/raid_5.png]]
 
@@ -268,7 +268,7 @@ ya empleados hoy en día. Los principales en uso son:
   recalcular el resultado)
 - El disco de paridad es otro /a cada bloque/
 - Soporta la pérdida de dos discos (cualquiera de ellos)
-#+attr_latex: width=0.6\textwidth
+#+attr_latex: :width 0.6\textwidth
 #+caption: Cinco discos organizados en RAID 6
 [[../img/dot/raid_6.png]]
 
@@ -279,7 +279,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Soporta el fallo de hasta el 50% de los discos
   - Siempre y cuando un disco por grupo se mantenga operando
 #+latex: \end{column} \begin{column}{0.4\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Seis discos organizados en RAID 1+0
 [[../img/dot/raid_10.png]]
 #+latex: \end{column}\end{columns}
@@ -293,7 +293,7 @@ ya empleados hoy en día. Los principales en uso son:
 - Obtenemos el mismo resultado /aparente/ que RAID 1+0, pero perdemos
   confiabilidad
 #+latex: \end{column} \begin{column}{0.4\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Seis discos organizados en RAID 0+1
 [[../img/dot/raid_01.png]]
 #+latex: \end{column}\end{columns}

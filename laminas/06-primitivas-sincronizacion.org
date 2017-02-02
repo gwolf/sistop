@@ -88,7 +88,7 @@ Es el área de código que:
   - ¡Cuidado con los accesos casi-simultáneos!
 
 ** Sección crítica
-#+attr_latex: width=0.8\textwidth
+#+attr_latex: :width 0.8\textwidth
 #+caption: Sincronización: La exclusión de una sección crítica común a varios procesos se protege por medio de regiones de exclusión mutua
 [[../img/gnuplot/secc_crit.png]]
 
@@ -103,7 +103,7 @@ En inglés, /deadlock/
   otro
 
 ** Bloqueo mutuo
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades /1/ y /2/.
 [[../img/dot/bloqueo_mutuo_simple.png]]
 
@@ -225,7 +225,7 @@ un simple /mutex/). Piensen en semáforos de tren.
 #+END_CENTER
 
 ** Semáforos de tren
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+caption: Semáforo de tren (Fuente: Wikipedia, /Señalización ferroviaria argentina/)
 [[../img/semaforo_tren.jpg]]
 
@@ -944,7 +944,7 @@ Vamos a emplear dos semáforos:
     palillo a la izquierda
   - El palillo lo /comparten/ con el filósofo de junto
 #+BEGIN_CENTER
-#+attr_latex: width=0.3\textwidth
+#+attr_latex: :width 0.3\textwidth
 [[../img/mesa_filosofos.png]]
 #+END_CENTER
 #+latex: {\scriptsize Imagenes ilustrativas: Ted P. Baker}
@@ -959,14 +959,14 @@ Vamos a emplear dos semáforos:
 
 ** Cena de filósofos: Bloqueo mutuo
 #+BEGIN_CENTER
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Cuando todos los filósofos intentan levantar uno de los palillos se produce un /bloqueo mutuo/
 [[../img/filosofos_bloqueados.png]]
 #+END_CENTER
 
 ** Cena de filósofos: Inanición
 #+BEGIN_CENTER
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Una rápida sucesión de C y E lleva a la inanición de D
 [[../img/filosofos_inanicion.png]]
 #+END_CENTER
@@ -1118,7 +1118,7 @@ int actualiza (int i) {
 #+end_src
 
 ** Cena de filósofos: Monitor y VCs (C)
-#+attr_latex: width=0.4\textwidth
+#+attr_latex: :width 0.4\textwidth
 #+caption: Representación del monitor
 [[../img/filosofos_monitor.png]]
 

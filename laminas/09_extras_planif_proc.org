@@ -26,13 +26,13 @@
     general
 
 ** Proporción de penalización (P)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+label: penalizacion_por_planificador
 #+caption: Proporción de penalización contra porcentaje de tiempo requerido en despachadores (Finkel, p.33)
 [[../img/penalizaciones_por_algoritmo_planificador.png]]
 
 ** Tiempo /perdido/ (E)
-#+attr_latex: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 #+label: espera_por_planificador
 #+caption: Tiempo /perdido/ contra porcentaje de tiempo requerido en despachadores (Finkel, p.34)
 [[../img/tiempo_en_espera_por_algoritmo_planificador.png]]
@@ -76,7 +76,7 @@ Tres modelos principales de /mapeo/:
 - Muchos a muchos
 
 ** Muchos a uno
-#+attr_latex: width=0.25\textwidth
+#+attr_latex: :width 0.25\textwidth
 #+caption: Mapeo de hilos /muchos a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_uno.png]]
 - /Hilos verdes/ (o /de usuario/)
@@ -87,7 +87,7 @@ Tres modelos principales de /mapeo/:
 - Llamadas bloqueantes \rightarrow Todos esperan
 
 ** Uno a uno
-#+attr_latex: width=0.25\textwidth
+#+attr_latex: :width 0.25\textwidth
 #+caption: Mapeo de hilos /uno a uno/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_uno_a_uno.png]]
 - Cada hilo es un /proceso ligero/ (/lightweight process/, /LWP/)
@@ -98,7 +98,7 @@ Tres modelos principales de /mapeo/:
 - El SO debe poder manejar LWP
 
 ** Muchos a muchos
-#+attr_latex: width=0.25\textwidth
+#+attr_latex: :width 0.25\textwidth
 #+caption: Mapeo de hilos /muchos a muchos/ (imagen: [[http://www.cs.indiana.edu/classes/b534-plal/ClassNotes/sched-synch-details4.pdf][Beth Plale]])
 [[../img/hilos_muchos_a_muchos.png]]
 - Existen /hilos unidos/ (/bound threads/), que corresponden cada uno
@@ -199,7 +199,7 @@ cuando hablamos de un /entorno multiprocesado/?
   - Re-poblar el nuevo
 
 ** Multiprocesamiento: Afinidad
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Fotografía de un CPU AMD Opteron /Barcelona/ (2007) (Imagen: http://www.elnexus.com/articles/barcelona.aspx)
 [[../img/foto_amd_barcelona.jpg]]
 
@@ -299,18 +299,18 @@ descritos?
   - WB :: Almacenamiento (Writeback)
 
 ** Hilos hardware (/hyperthreading/): Pipelines
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Descomposición de una instrucción en sus cinco pasos clásicos para organizarse en un /pipeline/
 [[../img/ditaa/pipeline.png]]
 
 ** Hilos hardware (/hyperthreading/): Pipelines
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Fotografía de un /core/ nVidia Denver (Imagen: http://www.brightsideofnews.com/news/2011/3/9/nvidia-reveals-64-bit-project-denver-cpu-silicon-die.aspx)
 [[../img/foto_nvidia_denver.jpg]]
 
 ** Hilos hardware (/hyperthreading/): Pipelines
 #+latex:\begin{columns}\begin{column}{0.7\textwidth}
-#+attr_latex: height=0.5\textheight
+#+attr_latex: :height 0.5\textheight
 #+caption: Fotografía de un CPU Intel Pentium 4
 [[../img/foto_pentium4.jpg]]
 #+latex:\end{column}\begin{column}{0.3\textwidth}
@@ -334,7 +334,7 @@ Un procesador moderno presenta mucho más etapas (Pentium 4: 20 etapas)
     en 2x!
 
 ** Hilos hardware (/hyperthreading/): Pipelines
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Alternando ciclos de cómputo y espera por memoria, un procesador que implementa hilos hardware (/hyperthreaded/) se presenta como dos procesadores
 [[../img/ditaa/hyperthread.png]]
 

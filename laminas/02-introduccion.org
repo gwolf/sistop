@@ -163,7 +163,7 @@ requeridas por cada sistema
 - En los 1970s comienzan a aparecer las computadoras personales
 - En un principio, programadas a través de /switches/, con resultados
   a través de LEDs
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 #+caption: Microcomputadora Altair 8800 (1975, \approx US$600)
 [[../img/altair.jpg]]
 
@@ -172,10 +172,11 @@ requeridas por cada sistema
 - /Microprocesadores/ de 8 bits y miniaturización
   - Salida a video (tipo TV)
   - Entrada por teclado
-  - Entrada opcional por cinta, primeros diskettes
+  - Entrada opcional por cinta, primeros /diskettes/ (discos
+    /flexibles/)
 - Programación en BASIC (intérprete en ROM)
 #+latex: \end{column} \begin{column}{0.4\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Commodore Pet 2001 (1977)
 [[../img/commodore_pet.jpg]]
 #+latex: \end{column}\end{columns}
@@ -188,21 +189,22 @@ requeridas por cada sistema
   - Nace la /distribución de binarios/
 - Explosión de la industria de los videojuegos
 
-** La microcomputadora seria: Familia PC (1981)
+** La microcomputadora /seria/: Familia PC (1981)
 #+latex: \begin{columns}\begin{column}{0.3\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Computadora IBM PC modelo 5150 (1981)
 [[../img/ibmpc.jpg]]
 #+latex: \end{column}\begin{column}{0.6\textwidth}
-- Primer computadora de una empresa seria, orientada a su uso en
+- Primer computadora de una empresa /seria/, orientada a su uso en
   ambiente empresarial
+  - Sin color ni audio... /¿Para qué?/
 - Entorno primario de ejecución: /Línea de comando/ (PC-DOS, MS-DOS)
 - Al día de hoy sigue siendo la arquitectura predominante
 #+latex: \end{column}\end{columns}
 
 ** Entorno gráfico (WIMP) (1984)
 #+latex: \begin{columns}\begin{column}{0.3\textwidth}
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Apple Macintosh (1984)
 [[../img/mac128.png]]
 #+latex: \end{column}\begin{column}{0.6\textwidth}
@@ -213,12 +215,19 @@ requeridas por cada sistema
 #+latex: \end{column}\end{columns}
 
 ** Multitarea preventiva (1985)
-#+caption: Commodore Amiga 500 (1987)
-#+attr_latex: width=0.4\textwidth
-[[../img/A500.jpg]]
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
 - Multitarea preventiva real: 1985 (Amiga, Atari ST)
   - Sin hardware de protección de memoria
 - Los programadores /tienen que considerar la concurrencia/
+#+latex: \end{column}\begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Commodore Amiga 500 (1987)
+#+attr_latex: :width \textwidth
+[[../img/A500.jpg]]
+#+latex: \end{column}\end{columns} \pause
+#+caption: La /meditación del gurú/
+#+attr_latex: :height 2.5em
+[[../img/guru_meditation.png]]
 
 ** La profesionalización del escritorio
 - Fines de los 1980 — Intel 80486, Motorola 68040, PowerPC: Hardware
@@ -291,7 +300,7 @@ fundamentales
   - ¿Dos modos? ¿Más modos?
 - Código con diferentes roles
   - Lo que hace el sistema operativo vs. las aplicaciones del usuario
-- ¿Cómo se /brinca/ entre un modo y otro?
+- ¿Cómo se /salta/ entre un modo y otro?
 ** Organización del sistema operativo
 #+BEGIN_CENTER
 ¿Hasta dónde llega el sistema operativo?
@@ -318,7 +327,7 @@ núcleo?
 - Difícil transición a un entorno multiprocesador
 
 ** Monolíticos: Esquematizando
-#+attr_latext: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/dot/diseno_monolitico.png]]
 
 ** Microkernel
@@ -338,7 +347,7 @@ núcleo?
 - Más difíciles de implementar correctamente
 
 ** Microkernel: Esquematizando
-#+attr_latext: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
 [[../img/dot/diseno_microkernel.png]]
 
 ** Diseño híbrido
@@ -350,6 +359,6 @@ núcleo?
   de ambos
 
 ** Diseño híbrido: Esquematizando
-#+attr_latext: height=0.7\textheight
+#+attr_latex: :height 0.7\textheight
    [[../img/dot/diseno_hibrido.png]]
 

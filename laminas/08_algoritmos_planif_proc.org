@@ -39,7 +39,7 @@ Vemos que hay tres tipos muy distintos de planificación.
 
 ** Planificador a largo plazo
 #+caption: Planificador a largo plazo
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: :width 0.7\textwidth
 [[../img/dot/planificador_largo_plazo.png]]
 
 ** Planificador a mediano plazo
@@ -53,7 +53,7 @@ Vemos que hay tres tipos muy distintos de planificación.
 
 ** Planificador a mediano plazo
 #+caption: Planificador a mediano plazo, o /agendador/
-#+attr_latex: width=0.9\textwidth
+#+attr_latex: :width 0.9\textwidth
 [[../img/dot/planificador_mediano_plazo.png]]
 
 ** Planificador a corto plazo
@@ -66,13 +66,13 @@ Vemos que hay tres tipos muy distintos de planificación.
 
 ** Planificador a corto plazo
 #+caption: Planificador a corto plazo, o /despachador/
-#+attr_latex: width=0.5\textwidth
+#+attr_latex: :width 0.5\textwidth
 [[../img/dot/planificador_corto_plazo.png]]
 
 ** Tipo de planificador según transición
 #+latex: \begin{columns}\begin{column}{0.6\textwidth}
 #+caption: Diagrama de transición entre los estados de un proceso
-#+attr_latex: height=0.6\textheight
+#+attr_latex: :height 0.6\textheight
 [[../img/dot/estados_proceso.png]]
 #+latex: \end{column} \begin{column}{0.4\textwidth}
 - *Largo plazo*: Admitir
@@ -207,7 +207,7 @@ Nuestro ejemplo /no es realista/
     /burocracia/
 
 ** Graficando nuestro ejemplo
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 1 /tick/
 [[../img/ditaa/planificador.png]]
 
@@ -309,7 +309,7 @@ de procesos:
 - Cada proceso se ejecuta en órden de llegada
 - Hasta que /suelta el control/
 ** Primero llegado, primero servido (/FCFS/)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Primero llegado, primero servido (FCFS)
 [[../img/ditaa/planif_fcfs.png]]
 
@@ -347,7 +347,7 @@ de procesos:
   - Los procesos nuevos se /forman/ también al final de esta misma
     cola
 ** Ronda (/Round Robin/)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Ronda (/Round Robin/)
 [[../img/ditaa/planif_rr1.png]]
 
@@ -371,7 +371,7 @@ de procesos:
   - Para valores grandes de $q$, tiende a convertirse en FCFS
 
 ** Ronda (/Round Robin/) con $q = 4$
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Ronda (/Round Robin/), con $q=4$
 [[../img/ditaa/planif_rr4.png]]
 
@@ -433,12 +433,12 @@ Es común que $f \approx 0.9$
 #+END_CENTER
 
 ** Estimando para SPN: Promedio exponencial
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: :width 0.7\textwidth
 #+caption: Predicción de próxima solicitud de tiempo de un proceso basado en su historia.
 [[../img/gnuplot/promedio_exponencial.png]]
 
 ** El proceso más corto a continuación (SPN)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: El proceso más corto a continuación (SPN)
 [[../img/ditaa/planif_spn.png]]
 
@@ -500,7 +500,7 @@ Es común que $f \approx 0.9$
   - Dando un /trato diferenciado/ a los procesos de distintas colas
 
 ** Mecanismos con múltiples colas
-#+attr_latex: width=0.7\textwidth
+#+attr_latex: :width 0.7\textwidth
 #+label: PLAN_planif_multicolas
 #+caption: Representación de un sistema con cinco colas de prioridad y siete procesos listos
 [[../img/dot/planif_multicolas.png]]
@@ -521,7 +521,7 @@ Es común que $f \approx 0.9$
     número limitado de colas
 
 ** Retroalimentación multinivel (FB)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Retroalimentación multinivel (FB) básica. En la línea superior al proceso se muestra la cola antes del /quantum/ en que se ejecuta.
 [[../img/ditaa/planif_fb_bas.png]]
 
@@ -564,7 +564,7 @@ activo /y lo vuelve a programar/
   - $Q = 2^{nq}$ (donde $q$ es la duración del /quantum/ base)
 
 ** Retroalimentación multinivel (FB)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Retroalimentación multinivel (FB) con $Q$ exponencial
 [[../img/ditaa/planif_fb_exp.png]]
 
@@ -621,7 +621,7 @@ Fenómenos observados:
   aceptado, éste se acepta.
 
 ** Ronda egoísta (SRR)
-#+attr_latex: width=\textwidth
+#+attr_latex: :width \textwidth
 #+caption: Ronda egoísta (SRR) con $a = 2$ y $b = 1$
 [[../img/ditaa/planif_srr.png]]
 

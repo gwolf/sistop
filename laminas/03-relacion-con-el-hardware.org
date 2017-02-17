@@ -62,7 +62,7 @@ Paridad, Acarreo
   - Fáciles de codificar en un procesador pequeño (en número de
     transistores)
   - La arquitectura RISC más conocida hoy: ARM
-- Típicamente ≥32 registros /largos/ (32, 64bits) de propósito
+- Típicamente $\ge 32$ registros /largos/ (32, 64bits) de propósito
   general
   - Mas algunos de propósito específico
 
@@ -305,7 +305,7 @@ Lista incompleta, meramente ejemplificando
   - A veces, demasiada información
 
 ** Ejemplo: =$ strace pwd=
-#+begin_src c
+#+begin_src C
 execve("/bin/pwd", ["pwd"], [/* 43 vars */]) = 0
 brk(0)                                  = 0x8414000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
@@ -482,7 +482,7 @@ hablamos de multiprocesamiento simétrico
 #+BEGIN_CENTER
 Puede haber varios puntos de asimetría:
 #+END_CENTER
-- Distinta /arquitectrura/ \arrow Típicamente algunos se dedicarán a una
+- Distinta /arquitectrura/ \rarrow Típicamente algunos se dedicarán a una
   tarea específica
 - Coprocesadores, o procesadores coadyuvantes
   - Caso de las tarjetas gráficas (GPUs)

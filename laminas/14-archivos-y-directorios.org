@@ -126,7 +126,7 @@ tendremos las siguientes operaciones disponibles:
       archivo/
 
 ** Tablas de archivos abiertos
-- /Semántica/ (¿cuál es el comportamiento?) de al haber múltiples
+- /Semántica/ (¿cuál es el comportamiento?) al haber múltiples
   procesos abriendo un archivo:
   - Depende del sistema operativo
 - Estas tablas no deben caer en /redundancia/
@@ -345,6 +345,11 @@ a través de:
   de bases de datos/)
   - Ejecutando en /espacio de usuario/ — Requieren menos privilegios
   - Pueden responder a solicitudes locales o por red
+- O /subsistemas particulares/
+  - Como pronto veremos, los /subdirectorios/ en nuestros sistemas de
+    archivos son simplemente archivos de tipo especial
+  - Gestionados directa y exclusivamente por el SO (e inaccesibles
+    directamente al usuario)
 
 ** Remanentes de los archivos estructurados
 #+BEGIN_CENTER
@@ -446,13 +451,34 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 - Es necesario /asegurar la sincronía/ entre ambos archivos
   - Si se pierde la sincronía, se corrompe la información
 
+** Acceso /mapeado a memoria/
+- Caso especial del acceso aleatorio
+- El programa de usuario /no usa/ la interfaz /tradicional/ de cinta,
+  sino que pide la inclusión de determinado archivo /dentro de su
+  espacio de memoria/
+#+BEGIN_SRC python
+from os import path
+from mmap import mmap
+filename = 'un_archivo' #...
+if not path.isfile(filename):
+  raise IOError, 'El archivo %s no existe!' % filename
+fh = open(filename, 'r+')
+datos = mmap(fh.fileno(), 0)
+datos[50:74] = 'Escribiendo directamente'
+print datos[0:100]
+#+END_SRC
+#+BEGIN_CENTER
+Más detalles: [[https://manpages.debian.org/jessie/manpages-dev/mmap.2.en.html][man 2 mmap]]
+#+END_CENTER
+
 ** Transferencias /orientadas a bloques/
 - En los tres modos de acceso, las solicitudes parecen ser del /rango
   de bytes/ solicitados, sean cuantos sean
 - En realidad, es una abstracción que nos da el sistema operativo —
   Las transferencias son siempre hechas en /bloques/ de tamaño
   definido por el hardware
-  - Típicamente, 512 bytes
+  - Históricamente (y por más de 50 años), 512 bytes
+  - Hoy en día (2009--), 4K (/Formato Avanzado/)
 
 ** Las transferencias en bloques y el rendimiento
 - Lecturas de registros contiguos en el mismo bloque \rarrow Servidas
@@ -464,8 +490,9 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
 
 ** Las transferencias en bloques y el rendimiento
 - Conviene diseñar estructuras de datos /alineadas al tamaño del bloque/
-  - Un registro de 400 bytes /casi siempre/ (>75%) requerirá la
-    transferencia de dos bloques
+  - Un registro de 400 bytes en un dispositivo con bloques de 512
+    bytes /casi siempre/ (>75%) requerirá la transferencia de dos
+    bloques
   - Incluso un registro pequeño (p.ej. 7 bytes) puede caer en la
     frontera entre bloques (aunque sea sólo 1.3% de las veces)
 
@@ -478,7 +505,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   dentro de /un mismo medio/
 #+latex:\pause
 - Hoy en día, eso significa hablar de /directorios/
-  - Aunque veremos otras formas de organización
+  - Aunque existen otras formas de organización
 
 ** Conveniciones de nomenclatura
 - En diferentes sistemas cambia la cantidad y conjunto de caracteres
@@ -487,7 +514,7 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   elemento de directorio e inicio de otro
   - Unix :: diagonal (=/=) (incl. MacOS X, Android)
   - Windows :: Diagonal invertida ($\backslash$)
-  - MacOS histórico :: Dos puntos (=:=)
+  - MacOS histórico ($\le 9.x$) :: Dos puntos (=:=)
 - Las interfaces usuario muchas veces los /ocultan/ al usuario
   - Aunque el programador /siempre/ debe estar consciente de ellos
   - APIs /inteligentes/ \rarrow Diseñados pensando un sistema,
@@ -594,13 +621,13 @@ que el método /secuencial/ presenta una simulación de unidad de cinta
   - Un mismo nodo puede tener varios /directorios padre/
 
 ** El directorio como un /grafo dirigido/
-#+attr_latex: :width 0.5\textwidth
+#+attr_latex: :width 0.45\textwidth
 #+caption: Directorio como un /grafo dirigido acíclico/: El directorio =proyecto= está tanto en el directorio =/home/usr1= como en el directorio =/home/usr2=
 [[../img/dot/directorio_DAG.png]]
 
 ** El directorio como un /grafo dirigido/: detallando...
-#+attr_latex: :width 0.5\textwidth
-#+caption: Directorio como un /grafo dirigido/ (ya no /acíclico/), mostrando los /enlaces ocultos/ =.= y =..=
+#+attr_latex: :width 0.45\textwidth
+#+caption: Directorio como un /grafo dirigido/ (ya no /acíclico/), mostrando en gris los /enlaces ocultos/ =.= y =..=
 [[../img/dot/directorio_DAG_completo.png]]
 
 ** Detalles extra en los grafos dirigidos
@@ -670,6 +697,8 @@ Las ligas duras presentan dos restricciones principales:
   - Pensados principalmente para el escritorio y el menú de inicio
 - ¿Principal diferencia? No se /siguen/ automáticamente
   - Tiene que hacerlo la aplicación — Y pocas lo hacen
+  - Un /acceso directo/ puede abrirse como un archivo; leer una /liga
+    simbólica/ lee directamente del archivo referido
 
 ** Volviendo a nuestro grafo dirigido
 - No podemos ya decir /formalmente/ que sea un grafo dirigido
@@ -791,30 +820,30 @@ Las ligas duras presentan dos restricciones principales:
 #+caption: Vista de un sistema de archivos Windows
 [[../img/dot/montaje_windows.png]]
 
-** Tarea / evaluación de unidad (1)
-#+BEGIN_CENTER
-Va como tarea, pero reemplaza al examen parcial de la unidad /Sistemas
-de Archivos/:
-#+END_CENTER
-- Desarrollar un micro-sistema de archivos
-  - Medio para almacenarlo: Un archivo cualquiera
-- Requisitos mínimos:
-  - Entorno interactivo
-  - Un directorio maestro que soporte un /mínimo/ de cuatro archivos
-  - Operaciones del directorio /simplificadas/ respecto a un
-    =dirstream=: =listar()= (no hace falta /recorrer/ entrada por
-    entrada), =crear_archivo(nombre)=, =eliminar_archivo(nombre)=
-** Tarea / evaluación de unidad (2)
-- Requisitos mínimos:
-  - Cada uno de los archivos debe soportar también operaciones
-    simplificadas: =escribir(archivo, datos)=, =leer(archivo)=,
-    =rebobinar(archivo, pos)=
-  - /Pueden/ hacer refinamientos adicionales.
-- El código debe:
-  - Ser compilable/ejecutable legal, en el lenguaje que prefieran
-- El trabajo puede entregarse de forma individual o en parejas
-  - Fecha límite: 22 de mayo
-    - Recomiendo 20 de mayo
+# ** Tarea / evaluación de unidad (1)
+# #+BEGIN_CENTER
+# Va como tarea, pero reemplaza al examen parcial de la unidad /Sistemas
+# de Archivos/:
+# #+END_CENTER
+# - Desarrollar un micro-sistema de archivos
+#   - Medio para almacenarlo: Un archivo cualquiera
+# - Requisitos mínimos:
+#   - Entorno interactivo
+#   - Un directorio maestro que soporte un /mínimo/ de cuatro archivos
+#   - Operaciones del directorio /simplificadas/ respecto a un
+#     =dirstream=: =listar()= (no hace falta /recorrer/ entrada por
+#     entrada), =crear_archivo(nombre)=, =eliminar_archivo(nombre)=
+# ** Tarea / evaluación de unidad (2)
+# - Requisitos mínimos:
+#   - Cada uno de los archivos debe soportar también operaciones
+#     simplificadas: =escribir(archivo, datos)=, =leer(archivo)=,
+#     =rebobinar(archivo, pos)=
+#   - /Pueden/ hacer refinamientos adicionales.
+# - El código debe:
+#   - Ser compilable/ejecutable legal, en el lenguaje que prefieran
+# - El trabajo puede entregarse de forma individual o en parejas
+#   - Fecha límite: 22 de mayo
+#     - Recomiendo 20 de mayo
 * Sistemas de archivos remotos
 ** La red y los sistemas de archivos
 - /Modelo cliente-servidor/

@@ -1,24 +1,24 @@
 #+begin_src dot :exports results :file ltxpng/directorio_DAG_completo.png
 digraph G {
-  root -> root [label="."];
-  root -> root [label=".."];
+  root -> root [color="#888888",label="."];
+  root -> root [color="#888888",label=".."];
 
   root -> home;
-  home -> home [label="."];
-  home -> root [label=".."];
+  home -> home [color="#888888",label="."];
+  home -> root [color="#888888",label=".."];
 
   home -> usr1;
-  usr1 -> home [label=".."];
-  usr1 -> usr1 [label="."];
+  usr1 -> home [color="#888888",label=".."];
+  usr1 -> usr1 [color="#888888",label="."];
   home -> usr2;
-  usr2 -> home [label=".."];
-  usr2 -> usr2 [label="."];
+  usr2 -> home [color="#888888",label=".."];
+  usr2 -> usr2 [color="#888888",label="."];
 
   usr1 -> test_c1;
   usr1 -> a_out;
   usr1 -> proyecto [style="dotted"];
-  proyecto -> proyecto [label="."];
-  proyecto -> usr2 [label=".."];
+  proyecto -> proyecto [color="#888888",label="."];
+  proyecto -> usr2 [color="#888888",label=".."];
   usr2 -> tarea_c2;
   usr2 -> proyecto;
 

@@ -684,13 +684,14 @@ empleado: en su configuración habitual, de dos discos por volumen, 50%
 del espacio de almacenamiento se pierde por fungir como respaldo del
 otro 50 por ciento.
 
-La velocidad de acceso a los datos bajo *raid* 1 es mayor a la que se
-lograría con un disco tradicional: basta con obtener los datos de uno
-de los discos; el controlador *raid* (sea el sistema operativo o una
-implementación en hardware) puede incluso programar las solicitudes de
-lectura para que se vayan repartiendo entre ambas unidades. La
-velocidad de escritura se ve levemente reducida, dado que hay que
-esperar a que ambos discos escriban la información.
+La velocidad de acceso a los datos bajo *raid* 1 es menor a la que se
+lograría con un disco tradicional: no basta con obtener los datos de
+uno de los discos; el controlador *raid* (sea el sistema operativo o
+una implementación en hardware) recupera ambas copias, y sólo las
+entrega a los programas si concuerdan; en caso contrario, debe
+reportar un error en el arreglo. La velocidad de escritura se ve
+levemente reducida, dado que hay que esperar a que ambos discos
+escriban la información.
 
 Un arreglo *raid* nivel 1 se construye típicamente con dos discos.
 

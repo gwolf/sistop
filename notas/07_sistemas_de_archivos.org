@@ -954,33 +954,33 @@ indirección que /vayan haciendo falta/.
 ¿Qué tan grande sería el archivo máximo direccionable bajo este
 esquema y únicamente tres indirecciones? Suponiendo magnitudes típicas
 hoy en día (/clusters/ de 4 *kb* y direcciones de 32 bits), en un
-/cluster/ vacío caben 128 apuntadores ($4~096 \over 32$). Si los
-metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 100
+/cluster/ vacío caben 1024 apuntadores ($4~096 \over 4$). Si los
+metadatos ocupan 224 bytes en el i-nodo, dejando espacio para 968
 apuntadores:
 
-- Un archivo de hasta $(100-3) \times 4$ *kb* = 388 *kb* puede ser referido
+- Un archivo de hasta $(968-3) \times 4$ *kb* = 3860 *kb* puede ser referido
   por completo directamente en el i-nodo, y es necesario un sólo
   acceso a disco para obtener su lista de /clusters/.
-- Un archivo de hasta $(100-3 + 128) \times 4$ *kb* = 900 *kb* puede
+- Un archivo de hasta $(968-3 + 1024) \times 4$ *kb* = 7956 *kb* puede
   representarse con el bloque de indirección sencilla, y obtener su
   lista de /clusters/ significa dos accesos a disco adicionales.
 - Con el bloque de doble indirección, puede hacerse referencia a
   archivos mucho más grandes:
 
-  $(100-3 + 128 + (128\times 128) ) \times 4$ *kb* $= 66~436$ *kb*
-  $\approx 65$ *mb*
+  $(968-3 + 1024 + (1024\times 1024) ) \times 4$ *kb* $= 4~202~260$ *kb*
+  $\approx 4$ *gb*
 
   Sin embargo, a estas alturas comienza a llamar la atención otro
   importante punto: para acceder a estos 65 *mb*, es necesario
-  realizar hasta 131 accesos a disco. A partir de este punto, resulta
+  realizar hasta 1027 accesos a disco. A partir de este punto, resulta
   importante que el sistema operativo asigne /clusters/ cercanos para
   los metadatos (y, de ser posible, para los datos), pues la
   diferencia en tiempo de acceso puede ser muy grande.
 
 - Empleando triple indirección, se puede llegar hasta:
 
-  $(100-3 + 128 + (128 \times 128) + (128 \times 128 \times 128) )
-  \times 2$ *kb* $= 8~455~044 *kb* \approx 8$ *gb*
+  $(968-3 + 1024 + (1024 \times 1024) + (1024 \times 1024 \times 1024) )
+  \times 4$ *kb* $= 4~299~169~556 *kb* \approx 4$ *tb*
 
   Esto es ya más de lo que puede representarse en un sistema de 32
   bits. La cantidad de bloques a leerse, sin embargo, para encontrar

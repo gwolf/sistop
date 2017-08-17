@@ -12,7 +12,7 @@ unsigned long timestamp(){
   /* http://www.strchr.com/performance_measurements_with_rdtsc */
   /* https://stackoverflow.com/questions/12631856/difference-between-rdtscp-rdtsc-memory-and-cpuid-rdtsc */
   long tsc;
-  asm volatile("rdtscp; "         /* Lectura serializada del TSC
+  asm volatile("rdtscp; "         /* Lectura serializada del TSC */
 	       "shl $32, %%rdx; " /* Recorre 32 bits bajos de RDX a izq. */
 	       "or %%rdx, %%rax"  /* Combina RDX y RAX */
 	       : "=a"(tsc)        /* Obtiene el valor en la variable tsc */
@@ -33,9 +33,9 @@ void llena_arreglo(int modo) {
 	data[x][y] = 1;
 }
 
-void main(){
+int main(){
   unsigned long inicio, fin, prom_h, prom_v;
-  printf( "Usando %d bytes de memoria\n", LONGITUD*LONGITUD*sizeof(int));
+  printf( "Usando %lu bytes de memoria\n", LONGITUD*LONGITUD*sizeof(int));
   prom_h = 0;
   prom_v = 0;
 
@@ -58,4 +58,5 @@ void main(){
   }
   printf("Promedio (vertical): %lu\n", prom_v / VECES);
   printf("\nRelación (horiz / vert): %f\n", (float) prom_h / prom_v);
+  return(0);
 }

@@ -237,14 +237,16 @@ ya empleados hoy en día. Los principales en uso son:
 ** RAID 0: División en /franjas/
 - Espacio total: Suma de los espacios de todas sus unidades
 - Mejoría en velocidad (más cabezas independientes)
-- Sin mejoría en confiabilidad
+- Menor confiabilidad: Un fallo en /cualquiera de los discos/ del
+  volumen lleva a pérdida de información
 #+attr_latex: :width \textwidth
 #+caption: Cinco discos organizados en RAID 0
 [[../img/dot/raid_0.png]]
 
 ** RAID 1: Espejo
 - Espacio total: Uno sólo de los volúmenes
-- Mejoría en velocidad (el primero que entregue los datos)
+- Ligera degradación en velocidad (debemos esperar a los datos /de
+  ambos discos/ y validar que sean iguales)
 - Confiabilidad: Soporta la pérdida de un disco
 #+caption: Dos discos organizados en RAID 1
 #+attr_latex: :width 0.6\textwidth

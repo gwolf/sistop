@@ -265,7 +265,7 @@ int sem_trywait(sem_t *sem);
 ** Variables de Condición
 #+BEGIN_CENTER
 Extensión sobre el comportamiento de un mutex permitiéndole una mayor
-"inteligencia". Siempre operan /junto/ con un mutex.
+``inteligencia''. Siempre operan /junto/ con un mutex.
 #+END_CENTER
 - =wait()= :: Libera el candado y se bloquea hasta recibir una
               /notificación/. Una vez despertado, /re-adquiere/ el
@@ -400,7 +400,6 @@ La JVM implementa:
 - /variables de condición/
 - Una semántica parecida (¡no idéntica!) a la de semáforos con
   =var.wait()= y =var.signal()=
-#+END_CENTER
 
 ** Soluciones en hardware
 - Decimos una y otra vez que /la concurrencia está aquí para quedarse/

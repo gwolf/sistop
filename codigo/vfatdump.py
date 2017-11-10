@@ -245,11 +245,14 @@ class Dentry:
         elif string[11] == chr(0x0f):
             # Nombre largo VFAT - Ignorar
             self.what = 'VFAT'
-        elif string[11] == chr(0x20):
+        elif string[11] == chr(0x20) or string[11] == chr(0x10):
             # Entrada base FAT
             self.name = string[0:8]
             self.ext = string[8:11]
-            self.what = 'File'
+            if string[11] == chr(0x20):
+                self.what = 'File'
+            else:
+                self.what = 'Directory'
             self.start_at = StrConv.int(string[26:27])
             self.size = StrConv.int(string[28:31])
 

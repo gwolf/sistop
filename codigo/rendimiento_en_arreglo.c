@@ -38,8 +38,9 @@ int main(){
   printf( "Usando %lu bytes de memoria\n", LONGITUD*LONGITUD*sizeof(int));
   prom_h = 0;
   prom_v = 0;
-
-  for (int i=0; i < VECES; i++) {
+  int i;
+  
+  for (i=0; i < VECES; i++) {
     inicio = timestamp();
     llena_arreglo(0);
     fin = timestamp();
@@ -49,7 +50,7 @@ int main(){
   printf("Promedio (horizontal): %lu\n", prom_h / VECES);
 
   printf("=========\n");
-  for (int i=0; i < VECES; i++) {
+  for (i=0; i < VECES; i++) {
     inicio = timestamp();
     llena_arreglo(1);
     fin = timestamp();

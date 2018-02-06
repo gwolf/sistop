@@ -272,9 +272,14 @@ bne $0, %ebx, user_fail
 - Desventajas
   - Debe verificarse a cada llamada a función
   - Rendimiento disminuído
+#+attr_latex: :width 0.6\textwidth
+#+caption: Mitigación: Uso de canario
+[[../img/ditaa/overflow_canary.png]]
 
 ** Memoria no ejecutable
 - Bits de control en el MMU impidiendo que se ejecute la memoria en
   el stack
 - Imposibilitan ejecutar código en el stack
   - Pero no regresar a otras direcciones
+- Técnica de explotación conocida como /Programación orientada a
+  retornos/ (/Return-Oriented Programming/)

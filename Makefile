@@ -73,7 +73,7 @@ libro_index:
 		TITULO=`grep -i ^#+title: $(srcdir)/$$FILE | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$FILE :minlevel 1" >> $(libro); \
-	        echo '#+latex: \\vfill \eject \\thispagestyle{empty}' >> $(libro); \
+	        echo '#+latex: \\vfill \\eject \\thispagestyle{empty}' >> $(libro); \
 	done
 
 	echo '' >> $(libro)
@@ -86,13 +86,13 @@ libro_index:
 		TITULO=`grep -i ^#+title: $(srcdir)/$$APDX | sed s/^.*://`; \
 		echo "* $$TITULO" >> $(libro) ; \
 		echo "#+include: $$APDX :minlevel 1" >> $(libro); \
-	        echo '#+latex: \\vfill \eject \\thispagestyle{empty}' >> $(libro); \
+	        echo '#+latex: \\vfill \\eject \\thispagestyle{empty}' >> $(libro); \
 	done
 	echo '#+latex: \\chapter*{Acerca de los autores}' >> $(libro)
 	echo '#+latex: \\addcontentsline{toc}{chapter}{Acerca de los autores}' >> $(libro)
 	echo '#+html: <h1>Acerca de los autores</h1>' >> $(libro)
 	echo '#+include: FF_los_autores.org :minlevel 1' >> $(libro)
-	echo '#+latex: \\vfill \eject \\thispagestyle{empty}' >> $(libro);
+	echo '#+latex: \\vfill \\eject \\thispagestyle{empty}' >> $(libro);
 	# No hay muchas tablas, este listado no tiene tanto sentido
 	# echo "#+latex: \listoftables" >> $(libro)
 	echo '#+latex: \\addcontentsline{toc}{chapter}{Índice de figuras}' >> $(libro)

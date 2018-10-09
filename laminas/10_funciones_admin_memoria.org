@@ -76,18 +76,20 @@ principio de /localidad de referencia/:
 - Cada arquitectura de procesador tiene un /espacio de
   direccionamiento/ determinado
   - Siempre es una potencia de 2, y /casi siempre/ en números
-    /cerrados/ (8, 16, 32, 64)
+    /cerrados/ (16, 32, 64 \rightarrow ¡Ojo! ¿24, 48?)
 - Es el máximo de memoria que dicho procesador puede ver
   - /Virtual/ :: Lo máximo que la arquitectura ofrece como una
                  dirección de memoria
   - /Físico/ :: Lo máximo que /un procesador específico/ puede
                 direccionar (limitado por su número de pines)
 
-** Procesadores de 16 bits
+** Procesadores de 16 bits /de direccionamiento/
 - Un procesador con /espacio de direccionamiento/ de 16 bits puede
   referirse /directamente/ a hasta $2^{16}$ (65,536) bytes.
 - Principales procesadores de este tipo: Intel 8080 y 8085, Zilog
   Z80, MOS 6502 y 6510
+  - Se conocen como procesadores de /8 bits/ (registros / aritmética)
+  - Implicaciones: ¿Tamaño y uso de os apuntadores?
 - Intel 8086/8088: Direcciona hasta 20 bits (1024KB)
   - Pero al ser una arquitectura /real/ de 16 bits, requiere emplear
     /segmentación/ para alcanzar toda su memoria
@@ -96,11 +98,13 @@ principio de /localidad de referencia/:
     restricciones de su arquitectura, casi nunca se utilizó en estos
     modos
 
-** Procesadores de 32 bits
+** Procesadores de 32 bits /de direccionamiento/
 - Hoy en día, los procesadores dominantes son de 32 o 64 bits
+  (aritmética)
 - Un procesador de 32 bits puede direccionar hasta 4GB — $2^{32}$
-  bytes (4,294,967,296 bytes)
-  - Hoy ya está dentro del rango de lo /alcanzable/
+  bytes (4,294,967,296 bytes), casi siempre coincide con 32 bits de
+  aritmética
+  - Hoy en día es una cantidad ya rebasada
   - Por medio de /PAE/ (Extensión de Direcciones Físicas, /Physical
     Address Extension/), puede extenderse hasta $2^{52}$ (aunque
     típicamente $2^{36}$, 64GB)
@@ -108,15 +112,19 @@ principio de /localidad de referencia/:
     cuando cubramos /paginación/), por lo que pierde /un poco/ de
     rendimiento, y cada proceso sigue viendo sólo hasta 4GB.
 
-** Procesadores de 64 bits
-- Un procesador de 64 bits puede direccionar hasta 16 exabytes —
-  $2^{64}$ bytes (18,446,744,073,709,551,616 bytes)
+** Procesadores de 64 bits (/direccionamiento \rightarrow 48 bits/)
+- Los procesadores de 64 bits típicamente manejan direccionamiento de
+  48 bits
+  - 281,474,976,710,656 bytes, 256TB
+  - Un direccionamiento /real/ de 64 bits tendría por límite los /16
+    exabytes/ — $2^{64}$ bytes (18,446,744,073,709,551,616 bytes)
 - El hardware actual está limitado por un criterio económico a entre
   $2^{34}$ y $2^{48}$ bits, 16GB y 256TB
   - El costo de más de 256TB RAM hace extremadamente improbable que
     sea requerido en suficientes procesadores de propósito general
     - En un sistema /actual/ de escritorio, es muy poco probable
       llegar a requerir incluso más de 16GB
+    - Servidores: no demasiado fuera de lo común 256TB
   - Cada bit de direccionamiento necesario requiere un pin en el CPU,
     por tanto, tiene un costo económico directo
 
@@ -134,6 +142,7 @@ principio de /localidad de referencia/:
 - Casi todos los sistemas operativos modernos /requieren/ de una
   /unidad de manejo de memoria/ (MMU)
   - Hardware, hoy es parte integral del CPU
+  - Intermediario hacia el bus de acceso a memoria
 - Trabaja /muy/ de cerca con el sistema operativo
 - Encargado de funciones de control de permisos, seguridad, y
   traducción de direcciones
@@ -144,7 +153,7 @@ principio de /localidad de referencia/:
 ** ¿Traducción de direcciones?
 - Es común que un sistema requiera más memoria /de la que está
   directamente disponible/
-  - Más memoria de la que existe
+  - Más memoria de la que existe físicamente
   - Más memoria de la que el hardware puede direccionar
 - Un proceso no tiene por qué conocer los detalles de la asignación de
   memoria — Le damos una vista virtual simplificada
@@ -156,7 +165,8 @@ principio de /localidad de referencia/:
 
 ** Permisos
 - El MMU verifica que un proceso no tenga acceso a datos de otro
-  - A menos que sea /expresamente permitido/ (vía el sistema operativo)
+  - A menos que sea /expresamente permitido/ (mediante solicitudes al
+    sistema operativo)
   - Hacer esta verificación desde el sistema operativo mismo
     incurriría en costos demasiado grandes
   - Una verificación estática no puede ser suficientemente exhaustiva

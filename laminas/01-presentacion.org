@@ -1,5 +1,5 @@
 #+SETUPFILE: ../setup_laminas.org
-#+TITLE: Sistemas Operativos (FI-UNAM 1554): Presentación del curso
+#+TITLE: Sistemas Operativos (FI-UNAM 1554 / 0840): Presentación del curso
 #+DATE:
 
 * Punto de partida
@@ -23,28 +23,38 @@ Del curso
 
 ** Horario, calendario
 - Martes y jueves
-- 18:15 a 20:30
-- Salón B106
+- 17:30 a 19:45
+- Salón A201
 - 72 horas clase en total
-  - /Perdemos/ el feriado 1 de noviembre
-  - ⇒ 69.75 horas /efectivas/ de clase
+  - Según el plan 2010; el plan 2016 contempla sólo 64 horas
+  - Trabajaremos la sesion de 02:15 /completa/
 - La evaluación principal será con trabajos prácticos
-- Posiblemente un examen parcial (detalles más adelante)
+- Mas un examen parcial (detalles más adelante)
 
 * Encuadre del curso
 
 ** El curso dentro de la currícula (plan 2010)
 #+begin_center
-#+attr_latex: :width 0.6\textwidth
-[[../img/pres/mapa_curricular.png]]
+#+attr_latex: :height 0.85\textheight
+[[../img/pres/mapa_curricular_2010.png]]
 #+end_center
 
+** El curso dentro de la currícula (plan 2016)
+#+begin_center
+#+attr_latex: :height 0.85\textheight
+[[../img/pres/mapa_curricular_2016.png]]
+#+end_center
 ** Seriación y materias relacionadas
 - Seriación obligatoria: /Estructura y programación de computadoras/
 - Asumo familiaridad con otras materias:
-  - Computación para ingenieros
-  - Programación avanzada y métodos numéricos
-  - Algoritmos y estructura de datos
+  - 2010 :: 
+    - Computación para ingenieros
+    - Programación avanzada y métodos numéricos \vskip 1em
+  - 2016 :: 
+    - Fundamentos de programación
+    - Programación orientada a objetos \vskip 1em
+  - Ambos ::
+    - Estructuras de datos y algoritmos
 
 ** Lenguajes de programación
 - Familiaridad con algún lenguaje de programación de alto nivel
@@ -90,12 +100,18 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
 
 #+END_CENTER
 
-** Programa de estudio
+** Programa de estudio (2010)
 #+begin_center
 #+attr_latex: :width 0.8\textwidth
-[[../img/pres/prog_estudio.png]]
+[[../img/pres/prog_estudio_2010.png]]
 #+end_center
 
+
+** Programa de estudio (2016)
+#+begin_center
+#+attr_latex: :width 0.8\textwidth
+[[../img/pres/prog_estudio_2016.png]]
+#+end_center
 * Enfoque personal
 ** ¿Quién soy y por qué estoy aquí?
 - Formación autodidacta
@@ -172,10 +188,11 @@ pueden ser estudiados de forma aislada.
 ** Adicionalmente...
 - Presentaré algunos temas relevantes a la materia más cercanos a la
   actualidad en el campo
-- Tendremos algunos invitados para temas particulares, ilustrando:
+- Buscaremos presentar ejemplificando
   - Problemáticas actuales
   - Detalles de implementación
   - Estado del arte
+
 * Bibliografía
 
 ** Fundamentos de Sistemas Operativos
@@ -185,8 +202,9 @@ pueden ser estudiados de forma aislada.
 #+latex: \end{column}\begin{column}{0.6\textwidth}
 - Libro en el que participé como autor y coordinador
 - [[http://sistop.org][Fundamentos de Sistemas Operativos]]
-- Con /licenciamiento libre/
-- Editado por la UNAM
+- Con /licenciamiento libre/ → ¡Descárguenlo y compártanlo!
+  https://sistop.org/|
+- Editado|| por la UNAM
 - Disponible en la ventanilla de apuntes de la Facultad
 - Diseñado siguiendo el plan de estudios de la FI-UNAM
 #+LaTeX: \end{column}\end{columns}
@@ -276,10 +294,9 @@ Estamos /experimentando/ con el uso de una plataforma educativa...
 - Entrega de tareas y proyectos al /depósito Git/ en la plataforma /GitHub/
 - Entorno de desarrollo colaborativo
 - Caso de estudio interesante
-- ...Probablemente tengamos que ir afinándolo en el transcurso del
-  curso
+- ...Probablemente tengamos que ir afinándolo en a lo largo del curso
 #+BEGIN_CENTER
-[[http://github.com/gwolf/sistop-2018-1]]
+[[http://github.com/gwolf/sistop-2019-2]]
 #+END_CENTER
 
 * Normas del grupo
@@ -303,6 +320,8 @@ Compromiso:
 ¡Entregar tareas, trabajos y exámenes corregidos a la brevedad!
 #+END_CENTER
 - Al martes inmediato siguiente a su aplicación
+  - O, por lo menos, explicar claramente si no puedo entregarlos a
+    tiempo (¡y apurarme!)
 - Los exámenes parciales son para aprender. /Debo entregarlos
   explicando cualquier error/.
 - Debo (por reglamento) conservar los exámenes finales. Les haré
@@ -312,9 +331,9 @@ Compromiso:
 ** Proyectos
 - Desarrollo /propio y original/ que integre el contenido visto en
   determinadas unidades
-  - Introducción / Relación con HW :: /Por definir/
-  - Administración / planificación de procesos :: Monitor del sistema
-  - Sistemas de archivos :: Mini-sistema de archivos
+  - Introducción / Relación con HW
+  - Administración / planificación de procesos
+  - Sistemas de archivos
 - La fecha de entrega será anunciada con por lo menos una semana de
   antelación
 - Desarrollados de forma individual o en equipos de dos integrantes
@@ -328,10 +347,11 @@ Compromiso:
 - La entrega de tareas es /obligatoria/
   - Las tareas se consideran entregadas /el día indicado, o antes si
     les resulta imposible/
-  - Hasta una semana de demora: Calificadas sobre el 80%
-  - Más de una semana de demora: *No se recibe*
-- Requisito para la exención: *100%* de tareas
-- Requisito para presentar examen final en primera vuelta: *80%* de tareas
+  - Tareas entregadas fuera de tiempo *no tienen derecho a
+    calificación* (aunque sí a contar como entregadas, y a revisión de
+    conceptos)
+- Requisito para la exención: *80%* de tareas
+- Requisito para presentar examen final en primera vuelta: *60%* de tareas
 
 ** Exposiciones / Proyectos de investigación
 - Los proyectos buscarán deben buscar anclar la teoría que estamos

@@ -263,6 +263,7 @@ requeridas por cada sistema
 # http://www.joelonsoftware.com/articles/Biculturalism.html
 # #+END_CENTER
 
+* Dispositivos móviles
 ** El mercado de los dispositivos (/appliances/)
 - 1990s: Agendas digitales inteligentes
   - Que se van /inflando/ en computadoras completas
@@ -274,6 +275,93 @@ requeridas por cada sistema
 ¿Cuál es la diferencia entre estos equipos y nuestras computadoras de
 escritorio?
 #+end_center
+
+** ¿Qué define a los /dispositivos móviles/?
+- Bajo consumo eléctrico
+  - Amplios /estados de ahorro de energía/
+- Interfaz usuario limitada
+  - Mecanismos de entrada reducidos
+  - Adecuación a dicha realidad en la interfaz usuario
+- +Equipos limitados en rendimiento+ \pause ¿En serio?
+
+** Primeros modelos
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
+Primer computadora /portátil/: IBM 5100 (1975, 25Kg, pantalla de 5
+pulgadas, US$9,000)
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+[[../img/ibm_5100.jpg]]
+#+latex: {\tiny \href{https://commons.wikimedia.org/w/index.php?curid=16332671}{IBM 5100 (CC-BY Sandstein)}}
+#+latex: \end{column} \end{columns}
+
+#+latex: \begin{columns} \begin{column}{0.15\textwidth}
+[[../img/psion_organiser.jpg]]
+#+latex: \end{column} \begin{column}{0.8\textwidth}
+1984: /Psion Organiser/: Computadora de bolsillo con reloj,
+calculadora, base de datos, cartuchos de aplicaciones.  4KB RAM, 2KB
+ROM, sin sistema operativo, programada en ensamblador. Antecedente
+directo de /Symbian/.
+#+latex: \end{column} \end{columns}
+
+** 1990s: El /Asistente Digital Personal/ (PDA)
+#+latex: \begin{columns} \begin{column}{0.15\textwidth}
+[[../img/pda_sharp.jpg]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/Sharp_Wizard#/media/File:SharpElectronicOrganiser-open.jpg}{Sharp Wizard}}
+#+latex: \end{column} \begin{column}{0.8\textwidth}
+1990s: Popularización de los /Asistentes Digitales Personales/ (PDAs)
+— Agendas de teléfonos, calendario, calculadora... (No programables,
+rara vez expandibles)
+#+latex: \end{column} \end{columns}
+
+#+latex: \begin{columns} \begin{column}{0.15\textwidth}
+[[../img/apple_newton.jpg]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/Apple_Newton#/media/File:Apple_Newton-IMG_0454-cropped.jpg}{Apple Newton}}
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+Comenzó a desarrollarse la tecnología de entrada por pantalla, con
+interfaces táctiles con /stylus/, con grados de éxito... Variables.
+
+Aparece el soporte para /ecosistemas/ de software, comunicación entre
+dispositivos, modos de /hibernación/.
+#+latex: \end{column} \begin{column}{0.15\textwidth}
+[[../img/palm_pilot.png]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/Palm_(PDA)}{Palm Pilot}}
+#+latex: \end{column} \end{columns}
+
+** 1995 – 2010: Puliendo la telefonía
+#+latex: \begin{columns} \begin{column}{0.15\textwidth}
+[[../img/kyocera_6035.jpg]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/Kyocera_6035#/media/File:Kyocera6035.jpg}{Kyocera 6035}}
+[[../img/n810.jpg]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/Nokia_N810#/media/File:N810-open.jpg}{Nokia N810}}
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Aparición de los /teléfonos inteligentes/
+- Personalidad dividida, dos computadoras en consonancia (señalización
+  celular e interfaz usuario)
+- Tendencia hacia interfaces /multitouch/
+- Enfoque en eficiencia de consumo eléctrico
+#+latex: \end{column} \begin{column}{0.15\textwidth}
+[[../img/treo.jpg]]
+#+latex: {\tiny \href{https://es.wikipedia.org/wiki/Treo#/media/File:Treo680sp.jpg}{Palm Treo}}
+[[../img/iphone.jpg]]
+#+latex: {\tiny \href{https://en.wikipedia.org/wiki/IPhone_3G}{iPhone}}
+#+latex: \end{column} \end{columns}
+
+** 2010– Maduración del mercado móvil
+- Consolidación de sistemas operativos disponibles
+  - Dominantes: Android (\rightarrow Linux), iOS (\rightarrow MacOS)
+  - Desaparecen: Symbian, Windows Phone, Firefox OS
+- Universalización de la interfaz
+  - ...Levante la mano quien /no/ tiene uno consigo...
+
+** Características generales del segmento
+- Almacenamiento en estado sólido
+- Multitarea, pero /monocontexto/
+- Consumo eléctrico
+  - Menor consumo
+  - Más /estados de descanso/, detección de patrones de uso acorde
+  - Salto constante entre estados
+- Adecuación a un entorno cambiante
+- /Jardín amurallado/
+
 ** Arquitecturas hardware en boga hoy
 - En escritorios y servidores: Derivada de PC (Intel x86)
 - En dispositivos embebidos ARM (ocasionalmente MIPS; ojo ⇒ OpenRISC)
@@ -282,3 +370,4 @@ escritorio?
   requieren sistema operativo (p.ej. Arduino, ARM perfiles R/M,
   ASICs...)
   - Probablemente siempre lo habrá
+

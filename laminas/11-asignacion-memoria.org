@@ -381,7 +381,7 @@ presente=no).
 
 ** Esquematización del proceso de paginación
 #+attr_latex: :width \textwidth
-#+caption: Esquema del proceso de paginación, ilustrando el rol del MMU
+#+caption: Esquema del proceso de paginación, ilustrando el papel del MMU
 [[../img/dot/hardware_de_paginacion.png]]
 
 ** Ubicación física y lógica \rarrow Marcos y páginas
@@ -530,6 +530,8 @@ Un tip: Basta multiplicar los números de la lámina anterior por
   - Costo económico
   - Tiempo perdido en el cambio de contexto
 - Una estrategia: Almacenar /la propia tabla de páginas/ en memoria
+  /privilegiada/ (accesible únicamente para el SO, no para el proceso
+  usuario)
   - Emplear /sólo dos/ registros especiales:
     - PTBR :: Registro Base de Tabla de Páginas (/Page Table Base
               Register/)

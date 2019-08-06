@@ -99,17 +99,18 @@
 [[../img/dot/respuesta_a_fallo_de_pagina.png]]
 
 ** Pasos para atender a un fallo de página
-1. Verificar en PCB: ¿Esta página ya fue asignada al proceso? (¿es válida?)
+1. Verificar en la tabla de paginación (TP): ¿Esta página ya fue
+   asignada al proceso? (¿es válida?)
 2. Si no es válida, se termina el proceso
 3. Buscar un marco disponible
    - P.ej. en una tabla de asignación de marcos
 4. Solicita el al disco la lectura de la página hacia el marco especificado
    - Continúa ejecutando otros procesos
-5. Cuando finaliza la lectura, actualiza PCB y TLB para indicar que la
-   tabla está en memoria
+5. Cuando finaliza la lectura, actualiza TP y TLB
+   para indicar que la tabla está en memoria
 6. Termina la suspensión del proceso.
    - Continúa con la instrucción que desencadenó el fallo.
-   - El proceso continúa como si la página siempre hubiera estado en
+   - El proceso continúa como si la página /siempre hubiera estado/ en
      memoria
 
 ** Paginación /puramente/ sobre demanda

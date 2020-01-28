@@ -1,0 +1,89 @@
+#!/usr/bin/ruby
+# coding: utf-8
+filename = ARGV.shift or raise Exception, 'Specify a file with the output of e2fsdump!'
+width = ARGV.shift.to_i
+width = 1024 if width==0
+
+fh = open(filename, 'r')
+
+group = nil
+blksize = nil
+@map = []
+
+def fill(from, to, with)
+  (to - from + 1).times {|b| @map[from+b] = with}
+end
+
+fh.readlines.each do |lin|
+  lin =~ /^Block size:\s+(\d+)/ && blksize = $1.to_i
+  lin =~ /^Group (\d+):/ && group = $1.to_i
+
+  if lin =~ /^\s+(Primary|Backup) superblock at (\d+), Group descriptors at (\d+)-(\d+)$/
+    type, sb, from, to = $1, $2.to_i, $3.to_i, $4.to_i
+    @map[sb] = (type == 'Primary') ? 'S' : 's'
+    fill(from, to, 'G')
+  end
+
+  if lin =~ /^\s+Reserved GDT blocks at (\d+)-(\d+)$/
+    from, to = $1.to_i, $2.to_i
+    fill(from, to, 'R')
+  end
+
+  if lin =~ /^\s+(Block|Inode) bitmap at (\d+)/
+    type, pos = $1, $2.to_i
+    @map[pos] = (type == 'Block') ? 'B' : 'I'
+  end
+
+  if lin =~ /^\s+Inode table at (\d+)-(\d+)/
+    from, to = $1.to_i, $2.to_i
+    fill(from, to, 'i')
+  end
+
+  if lin =~ /^\s+Free blocks: (.+)/
+    $1.split(/, /).each do |free|
+      free =~ /(^\d+)(?:-(\d+))?/
+      from, to = $1.to_i, $2.to_i
+      to = from if to == 0
+      fill(from, to, 'v')
+    end
+  end
+end
+
+size = @map.size
+size.times {|p| @map[p].nil? && @map[p]='D'}
+
+fh = open(filename + '.xpm', 'w')
+
+fh.puts '/* XPM */
+static char *test[] = {
+/* columns rows colors chars-per-pixel */'
+fh.puts '"%d %d %d %d ",'  % [width, size/width, 8, 1]
+
+# Colores utilizados
+# S Superbloque primario  #ffff00 Amarillo
+# s Superbloque respaldo  #00FF00 Verde
+# R Reservado GDT         #888888 Gris
+# B Bitmap de bloques     #FF0000 Rojo
+# I Bitmap de inodos      #0000FF Azul
+# i Tabla de inodos       #008888 Cyan
+# D Datos                 #000000 Negro
+# v Vacío                 #FFFFFF blanco
+fh.puts '"S c #FFFF00",
+"s c #00FF00",
+"R c #888888",
+"B c #FF0000",
+"I c #0000FF",
+"i c #008888",
+"D c #000000",
+"v c #FFFFFF",
+/* pixels */'
+
+fh.print '"'
+size.times do |it|
+  if it % width == 0
+    fh.print "\",\n\"" % it
+  end
+  fh.print @map[it]
+end
+fh.puts "\"\n};"
+fh.close

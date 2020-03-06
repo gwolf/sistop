@@ -619,10 +619,10 @@ mutex.release()
   
   def operacion(id, semaf):
     semaf.acquire()
-    print "Id %d en la secc. crit." % id
+    print("Id %d en la secc. crit." % id)
     time.sleep(random.random())
     semaf.release()
-    print "Terminando el id %d" % id
+    print("Terminando el id %d" % id)
   
   for hilo in range(10):
     threading.Thread(target=operacion, args=[hilo,multiplex]).start()
@@ -810,9 +810,9 @@ Vamos a emplear dos semáforos:
   buffer = []
   class Evento:
     def __init__(self):
-      print "Generando evento"
+      print("Generando evento")
     def process(self):
-      print "Procesando evento"
+      print("Procesando evento")
   threading.Thread(target=productor, args=[]).start()
   threading.Thread(target=consumidor, args=[]).start()
 #+END_SRC
@@ -862,11 +862,10 @@ Vamos a emplear dos semáforos:
   cuarto_vacio = threading.Semaphore(1)
   
   def escritor():
-    global lectores
     cuarto_vacio.acquire()
     escribe()
     cuarto_vacio.release()
-#+end_src python
+#+end_src
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+begin_src python
   def lector():
@@ -996,21 +995,21 @@ Vamos a emplear dos semáforos:
       suelta_palillos(id)
   def levanta_palillos(id):
     palillos[(id+1) % num].acquire()
-    print "%d - Tengo el palillo derecho" % id
+    print("%d - Tengo el palillo derecho" % id)
     palillos[id].acquire()
-    print "%d - Tengo ambos palillos" % id
+    print("%d - Tengo ambos palillos" % id)
 #+END_SRC
 #+latex: \end{column} \begin{column}{0.5\textwidth}
 #+BEGIN_SRC python
   def suelta_palillos(id):
     palillos[(id+1) % num].release()
     palillos[id].release()
-    print "%d - Sigamos pensando..." % id
+    print("%d - Sigamos pensando..." % id)
   def piensa(id):
     # (...)
-    print "%d - Tengo hambre..." % id
+    print("%d - Tengo hambre..." % id)
   def come(id):
-    print "%d - ¡A comer!" % id
+    print("%d - ¡A comer!" % id)
     # (...)
 #+END_SRC
 #+latex: \end{column}\end{columns}
@@ -1035,9 +1034,9 @@ sean zurdos?
       palillo1 = palillos[(id+1) % num]
       palillo2 = palillos[id]
     palillo1.acquire()
-    print "%d - Tengo el primer palillo" % id
+    print("%d - Tengo el primer palillo" % id)
     palillo2.acquire()
-    print "%d - Tengo ambos palillos" % id
+    print("%d - Tengo ambos palillos" % id)
 #+END_SRC
 
 ** Cena de filósofos: Basta con uno
@@ -1049,13 +1048,13 @@ haya bloqueo mutuo
   def levanta_palillos(id):
    if id == 0: # Zurdo
      palillos[id].acquire()
-     print "%d - Tengo el palillo izquierdo" % id
+     print("%d - Tengo el palillo izquierdo" % id)
      palillos[(id+1) % num].acquire()
    else: # Diestro
      palillos[(id+1) % num].acquire()
-     print "%d - Tengo el palillo derecho" % id
+     print("%d - Tengo el palillo derecho" % id)
      palillos[id].acquire()
-   print "%d - Tengo ambos palillos" % id
+   print("%d - Tengo ambos palillos" % id)
 #+end_src
 
 ** Cena de filósofos: Monitor y VCs (C)
@@ -1165,7 +1164,7 @@ Estructuras comunes:
   fumadores = [threading.Thread(target=fumador, args=[i]).start() for i in ingredientes]
   
   def fuma(ingr):
-    print 'Fumador con %s echando humo...' % ingr
+    print('Fumador con %s echando humo...' % ingr)
 #+END_SRC
 
 ** Fumadores compulsivos: Primer implementación
@@ -1176,7 +1175,7 @@ Estructuras comunes:
       mis_ingr = ingredientes[:]
       mis_ingr.remove(random.choice(mis_ingr))
       for i in mis_ingr:
-        print "Proveyendo %s" % i
+        print("Proveyendo %s" % i)
         semaforos[i].release()
   
   def fumador(ingr):

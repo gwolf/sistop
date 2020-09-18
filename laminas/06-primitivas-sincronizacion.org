@@ -129,23 +129,25 @@ En inglés, /resource starvation/
 #+BEGIN_CENTER
 ¡Inseguro! ¿Qué hizo el programador bien? ¿qué hizo mal?
 #+END_CENTER
-#+begin_src perl
-use threads::shared;
-my ($proximo_asiento :shared, $capacidad :shared, $bloq :shared);
-$capacidad = 40;
-sub asigna_asiento {
-  while ($bloq) { sleep 0.1; }
-  $bloq = 1;
-  if ($proximo_asiento < $capacidad) {
-    $asignado = $proximo_asiento;
-    $proximo_asiento += 1;
-    print "Asiento asignado: $asignado\n";
-  } else {
-    print "No hay asientos disponibles\n";
-    $bloq = 0; return 1; # Indicando error / falla
-  }
-  $bloq = 0; return 0;
-}
+#+begin_src python
+  capacidad = 40
+  proximo_asiento = 1
+  bloq = False
+  class NoHayAsientos(RuntimeError):
+      pass
+  def asigna_asiento():
+      global capacidad, proximo_asiento, bloq
+      while bloq:
+	  sleep(0.1)
+      bloq=True
+      if proximo_asiento < capacidad:
+	  asignado = proximo_asiento
+	  proximo_asiento = proximo_asiento + 1
+	  print('Asiento asignado: ', asignado)
+      else:
+	  bloq = False
+	  raise(NoHayAsientos('No hay asientos disponibles'))
+      bloq = False
 #+end_src
 
 ** ¿Por qué es inseguro el ejemplo anterior?
@@ -168,28 +170,25 @@ Líneas 5 y 6:
     entre procesos
 
 ** Mismo ejemplo, empleando un candado (/mutex/)
-#+begin_src perl
-use threads::shared;
-my ($proximo_asiento :shared, $capacidad :shared);
-$capacidad = 40;
-sub asigna_asiento {
-  lock($proximo_asiento);
-  if ($proximo_asiento < $capacidad) {
-    $asignado = $proximo_asiento;
-    $proximo_asiento += 1;
-    print "Asiento asignado: $asignado\n";
-  } else {
-    print "No hay asientos disponibles\n";
-    return 1;
-  }
-  return 0;
-}
+#+begin_src python
+  from threading import Lock
+  capacidad = 40
+  proximo_asiento = 1
+  bloq = Lock()
+  class NoHayAsientos(RuntimeError):
+      pass
+  def asigna_asiento():
+      global capacidad, proximo_asiento, bloq
+      bloq.acquire()
+      if proximo_asiento < capacidad:
+	  asignado = proximo_asiento
+	  proximo_asiento = proximo_asiento + 1
+	  print('Asiento asignado: ', asignado)
+      else:
+	  bloq.release()
+	  raise(NoHayAsientos('No hay asientos disponibles'))
+      bloq.release()
 #+end_src
-#+BEGIN_CENTER
-La implementación comunicación entre hilos en Perl implementa un
-/mutex/ a través de la función =lock()=, como /atributo/ sobre una
-variable, con /ámbito léxico/
-#+END_CENTER
 
 * Primitivas de sincronización
 ** Requisitos para las /primitivas/

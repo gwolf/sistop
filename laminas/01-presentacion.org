@@ -13,24 +13,25 @@ Personales
 - E-mail :: sistop@gwolf.org
 - Ubicación :: Instituto de Investigaciones Económicas UNAM
                (Secretaría Técnica)
-- Teléfono :: 55-5623-0154 (IIEc-UNAM)
+- Teléfono :: +55-5623-0154 (IIEc-UNAM)+
 
 #+begin_center
 Del curso
 #+end_center
 
 - Página Web :: http://gwolf.sistop.org/
-- Repositorio :: \small https://github.com/unamfi/sistop-2020-2/
+- Repositorio :: \small https://github.com/unamfi/sistop-2021-1/
 
 ** Horario, calendario
 - Martes y jueves
 - 17:30 (*no 17:45*, aunque hay tolerancia) a 19:45
-- Salón A201
+- +Salón A201+
 - 72 horas clase en total
   - Según el plan 2010; el plan 2016 contempla sólo 64 horas
   - Trabajaremos la sesion de 02:15 /completa/
+  - Primeros \approx 15 minutos haremos un repaso de la sesión anterior
 - La evaluación principal será con trabajos prácticos
-- Mas un examen parcial (detalles más adelante)
+# - Mas un examen parcial (detalles más adelante)
 
 * Encuadre del curso
 
@@ -60,7 +61,7 @@ Del curso
 ** Lenguajes de programación
 - Familiaridad con algún lenguaje de programación de alto nivel
   - Para seguir ejemplos (que serán principalmente en shell POSIX,
-    C, Ruby, Perl y Python)
+    C, Ruby y Python)
   - Para hacer ejercicios en clase y examen (basta con pseudocódigo
     semi-formal)
   - Para tareas (¡código legal/válido!)
@@ -128,7 +129,8 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
 
 ** ¿Por qué me parece importante la materia?
 - No espero que se dediquen a /escribir/ sistemas operativos (aunque
-  puede ocurrir)
+  definitivamente puede ocurrir)
+  - No es tan poco probable como creen...
 - Pero en cualquier área de aplicación profesional /requerimos conocer
   su funcionamiento/ para desempeñarnos mejor
   - Citando el objetivo institucional de la materia, /el alumno
@@ -159,7 +161,7 @@ Adicionalmente al objetivo formal...
 #+END_CENTER
 - ¿Por qué se /congela/ la computadora?
 - ¿Qué es eso de /expulsar con seguridad/ una unidad?
-- ¿Por qué una computadora con más memoria parece ser más rápida?
+- ¿Por qué una computadora con más memoria /parece ser/ más rápida?
 - ¿Qué pasa si reinicias y lo vuelves a intentar?
 - ...
 
@@ -206,7 +208,7 @@ pueden ser estudiados de forma aislada.
 - Con /licenciamiento libre/ → ¡Descárguenlo y compártanlo!
   https://sistop.org/
 - Editado por la UNAM
-- Disponible en la ventanilla de apuntes de la Facultad
+- +Disponible en la ventanilla de apuntes de la Facultad+
 - Diseñado siguiendo el plan de estudios de la FI-UNAM
 #+LaTeX: \end{column}\end{columns}
 
@@ -274,7 +276,7 @@ Encontrarás:
 - Entorno de desarrollo colaborativo
 - Referente para el desarrollo de software (millones de proyectos activos)
 #+BEGIN_CENTER
-[[http://github.com/unamfi/sistop-2020-2]]
+[[http://github.com/unamfi/sistop-2021-1]]
 #+END_CENTER
 
 * Normas del grupo
@@ -288,6 +290,8 @@ Encontrarás:
 |----------------------+------|
 - Exención de examen ordinario con calificación global de 8.5 y 100%
   de tareas entregadas
+  - Si la mayor parte del semestre se desarrolla a distancia,
+    posiblemente reevaluaré los requisitos
 - En caso de obtener más del 100%, la calificación se recorta al
   máximo definido
 
@@ -297,11 +301,12 @@ Compromiso:
 
 ¡Entregar tareas, trabajos y exámenes corregidos a la brevedad!
 #+END_CENTER
-- Al martes inmediato siguiente a su aplicación
+- +Al martes inmediato siguiente a su aplicación+ (...¡es difícil
+  comprometer tiempos en esta época de confinamiento!)
   - O, por lo menos, explicar claramente si no puedo entregarlos a
     tiempo (¡y apurarme!)
-- Los exámenes parciales son para aprender. /Debo entregarlos
-  explicando cualquier error/.
+- Tareas, proyectos y exámenes parciales son para aprender. /Debo
+  entregarlos explicando cualquier error/.
 - Debo (por reglamento) conservar los exámenes finales. Les haré
   llegar copias en forma electrónica tan pronto termine de
   calificarlos.
@@ -316,10 +321,10 @@ Compromiso:
   antelación
 - Desarrollados de forma individual o en equipos de dos integrantes
 
-** Examen parcial
-- Planeo realizar únicamente un examen parcial, cubriendo
-  principalmente la unidad /Administración de memoria/
-- La fecha será anunciada con por lo menos una semana de antelación
+# ** Examen parcial
+# - Planeo realizar únicamente un examen parcial, cubriendo
+#   principalmente la unidad /Administración de memoria/
+# - La fecha será anunciada con por lo menos una semana de antelación
 
 ** Tareas /obligatorias/
 - La entrega de tareas es /obligatoria/
@@ -331,35 +336,53 @@ Compromiso:
 - Requisito para la exención: *80%* de tareas
 - Requisito para presentar examen final en primera vuelta: *60%* de tareas
 
+** Prácticas
+- Auxiliares para dominar herramientas o conceptos específicos
+- Se califican dentro del rubro de /tareas/
+- Son opcionales, se /agregan/ a la calificación obtenida
+  - Cuatro prácticas $\Rightarrow$ una tarea con 10
+\pause
+#+begin_center
+*¡La práctica 1 está lista para que la hagas!*
+
+Entrega: 2020.09.28
+#+end_center
+
+
 ** Exposiciones / Proyectos de investigación
-- Los proyectos buscarán deben buscar anclar la teoría que estamos
+- Las exposiciones buscarán deben buscar anclar la teoría que estamos
   estudiando (o temas relacionados) con la actualidad en el campo
 - Pueden desarrollarse de forma individual o en equipo de 2 personas
-- Expondrán sus proyectos ante el grupo (exposiciones de \approx 15
-  minutos)
-  - Los temas expuestos son también material a estudiar y evaluar
-    /para el resto del grupo/ (en exámenes, tareas, etc.)
+- +Expondrán sus proyectos ante el grupo+ Presentarán a sus alumnos
+  videos exponiendo sus temas
+  - Exposiciones de \approx 15 minutos
+  - Sesión breve de preguntas durante la clase
 - En el sitio Web de la materia hay una lista de temas /sugeridos/
   - Pero vale más (incluso en calificación) el desarrollo de temas de
     su interés, con un enfoque original
 
 ** Autoría de lo que me entreguen
 - *Todo fraude puede hasta causar baja*
-  - Dependiendo de la situación; aplica en tareas, exámenes,
+  - Dependiendo de la situación; aplica en tareas, proyectos, exámenes,
     ejercicios...
   - ¿Trabajo de investigación? ¡Evítense problemas! Nada de /copiar y
     pegar/.
-  - Es /muy fácil/ detectar el copiado-y-pegado
+    - Es /muy fácil/ detectar el copiado-y-pegado
     - Lo hago frecuentemente.
+  - ¿Repositorio de semestres anteriores de la materia?
+    - Pueden usarlo para /inspiración/, para obtener ideas
+    - Es /trivial/ detectar código copiado...
+    - No lo hagan. Si copian un fragmento, citen/den atribución
+      correctamente.
 
 ** Toma de asistencia
 - *Se tomará asistencia* cada sesión. La asistencia a clases *es
   obligatoria*.
-- Puntualidad. 15 minutos pasado el inicio de la clase /no se cuenta
-  asistencia/.
-  - Se permite la entrada y se puede participar
-  - Salir a media clase por un tiempo prolongado /causa que se anule
-    la asistencia/
+# - Puntualidad. 15 minutos pasado el inicio de la clase /no se cuenta
+#   asistencia/.
+#   - Se permite la entrada y se puede participar
+#   - Salir a media clase por un tiempo prolongado /causa que se anule
+#     la asistencia/
 - Sólo tendrán derecho a exención los alumnos con *80%* de asistencia
   - Derecho a examen ordinario en primera vuelta los alumnos con *70%*
     de asistencia.
@@ -369,9 +392,9 @@ Compromiso:
   - No es lo mismo que trato /formal/.
   - Me parece perfecto que nos /tuteemos/ si se sienten cómodos (o no,
     si no ;-) )
-- Lenguaje correcto, entrar y salir sin estorbar, etc.
-- Comida en clase: No deseable, pero permitida a condición de que no
-  hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.
+- Lenguaje correcto, +entrar y salir sin estorbar+, etc.
+- +Comida en clase: No deseable, pero permitida a condición de que no
+  hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.+
 - Me reservo el derecho a amonestar faltas de respeto /entre
   alumnos/ según amerite.
 
@@ -383,6 +406,6 @@ Repito mis coordenadas:
 - E-mail :: sistop@gwolf.org
 - Ubicación :: Instituto de Investigaciones Económicas UNAM
                (Secretaría Técnica)
-- Teléfono :: 5623-0154 (IIEc-UNAM)
+- Teléfono :: +5623-0154 (IIEc-UNAM)+
 - Página del curso :: http://gwolf.sistop.org/
 - Repositorio :: \small https://github.com/unamfi/sistop-2020-2/

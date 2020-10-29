@@ -12,21 +12,21 @@ def filosofo(id):
 
 def piensa(id):
     # (...)
-    print "%d - Tengo hambre..." % id
+    print("%d - Tengo hambre..." % id)
 
 def levanta_palillos(id):
     palillos[(id + 1) % num].acquire()
-    print "%d - Tengo el palillo derecho" % id
+    print("%d - Tengo el palillo derecho" % id)
     palillos[id].acquire()
-    print "%d - Tengo ambos palillos" % id
+    print("%d - Tengo ambos palillos" % id)
 
 def suelta_palillos(id):
     palillos[(id + 1) % num].release()
     palillos[id].release()
-    print "%d - Sigamos pensando..." % id
+    print("%d - Sigamos pensando..." % id)
 
 def come(id):
-    print "%d - ¡A comer!" % id
+    print("%d - ¡A comer!" % id)
     # (...)
 
 filosofos = []

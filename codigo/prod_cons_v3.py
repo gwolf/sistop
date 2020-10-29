@@ -12,10 +12,10 @@ duracion = {'prod': 0.5, 'cons': 1}
 class Evento:
     def __init__(self, hilo):
         self.ident = random.random()
-        print "Hilo G%d generando evento %1.3f; buffer con %d" % (hilo, self.ident, len(buffer))
+        print("Hilo G%d generando evento %1.3f; buffer con %d" % (hilo, self.ident, len(buffer)))
         time.sleep( duracion['prod'] )
     def process(self, hilo):
-        print "Hilo P%d procesando evento %1.3f" % (hilo, self.ident)
+        print("Hilo P%d procesando evento %1.3f" % (hilo, self.ident))
         time.sleep( duracion['cons'] )
 
 def productor(yo):

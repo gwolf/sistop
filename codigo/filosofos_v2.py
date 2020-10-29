@@ -6,6 +6,6 @@ def levanta_palillos(id):
         palillo1 = palillos[(id + 1) % num]
         palillo2 = palillos[id]
     palillo1.acquire()
-    print "%d - Tengo el primer palillo" % id
+    print("%d - Tengo el primer palillo" % id)
     palillo2.acquire()
-    print "%d - Tengo ambos palillos" % id
+    print("%d - Tengo ambos palillos" % id)

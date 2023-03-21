@@ -1,42 +1,70 @@
 #!/usr/bin/ruby
 # coding: utf-8
-filename = ARGV.shift or raise Exception, 'Specify a file with the output of e2fsdump!'
+require 'chunky_png'
+
+filename = ARGV.shift or raise Exception, 'Specify a file with the output of dumpe2fs!'
 width = ARGV.shift.to_i
 width = 1024 if width==0
-
-fh = open(filename, 'r')
-
-group = nil
-blksize = nil
-@map = []
+@debug = ARGV.shift.to_i rescue 0
 
 def fill(from, to, with)
   (to - from + 1).times {|b| @map[from+b] = with}
 end
 
-fh.readlines.each do |lin|
+def log(level, what)
+  return unless level <= @debug
+  puts what
+end
+
+log(0, 'Starting! Debugging level %d.' % @debug)
+
+group = nil
+blksize = nil
+@map = ''
+
+log(0, 'Processing data file %s' % [filename])
+fh = open(filename, 'r')
+
+fh.readlines.each_with_index do |lin,idx|
+  log(2, group.nil? ? 'Line %s, initial declarations' % [idx] :
+           'Line %s, group %s' % [idx,group])
+
   lin =~ /^Block size:\s+(\d+)/ && blksize = $1.to_i
   lin =~ /^Group (\d+):/ && group = $1.to_i
+  # We really need to know the size of the string before entering each
+  # of the groups (to create a suitably sized string)'
+  #
+  # The initialization is made to the only non-explicit element in
+  # dumpe2fs' output, 'D' (used data sector).
+  if lin =~ /Block count:\s+(\d+)/
+    blks = $1.to_i
+    @map = 'D' * blks
+    log(1, 'Block count: %d' % blks)
+  end
 
   if lin =~ /^\s+(Primary|Backup) superblock at (\d+), Group descriptors at (\d+)-(\d+)$/
     type, sb, from, to = $1, $2.to_i, $3.to_i, $4.to_i
     @map[sb] = (type == 'Primary') ? 'S' : 's'
     fill(from, to, 'G')
+    log(2, '   Superblock at %d, group descriptors at %d-%d' % [sb, from, to])
   end
 
   if lin =~ /^\s+Reserved GDT blocks at (\d+)-(\d+)$/
     from, to = $1.to_i, $2.to_i
     fill(from, to, 'R')
+    log(2, '   Reserved GDT blocks %s-%s' % [from, to])
   end
 
   if lin =~ /^\s+(Block|Inode) bitmap at (\d+)/
     type, pos = $1, $2.to_i
     @map[pos] = (type == 'Block') ? 'B' : 'I'
+    log(2, '   Bitmap at %d' % pos)
   end
 
   if lin =~ /^\s+Inode table at (\d+)-(\d+)/
     from, to = $1.to_i, $2.to_i
     fill(from, to, 'i')
+    log(2, '   Inode table %d-%d' % [from, to])
   end
 
   if lin =~ /^\s+Free blocks: (.+)/
@@ -44,7 +72,8 @@ fh.readlines.each do |lin|
       free =~ /(^\d+)(?:-(\d+))?/
       from, to = $1.to_i, $2.to_i
       to = from if to == 0
-      fill(from, to, 'v')
+      fill(from, to, 'V')
+      log(2, '   Free blocks %d-%d' % [from, to])
     end
   end
 end
@@ -52,38 +81,36 @@ end
 size = @map.size
 size.times {|p| @map[p].nil? && @map[p]='D'}
 
-fh = open(filename + '.xpm', 'w')
-
-fh.puts '/* XPM */
-static char *test[] = {
-/* columns rows colors chars-per-pixel */'
-fh.puts '"%d %d %d %d ",'  % [width, size/width, 8, 1]
+pngfile = filename + '.png'
+height = (size/width).to_i
+log(0, 'Generating %d×%d PNG file %s. Total data size → %d' % [width, height, pngfile, size])
+png = ChunkyPNG::Image.new(width, height, ChunkyPNG::Color::TRANSPARENT)
 
 # Colores utilizados
-# S Superbloque primario  #ffff00 Amarillo
-# s Superbloque respaldo  #00FF00 Verde
-# R Reservado GDT         #888888 Gris
-# B Bitmap de bloques     #FF0000 Rojo
-# I Bitmap de inodos      #0000FF Azul
-# i Tabla de inodos       #008888 Cyan
-# D Datos                 #000000 Negro
-# v Vacío                 #FFFFFF blanco
-fh.puts '"S c #FFFF00",
-"s c #00FF00",
-"R c #888888",
-"B c #FF0000",
-"I c #0000FF",
-"i c #008888",
-"D c #000000",
-"v c #FFFFFF",
-/* pixels */'
+# S Superbloque primario                Amarillo
+# s Superbloque respaldo                Verde
+# G Descriptor de grupo de superbloque  Magenta
+# R Reservado GDT                       Gris
+# B Bitmap de bloques                   Rojo
+# I Bitmap de inodos                    Azul
+# i Tabla de inodos                     Cyan
+# D Datos                               Negro
+# v Vacío                               Blanco
+colors = { 'S' => ChunkyPNG::Color.rgba(255, 255,   0, 255),
+           's' => ChunkyPNG::Color.rgba(127, 127,   0, 255),
+           'G' => ChunkyPNG::Color.rgba(255,   0, 255, 255),
+           'R' => ChunkyPNG::Color.rgba(127, 127, 127, 255),
+           'B' => ChunkyPNG::Color.rgba(255,   0,   0, 255),
+           'I' => ChunkyPNG::Color.rgba(  0,   0, 255, 255),
+           'i' => ChunkyPNG::Color.rgba(  0, 127, 127, 255),
+           'D' => ChunkyPNG::Color.rgba(  0,   0,   0, 255),
+           'V' => ChunkyPNG::Color.rgba(255, 255, 255, 255)
+         }
 
-fh.print '"'
-size.times do |it|
-  if it % width == 0
-    fh.print "\",\n\"" % it
-  end
-  fh.print @map[it]
+@map.split('').each_with_index do |what, where|
+  x = where % width
+  y = (where / width).to_i
+  png[x,y] = colors[what]
 end
-fh.puts "\"\n};"
-fh.close
+
+png.save(pngfile)

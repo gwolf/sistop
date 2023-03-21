@@ -152,13 +152,13 @@ En inglés, /resource starvation/
 
 ** ¿Por qué es inseguro el ejemplo anterior?
 #+BEGIN_CENTER
-Líneas 5 y 6:
+Líneas 8 y 9:
 #+END_CENTER
 - Espera activa (/spinlock/): Desperdicio de recursos
   - Aunque esta espera activa lleva dentro un =sleep=, sigue siendo
     espera activa.
   - Eso hace que el código sea /poco considerado/ — No que sea inseguro
-- ¿Quién protege a =$bloq= de modificaciones no-atómicas?
+- ¿Quién protege a =bloq= de modificaciones no-atómicas?
 
 ** Las secciones críticas deben protegerse a otro nivel
 - Las primitivas que empleemos para sincronización /deben ser

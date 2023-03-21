@@ -2,74 +2,6 @@
 #+TITLE: Relación con el hardware: Estructuras y funciones básicas
 #+DATE:
 
-* Estructuras básicas
-** Separación /espacio núcleo/ y /espacio usuario/
-- Evolución de los tipos de /modo protegido/ de los sistemas monitores
-  - ¿Dos modos? ¿Más modos?
-- Código con diferentes roles
-  - Lo que hace el sistema operativo vs. las aplicaciones del usuario
-- ¿Cómo se /salta/ entre un modo y otro?
-** Organización del sistema operativo
-#+BEGIN_CENTER
-¿Hasta dónde llega el sistema operativo?
-
-¿Hasta dónde llega el código que corre en modo protegido/espacio
-núcleo?
-#+END_CENTER
-- Monolítico :: Todas las operaciones privilegiadas en el mismo
-                /super-proceso/.
-- Microkernel :: Un núcleo con el mínimo posible de funcionalidad,
-                 descargando en /procesos especiales/ ciertas tareas
-- Híbridos :: Sistemas que entran mayormente en una categoría, pero
-              tienen alguna excepción
-** Monolíticos
-- La mayor parte de los sistemas históricamente
-
-- Más fáciles de diseñar
-  - (¡No es lo mismo que /diseño más simple/!)
-
-- Estructuras compartidas directamente entre subsistemas
-
-- Más rápidos (menos /cambios de contexto/)
-
-- Difícil transición a un entorno multiprocesador
-
-** Monolíticos: Esquematizando
-#+attr_latex: :height 0.7\textheight
-[[../img/dot/diseno_monolitico.png]]
-
-** Microkernel
-- Se delegan a /espacio usuario/ todos los procesos que sea posible
-  - p.ej. sistemas de archivos, planificación de procesos,
-    administración de memoria, dispositivos, modelo de seguridad…
-
-- Código resultante /más limpio/
-  - Interfaces claras, separación de responsabilidades
-  - Seguridad: Verificabilidad, /auto-reparación/
-  - Más fácil pasar a multiprocesador
-
-- Más lentos
-  - Típicamente basados en /paso de mensajes/
-  - Requieren más cambios de contexto
-
-- Más difíciles de implementar correctamente
-
-** Microkernel: Esquematizando
-#+attr_latex: :height 0.7\textheight
-[[../img/dot/diseno_microkernel.png]]
-
-** Diseño híbrido
-- Hay componentes que pueden migrarse limpiamente de un esquema
-  monolítico a uno microkernel
-- Pero hay componentes para los cuales dicha tarea resulta muy cara
-  - Incluso en sistemas diseñados originalmente como microkernel
-- Hoy en día encontraremos concepciones híbridas, con características
-  de ambos
-
-** Diseño híbrido: Esquematizando
-#+attr_latex: :height 0.7\textheight
-   [[../img/dot/diseno_hibrido.png]]
-
 * Fronteras del CPU
 ** ¿Qué es un /sistema von Neumann/?
 - Computadora /de programa almacenado/
@@ -430,6 +362,77 @@ procesador/? (O por /otros procesadores/)
   - Caché de nivel superior (en el procesador) no coherente, cachés
     inferiores coherentes
 
+* Organización del sistema operativo
+
+** Separación /espacio núcleo/ y /espacio usuario/
+- Evolución de los tipos de /modo protegido/ de los sistemas monitores
+  - ¿Dos modos? ¿Más modos?
+- Código con diferentes roles
+  - Lo que hace el sistema operativo vs. las aplicaciones del usuario
+- ¿Cómo se /salta/ entre un modo y otro?
+
+** Organización del sistema operativo
+#+BEGIN_CENTER
+¿Hasta dónde llega el sistema operativo?
+
+¿Hasta dónde llega el código que corre en modo protegido/espacio
+núcleo?
+#+END_CENTER
+- Monolítico :: Todas las operaciones privilegiadas en el mismo
+                /super-proceso/.
+- Microkernel :: Un núcleo con el mínimo posible de funcionalidad,
+                 descargando en /procesos especiales/ ciertas tareas
+- Híbridos :: Sistemas que entran mayormente en una categoría, pero
+              tienen alguna excepción
+** Monolíticos
+- La mayor parte de los sistemas históricamente
+
+- Más fáciles de diseñar
+  - (¡No es lo mismo que /diseño más simple/!)
+
+- Estructuras compartidas directamente entre subsistemas
+
+- Más rápidos (menos /cambios de contexto/)
+
+- Difícil transición a un entorno multiprocesador
+
+** Monolíticos: Esquematizando
+#+attr_latex: :height 0.7\textheight
+[[../img/dot/diseno_monolitico.png]]
+
+** Microkernel
+- Se delegan a /espacio usuario/ todos los procesos que sea posible
+  - p.ej. sistemas de archivos, planificación de procesos,
+    administración de memoria, dispositivos, modelo de seguridad…
+
+- Código resultante /más limpio/
+  - Interfaces claras, separación de responsabilidades
+  - Seguridad: Verificabilidad, /auto-reparación/
+  - Más fácil pasar a multiprocesador
+
+- Más lentos
+  - Típicamente basados en /paso de mensajes/
+  - Requieren más cambios de contexto
+
+- Más difíciles de implementar correctamente
+
+** Microkernel: Esquematizando
+#+attr_latex: :height 0.7\textheight
+[[../img/dot/diseno_microkernel.png]]
+
+** Diseño híbrido
+- Hay componentes que pueden migrarse limpiamente de un esquema
+  monolítico a uno microkernel
+- Pero hay componentes para los cuales dicha tarea resulta muy cara
+  - Incluso en sistemas diseñados originalmente como microkernel
+- Hoy en día encontraremos concepciones híbridas, con características
+  de ambos
+
+** Diseño híbrido: Esquematizando
+#+attr_latex: :height 0.7\textheight
+   [[../img/dot/diseno_hibrido.png]]
+
+
 * Multiprocesamiento
 ** Multiprocesamiento y multiprogramación
 #+BEGIN_CENTER
@@ -520,7 +523,9 @@ Y a cinco decadas, la Ley de Moore se sigue cumpliendo...
   - (Y algunas facilidades adicionales — Por ejemplo, mucho mayor
     caché /dentro del mismo/ chip)
 - El reloj de los procesadores no sólo no ha crecido, sino que en
-  general /se ha reducido/ a cerca de 1GHz
+  general /se redujo/ a cerca de 1GHz
+  - Apenas 15 años más tarde estamos volviendo a esas velocidades (y
+    con menor /protagonismo/)
   - Obviamente, el rendimiento y la densificación siguen avanzando
 - Pero ahora la ganancia de velocidad ya no llega en automático con el
   nuevo hardware
@@ -543,7 +548,7 @@ hablamos de multiprocesamiento simétrico
   transparente
   - Únicamente manteniendo información básica
 - Tienen /acceso a la misma memoria/
-  - Aunque cada uno puede tener su propio caché) \rarrow
+  - Aunque cada uno puede tener su propio caché \rarrow
     *¡Necesidad de coherencia!*
 
 ** Multiprocesamiento asimétrico

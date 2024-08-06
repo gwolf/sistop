@@ -20,14 +20,13 @@ Del curso
 #+end_center
 
 - Página Web :: http://gwolf.sistop.org/
-- Repositorio :: \small https://github.com/unamfi/sistop-2023-2/
+- Repositorio :: \small https://github.com/unamfi/sistop-2025-1/
 
 ** Horario, calendario
 - Martes y jueves
 - 17:30 a 19:30
-- Salón A-201
-  - En caso de ser necesario, videoconferencia en
-    https://clase.sistop.unam.mx/sistop-2023-1
+- Videoconferencia en
+    https://salon.sistop.unam.mx/sistop-2025-1
 - 64 horas clase en total
   - No nos toca /perder/ clases por feriados en este semestre.
 - La evaluación principal será con trabajos prácticos /en la medida de
@@ -81,7 +80,7 @@ Lectura en inglés
 - Los encontrarán con frecuencia en su vida diaria/futura
 - Pero para aprender...
 #+beamer: \pause
-#+latex: \centering \vskip 1em {\Large ¡Tarea!} \vskip 1em
+#+latex: \centering \vskip 1em {\Large ¡Tarea!} (bueno... ¡Lectura!) \vskip 1em
 
 Leer el texto [[http://www.joelonsoftware.com/articles/Biculturalism.html][/Biculturalism/, de Joel Spolsky]] (2003) para discutir en
 clase.
@@ -179,10 +178,10 @@ pueden ser estudiados de forma aislada.
 * Bibliografía
 
 ** Fundamentos de Sistemas Operativos
-#+latex: \begin{columns}\begin{column}{0.35\textwidth}
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
 #+attr_latex: :height 15em
 [[../img/pres/libro_fund_sist_op.jpg]]
-#+latex: \end{column}\begin{column}{0.6\textwidth}
+#+latex: \end{column}\begin{column}{0.65\textwidth}
 - Libro en el que participé como autor y coordinador
 - [[http://sistop.org][Fundamentos de Sistemas Operativos]]
 - Con /licenciamiento libre/ → ¡Descárguenlo y compártanlo!
@@ -235,10 +234,10 @@ Disponible en línea desde [[http://pages.cs.wisc.edu/~remzi/OSTEP][el sitio Web
 capítulo, y a la venta tanto [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-softcover.html][impreso]] como [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-electronic.html][en un sólo PDF]].
 
 ** Pero... ¡Toma nota!
-- De todos modos, /sugiero fuertemente que cada quién tome notas/
+- De todos modos, /sugiero fuertemente que cada quién tome notas/ de forma
+  individual
   - Ayuda al proceso de aprendizaje
   - Siempre entenderás mejor las cosas en tus propias palabras
-  - No está sujeto a que se /caiga/ mi servidor
 
 ** Sitio Web de la materia
 #+BEGIN_CENTER
@@ -250,15 +249,39 @@ Encontrarás:
 - Temas sugeridos para las exposiciones (las abordamos en breve)
 - Liga al material /formal/
 
-** Depósito en GitHub
+** Depósito en GitHub y sistema Moodle
+Usaremos dos servicios para entregas y evaluación:
+#+begin_export latex
+\begin{columns}
+\begin{column}{0.1\textwidth}
+\includegraphics[width=\textwidth]{../img/github.png}
+\vskip 0.5\textheight
+\includegraphics[width=\textwidth]{../img/moodle.png}
+\end{column}
+\begin{column}{0.9\textwidth}
+
+\centering {\Large GitHub}
+
+\url{http://github.com/unamfi/sistop-2025-1}
+
+#+end_export
 - Entrega de tareas, prácticas, exposiciones y proyectos
   /exclusivamente/ mediante el /depósito Git/, en la plataforma
   /GitHub/
 - Entorno de desarrollo colaborativo
 - Referente para el desarrollo de software (millones de proyectos activos)
-#+BEGIN_CENTER
-[[http://github.com/unamfi/sistop-2023-2]]
-#+END_CENTER
+#+begin_export latex
+\vskip0.5em \hline \vskip0.5em
+
+\centering {\Large Moodle}
+
+\url{http://docencia.iiec.unam.mx/}
+#+end_export
+- Aplicación y evaluación de exámenes parciales
+#+begin_export latex
+\end{column}
+\end{columns}
+#+end_export
 
 * Normas del grupo
 ** Criterios de evaluación
@@ -287,7 +310,7 @@ Compromiso:
   - O, por lo menos, explicar claramente si no puedo entregarlos a
     tiempo (¡y apurarme!)
 - Tareas, proyectos y exámenes parciales son para aprender. /Debo
-  entregarlos explicando cualquier error/.
+  entregarlos explicando cualquier punto débil/.
 - Debo (por reglamento) conservar los exámenes finales. Les haré
   llegar copias en forma electrónica tan pronto termine de
   calificarlos.
@@ -326,7 +349,7 @@ Compromiso:
 #+begin_center
 *¡La práctica 1 está lista para que la hagas!*
 
-Entrega: 2023.02.22
+Entrega: 2025.08.13
 #+end_center
 
 
@@ -336,11 +359,8 @@ Entrega: 2023.02.22
 - Pueden desarrollarse de forma individual o en equipo de 2 personas
 - Expondrán sus proyectos ante el grupo o presentarán a sus alumnos
   videos exponiendo sus temas (dependiendo de la /realidad/)
-  - Exposiciones de \approx 15 minutos
-  - Sesión breve de preguntas durante la clase
-- En el sitio Web de la materia hay una lista de temas /sugeridos/
-  - Pero vale más (incluso en calificación) el desarrollo de temas de
-    su interés, con un enfoque original
+  - Videos de \approx 15 minutos
+  - Espacio para preguntas y respuestas de los compañeros
 
 ** Autoría de lo que me entreguen
 - *Todo fraude puede hasta causar baja*
@@ -349,12 +369,12 @@ Entrega: 2023.02.22
   - ¿Trabajo de investigación? ¡Evítense problemas! Nada de /copiar y
     pegar/.
     - Es /muy fácil/ detectar el copiado-y-pegado
-    - Lo hago frecuentemente.
+    - Exposiciones y proyectos, verificadas por /Compilatio.net/ buscando
+      similitudes y (ab)uso de LLMs.
   - ¿Repositorio de semestres anteriores de la materia?
     - Pueden usarlo para /inspiración/, para obtener ideas
     - Es /trivial/ detectar código copiado...
-    - No lo hagan. Si copian un fragmento, citen/den atribución
-      correctamente.
+    - Si copian un fragmento, citen/atribuyan correctamente.
 
 ** Toma de asistencia
 - *Se tomará asistencia* cada sesión. La asistencia a clases *es
@@ -367,20 +387,23 @@ Entrega: 2023.02.22
 - Sólo tendrán derecho a exención los alumnos con *80%* de asistencia
   - Derecho a examen ordinario en primera vuelta los alumnos con *70%*
     de asistencia.
-
-** Normas de convivencia
-- Respeto mutuo ante todo — Incluyendo a uno mismo y al grupo
-  - No es lo mismo que trato /formal/.
-  - Me parece perfecto que nos /tuteemos/ si se sienten cómodos (o no,
-    si no ;-) )
-- Lenguaje correcto, entrar y salir sin estorbar, etc.
-- +Comida en clase: No deseable, pero permitida a condición de que no
-  hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.+
-  - Este semestre, por favor sin comida...
-- Este semestre *todavía tenemos que usar cubrebocas*, todo el tiempo
-  que estemos en el salón.
-- Me reservo el derecho a amonestar faltas de respeto /entre
-  alumnos/ según amerite.
+- Toma de asistencia mediante participación en el /chat/ de la videoconferencia
+  - (basta con decir “hola” una vez durante la sesión)
+  - Les voy a recordar hacerlo
+  - Ojo: La asistencia la /toma/ un programita mío con un pelito de heurística,
+    pero sin inteligencia... ¡Usen su nombre real al conectarse!
+    
+# ** Normas de convivencia
+# - Respeto mutuo ante todo — Incluyendo a uno mismo y al grupo
+#   - No es lo mismo que trato /formal/.
+#   - Me parece perfecto que nos /tuteemos/ si se sienten cómodos (o no,
+#     si no ;-) )
+# - Lenguaje correcto, entrar y salir sin estorbar, etc.
+# - +Comida en clase: No deseable, pero permitida a condición de que no
+#   hagan ruido, no moleste a terceros (¡olores!) y no dejen basura.+
+#   - Este semestre, por favor sin comida...
+# - Me reservo el derecho a amonestar faltas de respeto /entre
+#   alumnos/ según amerite.
 
 ** Quedo a sus órdenes
 #+BEGIN_CENTER
@@ -392,4 +415,4 @@ Repito mis coordenadas:
                (Secretaría Técnica)
 - Teléfono :: 5623-0154 (IIEc-UNAM)
 - Página del curso :: http://gwolf.sistop.org/
-- Repositorio :: \small https://github.com/unamfi/sistop-2023-2/
+- Repositorio :: \small https://github.com/unamfi/sistop-2025-1/

@@ -1,7 +1,9 @@
 #+SETUPFILE: ../setup_laminas.org
 #+TITLE: Sistemas Operativos (FI-UNAM 0840): Presentación del curso
 #+DATE:
-
+#+latex_header: \usepackage{fontawesome}
+#+latex_header: \usepackage{xcolor}
+#+latex_header: \newcommand{\imgcred}[1]{ \,\hfill \tiny \textcolor{gray}{img:} \faCreativeCommons\, \textcolor{gray}{#1} }
 * Punto de partida
 
 ** Mis coordenadas
@@ -20,25 +22,31 @@ Del curso
 #+end_center
 
 - Página Web :: http://gwolf.sistop.org/
-- Repositorio :: \small https://github.com/unamfi/sistop-2025-1/
+- Repositorio :: \small https://github.com/unamfi/sistop-2025-2/
 
 ** Horario, calendario
 - Martes y jueves
-- 17:30 a 19:30
+- 17:00 a 19:00
 - Videoconferencia en
-    https://salon.sistop.unam.mx/sistop-2025-1
+    https://salon.sistop.unam.mx/sistop-2025-2
 - 64 horas clase en total
-  - No nos toca /perder/ clases por feriados en este semestre.
-- La evaluación principal será con trabajos prácticos /en la medida de
-  lo posible/
-  - Posiblemente apoyándonos en un examen parcial (detalles más adelante)
+  - Pero perdimos dos clases por el /asunto inscripciones/ \faFrownO
+  - Y tenemos los feriados del 1 y 15 de mayo \pause
+  - $\Rightarrow$ *56 horas efectivas* de clase
+# - La evaluación principal será con trabajos prácticos /en la medida de
+#   lo posible/
+#   - Posiblemente apoyándonos en un examen parcial (detalles más adelante)
 
 * Encuadre del curso
 
-** El curso dentro de la currícula
-\centering Plan 2016
-#+attr_latex: :width 0.5\textwidth
-[[../img/pres/mapa_curricular_2016.png]]
+** El curso dentro de la currícula: Plan 2016/2023
+#+latex: \begin{columns} \begin{column}{0.5\textwidth}
+#+attr_latex: :width 0.9\textwidth
+[[../img/pres/mapa_curricular_2023.png]]
+#+latex: \end{column} \begin{column}{0.5\textwidth} \scriptsize \, \vskip 15em
+La única diferencia entre ambos planes es la asignatura /«Igualdad de género en
+Ingeniería»/ en primer semestre para el plan 2023.
+#+latex: \end{column} \end{columns}
 
 ** Seriación y materias relacionadas
 - Seriación obligatoria: /Estructura y programación de computadoras/
@@ -101,8 +109,9 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
   - ¿Aprender algo para lo que no tengo uso? Aprendizaje destinado al
     olvido/fracaso
 - Usuario, promotor y desarrollador de software libre
-  - Promotor y organizador de congresos de tinte académico y
-    construcción de comunidades en México desde el 2002
+  - Uso /exclusivamente/ software libre para mi trabajo desde 1996
+  - Promotor y organizador de congresos de tinte académico y construcción de
+    comunidades en México desde el 2002
   - Desarrollador del proyecto Debian desde el 2003
   - Profesor de asignatura en la FI desde el semestre 2013-2
 
@@ -119,62 +128,121 @@ http://www.joelonsoftware.com/articles/Biculturalism.html
   cualquier área de desempeño profesional
 
 ** ¿Qué espero que logremos?
-#+BEGIN_CENTER
-\scriptsize
-Adicionalmente al objetivo formal...
-#+END_CENTER
-- El alumno conocerá el desarrollo histórico de los sistemas
-  operativos, lo que le llevará a comprender la razón de ser y el
-  funcionamiento general de los diversos componentes de los sistemas
-  operativos actuales.
-- Aplicando el conocimiento obtenido sobre el funcionamiento general
-  de los sistemas operativos, el alumno podrá sacar mejor provecho de
-  la computadora.
-  - Al emplearla como usuario final, al administrarla y al programar
-- El alumno conocerá las principales herramientas que ofrecen los
-  sistemas operativos libres para el monitoreo y administración.
+
+#+begin_export latex
+  { \centering \scriptsize Adicionalmente al objetivo formal... }
+
+   \begin{columns}
+     \begin{column}{0.3\textwidth}
+     \includegraphics[width=0.9\textwidth]{../img/pres/computo_maya.png}
+     \end{column}
+     \begin{column}{0.7\textwidth} \small
+       El alumno conocerá el \textit{desarrollo histórico} de los sistemas operativos, lo
+       que le llevará a comprender la \textit{razón de ser} y el \textit{funcionamiento general}
+       de los diversos componentes de los \textit{sistemas operativos actuales}.
+     \end{column}
+   \end{columns}
+   \vskip -0.5em
+   \pause
+
+   \begin{columns}
+     \begin{column}{0.85\textwidth} \small
+       Aplicando el conocimiento obtenido sobre el funcionamiento general de los
+       sistemas operativos, el alumno podrá \textit{sacar mejor provecho} de la
+       computadora.
+
+       \scriptsize $\Rightarrow$ Al emplearla como usuario final, al administrarla y al programar
+     \end{column}
+     \begin{column}{0.15\textwidth}
+     \includegraphics[width=\textwidth]{../img/pres/foco_feliz.png}
+     \end{column}
+   \end{columns}
+   \pause
+
+   \begin{columns}
+     \begin{column}{0.2\textwidth}
+     \includegraphics[width=\textwidth]{../img/pres/herramientas.png}
+     \end{column}
+     \begin{column}{0.8\textwidth} \small
+       El alumno conocerá las \textit{principales herramientas} que ofrecen los
+       \textit{sistemas operativos libres} para el \textit{monitoreo y administración}.
+     \end{column}
+   \end{columns}
+
+   \imgcred{ Dall•e; blog Arturos (Basiliskus); SVG SİLH }
+   % https://mediateca.inah.gob.mx/repositorio/islandora/object/codice:1648/datastream/TN/view
+   % https://basiliskus.blogspot.com/2011/11/cambiando-focos-xd-2.html
+   % https://svgsilh.com/es/image/144960.html
+#+end_export
 
 ** ¿Qué espero que logremos?
 #+BEGIN_CENTER
 /Desmitificar/ al uso del cómputo
 #+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.7\textwidth}
 - ¿Por qué se /congela/ la computadora?
 - ¿Qué es eso de /expulsar con seguridad/ una unidad?
 - ¿Por qué una computadora con más memoria /parece ser/ más rápida?
 - ¿Qué pasa si reinicias y lo vuelves a intentar?
 - ...
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/quest_think.png]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{FreePNGimg.com}
+# https://freepngimg.com/png/84284-silhouette-icons-wallpaper-question-mark-computer-logo
 
 * Estructura del curso
 ** Unidades
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/escalones_piedra.jpg]]
+#+latex: \end{column} \begin{column}{0.5\textwidth}
 1. Introducción a los sistemas operativos
 2. Relación con el hardware: Estructuras y funciones básicas
 3. Administración de memoria
 4. Administración de procesos
 5. Planificación de procesos
 6. Sistemas de archivos
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{PublicDomainPictures.net}
+# https://www.publicdomainpictures.net/pictures/160000/nahled/stone-stair-steps.jpg
 
 ** Temas transversales
 #+BEGIN_CENTER
 El temario propuesto de la Facultad contempla los siguientes temas
 como unidades independientes:
 #+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.65\textwidth}
 1. Sistemas de entrada/salida
 2. Sistemas distribuidos
 3. Seguridad y medidas de desempeño
+#+latex: \end{column} \begin{column}{0.35\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/trama-urdimbre.png]]
+#+latex: \end{column} \end{columns}
 #+BEGIN_CENTER
 Estos temas serán abordados de forma /transversal/, esto es,
 son temas que implican a los demás subsistemas y considero que no
 pueden ser estudiados de forma aislada.
 #+END_CENTER
+#+latex: \imgcred{El Rincón de CelesteCielo}
+# https://elrincondecelestecielo.blogspot.com/2015/03/algunos-conceptos-de-telas-en-tejido-de.html
 
 ** Adicionalmente...
+#+latex: \begin{columns}\begin{column}{0.65\textwidth}
 - Presentaré algunos temas relevantes a la materia más cercanos a la
   actualidad en el campo
 - Buscaremos presentar ejemplificando
   - Problemáticas actuales
   - Detalles de implementación
   - Estado del arte
-
+#+latex: \end{column} \begin{column}{0.35\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/post-its.jpg]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Andy Armstrong}
+# https://www.flickr.com/photos/andyarmstrong/4385801038/
 * Bibliografía
 
 ** Fundamentos de Sistemas Operativos
@@ -234,27 +302,24 @@ Disponible en línea desde [[http://pages.cs.wisc.edu/~remzi/OSTEP][el sitio Web
 capítulo, y a la venta tanto [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-softcover.html][impreso]] como [[http://pages.cs.wisc.edu/~remzi/OSTEP/book-electronic.html][en un sólo PDF]].
 
 ** Pero... ¡Toma nota!
+#+latex: \begin{columns}\begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/toma_nota.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
 - De todos modos, /sugiero fuertemente que cada quién tome notas/ de forma
   individual
   - Ayuda al proceso de aprendizaje
   - Siempre entenderás mejor las cosas en tus propias palabras
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{pxhere.com}
+# https://pxhere.com/es/photo/927327
 
-** Sitio Web de la materia
-#+BEGIN_CENTER
-http://gwolf.sistop.org/
-
-Encontrarás:
-#+END_CENTER
-- Listas de asistencia, calificaciones
-- Temas sugeridos para las exposiciones (las abordamos en breve)
-- Liga al material /formal/
-
-** Depósito en GitHub y sistema Moodle
+** Depósito \faGit, sistema Moodle
 Usaremos dos servicios para entregas y evaluación:
 #+begin_export latex
 \begin{columns}
 \begin{column}{0.1\textwidth}
-\includegraphics[width=\textwidth]{../img/github.png}
+\huge \faGithubAlt
 \vskip 0.5\textheight
 \includegraphics[width=\textwidth]{../img/moodle.png}
 \end{column}
@@ -262,13 +327,11 @@ Usaremos dos servicios para entregas y evaluación:
 
 \centering {\Large GitHub}
 
-\url{http://github.com/unamfi/sistop-2025-1}
+\url{http://github.com/unamfi/sistop-2025-2}
 
 #+end_export
-- Entrega de tareas, prácticas, exposiciones y proyectos
-  /exclusivamente/ mediante el /depósito Git/, en la plataforma
-  /GitHub/
-- Entorno de desarrollo colaborativo
+- Entrega de tareas, prácticas, exposiciones y proyectos /exclusivamente/
+  mediante el /depósito Git/ \faCodeFork, en la plataforma /GitHub/ \faGithub
 - Referente para el desarrollo de software (millones de proyectos activos)
 #+begin_export latex
 \vskip0.5em \hline \vskip0.5em
@@ -278,26 +341,31 @@ Usaremos dos servicios para entregas y evaluación:
 \url{http://docencia.iiec.unam.mx/}
 #+end_export
 - Aplicación y evaluación de exámenes parciales
+- Cuestionarios diarios
 #+begin_export latex
 \end{column}
 \end{columns}
 #+end_export
 
-* Normas del grupo
+* ¿Y cómo es la evaluación?
 ** Criterios de evaluación
-|----------------------+------|
-| Proyectos y exámenes |  60% |
-| Tareas y ejercicios  |  30% |
-| Exposiciones         |  20% |
-|----------------------+------|
-| Máximo posible       | 110% |
-|----------------------+------|
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+|----------------------+-----|
+| Proyectos y exámenes | 50% |
+| Tareas y ejercicios  | 25% |
+| Exposiciones         | 15% |
+| Participación        | 10% |
+|----------------------+-----|
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/onizuka.png]]
+#+latex: \end{column} \end{columns}
 - Exención de examen ordinario con calificación global de 8.5 y 100%
   de tareas entregadas
-  - Si la mayor parte del semestre se desarrolla a distancia,
-    posiblemente reevaluaré los requisitos
-- En caso de obtener más del 100% /final/, la calificación se recorta
-  al máximo definido
+- Ojo, no será imposible obtener más del 100% /final/. La calificación se
+  recorta al máximo definido \faSmileO
+#+latex: \imgcred{aniDB}
+# https://anidb.net/tag/1544/chartb
 
 ** Acerca de la evaluación
 #+BEGIN_CENTER
@@ -305,94 +373,171 @@ Compromiso:
 
 ¡Entregar tareas, trabajos y exámenes corregidos a la brevedad!
 #+END_CENTER
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/calificando.png]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
 - _Intento_ tener todo calificado al martes inmediato siguiente a su
   aplicación
   - O, por lo menos, explicar claramente si no puedo entregarlos a
     tiempo (¡y apurarme!)
 - Tareas, proyectos y exámenes parciales son para aprender. /Debo
   entregarlos explicando cualquier punto débil/.
-- Debo (por reglamento) conservar los exámenes finales. Les haré
-  llegar copias en forma electrónica tan pronto termine de
-  calificarlos.
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Biblioteca de Psicología y Logopedia}
+# https://bibliotecapsicologo.blogspot.com/2014/08/empezamos-el-curso-con-nuevos.html
 
 ** Proyectos
-- Desarrollo /propio y original/ que integre el contenido visto en
-  determinadas unidades
+- Desarrollo /propio y original/ que integre el contenido visto en determinadas
+  unidades
   - Introducción / Relación con HW
   - Administración / planificación de procesos
   - Sistemas de archivos
-- La fecha de entrega será anunciada con por lo menos una semana de
-  antelación
-- Desarrollados de forma individual o en equipos de dos integrantes
+#+latex: \begin{columns}\begin{column}{0.55\textwidth}
+- La fecha de entrega será anunciada con por lo menos dos semanas de antelación
+- Desarrollados de forma individual o en equipos de dos integrantes (a elección
+  de ustedes)
+#+latex: \vskip 1em \, \end{column} \begin{column}{0.45\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/programa_lego.png]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Legography}
+# https://legography.blogspot.com/2010/05/pair-programming.html
 
 # ** Examen parcial
 # - Planeo realizar únicamente un examen parcial, cubriendo
 #   principalmente la unidad /Administración de memoria/
 # - La fecha será anunciada con por lo menos una semana de antelación
 
-** Tareas /obligatorias/
+** Tareas
 - La entrega de tareas es /obligatoria/
   - Las tareas se consideran entregadas /el día indicado, o antes si
     les resulta imposible/
-  - Tareas entregadas fuera de tiempo *no tienen derecho a
-    calificación* (aunque sí a contar como entregadas, y a revisión de
-    conceptos)
+  - Fuera de tiempo *no tienen derecho a calificación* (aunque sí a contar como
+    entregadas, y a revisión de conceptos)
 - Requisito para la exención: *80%* de tareas
-- Requisito para presentar examen final en primera vuelta: *60%* de tareas
+- Para presentar examen final en primera vuelta: *60%* de tareas
+#+attr_latex: :width 0.85\textwidth
+[[../img/pres/haciendo_tarea.png]]
+#+latex: \imgcred{Pikist}
+# https://www.pikist.com/free-photo-sffpd
 
 ** Prácticas
 - Auxiliares para dominar herramientas o conceptos específicos
 - Se califican dentro del rubro de /tareas/
 - Son opcionales, se /agregan/ a la calificación obtenida
   - Cuatro prácticas $\Rightarrow$ una tarea con 10
-\pause
-#+begin_center
+#+latex: \begin{columns}\begin{column}{0.4\textwidth} \only<2>{ \centering
 *¡La práctica 1 está lista para que la hagas!*
 
-Entrega: 2025.08.13
-#+end_center
+Entrega: 2025.02.11
 
+#+latex: } \end{column} \begin{column}{0.6\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/trab_equipo.jpg]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Pxhere.com}
+# https://pxhere.com/es/photo/1562525
+
+** Participación
+#+latex: \begin{columns}\begin{column}{0.17\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/mano_alzada.jpg]]
+#+latex: \end{column} \begin{column}{0.83\textwidth}
+- Es cierto, no estamos /cara a cara/... Y se complica \faFrownO
+  - Pueden hacerlo escribiendo en el chat (que es parte de la videoconferencia)
+  - Pueden hablar empleando su micrófono (¡incluso cámara!)
+  - No me molesta que interrumpan una exposición para participar... ¡faltaba
+    más!
+- Ocasionalmente preguntaré expresamente a alguno de los alumnos (p.ej. tras
+  lecturas / entregas)
+- Al término de cada sesión, breve /encuesta/ en el sistema /Moodle/
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{DucDigital (Flickr)}
+# https://www.flickr.com/photos/ducdigital/3011652637
 
 ** Exposiciones / Proyectos de investigación
-- Las exposiciones deben buscar anclar la teoría que estamos
-  estudiando (o temas relacionados) con la actualidad en el campo
-- Pueden desarrollarse de forma individual o en equipo de 2 personas
-- Expondrán sus proyectos ante el grupo o presentarán a sus alumnos
-  videos exponiendo sus temas (dependiendo de la /realidad/)
-  - Videos de \approx 15 minutos
-  - Espacio para preguntas y respuestas de los compañeros
+#+latex: \begin{columns}\begin{column}{0.5\textwidth}
+- Las exposiciones deben buscar anclar la teoría (o temas relacionados) con la
+  actualidad en el campo
+- De forma individual o en equipo de 2 personas
+- Exposición en video
+  - Tema de su elección, relacionado con la materia
+  - \approx 15 minutos
+  - Ángulo técnico, no descriptivo
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+[[../img/pres/expo_alumno.jpg]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Diseño Curricular y Aulas Digitales,Aitor Alonso García}
+# https://dcyadeaitor19.blogspot.com/2014/02/exposiciones-aula-1222014.html
 
-** Autoría de lo que me entreguen
-- *Todo fraude puede hasta causar baja*
-  - Dependiendo de la situación; aplica en tareas, proyectos, exámenes,
-    ejercicios...
-  - ¿Trabajo de investigación? ¡Evítense problemas! Nada de /copiar y
-    pegar/.
-    - Es /muy fácil/ detectar el copiado-y-pegado
-    - Exposiciones y proyectos, verificadas por /Compilatio.net/ buscando
-      similitudes y (ab)uso de LLMs.
-  - ¿Repositorio de semestres anteriores de la materia?
-    - Pueden usarlo para /inspiración/, para obtener ideas
-    - Es /trivial/ detectar código copiado...
-    - Si copian un fragmento, citen/atribuyan correctamente.
+
+** Autoría de las entregas
+*Todo fraude puede (hasta) causar baja*
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
+[[../img/pres/honestidad.jpg]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
+- Dependiendo de la situación; aplica en tareas, proyectos, exámenes,
+  ejercicios...
+- ¿Trabajo de investigación? ¡Evítense problemas! Nada de /copiar y
+  pegar/.
+  - Exposiciones y proyectos, verificadas por /Compilatio.net/ buscando
+    similitudes y (ab)uso de LLMs.
+#+latex: \end{column} \end{columns}
+- ¿Repositorio de semestres anteriores de la materia?
+  - Pueden usarlo para /inspiración/, para obtener ideas
+  - Es /trivial/ detectar código copiado...
+  - Si copian un fragmento, citen/atribuyan correctamente.
+#+latex: \imgcred{Informática para Educación Especial}
+# https://informaticaparaeducacionespecial.blogspot.com/2015/09/nueva-licencia-creative-common-40.html
+
+** ¿Y el uso de LLMs / GenAI / GPT / como-se-llame?
+#+latex: \begin{columns}\begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/IA_prog.jpg]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
+- No podemos cerrarnos a su existencia (¡y conveniencia!)
+- Pero tampoco permitir que /anulen/ al esfuerzo en las consignas
+- Aprovechemos y exploremos — pero con *honestidad académica* y usándolos para
+  *mejorar* (no reemplazar) nuestro esfuerzo
+#+latex: \end{column} \end{columns}
+
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
+- Somos todos nuevos usándolos, y tenemos que aprender
+- Algunos somos más bien /escépticos/. ¡Pero no hay que cerrarnos! \faSmileO
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/IA_y_alumnos.jpg]]
+#+latex: \end{column} \end{columns}
+
+#+latex: \imgcred{Tecnoenseñando; PublicDomainPictures.net}
+# https://profesoracarolinapr.blogspot.com/2019/05/recursos-para-programar-con-scratch.html
+# https://www.publicdomainpictures.net/pictures/590000/velka/never-stop-learning-1709615354ODG.jpg
 
 ** Toma de asistencia
-- *Se tomará asistencia* cada sesión. La asistencia a clases *es
-  obligatoria*.
+#+latex: \begin{columns}\begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/pres/pase_lista.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+*Se tomará asistencia* cada sesión. La asistencia a clases *es obligatoria*.
+#+latex: \end{column} \end{columns}
+
 # - Puntualidad. 15 minutos pasado el inicio de la clase /no se cuenta
 #   asistencia/.
 #   - Se permite la entrada y se puede participar
 #   - Salir a media clase por un tiempo prolongado /causa que se anule
 #     la asistencia/
-- Sólo tendrán derecho a exención los alumnos con *80%* de asistencia
-  - Derecho a examen ordinario en primera vuelta los alumnos con *70%*
-    de asistencia.
+- Derecho a exención: *$\geq 80\%$* de asistencia
+  - Derecho a examen ordinario 1ª vuelta *$\geq 70\%$*  de asistencia.
 - Toma de asistencia mediante participación en el /chat/ de la videoconferencia
   - (basta con decir “hola” una vez durante la sesión)
   - Les voy a recordar hacerlo
-  - Ojo: La asistencia la /toma/ un programita mío con un pelito de heurística,
-    pero sin inteligencia... ¡Usen su nombre real al conectarse!
-    
+  - Ojo: La asistencia la /toma/ un programita mío, con heurística sin
+    inteligencia... ¡Usen su nombre real al conectarse!
+
+#+latex: \imgcred[erran.eus]
+# https://erran.tok-md.com/argazkiak/Umg/ikasleakpizarra.jpg
+
 # ** Normas de convivencia
 # - Respeto mutuo ante todo — Incluyendo a uno mismo y al grupo
 #   - No es lo mismo que trato /formal/.
@@ -415,4 +560,4 @@ Repito mis coordenadas:
                (Secretaría Técnica)
 - Teléfono :: 5623-0154 (IIEc-UNAM)
 - Página del curso :: http://gwolf.sistop.org/
-- Repositorio :: \small https://github.com/unamfi/sistop-2025-1/
+- Repositorio :: \small https://github.com/unamfi/sistop-2025-2/

@@ -15,12 +15,17 @@
 - …
 
 ** …¿Qué /no/ es?
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
 - Los programas básicos para administrar archivos
 - La forma en que el usuario /lanza/ programas
 - El ambiente con que interactúa el usuario
   - Entorno gráfico
   - Línea de comando
   - …
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[./environments.png]]
+#+latex: \end{column} \end{columns}
 
 ** ¿Qué brinda al /programador/?
 - Abstracción
@@ -29,14 +34,20 @@
 - Gestión de recursos
 - Aislamiento y protección
 ** Abstracción
-#+begin_center
+\centering
 Proporciona /abstracciones consistentes/ y /simplificaciones/ a los
 procesos del usuario
-#+end_center
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Archivos y directorios
 - /Flujos de caracteres/ (entrada/salida)
 - Dispositivos, conexiones de red, contacto con el /mundo exterior/
 - El concepto mismo de /proceso/
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[./abstraccion.png]]
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Mauricio Aviles: ¿Qué es abstracción?}
+# https://mauricioavilesc.blogspot.com/2017/07/que-es-abstraccion.html
 
 ** Gestión de recursos
 #+begin_center
@@ -46,15 +57,26 @@ ejecución a los diversos procesos
 - Cómo comparten los diversos procesos los recursos existentes (y
   rivales)
 - Políticas de asignación (y recuperación) justas
+#+attr_latex: :width 0.4\textwidth
+[[./adm_recursos.png]]
+#+latex: \imgcred{Unixmen}
+# https://www.unixmen.com/wp-content/uploads/2015/02/monitoring.jpg
 
 ** Aislamiento y protección
 #+begin_center
 Protección de los datos, de los recursos, de los procesos
 #+end_center
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+[[./policia_fantasma.png]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
 - Entre procesos
 - Entre usuarios
 - Ante procesos /mal comportados/
 - Ante procesos maliciosos
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Openclipart}
+# https://openclipart.org/detail/12572/fwd__bubble_hand_drawn-by-rejon-177666
 
 ** Ahora sí… ¿Qué es un sistema operativo?
 - El principal programa que corre en una computadora de propósito
@@ -67,6 +89,16 @@ Protección de los datos, de los recursos, de los procesos
 - Ofrece una infraestructura de gestión, aislamiento y protección de
   recursos
 - Permite la implementación de /entornos operativos/
+
+** Pero antes de continuar...
+#+begin_export latex
+\centering
+{ \Huge Biculturalism \vskip 1.5em
+
+\Large Joel Spolsky \vskip 3em
+
+\normalsize ... Quedamos que hablaríamos al respecto...}
+#+end_export
 
 * Historia y evolución
 
@@ -85,12 +117,22 @@ enfocados a las /inovaciones/ de cada etapa
 - Tiempo de programación \rightarrow tiempo /no productivo/
   \rightarrow desperdicio de recursos
 
+#+attr_latex: :width 0.5\textwidth
+[[./eniac.jpg]]
+#+latex: \imgcred{ochobitshacenunbyte.com}
+# https://www.ochobitshacenunbyte.com/2010/09/18/eniac-el-primer-ordenador-electronico/
+
 ** Sistemas de proceso por lotes (/batch processing/)
+#+latex: \begin{columns} \begin{column}{0.5\textwidth}
 - Los programadores codifican su código en un medio de almacenamiento
   (/tarjetas perforadas/)
 - Entregan los tambaches (/batches/) a los operadores
 - Los operadores cargan secuencialmente los trabajos, entregan los
   resultados conforme se presentan
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+#+attr_latex: :width \textwidth
+[[./tarjetas_perforadas.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** Sistemas monitor en el proceso por lotes
 - Implementan protección evitando la corrupción de /otros trabajos/
@@ -107,6 +149,10 @@ enfocados a las /inovaciones/ de cada etapa
   - Resultados a cinta para posterior impresión
 - Liberando los trabajos más lentos
   - Empleo de equipos /periféricos/ especializados
+#+attr_latex: :width 0.8\textwidth
+[[./spool.jpg]]
+#+latex: \imgcred{Computer History Museum: Reel-to-reel tape machines}
+# https://flickr.com/photos/marc_smith/6246956234
 
 ** Sistemas multiprogramados
 - Diferentes etapas en la vida de un proceso: /limitado por CPU/,
@@ -123,7 +169,11 @@ enfocados a las /inovaciones/ de cada etapa
 - Interacción con el equipo: Se mantiene como el modelo en lotes
 
 ** Sistemas de tiempo compartido
-- 1960s: Sistemas /interactivos/ y /multiusuarios/
+\centering 1960s: Sistemas /interactivos/ y /multiusuarios/
+#+latex: \begin{columns} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[./multi-user-area.jpg]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
 - Manejo de /terminales/ para la interacción (teletipos, CRTs)
 - Abstracciones de almacenamiento: Archivos, directorios en discos
 - Ventajas al programador:
@@ -134,6 +184,9 @@ enfocados a las /inovaciones/ de cada etapa
   - Bibliotecas de sistema
 - Complejidad técnica
   - Requisito de múltiples cambios de contexto por segundo
+#+latex: \end{column} \end{columns}
+#+latex: \imgcred{Germán Poo Camaño}
+# https://www.flickr.com/photos/gpoo/5284908858
 
 ** Tipos de multitarea
 - /Cooperativa/ o /no apropiativa/ :: (cooperative multitasking) Cada
@@ -363,8 +416,8 @@ dispositivos, modos de /hibernación/.
 - Disponibilidad de aplicaciones: /Jardín amurallado/
 
 ** Arquitecturas hardware en boga hoy
-- En escritorios y servidores: Derivada de PC (Intel x86)
-- En dispositivos embebidos ARM (ocasionalmente MIPS; ojo ⇒ OpenRISC)
+- En escritorios y servidores: Derivada de PC (Intel x86); va apareciendo ARM
+- En dispositivos embebidos ARM (ocasionalmente MIPS; ojo ⇒ RISC-V)
   - ARM como alternativa de bajo consumo para servidores
 - Sigue habiendo un importante espacio a controladores que no
   requieren sistema operativo (p.ej. Arduino, ARM perfiles R/M,

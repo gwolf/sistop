@@ -454,6 +454,34 @@ intercambiable, pero muy distintos:
 #+caption: Esquema de la ejecución de tres procesos en un sistema secuencial, multiprogramado, multiprocesado, e híbrido
 [[../img/ditaa/multiproceso_y_multiprogramacion.png]]
 
+** Tipos de multiprogramación
+- /Cooperativa/ o /no apropiativa/ :: (cooperative multitasking) Cada
+     proceso tiene control del CPU hasta que efectúa una /llamada al
+     sistema/ o indica al sistema que puede tomar el control (=yield=)
+
+- /Preventiva/ o /apropiativa/ :: (preemptive multitasking) El reloj
+     del sistema interrumpe la ejecución de cada proceso transfiriendo
+     /forzosamente/ el control al sistema operativo
+
+\pause \centering
+*Ojo:* Es frecuente ver a estos referidos como tipos de /multitarea/
+
+\small (en buena medida, porque el /multiprocesamiento/ no era aún común)
+
+# ** Clases de procesos
+# #+begin_center
+# ¿Qué procesos son más importantes?
+# #+end_center
+# - Procesos interactivos :: El usuario tiene la /experiencia/ de la demora
+# - Del sistema :: Procesos no postergables
+# - Por nivel de usuario :: Hay usuarios más importantes que otros
+# - /…Asegún el sapo/ :: Cada situación puede ameritar una política
+#      diferente
+# #+begin_center
+# Los procesos se organizan en /colas de prioridad/ según las políticas
+# requeridas por cada sistema
+# #+end_center
+
 ** Formalizando un poco
 - /Sólamente/ un sistema multiprocesador tiene la capacidad /real/ de
   atender /simultáneamente/ a diversos procesos

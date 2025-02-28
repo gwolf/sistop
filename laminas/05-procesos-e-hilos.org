@@ -13,16 +13,16 @@
   - Tiene /información de estado/ que indica, entre otras cosas, en
     qué punto va la ejecución.
 
-** ¿Cuando es proceso? ¿Cuándo es tarea?
-- Tarea :: Equivalente a un proceso en un /sistema por lotes/;
-           requiere típicamente menos metainformación.
-#+BEGIN_CENTER
-La distinción proceso-tarea no es del todo clara u objetiva.
-\vfill
-Hay textos que emplean uno u otro término indistintamente
-\vfill
-Nosotros emplearemos siempre el término /proceso/.
-#+END_CENTER
+# ** ¿Cuando es proceso? ¿Cuándo es tarea?
+# - Tarea :: Equivalente a un proceso en un /sistema por lotes/;
+#            requiere típicamente menos metainformación.
+# #+BEGIN_CENTER
+# La distinción proceso-tarea no es del todo clara u objetiva.
+# \vfill
+# Hay textos que emplean uno u otro término indistintamente
+# \vfill
+# Nosotros emplearemos siempre el término /proceso/.
+# #+END_CENTER
 
 ** La ilusión de la concurrencia
 - Un sistema actual nos da la /ilusión/ de ejecución simultánea de
@@ -31,10 +31,9 @@ Nosotros emplearemos siempre el término /proceso/.
   el planificador
 - En un momento dado sólo puede estarse ejecutando un número de
   procesos igual o menor al número de CPUs que tenga el sistema.
+  - $\rightarrow$ Multiprocesamiento + Multiprogramación
 - Esa ilusión tiene grandes costos... Especialmente pensando con
   suficiente velocidad
-
-* El proceso
 
 ** Estados de un proceso
 
@@ -82,8 +81,8 @@ O, ¿Cuánto cuesta un cambio de contexto?
      memoria (páginas o segmentos, dependiendo del sistema
      operativo).
 
-- Estado de E/S :: Listado de dispositivos y archivos asignados que el
-                   proceso tiene /abiertos/ en un momento dado.
+- Estado de E/S :: Dispositivos y archivos asignados que el proceso tiene
+  /abiertos/ en un momento dado.
 
 - Información de contabilidad :: Información de la utilización de
      recursos que ha tenido este proceso
@@ -91,20 +90,59 @@ O, ¿Cuánto cuesta un cambio de contexto?
   - Uso acumulado de memoria y dispositivos
   - etc.
 
+
+** Entonces, ¿cuánto cuesta el cambio de contexto?
+- Podemos aproximar a 1–7 $\mu s$ (0.001–0.007s), /pero todos los que saben
+  dicen que... no aproximemos — que midamos/ \faSmileO
+  #+latex: \vskip 1em {\tiny \href{https://stackoverflow.com/questions/21887797/what-is-the-overhead-of-a-context-switch}{https://stackoverflow.com/questions/21887797/what-is-the-overhead-of-a-context-switch} \\
+  #+latex: \href{https://blog.codingconfessions.com/p/context-switching-and-performance}{https://blog.codingconfessions.com/p/context-switching-and-performance}}
+- Principalmente por costos asociados con memoria
+  - Almacenamiento de registros activos
+  - Invalidación de /caché/
+  - Invalidación y reprogramación de mapas de memoria (/TLB/)
+- Puede parecer establecido y poco cambiante, pero las estrategias han cambiado
+  mucho a últimos años; muchas estrategias /requieren de soporte específico en
+  hardware/ (a nivel sub-arquitectura/generación)
+
+  #+latex: {\tiny \href{https://eli.thegreenplace.net/2018/measuring-context-switching-and-memory-overheads-for-linux-threads/}{https://eli.thegreenplace.net/2018/measuring-context-switching-and-memory-overheads-for-linux-threads/}}
+
+** Creación de procesos: Las llamadas al sistema =fork()= y =exec()=
+- En un sistema Unix, la manera más habitual de crear un nuevo proceso es
+  emplear la llamada al sistema =fork()=
+  - Genera un nuevo proceso con una /copia exacta de la memoria/ del proceso
+    original (/Copy on Write/, /CoW/)
+  - Única diferencia: el resultado de la llamada a =fork()=:
+    - Proceso original (/padre/): PID del proceso hijo (entero positivo)
+    - Proceso nuevo (/hijo/): 0
+    - Entero negativo $\rightarrow$ indica error
+- Frecuentemente se emplea de la mano de una llamada de la familia =exec()=
+  - =execl()=, =execv()=, =execle()=, =execve()=, etc.
+  - Reemplazan el /contenido en memoria/ de un proceso por el /archivo
+    ejecutable/ especificado inicializado como proceso
+
+#+begin_center
+#+latex: \Large $\rightarrow$ ¡Demostración!
+#+end_center
+
 * Hilos
 
 ** El problema con los hilos
 
 #+BEGIN_QUOTE
-Aunque los hilos parecen ser un pequeño paso partiendo del cómputo
-secuencial, de hecho, son un paso inmenso. Descartan las propiedades
-más esenciales y atractivas del cómputo secuencial: Facilidad de
-comprensión, predictabilidad y determinismo. Los hilos, como un modelo
-de computación, son salvajemente no-determinísticos, y el trabajo del
-programador se convierte en /podar/ ese no-determinismo.
+Aunque los hilos parecen ser un pequeño paso partiendo del cómputo secuencial,
+de hecho, son un paso inmenso. \vskip 0.5em
 
-— /El problema con los hilos/, Edward A. Lee, UC Berkeley, 2006
+Descartan las propiedades más esenciales y atractivas del cómputo secuencial:
+Facilidad de comprensión, predictabilidad y determinismo. \vskip 0.5em
+
+Los hilos, como un modelo de computación, son salvajemente no-determinísticos, y
+el trabajo del programador se convierte en /podar/ ese no-determinismo.
 #+END_QUOTE
+
+#+latex: \vskip 2em \small \raggedleft
+— /El problema con los hilos/
+
+Edward A. Lee, UC Berkeley, 2006
 
 ** El peso de los procesos
 - La cantidad de información implicada en un cambio de contexto es
@@ -140,6 +178,7 @@ programador se convierte en /podar/ ese no-determinismo.
 - No requerimos:
   - Registros del CPU
   - Estado de E/S
+  - Mapa de memoria (TLB)
 
 ** Patrones de trabajo: Jefe / trabajador
 - Un hilo tiene una tarea distinta de todos los demás
@@ -176,6 +215,22 @@ programador se convierte en /podar/ ese no-determinismo.
 #+attr_latex: :width \textwidth
 #+caption: Patrón de hilos /Línea de ensamblado/
 [[../img/dot/linea_ensamblado.png]]
+
+** Creación de procesos: La biblioteca =pthreads= (POSIX Threads)
+- Los sistemas POSIX han estandarizado el uso de la biblioteca =pthreads= para
+  el manejo de hilos
+- Cuenta con /bindings/ (exportación de sus funciones para llamada) para
+  prácticamente cualquier lenguaje
+- Creación de hilos: =pthread_create()= / =threading.Thread()= / =Thread.new()=
+  - Recibe la referencia a la /función/ en la que este hilo /existirá/
+  - Entrega referencia a un hilo /inicializado, pero inactivo/ $\rightarrow$
+    =thread.start()= para que inicie su ejecución
+- Finalización de hilos con =thr.join()=
+- Atributos de los hilos $\rightarrow$ =pthread_attr_init()=
+
+#+begin_center
+#+latex: \Large $\rightarrow$ ¡Demostración!
+#+end_center
 
 * Los hilos para el sistema operativo
 

@@ -56,12 +56,14 @@ end
   a veces =(@x + 3) * 2=
   - A veces la impresión ocurre en otro órden: =+**756= o =++1515=
 - Esto porque tenemos una /condición de carrera/ en el acceso a la
-  variable compartida
+  variable compartida =@x=
 
 ** Condición de carrera (Race condition)
-- Error de programación
+- *Error de programación* (sí, siempre)
 - Implica a dos procesos (o hilos)
-- Fallan al comunicarse su estado mutuo
+- Fallan al comunicarse su /estado mutuo/
+  - Al manejar algún /recurso compartido/ (variables, archivos, dispositivos,
+    ...)
 - Lleva a /resultados inconsistentes/
   - Problema muy común
   - Difícil de depurar
@@ -138,7 +140,7 @@ En inglés, /resource starvation/
   def asigna_asiento():
       global capacidad, proximo_asiento, bloq
       while bloq:
-	  sleep(0.1)
+	  pass
       bloq=True
       if proximo_asiento < capacidad:
 	  asignado = proximo_asiento
@@ -155,9 +157,8 @@ En inglés, /resource starvation/
 Líneas 8 y 9:
 #+END_CENTER
 - Espera activa (/spinlock/): Desperdicio de recursos
-  - Aunque esta espera activa lleva dentro un =sleep=, sigue siendo
-    espera activa.
   - Eso hace que el código sea /poco considerado/ — No que sea inseguro
+  - En un sistema multiprocesador, afecta al sistema completo \faFrown
 - ¿Quién protege a =bloq= de modificaciones no-atómicas?
 
 ** Las secciones críticas deben protegerse a otro nivel
@@ -303,7 +304,7 @@ int pthread_cond_destroy(pthread_cond_t *cond);
   pthread_mutex_unlock(&mut);
   /* (...) */
   /* Cuando otro hilo modifica a x o y, notifica */
-  /* a todos los hilos que estén esperando */
+  /* a todos los hilos en espera */
   pthread_mutex_lock(&mut);
   x = x + 1;
   if (x > y) pthread_cond_broadcast(&cond);

@@ -13,17 +13,17 @@
   - El administrador de memoria es el encargado de permitir que varios
     procesos la compartan
 
-** Notación: Sistemas binario, decimal, hexadecimal
-#+begin_center
-¡Importante!
-#+end_center
-- Para comprender bien este tema, así como el siguiente, es importante
-  tener un buen dominio de conceptos básicos de los sistemas de numeración
-  - Particularmente el binario, en segundo término el hexadecimal
-- Aspectos principales:
-  - Potencias de 2
-  - Representación numérica en los diferentes sistemas
-  - Máscaras de bits
+# ** Notación: Sistemas binario, decimal, hexadecimal
+# #+begin_center
+# ¡Importante!
+# #+end_center
+# - Para comprender bien este tema, así como el siguiente, es importante
+#   tener un buen dominio de conceptos básicos de los sistemas de numeración
+#   - Particularmente el binario, en segundo término el hexadecimal
+# - Aspectos principales:
+#   - Potencias de 2
+#   - Representación numérica en los diferentes sistemas
+#   - Máscaras de bits
 
 ** La memoria caché
 - El manejo del caché es /casi/ transparente para el sistema operativo
@@ -86,8 +86,7 @@ principio de /localidad de referencia/:
 - Principales procesadores de este tipo: Intel 8080 y 8085, Zilog
   Z80, MOS 6502 y 6510
   - Se conocen como procesadores de /8 bits/ (registros / aritmética)
-  - Implicaciones: ¿Tamaño y uso de os apuntadores?
-- Intel 8086/8088: Direcciona hasta 20 bits (1024KB)
+- Intel 8086/8088: Direccionamiento /físico/ hasta 20 bits (1024KB)
   - Pero al ser una arquitectura /real/ de 16 bits, requiere emplear
     /segmentación/ para alcanzar toda su memoria
 - Intel 80286: espacio de direccionamiento de 24 bits (16 MB)
@@ -96,8 +95,6 @@ principio de /localidad de referencia/:
     modos
 
 ** Procesadores de 32 bits /de direccionamiento/
-- Hoy en día, los procesadores dominantes son de 32 o 64 bits
-  (aritmética)
 - Un procesador de 32 bits puede direccionar hasta 4GB — $2^{32}$
   bytes (4,294,967,296 bytes), casi siempre coincide con 32 bits de
   aritmética
@@ -121,9 +118,9 @@ principio de /localidad de referencia/:
     sea requerido en suficientes procesadores de propósito general
     - En un sistema /actual/ de escritorio, es muy poco probable
       llegar a requerir incluso más de 16GB
-    - Servidores: no demasiado fuera de lo común 256TB
-  - Cada bit de direccionamiento necesario requiere un pin en el CPU,
-    por tanto, tiene un costo económico directo
+  - Cada bit de direccionamiento necesario requiere un /pin/ (una
+    pista elécrica dedicada) en el CPU, por tanto, tiene un costo
+    económico directo
 
 ** ¿Más allá?
 - ¿Qué tan lejos podemos llegar?

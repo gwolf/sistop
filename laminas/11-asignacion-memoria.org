@@ -320,26 +320,50 @@ presente=no).
 |      5-16 | X       | Atrapada: Segmento invalido             |
 
 ** Limitaciones de la segmentación
-- Número y semántica de segmentos disponible en la arquitectura
-  - En Intel 8086, 6 registros de segmento, mas un /desplazamiento/,
-    dan el espacio de direccionamiento de 20 bits (1MB); (extendido a
-    partir de 80386):
-    - CS :: /Code Segment/ (sección de texto)
-    - DS :: /Data Segment/ (sección de datos)
-    - SS :: /Stack Segment/ (pila de llamadas)
-    - ES, FS, GS :: /Extra Segment/ (cualquier otro acceso)
+Número y semántica de segmentos disponible en la arquitectura
+- En Intel 8086, 6 registros de segmento, mas un /desplazamiento/,
+  dan el espacio de direccionamiento de 20 bits (1MB)
+  - CS :: /Code Segment/ (sección de texto)
+  - DS :: /Data Segment/ (sección de datos)
+  - SS :: /Stack Segment/ (pila de llamadas)
+  - ES, FS, GS :: /Extra Segment/ (cualquier otro acceso)
+- Este esquema se mantuvo hasta la arquitectura x86 a 32 bits
+  - Al aparecer /x86-64/, se abandonó (en gran medida) a favor de la
+    /paginación/.
 
-** ¿Qué tanto se aprovecha /en verdad/?
-- El código que mejor aprovecha una arquitectura de segmentación es
-  /muy difícil/ de transportar a otra arquitectura
-  - El compilador puede generar acorde a la arquitectura objetivo,
-    pero... ¿Qué tanto beneficia al /programador/?
-  - Recuerden que para eso se presentó (supuestamente)...
-- Técnicas para direccionar más memoria de la que podemos /comprender/
-  - El Pentium Pro (1995) permite, a través de segmentación, ver 36
-    bits (64GB) de memoria en una arquitectura de 32 bits
-  - En PowerPC, hay 16 segmentos de 24 bits, que permiten direccionar
-    hasta 52 bits
+** Ejemplo de uso en /x86-32/
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+begin_src asm
+  MOV AX, 0x00400000
+  MOV DS, AX
+  MOV EBX, 0x1234
+  MOV EAX, [EBX]
+#+end_src
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- No se pueden cargar valores directamente a los registros de segmento; se hace
+  pasando por =AX=
+- El registro de datos =DS= apunta a la dirección base de memoria =0x00400000=
+- Se carga en el registro =EBX= el /desplazamiento/ requerido dentro del
+  segmento de datos
+- Se /linealiza/ la dirección requerida $\rightarrow$ combina el contenido de
+  =DS= con el desplazamiento =EBX=: 0x00401234
+
+#+latex: \end{column} \end{columns}
+\scriptsize *Ojo: /Un poquito/ sobresimplificado*, para no entrar en detalles de
+la indirección mediante Global Descriptor Table y otros, que incluye límites y
+permisos para cada segmento...
+
+# ** ¿Qué tanto se aprovecha /en verdad/?
+# - El código que mejor aprovecha una arquitectura de segmentación es
+#   /muy difícil/ de transportar a otra arquitectura
+#   - El compilador puede generar acorde a la arquitectura objetivo,
+#     pero... ¿Qué tanto beneficia al /programador/?
+#   - Recuerden que para eso se presentó (supuestamente)...
+# - Técnicas para direccionar más memoria de la que podemos /comprender/
+#   - El Pentium Pro (1995) permite, a través de segmentación, ver 36
+#     bits (64GB) de memoria en una arquitectura de 32 bits
+#   - En PowerPC, hay 16 segmentos de 24 bits, que permiten direccionar
+#     hasta 52 bits
 
 ** La segmentación hoy
 - La segmentación va cayendo en desuso en casi todas las arquitecturas
@@ -374,8 +398,9 @@ presente=no).
 - La memoria está dividida en una serie de /páginas/, todas ellas del
   mismo tamaño
   - Históricamente desde 512 bytes ($2^9$)
-  - Típicamente 4 u 8K ($2^{12}$ o $2^{13}$)
-  - Máximos hoy, 16MB ($2^{24}$)
+  - Típicamente 4K ($2^{12}$)
+  - Máximos hoy, 16MB ($2^{24}$) (aunque... /nadie usa tanto/ — Salvo
+    en casos especiales)
 - La memoria asignada ya no requiere ser contigua
   - A pesar de usar un /modelo plano/ (no segmentado)
 
@@ -479,6 +504,9 @@ demasiado pequeñas?
     físicamente contiguas
 - Fragmentar la memoria física en páginas muy pequeñas reduce la
   velocidad de transferencia de disco
+  - U obliga a que la transferencia se haga a marcos dentro del
+    espacio de memoria del kernel, obligando a una copia RAM-a-RAM
+    posterior
 
 ** Impacto en el PCB
 #+BEGIN_CENTER
@@ -514,12 +542,12 @@ de direccionamiento de 32 bits...
   - Quedamos en que un cambio de contexto /típico/ debe ser <1ms...
 ** ¿Cuánto ocuparía en una computadora real actual?
 #+BEGIN_CENTER
-... ¿Quién se aventura a sacar números para un sistema de 64 bits?
+... ¿Quién se aventura a sacar números para memoria de 48 bits?
 
 \pause
 
 Un tip: Basta multiplicar los números de la lámina anterior por
-4,294,967,296
+65,536
 
 #+END_CENTER
 

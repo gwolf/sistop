@@ -5,7 +5,7 @@
 # #+LATEX_CLASS_OPTIONS: [bigger]
 #+LATEX_HEADER: \usepackage[spanish]{babel}
 #+LATEX_HEADER: \usepackage{listings}
-#+LATEX_HEADER: \pgfdeclareimage[height=0.7\textheight]{../img/pres/cintillo.png}{../img/pres/cintillo.png}\logo{\pgfuseimage{../img/pres/cintillo.png}}
+# #+LATEX_HEADER: \pgfdeclareimage[height=0.7\textheight]{../img/pres/cintillo.png}{../img/pres/cintillo.png}\logo{\pgfuseimage{../img/pres/cintillo.png}}
 #+LATEX_HEADER: \AtBeginSection[]{ \begin{frame}<beamer> \frametitle{Índice} \tableofcontents[currentsection] \end{frame} }
 #+LATEX_HEADER: \definecolor{string}{rgb}{0,0.6,0} \definecolor{shadow}{rgb}{0.5,0.5,0.5} \definecolor{keyword}{rgb}{0.58,0,0.82} \definecolor{identifier}{rgb}{0,0,0.7}
 #+LATEX_HEADER: \renewcommand{\ttdefault}{pcr}
@@ -15,7 +15,10 @@
 #+LATEX_HEADER: \usepackage{xcolor}
 #+LATEX_HEADER: \graphicspath{ {../img/pres/} }
 #+LATEX_HEADER: \newcommand{\imgcred}[1]{ \,\hfill \tiny \textcolor{gray}{img:} \faCreativeCommons\, \textcolor{gray}{#1} }
-#+BEAMER_THEME: Warsaw
+#+latex_header: \usepackage{tikz}
+#+latex_header: \newcommand*\circulo[1]{\tikz[baseline=(char.base)]{ \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+#+latex_header: \newcommand*\circulito[1]{\tikz[baseline=(char.base)]{ \node[shape=circle,fill=black!30!blue,draw,inner sep=2pt] (char) {\scriptsize \textcolor{white} #1};}}
+#+BEAMER_THEME: metropolis
 #+BEAMER_COLOR_THEME: lily
 #+DESCRIPTION:
 #+KEYWORDS:

@@ -9,20 +9,18 @@
   - /Mismo almacenamiento/ para el programa siendo ejecutado que para
     sus datos
 - Todas las computadoras que empleamos hoy en día son, para fines
-  prácticos, sistemas von Neumann[fn:: Aunque podrían caracterizarse
-  como /Harvard modificadas/ partiendo desde un formalismo
-  excesivo...]
+  prácticos, sistemas von Neumann
 
 ** Implicaciones de /von Neumann/
-- La arquitectura /no considera/ la existencia de almacenamiento /persistente/
-  - Dentro del procesador hay algunas (¡pocas!) localidaes para
-    almacenar datos /muy limitados/, para /trabajar directamente con
-    ellos/ \rarrow /Registros/
-  - La computadora cuenta únicamente con la /memoria de trabajo/
-    \rarrow RAM, /almacenamiento primario/
-  - El almacenamiento a largo plazo debe hacerse empleando
-    controladores / mecanismos alternos, en medios específicos \rarrow
-    /almacenamiento secundario/
+\centering La arquitectura /no considera/ la existencia de almacenamiento /persistente/
+- Dentro del procesador hay algunas (¡pocas!) localidaes para
+  almacenar datos /muy limitados/, para /trabajar directamente con
+  ellos/ \rarrow /Registros/
+- La computadora cuenta únicamente con la /memoria de trabajo/
+  \rarrow RAM, /almacenamiento primario/
+- El almacenamiento a largo plazo debe hacerse empleando
+  controladores / mecanismos alternos, en medios específicos \rarrow
+  /almacenamiento secundario/
 
 ** Los registros
 #+BEGIN_CENTER
@@ -30,7 +28,7 @@
 #+END_CENTER
 - Memoria super-rápida (hoy en día, sub-nanosegundo), ubicada /dentro/
   del procesador
-- Manejada /por referencia directa/, no por dirección
+- Manejada /por referencia directa/ (por /su nombre/), no por dirección
 - Además de los datos del proceso guardan su /estado/
 - ¿Qué significa /gestionados por el compilador/?
 
@@ -138,9 +136,9 @@ xt_t$
 - Los componentes /no directamente referenciables/ de un sistema se
   comunican a través de /canales/ (/buses/)
   - Líneas de comunicación entre el procesador y el /chipset/
-- Acomodo /muy frecuente/ en sistemas x86 recientes[fn:: Después del
-  2010, las funciones del /Northbridge/ han tendido a ser absorbidas
-  por el CPU mismo]:
+- Acomodo /muy frecuente/ en sistemas x86 de hace algunos años[fn:: Desde
+  del 2010, las funciones, primero del /Northbridge/ u luego del
+  /Southbridge/, han sido absorbidas por el CPU mismo]:
   - Puente norte (Northbridge) :: Conectado directamente al CPU,
        encargado de los buses de alta velocidad y los dispositivos
        fundamentales para el inicio del sistema — Memoria, video (AGP)
@@ -184,7 +182,7 @@ xt_t$
     alrededor del bus USB
   - Frecuente en equipos ARM
 
-** Ejemplo: Raspberry Pi
+** Ejemplo: Raspberry Pi familias 1–3
 #+attr_latex: :width \textwidth
 #+caption: Diagrama de bloques de la popular plataforma ARM /Raspberry Pi/ de primera generación (Imagen de Wikipedia)
 [[../img/raspberry_block_diag.png]]
@@ -295,11 +293,11 @@ Lista incompleta, meramente ejemplificando
   ayudan a /depurar la ejecución/ de otros programas
 - Pueden /envolver/ al API del sistema, y permitir seguir la /traza/
   (/trace/) de la ejecución de un proceso
-- Por ejemplo:
-  - =strace= en Linux
-  - =truss= en Unixes históricos
-  - =ktrace=, =kdump= en *BSD
-  - =dtrace= en Solaris $\ge 10$ (2005)
+# - Por ejemplo:
+#   - =strace= en Linux
+#   - =truss= en Unixes históricos
+#   - =ktrace=, =kdump= en *BSD
+#   - =dtrace= en Solaris $\ge 10$ (2005)
 - Permite entender /buena parte/ de lo que realiza un proceso —
   Prácticamente, toda su interacción con el sistema
   - A veces, demasiada información
@@ -505,7 +503,7 @@ Particularmente la abordaremos en las dos siguientes unidades:
 - Existe desde los 1960
 - Entornos de alto rendimiento, /muy especializados/
   - Requieren una programación hecha /con cuidado especial/
-- Hace apenas 10-15 años, muchos sistemas operativos no detectaban
+- Hace apenas 20 años, muchos sistemas operativos no detectaban
   siquiera más de un procesador
   - Incluso de rango servidor
   - Era muy raro encontrarlos en hardware de uso frecuente
@@ -552,8 +550,8 @@ Y a cinco decadas, la Ley de Moore se sigue cumpliendo...
     caché /dentro del mismo/ chip)
 - El reloj de los procesadores no sólo no ha crecido, sino que en
   general /se redujo/ a cerca de 1GHz
-  - Apenas 15 años más tarde estamos volviendo a esas velocidades (y
-    con menor /protagonismo/)
+  - Apenas 15 años más tarde volvimos a esas velocidades
+    - Con menor /protagonismo/
   - Obviamente, el rendimiento y la densificación siguen avanzando
 - Pero ahora la ganancia de velocidad ya no llega en automático con el
   nuevo hardware
@@ -592,18 +590,30 @@ Puede haber varios puntos de asimetría:
 - Memoria y responsabilidades muy distintas a las del sistema central
 
 ** Acceso no-uniforme a memoria (NUMA)
-#+BEGIN_CENTER
-(/Non-Uniform Memory Access/)
-#+END_CENTER
+#+begin_export latex
+\begin{columns}
+  \begin{column}{0.4\textwidth}
+#+end_export
+#+attr_latex: :width \textwidth
+#+caption: Motherboard NUMA HP Z820 (Wikipedia)
+[[../img/motherboard_numa.jpg]]
+
+#+begin_export latex
+  \end{column}
+  \begin{column}{0.6\textwidth}
+#+end_export
 - Procesadores de la misma arquitectura/tipo
   - Podrían formar parte de un sistema SMP
 - Pero con /afinidad/ a bancos específicos de memoria
   - Memoria /cercana/ o /lejana/
   - Al /planificar/ los procesos, se destinan los procesadores cercanos
   - Hay un /canal compartido/ de memoria
+#+begin_export latex
+  \end{column}
+\end{columns}
+#+end_export
 - Típicamente computadoras grandes con /nodos/ o /blades/
-- Pueden ubicarse como en un punto medio entre SMP y el /cómputo
-  distribuído/
+- Parecerían un punto medio entre SMP y el /cómputo distribuído/
   - Cómputo distribuído fuertemente acoplado
 
 ** Más allá: Cómputo distribuído
@@ -635,7 +645,7 @@ Puede haber varios puntos de asimetría:
   nodos en el tiempo de vida de un cálculo
 \pause
 #+BEGIN_CENTER
-¿Quién quiere presentar el ejemplo de alguna malla?
+¿Quién quiere mencionar el ejemplo de alguna malla?
 #+END_CENTER
 
 ** Cómputo en la nube

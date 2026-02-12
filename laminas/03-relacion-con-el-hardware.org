@@ -33,6 +33,8 @@
 - ¿Qué significa /gestionados por el compilador/?
 
 ** Procesadores basados en /acumuladores/
+#+latex: \begin{columns}
+#+latex: \begin{column}{0.7\textwidth}
 - Primeros procesadores: Uno o pocos /acumuladores/. Por ejemplo:
   - MOS 6502:
     - 1 acumulador (A) de 8 bits
@@ -42,11 +44,22 @@
   - Zilog Z80 e Intel 8086:
     - 14 registros (3 de 8 bits, el resto de 16)
     - Pero sólo uno era un acumulador de propósito general
+#+latex: \end{column}
+#+latex: \begin{column}{0.3\textwidth}
+#+attr_latex: :width \columnwidth
+#+caption: Wikipedia: MOS Technology 6502
+[[../img/6502.jpg]]
+
+#+attr_latex: :width \columnwidth
+#+caption: Wikipedia: Zilog Z80
+[[../img/z80.jpg]]
+#+latex: \end{column}
+#+latex: \end{columns}
 
 ** Ejemplo de acumuladores: Intel 8086/8088
 #+latex: \begin{columns}\begin{column}{0.5\textwidth}
 #+attr_latex: :width \columnwidth
-#+caption: Imagen de Wikipedia
+#+caption: Wikipedia: Intel 8086
 [[../img/registros_8086.png]]
 #+latex: \end{column}\begin{column}{0.5\textwidth}
 Registros /bandera/ (vector de booleanos): Overflow, Dirección,
@@ -66,17 +79,36 @@ Paridad, Acarreo
 
 ** Tipos de almacenamiento
 #+BEGIN_CENTER
-¿Cómo representar y guardar /adecuadamente/ los datos e instrucciones?
+Todos nuestros /datos e instrucciones/ deben almacenarse en memoria, pero...
 #+END_CENTER
-- La memoria rápida es muy cara
-  - Pero aún así, mucho más lenta que el procesador: /Cuello de
-    botella de von Neumann/ ([[https://dl.acm.org/citation.cfm?doid=359576.359579][Backus, 1977]])
+- La memoria /muy/ rápida es muy cara
 - La memoria barata es muy lenta (/hasta 1000 veces/ más lenta que el procesador)
+#+latex: \begin{columns}
+#+latex: \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada en raphael.app
+[[../img/write_to_ram.png]]
+#+latex: \end{column}
+#+latex: \begin{column}{0.7\textwidth}
 - El almacenamiento /a largo plazo/ es mucho más barato, pero
   muchísimo más lento
   - Los discos llegan a ser /miles a millones/ de veces más lentos que
     la memoria
-- El avance en hardware /juega en contra/ de reducir la diferencia
+#+latex: \end{column}\end{columns}
+
+** El cuello de botella de /von Neumann/
+El avance en hardware /juega en contra/ de reducir la diferencia
+#+latex: \begin{columns}
+#+latex: \begin{column}{0.6\textwidth}
+- Los CPUs son > 1000 veces más rápidos que en 1978 (cuando John Backus
+  hizo esta observiación
+- La velocidad de acceso a la memoria ha mejorado... /marginalmente/
+#+latex: \end{column}
+#+latex: \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada en raphael.app
+[[../img/vn_bottleneck.png]]
+#+latex: \end{column}\end{columns}
 
 ** La memoria
 - El procesador puede referirse directamente a los datos ubicados en
@@ -152,6 +184,7 @@ xt_t$
 [[../img/northbridge_southbridge.png]]
 
 ** ¿Por qué tantos canales?
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Frecuencia acorde a distintas categorías de dispositivos
   - Criterio económico: Más barato usar señalización más lenta
   - Distintos mecanismos de acceso
@@ -163,6 +196,10 @@ xt_t$
   *contención*
   - Algunos canales, como el USB, permiten /hasta 127/ dispositivos
     conectados /serialmente/
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+[[../img/cables.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** Ejemplo: Chipset Intel 875 (2003)
 #+attr_latex: :width \textwidth
@@ -200,20 +237,26 @@ xt_t$
 
 ** Interrupciones y excepciones
 
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Interrupción :: Todo evento recibido por el sistema, de origen
                   /externo/ al flujo de la ejecución
   - Actividad en la red
   - Teclado o mouse
   - Alarma del temporizador
   - Datos del disco listos
+  - ...
 
 - Excepción :: Eventos inesperados originados por el flujo del
                proceso
   - División sobre cero
   - Instrucción ilegal
   - Acceso a memoria no direccionada
-  - También conocidas como /trampas/ (/traps/)
-
+  - ...
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada en perchance.org
+[[../img/exception.jpg]]
+#+latex: \end{column} \end{columns}
 ** Manejo de interrupciones y excepciones
 - Todo /evento/ es recibido por el sistema operativo (no por los
   procesos)
@@ -225,28 +268,30 @@ xt_t$
     posible!)
   - Una vez procesada, volver a invocar al /planificador/
 
-** ¿Cuándo una interrupción es /no enmascarable/?
-- Depende de la arquitectura y los objetivos del sistema
-- Algunos ejemplos:
-  - Error de paridad en la memoria (IBM PC)
-  - Llamadas a hardware incompatible (primeros /clones/ de IBM;
-    llamada atrapada y procesada por el manejador de interrupciones en
-    el BIOS)
-  - Diversas combinaciones de teclas para invocar a un reinicio (o
-    lanzar un depurador)
-  - Consolas de 8 bits (Nintendo NES): Bloquear modificaciones al
-    buffer de pantalla durante el refresco vertical
+# ** ¿Cuándo una interrupción es /no enmascarable/?
+# - Depende de la arquitectura y los objetivos del sistema
+# - Algunos ejemplos:
+#   - Error de paridad en la memoria (IBM PC)
+#   - Llamadas a hardware incompatible (primeros /clones/ de IBM;
+#     llamada atrapada y procesada por el manejador de interrupciones en
+#     el BIOS)
+#   - Diversas combinaciones de teclas para invocar a un reinicio (o
+#     lanzar un depurador)
+#   - Consolas de 8 bits (Nintendo NES): Bloquear modificaciones al
+#     buffer de pantalla durante el refresco vertical
 
 ** Llamadas al sistema
-- De cierto modo análogas/complementarias a las interrupciones
-- Mecanismo para que un proceso /solicite un servicio/ al sistema
-  operativo
+- Análogas/complementarias a las interrupciones
+- Mecanismo para que un proceso /solicite un servicio/ al sistema operativo
 - Cada sistema operativo /expone/ un diferente juego de llamadas al
   sistema a través de su API
 - Es en buena medida lo que determina la /compatibilidad de código/
   entre sistemas operativos
   - Contraposición: Compatibilidad binaria
   - APIs implementados por diversos sistemas: POSIX, Win32
+#+attr_latex: :width 0.7\textwidth
+#+caption: Generada en perchance.org
+[[../img/syscall.jpg]]
 
 ** Flujo de control en una llamada al sistema
 #+attr_latex: :width \textwidth

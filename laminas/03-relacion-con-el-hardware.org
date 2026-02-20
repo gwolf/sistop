@@ -367,15 +367,20 @@ exit_group(0)                           = ?
 
 ** Acceso directo a memoria (DMA)
 #+BEGIN_CENTER
-Problema: En la sección de un proceso en que está /limitado por
-entrada-salida/, la transferencia de información se vuelve cuello de
-botella
+*Problema:* Cuando un proceso está /limitado por entrada-salida/, la
+transferencia de información se vuelve cuello de botella
 #+END_CENTER
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Modo /entrada/salida programada/
 - Gran cantidad y frecuencia de interrupciones
 - Imposible realizar trabajo real
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada en perchance.org
+[[../img/old_man_programmed_io.jpg]]
+#+latex: \end{column} \end{columns}
 #+BEGIN_CENTER
-Respuesta: /Acceso Directo a Memoria/
+*Respuesta*: /Acceso Directo a Memoria/
 #+END_CENTER
 
 ** Acceso directo a memoria (DMA)
@@ -383,7 +388,6 @@ Respuesta: /Acceso Directo a Memoria/
   - Unidades de disco
   - Multimedia
   - Red
-  - Memoria y caché
 - Transferencia en bloques, empleando un /controlador/
   - Dirección física base de memoria
   - Cantidad de datos a transferir

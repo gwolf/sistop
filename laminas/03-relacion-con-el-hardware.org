@@ -641,7 +641,7 @@ Puede haber varios puntos de asimetría:
 ** Acceso no-uniforme a memoria (NUMA)
 #+begin_export latex
 \begin{columns}
-  \begin{column}{0.4\textwidth}
+  \begin{column}{0.35\textwidth}
 #+end_export
 #+attr_latex: :width \textwidth
 #+caption: Motherboard NUMA HP Z820 (Wikipedia)
@@ -649,7 +649,7 @@ Puede haber varios puntos de asimetría:
 
 #+begin_export latex
   \end{column}
-  \begin{column}{0.6\textwidth}
+  \begin{column}{0.65\textwidth}
 #+end_export
 - Procesadores de la misma arquitectura/tipo
   - Podrían formar parte de un sistema SMP
@@ -663,7 +663,9 @@ Puede haber varios puntos de asimetría:
 #+end_export
 - Típicamente computadoras grandes con /nodos/ o /blades/
 - Parecerían un punto medio entre SMP y el /cómputo distribuído/
-  - Cómputo distribuído fuertemente acoplado
+  - /¿Cómputo distribuído fuertemente acoplado?/
+
+    \pause Hmmm... No exactamente
 
 ** Más allá: Cómputo distribuído
 - Distribuir un proceso de cómputo para ser realizado /entre
@@ -694,27 +696,37 @@ Puede haber varios puntos de asimetría:
   nodos en el tiempo de vida de un cálculo
 \pause
 #+BEGIN_CENTER
-¿Quién quiere mencionar el ejemplo de alguna malla?
+¿Alguien puede mencionar el ejemplo de alguna malla?
 #+END_CENTER
 
 ** Cómputo en la nube
-- Caso específico y /de moda/
+- Caso específico, término /de moda/
 - Partición de recursos (/cliente-servidor/)
 - Orientado a la /tercerización/ de servicios específicos
 - La /implementación/ de un servicio deja de ser relevante \rarrow
   Procesos /opacos/
-- Conceptos relacionados:
-  - /Servicios Web/
-  - Plataforma como servicio (/PaaS/)
-  - Software como servicio (/SaaS/)
-  - Infraestructura como servicio (/IaaS/)
+
+#+latex: \only<1>{
+#+attr_latex: :width 0.5\textwidth
+#+caption: Cloud computing (de /linuxaria.com/)
+[[../img/cloud.jpg]]
+#+latex: } \only<2->{ \centering \Large
+La nube no existe... 
+#+latex: \vfill \,} \only<3>{ \centering \Large
+Es sólo la computadora de otra persona.
+#+latex: \vfill \,}
+# - Conceptos relacionados:
+#   - /Servicios Web/
+#   - Plataforma como servicio (/PaaS/)
+#   - Software como servicio (/SaaS/)
+#   - Infraestructura como servicio (/IaaS/)
 
 ** Límites del paralelismo
 - [[http://turing.eas.asu.edu/cse520fa08/Alaw.pdf][Gene Amdahl (1967)]] observó que la ganancia derivada de paralelizar
   el código llega a un límite natural: El tiempo requerido por la
   /porción secuencial/ del código
 - La /porción paralelizable/ puede repartirse entre varios
-  procesadores, pero siemprehay una importante proporción no
+  procesadores, pero siempre hay una importante proporción no
   paralelizable
   - Inicialización
   - Puntos de control/acumulación de datos

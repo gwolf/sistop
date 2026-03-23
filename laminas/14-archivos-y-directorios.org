@@ -646,8 +646,6 @@ Más detalles: [[https://manpages.debian.org/jessie/manpages-dev/mmap.2.en.html]
 - Un archivo puede estar en /más de un lugar/ en el directorio
   - Pero un directorio es una entidad un tanto particular
 - Esto se expresa empleando las /ligas duras/ y /ligas simbólicas/
-  - En Windows: Los /accesos directos/ son el /pariente pobre/ de las
-    ligas simbólicas
 
 ** Las ligas duras
 - Una entrada en el directorio es meramente la relación entre una
@@ -660,6 +658,11 @@ Más detalles: [[https://manpages.debian.org/jessie/manpages-dev/mmap.2.en.html]
     objeto, el mismo archivo
   - Si borramos uno, el otro sigue funcionando
   - Si modificamos uno, el otro también se modifica
+
+#+latex: \small
+- *Unix:* ~$ ln old.txt new.txt~
+- *Windows (~cmd~):* ~C:\> mklink /h old.txt new.txt~
+- *Windows (Powershell):* ~C:\> New-Item -ItemType HardLink -Path new.txt -Target old.txt~
 
 ** Ligas duras: Restricciones
 #+begin_center
@@ -674,7 +677,7 @@ Las ligas duras presentan dos restricciones principales:
    - Pueden causar problemas (veremos en un momento: /Recorrer los
      directorios/)
 
-** Ligas simbólicas (sistemas Unix)
+** Ligas simbólicas
 - Otro mecanismo para que un objeto /aparezca/ en más de un punto del directorio
 - Es un archivo /especial/ que incluye el nombre de otro objeto
   (¿archivo?) destino
@@ -686,17 +689,23 @@ Las ligas duras presentan dos restricciones principales:
     - Si el archivo referido se elimina o renombra, las ligas
       simbólicas /se rompen/
 
-** El /pariente pobre/: Accesos directos
-- Las /ligas duras/ existen tanto en Unix como en Windows
+#+latex: \small
+- *Unix:* ~$ ln -s old.txt new.txt~
+- *Windows (~cmd~):* ~C:\> mklink old.txt new.txt~
+- *Windows (Powershell):* ~C:\> New-Item -ItemType SymbolicLink -Path new.txt -Target old.txt~
+
+
+** /No es lo mismo/: Accesos directos
+- Ambos tipos de ligas duras existen tanto en Unix como en Windows
   - Aunque en Windows /casi/ nunca son empleadas
-- Las ligas simbólicas sólo existen en Unix
-- Son una herramienta muy útil y poderosa — En Windows 95 se introdujo
-  el /acceso directo/ buscando implementar parte de su funcionalidad
+- Son una herramienta muy útil y poderosa — En Windows 95 (FAT16/VFAT) se
+  introdujo el /acceso directo/ buscando implementar /parte/ de su
+  funcionalidad
   - Son archivos /estándar/
   - Extensión =.lnk=
   - Pensados principalmente para el escritorio y el menú de inicio
 - ¿Principal diferencia? No se /siguen/ automáticamente
-  - Tiene que hacerlo la aplicación — Y pocas lo hacen
+  - Tiene que hacerlo la aplicación (y pocas lo hacen)
   - Un /acceso directo/ puede abrirse como un archivo; leer una /liga
     simbólica/ lee directamente del archivo referido
 

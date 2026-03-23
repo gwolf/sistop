@@ -274,10 +274,17 @@ http://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf
 #+end_center
 
 ** ¿Qué es concurrencia?
-- Quedó ya claro que (para nosotros) concurrencia no significa que dos
-  o más eventos ocurran al mismo tiempo
+\centering Quedó ya claro que (para nosotros) concurrencia no significa que
+dos o más eventos ocurran al mismo tiempo
+
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
 - Nos referimos a dos o más eventos /cuyo órden no es determinista/
 - No podemos predecir el órden relativo en que ocurrirán
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \small Carrera de relevos (CC BY-ND mangoconarroz.blogspot.com)
+[[../img/relevos.jpg]]
+#+latex: \end{column}\end{columns}
 
 ** ¿Cuándo hablamos de concurrencia?
 - Dos o más hilos del mismo proceso

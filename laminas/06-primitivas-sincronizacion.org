@@ -81,7 +81,7 @@ end
 ** Sección crítica
 Es el área de código que:
 - Realiza el acceso (¿modificación? ¿lectura?) de datos compartidos
-- Requiere /ser protegida de accesos simultáneos/
+- Requiere /ser protegida de accesos concurrentes/
 - Dicha protección tiene que ser implementada /siempre, y
   manualmente/ por el programador
   - Identificarlas requiere inteligencia
@@ -381,23 +381,22 @@ seccion_critica();
   todo el código que asegura el /acceso concurrente seguro/ es empleado
 - Pueden ser presentados como /bibliotecas/
 
-** Ejemplo: Sincronización en Java
+** Sincronización en Java
 #+BEGIN_CENTER
 /Java/ facilita que una clase estándar se convierta en un monitor como
 una propiedad de la declaración de método, y lo implementa
 directamente en la JVM. (Silberschatz):
 #+END_CENTER
 #+begin_src java
-public class SimpleClass {
-  // . . .
+public class SimpleClass { // ...
   public synchronized void safeMethod() {
-    /* Implementation of safeMethod() */
-  }
+    /* Implementation of safeMethod() */  }
 }
 #+end_src
 La JVM implementa:
 - Mutexes a través de la declaración =synchronized=
-- /variables de condición/
+  - A nivel bloques de código, métodos de instancia y métodos estáticos
+- /Variables de condición/
 - Una semántica parecida (¡no idéntica!) a la de semáforos con
   =var.wait()= y =var.signal()=
 
@@ -423,6 +422,7 @@ pero...
   - Demasiado peligroso \rarrow Bastaría un error en la sección
     crítica de /cualquier proceso/ para que se congelara el sistema
     entero
+- Y hay /Interrupciones no enmascarables/...
 
 ** Instrucciones atómicas: =test_and_set= (1)
    Siguiendo una implementación /en hardware/ correspondiente a:
@@ -630,6 +630,7 @@ mutex.release()
 ** Torniquete
 - Garantiza que un grupo de hilos o procesos pasan por un punto
   determinado /de uno en uno/
+  - Permite /controlar fácilmente/ si pasan o se detienen
   - No sirve de mucho /por sí sólo/
 - Ayuda a controlar contención, es empleado como parte de
   construcciones posteriores
@@ -694,19 +695,6 @@ def vamos(id):
   int pthread_barrier_destroy(pthread_barrier_t *barrier);
 #+END_SRC
 
-** Apagador
-- Principalmente emplados en situación de /exclusión categórica/
-  - Categorías de procesos, no procesos individuales, que deben
-    excluirse mutuamente de secciones críticas
-- Metáfora empleada:
-  - La zona de exclusión mutua es un /cuarto/
-  - Los procesos que quieren entrar deben verificar /si está prendida
-    la luz/
-- O consideren también...
-  - Las avenidas que cambian de sentido según el horario de máximo
-    flujo
-- Implementación ejemplo a continuación (problema de
-  /lectores-escritores/)
 ** Cola
 - Generalización de /rendezvous/ para manejar a varios hilos (no sólo
   dos)
@@ -751,6 +739,26 @@ def vamos(id):
   - Asegurarse que sólo una pareja baile a la vez
   - Asegurarse que bailen en el órden en que llegaron
 
+** Apagador
+#+latex: \begin{columns} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Imagen generada: perchance.org
+[[../img/apagador.jpg]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
+- Principalmente emplados en situación de /exclusión categórica/
+  - Categorías de procesos, no procesos individuales, que deben
+    excluirse mutuamente de secciones críticas
+- Metáfora empleada:
+  - La zona de exclusión mutua es un /cuarto/
+  - Los procesos que quieren entrar deben verificar /si está prendida
+    la luz/
+- O consideren también...
+  - Las avenidas que cambian de sentido según el horario de máximo
+    flujo
+- Implementación ejemplo a continuación (problema de
+  /lectores-escritores/)
+#+latex: \end{column} \end{columns}
+
 * Problemas clásicos
 ** ¿De qué se tratan estos problemas clásicos?
 - Manera fácil de recordar para hablar de situaciones comunes en la
@@ -762,6 +770,7 @@ def vamos(id):
   aparentemente simples
 
 ** Problema productor-consumidor: Planteamiento
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
 - División de tareas tipo /línea de ensamblado/
   - Un grupo de procesos va /produciendo/ ciertas estructuras
   - Otro grupo va /consumiéndolas/
@@ -771,10 +780,23 @@ def vamos(id):
     atómica/
   - Si un consumidor está listo y el buffer está vacío, debe
     bloquearse (¡no espera activa!)
+
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Imagen generada: perchance.org
+[[../img/productor-consumidor.jpg]]
+#+latex: \end{column} \end{columns}
+
+** Problema productor-consumidor: Refinamientos posibles...
 - Refinamientos posteriores
   - Implementación con un buffer no-infinito (¿buffer circular?):
 - Vida real: Cola de trabajos para impresión, /Pipes/ (tuberías) entre
   procesos
+
+#+attr_latex: :width 0.5\textwidth
+#+caption: Imagen generada: perchance.org
+[[../img/prod-cons_impr.jpg]]
+
 ** Productor-consumidor: Implementación ingenua
 #+BEGIN_SRC python
   import threading
@@ -845,6 +867,7 @@ Vamos a emplear dos semáforos:
 #+latex: \end{column}\end{columns}
 
 ** Problema lectores-escritores: Planteamiento
+#+latex: \begin{columns}\begin{column}{0.6\textwidth}
 - Una estructura de datos puede ser accesada simultáneamente por
   muchos /procesos lectores/
 - Si un proceso requiere /modificarla/, debe asegurar que:
@@ -854,6 +877,13 @@ Vamos a emplear dos semáforos:
     crítica
 - Refinamiento: Debemos evitar que un /influjo constante de lectores/
   nos deje en situación de /inanición/
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex:  :width \textwidth
+[[../img/lectores-escritores.jpg]]
+#+attr_latex:  :width \textwidth
+#+caption: Imágenes generada: perchance.org
+[[../img/lectores-escritores.2.jpg]]
+#+latex: \end{column}\end{columns}
 
 ** Lectores-escritores: Primer acercamiento
 - El problema es de /exclusión mutua categórica/
@@ -948,10 +978,10 @@ Vamos a emplear dos semáforos:
     palillo a la izquierda
   - El palillo lo /comparten/ con el filósofo de junto
 #+BEGIN_CENTER
-#+attr_latex: :width 0.3\textwidth
-[[../img/mesa_filosofos.png]]
+#+attr_latex: :width 0.5\textwidth
+[[../img/filosofo_arroz.jpg]]
 #+END_CENTER
-#+latex: {\scriptsize Imagenes ilustrativas: Ted P. Baker}
+#+latex: {\scriptsize Imagen: Perchance.org}
 
 ** La cena de los filósofos: Planteamiento (2)
 - Cada filósofo /sólo/ sabe hacer dos cosas: Pensar y comer
@@ -973,6 +1003,7 @@ Vamos a emplear dos semáforos:
 #+attr_latex: :width \textwidth
 #+caption: Una rápida sucesión de C y E lleva a la inanición de D
 [[../img/filosofos_inanicion.png]]
+#+latex: {\scriptsize Imagenes ilustrativas: Ted P. Baker}
 #+END_CENTER
 
 ** Cena de filósofos: Primer acercamiento

@@ -17,6 +17,9 @@ completo/ y no avanzar hasta que el otro se haya ido
 #+begin_center
 #+latex: {\scriptsize Ley aprobada por el Estado de Kansas, principios del siglo XX}
 #+end_center
+#+attr_latex: :width 0.6\textwidth
+#+caption: Two trains crossing each other at India's Famous Diamond Crossing (youtube.com)
+[[../img/two_trains_crossing.png]]
 
 ** El cruce de un semáforo: ¿Qué queremos evitar?
 #+latex: \begin{columns} \begin{column}{0.5\textwidth}
@@ -68,10 +71,10 @@ Condiciones de Coffman
 
 ** Ejemplo clásico de bloqueo mutuo (1)
 #+begin_center
-Asumimos: Un sistema con dos unidades de cinta (acceso secuencial,
-no-compartible)
-
-Dos procesos, /A/ y /B/, requieren de ambas unidades.
+*Asumimos*:
+- Un sistema tiene dos unidades de cinta (acceso secuencial, no-compartible)
+- El acceso a las cintas se protege con un /mutex/.
+- Dos procesos, /A/ y /B/, requieren de ambas unidades.
 #+end_center
 
 1. /A/ solicita una unidad y se bloquea
@@ -98,17 +101,19 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
    /B/ bloqueado; otorga el control de vuelta a otro proceso (o queda
    en espera)
 
+10. *¡BUM!* Bloqueo mutuo :-(
+
 ** Esquematizando el ejemplo clásico
 #+attr_latex: :width 0.5\textwidth
 #+caption: Esquema clásico de un bloqueo mutuo simple: Los procesos /A/ y /B/ esperan mutuamente para el acceso a las unidades /1/ y /2/.
 [[../img/dot/bloqueo_mutuo_simple.png]]
 
 ** El punto de vista del sistema operativo
-- El rol del sistema operativo va más allá de lo presentado en las
+- El papel del sistema operativo va más allá de lo presentado en las
   láminas anteriores (/Exclusión mutua/)
 - No podemos asumir que los procesos cooperarán entre sí
   - Ni siquiera que sabrán por anticipado de la existencia mutua
-- Un rol primario del sistema operativo es gestionar los recursos del
+- Un rol primario del sistema operativo es /gestionar los recursos/ del
   equipo
 
 ** Políticas de prevención o resolución de bloqueos mutuos
@@ -123,7 +128,7 @@ Dos procesos, /A/ y /B/, requieren de ambas unidades.
 - Conservadoras :: Controlan más el proceso de asignación de recursos
 
 ** Espectro liberal-conservador de políticas
-#+attr_latex: :height 0.7\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Espectro liberal—conservador de esquemas para evitar bloqueos
 [[../img/dot/deadlocks_conserv_lib.png]]
 
@@ -212,9 +217,15 @@ Resulta en una utilización subóptima de recursos.
   requerirán
 - Apartados para uso exclusivo hasta que el proceso termina
 - El sistema puede seguir concediendo solicitudes /que no rivalicen/
-  - Si /C/ y /D/ requieren recursos /diferentes/ de /A/ y /B/, pueden
-    ejecutarse en paralelo /A/, /C/ y /D/
-  - Posteriormente, /B/, /C/, /D/
+#+latex: \begin{columns} \begin{column}{0.5\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada (perchance.org)
+[[../img/advance_claim.jpg]]
+#+latex: \end{column} \begin{column}{0.5\textwidth}
+- Si /C/ y /D/ requieren recursos /diferentes/ de /A/ y /B/, pueden
+  ejecutarse en paralelo /A/, /C/ y /D/
+- Posteriormente, /B/, /C/, /D/
+#+latex: \end{column} \end{columns}
 
 ** Desventajas de la /retención y espera/
 - Recursos reservados por /toda la ejecución/ del proceso
@@ -225,6 +236,11 @@ Resulta en una utilización subóptima de recursos.
   - Muchas veces es imposible
 
 ** Solicitud /de una vez/ (/one-shot/)
+#+latex: \begin{columns} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Generada (perchance.org)
+[[../img/one-shot.jpg]]
+#+latex: \end{column} \begin{column}{0.7\textwidth}
 - Otro mecanismo de prevención de bloqueos
 - Un proceso sólo puede solicitar recursos /cuando no tiene ninguno/
   - Dos variantes: Todos de inicio, o soltar y readquirir
@@ -233,7 +249,7 @@ Resulta en una utilización subóptima de recursos.
   largo plazo!
 - Cambia la lógica de programación al tener puntos definidos de
   adquisición y liberación
-
+#+latex: \end{column}\end{columns}
 ** Asignación de recursos /jerárquica/
 - A cada categoría de recursos se le asigna una prioridad o /nivel jerárquico/
 - Un proceso dado sólo puede solicitar recursos /de un nivel superior/
@@ -327,6 +343,9 @@ sus consecuencias.
   satisfacer los /préstamos/ (recursos) de sus clientes
 - Permite que el /conjunto de recursos/ solicitados por los procesos
   sean mayores a los disponibles
+#+attr_latex: :width 0.6\textwidth
+#+caption: Generada (perchance.org)
+[[../img/banquero.jpg]]
 
 ** Requisitos para el /Algoritmo del banquero/
 - Debe ejecutarse cada vez que un proceso solicita recursos

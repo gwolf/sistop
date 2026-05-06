@@ -15,6 +15,9 @@
   información en un /dispositivo persistente/
 - Principales estructuras y mecanismos para /implementar/ un sistema
   de archivos /en un medio físico/
+#+attr_latex: :width 0.5\textwidth
+#+caption: Medios de almacenamiento (elab. propia)
+[[../img/medios_de_almacenamiento.jpg]]
 
 ** Discos y otras hierbas
 - Cuando hablamos de almacenamiento, nos resulta natural hablar de /discos/
@@ -35,11 +38,15 @@
 - Pronto veremos algunas de estas características diferenciadoras
   - Y el impacto que pueden tener en los sistemas de archivos
 
-** ¿Cómo se ve un disco?
+** ¿Cómo /se ve/ un disco?
 - /Por ahora/, mantengamos la visión de un /disco/ como un arreglo
   muy grande
 - De bloques, todos ellos de tamaño fijo (fijado por el /hardware/)
 - Cada bloque, /directamente direccionable/
+\vskip 2em
+#+attr_latex: :width 0.5 \textwidth
+#+caption: \scriptsize Generada (perchance.org)
+[[../img/hdd_sketch.jpg]]
 
 ** Términos que se nos presentan
 #+BEGIN_CENTER
@@ -74,6 +81,10 @@ cuantos términos
 - Típicamente (por rendimiento) sólo almacena los archivos del
   /primer nivel jerárquico/
   - Directorios interiores, referenciados desde éste
+\vskip 2em
+#+attr_latex: :width 0.5\textwidth
+#+caption: \scriptsize \href{https://www.flickr.com/photos/sararah/2516885650/in/photostream/}{Day 136 - So organized? Sarah Cady, Flickr} CC BY-SA-NC
+[[../img/archivero.jpg]]
 
 ** Metadatos
 - Toda la información que haya /acerca de/ un archivo
@@ -124,18 +135,15 @@ cuantos términos
 
 
 * El volumen
-** Base para emplear un sistema de archivos
-- El volumen es descrito por el superbloque
-  - /No contiene/ a los archivos, ni al directorio, ni estructuras
-    que apunten hacia ellos
-  - Sólo información acerca del volumen
-- ¿Qué /tipo/ de sistema de archivos es?
-- Descripción básica del sistema de archivos
-  - Extensión del sistema
-  - Tamaño de los /bloques lógicos/
-  - Etiqueta que lo describa ante el usuario
 
 ** Bloques físicos y lógicos
+\centering La unidad mínima de asignación dentro de un volumen es el
+/bloque/.
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \scriptsize Generada (perchance.org)
+[[../img/cubo_de_legos.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
 - El tamaño de los /bloques físicos/ es establecido por el hardware
   - Tamaño de las transferencias del controlador al disco
 - Típicamente se /agrupan/ en /bloques lógicos/ (también llamados
@@ -143,14 +151,37 @@ cuantos términos
   - Por razones de rendimiento
   - Para alcanzar a direccionar mayor espacio
   - Revisaremos este tema al hablar de el /directorio/
+#+latex: \end{column} \end{columns}
 
-** Superbloque: ¿Qué hay en este medio?
+** Base para emplear un sistema de archivos
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
+- El volumen es /descrito por el superbloque/
+  - El superbloque /no contiene/ a los archivos, ni al directorio, ni
+    estructuras que apunten hacia ellos
+  - Sólo información /acerca del volumen/
+- ¿Qué /tipo/ de sistema de archivos es?
+- Descripción básica del sistema de archivos
+  - Extensión del sistema
+  - Tamaño de los /bloques lógicos/
+  - Etiqueta que lo describa ante el usuario
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \scriptsize Generada (perchance.org)
+[[../img/superbloque.jpg]]
+#+latex: \end{column} \end{columns}
+
+
+** Superbloque: ¿Qué hay en este dispositivo?
 - El /superbloque/ es fundamental para poder abrir el sistema de
   archivos
 - Es tan importante (y tan poco frecuentemente modificado) que se
   debe proteger de toda posible corrupción
 - Muchos sistemas de archivos mantienen /copias adicionales/ del
   superbloque dispersas a lo largo del sistema de archivos
+#+attr_latex: :width 0.4\textwidth
+#+caption: \scriptsize Generada (perchance.org)
+[[../img/varios_superbloques.jpg]]
+
 
 ** El superbloque en una unidad FAT
 - No guarda /tanta/ información en un sistema así de simple
@@ -161,18 +192,23 @@ cuantos términos
 - Indica el tamaño empleado en este volumen para los /clusters/
   - Desde 2 y hasta 32KB
 
-** Volúmenes crudos
+** /Volúmenes crudos/
 - Una de los principales tareas de un sistema operativo es
   la organización del espacio de almacenamiento en sistemas de
   archivos
 - Pero en algunos casos, puede tener sentido /no/ aprovechar esta
   característica
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
   - Principalmente, por rendimiento
   - Emplear un /dispositivo orientado a bloques/ sin emplear un
     sistema de archivos se denomina emplear /dispositivos crudos/ o
     /dispositivos en crudo/
 - ¿Cuándo se usa?
-
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \scriptsize \href{https://foto.wuestenigel.com/foto/518125-518125-bunter-salat-mit-paprika-und-tomaten-auf-weissem-hintergrund}{Marko Verch}, CC BY
+[[../img/ensalada.jpg]]
+#+latex: \end{column} \end{columns}
 ** Volúmenes crudos como /espacio de intercambio/
 - La gestión de la /memoria virtual/ puede beneficiarse de /no/
   cruzar por la abstracción del sistema operativo
@@ -201,9 +237,9 @@ cuantos términos
 * El directorio
 ** El papel del directorio
 - Estructura que relaciona a los archivos como son presentados al
-  usuario –identificados por una ruta y un nombre
-  - Con las estructuras que los describen ante el sistema operativo —
-    Los /i-nodos/.
+  usuario – identificados por una ruta y un nombre
+  - Con las estructuras que los describen ante el sistema operativo (los
+    /i-nodos/).
 - A lo largo de la historia de los sistemas de archivos, se han
   implementado muy distintos esquemas de organización
 
@@ -317,6 +353,10 @@ cuantos términos
     /principio/ de su sección de datos
 - Pero, ¿qué mecanismos hay para /asignar, gestionar y manejar/ el
   espacio que ocupa cada uno de los archivos?
+#+attr_latex: :width 0.4\textwidth
+#+caption: \scriptsize \href{https://www.dreamstime.com/hard-disk-drive-magnifying-glass-information-search-diagnostics-restore-concept-vertical-image345267411}{Dreamstime}, PD
+[[../img/buscar_en_disco.jpg]]
+
 
 ** Asignación contigua
 - Esquema empleado en los sistemas de archivos /muy/ antiguos
@@ -419,7 +459,7 @@ cuantos términos
 #+attr_latex: :height 0.7\textheight
 [[../img/dot/fs_apuntadores_indirectos.png]]
 
-** La lógica de la indirección multinivel
+** La lógica de la /indirección multinivel/
 - Varios sistemas de archivos (la idea apareció originalmente en UFS,
   Unix de los 1980s) buscan dar un rendimiento /acorde al tamaño del
   archivo/
@@ -431,7 +471,7 @@ cuantos términos
   - En un cluster vacío caben 128 apuntadores ($4096 \over 32$)
 - Reservamos los /últimos 3 apuntadores/ para los /bloques indirectos/
 
-** Ejemplo de indirección multinivel (1)
+** Ejemplo de indirección multinivel \circle{1}
 - Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede
   ser representado directamente en el i-nodo
   - Un sólo acceso a disco para obtener los clusters
@@ -439,7 +479,7 @@ cuantos términos
   representarse con el bloque de indirección sencilla
   - Dos accesos a disco
 
-** Ejemplo de indirección multinivel (2)
+** Ejemplo de indirección multinivel \circle{2}
 - Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
   \times 128) ) \times 4KB = 66436KB$
   - Hasta 131 accesos a disco

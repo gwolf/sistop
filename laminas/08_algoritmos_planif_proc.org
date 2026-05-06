@@ -177,78 +177,78 @@ Para un proceso $p$ que requiere ejecutarse por tiempo $t$,
      - Conceptualmente, entre 0 y 100%
      - En realidad, en un rango entre 40 y el 90%.
 
-** Por ejemplo...
-#+begin_center
-Los siguientes procesos forman la /cola de procesos listos/:
+# ** Por ejemplo...
+# #+begin_center
+# Los siguientes procesos forman la /cola de procesos listos/:
 
-|---------+-------+---------|
-| Proceso | Ticks | Llegada |
-|---------+-------+---------|
-| $A$     |     7 |       0 |
-| $B$     |     3 |       2 |
-| $C$     |    12 |       6 |
-| $D$     |     4 |      20 |
-|---------+-------+---------|
+# |---------+-------+---------|
+# | Proceso | Ticks | Llegada |
+# |---------+-------+---------|
+# | $A$     |     7 |       0 |
+# | $B$     |     3 |       2 |
+# | $C$     |    12 |       6 |
+# | $D$     |     4 |      20 |
+# |---------+-------+---------|
 
-Toma 1 /tick/ realizar un cambio de contexto; cada /quantum/ es de 5
-/ticks/, y tenemos un ordenamiento /de ronda/[fn:: Que pronto describiremos]
+# Toma 1 /tick/ realizar un cambio de contexto; cada /quantum/ es de 5
+# /ticks/, y tenemos un ordenamiento /de ronda/[fn:: Que pronto describiremos]
 
-#+end_center
+# #+end_center
 
-** Precisiones sobre el ejemplo
-#+BEGIN_CENTER
-Nuestro ejemplo /no es realista/
-#+END_CENTER
-- ¡El cambio de contexto propuesto es desproporcionadamente largo!
-  (sólo para ejemplificar)
-- Consideraremos al tiempo núcleo como si fuera un proceso más
-  - Midiendo /como si iniciara y terminara/ junto con los demás
-  - Normalmente el tiempo núcleo no se cuenta, es tomado por
-    /burocracia/
+# ** Precisiones sobre el ejemplo
+# #+BEGIN_CENTER
+# Nuestro ejemplo /no es realista/
+# #+END_CENTER
+# - ¡El cambio de contexto propuesto es desproporcionadamente largo!
+#   (sólo para ejemplificar)
+# - Consideraremos al tiempo núcleo como si fuera un proceso más
+#   - Midiendo /como si iniciara y terminara/ junto con los demás
+#   - Normalmente el tiempo núcleo no se cuenta, es tomado por
+#     /burocracia/
 
-** Graficando nuestro ejemplo
-#+attr_latex: :width \textwidth
-#+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 1 /tick/
-[[../img/ditaa/planificador.png]]
+# ** Graficando nuestro ejemplo
+# #+attr_latex: :width \textwidth
+# #+caption: Ejecución de cuatro procesos con /quantums/ de 5 /ticks/ y cambios de contexto de 1 /tick/
+# [[../img/ditaa/planificador.png]]
 
-** Resolviendo nuestro ejemplo
-#+begin_center
-| Proceso         | $t$ | $T$ | $E$ | $P$ | $R$ |
-|-----------------+-----+-----+-----+-----+-----|
-| $A$             |   7 |     |     |     |     |
-| $B$             |   3 |     |     |     |     |
-| $C$             |  12 |     |     |     |     |
-| $D$             |   4 |     |     |     |     |
-| Promedio /útil/ |     |     |     |     |     |
-|-----------------+-----+-----+-----+-----+-----|
-| Núcleo          |   6 |     |     |     |     |
-|-----------------+-----+-----+-----+-----+-----|
-| Promedio total  |     |     |     |     |     |
+# ** Resolviendo nuestro ejemplo
+# #+begin_center
+# | Proceso         | $t$ | $T$ | $E$ | $P$ | $R$ |
+# |-----------------+-----+-----+-----+-----+-----|
+# | $A$             |   7 |     |     |     |     |
+# | $B$             |   3 |     |     |     |     |
+# | $C$             |  12 |     |     |     |     |
+# | $D$             |   4 |     |     |     |     |
+# | Promedio /útil/ |     |     |     |     |     |
+# |-----------------+-----+-----+-----+-----+-----|
+# | Núcleo          |   6 |     |     |     |     |
+# |-----------------+-----+-----+-----+-----+-----|
+# | Promedio total  |     |     |     |     |     |
 
 
-- Tiempo kernel ::
-- Tiempo desocupado ::
-- Utilización del CPU ::
-#+end_center
-** Resultado de nuestro ejemplo
-#+begin_center
-| Proceso         | $t$ |  $T$ |   $E$ |  $P$ |   $R$ |
-|-----------------+-----+------+-------+------+-------|
-| $A$             |   7 |   18 |    11 | 2.57 | 0.389 |
-| $B$             |   3 |    7 |     4 | 2.33 | 0.429 |
-| $C$             |  12 |   26 |    14 | 2.17 | 0.462 |
-| $D$             |   4 |    9 |     5 | 2.25 | 0.444 |
-| Promedio /útil/ | 6.5 |   15 |  8.50 | 2.31 | 0.433 |
-|-----------------+-----+------+-------+------+-------|
-| Núcleo          |   6 |   32 |    26 | 5.33 | 0.188 |
-|-----------------+-----+------+-------+------+-------|
-| Promedio total  | 6.4 | 18.4 | 12.00 | 2.88 | 0.348 |
-#+TBLFM: @I$6..@IIII$6=($2/$3); EN f-3::@I$5..@IIII$5=($3/$2); EN f-2::@I$4..@IIII$4=($3-$2); EN f-2
+# - Tiempo kernel ::
+# - Tiempo desocupado ::
+# - Utilización del CPU ::
+# #+end_center
+# ** Resultado de nuestro ejemplo
+# #+begin_center
+# | Proceso         | $t$ |  $T$ |   $E$ |  $P$ |   $R$ |
+# |-----------------+-----+------+-------+------+-------|
+# | $A$             |   7 |   18 |    11 | 2.57 | 0.389 |
+# | $B$             |   3 |    7 |     4 | 2.33 | 0.429 |
+# | $C$             |  12 |   26 |    14 | 2.17 | 0.462 |
+# | $D$             |   4 |    9 |     5 | 2.25 | 0.444 |
+# | Promedio /útil/ | 6.5 |   15 |  8.50 | 2.31 | 0.433 |
+# |-----------------+-----+------+-------+------+-------|
+# | Núcleo          |   6 |   32 |    26 | 5.33 | 0.188 |
+# |-----------------+-----+------+-------+------+-------|
+# | Promedio total  | 6.4 | 18.4 | 12.00 | 2.88 | 0.348 |
+# #+TBLFM: @I$6..@IIII$6=($2/$3); EN f-3::@I$5..@IIII$5=($3/$2); EN f-2::@I$4..@IIII$4=($3-$2); EN f-2
 
-- Tiempo kernel :: 14 /ticks/
-- Tiempo desocupado :: 0 /ticks/
-- Utilización del CPU :: 26 /ticks/
-#+end_center
+# - Tiempo kernel :: 14 /ticks/
+# - Tiempo desocupado :: 0 /ticks/
+# - Utilización del CPU :: 26 /ticks/
+# #+end_center
 
 ** Frecuencias
 #+begin_center
@@ -690,8 +690,6 @@ descriptores primarios
 # Elige /dos/ sistemas operativos en uso /relativamente común/ en
 # ambientes de producción, y describe cómo es su mecanismo de
 # planificación.
-
-# *Entrega: Adjunto via EDUCAFI*
 # #+END_CENTER
 
 # ** Tarea: ¿Qué quiero que desarrollen?
@@ -800,7 +798,7 @@ descriptores primarios
   - Unos cinco resultados, para poder comparar un poco las tendencias
   - ¡Verifiquen manualmente algunos de los resultados!
 - (Y claro: Presentar el código)
-- Entrega vía plataforma: /una semana desde hoy/
+- Entrega en Git: /una semana desde hoy/
 
 ** Ejemplo de resultados
 #+begin_src sh

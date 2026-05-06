@@ -558,8 +558,8 @@ condiciones de Coffman /pueden presentarse/.
   - Puede representarse una /clase de recursos/ como un círculo
     grande, /conteniendo/ círculos pequeños indicando /recursos
     idénticos/
-  - Si un proceso puede solicitar /un recurso específico/ (y no
-    /cualquiera de una categoría/), no son idénticos
+  # - Si un proceso puede solicitar /un recurso específico/ (y no
+  #   /cualquiera de una categoría/), no son idénticos
 - Flecha de un recurso a un proceso: El recurso /está asignado/ al
   proceso.
 - Flecha de un proceso a un recurso: El proceso /está solicitando/ al
@@ -596,31 +596,31 @@ condiciones de Coffman /pueden presentarse/.
 3. Quedamos con un interbloqueo entre /C/, /D/ y /E/, en torno a los
    recursos /4/, /5/ y /7/.
 
-** Ejemplo 2
+# ** Ejemplo 2
 
-#+attr_latex: :width 0.4\textwidth
-#+caption: Ejemplo con categorías de recursos (Imágenes: Luis La Red)
-[[../img/deteccion_bloqueos_por_pasos_1.png]]
+# #+attr_latex: :width 0.4\textwidth
+# #+caption: Ejemplo con categorías de recursos (Imágenes: Luis La Red)
+# [[../img/deteccion_bloqueos_por_pasos_1.png]]
 
-** Ejemplo 2
-#+caption: Resultado de reducir por P9
-#+attr_latex: :width 0.5\textwidth
-[[../img/deteccion_bloqueos_por_pasos_2.png]]
+# ** Ejemplo 2
+# #+caption: Resultado de reducir por P9
+# #+attr_latex: :width 0.5\textwidth
+# [[../img/deteccion_bloqueos_por_pasos_2.png]]
 
-** Ejemplo 2
-#+caption: Resultado de reducir por P7
-#+attr_latex: :width 0.5\textwidth
-[[../img/deteccion_bloqueos_por_pasos_3.png]]
+# ** Ejemplo 2
+# #+caption: Resultado de reducir por P7
+# #+attr_latex: :width 0.5\textwidth
+# [[../img/deteccion_bloqueos_por_pasos_3.png]]
 
-** Ejemplo 2
-#+caption: Resultado de reducir por P8
-#+attr_latex: :width 0.5\textwidth
-[[../img/deteccion_bloqueos_por_pasos_4.png]]
+# ** Ejemplo 2
+# #+caption: Resultado de reducir por P8
+# #+attr_latex: :width 0.5\textwidth
+# [[../img/deteccion_bloqueos_por_pasos_4.png]]
 
-** ¡No todo ciclo es un bloqueo!
-#+attr_latex: :height 0.6\textheight
-#+caption: Al manejar /categorías/ de recursos, no siempre un ciclo implicará un bloqueo
-[[../img/ciclo_no_bloqueo.png]]
+# ** ¡No todo ciclo es un bloqueo!
+# #+attr_latex: :height 0.6\textheight
+# #+caption: Al manejar /categorías/ de recursos, no siempre un ciclo implicará un bloqueo
+# [[../img/ciclo_no_bloqueo.png]]
 
 ** Bloqueado /vs./ bloqueando
 - /Reducir un proceso/ no implica que este /haya entregado/ sus recursos
@@ -640,8 +640,17 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Técnica más sencilla y más justa...
   - Para cierta definición de justicia
 - Maximiza la pérdida de información
+#+attr_latex: :width 0.5\textwidth
+#+caption: \small OpenEdition Journals: Intervención norteamericana, 1914. Daniel Escorza Rodríguez.
+[[../img/matalos_en_caliente.jpg]]
+
 
 ** Retroceder al último /punto de control/ (/checkpoint/)
+#+latex: \begin{columns} \begin{column}{0.35\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Yoshi's Wooly World Checkpoint, Super Mario Wiki
+[[../img/yoshi_checkpoint.jpg]]
+#+latex: \end{column} \begin{column}{0.65\textwidth}
 - Sólo cuando el sistema implementa esta funcionalidad
 - Sólo cuando /ninguno/ de los procesos depende de factores
   externos
@@ -650,6 +659,7 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 - Probablemente otro orden específico se salve del bloqueo
   - Y si no... Se vuelve una vez más.
   - Tal vez, agregar un contador de /intentos/ que cambie el planificador
+#+latex: \end{column} \end{columns}
 
 ** Terminación selectiva / limitada
 - Terminar forzosamente, uno a uno (y no en bloque), a los procesos
@@ -658,23 +668,24 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
   - Los restantes pueden continuar operando
 - ¿Cómo elijo al desafortunado? Varias estrategias...
 
-** Estrategias para elegir el proceso a terminar (1)
-- Los procesos más sensibles para detener/relanzar: Los que
-  demandan /garantías de tiempo real/. Evitar penalizarlos.
-- Causar una menor pérdida de trabajo. El que haya consumido menor
-  cantidad de procesador hasta el momento.
-- Mayor tiempo restante estimado (si puedo estimar cuánto
-  procesamiento /queda pendiente/)
-
-** Estrategias para elegir el proceso a terminar (2)
-- Menor /número/ de recursos asignados hasta ahora (como criterio
-  de /justicia/: ¿qué proceso está haciendo un uso /más juicioso/
-  del sistema?)
-- Prioridad más baja (cuando la hay)
-- Procesos con naturaleza repetible sin pérdida de información
-  (aunque sí de tiempo)
-  - p.ej. es mejor interrupmir una compilación que la actualización
-    de una BD
+# ** Estrategias para elegir el proceso a terminar (1)
+# - Los procesos más sensibles para detener/relanzar: Los que
+#   demandan /garantías de tiempo real/. Evitar penalizarlos.
+# - Causar una menor pérdida de trabajo. El que haya consumido menor
+#   cantidad de procesador hasta el momento.
+# - Mayor tiempo restante estimado (si puedo estimar cuánto
+#   procesamiento /queda pendiente/)
+# 
+# ** Estrategias para elegir el proceso a terminar (2)
+# - Menor /número/ de recursos asignados hasta ahora (como criterio
+#   de /justicia/: ¿qué proceso está haciendo un uso /más juicioso/
+#   del sistema?)
+# - Prioridad más baja (cuando la hay)
+# - Procesos con naturaleza repetible sin pérdida de información
+#   (aunque sí de tiempo)
+#   - p.ej. es mejor interrupmir una compilación que la actualización
+#     de una BD
+#
 
 ** Periodicidad del chequeo
 - Si buscamos bloqueos cada vez que se solicita un recurso, es una

@@ -437,21 +437,21 @@ permisos para cada segmento...
     procesador)
   - Con una /dirección base/ distinta para cada una de las páginas
 
-** Ejemplo (minúsculo) de tabla de páginas
-#+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+attr_latex: :width \textwidth
-#+caption: Ejemplo de paginación (Silberschatz, p.292)
-[[../img/ditaa/ejemplo_de_paginacion.png]]
-#+latex: \end{column}\begin{column}{0.5\textwidth}
-- Direccionamiento: 5 bits
-- Página: 3 bits
-- Desplazamiento: 2 bits
-- Para referirse a la letra /f/: \pause
-  1. Dirección 00101 (5) \pause
-  2. Página 001 (1), posición 01 (1) \pause
-  3. MMU: Página 001 \rarrow marco 6 (110) \pause
-  4. Dirección física: 11001 (26)
-#+latex: \end{column}\end{columns}
+# ** Ejemplo (minúsculo) de tabla de páginas
+# #+latex: \begin{columns}\begin{column}{0.5\textwidth}
+# #+attr_latex: :width \textwidth
+# #+caption: Ejemplo de paginación (Silberschatz, p.292)
+# [[../img/ditaa/ejemplo_de_paginacion.png]]
+# #+latex: \end{column}\begin{column}{0.5\textwidth}
+# - Direccionamiento: 5 bits
+# - Página: 3 bits
+# - Desplazamiento: 2 bits
+# - Para referirse a la letra /f/: \pause
+#   1. Dirección 00101 (5) \pause
+#   2. Página 001 (1), posición 01 (1) \pause
+#   3. MMU: Página 001 \rarrow marco 6 (110) \pause
+#   4. Dirección física: 11001 (26)
+# #+latex: \end{column}\end{columns}
 
 ** Permisos y validez
 - Al emplear memoria paginada, seguimos manteniendo los modos de
@@ -462,7 +462,7 @@ permisos para cada segmento...
   tablas con el acceso a memoria
 - Un bit adicional: Página válida / inválida
   - El espacio total de direccionamiento disponible al proceso es muy
-    grande (32/64 bits)
+    grande (32/48 bits)
   - Indica cuáles páginas tiene asignadas el proceso y cuáles están
     libres
 
@@ -522,10 +522,10 @@ Volvamos a hacer cuentas:
 - Paginación :: Modelo presentado (128 páginas de 512 bytes, espacio
                 de direccionamiento de 16 bits): 1792 bytes
 
-** ¿Cuánto ocuparía en una computadora real actual?
+** ¿Cuánto ocuparía en una computadora real +actual+ viejita?
 #+BEGIN_CENTER
-Computadora sencilla actual: Páginas de 4096 bytes ($2^{12}$), espacio
-de direccionamiento de 32 bits...
+Computadora sencilla +actual+ de hace ≈15 años: Páginas de 4096 bytes
+($2^{12}$), espacio de direccionamiento de 32 bits...
 #+END_CENTER
 \pause
 - 1,048,576 páginas ($2^{20}$)
@@ -540,6 +540,8 @@ de direccionamiento de 32 bits...
 - Con memoria DDR3-14900 y transferencia pico de 15GB/s, le agrega
   0.3ms al cambio de contexto
   - Quedamos en que un cambio de contexto /típico/ debe ser <1ms...
+\pause
+- ¿Y qué caché me /aguanta/ 5MB?
 ** ¿Cuánto ocuparía en una computadora real actual?
 #+BEGIN_CENTER
 ... ¿Quién se aventura a sacar números para memoria de 48 bits?
@@ -565,9 +567,10 @@ Un tip: Basta multiplicar los números de la lámina anterior por
               Register/)
     - PTLR :: Registro Límite de Tabla de Páginas (/Page Table Limit
               Register/)
-  - ¿Por qué el PTLR? La mayor parte de los procesos, además, nunca
-    requerirá direccionarlo completo; para no tener un mapa completo
-    mayormente vacío, PTLR indica la extensión máxima empleada
+  - *¿Y por qué el PTLR?* La mayor parte de los procesos /nunca requerirá/ del
+    direccionarlo completo
+    - Para no tener un mapa completo mayormente vacío, PTLR indica la extensión
+      máxima empleada
 
 ** Desventaja de tener la tabla de páginas en memoria:
 - Velocidad: /Cada acceso a memoria/ se ve penalizado con (al menos)
@@ -621,11 +624,12 @@ En un equipo moderno, incluso con TLB, el espacio de la tabla de
 páginas es demasiado grande
 #+END_CENTER
 - Como vimos, una sobrecarga de 5MB por proceso en 32 bits. Y de
-  nuevo... ¿en 64 bits?
-- Tendríamos $2^{42}$ entradas con páginas de 4MB ($2^{22}$)
-- $2^{64} / 2^{22} = 2^{42}$ entradas, cada una ocupando 42 bits
-  para la página y 42 bits para el marco
-- $2^{42} \times (42 + 42)$ \rarrow ¡336TB /por proceso/!
+  nuevo... ¿en 48 bits?
+- Tendríamos $2^{26}$ ($\approx$ 64 millones) entradas con páginas de 4MB
+  ($2^{22}$)
+- $2^{48} / 2^{22} = 2^{26}$ entradas, cada una ocupando 26 bits
+  para la página y 26 bits para el marco
+- $2^{26} \times (26 + 26)$ \rarrow \approx 3.5GB /por proceso/!
 
 ** Subdividiendo las tablas de páginas
 - Aprovechamos que la mayor parte del espacio de direccionamiento de
@@ -638,7 +642,7 @@ páginas es demasiado grande
   - Desplazamiento :: 12 bits (dentro de cada página/marco)
 - Sólo se crean las tablas internas que sean necesarias
 - El TLB guarda la resolución para los /20 bits/ de ambas tablas
-  - O los 54 bits correspondientes en una arquitectura de 64 bits
+  - O los 38 bits correspondientes en una arquitectura de 48 bits
 
 ** Tablas de páginas con varios niveles
 #+caption: Paginación en dos niveles: 10+10 bits, con marcos de 12 bits.
@@ -652,42 +656,40 @@ páginas es demasiado grande
 - Pero una /falla de página/ puede ahora /triplicar/ el tiempo de
   acceso a memoria en vez de duplicarlo
   - Porque hace falta consultar a la /tabla externa/ y a la /tabla interna/
-- En una arquitectura de 64 bits dividida en páginas en incrementos 10
-  bits... /Septuplicamos/ el tiempo de acceso
 
-** Tablas de páginas con /funciones digestoras/ (/hash/)
-#+BEGIN_CENTER
-¿Qué es una /función digestora/?
+# ** Tablas de páginas con /funciones digestoras/ (/hash/)
+# #+BEGIN_CENTER
+# ¿Qué es una /función digestora/?
 
-$H: U\rightarrow M$
-#+END_CENTER
-- Una función que /mapea/ o /proyecta/ al conjunto $U$ en un conjunto
-   $M$ mucho menor
-- La /distribución resultante/ en $M$ debe resultar homogenea
-- Tan poco dependiente de la secuencialidad de la entrada como sea
-  posible
-- Permiten hacer /mapeos/ a espacios muestrales mucho más pequeños
-- Pero, en vez de apuntar a un sólo valor, deben apuntar a una /lista
-  ligada/ de valores
-  - Al ser espacios más pequeños, /necesariamente/ pueden presentar
-    colisiones
+# $H: U\rightarrow M$
+# #+END_CENTER
+# - Una función que /mapea/ o /proyecta/ al conjunto $U$ en un conjunto
+#    $M$ mucho menor
+# - La /distribución resultante/ en $M$ debe resultar homogenea
+# - Tan poco dependiente de la secuencialidad de la entrada como sea
+#   posible
+# - Permiten hacer /mapeos/ a espacios muestrales mucho más pequeños
+# - Pero, en vez de apuntar a un sólo valor, deben apuntar a una /lista
+#   ligada/ de valores
+#   - Al ser espacios más pequeños, /necesariamente/ pueden presentar
+#     colisiones
 
-** Tablas de páginas con funciones digestoras (/hash/)
-#+caption: Tablas de páginas empleando funciones digestoras (Silberschatz, p. 302)
-#+attr_latex: :height 0.65\textheight
-[[../img/tablas_hash.png]]
+# ** Tablas de páginas con funciones digestoras (/hash/)
+# #+caption: Tablas de páginas empleando funciones digestoras (Silberschatz, p. 302)
+# #+attr_latex: :height 0.65\textheight
+# [[../img/tablas_hash.png]]
 
-** Características de las tablas basadas en /hash/
-- Mayor complejidad \rarrow mayor latencia (¿mayor a qué?
-  Seguramente, no a 7 accesos a memoria)
-  - Evaluación de una función matemática (hash)
-  - Posiblemente, recorrer una lista
-- El tamaño de la tabla puede variar según crece el uso de memoria
-  del proceso
-  - Aunque requiera recalcular (/rehash/) la tabla, es una operación
-    poco frecuente
+# ** Características de las tablas basadas en /hash/
+# - Mayor complejidad \rarrow mayor latencia (¿mayor a qué?
+#   Seguramente, no a 7 accesos a memoria)
+#   - Evaluación de una función matemática (hash)
+#   - Posiblemente, recorrer una lista
+# - El tamaño de la tabla puede variar según crece el uso de memoria
+#   del proceso
+#   - Aunque requiera recalcular (/rehash/) la tabla, es una operación
+#     poco frecuente
 
-** Memoria compartida (1)
+** Memoria compartida \circulo{1}
 - La memoria paginada hace simple definir áreas de memoria compartida
 - Uso muy frecuente: Comunicación entre procesos (IPC)
   - Pueden compartirse estructuras complejas sin costo de copia
@@ -696,7 +698,7 @@ $H: U\rightarrow M$
   - Ojo: Diferencias entre memoria compartida entre procesos y memoria
     compartida entre hilos
 
-** Memoria compartida (2)
+** Memoria compartida \circulo{2}
 #+begin_center
 Uso más frecuente aún: Compartir /código/
 #+end_center
@@ -709,41 +711,41 @@ Uso más frecuente aún: Compartir /código/
   - Explican (parte de) un uso efectivo de memoria muy superior al
     100%
 
-** Memoria compartida (3)
+** Memoria compartida \circulo{3}
 #+attr_latex: :width \textwidth
 #+caption: Uso de memoria compartida: Tres procesos comparten la memoria ocupada por el texto del programa (azul), difieren sólo en los datos.
 [[../img/ditaa/memoria_compartida.png]]
 
-** La arquitectura x86-32: Paginación + Segmentación
-#+attr_latex: :width \textwidth
-#+caption: Pasos de la traducción lógica a física en un Pentium
-[[../img/ditaa/traduccion_pentium.png]]
-- La arquitectura x86 de 32 bits permite combinar paginación y
-  segmentación para alcanzar un mayor espacio de direccionamiento
-  - Comparable con la segmentación que permitía a la x86 llegar a 1MB RAM
-  - La segmentación fue (casi) eliminada para x86-64
+# ** La arquitectura x86-32: Paginación + Segmentación
+# #+attr_latex: :width \textwidth
+# #+caption: Pasos de la traducción lógica a física en un Pentium
+# [[../img/ditaa/traduccion_pentium.png]]
+# - La arquitectura x86 de 32 bits permite combinar paginación y
+#   segmentación para alcanzar un mayor espacio de direccionamiento
+#   - Comparable con la segmentación que permitía a la x86 llegar a 1MB RAM
+#   - La segmentación fue (casi) eliminada para x86-64
 
-** Segmentación en x86-32
-- Hay dos tablas de segmentos, almacenadas en /registros
-  programables/ específicos:
-  - LDT :: /Tabla local de descriptores/, segmentos privados de cada
-           uno de los procesos
-  - GDT :: /Tabla global de descriptores/, segmentos que pueden ser
-           compartidos entre diversos procesos del sistema
-- La dirección de segmento es de 16 bits
-  - 13 bits indican el segmento
-  - 1 bit indica si es en LDT o en GDT
-  - 2 bits son para los permisos
+# ** Segmentación en x86-32
+# - Hay dos tablas de segmentos, almacenadas en /registros
+#   programables/ específicos:
+#   - LDT :: /Tabla local de descriptores/, segmentos privados de cada
+#            uno de los procesos
+#   - GDT :: /Tabla global de descriptores/, segmentos que pueden ser
+#            compartidos entre diversos procesos del sistema
+# - La dirección de segmento es de 16 bits
+#   - 13 bits indican el segmento
+#   - 1 bit indica si es en LDT o en GDT
+#   - 2 bits son para los permisos
 
-** Paginación en x86-32
-- La familia Pentium (y equivalentes) pueden emplear páginas de 4KB o
-  4MB
-  - La tabla de páginas está dividida en una externa de 10 bits y una
-    interna de 10 bits (y desplazamiento, 12 bits)
-  - La /tabla externa/ incluye un bit que indica si apunta a una
-    /página grande/ o a una /tabla interna/
+# ** Paginación en x86-32
+# - La familia Pentium (y equivalentes) pueden emplear páginas de 4KB o
+#   4MB
+#   - La tabla de páginas está dividida en una externa de 10 bits y una
+#     interna de 10 bits (y desplazamiento, 12 bits)
+#   - La /tabla externa/ incluye un bit que indica si apunta a una
+#     /página grande/ o a una /tabla interna/
 
-** Paginación en x86-32
-#+caption: Paginación en x86-32 (silberschatz, p.309)
-#+attr_latex: :height 0.65\textheight
-[[../img/paginas_en_pentium.png]]
+# ** Paginación en x86-32
+# #+caption: Paginación en x86-32 (silberschatz, p.309)
+# #+attr_latex: :height 0.65\textheight
+# [[../img/paginas_en_pentium.png]]

@@ -15,6 +15,7 @@
   mecanismos
 
 ** Midiendo la respuesta de distintos algoritmos
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Parámetros de los procesos:
   - Generados de forma aleatoria, obedeciendo a distribución
     exponencial
@@ -24,6 +25,11 @@
   tridimensional (variando $\rho$)
   - Pero presentan ya un acercamiento útil acerca de su comportamiento
     general
+#+latex: \end{column} \begin{column}{0.3\textwidth} \, \vskip 4em
+#+attr_latex: :width \textwidth
+#+caption: Stopwatch (CC BY-SA \url{https://pngimg.com/download/87623})
+[[../img/stopwatch.png]]
+#+latex: \end{column} \end{columns}
 
 ** Proporción de penalización (P)
 #+attr_latex: :height 0.7\textheight
@@ -109,58 +115,59 @@ Tres modelos principales de /mapeo/:
   - Si el SO no maneja LWP, pueden caer en el modelo /uno a muchos/
     como modo degradado
 
-** El /ámbito de contención/
-#+BEGIN_CENTER
-¿Recibe cada uno de los hilos /la misma atención/ que recibiría un
-proceso? Hay dos enfoques (categorización de hilos POSIX, =pthread=):
-#+END_CENTER
+# ** El /ámbito de contención/
+# #+BEGIN_CENTER
+# ¿Recibe cada uno de los hilos /la misma atención/ que recibiría un
+# proceso? Hay dos enfoques (categorización de hilos POSIX, =pthread=):
+# #+END_CENTER
 
-- /Ámbito de contención de sistema/ (System Contention Scope, SCS)
-- /Ámbito de contencion de proceso/ (Process Contention Scope, PCS)
+# - /Ámbito de contención de sistema/ (System Contention Scope, SCS)
+# - /Ámbito de contencion de proceso/ (Process Contention Scope, PCS)
 
-#+BEGIN_CENTER
-El /ámbito de contención/ se refiere a cuál será la estructura dentro
-de la cual coexisten los hilos, y dentro de la cual cada hilo
-/contenderá/ (competirá) por el procesador.
-#+END_CENTER
+# #+BEGIN_CENTER
+# El /ámbito de contención/ se refiere a cuál será la estructura dentro
+# de la cual coexisten los hilos, y dentro de la cual cada hilo
+# /contenderá/ (competirá) por el procesador.
+# #+END_CENTER
 
-** Ámbitos de contención
-#+latex: \begin{columns}\begin{column}{0.5\textwidth}
-#+BEGIN_CENTER
-=PTHREAD_SCOPE_SYSTEM=
-#+END_CENTER
-- Todos los hilos son atendidos en el tiempo que sería asignado a /un
-  sólo proceso/
-- Modelo /muchos a uno/, así como los /hilos no unidos/ multiplexados
-  en /muchos a muchos/
-#+latex: \end{column}\begin{column}{0.5\textwidth}
-#+BEGIN_CENTER
-=PTHREAD_SCOPE_PROCESS=
-#+END_CENTER
-- Cada hilo es visto por el planificador como un proceso independiente
-- Modelo /uno a uno/ y los /hilos unidos/ en /muchos a muchos/
-#+LaTeX: \end{column}\end{columns}
-#+BEGIN_CENTER
-...Pero una implementación =pthreads= puede ofrecer sólo uno de los
-modelos \rightarrow Tanto Linux como Windows manejan sólo
-=PTHREAD_SCOPE_SYSTEM= (SCS).
-#+END_CENTER
-** Otras características en =pthreads=
-- =pthreads= incluyen varios de los otros aspectos mencionados en
-  esta unidad
-- El programador puede solicitar al núcleo la prioridad de cada uno
-  de los hilos por separado (=pthread_setschedprio=)
-- Incluso solicitar el empleo de un algoritmo de planificación en
-  específico (=sched_setscheduler=)
-- ...Pero recordemos que =pthreads= permite, en muchos casos,
-  responder al proceso /«Disculpa, no puedo hacer eso»/
+# ** Ámbitos de contención
+# #+latex: \begin{columns}\begin{column}{0.5\textwidth}
+# #+BEGIN_CENTER
+# =PTHREAD_SCOPE_SYSTEM=
+# #+END_CENTER
+# - Todos los hilos son atendidos en el tiempo que sería asignado a /un
+#   sólo proceso/
+# - Modelo /muchos a uno/, así como los /hilos no unidos/ multiplexados
+#   en /muchos a muchos/
+# #+latex: \end{column}\begin{column}{0.5\textwidth}
+# #+BEGIN_CENTER
+# =PTHREAD_SCOPE_PROCESS=
+# #+END_CENTER
+# - Cada hilo es visto por el planificador como un proceso independiente
+# - Modelo /uno a uno/ y los /hilos unidos/ en /muchos a muchos/
+# #+LaTeX: \end{column}\end{columns}
+# #+BEGIN_CENTER
+# ...Pero una implementación =pthreads= puede ofrecer sólo uno de los
+# modelos \rightarrow Tanto Linux como Windows manejan sólo
+# =PTHREAD_SCOPE_SYSTEM= (SCS).
+# #+END_CENTER
+# ** Otras características en =pthreads=
+# - =pthreads= incluyen varios de los otros aspectos mencionados en
+#   esta unidad
+# - El programador puede solicitar al núcleo la prioridad de cada uno
+#   de los hilos por separado (=pthread_setschedprio=)
+# - Incluso solicitar el empleo de un algoritmo de planificación en
+#   específico (=sched_setscheduler=)
+# - ...Pero recordemos que =pthreads= permite, en muchos casos,
+#   responder al proceso /«Disculpa, no puedo hacer eso»/
 
 
 * El despachador y el multiprocesamiento
 
 ** Compartir el procesador
-- Estrategia empleada por Control Data (CDC6600, 1964, diseñada por
-  Seymour Cray): Multitarea gestionada en hardware
+\centering Estrategia empleada por Control Data (CDC6600, 1964, diseñada
+por Seymour Cray): *Multitarea gestionada en hardware*
+#+latex: \begin{columns} \begin{column}{0.7\textwidth}
 - Un sólo procesador, pero con 10 juegos de registros
   - /Procesador superescalar/
 - A cada paso de reloj, avanzaba el /juego de registros/
@@ -168,6 +175,11 @@ modelos \rightarrow Tanto Linux como Windows manejan sólo
   - Apariencia de 10 procesadores más lentos, cada uno de
     $\frac{1}{10}$ la velocidad del /real/
   - Multitarea sin cambios de contexto
+#+latex: \end{column} \begin{column}{0.3\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: CDC6600; Computer Museum; Wikimedia Commons CC BY-SA
+[[../img/CDC6600.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** Compartir el procesador
 - ¿Desventajas?
@@ -226,8 +238,13 @@ considere dicha relación)
   - (casi) siempre habrá procesadores con procesos encolados y en
     espera
   - ...O ambas situaciones
-- Para mantener la divergencia lo menor posible, se emplea el
-  /balanceo de cargas/
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
+Para mantener la divergencia lo menor posible, se emplea el /balanceo de cargas/
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Balanza y Cronómetro de Kodak (\href{https://www.flickr.com/photos/coleccionandocamaras/5585819540/}{Flickr}, CC BY-NC-ND)
+[[../img/balanza.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** Multiprocesamiento: Balanceo de cargas
 - El balanceo de cargas /actúa en sentido contrario/ de la afinidad
@@ -247,6 +264,11 @@ Balanceo de cargas por empuje (/push migration/)
   procesos de una cola a otra.
 - Linux ejecuta esto cada 200ms.
 
+#+attr_latex: :width 0.25\textwidth
+#+caption: Push icon (game-icons.net CC BY)
+[[../img/push.png]]
+
+
 ** Estrategias de balanceo de cargas: /Por jalón/
 #+BEGIN_CENTER
 Balanceo de cargas: Por jalón (/pull migration/)
@@ -257,6 +279,10 @@ Balanceo de cargas: Por jalón (/pull migration/)
   del núcleo
 - Puede /averiguar/ si hay procesos en espera con otro procesador,
   y /jalarlos/ al actual.
+
+#+attr_latex: :width 0.25\textwidth
+#+caption: Push icon (game-icons.net CC BY)
+[[../img/pull.png]]
 
 #+BEGIN_CENTER
 Los mecanismos no son mutuamente exclusivos, es común que un SO emplee
@@ -310,11 +336,13 @@ descritos?
 
 ** Hilos hardware (/hyperthreading/): Pipelines
 #+latex:\begin{columns}\begin{column}{0.7\textwidth}
-#+attr_latex: :height 0.5\textheight
+#+attr_latex: :height 0.6\textheight
 #+caption: Fotografía de un CPU Intel Pentium 4
 [[../img/foto_pentium4.jpg]]
-#+latex:\end{column}\begin{column}{0.3\textwidth}
-Un procesador moderno presenta mucho más etapas (Pentium 4: 20 etapas)
+#+latex:\end{column}\begin{column}{0.4\textwidth}
+Un procesador “moderno” presenta mucho más etapas.
+
+(Pentium 4: 20 etapas, antes de la irrupción de los CPUs multi-core)
 #+latex:\end{column}\end{columns}
 #+BEGIN_CENTER
 #+latex:\scriptsize
@@ -352,23 +380,27 @@ Un procesador moderno presenta mucho más etapas (Pentium 4: 20 etapas)
 * Planificación de tiempo real
 
 ** ¿Qué es el /tiempo real/?
-- Nos hemos enfocado a repartir el tiempo disponible entre varios
-  procesos
+\centering Nos hemos enfocado a repartir el tiempo disponible entre varios
+procesos, pero...
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
 - No hemos tocado a los procesos que requieren /garantías de tiempo/
   - Para poder realizar su trabajo, tienen que recibir determinado
     tiempo de procesador /antes de un tiempo límite/
 - Estos procesos son conocidos como /de tiempo real/
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Train departures board (\href{https://www.flickr.com/photos/dgeezer/39872309300}{Diamond Geezer, Flickr} CC BY-NC-ND)
+[[../img/train_board.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** ¿Cuándo nos enfrentamos con el tiempo real?
-- Controladores de dispositivos
+- Controladores de dispositivos de audio, red, almacenamiento...
   - Entregan un determinado /bloque/ de información cada tanto tiempo
   - Si ese bloque no es procesado completo, se sobreescribe por el siguiente
 - Reproductores o recodificadores de audio y video
   - Si un /cuadro/ se pierde, el resultado puede escucharse
   - Sea como una demora (reproducción) o como un corte (recodificación)
-- Procesadores de criptografía
-  - Si un bloque se pierde, el documento completo /de ese punto en
-    adelante/ puede quedar corrupto
+- Aplicaciones industriales (robótica; automotriz)
 
 ** Reserva de recursos
 - Para poder manejarse como de tiempo real, un proceso debe declarar
@@ -383,10 +415,16 @@ Un procesador moderno presenta mucho más etapas (Pentium 4: 20 etapas)
     no podrá realizar la operación exitosamente en tiempo.
 
 ** Tiempo real duro y suave
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
 - Tiempo real duro :: El sistema puede /dar garantía/ de que el
      proceso tendrá el tiempo que reservó
 - Tiempo real suave :: El sistema /intentará/ dar la prioridad
      requerida al proceso, pero puede haber pequeñas demoras
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: Train Station Clock; Bongkarn Thanyakij, Vecteezy, Free License
+[[../img/station_clock.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** Restricciones del tiempo real duro
 - El planificador debe saber /con certeza/ cuánto tiempo toman todas
@@ -430,40 +468,72 @@ básicas de tiempo real suave.
 
 ** Inversión de prioridades
 - Un proceso $A$ de baja prioridad hace una llamada al sistema
-  - Es interrumpido a la mitad de la llamada
-- Un proceso $B$ de prioridad /tiempo real/ hace una segunda llamada
-  al sistema
-  - Requiriendo de la misma estructura que la que tiene bloqueada $A$
-- $B$ quedará esperando hasta que $A$ vuelva a ser agendado
+  - Queda en espera...
+- Un proceso $B$ de prioridad /tiempo real/ hace /otra/ llamada al sistema
+  - Requiriendo del mismo subsistema que el que bloquea a $A$
+- *$B$ quedará esperando hasta que $A$ vuelva a ser agendado*
 #+BEGIN_CENTER
-Esto es, $B$ fue, para propósitos prácticos, /degradado/ a la
-prioridad de $A$
+Esto es, $B$ fue, para propósitos prácticos, *degradado* a la prioridad de
+$A$
 #+END_CENTER
 
-** Inversión de prioridades: Herencia de prioridades
-- Mecanismo introducido por Solaris 2
+** Inversión de prioridades: Mars Pathfinder / Sojourner (1997)
+#+latex: \begin{columns} \begin{column}{0.6\textwidth}
+\small
+- Rover autónomo *Sojourner*
+- Sistema operativo: RTOS VxWorks
+  - Planificación por prioridades fijas
+  - Mutex para recursos compartidos
+- Reinicios repetidos y espontáneos
+- Bitácora: ~Data bus reset detected~
+#+attr_latex: :width 0.7\textwidth
+#+caption: \href{https://commons.wikimedia.org/wiki/File:Pathfinder01.jpg}{Pathfinder01} (Wikimedia Commons, PD)
+[[../img/Pathfinder01.jpg]]
+#+latex: \end{column} \begin{column}{0.4\textwidth}
+\small
+- *B* (baja prio) toma mutex del bus
+- *A* (alta prio) requiere el mutex
+- Planificador elige a *C* (med prio)
+  - *B* en espera
+  - *A* bloqueado...
+- Monitoreo detecta que *A* no avanza
+  - Reinicio completo del sistema... A 200 millones de kilómetros...
+#+latex: \end{column} \end{columns}
+
+** Inversión de prioridades: /Herencia/ de prioridades
 - Si $A$ bloquea a $B$ y $P_A < P_B$
 - $P_A := P_B$ hasta que $B$ libere el recurso
 - Pasado el bloqueo, $P_A$ vuelve a su estado nativo
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \href{https://en.wikipedia.org/wiki/File:Sojourner_on_Mars_PIA01122.jpg}{Sojourner on Mars} (Wikimedia Commons, PD)
+[[../img/sojourner.jpg]]
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+- Esta corrección /ya estaba disponible/ (no activa) en VxWorks
+  - Logró activarse a distancia, parchando un sistema /en producción/, a
+    200 millones de kilómetros
+- Salvó la misión. Pathfinder operó por 83 días
+  - 3 veces su tiempo de vida previsto.
+#+latex: \end{column} \end{columns}
 
-** Sistema operativo interrumpible (/prevenible/)
-- Hay llamadas al sistema que toman demasiado tiempo
-- Para poder ofrecer tiempo real suave con buenas expectativas, hay
-  que poder interrumpir al propio núcleo
-- Primer enfoque: /Puntos de interrupción/
-  - Marcar explícitamente puntos en que todas las estructuras están
-    en un estado estable
-- No muy eficiente: Hay pocos puntos aptos para declarar puntos de
-  interrupción
-  - Muy rígido, dificil estructurar para poner puntos adicionales
+# ** Sistema operativo interrumpible (/prevenible/)
+# - Hay llamadas al sistema que toman demasiado tiempo
+# - Para poder ofrecer tiempo real suave con buenas expectativas, hay
+#   que poder interrumpir al propio núcleo
+# - Primer enfoque: /Puntos de interrupción/
+#   - Marcar explícitamente puntos en que todas las estructuras están
+#     en un estado estable
+# - No muy eficiente: Hay pocos puntos aptos para declarar puntos de
+#   interrupción
+#   - Muy rígido, dificil estructurar para poner puntos adicionales
 
-** Núcleo completamente interrumpible
-- Otro enfoque: Proteger a /todas/ las modificaciones a estructuras
-  internas del núcleo con mecanismos de sincronización
-- Enfoque mucho más flexible
-- Hace que el sistema operativo /completo/ sea más lento (aunque más
-  seguro)
-  - Más operaciones a hacer por cada solicitud
-- Permiten que funciones del SO puedan correr como hilos concurrentes
-  en los distintos procesadores
+# ** Núcleo completamente interrumpible
+# - Otro enfoque: Proteger a /todas/ las modificaciones a estructuras
+#   internas del núcleo con mecanismos de sincronización
+# - Enfoque mucho más flexible
+# - Hace que el sistema operativo /completo/ sea más lento (aunque más
+#   seguro)
+#   - Más operaciones a hacer por cada solicitud
+# - Permiten que funciones del SO puedan correr como hilos concurrentes
+#   en los distintos procesadores
 

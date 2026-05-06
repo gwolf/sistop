@@ -19,7 +19,7 @@
 - Una de las abstracciones más longevas en la historia de la
   computación
 
-** Tipo de datos abstracto
+** Tipo de datos abstracto (ADT, ¿programación orientada a objetos?)
 - Cuando hablamos de /manejo de archivos/, necesariamente lo hacemos
   a través de un /tipo de datos abstracto/
   - Esto es, en el lenguaje y bajo el paradigma que sea, un tipo de
@@ -507,7 +507,7 @@ Más detalles: [[https://manpages.debian.org/jessie/manpages-dev/mmap.2.en.html]
 - Hoy en día, eso significa hablar de /directorios/
   - Aunque existen otras formas de organización
 
-** Conveniciones de nomenclatura
+** Convenciones de nomenclatura
 - En diferentes sistemas cambia la cantidad y conjunto de caracteres
   válidos para un nombre de archivo
 - Cambia también el /caracter separador/ — Indica el fin de un
@@ -555,6 +555,9 @@ Más detalles: [[https://manpages.debian.org/jessie/manpages-dev/mmap.2.en.html]
     /unidades/)
   - Permite referirse a un objeto o conjunto de objetos empleando
     /filtros/ sobre una cubeta
+  - De cierto modo, similar a los contenidos de =.git/objects=:
+    Requieren saber /qué objeto queremos encontrar/. No es su papel
+    proveer /organización de archivos/.
 
 # ** Pero no me dejen contarlo todo yo...
 # #+BEGIN_CENTER
@@ -681,7 +684,9 @@ Las ligas duras presentan dos restricciones principales:
 - Otro mecanismo para que un objeto /aparezca/ en más de un punto del directorio
 - Es un archivo /especial/ que incluye el nombre de otro objeto
   (¿archivo?) destino
-  - Cuando es abierto, /el SO/ sigue la indirección
+  - Cuando es abierto, /el sistema operativo mismo/ sigue la
+    indirección
+  - Es transparente al programa en espacio de usuario
 - Son más flexibles, pero menos robustas, que las ligas duras
   - /Pueden/ hacerse ligas simbólicas a objetos en otros sistemas de
     archivos y a directorios

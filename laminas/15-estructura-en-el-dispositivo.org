@@ -144,7 +144,7 @@ cuantos términos
   - Para alcanzar a direccionar mayor espacio
   - Revisaremos este tema al hablar de el /directorio/
 
-** Superbloque: Estructura repetida
+** Superbloque: ¿Qué hay en este medio?
 - El /superbloque/ es fundamental para poder abrir el sistema de
   archivos
 - Es tan importante (y tan poco frecuentemente modificado) que se
@@ -152,7 +152,7 @@ cuantos términos
 - Muchos sistemas de archivos mantienen /copias adicionales/ del
   superbloque dispersas a lo largo del sistema de archivos
 
-** FAT: El superbloque
+** El superbloque en una unidad FAT
 - No guarda /tanta/ información en un sistema así de simple
 - Indica principalmente la /generación/ del sistema de archivos
   (FAT12, FAT16, FAT32)
@@ -199,7 +199,7 @@ cuantos términos
 
 
 * El directorio
-** Rol del directorio
+** El papel del directorio
 - Estructura que relaciona a los archivos como son presentados al
   usuario –identificados por una ruta y un nombre
   - Con las estructuras que los describen ante el sistema operativo —
@@ -458,7 +458,6 @@ cuantos términos
   de archivos) es la /Tabla de Asignación de Archivos/ \rarrow /File
   Allocation Table/
   - Tan importante es esta estructura que se mantiene /por duplicado/
-    (triplicado en FAT12)
   - Ante daño físico — Los discos antes eran mucho menos confiables
 
 ** FAT: Leyendo la tabla de asignación de archivos
@@ -613,43 +612,54 @@ cuantos términos
     en /sólo lectura/)
 
 ** Evitando o recuperando de estados inconsistentes
-#+BEGIN_CENTER
-Hay dos estrategias principales para enfrentarse a los estados
-inconsistentes:
-#+END_CENTER
-- Actualizaciones suaves (/soft updates/)
-- Sistemas de archivo con bitácora (/journaling file systems/)
-- Sistemas de archivo estructurados en bitácora (/log-structured
-  file systems/)
+   Ha habido dos principales estrategias para asegurar que un volumen
+   esté siempre consistente — O pueda, por lo menos, detectarlo y
+   converger a un estado consistente:
 
-** Actualizaciones suaves (/soft updates/)
-- Organiza las escrituras a disco de modo que el estado resultante /no
-  pueda/ ser inconsistente
-  - Permite inconsistencias /no destructivas/: Marcar como asignado
-    espacio libre
-- Verifica /dependencias/ antes de escribir
-  - Por ejemplo: No libera el espacio de un archivo antes de haber
-    marcado su entrada como eliminada del directorio
-- El programa de verificación (=fsck=) se vuelve una tarea /ejecutable
-  en el fondo/, principalmente actuando como /recolector de basura/
-  - Busca espacio marcado como asignado, pero no referenciado
+   - Actualizaciones suaves
+   - Sistemas de archivo con bitácora
 
-** Actualizaciones suaves y archivos temporales
-- Puede ahorrarse por completo muchas escrituras a disco
-  - La creación de un archivo temporal (creación/obtención de
-    descriptor/remoción) no tiene siquiera que llegar al disco
-  - El proceso puede escribir sus datos en /espacio libre
-    no-referenciado/, la estructura del sistema de archivos no se
-    altera
+   (...y las /actualizaciones suaves/ han sido prácticamente
+   abandonadas :-( )
 
-** Uso de actualizaciones suaves
-- La idea fue presentada hacia 1999, e implementada en FreeBSD hacia
-  2002
-- Está implementado en UFS, empleado por varios sistemas operativos de
-  la familia *BSD
-- Pero no ha sido adoptado en otras familias de sistemas operativos
-  - NetBSD retiró el soporte en 2012 (v6.0), /prefiriendo/ el empleo
-    de bitácora
+# ** Evitando o recuperando de estados inconsistentes
+# #+BEGIN_CENTER
+# Hay dos estrategias principales para enfrentarse a los estados
+# inconsistentes:
+# #+END_CENTER
+# - Actualizaciones suaves (/soft updates/)
+# - Sistemas de archivo con bitácora (/journaling file systems/)
+# - Sistemas de archivo estructurados en bitácora (/log-structured
+#   file systems/)
+
+# ** Actualizaciones suaves (/soft updates/)
+# - Organiza las escrituras a disco de modo que el estado resultante /no
+#   pueda/ ser inconsistente
+#   - Permite inconsistencias /no destructivas/: Marcar como asignado
+#     espacio libre
+# - Verifica /dependencias/ antes de escribir
+#   - Por ejemplo: No libera el espacio de un archivo antes de haber
+#     marcado su entrada como eliminada del directorio
+# - El programa de verificación (=fsck=) se vuelve una tarea /ejecutable
+#   en el fondo/, principalmente actuando como /recolector de basura/
+#   - Busca espacio marcado como asignado, pero no referenciado
+
+# ** Actualizaciones suaves y archivos temporales
+# - Puede ahorrarse por completo muchas escrituras a disco
+#   - La creación de un archivo temporal (creación/obtención de
+#     descriptor/remoción) no tiene siquiera que llegar al disco
+#   - El proceso puede escribir sus datos en /espacio libre
+#     no-referenciado/, la estructura del sistema de archivos no se
+#     altera
+
+# ** Uso de actualizaciones suaves
+# - La idea fue presentada hacia 1999, e implementada en FreeBSD hacia
+#   2002
+# - Está implementado en UFS, empleado por varios sistemas operativos de
+#   la familia *BSD
+# - Pero no ha sido adoptado en otras familias de sistemas operativos
+#   - NetBSD retiró el soporte en 2012 (v6.0), /prefiriendo/ el empleo
+#     de bitácora
 
 ** Sistemas de archivos con bitácora (/journaling file systems/)
 - Antes de efectuar cualquier operación /de metadatos/ (una

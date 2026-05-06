@@ -713,14 +713,22 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
 [[../img/dot/deadlocks_conserv_lib.png]]
 
 ** El Algoritmo del avestruz
+
+#+latex: \begin{columns} \begin{column}{0.2\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \scriptsize Avestruz (\href{https://es.wikipedia.org/wiki/Archivo:Avestruz_(Struthio_camelus),_Zoo_de_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_01.JPG}{Wikipedia} CC BY-SA)
+[[../img/avestruz.jpg]]
+#+latex: \end{column} \begin{column}{0.8\textwidth}
 - Mecanismo más frecuente utilizado por los sistemas operativos de
   propósito general
 - Ignorar las situaciones de bloqueo
 - Esconder la cabeza bajo tierra y esperar a que pasen
 - Esperar que su ocurrencia sea suficientemente poco frecuente
 - Esperar que el usuario detecte y resuelva el problema por sí sólo
+#+latex: \end{column} \end{columns}
 
 ** El por qué del avestruz
+#+latex: \begin{columns} \begin{column}{0.8\textwidth}
 - Las condiciones impuestas por las diversas estrategias son casi
   imposibles de alcanzar
 - Conocimiento previo de requisitos insuficiente
@@ -730,6 +738,11 @@ Ahora... Una vez detectado el bloqueo, ¿qué procede?
   - Estructuras a niveles superiores
 - Modelo de computación tendiente al interactivo
   - En servidores: Programas (¡y personas!) dedicados al monitoreo
+#+latex: \end{column} \begin{column}{0.2\textwidth}
+#+attr_latex: :width \textwidth
+#+caption: \scriptsize Avestruz (\href{https://es.wikipedia.org/wiki/Archivo:Avestruz_(Struthio_camelus),_Zoo_de_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_01.JPG}{Wikipedia} CC BY-SA)
+[[../img/avestruz_izq.jpg]]
+#+latex: \end{column} \end{columns}
 
 ** ¿Qué es un recurso?
 - Para que estos mecanismos funcionen, tenemos que definir qué es un
@@ -798,7 +811,13 @@ programa/ caiga en situaciones de bloqueo
   - Ámbito del bloqueo
   - Función del sistema operativo en cuestión
   - Costo de implementación
+#+latex: \begin{columns} \begin{column}{0.4\textwidth}
 - Hecho: Tenemos avestruces /ahí afuera/, al igual que tenemos
   sistemas críticos que requieren verificación formal a cada
   asignación
 - ...Lo que no vale es que /nosotros/ seamos las avestruces.
+#+latex: \end{column} \begin{column}{0.6\textwidth}
+#+attr_latex: \textwidth
+#+caption: \scriptsize Generada (perchance.org)
+[[../img/avestruz_centro_de_datos.jpg]]
+#+latex: \end{column} \end{columns}

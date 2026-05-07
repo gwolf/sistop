@@ -471,7 +471,7 @@ cuantos términos
   - En un cluster vacío caben 128 apuntadores ($4096 \over 32$)
 - Reservamos los /últimos 3 apuntadores/ para los /bloques indirectos/
 
-** Ejemplo de indirección multinivel \circle{1}
+** Ejemplo de indirección multinivel \circulo{1}
 - Un archivo de hasta $(100-3) \times 4KB = 388KB$ puede
   ser representado directamente en el i-nodo
   - Un sólo acceso a disco para obtener los clusters
@@ -479,7 +479,7 @@ cuantos términos
   representarse con el bloque de indirección sencilla
   - Dos accesos a disco
 
-** Ejemplo de indirección multinivel \circle{2}
+** Ejemplo de indirección multinivel \circulo{2}
 - Con el bloque de doble indirección, llegamos a $(100-3 + 128 + (128
   \times 128) ) \times 4KB = 66436KB$
   - Hasta 131 accesos a disco

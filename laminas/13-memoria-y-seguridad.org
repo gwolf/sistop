@@ -5,21 +5,21 @@
 * Introducción
 ** ¿Seguridad?
 - En un sistema de cómputo, no podemos asumir /la mejor intención/
-  - Un sistema puede tener distintos usuarios, el sistema protege a
+  - Un sistema puede tener distintos usuarios, el sistema debe proteger a
     los datos de unos frente a otros
   - Un usuario puede intentar modificar cómo opera determinado
     programa /y generar salida que aparente ser legítima/
-  - Privilegios parciales/temporales: Bit SUID (a cubrirlo
-    posteriormente, en /sistemas de archivos/), /capacidades/
+  # - Privilegios parciales/temporales: Bit SUID (a cubrirlo
+  #   posteriormente, en /sistemas de archivos/), /capacidades/
 - La memoria es el principal /vector de ataque/
   - Todos los datos deben pasar por memoria
-  - ...Y el procesador no puede /entenderla/, sólo /obedecerla/
+  - ...Y el procesador *no puede /entenderla/* — únicamente puede */obedecerla/*
 
-** ¿No son suficiente los permisos?
+** ¿No basta con configurar correctamente los permisos?
 - La memoria segmentada y paginada ya incluyen los conceptos de
   permisos
-- Desde hace muchos años, los segmentos /de texto/ no admiten
-  escritura
+- Desde hace muchos años, los segmentos /de texto/ (o las páginas
+  correspondientes) no admiten escritura
 - ¿Qué más puede ocurrir?
 
 ** Lidiando con información externa
@@ -86,14 +86,14 @@ void func(int a, int b, int c) {
 }
 
 void main() {
-  func(1,2,3);
+  func(1,3,15);
 }
 #+end_src
 #+latex:\end{column}\begin{column}{0.5\textwidth}
 #+begin_src asm
 ; main
+        pushl $15
         pushl $3
-        pushl $2
         pushl $1
         call func
 
@@ -104,13 +104,13 @@ func:
 #+end_src
 #+latex:\end{column}\end{columns}
 #+attr_latex: :width 0.85\textwidth
-#+caption: Marco del stack con llamada a =func(1,2,3)= en x86-32
+#+caption: Marco del stack con llamada a =func(1,3,15)= en x86-32
 [[../img/ditaa/stackframe.png]]
 
 ** ¿Qué hizo el código compilado?
 - Los tres primeros =pushl=: /Debajo/ de la pila, agrega los tres
   argumentos de la función
-  - Los valores literales 1, 2, 3
+  - Los valores literales 1, 3, 15
   - 4 bytes para cada uno (=sizeof(int())= en 32 bits)
 - =call=: Agrega =ret= debajo de la pila, y brinca a la ubicación de
   la /etiqueta/ =func=
@@ -185,7 +185,7 @@ Parecería que el sistema /atrapó/ al error exitosamente. \pause ¿O no?
 
 ** ¿Qué significa nuestro =Segmentation fault=?
 - El =Segmentation fault= se debe a que la /dirección de retorno/ es
-  la 0x41414141
+  la 0x4141414141414141
   - No es una dirección válida y ejecutable
 - El código está /demostrado vulnerable/
   - ...Pero no lo hemos podido explotar aún
@@ -199,8 +199,8 @@ Parecería que el sistema /atrapó/ al error exitosamente. \pause ¿O no?
 - Si no lo tenemos, con ayuda de un depurador (como =gdb=) podemos
   leer el estado de los registros o de ubicaciones específicas de
   memoria a lo largo de la vida del programa
-- En este caso, la longitud /mágica/ es de 264 bytes (256 del buffer +
-  4 de =RET= + 4 de =SFP=
+- En este caso, la longitud /mágica/ es de 272 bytes (256 del buffer +
+  8 de =RET= + 8 de =SFP=
 - ¿Qué pasa si sobreescribimos =RET= con una dirección /válida/?
 
 ** Brincando a otro punto del programa
@@ -234,7 +234,7 @@ bne $0, %ebx, user_fail
 - Si en vez de 'AAAAAAAA...' le damos al sistema código ejecutable
   válido, más que brincarnos una validación, podemos hacer que el
   programa ejecute código arbitrario
-#+attr_latex: :width 0.6\textwidth
+#+attr_latex: :width 0.8\textwidth
 #+caption: Ejecutando el código arbitrario inyectado al buffer
 [[../img/ditaa/overflow_jump.png]]
 - El flujo de ejecución del proceso está comprometido
@@ -272,7 +272,7 @@ bne $0, %ebx, user_fail
 - Desventajas
   - Debe verificarse a cada llamada a función
   - Rendimiento disminuído
-#+attr_latex: :width 0.6\textwidth
+#+attr_latex: :width 0.8\textwidth
 #+caption: Mitigación: Uso de canario
 [[../img/ditaa/overflow_canary.png]]
 

@@ -1,8 +1,8 @@
-  0x00000000 <----             ----> 0xFFFFFFFF
+  0x000000000000 <----             ----> 0x0000FFFFFFFFFFFF
 
-      ----=----+----+----+----+----+----+
-     argc, argv| sfp| ret| buffer       |
-      ----=----+----+----+----+----+----+
-                 4b   4b   256 bytes
-     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      ----=----+--------+--------+----+----+----+
+     argc, argv|   sfp  |   ret  | buffer       |
+      ----=----+--------+--------+----+----+----+
+                 8 bytes  8 bytes   256 bytes
+     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 

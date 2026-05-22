@@ -1,7 +1,7 @@
-  0x00000000 <----                        ----> 0xFFFFFFFF
+  0x0000000000000000 <----                        ----> 0x0000FFFFFFFFFFFF
                                   <----AAAAAAAAAAAAAAA...
-                           qR'z2a&5f50s
-      ----=----+----+----+--------------+--------------+
-     argc, argv| sfp| ret| canario cYEL | buffer cC22  |
-      ----=----+----+----+--------------+--------------+
-                 4b   4b   12 bytes        256 bytes
+                                   qR'z2a&5f50s
+      ----=----+--------+--------+--------------+--------------+
+     argc, argv|   sfp  |   ret  | canario cYEL | buffer cC22  |
+      ----=----+--------+--------+--------------+--------------+
+                 8 bytes  8 bytes   12 bytes        256 bytes

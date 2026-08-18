@@ -18,6 +18,12 @@
 #+latex_header: \usepackage{tikz}
 #+latex_header: \newcommand*\circulo[1]{\tikz[baseline=(char.base)]{ \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 #+latex_header: \newcommand*\circulito[1]{\tikz[baseline=(char.base)]{ \node[shape=circle,fill=black!30!blue,draw,inner sep=2pt] (char) {\scriptsize \textcolor{white} #1};}}
+# % Usage:
+# % \tikzoverlay at (-1cm,-5cm) {content};
+# % or
+# % \tikzoverlay[text width=5cm] at (-1cm,-5cm) {content};
+#+latex_header: \tikzset{ every overlay node/.style={anchor=north west, },}
+#+latex_header: \def\tikzoverlay{ \tikz[baseline,overlay]\node[every overlay node] }%
 #+BEAMER_THEME: metropolis
 #+BEAMER_COLOR_THEME: lily
 #+DESCRIPTION:
